@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS user_decks (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- 4. SRS Card States (SM-2 Algorithm persistence)
+-- 4. SRS Card States (FSRS-4.5 scheduler state)
 CREATE TABLE IF NOT EXISTS card_states (
     id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
@@ -52,6 +52,9 @@ CREATE TABLE IF NOT EXISTS card_states (
     reps INTEGER DEFAULT 0,
     lapses INTEGER DEFAULT 0,
     state TEXT DEFAULT 'new', -- new, learning, review
+    stability REAL,
+    difficulty REAL,
+    last_review TEXT,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     UNIQUE(user_id, deck_id, card_id)

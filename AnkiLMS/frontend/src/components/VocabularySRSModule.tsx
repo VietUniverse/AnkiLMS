@@ -39,7 +39,7 @@ import {
   ShieldCheck,
   Lock,
 } from "lucide-react";
-import { calculateSM2, formatLocalDate, SM2Rating, SM2State } from "../lib/sm2";
+import { calculateFSRS45, formatLocalDate, FSRSRating, FSRSState } from "../lib/fsrs45";
 import { ApiClient } from "../lib/apiClient";
 import { speakKorean } from "../lib/koreanSpeech";
 
@@ -112,7 +112,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const [typedInput, setTypedInput] = useState("");
   const [reviewedCount, setReviewedCount] = useState(0);
   const [sessionXp, setSessionXp] = useState(0);
-  const [cardStateMap, setCardStateMap] = useState<Record<string, SM2State>>({});
+  const [cardStateMap, setCardStateMap] = useState<Record<string, FSRSState>>({});
 
   // Settings Menu State
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
@@ -330,11 +330,14 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const cardKey = `${activeDeckId}_${currentCard?.id}`;
   const currentCardState = cardStateMap[cardKey] || {
     interval: 1,
-    easeFactor: 2.5,
     reps: 0,
     lapses: 0,
     state: "new",
     dueDate: formatLocalDate(new Date()),
+    stability: 0,
+    difficulty: 5,
+    lastReview: null,
+    easeFactor: 2.5,
   };
 
   useEffect(() => {
@@ -400,8 +403,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     return () => clearTimeout(timer);
   }, [isFlipped, currentIndex, viewMode, currentCard, playSound]);
 
-  const handleNext = (rating: SM2Rating) => {
-    const newState = calculateSM2(rating, currentCardState);
+  const handleNext = (rating: FSRSRating) => {
+    const newState = calculateFSRS45(rating, currentCardState);
     setCardStateMap((prev) => {
       const updated = { ...prev, [cardKey]: newState };
       if (typeof window !== "undefined") {
@@ -634,7 +637,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
               Học Từ Vựng Tiếng Hàn <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-sky-300 to-emerald-400">Theo Chủ Đề</span>
             </h1>
             <p className="text-xs md:text-sm text-slate-300 max-w-2xl leading-relaxed">
-              Thành thạo từ vựng tiếng Hàn với hệ thống lặp lại ngắt quãng (SM-2 SRS) chuẩn Anki. Giọng đọc tiếng Hàn dùng giọng có sẵn trên trình duyệt và thiết bị.
+              Thành thạo từ vựng với FSRS 4.5: lịch ôn được tính từ độ ổn định ghi nhớ, độ khó và thời gian từ lần ôn trước. Giọng Hàn dùng giọng có sẵn trên trình duyệt và thiết bị.
             </p>
             <div className="pt-2 flex flex-wrap items-center justify-center md:justify-start gap-3">
               <button
@@ -1075,16 +1078,18 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
         <div className="flex-1 space-y-6">
           {currentCard ? (
             <div className="card-container p-6 sm:p-8 min-h-[460px] flex flex-col justify-between relative shadow-2xl">
-              {/* SM-2 Spaced Repetition Live Status Badge */}
+              {/* FSRS-4.5 Spaced Repetition Live Status Badge */}
               <div className="flex items-center justify-between gap-2 border-b border-slate-800/80 pb-3 mb-3">
                 <div className="flex items-center gap-2 bg-slate-950/80 px-3 py-1.5 rounded-xl border border-slate-800 text-[11px] font-mono text-slate-300">
                   <Brain className="w-3.5 h-3.5 text-amber-400" />
-                  <span className="text-amber-300 font-bold">SM-2 SRS:</span>
+                  <span className="text-amber-300 font-bold">FSRS 4.5:</span>
                   <span>Lần thuộc: <strong className="text-white">{currentCardState.reps}</strong></span>
                   <span>•</span>
                   <span>Hẹn ôn lại: <strong className="text-sky-300">{currentCardState.dueDate}</strong> ({currentCardState.interval} ngày)</span>
                   <span>•</span>
-                  <span>Hệ số dễ: <strong className="text-emerald-300">{currentCardState.easeFactor}</strong></span>
+                  <span>Ổn định: <strong className="text-emerald-300">{currentCardState.stability || currentCardState.interval} ngày</strong></span>
+                  <span>•</span>
+                  <span>Độ khó: <strong className="text-emerald-300">{currentCardState.difficulty || 5}/10</strong></span>
                 </div>
 
                 <button

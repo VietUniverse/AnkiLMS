@@ -304,7 +304,7 @@ export default function Home() {
           <Link href="/flashcards" className="card-duo card-duo-hover p-6 bg-[#0f1b38] border-[#1e3466] cursor-pointer space-y-3 block">
             <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-black"><Layers className="w-5 h-5" /></div>
             <h3 className="text-base font-black text-white">Từ Vựng SRS Anki</h3>
-            <p className="text-xs text-slate-400">Thuật toán SM-2 lặp lại ngắt quãng tự động tính interval ôn tập</p>
+            <p className="text-xs text-slate-400">FSRS 4.5 tự điều chỉnh lịch ôn theo độ khó và độ ổn định ghi nhớ</p>
           </Link>
           <Link href="/topik" className="card-duo card-duo-hover p-6 bg-[#0f1b38] border-[#1e3466] cursor-pointer space-y-3 block">
             <div className="w-10 h-10 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-black"><Trophy className="w-5 h-5" /></div>

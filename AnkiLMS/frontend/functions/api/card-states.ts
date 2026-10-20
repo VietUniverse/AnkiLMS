@@ -44,6 +44,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       reps: number;
       lapses: number;
       state: string;
+      stability: number;
+      difficulty: number;
+      lastReview: string | null;
     };
 
     if (typeof body.deckId !== "string" || body.deckId.length < 1 || body.deckId.length > 120) return errorResponse("Bộ thẻ không hợp lệ.");
@@ -54,12 +57,15 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (!Number.isInteger(body.reps) || body.reps < 0 || body.reps > 100_000) return errorResponse("Số lần ôn tập không hợp lệ.");
     if (!Number.isInteger(body.lapses) || body.lapses < 0 || body.lapses > 100_000) return errorResponse("Số lần quên không hợp lệ.");
     if (!["new", "learning", "review"].includes(body.state)) return errorResponse("Trạng thái thẻ không hợp lệ.");
+    if (typeof body.stability !== "number" || !Number.isFinite(body.stability) || body.stability < 0 || body.stability > 36_500) return errorResponse("Độ ổn định ghi nhớ không hợp lệ.");
+    if (typeof body.difficulty !== "number" || !Number.isFinite(body.difficulty) || body.difficulty < 1 || body.difficulty > 10) return errorResponse("Độ khó ghi nhớ không hợp lệ.");
+    if (body.lastReview !== null && (typeof body.lastReview !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(body.lastReview))) return errorResponse("Ngày ôn gần nhất không hợp lệ.");
 
     const id = `cs_${user.id}_${body.deckId}_${body.cardId}`;
 
     await env.DB.prepare(
-      `INSERT INTO card_states (id, user_id, deck_id, card_id, interval, ease_factor, due_date, reps, lapses, state, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+      `INSERT INTO card_states (id, user_id, deck_id, card_id, interval, ease_factor, due_date, reps, lapses, state, stability, difficulty, last_review, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
        ON CONFLICT(user_id, deck_id, card_id) DO UPDATE SET
          interval = excluded.interval,
          ease_factor = excluded.ease_factor,
@@ -67,6 +73,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
          reps = excluded.reps,
          lapses = excluded.lapses,
          state = excluded.state,
+         stability = excluded.stability,
+         difficulty = excluded.difficulty,
+         last_review = excluded.last_review,
          updated_at = CURRENT_TIMESTAMP`
     ).bind(
       id,
@@ -78,7 +87,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       body.dueDate,
       body.reps,
       body.lapses,
-      body.state
+      body.state,
+      body.stability,
+      body.difficulty,
+      body.lastReview
     ).run();
 
     return jsonResponse({ success: true });
