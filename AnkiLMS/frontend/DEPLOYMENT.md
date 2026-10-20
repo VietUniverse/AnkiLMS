@@ -37,16 +37,9 @@ npx wrangler pages secret put GOOGLE_CLIENT_SECRET --project-name haechivn-korea
 
 Register `https://lms.ankivn.com/api/auth/callback` as an authorized redirect URI in the Google OAuth client. Google sign-in stays unavailable until both secrets and the redirect URI are configured; email/password sign-in does not require them.
 
-## Naver CLOVA Voice
+## Korean pronunciation
 
-The Korean pronunciation endpoint uses the NAVER Cloud Platform CLOVA Voice Premium API. Register an application in the NAVER Cloud Platform console, enable CLOVA Voice for that application, and copy its Client ID and Client Secret. Add them to the production Pages project as encrypted secrets (Wrangler prompts for each value; never commit them or paste them into source files):
-
-```powershell
-npx wrangler pages secret put CLOVA_VOICE_CLIENT_ID --project-name haechivn-korean
-npx wrangler pages secret put CLOVA_VOICE_CLIENT_SECRET --project-name haechivn-korean
-```
-
-The endpoint reads these two secrets on each request, so a new deployment is not required after adding them. If CLOVA Voice is not enabled for the Naver application, the provider may reject requests even when both keys are present. Check the configured secrets by name only with `npx wrangler pages secret list --project-name haechivn-korean`; their values cannot be read back.
+The current learning interface uses the Korean voice supplied by the learner's browser/device through the Web Speech API. It does not require Naver CLOVA credentials. Available voices depend on the browser and installed system voices.
 
 ## Release checklist
 
