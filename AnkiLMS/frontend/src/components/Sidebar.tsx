@@ -29,7 +29,6 @@ import {
   Gamepad2,
   ListMusic,
   Compass,
-  Clapperboard,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -50,7 +49,6 @@ const mainNav = [
   { href: "/shadowing", label: "Shadowing", icon: Repeat },
   { href: "/listen", label: "Nghe thụ động", icon: ListMusic, badge: "MỚI" },
   { href: "/games", label: "Trò chơi từ vựng", icon: Gamepad2 },
-  { href: "/create-lesson", label: "Tạo bài YouTube", icon: Clapperboard },
   { href: "/ai-speaking", label: "Luyện nói tiếng Hàn", icon: Mic },
   { href: "/topik", label: "Luyện thi TOPIK I/II", icon: GraduationCap, badge: "HOT" },
 ];

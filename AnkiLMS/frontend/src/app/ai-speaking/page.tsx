@@ -5,6 +5,7 @@ import { AppShell } from "../../components/AppShell";
 import { useApp } from "../../contexts/AppProvider";
 import { ApiClient } from "../../lib/apiClient";
 import { AudioLines, Mic, MicOff, RefreshCw, Volume2 } from "lucide-react";
+import NIKL_KOREAN_VI from "../../data/niklKoreanViVocabulary.json";
 
 const PROMPTS = [
   { korean: "안녕하세요. 만나서 반갑습니다.", vietnamese: "Xin chào. Rất vui được gặp bạn." },
@@ -16,6 +17,9 @@ const PROMPTS = [
   { korean: "지하철역이 어디에 있는지 아세요?", vietnamese: "Bạn có biết ga tàu điện ngầm ở đâu không?" },
   { korean: "매일 조금씩 연습하면 실력이 늘 거예요.", vietnamese: "Luyện tập mỗi ngày một chút thì trình độ sẽ tiến bộ." },
 ];
+
+const SPEAKING_WORDS = NIKL_KOREAN_VI.map((item) => ({ korean: item.hangul, vietnamese: item.vietnamese, kind: "word" as const }));
+const PRACTICE_COUNT = PROMPTS.length + SPEAKING_WORDS.length;
 
 type RecognitionAlternative = { transcript: string };
 type RecognitionEvent = { results: ArrayLike<ArrayLike<RecognitionAlternative>> };
@@ -56,7 +60,7 @@ export default function SpeakingPracticePage() {
   const [recording, setRecording] = useState(false);
   const [message, setMessage] = useState("");
   const recognitionRef = useRef<RecognitionLike | null>(null);
-  const prompt = PROMPTS[index];
+  const prompt = index < PROMPTS.length ? { ...PROMPTS[index], kind: "sentence" as const } : SPEAKING_WORDS[index - PROMPTS.length];
 
   const percent = useMemo(() => transcript ? similarity(prompt.korean, transcript) : null, [prompt.korean, transcript]);
 
@@ -102,7 +106,7 @@ export default function SpeakingPracticePage() {
   function nextPrompt() {
     recognitionRef.current?.stop();
     setRecording(false);
-    setIndex((value) => (value + 1) % PROMPTS.length);
+    setIndex((value) => value < PROMPTS.length - 1 ? value + 1 : PROMPTS.length + Math.floor(Math.random() * SPEAKING_WORDS.length));
     setTranscript("");
     setScore(null);
     setMessage("");
@@ -111,10 +115,10 @@ export default function SpeakingPracticePage() {
   return (
     <AppShell>
       <div className="mx-auto max-w-3xl space-y-5 animate-fadeIn">
-        <header className="card-duo p-6"><p className="text-xs font-bold uppercase tracking-widest text-violet-300">Luyện phát âm · {index + 1}/{PROMPTS.length}</p><h1 className="mt-2 text-2xl font-black text-white">Nghe mẫu và nói theo</h1><p className="mt-2 text-sm text-slate-400">Dùng giọng đọc và nhận diện tiếng Hàn có sẵn trong trình duyệt. Điểm số so sánh văn bản nhận diện, không thay thế đánh giá phát âm của giáo viên.</p></header>
+        <header className="card-duo p-6"><p className="text-xs font-bold uppercase tracking-widest text-violet-300">Luyện phát âm · {PRACTICE_COUNT.toLocaleString("vi-VN")} từ và câu mẫu</p><h1 className="mt-2 text-2xl font-black text-white">Nghe mẫu và nói theo</h1><p className="mt-2 text-sm text-slate-400">Luyện câu giao tiếp và gần 4.600 từ tiếng Hàn có nghĩa tiếng Việt từ Từ điển Học tiếng Hàn của Viện Ngôn ngữ Quốc gia Hàn Quốc. Bấm “Từ/câu tiếp” để lấy mẫu ngẫu nhiên. Dùng giọng đọc và nhận diện có sẵn trong trình duyệt.</p></header>
         <section className="card-duo space-y-6 p-6 sm:p-8">
-          <div className="text-center"><p className="font-noto text-2xl font-black leading-relaxed text-white sm:text-3xl">{prompt.korean}</p><p className="mt-3 text-sm text-slate-400">{prompt.vietnamese}</p></div>
-          <div className="flex flex-wrap justify-center gap-3"><button type="button" onClick={speak} className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-4 py-3 text-xs font-bold text-slate-200 hover:border-sky-500"><Volume2 className="h-4 w-4 text-sky-300" /> Nghe mẫu</button><button type="button" onClick={recording ? () => recognitionRef.current?.stop() : startRecording} className={`btn-duo inline-flex items-center gap-2 px-5 py-3 text-xs ${recording ? "bg-rose-600 text-white" : "btn-duo-primary"}`}>{recording ? <><MicOff className="h-4 w-4" /> Dừng ghi âm</> : <><Mic className="h-4 w-4" /> Bắt đầu nói</>}</button><button type="button" onClick={nextPrompt} className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-4 py-3 text-xs font-bold text-slate-200 hover:border-violet-500"><RefreshCw className="h-4 w-4" /> Câu tiếp</button></div>
+          <div className="text-center"><span className="inline-flex rounded-full border border-slate-700 bg-slate-950/50 px-3 py-1 text-[10px] font-bold text-sky-300">{prompt.kind === "word" ? "Từ vựng · NIKL" : "Câu giao tiếp"}</span><p className="mt-4 font-noto text-2xl font-black leading-relaxed text-white sm:text-3xl">{prompt.korean}</p><p className="mt-3 text-sm text-slate-400">{prompt.vietnamese}</p></div>
+          <div className="flex flex-wrap justify-center gap-3"><button type="button" onClick={speak} className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-4 py-3 text-xs font-bold text-slate-200 hover:border-sky-500"><Volume2 className="h-4 w-4 text-sky-300" /> Nghe mẫu</button><button type="button" onClick={recording ? () => recognitionRef.current?.stop() : startRecording} className={`btn-duo inline-flex items-center gap-2 px-5 py-3 text-xs ${recording ? "bg-rose-600 text-white" : "btn-duo-primary"}`}>{recording ? <><MicOff className="h-4 w-4" /> Dừng ghi âm</> : <><Mic className="h-4 w-4" /> Bắt đầu nói</>}</button><button type="button" onClick={nextPrompt} className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-4 py-3 text-xs font-bold text-slate-200 hover:border-violet-500"><RefreshCw className="h-4 w-4" /> Từ/câu tiếp</button></div>
           {recording && <p role="status" className="flex items-center justify-center gap-2 text-xs font-bold text-rose-300"><AudioLines className="h-4 w-4 animate-pulse" /> Đang nghe… Hãy đọc câu tiếng Hàn.</p>}
           {message && <p role="alert" className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-200">{message}</p>}
           {transcript && <div className="rounded-2xl border border-slate-700 bg-slate-950/70 p-5 text-center"><p className="text-xs font-bold text-slate-400">Trình duyệt nghe được</p><p className="mt-2 font-noto text-lg font-bold text-slate-100">{transcript}</p><p className="mt-4 text-3xl font-black text-emerald-300">{score}%</p><p className="text-xs text-slate-400">Độ giống văn bản nhận diện</p></div>}
