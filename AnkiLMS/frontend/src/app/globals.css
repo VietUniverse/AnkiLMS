@@ -33,7 +33,7 @@
 /* User-selectable appearance. Keep contrast predictable across Tailwind utility colors. */
 html[data-theme="light"] {
   color-scheme: light;
-  --bg-primary: #f3f6fb;
+  --bg-primary: #f7f8fc;
   --bg-secondary: #ffffff;
   --bg-card: #ffffff;
   --border-color: #d5deeb;
@@ -42,7 +42,7 @@ html[data-theme="light"] {
 }
 
 html[data-theme="light"] body {
-  background: #f3f6fb !important;
+  background: #f7f8fc !important;
   color: #172033 !important;
 }
 
@@ -98,6 +98,25 @@ html[data-theme="light"] [class*="text-slate-500"] {
   color: #52627a !important;
 }
 
+html[data-theme="light"] [class*="text-[#38bdf8]"],
+html[data-theme="light"] [class*="text-sky-300"],
+html[data-theme="light"] [class*="text-sky-400"],
+html[data-theme="light"] [class*="text-blue-300"],
+html[data-theme="light"] [class*="text-cyan-300"] {
+  color: #0369a1 !important;
+}
+
+html[data-theme="light"] [class*="text-emerald-300"],
+html[data-theme="light"] [class*="text-emerald-400"] {
+  color: #047857 !important;
+}
+
+html[data-theme="light"] [class*="text-amber-300"],
+html[data-theme="light"] [class*="text-amber-400"],
+html[data-theme="light"] [class*="text-yellow-300"] {
+  color: #92400e !important;
+}
+
 html[data-theme="light"] input,
 html[data-theme="light"] textarea,
 html[data-theme="light"] select {
@@ -116,7 +135,12 @@ html[data-theme="light"] .card-duo {
 }
 
 html[data-theme="light"] .card-duo[class*="bg-gradient-to"] {
-  background-image: linear-gradient(115deg, #e0f2fe, #e8eaff 55%, #f3e8ff) !important;
+  background-image: linear-gradient(115deg, #fff7ed, #fff1f2 52%, #eff6ff) !important;
+}
+
+html[data-theme="light"] [class*="bg-gradient-to"][class*="text-white"],
+html[data-theme="light"] [class*="bg-gradient-to"] [class*="text-white"] {
+  color: #fff !important;
 }
 
 html[data-theme="rainbow"] {
@@ -132,6 +156,10 @@ html[data-theme="rainbow"] {
 html[data-theme="rainbow"] body {
   background: linear-gradient(135deg, #100d20, #17102e 45%, #101b32) fixed !important;
   color: #fff7ff !important;
+}
+
+html[data-theme="rainbow"] [class*="h-screen"][class*="bg-[#0b1329]"] {
+  background-image: linear-gradient(125deg, #100d20 0%, #211139 35%, #11233b 68%, #29132f 100%) !important;
 }
 
 html[data-theme="rainbow"] [class*="bg-[#0b1329]"],
@@ -160,6 +188,16 @@ html[data-theme="rainbow"] .card-duo {
   background-color: #1b1634 !important;
   border-color: rgb(192 132 252 / 62%) !important;
   box-shadow: 0 5px 0 rgb(168 85 247 / 24%), 0 0 26px rgb(34 211 238 / 12%) !important;
+}
+
+html[data-theme="rainbow"] .card-duo:nth-child(3n + 1) {
+  border-color: rgb(34 211 238 / 58%) !important;
+  box-shadow: 0 5px 0 rgb(6 182 212 / 18%), 0 0 22px rgb(34 211 238 / 10%) !important;
+}
+
+html[data-theme="rainbow"] .card-duo:nth-child(3n + 2) {
+  border-color: rgb(244 114 182 / 58%) !important;
+  box-shadow: 0 5px 0 rgb(236 72 153 / 18%), 0 0 22px rgb(236 72 153 / 10%) !important;
 }
 
 html[data-theme="rainbow"] .card-duo[class*="bg-gradient-to"] {
