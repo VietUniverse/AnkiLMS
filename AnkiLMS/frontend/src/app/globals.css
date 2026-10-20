@@ -30,6 +30,85 @@
   }
 }
 
+/* User-selectable appearance. Persisted preference is applied to <html>. */
+html[data-theme="light"] {
+  color-scheme: light;
+}
+
+html[data-theme="light"] body {
+  background: #f1f5f9 !important;
+  color: #172033 !important;
+}
+
+html[data-theme="light"] [class*="bg-[#0b1329]"],
+html[data-theme="light"] [class*="bg-[#090f1d]"],
+html[data-theme="light"] [class*="bg-slate-950"],
+html[data-theme="light"] [class*="bg-slate-900"] {
+  background-color: #f8fafc !important;
+}
+
+html[data-theme="light"] [class*="bg-[#132247]"],
+html[data-theme="light"] [class*="bg-[#0f1b38]"],
+html[data-theme="light"] [class*="bg-slate-800"],
+html[data-theme="light"] [class*="bg-slate-800/"],
+html[data-theme="light"] [class*="bg-slate-700"] {
+  background-color: #e8eef7 !important;
+}
+
+html[data-theme="light"] [class*="bg-slate-950/"],
+html[data-theme="light"] [class*="bg-slate-900/"] {
+  background-color: rgb(248 250 252 / 96%) !important;
+}
+
+html[data-theme="light"] [class*="border-[#19284d]"],
+html[data-theme="light"] [class*="border-[#1e3a70]"],
+html[data-theme="light"] [class*="border-slate-800"],
+html[data-theme="light"] [class*="border-slate-700"] {
+  border-color: #cbd5e1 !important;
+}
+
+html[data-theme="light"] [class*="text-white"],
+html[data-theme="light"] [class*="text-slate-100"],
+html[data-theme="light"] [class*="text-slate-200"] {
+  color: #172033 !important;
+}
+
+html[data-theme="light"] button [class*="text-white"],
+html[data-theme="light"] a[class*="bg-"][class*="text-white"],
+html[data-theme="light"] a[class*="bg-"] [class*="text-white"],
+html[data-theme="light"] a.btn-duo [class*="text-white"] {
+  color: #fff !important;
+}
+
+html[data-theme="light"] input,
+html[data-theme="light"] textarea,
+html[data-theme="light"] select {
+  color: #172033;
+}
+
+html[data-theme="light"] input::placeholder,
+html[data-theme="light"] textarea::placeholder {
+  color: #64748b;
+}
+
+html[data-theme="light"] .card-duo {
+  background-color: #fff !important;
+  border-color: #d5deeb !important;
+  box-shadow: 0 5px 0 rgb(15 23 42 / 8%) !important;
+}
+
+html[data-theme="rainbow"] .card-duo {
+  border-color: rgb(192 132 252 / 55%) !important;
+  box-shadow: 0 5px 0 rgb(168 85 247 / 22%), 0 0 24px rgb(34 211 238 / 8%) !important;
+}
+
+html[data-theme="rainbow"] button.bg-blue-600,
+html[data-theme="rainbow"] button.bg-violet-600,
+html[data-theme="rainbow"] button.bg-purple-600 {
+  background-image: linear-gradient(110deg, #06b6d4, #6366f1, #d946ef, #f97316) !important;
+  border-color: transparent !important;
+}
+
 /* Parroto Tactile 3D Buttons */
 .btn-duo {
   position: relative;

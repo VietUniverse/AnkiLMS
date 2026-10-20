@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Search, ChevronDown, Sparkles, Flame, Zap, Gem, LogOut, User as UserIcon, BookOpen, Volume2 } from "lucide-react";
 import { UserProfile, ApiClient } from "../lib/apiClient";
 import { searchDictionary, DictEntry } from "../data/koreanMiniDict";
+import { ThemeSwitcher } from "./ThemeSwitcher";
 
 interface HeaderProps {
   currentUser: UserProfile | null;
@@ -107,6 +108,7 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onLogou
 
       {/* User Stats Badges */}
       <div className="flex items-center gap-2.5">
+        <ThemeSwitcher />
         {currentUser ? (
           <>
             {/* Streak */}
