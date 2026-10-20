@@ -4,7 +4,6 @@ import React from "react";
 import { Sidebar } from "./Sidebar";
 import { BottomNav } from "./BottomNav";
 import { Header } from "./Header";
-import { DownloadBanner } from "./DownloadBanner";
 import { AnkiImporter } from "./AnkiImporter";
 import { AuthModal } from "./AuthModal";
 import { FloatingCommunityChat } from "./FloatingCommunityChat";
@@ -50,8 +49,6 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
         />
 
         <main className="flex-1 p-2 md:p-4 w-full max-w-[1800px] mx-auto">
-          <DownloadBanner />
-
           {checkinMessage && (
             <div className="mb-4 p-4 rounded-2xl bg-amber-500/20 border border-amber-400 text-amber-300 font-bold text-xs flex items-center justify-between animate-fadeIn">
               <span>{checkinMessage}</span>
