@@ -213,6 +213,33 @@ html[data-theme="rainbow"] button.btn-duo-primary {
   border-color: transparent !important;
 }
 
+/* Light mode follows a strict ink-only text palette: no white or muted gray copy. */
+html[data-theme="light"] body * {
+  color: #172033 !important;
+}
+
+html[data-theme="light"] button.btn-duo,
+html[data-theme="light"] button[class*="bg-gradient-to"],
+html[data-theme="light"] a[class*="bg-gradient-to"],
+html[data-theme="light"] button[class*="bg-blue-"],
+html[data-theme="light"] button[class*="bg-purple-"],
+html[data-theme="light"] button[class*="bg-violet-"],
+html[data-theme="light"] button[class*="bg-rose-"],
+html[data-theme="light"] button[class*="bg-sky-"] {
+  background-color: #dbeafe !important;
+  background-image: linear-gradient(110deg, #dbeafe, #ede9fe) !important;
+  border-color: #93c5fd !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] button.btn-duo-orange,
+html[data-theme="light"] button[class*="bg-orange-"],
+html[data-theme="light"] button[class*="bg-amber-"] {
+  background-color: #ffedd5 !important;
+  background-image: linear-gradient(110deg, #ffedd5, #fef3c7) !important;
+  border-color: #fdba74 !important;
+}
+
 /* Parroto Tactile 3D Buttons */
 .btn-duo {
   position: relative;
