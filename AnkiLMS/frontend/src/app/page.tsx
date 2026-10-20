@@ -75,7 +75,7 @@ export default function Home() {
               <Sparkles className="w-3.5 h-3.5" />
               <span>Hệ Thống Học Tiếng Hàn Chuẩn Anki SRS</span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white">
+            <h1 className="home-hero-title text-2xl md:text-3xl font-black tracking-tight">
               Chào mừng đến với <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">HaechiVN</span>
             </h1>
             <p className="text-xs md:text-sm text-slate-300 max-w-xl leading-relaxed">

@@ -218,6 +218,15 @@ html[data-theme="light"] body * {
   color: #172033 !important;
 }
 
+html[data-theme="light"] .home-hero-title {
+  color: #172033 !important;
+}
+
+html[data-theme="dark"] .home-hero-title,
+html[data-theme="rainbow"] .home-hero-title {
+  color: #fff7ff;
+}
+
 html[data-theme="light"] button.btn-duo,
 html[data-theme="light"] button[class*="bg-gradient-to"],
 html[data-theme="light"] a[class*="bg-gradient-to"],
