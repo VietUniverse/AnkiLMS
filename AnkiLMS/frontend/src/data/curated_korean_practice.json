@@ -1,0 +1,834 @@
+[
+  {
+    "id": "drama_practice_01",
+    "collectionId": "original-drama",
+    "lessonNum": 1,
+    "title": "드라마 연습 · 첫 출근 날",
+    "topikLevel": 2,
+    "topikName": "TOPIK 2",
+    "durationSec": 52,
+    "sourceType": "original",
+    "sourceLabel": "HaechiVN 창작 대화 · 실제 드라마 대사 아님",
+    "segments": [
+      {
+        "id": 1,
+        "start": 0,
+        "end": 5,
+        "text": "오늘부터 여기서 일하게 된 김민지입니다.",
+        "translation": "Từ hôm nay tôi sẽ làm việc ở đây. Tôi là Kim Min-ji.",
+        "translationEn": "My name is Minji Kim, and I’m starting to work here starting today."
+      },
+      {
+        "id": 2,
+        "start": 5,
+        "end": 10,
+        "text": "반가워요. 먼저 사무실을 안내해 드릴게요.",
+        "translation": "Rất vui được gặp bạn. Trước tiên tôi sẽ hướng dẫn bạn quanh văn phòng.",
+        "translationEn": "nice to meet you. First, let me show you around the office."
+      },
+      {
+        "id": 3,
+        "start": 10,
+        "end": 15,
+        "text": "제가 준비해야 할 서류가 있을까요?",
+        "translation": "Tôi có giấy tờ nào cần chuẩn bị không?",
+        "translationEn": "Are there any documents I need to prepare?"
+      },
+      {
+        "id": 4,
+        "start": 15,
+        "end": 20,
+        "text": "신분증 사본만 인사팀에 제출해 주세요.",
+        "translation": "Bạn chỉ cần nộp bản sao giấy tờ tùy thân cho phòng nhân sự.",
+        "translationEn": "Please submit only a copy of your ID card to the HR team."
+      },
+      {
+        "id": 5,
+        "start": 20,
+        "end": 26,
+        "text": "네, 점심시간 전에 가져다드리겠습니다.",
+        "translation": "Vâng, tôi sẽ mang đến trước giờ nghỉ trưa.",
+        "translationEn": "Yes, we will bring it to you before lunch time."
+      },
+      {
+        "id": 6,
+        "start": 26,
+        "end": 33,
+        "text": "모르는 게 있으면 언제든 편하게 물어보세요.",
+        "translation": "Nếu có điều gì chưa biết, cứ thoải mái hỏi bất cứ lúc nào nhé.",
+        "translationEn": "If you don't know anything, feel free to ask."
+      }
+    ],
+    "segmentCount": 6,
+    "sourceUrl": "https://www.youtube.com/watch?v=t_EGBys58lo",
+    "sourceTitle": "종이의 집: 공동경제구역 파트2 | 공식 클립 영상 | 넷플릭스"
+  },
+  {
+    "id": "drama_practice_02",
+    "collectionId": "original-drama",
+    "lessonNum": 2,
+    "title": "드라마 연습 · 오해를 풀어요",
+    "topikLevel": 3,
+    "topikName": "TOPIK 3",
+    "durationSec": 57,
+    "sourceType": "original",
+    "sourceLabel": "HaechiVN 창작 대화 · 실제 드라마 대사 아님",
+    "segments": [
+      {
+        "id": 1,
+        "start": 0,
+        "end": 6,
+        "text": "어제 내가 한 말 때문에 기분이 상했어?",
+        "translation": "Cậu buồn vì lời tớ nói hôm qua à?",
+        "translationEn": "Are you offended by what I said yesterday?"
+      },
+      {
+        "id": 2,
+        "start": 6,
+        "end": 12,
+        "text": "조금 그랬어. 다들 있는 데서 말해서 당황했거든.",
+        "translation": "Có một chút. Tớ bối rối vì cậu nói trước mặt mọi người.",
+        "translationEn": "It was a little bit like that. I was embarrassed to say it in front of everyone."
+      },
+      {
+        "id": 3,
+        "start": 12,
+        "end": 18,
+        "text": "그럴 생각은 아니었는데, 내가 배려가 부족했네.",
+        "translation": "Tớ không có ý đó, nhưng đúng là tớ đã thiếu tinh tế.",
+        "translationEn": "I didn't mean to do that, but I wasn't considerate enough."
+      },
+      {
+        "id": 4,
+        "start": 18,
+        "end": 24,
+        "text": "솔직하게 얘기해 줘서 고마워.",
+        "translation": "Cảm ơn cậu đã nói thật với tớ.",
+        "translationEn": "Thank you for being honest."
+      },
+      {
+        "id": 5,
+        "start": 24,
+        "end": 31,
+        "text": "다음부터는 먼저 네 의견을 물어볼게.",
+        "translation": "Lần sau tớ sẽ hỏi ý kiến cậu trước.",
+        "translationEn": "Next time, I will ask your opinion first."
+      },
+      {
+        "id": 6,
+        "start": 31,
+        "end": 38,
+        "text": "응, 우리 이렇게 얘기하니까 오해가 풀린 것 같아.",
+        "translation": "Ừ, nói chuyện thế này làm tớ thấy hiểu lầm được giải tỏa rồi.",
+        "translationEn": "Yes, I think the misunderstanding has been resolved since we talked like this."
+      }
+    ],
+    "segmentCount": 6,
+    "sourceUrl": "https://www.youtube.com/watch?v=t_EGBys58lo",
+    "sourceTitle": "Clip chính thức Netflix Korea (nghe tham khảo)"
+  },
+  {
+    "id": "drama_practice_03",
+    "collectionId": "original-drama",
+    "lessonNum": 3,
+    "title": "드라마 연습 · 막차를 놓쳤어요",
+    "topikLevel": 2,
+    "topikName": "TOPIK 2",
+    "durationSec": 54,
+    "sourceType": "original",
+    "sourceLabel": "HaechiVN 창작 대화 · 실제 드라마 대사 아님",
+    "segments": [
+      {
+        "id": 1,
+        "start": 0,
+        "end": 5,
+        "text": "큰일 났어. 막차가 방금 떠났어.",
+        "translation": "Chết rồi. Chuyến tàu cuối vừa chạy mất.",
+        "translationEn": "I'm in big trouble. The last train just left."
+      },
+      {
+        "id": 2,
+        "start": 5,
+        "end": 11,
+        "text": "택시를 타면 집까지 얼마나 걸릴까?",
+        "translation": "Nếu đi taxi thì về nhà mất bao lâu nhỉ?",
+        "translationEn": "How long does it take to get home by taxi?"
+      },
+      {
+        "id": 3,
+        "start": 11,
+        "end": 17,
+        "text": "이 시간에는 길이 막혀서 한 시간쯤 걸릴 거야.",
+        "translation": "Giờ này đường tắc nên chắc mất khoảng một tiếng.",
+        "translationEn": "It will take about an hour because the roads are blocked at this time."
+      },
+      {
+        "id": 4,
+        "start": 17,
+        "end": 23,
+        "text": "그럼 근처에서 첫차를 기다리는 게 낫겠다.",
+        "translation": "Vậy chờ chuyến đầu ở gần đây có lẽ tốt hơn.",
+        "translationEn": "Then it would be better to wait nearby for the first car."
+      },
+      {
+        "id": 5,
+        "start": 23,
+        "end": 29,
+        "text": "저기 편의점에서 따뜻한 음료라도 사자.",
+        "translation": "Mình mua đồ uống nóng ở cửa hàng tiện lợi kia nhé.",
+        "translationEn": "Let’s buy a warm drink at the convenience store over there."
+      },
+      {
+        "id": 6,
+        "start": 29,
+        "end": 36,
+        "text": "오늘은 계획대로 되는 일이 하나도 없네.",
+        "translation": "Hôm nay chẳng có việc gì diễn ra theo kế hoạch cả.",
+        "translationEn": "Nothing goes as planned today."
+      }
+    ],
+    "segmentCount": 6,
+    "sourceUrl": "https://www.youtube.com/watch?v=t_EGBys58lo",
+    "sourceTitle": "Clip chính thức Netflix Korea (nghe tham khảo)"
+  },
+  {
+    "id": "drama_practice_04",
+    "collectionId": "original-drama",
+    "lessonNum": 4,
+    "title": "드라마 연습 · 비밀을 말할게",
+    "topikLevel": 4,
+    "topikName": "TOPIK 4",
+    "durationSec": 64,
+    "sourceType": "original",
+    "sourceLabel": "HaechiVN 창작 대화 · 실제 드라마 대사 아님",
+    "segments": [
+      {
+        "id": 1,
+        "start": 0,
+        "end": 7,
+        "text": "사실은 다음 달에 부산으로 내려가게 됐어.",
+        "translation": "Thật ra tháng sau tớ sẽ chuyển xuống Busan.",
+        "translationEn": "Actually, I'm going down to Busan next month."
+      },
+      {
+        "id": 2,
+        "start": 7,
+        "end": 14,
+        "text": "갑자기 그런 결정을 한 이유가 있어?",
+        "translation": "Có lý do gì khiến cậu đột ngột quyết định như vậy không?",
+        "translationEn": "Is there a reason you suddenly made that decision?"
+      },
+      {
+        "id": 3,
+        "start": 14,
+        "end": 21,
+        "text": "오래전부터 바다 근처에서 살아 보고 싶었거든.",
+        "translation": "Từ lâu tớ đã muốn thử sống gần biển.",
+        "translationEn": "I've wanted to live near the sea for a long time."
+      },
+      {
+        "id": 4,
+        "start": 21,
+        "end": 28,
+        "text": "네가 원하는 삶을 찾아가는 거라면 응원할게.",
+        "translation": "Nếu đó là con đường giúp cậu tìm thấy cuộc sống mình mong muốn thì tớ ủng hộ.",
+        "translationEn": "I will support you if you find the life you want."
+      },
+      {
+        "id": 5,
+        "start": 28,
+        "end": 35,
+        "text": "그렇게 말해 주니까 마음이 한결 놓인다.",
+        "translation": "Nghe cậu nói vậy tớ thấy nhẹ lòng hơn nhiều.",
+        "translationEn": "When you say that, I feel at ease."
+      },
+      {
+        "id": 6,
+        "start": 35,
+        "end": 43,
+        "text": "멀리 가도 우리 연락은 자주 하자.",
+        "translation": "Dù đi xa, chúng mình vẫn thường xuyên liên lạc nhé.",
+        "translationEn": "Even if we go far, let’s keep in touch often."
+      }
+    ],
+    "segmentCount": 6,
+    "sourceUrl": "https://www.youtube.com/watch?v=t_EGBys58lo",
+    "sourceTitle": "Clip chính thức Netflix Korea (nghe tham khảo)"
+  },
+  {
+    "id": "drama_practice_05",
+    "collectionId": "original-drama",
+    "lessonNum": 5,
+    "title": "드라마 연습 · 카페에서 다시 만난 날",
+    "topikLevel": 3,
+    "topikName": "TOPIK 3",
+    "durationSec": 57,
+    "sourceType": "original",
+    "sourceLabel": "HaechiVN 창작 대화 · 실제 드라마 대사 아님",
+    "segments": [
+      {
+        "id": 1,
+        "start": 0,
+        "end": 6,
+        "text": "혹시 저 기억하세요? 예전에 같은 동아리였잖아요.",
+        "translation": "Bạn có nhớ tôi không? Trước đây chúng ta cùng câu lạc bộ mà.",
+        "translationEn": "Do you remember me? We used to be in the same club."
+      },
+      {
+        "id": 2,
+        "start": 6,
+        "end": 12,
+        "text": "정말 오랜만이네요. 여기서 만날 줄 몰랐어요.",
+        "translation": "Lâu quá không gặp. Tôi không ngờ lại gặp bạn ở đây.",
+        "translationEn": "It's been a really long time. I didn't know we'd meet here."
+      },
+      {
+        "id": 3,
+        "start": 12,
+        "end": 18,
+        "text": "요즘은 어떤 일 하세요?",
+        "translation": "Dạo này bạn làm công việc gì?",
+        "translationEn": "What do you do these days?"
+      },
+      {
+        "id": 4,
+        "start": 18,
+        "end": 24,
+        "text": "작은 출판사에서 책을 만들고 있어요.",
+        "translation": "Tôi đang làm sách ở một nhà xuất bản nhỏ.",
+        "translationEn": "I'm producing a book at a small publishing company."
+      },
+      {
+        "id": 5,
+        "start": 24,
+        "end": 30,
+        "text": "그때 글 쓰는 걸 좋아하더니 정말 꿈을 이뤘네요.",
+        "translation": "Hồi đó bạn đã thích viết lách, giờ đúng là đạt được ước mơ rồi.",
+        "translationEn": "At that time, I loved writing, and it was truly a dream come true."
+      },
+      {
+        "id": 6,
+        "start": 30,
+        "end": 37,
+        "text": "아직 배울 게 많지만 매일 재미있게 일하고 있어요.",
+        "translation": "Tôi vẫn còn nhiều điều phải học nhưng ngày nào cũng làm việc vui vẻ.",
+        "translationEn": "I still have a lot to learn, but I'm having fun working every day."
+      }
+    ],
+    "segmentCount": 6,
+    "sourceUrl": "https://www.youtube.com/watch?v=t_EGBys58lo",
+    "sourceTitle": "Clip chính thức Netflix Korea (nghe tham khảo)"
+  },
+  {
+    "id": "drama_practice_06",
+    "collectionId": "original-drama",
+    "lessonNum": 6,
+    "title": "드라마 연습 · 면접 결과를 기다리며",
+    "topikLevel": 4,
+    "topikName": "TOPIK 4",
+    "durationSec": 65,
+    "sourceType": "original",
+    "sourceLabel": "HaechiVN 창작 대화 · 실제 드라마 대사 아님",
+    "segments": [
+      {
+        "id": 1,
+        "start": 0,
+        "end": 7,
+        "text": "면접은 어땠어? 준비한 만큼 잘한 것 같아?",
+        "translation": "Buổi phỏng vấn thế nào? Cậu nghĩ mình làm tốt như đã chuẩn bị không?",
+        "translationEn": "How was the interview? Do you think you did as well as you prepared?"
+      },
+      {
+        "id": 2,
+        "start": 7,
+        "end": 14,
+        "text": "긴장해서 마지막 질문에는 대답을 제대로 못 했어.",
+        "translation": "Vì căng thẳng nên tớ không trả lời tốt câu hỏi cuối.",
+        "translationEn": "I was so nervous that I couldn't answer the last question properly."
+      },
+      {
+        "id": 3,
+        "start": 14,
+        "end": 21,
+        "text": "그래도 네 경험을 차분하게 설명했잖아.",
+        "translation": "Nhưng cậu đã bình tĩnh trình bày kinh nghiệm của mình mà.",
+        "translationEn": "Still, you explained your experience calmly."
+      },
+      {
+        "id": 4,
+        "start": 21,
+        "end": 28,
+        "text": "결과가 어떻든 이번 경험이 도움이 될 거야.",
+        "translation": "Dù kết quả thế nào thì trải nghiệm lần này cũng sẽ có ích.",
+        "translationEn": "No matter the outcome, this experience will be helpful."
+      },
+      {
+        "id": 5,
+        "start": 28,
+        "end": 35,
+        "text": "고마워. 이제는 기다리는 일만 남았네.",
+        "translation": "Cảm ơn cậu. Giờ chỉ còn việc chờ kết quả thôi.",
+        "translationEn": "thank you. Now all that's left to do is wait."
+      },
+      {
+        "id": 6,
+        "start": 35,
+        "end": 43,
+        "text": "좋은 소식이 오면 제일 먼저 나한테 알려 줘.",
+        "translation": "Có tin vui thì báo cho tớ đầu tiên nhé.",
+        "translationEn": "If you get good news, let me know first."
+      }
+    ],
+    "segmentCount": 6,
+    "sourceUrl": "https://www.youtube.com/watch?v=t_EGBys58lo",
+    "sourceTitle": "Clip chính thức Netflix Korea (nghe tham khảo)"
+  },
+  {
+    "id": "drama_practice_07",
+    "collectionId": "original-drama",
+    "lessonNum": 7,
+    "title": "드라마 연습 · 가족과 저녁 식사",
+    "topikLevel": 2,
+    "topikName": "TOPIK 2",
+    "durationSec": 53,
+    "sourceType": "original",
+    "sourceLabel": "HaechiVN 창작 대화 · 실제 드라마 대사 아님",
+    "segments": [
+      {
+        "id": 1,
+        "start": 0,
+        "end": 5,
+        "text": "오늘 저녁은 제가 준비할게요.",
+        "translation": "Bữa tối hôm nay để con chuẩn bị ạ.",
+        "translationEn": "I will prepare dinner tonight."
+      },
+      {
+        "id": 2,
+        "start": 5,
+        "end": 10,
+        "text": "힘들 텐데 그냥 배달시켜 먹자.",
+        "translation": "Chắc con mệt rồi, gọi đồ ăn giao đến đi.",
+        "translationEn": "It's going to be difficult, but let's just have it delivered."
+      },
+      {
+        "id": 3,
+        "start": 10,
+        "end": 16,
+        "text": "괜찮아요. 오랜만에 같이 먹고 싶어요.",
+        "translation": "Không sao ạ. Lâu rồi con muốn ăn cùng cả nhà.",
+        "translationEn": "are you okay. I want to eat together after a long time."
+      },
+      {
+        "id": 4,
+        "start": 16,
+        "end": 22,
+        "text": "그럼 내가 옆에서 채소를 다듬을게.",
+        "translation": "Vậy mẹ sẽ sơ chế rau ở bên cạnh nhé.",
+        "translationEn": "Then I will chop the vegetables on the side."
+      },
+      {
+        "id": 5,
+        "start": 22,
+        "end": 28,
+        "text": "아버지는 식탁을 차려 주시면 돼요.",
+        "translation": "Bố chỉ cần dọn bàn ăn giúp con là được ạ.",
+        "translationEn": "Father, you can set the table."
+      },
+      {
+        "id": 6,
+        "start": 28,
+        "end": 35,
+        "text": "온 가족이 함께하니 금방 끝나겠구나.",
+        "translation": "Cả nhà cùng làm thì sẽ xong nhanh thôi.",
+        "translationEn": "With the whole family together, it will be over quickly."
+      }
+    ],
+    "segmentCount": 6,
+    "sourceUrl": "https://www.youtube.com/watch?v=t_EGBys58lo",
+    "sourceTitle": "Clip chính thức Netflix Korea (nghe tham khảo)"
+  },
+  {
+    "id": "bp_fan_interview_01",
+    "collectionId": "original-blackpink",
+    "lessonNum": 1,
+    "title": "팬 인터뷰 연습 · 좋아하는 무대",
+    "topikLevel": 3,
+    "topikName": "TOPIK 3",
+    "durationSec": 60,
+    "sourceType": "original",
+    "sourceLabel": "HaechiVN 창작 인터뷰 연습 · BLACKPINK 실제 발언 아님",
+    "segments": [
+      {
+        "id": 1,
+        "start": 0,
+        "end": 6,
+        "text": "블랙핑크 무대 중에서 가장 기억에 남는 무대는 뭐예요?",
+        "translation": "Trong các sân khấu của BLACKPINK, sân khấu nào khiến bạn nhớ nhất?",
+        "translationEn": "What is the most memorable Blackpink performance?"
+      },
+      {
+        "id": 2,
+        "start": 6,
+        "end": 12,
+        "text": "저는 관객과 함께 노래했던 순간이 제일 인상 깊었어요.",
+        "translation": "Với tôi, khoảnh khắc hát cùng khán giả là ấn tượng nhất.",
+        "translationEn": "I was most impressed by the moment when I sang with the audience."
+      },
+      {
+        "id": 3,
+        "start": 12,
+        "end": 18,
+        "text": "그때 현장 분위기는 어땠나요?",
+        "translation": "Không khí tại đó lúc ấy thế nào?",
+        "translationEn": "What was the atmosphere like at the scene at that time?"
+      },
+      {
+        "id": 4,
+        "start": 18,
+        "end": 24,
+        "text": "모두가 핑크색 응원봉을 흔들어서 정말 아름다웠어요.",
+        "translation": "Mọi người đều vẫy lightstick màu hồng nên khung cảnh rất đẹp.",
+        "translationEn": "It was really beautiful with everyone waving their pink light sticks."
+      },
+      {
+        "id": 5,
+        "start": 24,
+        "end": 30,
+        "text": "팬이 된 뒤에 달라진 점도 있나요?",
+        "translation": "Sau khi trở thành fan, có điều gì thay đổi không?",
+        "translationEn": "Has anything changed since you became a fan?"
+      },
+      {
+        "id": 6,
+        "start": 30,
+        "end": 37,
+        "text": "한국어 가사를 이해하고 싶어서 한국어 공부를 시작했어요.",
+        "translation": "Tôi bắt đầu học tiếng Hàn vì muốn hiểu lời bài hát tiếng Hàn.",
+        "translationEn": "I started studying Korean because I wanted to understand Korean lyrics."
+      }
+    ],
+    "segmentCount": 6,
+    "sourceUrl": "https://yg-life.com/archives/82154?lang=ko",
+    "sourceTitle": "Bài phỏng vấn BLACKPINK trên YG Life (đọc tham khảo)"
+  },
+  {
+    "id": "bp_fan_interview_02",
+    "collectionId": "original-blackpink",
+    "lessonNum": 2,
+    "title": "팬 인터뷰 연습 · 콘서트 준비",
+    "topikLevel": 4,
+    "topikName": "TOPIK 4",
+    "durationSec": 64,
+    "sourceType": "original",
+    "sourceLabel": "HaechiVN 창작 인터뷰 연습 · BLACKPINK 실제 발언 아님",
+    "segments": [
+      {
+        "id": 1,
+        "start": 0,
+        "end": 7,
+        "text": "콘서트에 가기 전에 특별히 준비한 게 있었어요?",
+        "translation": "Trước khi đi concert bạn có chuẩn bị gì đặc biệt không?",
+        "translationEn": "Did you prepare anything special before going to the concert?"
+      },
+      {
+        "id": 2,
+        "start": 7,
+        "end": 14,
+        "text": "응원법을 외우고 멤버들에게 쓸 편지도 준비했어요.",
+        "translation": "Tôi học thuộc cách cổ vũ và chuẩn bị thư gửi các thành viên.",
+        "translationEn": "I memorized cheering methods and prepared letters to write to the members."
+      },
+      {
+        "id": 3,
+        "start": 14,
+        "end": 21,
+        "text": "직접 공연을 보니 영상으로 볼 때와 달랐나요?",
+        "translation": "Xem trực tiếp có khác lúc xem video không?",
+        "translationEn": "Was seeing the performance in person different from watching it on video?"
+      },
+      {
+        "id": 4,
+        "start": 21,
+        "end": 28,
+        "text": "음향과 함성이 온몸으로 느껴져서 훨씬 생생했어요.",
+        "translation": "Âm thanh và tiếng hò reo cảm nhận được bằng cả cơ thể nên sống động hơn nhiều.",
+        "translationEn": "I felt the sound and shouts with my whole body, so it was much more vivid."
+      },
+      {
+        "id": 5,
+        "start": 28,
+        "end": 35,
+        "text": "그날 가장 놀랐던 순간은 언제였어요?",
+        "translation": "Khoảnh khắc bất ngờ nhất hôm đó là khi nào?",
+        "translationEn": "What was the most surprising moment that day?"
+      },
+      {
+        "id": 6,
+        "start": 35,
+        "end": 43,
+        "text": "멤버들이 관객석을 바라보며 웃어 준 순간이요.",
+        "translation": "Là khoảnh khắc các thành viên nhìn khán đài và mỉm cười.",
+        "translationEn": "The moment when the members looked at the audience and smiled."
+      }
+    ],
+    "segmentCount": 6,
+    "sourceUrl": "https://yg-life.com/archives/82154?lang=ko",
+    "sourceTitle": "Bài phỏng vấn BLACKPINK trên YG Life (đọc tham khảo)"
+  },
+  {
+    "id": "bp_fan_interview_03",
+    "collectionId": "original-blackpink",
+    "lessonNum": 3,
+    "title": "팬 인터뷰 연습 · 한국어 공부",
+    "topikLevel": 2,
+    "topikName": "TOPIK 2",
+    "durationSec": 53,
+    "sourceType": "original",
+    "sourceLabel": "HaechiVN 창작 인터뷰 연습 · BLACKPINK 실제 발언 아님",
+    "segments": [
+      {
+        "id": 1,
+        "start": 0,
+        "end": 5,
+        "text": "한국어를 공부하게 된 계기가 뭐예요?",
+        "translation": "Điều gì khiến bạn bắt đầu học tiếng Hàn?",
+        "translationEn": "What motivated you to study Korean?"
+      },
+      {
+        "id": 2,
+        "start": 5,
+        "end": 10,
+        "text": "좋아하는 가수의 말을 알아듣고 싶었어요.",
+        "translation": "Tôi muốn hiểu lời nói của ca sĩ mình yêu thích.",
+        "translationEn": "I wanted to understand what my favorite singer said."
+      },
+      {
+        "id": 3,
+        "start": 10,
+        "end": 16,
+        "text": "요즘은 어떤 방법으로 공부해요?",
+        "translation": "Dạo này bạn học bằng cách nào?",
+        "translationEn": "How do you study these days?"
+      },
+      {
+        "id": 4,
+        "start": 16,
+        "end": 22,
+        "text": "매일 짧은 영상을 듣고 문장을 따라 말해요.",
+        "translation": "Mỗi ngày tôi nghe video ngắn và nói nhại theo câu.",
+        "translationEn": "Listen to a short video every day and repeat the sentences."
+      },
+      {
+        "id": 5,
+        "start": 22,
+        "end": 28,
+        "text": "어려운 부분은 어떻게 복습하나요?",
+        "translation": "Bạn ôn lại phần khó bằng cách nào?",
+        "translationEn": "How do I review difficult parts?"
+      },
+      {
+        "id": 6,
+        "start": 28,
+        "end": 35,
+        "text": "새 단어를 적고 다음 날 다시 들어 봐요.",
+        "translation": "Tôi ghi từ mới lại và nghe lại vào ngày hôm sau.",
+        "translationEn": "Write down the new words and listen to them again the next day."
+      }
+    ],
+    "segmentCount": 6,
+    "sourceUrl": "https://yg-life.com/archives/82154?lang=ko",
+    "sourceTitle": "Bài phỏng vấn BLACKPINK trên YG Life (đọc tham khảo)"
+  },
+  {
+    "id": "bp_fan_interview_04",
+    "collectionId": "original-blackpink",
+    "lessonNum": 4,
+    "title": "팬 인터뷰 연습 · 음악이 주는 힘",
+    "topikLevel": 5,
+    "topikName": "TOPIK 5",
+    "durationSec": 69,
+    "sourceType": "original",
+    "sourceLabel": "HaechiVN 창작 인터뷰 연습 · BLACKPINK 실제 발언 아님",
+    "segments": [
+      {
+        "id": 1,
+        "start": 0,
+        "end": 8,
+        "text": "음악이 힘든 시기를 버티는 데 도움이 된 적이 있나요?",
+        "translation": "Âm nhạc từng giúp bạn vượt qua giai đoạn khó khăn chưa?",
+        "translationEn": "Has music ever helped you get through difficult times?"
+      },
+      {
+        "id": 2,
+        "start": 8,
+        "end": 16,
+        "text": "네, 자신감을 잃었을 때 노래를 들으며 다시 마음을 다잡았어요.",
+        "translation": "Có. Khi mất tự tin, tôi nghe nhạc và lấy lại tinh thần.",
+        "translationEn": "Yes, when I lost confidence, I regained my strength by listening to the song."
+      },
+      {
+        "id": 3,
+        "start": 16,
+        "end": 24,
+        "text": "그 경험이 다른 사람에게도 전해졌으면 좋겠네요.",
+        "translation": "Mong rằng trải nghiệm đó cũng có thể truyền đến người khác.",
+        "translationEn": "I hope that experience can be passed on to others."
+      },
+      {
+        "id": 4,
+        "start": 24,
+        "end": 32,
+        "text": "저도 누군가에게 작은 용기를 줄 수 있으면 좋겠어요.",
+        "translation": "Tôi cũng mong có thể tiếp thêm chút can đảm cho ai đó.",
+        "translationEn": "I hope I can give someone a little courage too."
+      },
+      {
+        "id": 5,
+        "start": 32,
+        "end": 40,
+        "text": "앞으로 도전해 보고 싶은 일은 무엇인가요?",
+        "translation": "Trong tương lai bạn muốn thử thách điều gì?",
+        "translationEn": "What challenge would you like to try in the future?"
+      },
+      {
+        "id": 6,
+        "start": 40,
+        "end": 48,
+        "text": "언어와 문화가 달라도 마음을 나누는 프로젝트를 해 보고 싶어요.",
+        "translation": "Tôi muốn làm dự án chia sẻ cảm xúc dù khác ngôn ngữ và văn hóa.",
+        "translationEn": "I want to do a project that shares feelings even though languages ​​and cultures are different."
+      }
+    ],
+    "segmentCount": 6,
+    "sourceUrl": "https://yg-life.com/archives/82154?lang=ko",
+    "sourceTitle": "Bài phỏng vấn BLACKPINK trên YG Life (đọc tham khảo)"
+  },
+  {
+    "id": "bp_fan_interview_05",
+    "collectionId": "original-blackpink",
+    "lessonNum": 5,
+    "title": "팬 인터뷰 연습 · 팬 커뮤니티",
+    "topikLevel": 3,
+    "topikName": "TOPIK 3",
+    "durationSec": 59,
+    "sourceType": "original",
+    "sourceLabel": "HaechiVN 창작 인터뷰 연습 · BLACKPINK 실제 발언 아님",
+    "segments": [
+      {
+        "id": 1,
+        "start": 0,
+        "end": 6,
+        "text": "온라인 팬 커뮤니티에서는 주로 어떤 활동을 해요?",
+        "translation": "Bạn thường làm hoạt động gì trong cộng đồng fan trực tuyến?",
+        "translationEn": "What do you usually do in the online fan community?"
+      },
+      {
+        "id": 2,
+        "start": 6,
+        "end": 12,
+        "text": "새 소식을 나누고 서로 한국어 표현도 알려 줘요.",
+        "translation": "Chúng tôi chia sẻ tin mới và chỉ nhau cách diễn đạt tiếng Hàn.",
+        "translationEn": "We share new news and teach each other Korean expressions."
+      },
+      {
+        "id": 3,
+        "start": 12,
+        "end": 18,
+        "text": "다른 나라 팬들과도 친해질 수 있겠네요.",
+        "translation": "Như vậy có thể kết bạn với fan ở những nước khác nhỉ.",
+        "translationEn": "I might be able to become friends with fans from other countries."
+      },
+      {
+        "id": 4,
+        "start": 18,
+        "end": 24,
+        "text": "맞아요. 음악을 좋아한다는 공통점이 있어서 금방 가까워져요.",
+        "translation": "Đúng vậy. Có điểm chung là yêu âm nhạc nên chúng tôi nhanh chóng thân thiết.",
+        "translationEn": "that's right. We quickly became close because we had something in common: a love of music."
+      },
+      {
+        "id": 5,
+        "start": 24,
+        "end": 30,
+        "text": "커뮤니티에서 가장 고마웠던 순간은 언제예요?",
+        "translation": "Khoảnh khắc bạn biết ơn nhất trong cộng đồng là khi nào?",
+        "translationEn": "What was the moment you were most grateful for in the community?"
+      },
+      {
+        "id": 6,
+        "start": 30,
+        "end": 37,
+        "text": "제가 쓴 한국어 글을 다 같이 고쳐 줬을 때예요.",
+        "translation": "Là khi mọi người cùng sửa bài viết tiếng Hàn tôi đã viết.",
+        "translationEn": "It was when we all corrected the Korean text I had written."
+      }
+    ],
+    "segmentCount": 6,
+    "sourceUrl": "https://yg-life.com/archives/82154?lang=ko",
+    "sourceTitle": "Bài phỏng vấn BLACKPINK trên YG Life (đọc tham khảo)"
+  },
+  {
+    "id": "bp_fan_interview_06",
+    "collectionId": "original-blackpink",
+    "lessonNum": 6,
+    "title": "팬 인터뷰 연습 · 다음 세대에게",
+    "topikLevel": 4,
+    "topikName": "TOPIK 4",
+    "durationSec": 65,
+    "sourceType": "original",
+    "sourceLabel": "HaechiVN 창작 인터뷰 연습 · BLACKPINK 실제 발언 아님",
+    "segments": [
+      {
+        "id": 1,
+        "start": 0,
+        "end": 7,
+        "text": "처음 한국어를 배우는 팬에게 해 주고 싶은 말이 있나요?",
+        "translation": "Bạn muốn nói gì với những fan mới bắt đầu học tiếng Hàn?",
+        "translationEn": "Is there anything you would like to say to fans who are learning Korean for the first time?"
+      },
+      {
+        "id": 2,
+        "start": 7,
+        "end": 14,
+        "text": "완벽하게 하려고 하기보다 매일 조금씩 말해 보라고 하고 싶어요.",
+        "translation": "Tôi muốn khuyên họ hãy nói một chút mỗi ngày thay vì cố gắng hoàn hảo.",
+        "translationEn": "Rather than trying to do it perfectly, I would say try speaking a little bit every day."
+      },
+      {
+        "id": 3,
+        "start": 14,
+        "end": 21,
+        "text": "실수하는 게 부끄럽지는 않았나요?",
+        "translation": "Bạn có thấy xấu hổ khi mắc lỗi không?",
+        "translationEn": "Aren’t you embarrassed about making mistakes?"
+      },
+      {
+        "id": 4,
+        "start": 21,
+        "end": 28,
+        "text": "처음에는 그랬지만 실수 덕분에 더 많이 배우게 됐어요.",
+        "translation": "Lúc đầu có, nhưng nhờ mắc lỗi tôi đã học được nhiều hơn.",
+        "translationEn": "It was like that at first, but thanks to my mistakes, I learned more."
+      },
+      {
+        "id": 5,
+        "start": 28,
+        "end": 35,
+        "text": "이제는 한국어로 직접 소통하는 게 즐거워요.",
+        "translation": "Giờ đây tôi thấy giao tiếp trực tiếp bằng tiếng Hàn rất vui.",
+        "translationEn": "Now I enjoy communicating directly in Korean."
+      },
+      {
+        "id": 6,
+        "start": 35,
+        "end": 43,
+        "text": "좋아하는 마음이 꾸준히 공부할 힘이 되어 줬어요.",
+        "translation": "Tình yêu dành cho điều mình thích đã tiếp sức để tôi học đều đặn.",
+        "translationEn": "My love for it gave me the strength to continue studying."
+      }
+    ],
+    "segmentCount": 6,
+    "sourceUrl": "https://yg-life.com/archives/82154?lang=ko",
+    "sourceTitle": "Bài phỏng vấn BLACKPINK trên YG Life (đọc tham khảo)"
+  }
+]

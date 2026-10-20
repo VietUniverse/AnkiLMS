@@ -1,83 +1,104 @@
-import { Env, jsonResponse, errorResponse, UserRow } from "../_utils";
+import { Env, UserRow, createSession, sessionCookie, clearOauthStateCookie } from "../_utils";
+
+function siteOrigin(request: Request, env: Env): string {
+  const value = env.SITE_URL || new URL(request.url).origin;
+  const url = new URL(value);
+  if (url.protocol !== "https:" && url.hostname !== "localhost") throw new Error("Invalid site URL");
+  return url.origin;
+}
+
+function readStateCookie(request: Request): string | null {
+  return (request.headers.get("Cookie") || "")
+    .split(";")
+    .map((part) => part.trim())
+    .find((part) => part.startsWith("haechivn_oauth_state="))
+    ?.slice("haechivn_oauth_state=".length) || null;
+}
+
+function redirect(request: Request, siteUrl: string, error?: string, cookie?: string): Response {
+  const target = new URL("/", siteUrl);
+  if (error) target.searchParams.set("auth_error", error);
+  const headers = new Headers({
+    Location: target.toString(),
+    "Cache-Control": "no-store",
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Strict-Transport-Security": "max-age=31536000",
+  });
+  headers.append("Set-Cookie", clearOauthStateCookie(request));
+  if (cookie) headers.append("Set-Cookie", cookie);
+  return new Response(null, {
+    status: 302,
+    headers,
+  });
+}
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
+  const { request, env } = context;
+  let siteUrl = new URL(request.url).origin;
   try {
-    const { request, env } = context;
+    siteUrl = siteOrigin(request, env);
     const url = new URL(request.url);
     const code = url.searchParams.get("code");
-    const siteUrl = env.SITE_URL || url.origin;
+    const state = url.searchParams.get("state");
+    if (!code || !state || !env.SESSIONS) return redirect(request, siteUrl, "oauth_invalid_request");
 
-    if (!code) {
-      return Response.redirect(`${siteUrl}/?auth_error=no_code`, 302);
-    }
+    const stateKey = `oauth_state:${state}`;
+    const validState = await env.SESSIONS.get(stateKey);
+    await env.SESSIONS.delete(stateKey);
+    if (!validState || readStateCookie(request) !== state) return redirect(request, siteUrl, "oauth_state_expired");
 
     const clientId = env.GOOGLE_CLIENT_ID;
     const clientSecret = env.GOOGLE_CLIENT_SECRET;
-    const redirectUri = `${siteUrl}/api/auth/callback`;
+    if (!clientId || !clientSecret) return redirect(request, siteUrl, "oauth_not_configured");
 
-    if (!clientId || !clientSecret) {
-      return Response.redirect(`${siteUrl}/?auth_error=missing_config`, 302);
-    }
-
-    // Exchange code for tokens
-    const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+    const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
         code,
         client_id: clientId,
         client_secret: clientSecret,
-        redirect_uri: redirectUri,
+        redirect_uri: `${siteUrl}/api/auth/callback`,
         grant_type: "authorization_code",
       }),
     });
+    if (!tokenResponse.ok) return redirect(request, siteUrl, "oauth_token_failed");
+    const tokenData = (await tokenResponse.json()) as { access_token?: string };
+    if (!tokenData.access_token) return redirect(request, siteUrl, "oauth_token_failed");
 
-    if (!tokenRes.ok) {
-      return Response.redirect(`${siteUrl}/?auth_error=token_failed`, 302);
-    }
-
-    const tokenData = (await tokenRes.json()) as { access_token: string; id_token: string };
-
-    // Fetch user info from Google
-    const userRes = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
+    const profileResponse = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
       headers: { Authorization: `Bearer ${tokenData.access_token}` },
     });
+    if (!profileResponse.ok) return redirect(request, siteUrl, "oauth_profile_failed");
+    const profile = (await profileResponse.json()) as {
+      id?: string;
+      email?: string;
+      name?: string;
+      picture?: string;
+      verified_email?: boolean;
+    };
+    if (!profile.email || !profile.verified_email) return redirect(request, siteUrl, "oauth_email_unverified");
 
-    if (!userRes.ok) {
-      return Response.redirect(`${siteUrl}/?auth_error=userinfo_failed`, 302);
-    }
-
-    const googleUser = (await userRes.json()) as { id: string; email: string; name: string; picture?: string };
-
-    const email = googleUser.email.toLowerCase();
+    const email = profile.email.trim().toLowerCase();
     let user = await env.DB.prepare("SELECT * FROM users WHERE email = ?").bind(email).first<UserRow>();
-
     if (!user) {
-      const userId = "usr_" + crypto.randomUUID().substring(0, 8);
+      const userId = `usr_${crypto.randomUUID()}`;
       await env.DB.prepare(
-        `INSERT INTO users (id, email, password_hash, name, avatar_url, streak, xp, gems, level)
-         VALUES (?, ?, NULL, ?, ?, 1, 50, 100, 1)`
-      ).bind(userId, email, googleUser.name, googleUser.picture || null).run();
-
+      `INSERT INTO users (id, email, password_hash, name, avatar_url, streak, longest_streak, xp, gems, level)
+         VALUES (?, ?, '', ?, ?, 0, 0, 0, 100, 1)`
+      ).bind(userId, email, (profile.name || email.split("@")[0]).slice(0, 48), profile.picture || null).run();
       user = await env.DB.prepare("SELECT * FROM users WHERE id = ?").bind(userId).first<UserRow>();
-    } else if (googleUser.picture && !user.avatar_url) {
-      await env.DB.prepare("UPDATE users SET avatar_url = ? WHERE id = ?").bind(googleUser.picture, user.id).run();
+    } else if (profile.picture && !user.avatar_url) {
+      await env.DB.prepare("UPDATE users SET avatar_url = ? WHERE id = ?").bind(profile.picture, user.id).run();
+      user.avatar_url = profile.picture;
     }
+    if (!user) return redirect(request, siteUrl, "oauth_account_failed");
 
-    if (!user) {
-      return Response.redirect(`${siteUrl}/?auth_error=db_error`, 302);
-    }
-
-    // Create session token
-    const token = "token_" + crypto.randomUUID();
-    await env.SESSIONS.put(token, JSON.stringify({ userId: user.id, email: user.email, name: user.name }), {
-      expirationTtl: 86400 * 30, // 30 days
-    });
-
-    // Redirect user to frontend home page with token param
-    return Response.redirect(`${siteUrl}/?auth_token=${encodeURIComponent(token)}`, 302);
-  } catch (e: any) {
-    const siteUrl = env.SITE_URL || new URL(context.request.url).origin;
-    return Response.redirect(`${siteUrl}/?auth_error=${encodeURIComponent(e.message)}`, 302);
+    const session = await createSession(env, user);
+    return redirect(request, siteUrl, undefined, sessionCookie(request, session));
+  } catch {
+    return redirect(request, siteUrl, "oauth_failed");
   }
 };

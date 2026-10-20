@@ -1,0 +1,26 @@
+# Local Wrangler state and generated website output
+/.wrangler/
+AnkiLMS/frontend/.wrangler/
+AnkiLMS/frontend/.next/
+AnkiLMS/frontend/out/
+AnkiLMS/frontend/node_modules/
+AnkiLMS/frontend/.env*
+AnkiLMS/frontend/.dev.vars*
+AnkiLMS/frontend/.admin-provision.cjs
+AnkiLMS/frontend/set_secrets.js
+
+# Local transcription inputs, Anki packages, and scratch exports
+/Script/
+/*.apkg
+/*.srt
+/transcript_ko.txt
+/subtitles.json
+/Parroto*.html
+/Parroto*_files/
+/*Parroto*.html
+/*Parroto*_files/
+/anki/
+/Anki-Android/
+/anki-desktop/
+/anki-sync-server/
+/ankimobile-docs/

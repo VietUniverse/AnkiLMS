@@ -69,6 +69,11 @@ export const HANGEUL_DATA: HangeulChar[] = [
   { char: "ㅌ", type: "consonant", name: "T'ieut (티읕)", romaja: "t'", pronunciationGuide: "Bật hơi mạnh chữ 't'", exampleWord: "택시 (Taeksi)", exampleMeaning: "Xe Taxi" },
   { char: "ㅍ", type: "consonant", name: "P'ieup (피읖)", romaja: "p'", pronunciationGuide: "Bật hơi mạnh chữ 'p'", exampleWord: "피자 (Pija)", exampleMeaning: "Bánh Pizza" },
   { char: "ㅎ", type: "consonant", name: "Hieut (히읗)", romaja: "h", pronunciationGuide: "Phát âm như chữ 'h'", exampleWord: "하늘 (Haneul)", exampleMeaning: "Bầu trời" },
+  { char: "ㄲ", type: "consonant", name: "Ssang-Giyeok (쌍기역)", romaja: "kk", pronunciationGuide: "Phụ âm căng: siết nhẹ thanh quản, không bật hơi", exampleWord: "까치 (Kkachi)", exampleMeaning: "Chim ác là" },
+  { char: "ㄸ", type: "consonant", name: "Ssang-Digeut (쌍디귿)", romaja: "tt", pronunciationGuide: "Phụ âm căng tương ứng với ㄷ", exampleWord: "딸기 (Ttalgi)", exampleMeaning: "Dâu tây" },
+  { char: "ㅃ", type: "consonant", name: "Ssang-Bieup (쌍비읍)", romaja: "pp", pronunciationGuide: "Phụ âm căng tương ứng với ㅂ", exampleWord: "뽀뽀 (Ppoppo)", exampleMeaning: "Nụ hôn" },
+  { char: "ㅆ", type: "consonant", name: "Ssang-Siot (쌍시옷)", romaja: "ss", pronunciationGuide: "Phụ âm căng tương ứng với ㅅ", exampleWord: "쌀 (Ssal)", exampleMeaning: "Gạo" },
+  { char: "ㅉ", type: "consonant", name: "Ssang-Jieut (쌍지읒)", romaja: "jj", pronunciationGuide: "Phụ âm căng tương ứng với ㅈ", exampleWord: "짜다 (Jjada)", exampleMeaning: "Mặn" },
 
   // Nguyên âm đơn
   { char: "ㅏ", type: "vowel", name: "A", romaja: "a", pronunciationGuide: "Đọc như 'a' trong tiếng Việt", exampleWord: "아버지 (Abeoji)", exampleMeaning: "Bố / Cha" },
@@ -81,6 +86,17 @@ export const HANGEUL_DATA: HangeulChar[] = [
   { char: "ㅕ", type: "vowel", name: "Yeo", romaja: "yeo", pronunciationGuide: "Phát âm 'yơ' hoặc 'yo'", exampleWord: "여자 (Yeoja)", exampleMeaning: "Phụ nữ / Con gái" },
   { char: "ㅛ", type: "vowel", name: "Yo", romaja: "yo", pronunciationGuide: "Phát âm 'yô'", exampleWord: "요리 (Yori)", exampleMeaning: "Nấu ăn / Món ăn" },
   { char: "ㅠ", type: "vowel", name: "Yu", romaja: "yu", pronunciationGuide: "Phát âm 'yu'", exampleWord: "휴지 (Hyuji)", exampleMeaning: "Giấy vệ sinh" },
+  { char: "ㅐ", type: "vowel", name: "Ae", romaja: "ae", pronunciationGuide: "Nguyên âm ghép, trong tiếng Hàn hiện đại thường gần âm ㅔ", exampleWord: "개 (Gae)", exampleMeaning: "Chó" },
+  { char: "ㅒ", type: "vowel", name: "Yae", romaja: "yae", pronunciationGuide: "Ghép âm y với ㅐ", exampleWord: "얘기 (Yaegi)", exampleMeaning: "Câu chuyện" },
+  { char: "ㅔ", type: "vowel", name: "E", romaja: "e", pronunciationGuide: "Nguyên âm ghép, trong tiếng Hàn hiện đại thường gần âm ㅐ", exampleWord: "네 (Ne)", exampleMeaning: "Vâng" },
+  { char: "ㅖ", type: "vowel", name: "Ye", romaja: "ye", pronunciationGuide: "Ghép âm y với ㅔ", exampleWord: "예 (Ye)", exampleMeaning: "Vâng / Dạ" },
+  { char: "ㅘ", type: "vowel", name: "Wa", romaja: "wa", pronunciationGuide: "Ghép ㅗ và ㅏ", exampleWord: "과일 (Gwa-il)", exampleMeaning: "Trái cây" },
+  { char: "ㅙ", type: "vowel", name: "Wae", romaja: "wae", pronunciationGuide: "Ghép ㅗ và ㅐ", exampleWord: "왜 (Wae)", exampleMeaning: "Tại sao" },
+  { char: "ㅚ", type: "vowel", name: "Oe", romaja: "oe", pronunciationGuide: "Ghép ㅗ và ㅣ; phát âm hiện đại gần âm oe/we", exampleWord: "외국 (Oeguk)", exampleMeaning: "Nước ngoài" },
+  { char: "ㅝ", type: "vowel", name: "Wo", romaja: "wo", pronunciationGuide: "Ghép ㅜ và ㅓ", exampleWord: "원 (Won)", exampleMeaning: "Won Hàn Quốc" },
+  { char: "ㅞ", type: "vowel", name: "We", romaja: "we", pronunciationGuide: "Ghép ㅜ và ㅔ", exampleWord: "웨이터 (Weiteo)", exampleMeaning: "Nhân viên phục vụ" },
+  { char: "ㅟ", type: "vowel", name: "Wi", romaja: "wi", pronunciationGuide: "Ghép ㅜ và ㅣ", exampleWord: "위 (Wi)", exampleMeaning: "Phía trên" },
+  { char: "ㅢ", type: "vowel", name: "Ui", romaja: "ui", pronunciationGuide: "Ghép ㅡ và ㅣ; cách đọc thay đổi theo vị trí trong từ", exampleWord: "의사 (Uisa)", exampleMeaning: "Bác sĩ" },
 ];
 
 // 2. Sample Vocabulary Dataset

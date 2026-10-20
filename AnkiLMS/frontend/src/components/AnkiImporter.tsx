@@ -22,9 +22,10 @@ export const AnkiImporter: React.FC<AnkiImporterProps> = ({
   if (!isOpen) return null;
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-    await processFile(files[0]);
+    const file = e.currentTarget.files?.[0];
+    e.currentTarget.value = "";
+    if (!file) return;
+    await processFile(file);
   };
 
   const handleDrop = async (e: React.DragEvent) => {
@@ -35,7 +36,8 @@ export const AnkiImporter: React.FC<AnkiImporterProps> = ({
   };
 
   const processFile = async (file: File) => {
-    if (!file.name.endsWith(".apkg") && !file.name.endsWith(".zip")) {
+    const extension = file.name.toLocaleLowerCase();
+    if (!extension.endsWith(".apkg") && !extension.endsWith(".zip")) {
       setError("Vui lòng chọn đúng file có định dạng .apkg (Anki Deck Archive)");
       return;
     }
@@ -50,6 +52,7 @@ export const AnkiImporter: React.FC<AnkiImporterProps> = ({
         throw new Error("Không tìm thấy thẻ nào trong bộ thẻ Anki này.");
       }
       setSuccessDecks(decks);
+      setError(null);
       onImportComplete(decks);
     } catch (err: any) {
       console.error(err);
@@ -118,7 +121,7 @@ export const AnkiImporter: React.FC<AnkiImporterProps> = ({
         )}
 
         {/* Error Alert */}
-        {error && (
+        {error && !successDecks && (
           <div className="mt-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-semibold">
             ⚠️ {error}
           </div>

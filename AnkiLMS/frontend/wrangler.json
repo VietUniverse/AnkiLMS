@@ -1,17 +1,28 @@
 {
   "name": "haechivn-korean",
+  "compatibility_date": "2026-10-17",
   "pages_build_output_dir": "out",
+  "vars": {
+    "SITE_URL": "https://lms.ankivn.com"
+  },
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "haechivn-korean-db",
-      "database_id": "03f24d93-89c1-4648-9555-94e3167845d2"
+      "database_id": "03f24d93-89c1-4648-9555-94e3167845d2",
+      "migrations_dir": "migrations"
     }
   ],
   "kv_namespaces": [
     {
       "binding": "SESSIONS",
       "id": "991dbf49f7d448c487343464a7c20cca"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "ankivn-media"
     }
   ]
 }

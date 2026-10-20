@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { HANGEUL_DATA, HangeulChar } from "../data/koreanData";
 import { Volume2, Sparkles, Check, ArrowRight } from "lucide-react";
+import { composeHangulSyllable, HANGUL_FINALS } from "../lib/hangul";
 
 export const HangeulModule: React.FC = () => {
   const [filter, setFilter] = useState<"all" | "consonant" | "vowel">("all");
@@ -11,6 +12,10 @@ export const HangeulModule: React.FC = () => {
   // Syllable Builder Interactive State
   const [selectedConsonant, setSelectedConsonant] = useState("ㄱ");
   const [selectedVowel, setSelectedVowel] = useState("ㅏ");
+  const [selectedFinal, setSelectedFinal] = useState("");
+  const combinedSyllable = composeHangulSyllable(selectedConsonant, selectedVowel, selectedFinal);
+  const consonantCount = HANGEUL_DATA.filter((item) => item.type === "consonant").length;
+  const vowelCount = HANGEUL_DATA.filter((item) => item.type === "vowel").length;
 
   const filteredChars = HANGEUL_DATA.filter(
     (item) => filter === "all" || item.type === filter
@@ -18,9 +23,16 @@ export const HangeulModule: React.FC = () => {
 
   const playSound = (text: string) => {
     if ("speechSynthesis" in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
+      // Cancel any ongoing/queued speech to prevent repeating
+      window.speechSynthesis.cancel();
+      const koreanText = text.includes(" (") ? text.slice(0, text.indexOf(" (")) : text;
+      const utterance = new SpeechSynthesisUtterance(koreanText);
       utterance.lang = "ko-KR";
       utterance.rate = 0.8;
+      // Select best Korean voice if available
+      const voices = window.speechSynthesis.getVoices();
+      const koVoice = voices.find(v => v.lang.startsWith("ko"));
+      if (koVoice) utterance.voice = koVoice;
       window.speechSynthesis.speak(utterance);
     }
   };
@@ -37,7 +49,7 @@ export const HangeulModule: React.FC = () => {
             Bảng Chữ Cái Hangeul (한글 Master)
           </h2>
           <p className="text-xs text-slate-400 mt-1">
-            Khám phá 40 nguyên âm & phụ âm chuẩn Seoul, luyện ghép vần và nghe phát âm bản xứ
+            Học 19 phụ âm và 21 nguyên âm, luyện ghép thành âm tiết và nghe phát âm tiếng Hàn
           </p>
         </div>
 
@@ -46,14 +58,18 @@ export const HangeulModule: React.FC = () => {
           {(["all", "consonant", "vowel"] as const).map((t) => (
             <button
               key={t}
-              onClick={() => setFilter(t)}
+              onClick={() => {
+                setFilter(t);
+                const firstVisible = HANGEUL_DATA.find((item) => t === "all" || item.type === t);
+                if (firstVisible) setSelectedChar(firstVisible);
+              }}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                 filter === t
                   ? "bg-emerald-500 text-white shadow-md shadow-emerald-900/40"
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
-              {t === "all" ? "Tất cả (40)" : t === "consonant" ? "Phụ âm (자음)" : "Nguyên âm (모음)"}
+              {t === "all" ? `Tất cả (${HANGEUL_DATA.length})` : t === "consonant" ? `Phụ âm (${consonantCount})` : `Nguyên âm (${vowelCount})`}
             </button>
           ))}
         </div>
@@ -93,7 +109,7 @@ export const HangeulModule: React.FC = () => {
               <Sparkles className="w-4 h-4" /> Công cụ ghép vần Hangeul (Syllable Builder)
             </h3>
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-wrap">
                 {/* Consonant Selector */}
                 <select
                   value={selectedConsonant}
@@ -122,18 +138,29 @@ export const HangeulModule: React.FC = () => {
                   ))}
                 </select>
 
+                <span className="text-lg font-black text-slate-500">+</span>
+
+                <select
+                  value={selectedFinal}
+                  onChange={(e) => setSelectedFinal(e.target.value)}
+                  aria-label="Chọn phụ âm cuối batchim"
+                  className="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-lg font-bold text-white font-noto focus:outline-none"
+                >
+                  <option value="">받침 없음</option>
+                  {HANGUL_FINALS.map((final) => <option key={final} value={final}>{final} (받침)</option>)}
+                </select>
+
                 <ArrowRight className="w-5 h-5 text-slate-500" />
               </div>
 
               {/* Combined Result Output */}
               <div className="flex items-center gap-3">
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-3xl font-black text-white font-noto shadow-lg">
-                  {selectedConsonant}
-                  {selectedVowel}
+                  {combinedSyllable}
                 </div>
 
                 <button
-                  onClick={() => playSound(selectedConsonant + selectedVowel)}
+                  onClick={() => playSound(combinedSyllable)}
                   className="btn-duo btn-duo-primary px-4 py-3 text-xs"
                 >
                   <Volume2 className="w-4 h-4 mr-1.5" /> Nghe phát âm

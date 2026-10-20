@@ -121,10 +121,10 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onLogou
               <span>{currentUser.xp || 0} XP</span>
             </div>
 
-            {/* Gem */}
-            <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-black">
-              <Gem className="w-3.5 h-3.5 fill-emerald-400" />
-              <span>{currentUser.gems || 100}</span>
+            {/* Gem / Kim Cương */}
+            <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-xs font-black cursor-pointer hover:bg-cyan-500/25 transition-all" title="Kim Cương 💎 (Dùng để mua vật phẩm & Streak Freeze)">
+              <Gem className="w-3.5 h-3.5 fill-cyan-400 text-cyan-400" />
+              <span>{(currentUser.gems || 0).toLocaleString()} 💎</span>
             </div>
 
             {/* User Profile Menu */}

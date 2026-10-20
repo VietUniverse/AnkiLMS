@@ -20,6 +20,10 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
         xp: user.xp,
         gems: user.gems,
         level: user.level,
+        active_badge: user.active_badge,
+        active_frame: user.active_frame,
+        active_background: user.active_background,
+        role: user.role,
         last_checkin_date: user.last_checkin_date,
       },
     });

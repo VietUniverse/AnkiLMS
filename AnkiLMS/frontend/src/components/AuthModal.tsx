@@ -162,9 +162,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
+                  minLength={isRegister ? 8 : undefined}
+                  maxLength={128}
                 className="w-full bg-slate-950 border border-slate-700 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
               />
             </div>
+              {isRegister && <p className="mt-1.5 text-[11px] text-slate-500">Mật khẩu cần ít nhất 8 ký tự.</p>}
           </div>
 
           {error && (

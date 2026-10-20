@@ -80,7 +80,22 @@ CREATE TABLE IF NOT EXISTS study_sessions (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS daily_mission_claims (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    mission_id TEXT NOT NULL CHECK (mission_id IN ('shadowing', 'vocabulary', 'dictation')),
+    mission_date TEXT NOT NULL,
+    gems_awarded INTEGER NOT NULL DEFAULT 30,
+    claimed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE(user_id, mission_id, mission_date)
+);
+
 -- Indexes for fast queries
 CREATE INDEX IF NOT EXISTS idx_checkins_user_date ON checkins(user_id, checkin_date);
 CREATE INDEX IF NOT EXISTS idx_card_states_due ON card_states(user_id, due_date);
 CREATE INDEX IF NOT EXISTS idx_users_xp ON users(xp DESC);
+CREATE INDEX IF NOT EXISTS idx_daily_missions_user_date ON daily_mission_claims(user_id, mission_date);
+
+-- Product feature tables and the related user columns are added by
+-- migrations/0002_product_features.sql after this base schema is initialized.

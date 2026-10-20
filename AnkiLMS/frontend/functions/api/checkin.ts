@@ -1,8 +1,9 @@
-import { Env, jsonResponse, errorResponse, authenticateRequest } from "./_utils";
+import { Env, UserRow, jsonResponse, errorResponse, authenticateRequest, isSameOriginRequest } from "./_utils";
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
     const { request, env } = context;
+    if (!isSameOriginRequest(request)) return errorResponse("Yêu cầu không hợp lệ.", 403);
     const user = await authenticateRequest(request, env);
 
     if (!user) {
@@ -49,28 +50,45 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     const newLongestStreak = Math.max(user.longest_streak || 1, newStreak);
     const newXp = user.xp + 50;
-    const newGems = user.gems + 20;
-    const newLevel = Math.floor(Math.sqrt(newXp / 100)) + 1;
+    const newGems = user.gems + 50;
+    const newLevel = Math.floor(newXp / 300) + 1;
 
     // Record checkin
     const checkinId = "chk_" + crypto.randomUUID().substring(0, 8);
-    await env.DB.prepare(
+    const insertCheckin = env.DB.prepare(
       `INSERT INTO checkins (id, user_id, checkin_date, xp_earned, time_spent_minutes)
        VALUES (?, ?, ?, 50, 15)`
-    ).bind(checkinId, user.id, todayStr).run();
+    ).bind(checkinId, user.id, todayStr);
 
-    // Update user profile
-    await env.DB.prepare(
+    const updateUser = env.DB.prepare(
       `UPDATE users
        SET streak = ?, longest_streak = ?, xp = ?, gems = ?, level = ?, last_checkin_date = ?
        WHERE id = ?`
-    ).bind(newStreak, newLongestStreak, newXp, newGems, newLevel, todayStr, user.id).run();
+    ).bind(newStreak, newLongestStreak, newXp, newGems, newLevel, todayStr, user.id);
+
+    try {
+      await env.DB.batch([insertCheckin, updateUser]);
+    } catch {
+      // A simultaneous request may have won the unique (user, date) checkin first.
+      const duplicate = await env.DB.prepare("SELECT id FROM checkins WHERE user_id = ? AND checkin_date = ?")
+        .bind(user.id, todayStr)
+        .first();
+      if (duplicate) {
+        const latestUser = await env.DB.prepare("SELECT streak, xp, gems FROM users WHERE id = ?").bind(user.id).first<UserRow>();
+        return jsonResponse({
+          alreadyCheckedIn: true,
+          message: "Bạn đã điểm danh hôm nay rồi!",
+          user: { streak: latestUser?.streak ?? user.streak, xp: latestUser?.xp ?? user.xp, gems: latestUser?.gems ?? user.gems },
+        });
+      }
+      throw new Error("checkin_transaction_failed");
+    }
 
     return jsonResponse({
       alreadyCheckedIn: false,
-      message: "Điểm danh thành công! +50 XP, +20 Gem 💎",
+      message: "Điểm danh thành công! +50 XP, +50 Kim Cương 💎",
       rewardXp: 50,
-      rewardGems: 20,
+      rewardGems: 50,
       user: {
         id: user.id,
         streak: newStreak,

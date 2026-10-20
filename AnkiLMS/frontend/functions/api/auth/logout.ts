@@ -1,21 +1,13 @@
-import { Env, jsonResponse } from "../_utils";
+import { Env, jsonResponse, clearSessionCookie, getSessionToken, isSameOriginRequest, errorResponse } from "../_utils";
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
+  const { request, env } = context;
+  if (!isSameOriginRequest(request)) return errorResponse("Yêu cầu không hợp lệ.", 403);
   try {
-    const { request, env } = context;
-    const authHeader = request.headers.get("Authorization");
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      const token = authHeader.replace("Bearer ", "").trim();
-      if (token) {
-        await env.SESSIONS.delete(token);
-      }
-    }
-    return jsonResponse({ success: true, message: "Đã đăng xuất" });
-  } catch (e: any) {
-    return jsonResponse({ success: true });
+    const token = getSessionToken(request);
+    if (token) await env.SESSIONS.delete(token);
+  } catch {
+    // Clear the browser cookie even if the session store is temporarily unavailable.
   }
-};
-
-export const onRequestOptions: PagesFunction = async () => {
-  return jsonResponse({}, 200);
+  return jsonResponse({ success: true, message: "Đã đăng xuất" }, 200, { "Set-Cookie": clearSessionCookie(request) });
 };

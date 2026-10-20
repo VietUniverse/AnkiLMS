@@ -25,7 +25,6 @@
     background-color: var(--bg-primary);
     color: var(--text-primary);
     font-family: 'Inter', 'Noto Sans KR', system-ui, -apple-system, sans-serif;
-    user-select: none;
     -webkit-tap-highlight-color: transparent;
     overflow-x: hidden;
   }
@@ -161,4 +160,418 @@
 /* Noto Sans KR font for Korean text */
 .font-noto {
   font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* ==================================================
+   ANKI VN CARD UI STYLES & INTERACTIVE TYPING OVERLAY
+   ================================================== */
+.card-container {
+  border-radius: 1.5rem;
+  background-color: #0f1b38;
+  border: 2px solid #1e3a70;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.prompt-section {
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+
+.prompt-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #38bdf8;
+  margin-bottom: 0.35rem;
+}
+
+.prompt-content {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+.giaithich {
+  font-size: 0.85rem;
+  color: #fbbf24;
+  margin-top: 0.25rem;
+  font-weight: 600;
+}
+
+/* Typing area & overlay */
+.typing-area {
+  margin: 1.5rem 0;
+}
+
+.type-input-wrapper {
+  position: relative;
+  background-color: #070e20;
+  border: 2px solid #1e3a70;
+  border-radius: 1rem;
+  padding: 0.875rem 1.25rem;
+  min-height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: text;
+  transition: border-color 0.2s;
+}
+
+.type-input-wrapper:focus-within {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
+
+.real-type-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: text;
+  z-index: 10;
+}
+
+.typeans-overlay {
+  font-family: 'Noto Sans KR', monospace;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.typeGood {
+  color: #4ade80;
+  background-color: rgba(74, 222, 128, 0.15);
+  border-radius: 0.25rem;
+  padding: 0 0.15rem;
+}
+
+.typeBad {
+  color: #f87171;
+  background-color: rgba(248, 113, 113, 0.2);
+  border-radius: 0.25rem;
+  padding: 0 0.15rem;
+  text-decoration: line-through;
+}
+
+.typeExtra {
+  color: #f87171;
+  background-color: rgba(248, 113, 113, 0.3);
+  border-radius: 0.25rem;
+  padding: 0 0.15rem;
+}
+
+.type-placeholder {
+  color: #475569;
+}
+
+.active-cursor {
+  border-bottom: 3px solid #38bdf8;
+  animation: pulseCursor 0.8s infinite alternate;
+}
+
+@keyframes pulseCursor {
+  from { border-color: #38bdf8; }
+  to { border-color: transparent; }
+}
+
+.type-progress-container {
+  height: 6px;
+  background-color: #070e20;
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-top: 0.5rem;
+  border: 1px solid #1e3a70;
+}
+
+.type-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #3b82f6, #ec4899);
+  transition: width 0.2s ease-out;
+}
+
+.type-progress-bar.progress-complete {
+  background: linear-gradient(90deg, #22c55e, #10b981);
+}
+
+/* Meta Row & Tags */
+.meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.loaitu, .pos-badge {
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 0.25rem 0.65rem;
+  border-radius: 0.5rem;
+  background-color: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.type-hint-button {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.65rem;
+  background-color: rgba(234, 179, 8, 0.15);
+  border: 1px solid rgba(234, 179, 8, 0.4);
+  color: #facc15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.type-hint-button:hover {
+  background-color: rgba(234, 179, 8, 0.3);
+  transform: scale(1.05);
+}
+
+.type-hint-button svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: currentColor;
+}
+
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 1rem;
+}
+
+.tag-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.375rem;
+  background-color: #132247;
+  color: #94a3b8;
+  border: 1px solid #1e3a70;
+}
+
+/* Back Card Elements */
+.word-info-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.ipa {
+  font-family: monospace;
+  font-size: 0.9rem;
+  color: #fbbf24;
+  font-weight: 700;
+}
+
+.main-meaning {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #f59e0b;
+}
+
+.sub-meaning {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  margin-top: 0.35rem;
+}
+
+.example-box {
+  background-color: #070e20;
+  border: 1.5px solid #1e3a70;
+  border-radius: 1rem;
+  padding: 1rem;
+  margin: 1.25rem 0;
+  text-align: left;
+}
+
+.ex-text {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #ffffff;
+  font-family: 'Noto Sans KR', sans-serif;
+  margin-bottom: 0.35rem;
+}
+
+.ex-trans {
+  font-size: 0.875rem;
+  color: #cbd5e1;
+}
+
+/* Expand Box */
+.expand {
+  background-color: #111d38;
+  border: 1px solid #1e3a70;
+  border-radius: 0.875rem;
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+  text-align: left;
+}
+
+.expand-trigger {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #38bdf8;
+  cursor: pointer;
+}
+
+.expand-content {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.row-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+}
+
+.row-info .label {
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.row-info .val {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/* ChatGPT Button */
+.chatgpt-container {
+  margin-top: 1.25rem;
+}
+
+.chatgpt-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 0.875rem;
+  background: linear-gradient(135deg, #10a37f 0%, #0d8a6c 100%);
+  color: white;
+  font-weight: 800;
+  font-size: 0.85rem;
+  transition: all 0.15s;
+  box-shadow: 0 4px 12px rgba(16, 163, 127, 0.3);
+}
+
+.chatgpt-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.chatgpt-btn svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: currentColor;
+}
+
+/* Settings Menu Modal */
+.btn-settings {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.75rem;
+  background-color: rgba(30, 58, 112, 0.4);
+  border: 1px solid rgba(30, 58, 112, 0.8);
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  transition: all 0.15s;
+}
+
+.btn-settings:hover {
+  color: white;
+  background-color: rgba(30, 58, 112, 0.8);
+}
+
+.btn-settings svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: currentColor;
+}
+
+.settings-menu {
+  position: absolute;
+  top: 3.75rem;
+  right: 1rem;
+  width: 16rem;
+  background-color: #0f1b38;
+  border: 2px solid #1e3a70;
+  border-radius: 1rem;
+  padding: 0.75rem;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+  z-index: 50;
+  display: none;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.settings-menu.active {
+  display: flex;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #cbd5e1;
+}
+
+.toggle-switch {
+  width: 2.25rem;
+  height: 1.25rem;
+  background-color: #334155;
+  border-radius: 9999px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 1rem;
+  height: 1rem;
+  background-color: white;
+  border-radius: 9999px;
+  transition: transform 0.2s;
+}
+
+.toggle-switch.checked {
+  background-color: #3b82f6;
+}
+
+.toggle-switch.checked::after {
+  transform: translateX(1rem);
 }

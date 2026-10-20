@@ -6,22 +6,25 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint src/app src/components src/contexts src/lib functions next.config.ts",
+    "typecheck": "tsc --noEmit && tsc -p functions/tsconfig.json"
   },
   "dependencies": {
-    "@capacitor/android": "^8.4.2",
-    "@capacitor/core": "^8.4.2",
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/core": "^8.5.3",
     "clsx": "^2.1.1",
+    "dompurify": "^3.4.17",
     "jszip": "^3.10.1",
-    "lucide-react": "^1.28.0",
-    "next": "16.1.1",
+    "lucide-react": "1.59.0",
+    "next": "^16.4.2",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "sql.js": "^1.14.1",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
-    "@capacitor/cli": "^8.4.2",
+    "@capacitor/cli": "^8.5.3",
+    "@cloudflare/workers-types": "^5.20261016.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -29,8 +32,9 @@
     "@types/sql.js": "^1.4.11",
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
-    "eslint-config-next": "16.1.1",
+    "eslint-config-next": "^16.4.2",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "^4.151.1"
   }
 }

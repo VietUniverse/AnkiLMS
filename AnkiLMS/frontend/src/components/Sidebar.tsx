@@ -1,15 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Home,
   BookOpen,
   Headphones,
   Repeat,
-  BookText,
   Mic,
   GraduationCap,
-  Gamepad2,
   Brain,
   MessageSquare,
   Trophy,
@@ -24,68 +24,91 @@ import {
   LogOut,
   Award,
   User,
+  Users,
+  ShieldCheck,
+  Gamepad2,
+  ListMusic,
+  Compass,
+  Clapperboard,
 } from "lucide-react";
 
-export type ModuleTab =
-  | "home"
-  | "hangeul"
-  | "review"
-  | "dictation"
-  | "shadowing"
-  | "aispeaking"
-  | "topik"
-  | "leaderboard"
-  | "achievements"
-  | "community"
-  | "chat"
-  | "feedback"
-  | "shop"
-  | "affiliate"
-  | "pricing"
-  | "profile";
-
 interface SidebarProps {
-  activeTab: ModuleTab;
-  onTabChange: (tab: ModuleTab) => void;
   onOpenImporter: () => void;
   onOpenAuth: (isRegisterMode?: boolean) => void;
   currentUser: any;
   onLogout: () => void;
 }
 
+const mainNav = [
+  { href: "/", label: "Trang chủ", icon: Home },
+  { href: "/classes", label: "Lớp học AnkiVN", icon: Users, badge: "MỚI" },
+  { href: "/hangul", label: "Bảng Hangeul", icon: BookOpen },
+  { href: "/lessons", label: "Lộ trình bài học", icon: BookOpen, badge: "16 BÀI" },
+  { href: "/flashcards", label: "Từ vựng SRS / Ôn Anki", icon: Brain },
+  { href: "/topics", label: "Học theo chủ đề", icon: Compass },
+  { href: "/dictation", label: "Luyện nghe chính tả", icon: Headphones },
+  { href: "/shadowing", label: "Shadowing", icon: Repeat },
+  { href: "/listen", label: "Nghe thụ động", icon: ListMusic, badge: "MỚI" },
+  { href: "/games", label: "Trò chơi từ vựng", icon: Gamepad2 },
+  { href: "/create-lesson", label: "Tạo bài YouTube", icon: Clapperboard },
+  { href: "/ai-speaking", label: "Luyện nói tiếng Hàn", icon: Mic },
+  { href: "/topik", label: "Luyện thi TOPIK I/II", icon: GraduationCap, badge: "HOT" },
+];
+
+const communityNav = [
+  { href: "/leaderboard", label: "Bảng xếp hạng", icon: Trophy },
+  { href: "/achievements", label: "Huy hiệu & Mốc thưởng", icon: Award },
+  { href: "/community", label: "Cộng đồng Haechi", icon: MessageSquare },
+  { href: "/chat", label: "Phòng Trò chuyện", icon: MessagesSquare },
+  { href: "/feedback", label: "Góp ý & Đánh giá", icon: MessageSquareHeart },
+];
+
+const otherNav = [
+  { href: "/rewards", label: "Cửa hàng Đổi quà", icon: ShoppingBag },
+  { href: "/referrals", label: "Mời bạn bè", icon: Gift, badge: "MỚI" },
+  { href: "/pricing", label: "Nâng cấp PRO", icon: Crown },
+];
+
 export const Sidebar: React.FC<SidebarProps> = ({
-  activeTab,
-  onTabChange,
   onOpenImporter,
   onOpenAuth,
   currentUser,
   onLogout,
 }) => {
   const [collapsed, setCollapsed] = useState(false);
+  const pathname = usePathname();
 
-  const mainNav = [
-    { id: "home" as ModuleTab, label: "Trang chủ", icon: Home },
-    { id: "hangeul" as ModuleTab, label: "Bảng Hangeul", icon: BookOpen },
-    { id: "review" as ModuleTab, label: "Từ vựng SRS / Ôn Anki", icon: Brain },
-    { id: "dictation" as ModuleTab, label: "Luyện nghe chính tả", icon: Headphones },
-    { id: "shadowing" as ModuleTab, label: "Shadowing", icon: Repeat },
-    { id: "aispeaking" as ModuleTab, label: "Nói cùng AI", icon: Mic, badge: "AI" },
-    { id: "topik" as ModuleTab, label: "Luyện thi TOPIK I/II", icon: GraduationCap, badge: "HOT" },
-  ];
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href);
+  };
 
-  const communityNav = [
-    { id: "leaderboard" as ModuleTab, label: "Bảng xếp hạng", icon: Trophy },
-    { id: "achievements" as ModuleTab, label: "Huy hiệu & Mốc thưởng", icon: Award },
-    { id: "community" as ModuleTab, label: "Cộng đồng Haechi", icon: MessageSquare },
-    { id: "chat" as ModuleTab, label: "Phòng Trò chuyện", icon: MessagesSquare },
-    { id: "feedback" as ModuleTab, label: "Góp ý & Đánh giá", icon: MessageSquareHeart },
-  ];
-
-  const otherNav = [
-    { id: "shop" as ModuleTab, label: "Cửa hàng Đổi quà", icon: ShoppingBag },
-    { id: "affiliate" as ModuleTab, label: "Mời bạn bè", icon: Gift, badge: "MỚI" },
-    { id: "pricing" as ModuleTab, label: "Nâng cấp PRO", icon: Crown },
-  ];
+  const renderNavItem = (item: { href: string; label: string; icon: any; badge?: string }) => {
+    const Icon = item.icon;
+    const active = isActive(item.href);
+    return (
+      <Link
+        key={item.href}
+        href={item.href}
+        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-bold text-xs transition-all duration-150 border-2 ${
+          active
+            ? "bg-[#2563eb]/20 border-[#2563eb]/60 text-[#38bdf8] shadow-sm"
+            : "border-transparent text-[#8b9bb4] hover:bg-[#132247] hover:border-[#1e3a70] hover:text-white"
+        }`}
+        title={collapsed ? item.label : undefined}
+      >
+        <div className="flex items-center gap-2.5">
+          <Icon className="w-4 h-4 shrink-0" />
+          {!collapsed && <span className="tracking-normal">{item.label}</span>}
+        </div>
+        {!collapsed && item.badge && (
+          <span className="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-gradient-to-r from-rose-500 to-amber-500 text-white animate-pulse">
+            {item.badge}
+          </span>
+        )}
+      </Link>
+    );
+  };
 
   return (
     <aside
@@ -94,8 +117,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
       }`}
     >
       {/* HaechiVN Brand Header */}
-      <div
-        onClick={() => onTabChange("home")}
+      <Link
+        href="/"
         className="flex h-16 items-center border-b-2 border-[#19284d] px-4 shrink-0 justify-between cursor-pointer hover:bg-[#132247] transition-colors"
       >
         <div className="flex items-center gap-2.5">
@@ -111,7 +134,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
           )}
         </div>
-      </div>
+      </Link>
 
       {/* Navigation Scrollable Area */}
       <div className="flex-1 overflow-y-auto p-3 space-y-4">
@@ -136,32 +159,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Main Section */}
         <nav className="space-y-1">
-          {mainNav.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeTab === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => onTabChange(item.id)}
-                className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-bold text-xs transition-all duration-150 border-2 ${
-                  isActive
-                    ? "bg-[#2563eb]/20 border-[#2563eb]/60 text-[#38bdf8] shadow-sm"
-                    : "border-transparent text-[#8b9bb4] hover:bg-[#132247] hover:border-[#1e3a70] hover:text-white"
-                }`}
-                title={collapsed ? item.label : undefined}
-              >
-                <div className="flex items-center gap-2.5">
-                  <Icon className="w-4 h-4 shrink-0" />
-                  {!collapsed && <span className="tracking-normal">{item.label}</span>}
-                </div>
-                {!collapsed && item.badge && (
-                  <span className="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-gradient-to-r from-rose-500 to-amber-500 text-white animate-pulse">
-                    {item.badge}
-                  </span>
-                )}
-              </button>
-            );
-          })}
+          {mainNav.map(renderNavItem)}
+          {currentUser?.role === "admin" && renderNavItem({ href: "/admin", label: "Quản trị hệ thống", icon: ShieldCheck })}
         </nav>
 
         {/* Divider & Community Section */}
@@ -172,59 +171,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </p>
           )}
           <div className="space-y-1 mt-1">
-            {communityNav.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => onTabChange(item.id)}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-bold text-xs transition-all border-2 ${
-                    isActive
-                      ? "bg-[#2563eb]/20 border-[#2563eb]/60 text-[#38bdf8]"
-                      : "border-transparent text-[#8b9bb4] hover:bg-[#132247] hover:border-[#1e3a70] hover:text-white"
-                  }`}
-                  title={collapsed ? item.label : undefined}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Icon className="w-4 h-4 shrink-0" />
-                    {!collapsed && <span>{item.label}</span>}
-                  </div>
-                </button>
-              );
-            })}
+            {communityNav.map(renderNavItem)}
           </div>
         </div>
 
         {/* Divider & Other Section */}
         <div className="pt-2 border-t border-[#19284d]">
           <div className="space-y-1">
-            {otherNav.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => onTabChange(item.id)}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-bold text-xs transition-all border-2 ${
-                    isActive
-                      ? "bg-[#2563eb]/20 border-[#2563eb]/60 text-[#38bdf8]"
-                      : "border-transparent text-[#8b9bb4] hover:bg-[#132247] hover:border-[#1e3a70] hover:text-white"
-                  }`}
-                  title={collapsed ? item.label : undefined}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <Icon className="w-4 h-4 shrink-0" />
-                    {!collapsed && <span>{item.label}</span>}
-                  </div>
-                  {!collapsed && item.badge && (
-                    <span className="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-gradient-to-r from-rose-500 to-amber-500 text-white animate-pulse">
-                      {item.badge}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+            {otherNav.map(renderNavItem)}
           </div>
         </div>
       </div>
@@ -233,8 +187,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div className="p-3 space-y-2 border-t-2 border-[#19284d] bg-[#090f1d] shrink-0">
         {currentUser ? (
           <div className="flex items-center justify-between p-2 rounded-xl bg-[#132247] border border-[#1e3a70]">
-            <button
-              onClick={() => onTabChange("profile")}
+            <Link
+              href="/profile"
               className="flex items-center gap-2 min-w-0 hover:opacity-80 transition-opacity"
             >
               {currentUser.avatar_url ? (
@@ -248,11 +202,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <div className="min-w-0">
                   <span className="font-bold text-xs text-white block truncate">{currentUser.name}</span>
                   <span className="text-[10px] text-amber-400 font-semibold block">
-                    Lv.{currentUser.level || 1} • {currentUser.xp || 0} XP
+                    Lv.{Math.floor((currentUser.xp || 0) / 300) + 1} • {currentUser.xp || 0} XP
                   </span>
                 </div>
               )}
-            </button>
+            </Link>
             <button
               onClick={onLogout}
               className="p-1.5 text-slate-400 hover:text-rose-400 rounded-lg transition-colors shrink-0"
