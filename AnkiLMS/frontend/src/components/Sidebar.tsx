@@ -40,7 +40,6 @@ interface SidebarProps {
 const mainNav = [
   { href: "/", label: "Trang chủ", icon: Home },
   { href: "/hangul", label: "Bảng Hangeul", icon: BookOpen },
-  { href: "/lessons", label: "Lộ trình bài học", icon: BookOpen, badge: "16 BÀI" },
   { href: "/flashcards", label: "Từ vựng SRS / Ôn Anki", icon: Brain },
   { href: "/topics", label: "Học theo chủ đề", icon: Compass },
   { href: "/dictation", label: "Luyện nghe chính tả", icon: Headphones },
@@ -57,6 +56,7 @@ const communityNav = [
 
 // LƯU Ý BACKEND: Các tính năng Beta đang thử nghiệm UX/UI, không đưa lên production
 const betaNav = [
+  { href: "/lessons", label: "Lộ trình bài học", icon: BookOpen, badge: "BETA" },
   { href: "/ai-speaking", label: "Luyện nói tiếng Hàn", icon: Mic, badge: "BETA" },
   { href: "/topik", label: "Luyện thi TOPIK I/II", icon: GraduationCap, badge: "BETA" },
   { href: "/community", label: "Cộng đồng Haechi", icon: MessageSquare, badge: "BETA" },
