@@ -140,25 +140,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Navigation Scrollable Area */}
       <div className="flex-1 overflow-y-auto p-3 space-y-4">
-        {/* Anki Import Quick Button - Solid unbordered */}
-        {!collapsed ? (
-          <button
-            onClick={onOpenImporter}
-            className="w-full py-2.5 px-3 rounded-xl bg-[#111c38] hover:bg-[#182850] active:scale-[0.99] text-white font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer border-0 shadow-sm"
-          >
-            <Upload className="w-4 h-4 text-blue-400" />
-            <span>Kéo Thả Thẻ Anki (.apkg)</span>
-          </button>
-        ) : (
-          <button
-            onClick={onOpenImporter}
-            className="w-full py-2.5 rounded-xl bg-[#111c38] hover:bg-[#182850] text-blue-400 flex items-center justify-center border-0 cursor-pointer"
-            title="Kéo thả thẻ Anki"
-          >
-            <Upload className="w-4 h-4" />
-          </button>
-        )}
-
         {/* Section 1: HỌC TẬP (Chính) */}
         <div>
           {!collapsed && (
@@ -198,6 +179,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
           )}
           <div className="space-y-0.5 mt-1">
             {betaNav.map(renderNavItem)}
+
+            {/* Tính năng Kéo thẻ Anki (.apkg) đưa vào mục Beta */}
+            <button
+              onClick={onOpenImporter}
+              className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-colors border-0 text-slate-400 hover:text-white hover:bg-[#111c38] font-medium cursor-pointer"
+              title={collapsed ? "Nhập thẻ Anki (.apkg)" : undefined}
+            >
+              <div className="flex items-center gap-2.5">
+                <Upload className="w-4 h-4 text-purple-400 shrink-0" />
+                {!collapsed && <span className="tracking-normal truncate">Nhập thẻ Anki (.apkg)</span>}
+              </div>
+              {!collapsed && (
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md border-0 bg-purple-500/20 text-purple-300">
+                  BETA
+                </span>
+              )}
+            </button>
           </div>
         </div>
       </div>

@@ -5,7 +5,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AppShell } from "../components/AppShell";
 import { useApp } from "../contexts/AppProvider";
-import { Flame, Zap, Layers, Trophy, Calendar, CheckCircle2, Gamepad2, Target, X, LogIn } from "lucide-react";
+import { Flame, Zap, Layers, Trophy, Calendar, CheckCircle2, Gamepad2, Target, X, LogIn, Search, Volume2 } from "lucide-react";
+import { VOCABULARY_DATA } from "../data/koreanData";
+import { SEJONG_TOPIC_VOCABULARY } from "../data/sejongTopicVocabulary";
+import { speakKorean } from "../lib/koreanSpeech";
 import { ApiClient } from "../lib/apiClient";
 
 export default function Home() {
@@ -13,6 +16,38 @@ export default function Home() {
   const { currentUser, heatmapData, handleCheckin, handleOpenAuth, isAuthReady } = useApp();
   const [dailyMissionCount, setDailyMissionCount] = React.useState(0);
   const [showWelcome, setShowWelcome] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState("");
+
+  const searchPool = React.useMemo(() => {
+    const list = [
+      ...VOCABULARY_DATA.map((item) => ({
+        korean: item.hangul,
+        meaning: item.vietnamese,
+        example: item.exampleSentence,
+        translation: item.exampleTranslation,
+      })),
+      ...SEJONG_TOPIC_VOCABULARY.map((item) => ({
+        korean: item.korean,
+        meaning: item.meaning,
+        example: item.example,
+        translation: item.translation,
+      })),
+    ];
+    const unique = new Map<string, { korean: string; meaning: string; example?: string; translation?: string }>();
+    list.forEach((item) => {
+      const key = item.korean.trim().toLowerCase();
+      if (!unique.has(key)) unique.set(key, item);
+    });
+    return Array.from(unique.values());
+  }, []);
+
+  const searchResults = React.useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return [];
+    return searchPool
+      .filter((item) => item.korean.toLowerCase().includes(q) || item.meaning.toLowerCase().includes(q))
+      .slice(0, 5);
+  }, [searchQuery, searchPool]);
 
   // Nếu chưa đăng nhập thì tự động chuyển hướng sang trang đăng nhập /login
   React.useEffect(() => {
@@ -159,6 +194,77 @@ export default function Home() {
             </button>
           </div>
         )}
+
+        {/* Khối Tra Từ Vựng - Căn giữa, ngay trên khối tiến độ */}
+        <div className="rounded-3xl bg-[#090f1e] text-white p-5 sm:p-6 shadow-2xl border-0 space-y-3.5 animate-fadeIn text-center">
+          <div className="space-y-1 text-center">
+            <h3 className="text-base sm:text-lg font-black tracking-tight text-white flex items-center justify-center gap-2">
+              <Search className="w-5 h-5 text-blue-400" />
+              <span>Tra Từ Vựng</span>
+            </h3>
+            <p className="text-xs text-slate-400 font-medium max-w-md mx-auto">
+              Tra cứu nhanh nghĩa tiếng Việt, câu ví dụ và phát âm chuẩn giọng Seoul
+            </p>
+          </div>
+
+          <div className="max-w-xl mx-auto relative">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Nhập từ tiếng Hàn hoặc nghĩa tiếng Việt (VD: 행복, yêu, học)..."
+              className="w-full px-5 py-3 pr-12 rounded-2xl bg-[#0b1329] text-white text-xs sm:text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all border-0 shadow-inner"
+            />
+            {searchQuery ? (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-white transition-colors cursor-pointer border-0"
+                title="Xóa tìm kiếm"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            ) : (
+              <Search className="w-4 h-4 text-slate-500 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+            )}
+          </div>
+
+          {/* Kết quả tra cứu nhanh (Chỉ hiển thị tiếng Hàn và nghĩa tiếng Việt, TUYỆT ĐỐI KHÔNG hiển thị phiên âm La-tinh) */}
+          {searchQuery.trim() && (
+            <div className="max-w-xl mx-auto space-y-2 pt-1 animate-fadeIn">
+              {searchResults.length > 0 ? (
+                searchResults.map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="p-3.5 rounded-2xl bg-[#0b1329] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-left border-0 shadow-md"
+                  >
+                    <div className="space-y-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-base sm:text-lg font-black text-white">{item.korean}</span>
+                        <button
+                          onClick={() => speakKorean(item.korean)}
+                          className="p-1.5 rounded-lg bg-[#132247] hover:bg-[#1a2f60] text-blue-400 hover:text-blue-300 transition-colors cursor-pointer border-0"
+                          title="Phát âm tiếng Hàn"
+                        >
+                          <Volume2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                      <p className="text-xs sm:text-sm font-semibold text-blue-300">{item.meaning}</p>
+                      {item.example && (
+                        <p className="text-[11px] text-slate-400 font-normal">
+                          {item.example} {item.translation ? `— ${item.translation}` : ""}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-xs text-slate-400 italic py-2">
+                  Không tìm thấy từ vựng nào khớp với &quot;{searchQuery}&quot;
+                </p>
+              )}
+            </div>
+          )}
+        </div>
 
         {/* Master Dashboard Block - Căn giữa toàn bộ layout, tinh gọn bớt dòng, phong cách Dark Solid Block */}
         <div className="rounded-3xl bg-[#090f1e] text-white p-5 sm:p-6 space-y-4 shadow-2xl border-0 overflow-hidden animate-fadeIn text-center">
