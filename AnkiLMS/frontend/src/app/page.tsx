@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AppShell } from "../components/AppShell";
 import { useApp } from "../contexts/AppProvider";
-import { Flame, Zap, Layers, Trophy, Calendar, CheckCircle2, Gamepad2, Target, X } from "lucide-react";
+import { Flame, Zap, Layers, Trophy, Calendar, CheckCircle2, Gamepad2, Target, X, LogIn } from "lucide-react";
 import { ApiClient } from "../lib/apiClient";
 
 export default function Home() {
