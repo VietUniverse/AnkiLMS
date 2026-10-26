@@ -160,57 +160,53 @@ export default function Home() {
           </div>
         )}
 
-        {/* Master Dashboard Block - Căn giữa toàn bộ layout, phong cách Dark Solid Block nguyên khối không viền */}
-        <div className="rounded-3xl bg-[#090f1e] text-white p-6 sm:p-8 space-y-6 shadow-2xl border-0 overflow-hidden animate-fadeIn text-center">
-          {/* Header căn giữa */}
-          <div className="text-center space-y-1.5 pb-2">
-            <h2 className="text-base sm:text-xl font-black tracking-tight text-white">
-              {currentUser ? `Chào mừng ${currentUser.name || "bạn"}, tiếp tục hành trình nào!` : "Bảng Tiến Độ & Nhiệm Vụ Hôm Nay"}
+        {/* Master Dashboard Block - Căn giữa toàn bộ layout, tinh gọn bớt dòng, phong cách Dark Solid Block */}
+        <div className="rounded-3xl bg-[#090f1e] text-white p-5 sm:p-6 space-y-4 shadow-2xl border-0 overflow-hidden animate-fadeIn text-center">
+          {/* Header căn giữa gọn 1 dòng */}
+          <div className="text-center">
+            <h2 className="text-base sm:text-lg font-black tracking-tight text-white">
+              {currentUser ? `Chào ${currentUser.name || "bạn"}, tiếp tục chuỗi học và điểm danh nhận 💎 hôm nay!` : "Bảng Tiến Độ & Nhiệm Vụ Hôm Nay"}
             </h2>
-            <p className="text-xs text-slate-400 font-medium max-w-md mx-auto">
-              Duy trì chuỗi học và điểm danh mỗi ngày để tích lũy XP thăng cấp
-            </p>
           </div>
 
-          {/* 3 Metric Cards: Chuỗi Streak, Cấp độ, Tổng Tích Lũy - Tất cả căn giữa */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* 3 Metric Cards: Chuỗi Streak, Cấp độ, Tổng Tích Lũy - Căn giữa, cô đọng bớt dòng */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
             {/* Card 1: Chuỗi Streak */}
-            <div className="p-6 rounded-2xl bg-[#0b1329] flex flex-col items-center justify-center text-center space-y-2.5 border-0">
-              <div className="w-12 h-12 rounded-2xl bg-amber-500/20 flex items-center justify-center">
-                <Flame className="w-6 h-6 text-amber-400 fill-amber-400" />
-              </div>
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            <div className="py-4 px-5 rounded-2xl bg-[#0b1329] flex flex-col items-center justify-center text-center space-y-1 border-0">
+              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                 Chuỗi Streak
               </span>
-              <div className="flex items-baseline justify-center gap-1.5">
-                <span className="text-4xl font-black text-white">{currentUser?.streak || 0}</span>
-                <span className="text-sm font-bold text-amber-400">ngày</span>
+              <div className="flex items-center justify-center gap-2">
+                <Flame className="w-6 h-6 text-amber-400 fill-amber-400 shrink-0" />
+                <span className="text-3xl font-black text-white">{currentUser?.streak || 0}</span>
+                <span className="text-xs font-bold text-amber-400">ngày</span>
               </div>
-              <p className="text-xs text-slate-400 font-medium">
+              <p className="text-[11px] text-slate-400 font-medium">
                 Streak cao nhất: {currentUser?.longest_streak || currentUser?.streak || 0} ngày
               </p>
             </div>
 
             {/* Card 2: Cấp độ (Level) */}
-            <div className="p-6 rounded-2xl bg-[#0b1329] flex flex-col items-center justify-center text-center space-y-2.5 border-0">
-              <div className="w-12 h-12 rounded-2xl bg-purple-600 text-white font-black text-lg flex items-center justify-center shadow-lg shadow-purple-950/50">
-                {userLevel}
-              </div>
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            <div className="py-4 px-5 rounded-2xl bg-[#0b1329] flex flex-col items-center justify-center text-center space-y-1.5 border-0">
+              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                 Cấp độ (Level)
               </span>
-              <div className="space-y-1.5 w-full max-w-[210px] mx-auto">
-                <div className="flex items-center justify-between text-xs font-bold">
-                  <span className="text-sky-300">Lên level {userLevel + 1}</span>
-                  <span className="text-purple-300">Còn {neededXPForNext} XP</span>
-                </div>
-                <div className="w-full h-2.5 bg-[#132247] rounded-full overflow-hidden p-0.5">
+              <div className="flex items-center justify-center gap-2">
+                <span className="w-7 h-7 rounded-lg bg-purple-600 text-white font-black text-xs flex items-center justify-center shadow-md">
+                  {userLevel}
+                </span>
+                <span className="text-xs font-bold text-sky-300">
+                  Lên Lv.{userLevel + 1} · Còn {neededXPForNext} XP
+                </span>
+              </div>
+              <div className="w-full max-w-[200px] mx-auto space-y-1">
+                <div className="w-full h-2 bg-[#132247] rounded-full overflow-hidden p-0.5">
                   <div
                     className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 rounded-full transition-all duration-500"
                     style={{ width: `${levelProgressPercent}%` }}
                   />
                 </div>
-                <div className="flex items-center justify-between text-[11px] text-slate-400 font-medium">
+                <div className="text-[10px] text-slate-400 font-medium flex justify-between px-1">
                   <span>{currentLevelProgressXP} / 300 XP</span>
                   <span>{levelProgressPercent}%</span>
                 </div>
@@ -218,30 +214,28 @@ export default function Home() {
             </div>
 
             {/* Card 3: Tổng Tích Lũy */}
-            <div className="p-6 rounded-2xl bg-[#0b1329] flex flex-col items-center justify-center text-center space-y-2.5 border-0">
-              <div className="w-12 h-12 rounded-2xl bg-blue-500/20 flex items-center justify-center">
-                <Zap className="w-6 h-6 text-blue-400 fill-blue-400" />
-              </div>
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            <div className="py-4 px-5 rounded-2xl bg-[#0b1329] flex flex-col items-center justify-center text-center space-y-1 border-0">
+              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                 Tổng Tích Lũy
               </span>
-              <div className="flex items-baseline justify-center gap-1.5">
-                <span className="text-4xl font-black text-white">{(currentUser?.xp || 0).toLocaleString()}</span>
-                <span className="text-sm font-bold text-blue-400">XP</span>
+              <div className="flex items-center justify-center gap-2">
+                <Zap className="w-6 h-6 text-blue-400 fill-blue-400 shrink-0" />
+                <span className="text-3xl font-black text-white">{(currentUser?.xp || 0).toLocaleString()}</span>
+                <span className="text-xs font-bold text-blue-400">XP</span>
               </div>
-              <p className="text-xs text-slate-400 font-medium">
+              <p className="text-[11px] text-slate-400 font-medium">
                 Đã quy đổi: {(currentUser?.xp || 0)} 💎 kim cương
               </p>
             </div>
           </div>
 
-          {/* Dãy nút bấm hành động căn giữa - Nguyên khối không viền */}
-          <div className="p-4 rounded-2xl bg-[#070d1a] flex flex-wrap items-center justify-center gap-3 border-0">
+          {/* Dãy nút bấm hành động căn giữa gọn gàng - Nguyên khối không viền */}
+          <div className="p-3.5 rounded-2xl bg-[#070d1a] flex flex-wrap items-center justify-center gap-2.5 border-0">
             {/* Điểm danh */}
             {hasCheckedInToday ? (
               <button
                 disabled
-                className="px-6 py-3 rounded-xl bg-emerald-500/20 text-emerald-300 font-bold text-xs flex items-center gap-2 cursor-not-allowed border-0"
+                className="px-5 py-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 font-bold text-xs flex items-center gap-2 cursor-not-allowed border-0"
               >
                 <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                 <span>ĐÃ ĐIỂM DANH (+50 💎)</span>
@@ -249,7 +243,7 @@ export default function Home() {
             ) : (
               <button
                 onClick={handleCheckin}
-                className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-[0.99] text-white font-bold text-xs shadow-lg shadow-blue-900/40 transition-all cursor-pointer flex items-center gap-2 border-0"
+                className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-[0.99] text-white font-bold text-xs shadow-lg shadow-blue-900/40 transition-all cursor-pointer flex items-center gap-2 border-0"
               >
                 <Flame className="w-4 h-4 text-white fill-white" />
                 <span>ĐIỂM DANH NGAY · NHẬN 50 💎 HÔM NAY</span>
@@ -259,7 +253,7 @@ export default function Home() {
             {/* Ôn tập */}
             <Link
               href="/flashcards"
-              className="px-6 py-3 rounded-xl bg-[#132247] hover:bg-[#1a2f60] active:scale-[0.99] text-white font-bold text-xs transition-colors flex items-center gap-2 border-0"
+              className="px-5 py-2.5 rounded-xl bg-[#132247] hover:bg-[#1a2f60] active:scale-[0.99] text-white font-bold text-xs transition-colors flex items-center gap-2 border-0"
             >
               <Layers className="w-4 h-4 text-blue-400" />
               <span>ÔN TẬP</span>
@@ -268,7 +262,7 @@ export default function Home() {
             {/* Chơi game · Ôn từ */}
             <Link
               href="/games"
-              className="px-5 py-3 rounded-xl bg-[#111c38] hover:bg-[#182850] active:scale-[0.99] text-amber-300 font-bold text-xs transition-colors flex items-center gap-2 border-0"
+              className="px-4 py-2.5 rounded-xl bg-[#111c38] hover:bg-[#182850] active:scale-[0.99] text-amber-300 font-bold text-xs transition-colors flex items-center gap-2 border-0"
             >
               <Gamepad2 className="w-4 h-4 text-amber-400" />
               <span>CHƠI GAME · ÔN TỪ</span>
@@ -277,7 +271,7 @@ export default function Home() {
             {/* Nhiệm vụ */}
             <Link
               href="/missions"
-              className="px-5 py-3 rounded-xl bg-[#111c38] hover:bg-[#182850] active:scale-[0.99] text-sky-300 font-bold text-xs transition-colors flex items-center gap-2 border-0"
+              className="px-4 py-2.5 rounded-xl bg-[#111c38] hover:bg-[#182850] active:scale-[0.99] text-sky-300 font-bold text-xs transition-colors flex items-center gap-2 border-0"
             >
               <Target className="w-4 h-4 text-sky-400" />
               <span>NHIỆM VỤ · {dailyMissionCount}/3</span>
@@ -285,45 +279,45 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Heatmap Vườn Hoa - Trồng hoa Heatmap (Tiến Độ Học Tập 90 Ngày Gần Nhất) */}
-        <div className="rounded-3xl p-6 sm:p-8 bg-[#090f1e] text-white shadow-2xl border-0 space-y-5 text-center">
-          <div className="space-y-1 text-center">
-            <h3 className="text-base sm:text-lg font-black text-white flex items-center justify-center gap-2">
+        {/* Heatmap Vườn Hoa - Trồng hoa Heatmap (Tiến Độ Học Tập 90 Ngày Gần Nhất) - Tinh gọn bớt dòng */}
+        <div className="rounded-3xl p-5 sm:p-6 bg-[#090f1e] text-white shadow-2xl border-0 space-y-3.5 text-center">
+          <div className="space-y-0.5 text-center">
+            <h3 className="text-sm sm:text-base font-black text-white flex items-center justify-center gap-2">
               <span>🌸</span>
               <span>Tiến Độ Học Tập 90 Ngày Gần Nhất – Heatmap Vườn Hoa</span>
               <span>🌿</span>
             </h3>
-            <p className="text-xs text-slate-400 font-medium max-w-xl mx-auto">
-              Tính năng Heatmap dạng vườn hoa: Mỗi ngày bạn học là gieo mầm và trồng một đóa hoa rực rỡ trong khu vườn tri thức ({heatmapData.length} ngày đã ghi nhận)
+            <p className="text-xs text-slate-400 font-medium">
+              Tính năng Heatmap dạng vườn hoa: Mỗi ngày bạn học là gieo mầm một đóa hoa rực rỡ ({heatmapData.length} ngày đã ghi nhận)
             </p>
           </div>
 
           {/* Grid vườn hoa căn giữa */}
-          <div className="flex flex-wrap gap-2 justify-center py-2 max-w-4xl mx-auto">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center py-1 max-w-4xl mx-auto">
             {renderHeatmapGrid()}
           </div>
 
-          {/* Chú giải vườn hoa căn giữa */}
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-slate-300 font-medium border-t border-[#132247] pt-4">
+          {/* Chú giải vườn hoa căn giữa 1 dòng gọn gàng */}
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-5 text-[11px] text-slate-300 font-medium border-t border-[#132247] pt-3">
             <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-slate-700/60" />
+              <span className="w-1.5 h-1.5 rounded-full bg-slate-700/60" />
               <span className="text-slate-400">Đất trống (chưa học)</span>
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1">
               <span>🌱</span>
-              <span>Mầm xanh (&lt; 15p)</span>
+              <span>Mầm xanh (&lt;15p)</span>
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1">
               <span>🌷</span>
-              <span>Hoa tulip (15p+)</span>
+              <span>Tulip (15p+)</span>
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1">
               <span>🌻</span>
-              <span>Hoa hướng dương (30p+)</span>
+              <span>Hướng dương (30p+)</span>
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1">
               <span>🌸</span>
-              <span>Hoa anh đào (45p+)</span>
+              <span>Anh đào (45p+)</span>
             </div>
           </div>
         </div>
