@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { Sidebar } from "./Sidebar";
 import { BottomNav } from "./BottomNav";
 import { Header } from "./Header";
@@ -15,8 +16,12 @@ interface AppShellProps {
 }
 
 export const AppShell: React.FC<AppShellProps> = ({ children }) => {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const {
     currentUser,
+    isAuthReady,
     isImporterOpen,
     setIsImporterOpen,
     isAuthOpen,
@@ -29,6 +34,25 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
     handleLogout,
     handleDeckImported,
   } = useApp();
+
+  useEffect(() => {
+    if (isAuthReady && !currentUser && pathname !== "/login") {
+      router.replace("/login");
+    }
+  }, [isAuthReady, currentUser, pathname, router]);
+
+  if (isAuthReady && !currentUser && pathname !== "/login") {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center bg-[#0b1329] text-white font-sans">
+        <div className="flex flex-col items-center gap-3 animate-fadeIn">
+          <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-xs text-slate-400 font-semibold tracking-wide">
+            Đang chuyển hướng sang trang đăng nhập...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-[#0b1329] text-white overflow-hidden font-sans">

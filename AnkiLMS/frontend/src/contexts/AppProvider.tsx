@@ -18,6 +18,7 @@ interface AppContextType {
   authRegisterMode: boolean;
   checkinMessage: string | null;
   authErrorMessage: string | null;
+  isAuthReady: boolean;
   handleOpenAuth: (register?: boolean) => void;
   handleLogout: () => void;
   handleCheckin: () => Promise<void>;
@@ -41,6 +42,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [authRegisterMode, setAuthRegisterMode] = useState(false);
   const [checkinMessage, setCheckinMessage] = useState<string | null>(null);
   const [authErrorMessage, setAuthErrorMessage] = useState<string | null>(null);
+  const [isAuthReady, setIsAuthReady] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -75,14 +77,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
 
     async function loadInitialData() {
-      const user = await ApiClient.fetchMe();
-      setCurrentUser(user);
-      const decks = ApiClient.getSavedDecks();
-      setUserDecks(decks);
+      try {
+        const user = await ApiClient.fetchMe();
+        setCurrentUser(user);
+        const decks = ApiClient.getSavedDecks();
+        setUserDecks(decks);
 
-      if (user) {
-        const heatmap = await ApiClient.getHeatmapData();
-        setHeatmapData(heatmap);
+        if (user) {
+          const heatmap = await ApiClient.getHeatmapData();
+          setHeatmapData(heatmap);
+        }
+      } finally {
+        setIsAuthReady(true);
       }
     }
     loadInitialData();
@@ -151,6 +157,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         authRegisterMode,
         checkinMessage,
         authErrorMessage,
+        isAuthReady,
         handleOpenAuth,
         handleLogout,
         handleCheckin,

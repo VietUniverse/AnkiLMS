@@ -120,8 +120,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         className="flex h-16 items-center border-b-2 border-[#19284d] px-4 shrink-0 justify-between cursor-pointer hover:bg-[#132247] transition-colors"
       >
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-sm shadow-md shadow-blue-500/30 border border-blue-400/40 shrink-0">
-            해
+          <div className="w-8 h-8 rounded-xl bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-sky-400 shrink-0">
+            <GraduationCap className="w-4 h-4" />
           </div>
           {!collapsed && (
             <div>

@@ -8,6 +8,7 @@ AnkiLMS/frontend/.env*
 AnkiLMS/frontend/.dev.vars*
 AnkiLMS/frontend/.admin-provision.cjs
 AnkiLMS/frontend/set_secrets.js
+AnkiLMS/frontend/graphify-out/
 
 # Local transcription inputs, Anki packages, and scratch exports
 /Script/
