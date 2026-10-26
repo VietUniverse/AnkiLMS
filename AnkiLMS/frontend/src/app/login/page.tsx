@@ -82,15 +82,11 @@ export default function LoginPage() {
               </p>
             </div>
 
-            {/* Widget Thẻ Anki - Khối màu thuần nguyên bản không viền */}
-            <div className="p-6 rounded-2xl bg-[#111c38] shadow-lg max-w-sm space-y-4">
-              <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono">
-                <span className="uppercase tracking-wider">Thẻ hôm nay · Anki FSRS</span>
-                <span className="text-emerald-400 font-bold">Đến hạn ôn</span>
-              </div>
-              <div>
-                <div className="text-2xl font-black text-white">행복하다</div>
-                <div className="text-xs text-slate-400 mt-1">Hạnh phúc</div>
+            {/* Widget Thẻ Anki - Căn giữa, không chữ rườm rà, nghĩa to rõ */}
+            <div className="p-6 rounded-2xl bg-[#111c38] shadow-lg max-w-sm mx-auto w-full text-center space-y-4">
+              <div className="space-y-1 py-1">
+                <div className="text-3xl font-black text-white tracking-tight">행복하다</div>
+                <div className="text-base text-slate-300 font-semibold">Hạnh phúc</div>
               </div>
               <div className="grid grid-cols-3 gap-2 pt-1 text-[11px] font-bold">
                 <div className="py-2 rounded-xl bg-rose-500/20 text-rose-300 text-center">Khó (1 ngày)</div>
