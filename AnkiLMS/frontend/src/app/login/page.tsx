@@ -73,7 +73,7 @@ export default function LoginPage() {
           {/* Cột trái: Thương hiệu & Widget thẻ Anki nguyên khối không viền */}
           <div className="lg:col-span-7 p-8 sm:p-12 lg:p-14 flex flex-col justify-center space-y-8 bg-[#0b1329]">
             {/* Brand & Slogan */}
-            <div className="space-y-3">
+            <div className="space-y-3 text-center">
               <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-white">
                 Haechi<span className="text-blue-400">VN</span>
               </h1>
