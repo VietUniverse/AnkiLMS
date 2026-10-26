@@ -79,8 +79,13 @@ export const AnkiImporter: React.FC<AnkiImporterProps> = ({
             <Upload className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-xl font-black text-white">Import Bộ Thẻ Anki (.apkg)</h2>
-            <p className="text-xs text-slate-400">Đọc trực tiếp dữ liệu SQLite & Media 100% Offline</p>
+            <h2 className="text-xl font-black text-white flex items-center gap-2">
+              <span>Import Thẻ Anki (.apkg)</span>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-purple-500/20 text-purple-300">
+                BETA
+              </span>
+            </h2>
+            <p className="text-xs text-slate-400">Tính năng thử nghiệm Beta: Đọc trực tiếp dữ liệu SQLite & Media 100% Offline</p>
           </div>
         </div>
 
