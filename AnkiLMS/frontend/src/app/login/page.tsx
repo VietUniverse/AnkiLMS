@@ -17,6 +17,15 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Luôn khóa dark theme khi ở trang login để giữ chuẩn style Anime Dark Glass
+  useEffect(() => {
+    const prevTheme = document.documentElement.dataset.theme;
+    document.documentElement.dataset.theme = "dark";
+    return () => {
+      document.documentElement.dataset.theme = prevTheme || "light";
+    };
+  }, []);
+
   // Nếu người dùng đã đăng nhập, tự động chuyển về trang chủ
   useEffect(() => {
     if (isAuthReady && currentUser) {
@@ -54,8 +63,9 @@ export default function LoginPage() {
 
   return (
     <div
-      className="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 lg:p-10 relative font-sans overflow-y-auto bg-slate-950"
+      className="login-page-root min-h-screen w-full flex items-center justify-center p-4 sm:p-6 lg:p-10 relative font-sans overflow-y-auto"
       style={{
+        backgroundColor: "#020617",
         backgroundImage: "url('/images/login-bg.webp')",
         backgroundPosition: "center",
         backgroundSize: "cover",
@@ -64,14 +74,23 @@ export default function LoginPage() {
       }}
     >
       {/* Dark overlay để ảnh nền sâu và không bị chói */}
-      <div className="fixed inset-0 bg-slate-950/70 pointer-events-none" />
+      <div
+        className="fixed inset-0 pointer-events-none"
+        style={{ backgroundColor: "rgba(2, 6, 23, 0.7)" }}
+      />
 
       {/* Main Box - Khối nguyên khối màu không viền, đổ bóng sâu */}
-      <div className="relative z-10 w-full max-w-5xl rounded-3xl bg-[#090f1e]/95 shadow-2xl shadow-black/95 text-white overflow-hidden animate-fadeIn">
+      <div
+        className="relative z-10 w-full max-w-5xl rounded-3xl shadow-2xl shadow-black/95 text-white overflow-hidden animate-fadeIn border-0"
+        style={{ backgroundColor: "rgba(9, 15, 30, 0.95)" }}
+      >
         <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[480px]">
 
           {/* Cột trái: Thương hiệu & Widget thẻ Anki nguyên khối không viền */}
-          <div className="lg:col-span-7 p-8 sm:p-12 lg:p-14 flex flex-col justify-center space-y-8 bg-[#0b1329]">
+          <div
+            className="lg:col-span-7 p-8 sm:p-12 lg:p-14 flex flex-col justify-center space-y-8 border-0"
+            style={{ backgroundColor: "#0b1329" }}
+          >
             {/* Brand & Slogan */}
             <div className="space-y-3 text-center">
               <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-white">
@@ -83,20 +102,36 @@ export default function LoginPage() {
             </div>
 
             {/* Widget Thẻ Anki - Căn giữa, không chữ rườm rà, nghĩa to rõ */}
-            <div className="p-6 rounded-2xl bg-[#111c38] shadow-lg max-w-sm mx-auto w-full text-center space-y-4">
+            <div
+              className="p-6 rounded-2xl shadow-lg max-w-sm mx-auto w-full text-center space-y-4 border-0"
+              style={{ backgroundColor: "#111c38" }}
+            >
               <div className="space-y-1 py-1">
                 <div className="text-3xl font-black text-white tracking-tight">행복하다</div>
                 <div className="text-base text-slate-300 font-semibold">Hạnh phúc</div>
               </div>
               <div className="grid grid-cols-2 gap-3 pt-1 text-xs font-bold">
-                <div className="py-2.5 rounded-xl bg-rose-500/20 text-rose-300 text-center">Quên</div>
-                <div className="py-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 text-center">Nhớ</div>
+                <div
+                  className="py-2.5 rounded-xl text-rose-300 text-center font-bold"
+                  style={{ backgroundColor: "rgba(244, 63, 94, 0.2)" }}
+                >
+                  Quên
+                </div>
+                <div
+                  className="py-2.5 rounded-xl text-emerald-300 text-center font-bold"
+                  style={{ backgroundColor: "rgba(16, 185, 129, 0.2)" }}
+                >
+                  Nhớ
+                </div>
               </div>
             </div>
           </div>
 
           {/* Cột phải: Form Đăng nhập nguyên khối không viền */}
-          <div className="lg:col-span-5 p-8 sm:p-12 flex flex-col justify-center space-y-6 bg-[#070d1a]">
+          <div
+            className="lg:col-span-5 p-8 sm:p-12 flex flex-col justify-center space-y-6 border-0"
+            style={{ backgroundColor: "#070d1a" }}
+          >
             {/* Tiêu đề căn giữa */}
             <div className="text-center">
               <h2 className="text-2xl font-black tracking-tight text-white">
@@ -105,7 +140,10 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <div className="p-3.5 rounded-xl bg-rose-500/20 text-rose-300 text-xs font-semibold animate-fadeIn text-center">
+              <div
+                className="p-3.5 rounded-xl text-rose-300 text-xs font-semibold animate-fadeIn text-center border-0"
+                style={{ backgroundColor: "rgba(244, 63, 94, 0.2)" }}
+              >
                 {error}
               </div>
             )}
@@ -119,7 +157,8 @@ export default function LoginPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Họ và tên"
-                    className="w-full px-4 py-3.5 rounded-xl bg-[#132247] text-white text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-inner"
+                    style={{ backgroundColor: "#132247", color: "#ffffff" }}
+                    className="w-full px-4 py-3.5 rounded-xl text-white text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-inner border-0"
                   />
                 </div>
               )}
@@ -132,7 +171,8 @@ export default function LoginPage() {
                   value={account}
                   onChange={(e) => setAccount(e.target.value)}
                   placeholder="Tài khoản hoặc email"
-                  className="w-full px-4 py-3.5 rounded-xl bg-[#132247] text-white text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-inner"
+                  style={{ backgroundColor: "#132247", color: "#ffffff" }}
+                  className="w-full px-4 py-3.5 rounded-xl text-white text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-inner border-0"
                 />
               </div>
 
@@ -144,7 +184,8 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Mật khẩu"
-                  className="w-full px-4 py-3.5 rounded-xl bg-[#132247] text-white text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-inner"
+                  style={{ backgroundColor: "#132247", color: "#ffffff" }}
+                  className="w-full px-4 py-3.5 rounded-xl text-white text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-inner border-0"
                 />
               </div>
 
@@ -152,18 +193,19 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-[0.99] text-white font-extrabold text-sm shadow-lg shadow-blue-900/40 cursor-pointer transition-all flex items-center justify-center gap-2 mt-2"
+                style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
+                className="w-full py-3.5 rounded-xl hover:bg-blue-500 active:scale-[0.99] text-white font-extrabold text-sm shadow-lg shadow-blue-900/40 cursor-pointer transition-all flex items-center justify-center gap-2 mt-2 border-0"
               >
                 {loading ? (
                   <span>Đang xử lý...</span>
                 ) : isRegister ? (
                   <>
-                    <UserPlus className="w-4 h-4" />
+                    <UserPlus className="w-4 h-4 text-white" />
                     <span>Tạo tài khoản & Vào học</span>
                   </>
                 ) : (
                   <>
-                    <LogIn className="w-4 h-4" />
+                    <LogIn className="w-4 h-4 text-white" />
                     <span>Vào học</span>
                   </>
                 )}

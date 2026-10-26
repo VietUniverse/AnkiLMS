@@ -41,41 +41,72 @@ html[data-theme="light"] {
   --text-secondary: #52627a;
 }
 
-html[data-theme="light"] body {
+html[data-theme="light"] body:not(:has(.login-page-root)) {
   background: #f7f8fc !important;
   color: #172033 !important;
 }
 
-html[data-theme="light"] [class*="bg-[#0b1329]"],
-html[data-theme="light"] [class*="bg-[#090f1d]"],
-html[data-theme="light"] [class*="bg-slate-950"],
-html[data-theme="light"] [class*="bg-slate-900"] {
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-[#0b1329]"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-[#090f1d]"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-slate-950"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-slate-900"] {
   background-color: #f8fafc !important;
 }
 
-html[data-theme="light"] [class*="bg-[#132247]"],
-html[data-theme="light"] [class*="bg-[#0f1b38]"],
-html[data-theme="light"] [class*="bg-slate-800"],
-html[data-theme="light"] [class*="bg-slate-800/"],
-html[data-theme="light"] [class*="bg-slate-700"] {
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-[#132247]"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-[#0f1b38]"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-slate-800"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-slate-800/"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-slate-700"] {
   background-color: #e8eef7 !important;
 }
 
-html[data-theme="light"] [class*="bg-slate-950/"],
-html[data-theme="light"] [class*="bg-slate-900/"] {
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-slate-950/"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-slate-900/"] {
   background-color: rgb(248 250 252 / 97%) !important;
 }
 
-html[data-theme="light"] [class*="border-[#19284d]"],
-html[data-theme="light"] [class*="border-[#1e3a70]"],
-html[data-theme="light"] [class*="border-slate-800"],
-html[data-theme="light"] [class*="border-slate-700"] {
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="border-[#19284d]"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="border-[#1e3a70]"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="border-slate-800"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="border-slate-700"] {
   border-color: #cbd5e1 !important;
 }
 
-html[data-theme="light"] [class*="text-white"],
-html[data-theme="light"] [class*="text-slate-100"],
-html[data-theme="light"] [class*="text-slate-200"] {
+/* Đảm bảo trang đăng nhập giữ nguyên giao diện kính tối trên nền wallpaper anime, không bị light mode đè */
+html[data-theme="light"] .login-page-root,
+html[data-theme="light"] .login-page-root [class*="text-white"] {
+  color: #ffffff !important;
+}
+html[data-theme="light"] .login-page-root [class*="text-slate-300"],
+html[data-theme="light"] .login-page-root [class*="text-slate-200"] {
+  color: #cbd5e1 !important;
+}
+html[data-theme="light"] .login-page-root [class*="text-slate-400"] {
+  color: #94a3b8 !important;
+}
+html[data-theme="light"] .login-page-root [class*="bg-[#090f1e]"] {
+  background-color: rgba(9, 15, 30, 0.95) !important;
+}
+html[data-theme="light"] .login-page-root [class*="bg-[#0b1329]"] {
+  background-color: #0b1329 !important;
+}
+html[data-theme="light"] .login-page-root [class*="bg-[#111c38]"] {
+  background-color: #111c38 !important;
+}
+html[data-theme="light"] .login-page-root [class*="bg-[#070d1a]"] {
+  background-color: #070d1a !important;
+}
+html[data-theme="light"] .login-page-root [class*="bg-[#132247]"] {
+  background-color: #132247 !important;
+}
+html[data-theme="light"] .login-page-root [class*="bg-slate-950"] {
+  background-color: rgb(2 6 23 / 0.7) !important;
+}
+
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-white"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-slate-100"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-slate-200"] {
   color: #172033 !important;
 }
 
@@ -90,41 +121,41 @@ html[data-theme="light"] a[class*="bg-gradient-to"] [class*="text-white"] {
   color: #fff !important;
 }
 
-html[data-theme="light"] [class*="text-[#8b9bb4]"],
-html[data-theme="light"] [class*="text-[#64748b]"],
-html[data-theme="light"] [class*="text-slate-300"],
-html[data-theme="light"] [class*="text-slate-400"],
-html[data-theme="light"] [class*="text-slate-500"] {
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-[#8b9bb4]"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-[#64748b]"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-slate-300"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-slate-400"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-slate-500"] {
   color: #52627a !important;
 }
 
-html[data-theme="light"] [class*="text-[#38bdf8]"],
-html[data-theme="light"] [class*="text-sky-300"],
-html[data-theme="light"] [class*="text-sky-400"],
-html[data-theme="light"] [class*="text-blue-300"],
-html[data-theme="light"] [class*="text-cyan-300"] {
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-[#38bdf8]"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-sky-300"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-sky-400"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-blue-300"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-cyan-300"] {
   color: #0369a1 !important;
 }
 
-html[data-theme="light"] [class*="text-emerald-300"],
-html[data-theme="light"] [class*="text-emerald-400"] {
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-emerald-300"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-emerald-400"] {
   color: #047857 !important;
 }
 
-html[data-theme="light"] [class*="text-amber-300"],
-html[data-theme="light"] [class*="text-amber-400"],
-html[data-theme="light"] [class*="text-yellow-300"] {
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-amber-300"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-amber-400"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-yellow-300"] {
   color: #92400e !important;
 }
 
-html[data-theme="light"] input,
-html[data-theme="light"] textarea,
-html[data-theme="light"] select {
+html[data-theme="light"] body:not(:has(.login-page-root)) input,
+html[data-theme="light"] body:not(:has(.login-page-root)) textarea,
+html[data-theme="light"] body:not(:has(.login-page-root)) select {
   color: #172033 !important;
 }
 
-html[data-theme="light"] input::placeholder,
-html[data-theme="light"] textarea::placeholder {
+html[data-theme="light"] body:not(:has(.login-page-root)) input::placeholder,
+html[data-theme="light"] body:not(:has(.login-page-root)) textarea::placeholder {
   color: #64748b !important;
 }
 
@@ -214,11 +245,11 @@ html[data-theme="rainbow"] button.btn-duo-primary {
 }
 
 /* Light mode follows a strict ink-only text palette: no white or muted gray copy. */
-html[data-theme="light"] body * {
+html[data-theme="light"] body:not(:has(.login-page-root)) * {
   color: #172033 !important;
 }
 
-html[data-theme="light"] .home-hero-title {
+html[data-theme="light"] body:not(:has(.login-page-root)) .home-hero-title {
   color: #172033 !important;
 }
 
@@ -227,14 +258,14 @@ html[data-theme="rainbow"] .home-hero-title {
   color: #fff7ff;
 }
 
-html[data-theme="light"] button.btn-duo,
-html[data-theme="light"] button[class*="bg-gradient-to"],
-html[data-theme="light"] a[class*="bg-gradient-to"],
-html[data-theme="light"] button[class*="bg-blue-"],
-html[data-theme="light"] button[class*="bg-purple-"],
-html[data-theme="light"] button[class*="bg-violet-"],
-html[data-theme="light"] button[class*="bg-rose-"],
-html[data-theme="light"] button[class*="bg-sky-"] {
+html[data-theme="light"] body:not(:has(.login-page-root)) button.btn-duo,
+html[data-theme="light"] body:not(:has(.login-page-root)) button[class*="bg-gradient-to"],
+html[data-theme="light"] body:not(:has(.login-page-root)) a[class*="bg-gradient-to"],
+html[data-theme="light"] body:not(:has(.login-page-root)) button[class*="bg-blue-"],
+html[data-theme="light"] body:not(:has(.login-page-root)) button[class*="bg-purple-"],
+html[data-theme="light"] body:not(:has(.login-page-root)) button[class*="bg-violet-"],
+html[data-theme="light"] body:not(:has(.login-page-root)) button[class*="bg-rose-"],
+html[data-theme="light"] body:not(:has(.login-page-root)) button[class*="bg-sky-"] {
   background-color: #dbeafe !important;
   background-image: linear-gradient(110deg, #dbeafe, #ede9fe) !important;
   border-color: #93c5fd !important;
