@@ -10,6 +10,7 @@ import { AuthModal } from "./AuthModal";
 import { FloatingCommunityChat } from "./FloatingCommunityChat";
 import { useApp } from "../contexts/AppProvider";
 import { Sparkles } from "lucide-react";
+import { featureForPath } from "../lib/featureFlags";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -22,6 +23,8 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   const {
     currentUser,
     isAuthReady,
+    isFeatureEnabled,
+    featureFlagsLoaded,
     isImporterOpen,
     setIsImporterOpen,
     isAuthOpen,
@@ -53,6 +56,9 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       </div>
     );
   }
+
+  const routeFeature = featureForPath(pathname);
+  const routeDisabled = featureFlagsLoaded && routeFeature && !isFeatureEnabled(routeFeature);
 
   return (
     <div className="flex h-screen bg-[#0b1329] text-white overflow-hidden font-sans">
@@ -86,18 +92,23 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
             </div>
           )}
 
-          {children}
+          {routeDisabled ? (
+            <section className="mx-auto mt-12 max-w-xl rounded-2xl border border-blue-500/30 bg-[#101a32] p-8 text-center">
+              <h1 className="text-xl font-black text-white">Tính năng hiện chưa khả dụng</h1>
+              <p className="mt-2 text-sm text-slate-300">Tính năng này đang được tạm ẩn trên HaechiVN.</p>
+            </section>
+          ) : children}
         </main>
       </div>
 
       <BottomNav />
-      {pathname !== "/" && <FloatingCommunityChat />}
+      {pathname !== "/" && isFeatureEnabled("chat") && <FloatingCommunityChat />}
 
-      <AnkiImporter
+      {isFeatureEnabled("ankiImport") && <AnkiImporter
         isOpen={isImporterOpen}
         onClose={() => setIsImporterOpen(false)}
         onImportComplete={(decks) => decks.forEach(handleDeckImported)}
-      />
+      />}
       <AuthModal isOpen={isAuthOpen} initialRegisterMode={authRegisterMode} onClose={() => setIsAuthOpen(false)} onSuccess={(user) => { setCurrentUser(user); setIsAuthOpen(false); }} />
     </div>
   );

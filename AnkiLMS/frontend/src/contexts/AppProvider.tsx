@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { AnkiDeck } from "../lib/ankiParser";
 import { ApiClient, UserProfile } from "../lib/apiClient";
+import { DEFAULT_FEATURE_FLAGS, FeatureFlags, FeatureKey } from "../lib/featureFlags";
 
 interface AppContextType {
   currentUser: UserProfile | null;
@@ -19,6 +20,9 @@ interface AppContextType {
   checkinMessage: string | null;
   authErrorMessage: string | null;
   isAuthReady: boolean;
+  featureFlags: FeatureFlags;
+  featureFlagsLoaded: boolean;
+  isFeatureEnabled: (key: FeatureKey | undefined) => boolean;
   handleOpenAuth: (register?: boolean) => void;
   handleLogout: () => void;
   handleCheckin: () => Promise<void>;
@@ -43,6 +47,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [checkinMessage, setCheckinMessage] = useState<string | null>(null);
   const [authErrorMessage, setAuthErrorMessage] = useState<string | null>(null);
   const [isAuthReady, setIsAuthReady] = useState(false);
+  const [featureFlags, setFeatureFlags] = useState<FeatureFlags>(DEFAULT_FEATURE_FLAGS);
+  const [featureFlagsLoaded, setFeatureFlagsLoaded] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -78,8 +84,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     async function loadInitialData() {
       try {
-        const user = await ApiClient.fetchMe();
+        const [user, featureResponse] = await Promise.all([
+          ApiClient.fetchMe(),
+          fetch("/api/features", { credentials: "same-origin", cache: "no-store" }).catch(() => null),
+        ]);
         setCurrentUser(user);
+        if (featureResponse?.ok) {
+          const payload = await featureResponse.json() as { features?: Partial<FeatureFlags> };
+          setFeatureFlags({ ...DEFAULT_FEATURE_FLAGS, ...payload.features });
+        }
+        setFeatureFlagsLoaded(true);
         const decks = ApiClient.getSavedDecks();
         setUserDecks(decks);
 
@@ -88,6 +102,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           setHeatmapData(heatmap);
         }
       } finally {
+        setFeatureFlagsLoaded(true);
         setIsAuthReady(true);
       }
     }
@@ -158,6 +173,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         checkinMessage,
         authErrorMessage,
         isAuthReady,
+        featureFlags,
+        featureFlagsLoaded,
+        isFeatureEnabled: (key) => !key || featureFlags[key],
         handleOpenAuth,
         handleLogout,
         handleCheckin,

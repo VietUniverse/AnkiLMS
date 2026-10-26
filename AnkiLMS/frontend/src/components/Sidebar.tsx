@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useApp } from "../contexts/AppProvider";
+import { FeatureKey } from "../lib/featureFlags";
 import {
   Home,
   BookOpen,
@@ -39,31 +41,31 @@ interface SidebarProps {
 
 const mainNav = [
   { href: "/", label: "Trang chủ", icon: Home },
-  { href: "/hangul", label: "Bảng Hangeul", icon: BookOpen },
-  { href: "/flashcards", label: "Từ vựng", icon: Brain },
-  { href: "/dictation", label: "Luyện nghe chính tả", icon: Headphones },
-  { href: "/shadowing", label: "Shadowing", icon: Repeat },
-  { href: "/listen", label: "Nghe thụ động", icon: ListMusic, badge: "MỚI" },
-  { href: "/games", label: "Trò chơi từ vựng", icon: Gamepad2 },
-];
+  { href: "/hangul", label: "Bảng Hangeul", icon: BookOpen, feature: "hangul" },
+  { href: "/flashcards", label: "Từ vựng", icon: Brain, feature: "flashcards" },
+  { href: "/dictation", label: "Luyện nghe chính tả", icon: Headphones, feature: "dictation" },
+  { href: "/shadowing", label: "Shadowing", icon: Repeat, feature: "shadowing" },
+  { href: "/listen", label: "Nghe thụ động", icon: ListMusic, badge: "MỚI", feature: "listen" },
+  { href: "/games", label: "Trò chơi từ vựng", icon: Gamepad2, feature: "games" },
+] as const;
 
 const communityNav = [
-  { href: "/leaderboard", label: "Bảng xếp hạng", icon: Trophy },
-  { href: "/achievements", label: "Huy hiệu & Mốc thưởng", icon: Award },
-  { href: "/feedback", label: "Góp ý & Đánh giá", icon: MessageSquareHeart },
-];
+  { href: "/leaderboard", label: "Bảng xếp hạng", icon: Trophy, feature: "leaderboard" },
+  { href: "/achievements", label: "Huy hiệu & Mốc thưởng", icon: Award, feature: "achievements" },
+  { href: "/feedback", label: "Góp ý & Đánh giá", icon: MessageSquareHeart, feature: "feedback" },
+] as const;
 
 // LƯU Ý BACKEND: Các tính năng Beta đang thử nghiệm UX/UI, không đưa lên production
 const betaNav = [
-  { href: "/lessons", label: "Lộ trình bài học", icon: BookOpen, badge: "BETA" },
-  { href: "/ai-speaking", label: "Luyện nói tiếng Hàn", icon: Mic, badge: "BETA" },
-  { href: "/topik", label: "Luyện thi TOPIK I/II", icon: GraduationCap, badge: "BETA" },
-  { href: "/community", label: "Cộng đồng Haechi", icon: MessageSquare, badge: "BETA" },
-  { href: "/chat", label: "Phòng Trò chuyện", icon: MessagesSquare, badge: "BETA" },
-  { href: "/rewards", label: "Cửa hàng Đổi quà", icon: ShoppingBag, badge: "BETA" },
-  { href: "/referrals", label: "Mời bạn bè", icon: Gift, badge: "BETA" },
-  { href: "/pricing", label: "Nâng cấp PRO", icon: Crown, badge: "BETA" },
-];
+  { href: "/lessons", label: "Lộ trình bài học", icon: BookOpen, badge: "BETA", feature: "lessons" },
+  { href: "/ai-speaking", label: "Luyện nói tiếng Hàn", icon: Mic, badge: "BETA", feature: "aiSpeaking" },
+  { href: "/topik", label: "Luyện thi TOPIK I/II", icon: GraduationCap, badge: "BETA", feature: "topik" },
+  { href: "/community", label: "Cộng đồng Haechi", icon: MessageSquare, badge: "BETA", feature: "community" },
+  { href: "/chat", label: "Phòng Trò chuyện", icon: MessagesSquare, badge: "BETA", feature: "chat" },
+  { href: "/rewards", label: "Cửa hàng Đổi quà", icon: ShoppingBag, badge: "BETA", feature: "rewards" },
+  { href: "/referrals", label: "Mời bạn bè", icon: Gift, badge: "BETA", feature: "referrals" },
+  { href: "/pricing", label: "Nâng cấp PRO", icon: Crown, badge: "BETA", feature: "pricing" },
+] as const;
 
 export const Sidebar: React.FC<SidebarProps> = ({
   onOpenImporter,
@@ -73,13 +75,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
+  const { isFeatureEnabled } = useApp();
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
     return pathname.startsWith(href);
   };
 
-  const renderNavItem = (item: { href: string; label: string; icon: any; badge?: string }) => {
+  const renderNavItem = (item: { href: string; label: string; icon: any; badge?: string; feature?: FeatureKey }) => {
     const Icon = item.icon;
     const active = isActive(item.href);
     return (
@@ -148,7 +151,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </p>
           )}
           <nav className="space-y-0.5 mt-1">
-            {mainNav.map(renderNavItem)}
+            {mainNav.filter((item) => isFeatureEnabled("feature" in item ? item.feature : undefined)).map(renderNavItem)}
             {currentUser?.role === "admin" && renderNavItem({ href: "/admin", label: "Quản trị hệ thống", icon: ShieldCheck })}
           </nav>
         </div>
@@ -161,7 +164,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </p>
           )}
           <div className="space-y-0.5 mt-1">
-            {communityNav.map(renderNavItem)}
+            {communityNav.filter((item) => isFeatureEnabled(item.feature)).map(renderNavItem)}
           </div>
         </div>
 
@@ -178,10 +181,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
           )}
           <div className="space-y-0.5 mt-1">
-            {betaNav.map(renderNavItem)}
+            {betaNav.filter((item) => isFeatureEnabled(item.feature)).map(renderNavItem)}
 
             {/* Tính năng Kéo thẻ Anki (.apkg) đưa vào mục Beta */}
-            <button
+            {isFeatureEnabled("ankiImport") && <button
               onClick={onOpenImporter}
               className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-colors border-0 text-slate-400 hover:text-white hover:bg-[#111c38] font-medium cursor-pointer"
               title={collapsed ? "Nhập thẻ Anki (.apkg)" : undefined}
@@ -195,7 +198,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   BETA
                 </span>
               )}
-            </button>
+            </button>}
           </div>
         </div>
       </div>
@@ -205,7 +208,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {currentUser ? (
           <div className="flex items-center justify-between p-2 rounded-xl bg-[#0b1329] border-0">
             <Link
-              href="/profile"
+              href={isFeatureEnabled("profile") ? "/profile" : "/"}
               className="flex items-center gap-2 min-w-0 hover:opacity-85 transition-opacity"
             >
               {currentUser.avatar_url ? (

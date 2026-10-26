@@ -4,7 +4,8 @@ import React, { FormEvent, useCallback, useEffect, useState } from "react";
 import { AppShell } from "../../components/AppShell";
 import { useApp } from "../../contexts/AppProvider";
 import { ApiClient } from "../../lib/apiClient";
-import { AlertCircle, BookOpen, Check, Loader2, MessageSquare, RefreshCw, Search, ShieldCheck, Trash2, Users } from "lucide-react";
+import { AlertCircle, BookOpen, Check, Loader2, MessageSquare, RefreshCw, Search, ShieldCheck, Trash2, Users, SlidersHorizontal, Power } from "lucide-react";
+import { DEFAULT_FEATURE_FLAGS, FEATURE_CATALOG, FeatureFlags, FeatureKey } from "../../lib/featureFlags";
 import topikLessonsData from "../../data/topik_lessons.json";
 import curatedKoreanPractice from "../../data/curated_korean_practice.json";
 import { KOREAN_COURSE } from "../../data/koreanCourse";
@@ -22,7 +23,7 @@ const BUILTIN_LESSONS: { id: string; title: string; level: string; lessonType: s
   ...curatedKoreanPractice.map((lesson: any) => ({ id: lesson.id, title: lesson.title, level: lesson.topikName, lessonType: "Bài sáng tác · Dictation + Shadowing", count: lesson.segments.length })),
   ...KOREAN_COURSE.map((lesson) => ({ id: lesson.id, title: lesson.title, level: lesson.level, lessonType: "Khóa học tiếng Hàn", count: lesson.dialogue.length })),
 ];
-type Panel = "overview" | "students" | "decks" | "lessons" | "classes" | "community" | "chat" | "feedback";
+type Panel = "overview" | "students" | "decks" | "lessons" | "classes" | "community" | "chat" | "feedback" | "features";
 
 async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const token = ApiClient.getToken();
@@ -45,6 +46,7 @@ const panelLabels: { id: Panel; label: string; icon: React.ReactNode }[] = [
   { id: "community", label: "Bài cộng đồng", icon: <MessageSquare className="h-4 w-4" /> },
   { id: "chat", label: "Trò chuyện", icon: <MessageSquare className="h-4 w-4" /> },
   { id: "feedback", label: "Góp ý", icon: <Check className="h-4 w-4" /> },
+  { id: "features", label: "Tính năng production", icon: <SlidersHorizontal className="h-4 w-4" /> },
 ];
 
 export default function AdminPage() {
@@ -59,6 +61,7 @@ export default function AdminPage() {
   const [hiddenLessonIds, setHiddenLessonIds] = useState<string[]>([]);
   const [classes, setClasses] = useState<ClassRow[]>([]);
   const [messages, setMessages] = useState<ChatRow[]>([]);
+  const [featureFlags, setFeatureFlags] = useState<FeatureFlags>(DEFAULT_FEATURE_FLAGS);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState("");
   const [query, setQuery] = useState("");
@@ -75,7 +78,7 @@ export default function AdminPage() {
     setError("");
     const params = new URLSearchParams(); if (search) params.set("q", search);
     try {
-      const [summary, userData, deckData, feedbackData, postData, lessonData, classData, chatData] = await Promise.all([
+      const [summary, userData, deckData, feedbackData, postData, lessonData, classData, chatData, featureData] = await Promise.all([
         adminFetch<Overview>("/api/admin/overview"),
         adminFetch<{ users: UserRow[] }>(`/api/admin/users${params.size ? `?${params}` : ""}`),
         adminFetch<{ decks: DeckRow[] }>("/api/admin/decks"),
@@ -84,9 +87,11 @@ export default function AdminPage() {
         adminFetch<{ lessons: LessonRow[]; hiddenLessonIds: string[] }>("/api/admin/lessons"),
         adminFetch<{ classes: ClassRow[] }>("/api/admin/classes"),
         adminFetch<{ messages: ChatRow[] }>("/api/admin/chat"),
+        adminFetch<{ features: Partial<FeatureFlags> }>("/api/admin/features"),
       ]);
       setOverview(summary); setUsers(userData.users); setDecks(deckData.decks); setFeedback(feedbackData.feedback); setPosts(postData.posts);
       setLessons(lessonData.lessons); setHiddenLessonIds(lessonData.hiddenLessonIds || []); setClasses(classData.classes); setMessages(chatData.messages);
+      setFeatureFlags({ ...DEFAULT_FEATURE_FLAGS, ...featureData.features });
     } catch (cause) { setError(cause instanceof Error ? cause.message : "Không tải được trang quản trị."); }
   }, [currentUser, search]);
 
@@ -97,6 +102,14 @@ export default function AdminPage() {
     try { const result = await run(); await load(); return result; }
     catch (cause) { setError(cause instanceof Error ? cause.message : "Thao tác không thành công."); return undefined; }
     finally { setBusy(""); }
+  }
+
+  function toggleFeature(key: FeatureKey) {
+    const enabled = !featureFlags[key];
+    void action(`feature:${key}`, () => adminFetch("/api/admin/features", {
+      method: "PATCH",
+      body: JSON.stringify({ key, enabled }),
+    }));
   }
 
   async function createLesson(event: FormEvent<HTMLFormElement>) {
@@ -162,6 +175,8 @@ export default function AdminPage() {
             <section className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">{[["Tài khoản", overview.users], ["Học viên", overview.students], ["Giáo viên", overview.teachers], ["Lớp học", overview.classes], ["Bài cộng đồng", overview.posts], ["Góp ý mới", overview.pendingFeedback]].map(([label, count]) => <button key={label} onClick={() => setPanel(label === "Lớp học" ? "classes" : label === "Bài cộng đồng" ? "community" : label === "Góp ý mới" ? "feedback" : "students")} className="card-duo p-4 text-left hover:border-sky-500/50"><div className="text-2xl font-black text-white">{count}</div><div className="mt-1 text-xs text-slate-400">{label}</div></button>)}</section>
             <section className="grid gap-4 lg:grid-cols-2"><div className="card-duo p-5"><h2 className="font-bold text-white">Hoạt động học tập</h2><p className="mt-2 text-sm text-slate-400">Mở Tài khoản để tìm học viên, xem XP, chuỗi ngày học và gán vai trò giáo viên.</p><button onClick={() => setPanel("students")} className="mt-4 text-xs font-bold text-sky-300">Quản lý học viên →</button></div><div className="card-duo p-5"><h2 className="font-bold text-white">Nội dung đào tạo</h2><p className="mt-2 text-sm text-slate-400">Tạo bài Dictation/Shadowing dùng chung cho học viên. Câu tiếng Hàn và bản dịch đặt cùng thứ tự dòng.</p><button onClick={() => setPanel("lessons")} className="mt-4 text-xs font-bold text-sky-300">Quản lý bài học →</button></div></section>
           </>}
+
+          {panel === "features" && <section className="space-y-4"><div className="card-duo border-sky-500/20 p-5"><h2 className="font-bold text-white">Ẩn hoặc hiện tính năng trên production</h2><p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Tắt tính năng sẽ gỡ mục khỏi menu trên máy tính và điện thoại, đồng thời chặn trang đó khi người học mở trực tiếp. Dữ liệu được giữ nguyên và có thể bật lại bất cứ lúc nào.</p><p className="mt-3 text-xs font-bold text-sky-300">{Object.values(featureFlags).filter(Boolean).length} / {FEATURE_CATALOG.length} tính năng đang hiện</p></div><div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">{FEATURE_CATALOG.map((feature) => { const enabled = featureFlags[feature.key]; const busyKey = `feature:${feature.key}`; return <article key={feature.key} className={`card-duo flex items-center justify-between gap-4 p-4 transition ${enabled ? "border-emerald-500/20" : "border-amber-500/20 opacity-80"}`}><div className="min-w-0"><h3 className="text-sm font-bold text-white">{feature.label}</h3><p className="mt-1 text-xs leading-5 text-slate-400">{feature.description}</p><span className={`mt-2 inline-block rounded-full px-2 py-1 text-[10px] font-black ${enabled ? "bg-emerald-500/10 text-emerald-300" : "bg-amber-500/10 text-amber-300"}`}>{enabled ? "Đang hiện" : "Đang ẩn"}</span></div><button type="button" role="switch" aria-checked={enabled} aria-label={`${enabled ? "Ẩn" : "Hiện lại"} ${feature.label}`} disabled={busy === busyKey} onClick={() => toggleFeature(feature.key)} className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full border transition disabled:cursor-wait disabled:opacity-50 ${enabled ? "border-emerald-400 bg-emerald-500/30" : "border-slate-600 bg-slate-800"}`}><span className={`flex h-5 w-5 items-center justify-center rounded-full transition ${enabled ? "translate-x-6 bg-emerald-400 text-emerald-950" : "translate-x-1 bg-slate-400 text-slate-900"}`}><Power className="h-3 w-3" /></span></button></article>; })}</div></section>}
 
           {panel === "students" && <section className="card-duo overflow-hidden"><div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-700 p-4"><div><h2 className="font-bold text-white">Tài khoản và học viên</h2><p className="mt-1 text-xs text-slate-500">{users.length} tài khoản trong kết quả · tối đa 500 dòng</p></div><form onSubmit={(event) => { event.preventDefault(); setSearch(query.trim()); }} className="flex gap-2"><label className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-950 px-3"><Search className="h-4 w-4 text-slate-500"/><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Tên hoặc email" className="w-44 bg-transparent py-2 text-xs text-white outline-none" /></label><button className="rounded-lg bg-sky-600 px-3 text-xs font-bold text-white">Tìm</button></form></div><div className="overflow-x-auto"><table className="w-full min-w-[920px] text-left text-sm"><thead className="text-xs text-slate-400"><tr><th className="p-3">Học viên</th><th className="p-3">XP</th><th className="p-3">Chuỗi</th><th className="p-3">Bộ Anki</th><th className="p-3">Phiên học</th><th className="p-3">Hoạt động gần nhất</th><th className="p-3">Ngày tạo</th><th className="p-3">Vai trò</th><th className="p-3">Thao tác</th></tr></thead><tbody>{users.map((user) => <tr key={user.id} className="border-t border-slate-800"><td className="p-3 text-white">{user.name}<span className="block text-xs text-slate-400">{user.email}</span></td><td className="p-3 text-amber-300">{user.xp}</td><td className="p-3 text-sky-300">{user.streak || 0} ngày</td><td className="p-3 text-slate-300">{user.decks || 0}</td><td className="p-3 text-slate-300">{user.studySessions || 0}</td><td className="p-3 text-slate-400">{user.lastStudied ? String(user.lastStudied).slice(0, 16) : "Chưa học"}</td><td className="p-3 text-slate-400">{String(user.created_at).slice(0, 10)}</td><td className="p-3"><select disabled={busy === user.id || user.id === currentUser.id} value={user.role} onChange={(event) => void action(user.id, () => adminFetch("/api/admin/users", { method: "PATCH", body: JSON.stringify({ userId: user.id, role: event.target.value }) }))} className="rounded-lg border border-slate-700 bg-slate-950 px-2 py-1 text-xs text-white"><option value="student">Học viên</option><option value="teacher">Giáo viên</option><option value="admin">Admin</option></select></td><td className="p-3">{user.role === "admin" ? <span className="text-xs text-slate-500">Không thể xóa admin</span> : <button disabled={busy === user.id || user.id === currentUser.id} onClick={() => deleteUser(user)} className="inline-flex items-center gap-1.5 rounded-lg border border-rose-700/50 px-2.5 py-1.5 text-xs font-bold text-rose-300 transition hover:bg-rose-950/40 disabled:cursor-not-allowed disabled:opacity-50" title="Xóa tài khoản vĩnh viễn"><Trash2 className="h-3.5 w-3.5"/>Xóa</button>}</td></tr>)}</tbody></table>{users.length === 0 && <p className="p-5 text-sm text-slate-400">Không tìm thấy tài khoản.</p>}</div></section>}
 

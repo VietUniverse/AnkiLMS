@@ -13,7 +13,7 @@ import { ApiClient } from "../lib/apiClient";
 
 export default function Home() {
   const router = useRouter();
-  const { currentUser, heatmapData, handleCheckin, handleOpenAuth, isAuthReady } = useApp();
+  const { currentUser, heatmapData, handleCheckin, handleOpenAuth, isAuthReady, isFeatureEnabled } = useApp();
   const [dailyMissionCount, setDailyMissionCount] = React.useState(0);
   const [showWelcome, setShowWelcome] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -357,31 +357,31 @@ export default function Home() {
             )}
 
             {/* Từ vựng */}
-            <Link
+            {isFeatureEnabled("flashcards") && <Link
               href="/flashcards"
               className="px-5 py-2.5 rounded-xl bg-[#132247] hover:bg-[#1a2f60] active:scale-[0.99] text-white font-bold text-xs transition-colors flex items-center gap-2 border-0"
             >
               <Layers className="w-4 h-4 text-blue-400" />
               <span>TỪ VỰNG</span>
-            </Link>
+            </Link>}
 
             {/* Chơi game · Ôn từ */}
-            <Link
+            {isFeatureEnabled("games") && <Link
               href="/games"
               className="px-4 py-2.5 rounded-xl bg-[#111c38] hover:bg-[#182850] active:scale-[0.99] text-amber-300 font-bold text-xs transition-colors flex items-center gap-2 border-0"
             >
               <Gamepad2 className="w-4 h-4 text-amber-400" />
               <span>CHƠI GAME · ÔN TỪ</span>
-            </Link>
+            </Link>}
 
             {/* Nhiệm vụ */}
-            <Link
+            {isFeatureEnabled("missions") && <Link
               href="/missions"
               className="px-4 py-2.5 rounded-xl bg-[#111c38] hover:bg-[#182850] active:scale-[0.99] text-sky-300 font-bold text-xs transition-colors flex items-center gap-2 border-0"
             >
               <Target className="w-4 h-4 text-sky-400" />
               <span>NHIỆM VỤ · {dailyMissionCount}/3</span>
-            </Link>
+            </Link>}
           </div>
         </div>
 

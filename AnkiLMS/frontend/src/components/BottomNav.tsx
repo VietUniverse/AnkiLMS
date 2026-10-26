@@ -4,17 +4,19 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, BookOpen, Layers, Trophy, User } from "lucide-react";
+import { useApp } from "../contexts/AppProvider";
 
 const items = [
   { href: "/", label: "Trang chủ", icon: Home },
-  { href: "/lessons", label: "Bài học", icon: BookOpen },
-  { href: "/flashcards", label: "Từ vựng", icon: Layers },
-  { href: "/leaderboard", label: "Xếp hạng", icon: Trophy },
-  { href: "/profile", label: "Hồ sơ", icon: User },
-];
+  { href: "/lessons", label: "Bài học", icon: BookOpen, feature: "lessons" },
+  { href: "/flashcards", label: "Từ vựng", icon: Layers, feature: "flashcards" },
+  { href: "/leaderboard", label: "Xếp hạng", icon: Trophy, feature: "leaderboard" },
+  { href: "/profile", label: "Hồ sơ", icon: User, feature: "profile" },
+] as const;
 
 export const BottomNav: React.FC = () => {
   const pathname = usePathname();
+  const { isFeatureEnabled } = useApp();
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -23,7 +25,7 @@ export const BottomNav: React.FC = () => {
 
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0b1329]/95 backdrop-blur-md border-t border-[#19284d] px-2 py-2 flex items-center justify-around select-none">
-      {items.map((item) => {
+      {items.filter((item) => isFeatureEnabled("feature" in item ? item.feature : undefined)).map((item) => {
         const Icon = item.icon;
         const active = isActive(item.href);
         return (
