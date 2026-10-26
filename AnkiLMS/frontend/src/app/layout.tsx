@@ -31,11 +31,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" data-theme="light">
+    <html lang="vi" data-theme="light" suppressHydrationWarning>
       <head>
         <link rel="apple-touch-icon" href="/favicon.ico" />
       </head>
-      <body className={`${inter.variable} ${notoKorean.variable} bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-blue-500 selection:text-white`}>
+      <body
+        suppressHydrationWarning
+        className={`${inter.variable} ${notoKorean.variable} bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-blue-500 selection:text-white`}
+      >
         <AppProvider>
           {children}
         </AppProvider>
