@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AppShell } from "../components/AppShell";
 import { useApp } from "../contexts/AppProvider";
-import { Flame, Zap, Layers, Trophy, Calendar, Sparkles, User, LogIn, CheckCircle2, Headphones, Gamepad2, Compass, BookOpen, Target, X } from "lucide-react";
+import { Flame, Zap, Layers, Trophy, Calendar, CheckCircle2, Gamepad2, Target, X } from "lucide-react";
 import { ApiClient } from "../lib/apiClient";
 
 export default function Home() {
@@ -147,199 +147,174 @@ export default function Home() {
           </div>
         )}
 
-        {/* Quick Action Buttons - Đồng bộ style trang login: nguyên khối không viền, căn giữa */}
-        <div className="flex flex-wrap items-center justify-center gap-3.5">
-          {hasCheckedInToday ? (
-            <button
-              disabled
-              className="px-7 py-3 rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold text-xs flex items-center gap-2 cursor-not-allowed"
-            >
-              <CheckCircle2 className="w-4 h-4" />
-              <span>Đã điểm danh</span>
-            </button>
-          ) : (
-            <button
-              onClick={handleCheckin}
-              className="px-7 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-[0.99] text-white font-bold text-xs shadow-md shadow-blue-900/30 transition-all cursor-pointer flex items-center gap-2"
-            >
-              <Flame className="w-4 h-4" />
-              <span>Điểm danh</span>
-            </button>
-          )}
-
-          <Link
-            href="/flashcards"
-            className="px-7 py-3 rounded-xl bg-[#e8eef7] hover:bg-[#d8e4f5] dark:bg-[#132247] dark:hover:bg-[#1a2f60] text-slate-800 dark:text-slate-200 font-bold text-xs transition-colors flex items-center gap-2 cursor-pointer"
-          >
-            <Layers className="w-4 h-4 text-blue-500 dark:text-blue-400" />
-            <span>Ôn tập</span>
-          </Link>
-        </div>
-
-        {/* Streak & Level Progress Widget */}
-        <div className="card-duo p-5 bg-[#0f1b38] border-[#1e3466] flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-6 shadow-xl">
-          {/* Left Section: Streak Info & Action Buttons */}
-          <div className="flex-1 space-y-4">
+        {/* Master Dashboard Block - Gộp tất cả hành động & thống kê thành 1 khối duy nhất theo style Dark Glass nguyên khối không viền */}
+        <div className="rounded-3xl bg-[#090f1e] text-white p-6 sm:p-8 space-y-6 shadow-2xl border-0 overflow-hidden animate-fadeIn">
+          {/* Top Bar: Thống kê tổng quan & Link BXH */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#132247]/80">
             <div className="flex items-center gap-3">
-              <div className="w-14 h-14 rounded-2xl bg-slate-950 border-2 border-amber-500/60 flex items-center justify-center shadow-lg shadow-amber-950/40">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center">
-                  <Flame className="w-7 h-7 text-amber-400 fill-amber-400 animate-pulse" />
-                </div>
+              <div className="w-10 h-10 rounded-2xl bg-[#111c38] flex items-center justify-center text-blue-400 font-black shrink-0">
+                <Zap className="w-5 h-5 text-blue-400 fill-blue-400" />
               </div>
-
               <div>
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Streak hiện tại</span>
-                <div className="flex items-baseline gap-1.5">
-                  <span className="text-2xl font-black text-white">{currentUser?.streak || 0}</span>
-                  <span className="text-sm font-bold text-sky-400">ngày</span>
-                </div>
-                <div className="flex items-center gap-1 text-[11px] text-slate-400 font-medium">
-                  <Trophy className="w-3 h-3 text-amber-400" />
-                  <span>Streak cao nhất: {currentUser?.longest_streak || currentUser?.streak || 0} ngày</span>
-                </div>
+                <h2 className="text-base sm:text-lg font-black tracking-tight text-white">
+                  {currentUser ? `Chào mừng ${currentUser.name || "bạn"}, tiếp tục hành trình nào!` : "Bảng Tiến Độ & Nhiệm Vụ Hôm Nay"}
+                </h2>
+                <p className="text-xs text-slate-400 font-medium">
+                  Duy trì chuỗi học và điểm danh mỗi ngày để tích lũy XP thăng cấp
+                </p>
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3 pt-1">
-              {hasCheckedInToday ? (
-                <button
-                  disabled
-                  className="px-5 py-2.5 rounded-xl bg-emerald-950/60 border border-emerald-500/50 text-emerald-400 font-extrabold text-xs flex items-center gap-2 cursor-not-allowed opacity-90 shadow-md"
-                >
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  <span>ĐÃ ĐIỂM DANH HÔM NAY (50 💎)</span>
-                </button>
-              ) : (
-                <button
-                  onClick={handleCheckin}
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-extrabold text-xs flex items-center gap-2 shadow-lg shadow-sky-900/40 active:scale-95 transition-all cursor-pointer"
-                >
-                  <Flame className="w-4 h-4 text-white fill-white" />
-                  <span>ĐIỂM DANH NGAY · NHẬN 50 💎 HÔM NAY</span>
-                </button>
-              )}
-
-              <Link href="/games" className="px-4 py-2.5 rounded-xl bg-amber-950/30 border border-amber-500/40 text-amber-300 font-extrabold text-xs flex items-center gap-2 hover:bg-amber-950/60">
-                <Gamepad2 className="h-4 w-4" /><span>CHƠI GAME · ÔN TỪ</span>
-              </Link>
-              <Link href="/missions" className="px-4 py-2.5 rounded-xl bg-amber-950/30 border border-amber-500/50 text-amber-300 font-extrabold text-xs flex items-center gap-2 hover:bg-amber-950/60 transition-colors">
-                <Target className="h-4 w-4" /><span>NHIỆM VỤ · {dailyMissionCount}/3</span>
-              </Link>
-            </div>
+            <Link
+              href="/leaderboard"
+              className="self-start sm:self-auto px-4 py-2 rounded-xl bg-[#111c38] hover:bg-[#182850] text-purple-300 text-xs font-bold transition-colors flex items-center gap-1.5 border-0 shrink-0"
+            >
+              <Trophy className="w-4 h-4 text-amber-400" />
+              <span>Xem Bảng Xếp Hạng</span>
+            </Link>
           </div>
 
-          {/* Right Section: Level & XP Progress Bar */}
-          <div className="flex-1 space-y-2.5 bg-slate-950/60 p-4 rounded-2xl border border-slate-800/80">
-            <div className="flex items-center justify-between text-xs">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-indigo-700 border border-purple-400/40 flex items-center justify-center text-xl font-black text-white shadow-md shadow-purple-900/50">
+          {/* 3 Metric Cards: Streak, Level & Tiến trình, Tổng XP */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Card 1: Chuỗi Streak */}
+            <div className="p-5 rounded-2xl bg-[#0b1329] flex flex-col justify-between space-y-3 border-0">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Chuỗi Streak</span>
+                <div className="w-9 h-9 rounded-xl bg-amber-500/20 flex items-center justify-center">
+                  <Flame className="w-5 h-5 text-amber-400 fill-amber-400" />
+                </div>
+              </div>
+              <div>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-3xl sm:text-4xl font-black text-white">{currentUser?.streak || 0}</span>
+                  <span className="text-sm font-bold text-amber-400">ngày</span>
+                </div>
+                <p className="text-xs text-slate-400 font-medium mt-1">
+                  Streak cao nhất: {currentUser?.longest_streak || currentUser?.streak || 0} ngày
+                </p>
+              </div>
+            </div>
+
+            {/* Card 2: Cấp độ (Level) & Tiến trình XP */}
+            <div className="p-5 rounded-2xl bg-[#0b1329] flex flex-col justify-between space-y-3 border-0">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Cấp độ (Level)</span>
+                <div className="w-9 h-9 rounded-xl bg-purple-600 text-white font-black text-sm flex items-center justify-center shadow-md">
                   {userLevel}
                 </div>
-                <div>
-                  <span className="text-xs font-bold text-sky-300 flex items-center gap-1">
-                    <Sparkles className="w-3.5 h-3.5 text-purple-400" /> Lên level {userLevel + 1}
-                  </span>
-                  <span className="text-[11px] text-slate-400 font-medium block">
-                    Còn {neededXPForNext} XP đến level tiếp
-                  </span>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-bold text-sky-300">Lên level {userLevel + 1}</span>
+                  <span className="font-semibold text-slate-400">Còn {neededXPForNext} XP</span>
+                </div>
+                <div className="w-full h-2.5 bg-[#132247] rounded-full overflow-hidden p-0.5">
+                  <div
+                    className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 rounded-full transition-all duration-500"
+                    style={{ width: `${levelProgressPercent}%` }}
+                  />
+                </div>
+                <div className="flex justify-between text-[11px] text-slate-400 font-medium">
+                  <span>{currentLevelProgressXP} / 300 XP</span>
+                  <span>{levelProgressPercent}%</span>
                 </div>
               </div>
-
-              <span className="text-sm font-black text-white font-mono">{userXP.toLocaleString()} XP</span>
             </div>
 
-            <div className="w-full h-3.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800 p-0.5 shadow-inner">
-              <div
-                className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 rounded-full transition-all duration-500 shadow-sm shadow-pink-500/50"
-                style={{ width: `${levelProgressPercent}%` }}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Heatmap & Stats */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 card-duo p-5 bg-[#0f1b38] border-[#1e3466]">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-blue-400" />
-                <h3 className="text-sm font-black text-white">Tiến Độ Học Tập 90 Ngày Gần Nhất</h3>
+            {/* Card 3: Tổng XP tích lũy */}
+            <div className="p-5 rounded-2xl bg-[#0b1329] flex flex-col justify-between space-y-3 border-0">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Tổng Tích Lũy</span>
+                <div className="w-9 h-9 rounded-xl bg-blue-500/20 flex items-center justify-center">
+                  <Zap className="w-5 h-5 text-blue-400 fill-blue-400" />
+                </div>
               </div>
-              <span className="text-[11px] text-slate-400 font-bold">{heatmapData.length} ngày đã ghi nhận</span>
-            </div>
-            <div className="flex flex-wrap gap-1.5 justify-center sm:justify-start">{renderHeatmapGrid()}</div>
-            <div className="mt-4 flex items-center justify-between text-[10px] text-slate-400 font-semibold border-t border-slate-800/80 pt-3">
-              <span>Ít học</span>
-              <div className="flex items-center gap-1">
-                <div className="w-2.5 h-2.5 rounded-sm bg-[#16274e]"></div>
-                <div className="w-2.5 h-2.5 rounded-sm bg-emerald-800"></div>
-                <div className="w-2.5 h-2.5 rounded-sm bg-emerald-600"></div>
-                <div className="w-2.5 h-2.5 rounded-sm bg-emerald-400"></div>
+              <div>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-3xl sm:text-4xl font-black text-white">{(currentUser?.xp || 0).toLocaleString()}</span>
+                  <span className="text-sm font-bold text-blue-400">XP</span>
+                </div>
+                <p className="text-xs text-slate-400 font-medium mt-1">
+                  Đã quy đổi: {(currentUser?.xp || 0)} 💎 kim cương
+                </p>
               </div>
-              <span>Học nhiều</span>
             </div>
           </div>
 
-          <div className="card-duo p-5 bg-[#0f1b38] border-[#1e3466] flex flex-col justify-between space-y-4">
-            <h3 className="text-sm font-black text-white flex items-center gap-2">
-              <Trophy className="w-4 h-4 text-amber-400" /> Thống Kê Cá Nhân
-            </h3>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 rounded-xl bg-[#132247] border border-[#1e3a70]">
-                <span className="text-xs text-slate-400 font-bold flex items-center gap-2">
-                  <Flame className="w-4 h-4 text-amber-400 fill-amber-400" /> Chuỗi Streak
-                </span>
-                <span className="text-sm font-black text-amber-400">{currentUser?.streak || 0} ngày</span>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-[#132247] border border-[#1e3a70]">
-                <span className="text-xs text-slate-400 font-bold flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-blue-400 fill-blue-400" /> Tổng XP
-                </span>
-                <span className="text-sm font-black text-blue-400">{currentUser?.xp || 0} XP</span>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-[#132247] border border-[#1e3a70]">
-                <span className="text-xs text-slate-400 font-bold flex items-center gap-2">
-                  <Trophy className="w-4 h-4 text-purple-400" /> Cấp độ (Level)
-                </span>
-                <span className="text-sm font-black text-purple-400">Level {currentUser?.level || 1}</span>
-              </div>
-            </div>
+          {/* Dãy nút bấm hành động căn giữa - Nguyên khối không viền */}
+          <div className="p-4 rounded-2xl bg-[#070d1a] flex flex-wrap items-center justify-center gap-3 border-0">
+            {/* Điểm danh */}
+            {hasCheckedInToday ? (
+              <button
+                disabled
+                className="px-6 py-3 rounded-xl bg-emerald-500/20 text-emerald-300 font-bold text-xs flex items-center gap-2 cursor-not-allowed border-0"
+              >
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <span>ĐÃ ĐIỂM DANH (+50 💎)</span>
+              </button>
+            ) : (
+              <button
+                onClick={handleCheckin}
+                className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-[0.99] text-white font-bold text-xs shadow-lg shadow-blue-900/40 transition-all cursor-pointer flex items-center gap-2 border-0"
+              >
+                <Flame className="w-4 h-4 text-white fill-white" />
+                <span>ĐIỂM DANH NGAY · NHẬN 50 💎 HÔM NAY</span>
+              </button>
+            )}
 
-            <Link href="/leaderboard" className="w-full py-2.5 rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/40 text-xs font-bold hover:bg-blue-600/30 transition-colors text-center block">
-              Xem Bảng Xếp Hạng
+            {/* Ôn tập */}
+            <Link
+              href="/flashcards"
+              className="px-6 py-3 rounded-xl bg-[#132247] hover:bg-[#1a2f60] active:scale-[0.99] text-white font-bold text-xs transition-colors flex items-center gap-2 border-0"
+            >
+              <Layers className="w-4 h-4 text-blue-400" />
+              <span>ÔN TẬP</span>
+            </Link>
+
+            {/* Chơi game · Ôn từ */}
+            <Link
+              href="/games"
+              className="px-5 py-3 rounded-xl bg-[#111c38] hover:bg-[#182850] active:scale-[0.99] text-amber-300 font-bold text-xs transition-colors flex items-center gap-2 border-0"
+            >
+              <Gamepad2 className="w-4 h-4 text-amber-400" />
+              <span>CHƠI GAME · ÔN TỪ</span>
+            </Link>
+
+            {/* Nhiệm vụ */}
+            <Link
+              href="/missions"
+              className="px-5 py-3 rounded-xl bg-[#111c38] hover:bg-[#182850] active:scale-[0.99] text-sky-300 font-bold text-xs transition-colors flex items-center gap-2 border-0"
+            >
+              <Target className="w-4 h-4 text-sky-400" />
+              <span>NHIỆM VỤ · {dailyMissionCount}/3</span>
             </Link>
           </div>
         </div>
 
-        {/* Quick review and learning routes */}
-        <section className="space-y-3">
-          <div><p className="text-[10px] font-bold uppercase tracking-widest text-sky-300">Bắt đầu nhanh</p><h2 className="mt-1 text-lg font-black text-white">Tiếp tục học tiếng Hàn</h2></div>
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-            <Link href="/lessons" className="card-duo flex items-center gap-3 p-4 hover:border-sky-500/60"><span className="rounded-xl bg-sky-500/15 p-3 text-sky-300"><BookOpen className="h-5 w-5" /></span><span><b className="block text-sm text-white">Lộ trình bài học</b><small className="text-xs text-slate-400">16 bài từ sơ cấp đến trung cấp</small></span></Link>
-            <Link href="/flashcards" className="card-duo flex items-center gap-3 p-4 hover:border-sky-500/60"><span className="rounded-xl bg-blue-500/15 p-3 text-blue-300"><Layers className="h-5 w-5" /></span><span><b className="block text-sm text-white">Ôn từ vựng</b><small className="text-xs text-slate-400">Flashcard SRS và bộ Anki</small></span></Link>
-            <Link href="/listen" className="card-duo flex items-center gap-3 p-4 hover:border-cyan-500/60"><span className="rounded-xl bg-cyan-500/15 p-3 text-cyan-300"><Headphones className="h-5 w-5" /></span><span><b className="block text-sm text-white">Nghe thụ động</b><small className="text-xs text-slate-400">Nghe hội thoại theo bài</small></span></Link>
-            <Link href="/topics" className="card-duo flex items-center gap-3 p-4 hover:border-emerald-500/60"><span className="rounded-xl bg-emerald-500/15 p-3 text-emerald-300"><Compass className="h-5 w-5" /></span><span><b className="block text-sm text-white">Chủ đề học</b><small className="text-xs text-slate-400">Từ mới trong ngữ cảnh</small></span></Link>
-            <Link href="/ai-speaking" className="card-duo flex items-center gap-3 p-4 hover:border-violet-500/60"><span className="rounded-xl bg-violet-500/15 p-3 text-violet-300"><Headphones className="h-5 w-5" /></span><span><b className="block text-sm text-white">Nghe và nói theo</b><small className="text-xs text-slate-400">Dùng nhận diện giọng nói</small></span></Link>
+        {/* Tiến Độ Học Tập 90 Ngày Gần Nhất - Đồng bộ khối nguyên khối không viền */}
+        <div className="rounded-3xl p-6 sm:p-8 bg-[#090f1e] text-white shadow-2xl border-0 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-blue-400" />
+              <h3 className="text-sm font-black text-white">Tiến Độ Học Tập 90 Ngày Gần Nhất</h3>
+            </div>
+            <span className="text-[11px] text-slate-400 font-bold">{heatmapData.length} ngày đã ghi nhận</span>
           </div>
-        </section>
 
-        {/* Module Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Link href="/hangul" className="card-duo card-duo-hover p-6 bg-[#0f1b38] border-[#1e3466] cursor-pointer space-y-3 block">
-            <div className="w-10 h-10 rounded-2xl bg-blue-500/20 text-blue-400 flex items-center justify-center font-black"><BookOpen className="w-5 h-5" /></div>
-            <h3 className="text-base font-black text-white">Bảng Chữ Cái Hangeul</h3>
-            <p className="text-xs text-slate-400">Học toàn bộ Nguyên âm, Phụ âm và Quy tắc ghép vần tiếng Hàn</p>
-          </Link>
-          <Link href="/flashcards" className="card-duo card-duo-hover p-6 bg-[#0f1b38] border-[#1e3466] cursor-pointer space-y-3 block">
-            <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-black"><Layers className="w-5 h-5" /></div>
-            <h3 className="text-base font-black text-white">Từ Vựng SRS Anki</h3>
-            <p className="text-xs text-slate-400">FSRS 4.5 tự điều chỉnh lịch ôn theo độ khó và độ ổn định ghi nhớ</p>
-          </Link>
-          <Link href="/topik" className="card-duo card-duo-hover p-6 bg-[#0f1b38] border-[#1e3466] cursor-pointer space-y-3 block">
-            <div className="w-10 h-10 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-black"><Trophy className="w-5 h-5" /></div>
-            <h3 className="text-base font-black text-white">Đề Thi TOPIK I / II</h3>
-            <p className="text-xs text-slate-400">Thi thử trực tuyến có timer đếm ngược và giải thích chi tiết</p>
-          </Link>
+          <div className="flex flex-wrap gap-1.5 justify-center sm:justify-start pt-1">
+            {renderHeatmapGrid()}
+          </div>
+
+          <div className="mt-3 flex items-center justify-between text-[10px] text-slate-400 font-semibold border-t border-[#132247] pt-3">
+            <span>Ít học</span>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 rounded-sm bg-[#16274e]" />
+              <div className="w-2.5 h-2.5 rounded-sm bg-emerald-800" />
+              <div className="w-2.5 h-2.5 rounded-sm bg-emerald-600" />
+              <div className="w-2.5 h-2.5 rounded-sm bg-emerald-400" />
+            </div>
+            <span>Học nhiều</span>
+          </div>
         </div>
       </div>
     </AppShell>

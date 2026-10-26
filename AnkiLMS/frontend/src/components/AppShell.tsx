@@ -91,7 +91,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       </div>
 
       <BottomNav />
-      <FloatingCommunityChat />
+      {pathname !== "/" && <FloatingCommunityChat />}
 
       <AnkiImporter
         isOpen={isImporterOpen}

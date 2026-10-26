@@ -40,7 +40,6 @@ interface SidebarProps {
 
 const mainNav = [
   { href: "/", label: "Trang chủ", icon: Home },
-  { href: "/classes", label: "Lớp học AnkiVN", icon: Users, badge: "MỚI" },
   { href: "/hangul", label: "Bảng Hangeul", icon: BookOpen },
   { href: "/lessons", label: "Lộ trình bài học", icon: BookOpen, badge: "16 BÀI" },
   { href: "/flashcards", label: "Từ vựng SRS / Ôn Anki", icon: Brain },
@@ -49,20 +48,24 @@ const mainNav = [
   { href: "/shadowing", label: "Shadowing", icon: Repeat },
   { href: "/listen", label: "Nghe thụ động", icon: ListMusic, badge: "MỚI" },
   { href: "/games", label: "Trò chơi từ vựng", icon: Gamepad2 },
-  { href: "/ai-speaking", label: "Luyện nói tiếng Hàn", icon: Mic },
-  { href: "/topik", label: "Luyện thi TOPIK I/II", icon: GraduationCap, badge: "HOT" },
 ];
 
 const communityNav = [
   { href: "/leaderboard", label: "Bảng xếp hạng", icon: Trophy },
   { href: "/achievements", label: "Huy hiệu & Mốc thưởng", icon: Award },
-  { href: "/community", label: "Cộng đồng Haechi", icon: MessageSquare },
-  { href: "/chat", label: "Phòng Trò chuyện", icon: MessagesSquare },
   { href: "/feedback", label: "Góp ý & Đánh giá", icon: MessageSquareHeart },
 ];
 
+// LƯU Ý BACKEND: Các tính năng Beta đang thử nghiệm UX/UI, không đưa lên production
+const betaNav = [
+  { href: "/ai-speaking", label: "Luyện nói tiếng Hàn", icon: Mic, badge: "BETA" },
+  { href: "/topik", label: "Luyện thi TOPIK I/II", icon: GraduationCap, badge: "BETA" },
+  { href: "/community", label: "Cộng đồng Haechi", icon: MessageSquare, badge: "BETA" },
+  { href: "/chat", label: "Phòng Trò chuyện", icon: MessagesSquare, badge: "BETA" },
+  { href: "/rewards", label: "Cửa hàng Đổi quà", icon: ShoppingBag, badge: "BETA" },
+];
+
 const otherNav = [
-  { href: "/rewards", label: "Cửa hàng Đổi quà", icon: ShoppingBag },
   { href: "/referrals", label: "Mời bạn bè", icon: Gift, badge: "MỚI" },
   { href: "/pricing", label: "Nâng cấp PRO", icon: Crown },
 ];
@@ -160,6 +163,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {mainNav.map(renderNavItem)}
           {currentUser?.role === "admin" && renderNavItem({ href: "/admin", label: "Quản trị hệ thống", icon: ShieldCheck })}
         </nav>
+
+        {/* Divider & Beta Section */}
+        <div className="pt-2 border-t border-[#19284d]">
+          {!collapsed && (
+            <div className="px-3 py-1 flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-purple-400">
+                TÍNH NĂNG BETA
+              </span>
+              <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">
+                THỬ NGHIỆM
+              </span>
+            </div>
+          )}
+          <div className="space-y-1 mt-1">
+            {betaNav.map(renderNavItem)}
+          </div>
+        </div>
 
         {/* Divider & Community Section */}
         <div className="pt-2 border-t border-[#19284d]">
