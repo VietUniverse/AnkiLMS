@@ -8,7 +8,7 @@ import { Home, BookOpen, Layers, Trophy, User } from "lucide-react";
 const items = [
   { href: "/", label: "Trang chủ", icon: Home },
   { href: "/lessons", label: "Bài học", icon: BookOpen },
-  { href: "/flashcards", label: "Ôn Anki", icon: Layers },
+  { href: "/flashcards", label: "Từ vựng", icon: Layers },
   { href: "/leaderboard", label: "Xếp hạng", icon: Trophy },
   { href: "/profile", label: "Hồ sơ", icon: User },
 ];

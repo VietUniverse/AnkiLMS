@@ -40,8 +40,7 @@ interface SidebarProps {
 const mainNav = [
   { href: "/", label: "Trang chủ", icon: Home },
   { href: "/hangul", label: "Bảng Hangeul", icon: BookOpen },
-  { href: "/flashcards", label: "Từ vựng SRS / Ôn Anki", icon: Brain },
-  { href: "/topics", label: "Học theo chủ đề", icon: Compass },
+  { href: "/flashcards", label: "Từ vựng", icon: Brain },
   { href: "/dictation", label: "Luyện nghe chính tả", icon: Headphones },
   { href: "/shadowing", label: "Shadowing", icon: Repeat },
   { href: "/listen", label: "Nghe thụ động", icon: ListMusic, badge: "MỚI" },

@@ -250,13 +250,13 @@ export default function Home() {
               </button>
             )}
 
-            {/* Ôn tập */}
+            {/* Từ vựng */}
             <Link
               href="/flashcards"
               className="px-5 py-2.5 rounded-xl bg-[#132247] hover:bg-[#1a2f60] active:scale-[0.99] text-white font-bold text-xs transition-colors flex items-center gap-2 border-0"
             >
               <Layers className="w-4 h-4 text-blue-400" />
-              <span>ÔN TẬP</span>
+              <span>TỪ VỰNG</span>
             </Link>
 
             {/* Chơi game · Ôn từ */}

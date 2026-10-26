@@ -1,8 +1,14 @@
 "use client";
 
-import { AppShell } from "../../components/AppShell";
-import { KoreanTopicsModule } from "../../components/KoreanTopicsModule";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function TopicsPage() {
-  return <AppShell><KoreanTopicsModule /></AppShell>;
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace("/flashcards?tab=topics");
+  }, [router]);
+
+  return null;
 }
