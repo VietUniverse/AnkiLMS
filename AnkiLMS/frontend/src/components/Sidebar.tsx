@@ -24,7 +24,6 @@ import {
   LogOut,
   Award,
   User,
-  Users,
   ShieldCheck,
   Gamepad2,
   ListMusic,
@@ -88,19 +87,25 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <Link
         key={item.href}
         href={item.href}
-        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-bold text-xs transition-all duration-150 border-2 ${
+        className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-colors border-0 ${
           active
-            ? "bg-[#2563eb]/20 border-[#2563eb]/60 text-[#38bdf8] shadow-sm"
-            : "border-transparent text-[#8b9bb4] hover:bg-[#132247] hover:border-[#1e3a70] hover:text-white"
+            ? "bg-blue-600 text-white font-extrabold shadow-md shadow-blue-900/30"
+            : "text-slate-400 hover:text-white hover:bg-[#111c38] font-medium"
         }`}
         title={collapsed ? item.label : undefined}
       >
         <div className="flex items-center gap-2.5">
-          <Icon className="w-4 h-4 shrink-0" />
-          {!collapsed && <span className="tracking-normal">{item.label}</span>}
+          <Icon className={`w-4 h-4 shrink-0 ${active ? "text-white" : "text-slate-400"}`} />
+          {!collapsed && <span className="tracking-normal truncate">{item.label}</span>}
         </div>
         {!collapsed && item.badge && (
-          <span className="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-gradient-to-r from-rose-500 to-amber-500 text-white animate-pulse">
+          <span
+            className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md border-0 ${
+              item.badge === "BETA"
+                ? "bg-purple-500/20 text-purple-300"
+                : "bg-blue-500/20 text-blue-300"
+            }`}
+          >
             {item.badge}
           </span>
         )}
@@ -110,25 +115,25 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      className={`hidden lg:flex flex-col border-r-2 border-[#19284d] bg-[#0b1329] h-screen sticky top-0 justify-between z-30 select-none transition-all duration-300 ${
+      className={`hidden lg:flex flex-col border-r border-[#111c38]/70 bg-[#090f1e] text-white h-screen sticky top-0 justify-between z-30 select-none transition-all duration-300 ${
         collapsed ? "w-16" : "w-64"
       }`}
     >
       {/* HaechiVN Brand Header */}
       <Link
         href="/"
-        className="flex h-16 items-center border-b-2 border-[#19284d] px-4 shrink-0 justify-between cursor-pointer hover:bg-[#132247] transition-colors"
+        className="flex h-16 items-center border-b border-[#111c38]/70 px-4 shrink-0 justify-between cursor-pointer hover:bg-[#0b1329] transition-colors"
       >
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-sky-400 shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
             <GraduationCap className="w-4 h-4" />
           </div>
           {!collapsed && (
             <div>
-              <span className="font-extrabold text-lg text-white tracking-tight block leading-none">
-                HaechiVN
+              <span className="font-black text-lg text-white tracking-tight block leading-none">
+                Haechi<span className="text-blue-400">VN</span>
               </span>
-              <span className="text-[9px] font-bold text-sky-400 tracking-wider">Tiếng Hàn & Anki LMS</span>
+              <span className="text-[9px] font-semibold text-slate-400 tracking-wider">Tiếng Hàn & Anki LMS</span>
             </div>
           )}
         </div>
@@ -136,73 +141,80 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Navigation Scrollable Area */}
       <div className="flex-1 overflow-y-auto p-3 space-y-4">
-        {/* Anki Import Quick Button */}
+        {/* Anki Import Quick Button - Solid unbordered */}
         {!collapsed ? (
           <button
             onClick={onOpenImporter}
-            className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:brightness-110 active:translate-y-[1px] border-b-4 border-indigo-900 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-all"
+            className="w-full py-2.5 px-3 rounded-xl bg-[#111c38] hover:bg-[#182850] active:scale-[0.99] text-white font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer border-0 shadow-sm"
           >
-            <Upload className="w-4 h-4 animate-bounce text-yellow-300" />
+            <Upload className="w-4 h-4 text-blue-400" />
             <span>Kéo Thả Thẻ Anki (.apkg)</span>
           </button>
         ) : (
           <button
             onClick={onOpenImporter}
-            className="w-full py-2.5 rounded-xl bg-purple-600 hover:brightness-110 text-white flex items-center justify-center"
-            title="Import Anki"
+            className="w-full py-2.5 rounded-xl bg-[#111c38] hover:bg-[#182850] text-blue-400 flex items-center justify-center border-0 cursor-pointer"
+            title="Kéo thả thẻ Anki"
           >
             <Upload className="w-4 h-4" />
           </button>
         )}
 
-        {/* Main Section */}
-        <nav className="space-y-1">
-          {mainNav.map(renderNavItem)}
-          {currentUser?.role === "admin" && renderNavItem({ href: "/admin", label: "Quản trị hệ thống", icon: ShieldCheck })}
-        </nav>
+        {/* Section 1: HỌC TẬP (Chính) */}
+        <div>
+          {!collapsed && (
+            <p className="px-3 py-1 text-[10px] font-extrabold uppercase tracking-widest text-slate-500">
+              HỌC TẬP
+            </p>
+          )}
+          <nav className="space-y-0.5 mt-1">
+            {mainNav.map(renderNavItem)}
+            {currentUser?.role === "admin" && renderNavItem({ href: "/admin", label: "Quản trị hệ thống", icon: ShieldCheck })}
+          </nav>
+        </div>
 
-        {/* Divider & Beta Section */}
-        <div className="pt-2 border-t border-[#19284d]">
+        {/* Section 2: CỘNG ĐỒNG & XẾP HẠNG */}
+        <div className="pt-3 border-t border-[#132247]/60">
+          {!collapsed && (
+            <p className="px-3 py-1 text-[10px] font-extrabold uppercase tracking-widest text-slate-500">
+              CỘNG ĐỒNG & XẾP HẠNG
+            </p>
+          )}
+          <div className="space-y-0.5 mt-1">
+            {communityNav.map(renderNavItem)}
+          </div>
+        </div>
+
+        {/* Section 3: TÍNH NĂNG BETA (Xuống dưới cùng) */}
+        <div className="pt-3 border-t border-[#132247]/60">
           {!collapsed && (
             <div className="px-3 py-1 flex items-center justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-purple-400">
+              <span className="text-[10px] font-extrabold uppercase tracking-widest text-purple-400">
                 TÍNH NĂNG BETA
               </span>
-              <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">
+              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">
                 THỬ NGHIỆM
               </span>
             </div>
           )}
-          <div className="space-y-1 mt-1">
+          <div className="space-y-0.5 mt-1">
             {betaNav.map(renderNavItem)}
-          </div>
-        </div>
-
-        {/* Divider & Community Section */}
-        <div className="pt-2 border-t border-[#19284d]">
-          {!collapsed && (
-            <p className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[#64748b]">
-              CỘNG ĐỒNG & XẾP HẠNG
-            </p>
-          )}
-          <div className="space-y-1 mt-1">
-            {communityNav.map(renderNavItem)}
           </div>
         </div>
       </div>
 
       {/* Bottom Action Area: Login / User Profile */}
-      <div className="p-3 space-y-2 border-t-2 border-[#19284d] bg-[#090f1d] shrink-0">
+      <div className="p-3 space-y-2 border-t border-[#111c38]/70 bg-[#070d1a] shrink-0">
         {currentUser ? (
-          <div className="flex items-center justify-between p-2 rounded-xl bg-[#132247] border border-[#1e3a70]">
+          <div className="flex items-center justify-between p-2 rounded-xl bg-[#0b1329] border-0">
             <Link
               href="/profile"
-              className="flex items-center gap-2 min-w-0 hover:opacity-80 transition-opacity"
+              className="flex items-center gap-2 min-w-0 hover:opacity-85 transition-opacity"
             >
               {currentUser.avatar_url ? (
                 <img src={currentUser.avatar_url} alt={currentUser.name} className="w-8 h-8 rounded-lg object-cover shrink-0" />
               ) : (
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center font-bold text-xs text-white shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-xs text-white shrink-0">
                   {currentUser.name?.[0]?.toUpperCase() || "?"}
                 </div>
               )}
@@ -210,14 +222,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <div className="min-w-0">
                   <span className="font-bold text-xs text-white block truncate">{currentUser.name}</span>
                   <span className="text-[10px] text-amber-400 font-semibold block">
-                    Lv.{Math.floor((currentUser.xp || 0) / 300) + 1} • {currentUser.xp || 0} XP
+                    Lv.{Math.floor((currentUser.xp || 0) / 300) + 1} · {currentUser.xp || 0} XP
                   </span>
                 </div>
               )}
             </Link>
             <button
               onClick={onLogout}
-              className="p-1.5 text-slate-400 hover:text-rose-400 rounded-lg transition-colors shrink-0"
+              className="p-1.5 text-slate-400 hover:text-rose-400 rounded-lg transition-colors shrink-0 cursor-pointer border-0"
               title="Đăng xuất"
             >
               <LogOut className="w-4 h-4" />
@@ -226,15 +238,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
         ) : (
           <button
             onClick={() => onOpenAuth(false)}
-            className="w-full py-2.5 px-4 rounded-xl bg-[#2563eb] hover:bg-[#1d4ed8] active:translate-y-[1px] border-b-4 border-[#1e40af] text-white font-black text-xs uppercase tracking-wider shadow-lg transition-all"
+            className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider transition-all cursor-pointer border-0 shadow-md shadow-blue-900/30"
           >
-            {collapsed ? <User className="w-4 h-4 mx-auto" /> : "ĐĂNG NHẬP HAECHIVN"}
+            {collapsed ? <User className="w-4 h-4 mx-auto" /> : "ĐĂNG NHẬP"}
           </button>
         )}
 
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="w-full flex items-center justify-center gap-2 py-1.5 text-xs font-bold text-[#8b9bb4] hover:text-white transition-colors"
+          className="w-full flex items-center justify-center gap-2 py-1.5 text-xs font-semibold text-slate-500 hover:text-slate-300 transition-colors cursor-pointer border-0"
         >
           {collapsed ? <ChevronsRight className="w-4 h-4" /> : <ChevronsLeft className="w-4 h-4" />}
           {!collapsed && <span>{collapsed ? "Mở rộng" : "Thu gọn"}</span>}
