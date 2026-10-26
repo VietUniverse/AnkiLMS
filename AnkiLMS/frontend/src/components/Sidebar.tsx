@@ -63,11 +63,8 @@ const betaNav = [
   { href: "/community", label: "Cộng đồng Haechi", icon: MessageSquare, badge: "BETA" },
   { href: "/chat", label: "Phòng Trò chuyện", icon: MessagesSquare, badge: "BETA" },
   { href: "/rewards", label: "Cửa hàng Đổi quà", icon: ShoppingBag, badge: "BETA" },
-];
-
-const otherNav = [
-  { href: "/referrals", label: "Mời bạn bè", icon: Gift, badge: "MỚI" },
-  { href: "/pricing", label: "Nâng cấp PRO", icon: Crown },
+  { href: "/referrals", label: "Mời bạn bè", icon: Gift, badge: "BETA" },
+  { href: "/pricing", label: "Nâng cấp PRO", icon: Crown, badge: "BETA" },
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -190,13 +187,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
           )}
           <div className="space-y-1 mt-1">
             {communityNav.map(renderNavItem)}
-          </div>
-        </div>
-
-        {/* Divider & Other Section */}
-        <div className="pt-2 border-t border-[#19284d]">
-          <div className="space-y-1">
-            {otherNav.map(renderNavItem)}
           </div>
         </div>
       </div>
