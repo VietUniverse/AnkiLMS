@@ -31,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" className="dark">
+    <html lang="vi" data-theme="light">
       <head>
         <link rel="apple-touch-icon" href="/favicon.ico" />
       </head>

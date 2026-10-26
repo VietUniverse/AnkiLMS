@@ -14,12 +14,12 @@ const THEMES: { id: Theme; label: string; description: string; icon: typeof Sun 
 const STORAGE_KEY = "haechivn_theme";
 
 export function ThemeSwitcher() {
-  const [theme, setTheme] = useState<Theme>("dark");
+  const [theme, setTheme] = useState<Theme>("light");
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const saved = window.localStorage.getItem(STORAGE_KEY);
-    const next: Theme = saved === "light" || saved === "rainbow" ? saved : "dark";
+    const next: Theme = saved === "dark" || saved === "rainbow" ? saved : "light";
     setTheme(next);
     document.documentElement.dataset.theme = next;
   }, []);
@@ -31,7 +31,7 @@ export function ThemeSwitcher() {
     setOpen(false);
   }
 
-  const ActiveIcon = THEMES.find((item) => item.id === theme)?.icon ?? Moon;
+  const ActiveIcon = THEMES.find((item) => item.id === theme)?.icon ?? Sun;
 
   return (
     <div className="relative">

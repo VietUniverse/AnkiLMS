@@ -118,29 +118,27 @@ export default function Home() {
   return (
     <AppShell>
       <div className="space-y-8 animate-fadeIn">
-        {/* Welcome Popup / Banner */}
+        {/* Welcome Popup / Banner - Khối nguyên khối màu không viền, ưu tiên giao diện sáng, căn giữa */}
         {showWelcome && (
-          <div className="card-duo p-6 bg-gradient-to-r from-[#13244e] via-[#162a5b] to-[#1d3572] border-[#274893] relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6 animate-fadeIn">
-            <div className="space-y-2 z-10 text-left pr-8">
-              <h1 className="home-hero-title text-2xl md:text-3xl font-black tracking-tight">
-                Chào mừng đến với <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">HaechiVN</span>
-              </h1>
-              <p className="text-xs md:text-sm text-slate-300 max-w-xl leading-relaxed">
-                Học từ vựng lặp lại ngắt quãng Anki, luyện nghe chính tả, Shadowing chuẩn giọng Seoul và thử sức với ngân hàng đề thi TOPIK.
-              </p>
-              <div className="pt-2 flex items-center gap-3">
-                <button
-                  onClick={() => handleDismissWelcome(true)}
-                  className="text-xs text-slate-400 hover:text-slate-200 underline decoration-slate-500 underline-offset-4 cursor-pointer transition-colors"
-                >
-                  Không hiển thị lại
-                </button>
-              </div>
+          <div className="relative rounded-3xl p-8 sm:p-10 text-center space-y-3.5 bg-[#e8eef7] dark:bg-[#111c38] shadow-sm overflow-hidden animate-fadeIn">
+            <h1 className="text-2xl md:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+              Chào mừng đến với <span className="text-blue-600 dark:text-blue-400">HaechiVN</span>
+            </h1>
+            <p className="text-sm text-slate-600 dark:text-slate-300 max-w-xl mx-auto leading-relaxed font-medium">
+              Học từ vựng lặp lại ngắt quãng Anki, luyện nghe chính tả, Shadowing chuẩn giọng Seoul và thử sức với ngân hàng đề thi TOPIK.
+            </p>
+            <div className="pt-1 flex items-center justify-center">
+              <button
+                onClick={() => handleDismissWelcome(true)}
+                className="text-xs text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 underline underline-offset-4 cursor-pointer transition-colors font-medium"
+              >
+                Không hiển thị lại
+              </button>
             </div>
 
             <button
               onClick={() => handleDismissWelcome(false)}
-              className="absolute top-4 right-4 p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+              className="absolute top-4 right-4 p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors cursor-pointer"
               title="Đóng tạm thời"
               aria-label="Đóng thông báo"
             >
