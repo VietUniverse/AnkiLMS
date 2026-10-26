@@ -88,10 +88,9 @@ export default function LoginPage() {
                 <div className="text-3xl font-black text-white tracking-tight">행복하다</div>
                 <div className="text-base text-slate-300 font-semibold">Hạnh phúc</div>
               </div>
-              <div className="grid grid-cols-3 gap-2 pt-1 text-[11px] font-bold">
-                <div className="py-2 rounded-xl bg-rose-500/20 text-rose-300 text-center">Khó (1 ngày)</div>
-                <div className="py-2 rounded-xl bg-blue-500/20 text-blue-300 text-center">Tốt (3 ngày)</div>
-                <div className="py-2 rounded-xl bg-emerald-500/20 text-emerald-300 text-center">Dễ (7 ngày)</div>
+              <div className="grid grid-cols-2 gap-3 pt-1 text-xs font-bold">
+                <div className="py-2.5 rounded-xl bg-rose-500/20 text-rose-300 text-center">Quên</div>
+                <div className="py-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 text-center">Nhớ</div>
               </div>
             </div>
           </div>
