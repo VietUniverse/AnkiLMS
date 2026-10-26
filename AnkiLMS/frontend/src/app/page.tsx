@@ -147,23 +147,33 @@ export default function Home() {
           </div>
         )}
 
-        {/* Quick Action Buttons */}
-        <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
-          <Link href="/flashcards" className="btn-duo btn-duo-primary px-6 py-3 text-xs flex items-center gap-2">
-            <Layers className="w-4 h-4" />
-            <span>Ôn Tập Thẻ Từ Vựng ngay</span>
-          </Link>
+        {/* Quick Action Buttons - Đồng bộ style trang login: nguyên khối không viền, căn giữa */}
+        <div className="flex flex-wrap items-center justify-center gap-3.5">
           {hasCheckedInToday ? (
-            <button disabled className="px-6 py-3 rounded-xl bg-emerald-600/20 text-emerald-400 border border-emerald-500/40 text-xs font-bold flex items-center gap-2 cursor-not-allowed opacity-90 shadow-md">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <span>ĐÃ ĐIỂM DANH HÔM NAY (+50 XP)</span>
+            <button
+              disabled
+              className="px-7 py-3 rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold text-xs flex items-center gap-2 cursor-not-allowed"
+            >
+              <CheckCircle2 className="w-4 h-4" />
+              <span>Đã điểm danh</span>
             </button>
           ) : (
-            <button onClick={handleCheckin} className="btn-duo btn-duo-orange px-6 py-3 text-xs flex items-center gap-2 cursor-pointer">
+            <button
+              onClick={handleCheckin}
+              className="px-7 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-[0.99] text-white font-bold text-xs shadow-md shadow-blue-900/30 transition-all cursor-pointer flex items-center gap-2"
+            >
               <Flame className="w-4 h-4" />
-              <span>ĐIỂM DANH NGAY (+50 XP)</span>
+              <span>Điểm danh</span>
             </button>
           )}
+
+          <Link
+            href="/flashcards"
+            className="px-7 py-3 rounded-xl bg-[#e8eef7] hover:bg-[#d8e4f5] dark:bg-[#132247] dark:hover:bg-[#1a2f60] text-slate-800 dark:text-slate-200 font-bold text-xs transition-colors flex items-center gap-2 cursor-pointer"
+          >
+            <Layers className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+            <span>Ôn tập</span>
+          </Link>
         </div>
 
         {/* Streak & Level Progress Widget */}
