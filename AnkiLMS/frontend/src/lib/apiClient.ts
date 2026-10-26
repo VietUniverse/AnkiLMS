@@ -71,18 +71,29 @@ export class ApiClient {
 
   public static async fetchMe(): Promise<UserProfile | null> {
     const token = this.getToken();
+    const localUser = this.getCurrentUser();
+    // Nếu chưa có token thì trả về user cục bộ ngay lập tức (không chờ gọi API 404)
+    if (!token) {
+      return localUser;
+    }
+
+    const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+    const timer = controller ? setTimeout(() => controller.abort(), 800) : null;
+
     try {
       const res = await fetch("/api/auth/me", {
         credentials: "same-origin",
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        headers: { Authorization: `Bearer ${token}` },
+        signal: controller?.signal,
       });
+      if (timer) clearTimeout(timer);
       if (res.status === 401) {
         localStorage.removeItem(LOCAL_STORAGE_TOKEN_KEY);
         localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
         return null;
       }
       if (!res.ok) {
-        return this.getCurrentUser();
+        return localUser;
       }
       const data = await res.json();
       if (data.user) {
@@ -90,9 +101,11 @@ export class ApiClient {
         return data.user;
       }
     } catch (e) {
-      console.warn("Offline or API error, fallback to local user");
+      // Bỏ qua lỗi mạng / offline / timeout
+    } finally {
+      if (timer) clearTimeout(timer);
     }
-    return this.getCurrentUser();
+    return localUser;
   }
 
   public static async login(email: string, password: string): Promise<UserProfile> {

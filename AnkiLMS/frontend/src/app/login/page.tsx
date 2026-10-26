@@ -56,7 +56,7 @@ export default function LoginPage() {
     <div
       className="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 lg:p-10 relative font-sans overflow-y-auto bg-slate-950"
       style={{
-        backgroundImage: "url('/images/login-bg.png')",
+        backgroundImage: "url('/images/login-bg.webp')",
         backgroundPosition: "center",
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
