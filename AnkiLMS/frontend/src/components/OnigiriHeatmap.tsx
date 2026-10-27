@@ -250,7 +250,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
   return (
     <div
       id="onigiri-heatmap-container"
-      className={`relative rounded-2xl p-5 sm:p-6 bg-[#0f131a] text-slate-100 border border-[#1e2533] shadow-xl overflow-hidden ${className}`}
+      className={`relative rounded-2xl p-5 sm:p-6 bg-[#0f131a] text-slate-100 shadow-xl overflow-hidden border-0 ${className}`}
     >
       {/* Background radial glow */}
       <div className="pointer-events-none absolute -top-24 -right-24 w-80 h-80 rounded-full bg-sky-500/10 blur-3xl" />
@@ -260,7 +260,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-5 relative z-10">
         {/* Header Left: Onigiri Avatar & Title */}
         <div className="flex items-center gap-3">
-          <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-sky-500/20 to-indigo-500/15 border border-sky-500/30 flex items-center justify-center p-1.5 shadow-sm group">
+          <div className="relative w-9 h-9 rounded-xl bg-sky-500/15 flex items-center justify-center p-1.5 shadow-sm group border-0">
             <img
               src="/onigiri.svg"
               alt="Onigiri"
@@ -272,7 +272,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
               <h3 className="text-sm sm:text-base font-bold tracking-wider uppercase text-white">
                 HOẠT ĐỘNG ÔN TẬP
               </h3>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-sky-500/15 text-sky-400 border border-sky-500/25 tracking-wide">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-sky-500/15 text-sky-400 tracking-wide border-0">
                 ONIGIRI
               </span>
             </div>
@@ -286,7 +286,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
         <div className="flex flex-wrap items-center gap-2.5 self-stretch lg:self-auto justify-between lg:justify-end">
           {/* Streak Counter Chip */}
           <div
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-orange-500/15 border border-orange-500/25 text-orange-400 text-xs font-semibold shadow-sm"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-orange-500/15 text-orange-400 text-xs font-semibold shadow-sm border-0"
             title="Chuỗi ngày liên tục học tập"
           >
             <Flame className="w-4 h-4 text-orange-400 animate-pulse fill-orange-400/30" />
@@ -294,7 +294,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
           </div>
 
           {/* Navigation Year / Month Buttons */}
-          <div className="flex items-center gap-1 px-1 py-0.5 rounded-lg bg-[#181d28] border border-[#262e3f] text-xs">
+          <div className="flex items-center gap-1 px-1 py-0.5 rounded-lg bg-[#181d28] text-xs border-0">
             <button
               onClick={() => {
                 if (view === "month") {
@@ -329,10 +329,10 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
           </div>
 
           {/* View Filter Pill Switcher (Year, Month, Week) */}
-          <div className="flex items-center p-0.5 rounded-lg bg-[#181d28] border border-[#262e3f] text-xs">
+          <div className="flex items-center p-0.5 rounded-lg bg-[#181d28] text-xs border-0">
             <button
               onClick={() => setView("year")}
-              className={`px-2.5 py-1 rounded-md font-semibold transition-all ${
+              className={`px-2.5 py-1 rounded-md font-semibold transition-all border-0 ${
                 view === "year"
                   ? "bg-sky-500 text-white shadow-sm"
                   : "text-slate-400 hover:text-slate-200"
@@ -342,7 +342,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
             </button>
             <button
               onClick={() => setView("month")}
-              className={`px-2.5 py-1 rounded-md font-semibold transition-all ${
+              className={`px-2.5 py-1 rounded-md font-semibold transition-all border-0 ${
                 view === "month"
                   ? "bg-sky-500 text-white shadow-sm"
                   : "text-slate-400 hover:text-slate-200"
@@ -352,7 +352,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
             </button>
             <button
               onClick={() => setView("week")}
-              className={`px-2.5 py-1 rounded-md font-semibold transition-all ${
+              className={`px-2.5 py-1 rounded-md font-semibold transition-all border-0 ${
                 view === "week"
                   ? "bg-sky-500 text-white shadow-sm"
                   : "text-slate-400 hover:text-slate-200"
@@ -366,7 +366,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
           {onToggleDemo && (
             <button
               onClick={onToggleDemo}
-              className="text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-slate-700/60 bg-[#141923] hover:bg-[#1a212e] text-slate-300 transition-all flex items-center gap-1.5"
+              className="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-[#181d28] hover:bg-[#202736] text-slate-300 transition-all flex items-center gap-1.5 border-0"
               title="Bật/Tắt dữ liệu demo"
             >
               <span
@@ -379,7 +379,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
       </div>
 
       {/* --- Heatmap Body --- */}
-      <div className="relative z-10 bg-[#0a0d14] rounded-xl p-4 border border-[#1a2130] overflow-x-auto scrollbar-thin">
+      <div className="relative z-10 bg-[#0a0d14] rounded-xl p-4 overflow-x-auto scrollbar-thin border-0">
         {/* YEAR VIEW */}
         {view === "year" && (
           <div className="inline-flex flex-col min-w-max mx-auto text-left">
@@ -550,7 +550,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
                   </p>
                 </div>
 
-                <div className="text-center w-full mt-2 pt-2 border-t border-black/10 dark:border-white/10">
+                <div className="text-center w-full mt-2 pt-2 bg-black/10 dark:bg-white/5 rounded-lg py-1.5 border-0">
                   {day.item && day.item.time_spent_minutes > 0 ? (
                     <>
                       <p
@@ -628,7 +628,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
       {/* --- Floating Tooltip --- */}
       {hoveredCell && (
         <div
-          className="fixed pointer-events-none z-50 transform -translate-x-1/2 -translate-y-full mb-2 bg-[#0c1017] text-white border border-[#222a3a] rounded-lg px-3 py-2 shadow-2xl text-xs space-y-0.5 animate-fadeIn"
+          className="fixed pointer-events-none z-50 transform -translate-x-1/2 -translate-y-full mb-2 bg-[#0c1017] text-white rounded-lg px-3 py-2 shadow-2xl text-xs space-y-0.5 animate-fadeIn border-0"
           style={{
             left: hoveredCell.x,
             top: hoveredCell.y - 8,
