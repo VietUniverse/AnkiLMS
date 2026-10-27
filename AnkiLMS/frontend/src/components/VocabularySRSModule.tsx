@@ -411,10 +411,12 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     if (typedInput.length < target.length) {
       const nextTyped = typedInput + target[typedInput.length];
       setTypedInput(nextTyped);
-      if (nextTyped.trim() === target.trim()) {
+      if (nextTyped.trim().normalize("NFC") === target.normalize("NFC")) {
         setIsFlipped(true);
+        inputRef.current?.blur();
+      } else {
+        inputRef.current?.focus();
       }
-      inputRef.current?.focus();
     }
   };
 
@@ -428,8 +430,13 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
         return;
       }
 
-      // Ignore when typing inside typing-input
-      if (studyMode === "typing" && document.activeElement === inputRef.current && e.key !== "Enter") {
+      // If typing in input and card is not yet flipped
+      if (studyMode === "typing" && document.activeElement === inputRef.current && !isFlipped) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          setIsFlipped(true);
+          inputRef.current?.blur();
+        }
         return;
       }
 
@@ -440,25 +447,27 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
         return;
       }
 
-      // Flip: Space or Enter
+      // Flip: Space or Enter (when not flipped)
       if (!isFlipped && (e.key === " " || e.key === "Enter")) {
         e.preventDefault();
         setIsFlipped(true);
+        inputRef.current?.blur();
         return;
       }
 
-      // If Flipped: Grade responses
+      // If Flipped: Grade responses (Supports Q/T, 1/2/3/4, Space/Enter/Arrows)
       if (isFlipped) {
-        if (e.key === "1" || e.key === "ArrowLeft") {
+        const k = e.key.toLowerCase();
+        if (k === "q" || k === "1" || e.key === "ArrowLeft") {
           e.preventDefault();
           handleResponse(false);
-        } else if (e.key === "2" || e.key === " " || e.key === "ArrowRight") {
+        } else if (k === "t" || k === "2" || k === " " || e.key === "Enter" || e.key === "ArrowRight") {
           e.preventDefault();
           handleResponse(true);
-        } else if (e.key === "3") {
+        } else if (k === "3") {
           e.preventDefault();
           handleResponse(true, "good");
-        } else if (e.key === "4") {
+        } else if (k === "4") {
           e.preventDefault();
           handleResponse(true, "easy");
         }
@@ -469,12 +478,12 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [viewMode, isFlipped, studyMode, modalImage, playCurrentSound, handleResponse]);
 
-  // Auto-focus input when in typing mode
+  // Auto-focus input when in typing mode and not flipped
   useEffect(() => {
-    if (viewMode === "study" && studyMode === "typing") {
-      setTimeout(() => inputRef.current?.focus(), 100);
+    if (viewMode === "study" && studyMode === "typing" && !isFlipped) {
+      setTimeout(() => inputRef.current?.focus(), 80);
     }
-  }, [viewMode, studyMode, currentCardIndex]);
+  }, [viewMode, studyMode, currentCardIndex, isFlipped]);
 
   // Image source for active card
   const activeImageSrc = useMemo(() => {
@@ -1126,12 +1135,14 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                             const target = cleanTextOnly(currentCard.word);
                             if (val.trim().normalize("NFC") === target.normalize("NFC")) {
                               setIsFlipped(true);
+                              inputRef.current?.blur();
                             }
                           }}
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {
                               e.preventDefault();
                               setIsFlipped(true);
+                              inputRef.current?.blur();
                             }
                           }}
                           placeholder="Gõ từ tiếng Hàn vào đây..."
@@ -1166,11 +1177,14 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
               {!isFlipped ? (
                 /* Trạng thái 1: Chưa lật -> Nút Hiện Đáp Án */
                 <button
-                  onClick={() => setIsFlipped(true)}
+                  onClick={() => {
+                    setIsFlipped(true);
+                    inputRef.current?.blur();
+                  }}
                   className="w-full h-12 rounded-xl bg-stone-900 hover:bg-stone-800 dark:bg-white dark:hover:bg-stone-100 text-white dark:text-stone-900 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition shadow-xs cursor-pointer"
                 >
-                  <span>Hiện đáp án</span>
-                  <kbd className="hidden sm:inline font-mono text-[10px] opacity-60 px-1.5 py-0.5 rounded border border-white/20 dark:border-stone-400">
+                  <span className="font-extrabold text-white dark:text-stone-900">Hiện đáp án</span>
+                  <kbd className="hidden sm:inline font-mono text-[10px] text-white dark:text-stone-900 px-2 py-0.5 rounded border border-white/40 dark:border-stone-400 font-bold">
                     Space / Enter
                   </kbd>
                 </button>
@@ -1184,8 +1198,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                     >
                       <span className="w-2 h-2 rounded-full bg-rose-500" />
                       <span>Quên</span>
-                      <kbd className="hidden sm:inline font-mono text-[10px] text-stone-400 ml-1">
-                        ← (1)
+                      <kbd className="hidden sm:inline font-mono text-[10px] text-stone-500 dark:text-stone-400 ml-1">
+                        Q / 1 (←)
                       </kbd>
                     </button>
 
@@ -1195,8 +1209,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                     >
                       <span className="w-2 h-2 rounded-full bg-emerald-400 dark:bg-emerald-600" />
                       <span>Thuộc</span>
-                      <kbd className="hidden sm:inline font-mono text-[10px] opacity-60 ml-1">
-                        → / Space (2)
+                      <kbd className="hidden sm:inline font-mono text-[10px] text-white/90 dark:text-stone-900/90 ml-1">
+                        T / 2 / Space (→)
                       </kbd>
                     </button>
                   </div>
