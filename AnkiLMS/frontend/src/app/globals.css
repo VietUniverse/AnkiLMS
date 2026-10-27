@@ -148,7 +148,7 @@ html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-slate-20
   color: #0f172a !important;
 }
 
-/* Saturated actions and rainbow labels retain white text on their colored surface */
+/* Saturated actions and colored labels retain white text on their surface */
 html[data-theme="light"] .btn-duo,
 html[data-theme="light"] .btn-duo-primary,
 html[data-theme="light"] .btn-duo-primary *,
@@ -243,82 +243,11 @@ html[data-theme="light"] [class*="bg-gradient-to"] [class*="text-white"] {
   color: #fff !important;
 }
 
-html[data-theme="rainbow"] {
-  color-scheme: dark;
-  --bg-primary: #100d20;
-  --bg-secondary: #17132d;
-  --bg-card: #1d1838;
-  --border-color: #7650b9;
-  --text-primary: #fff7ff;
-  --text-secondary: #c4b5d9;
-}
-
-html[data-theme="rainbow"] body {
-  background: linear-gradient(135deg, #100d20, #17102e 45%, #101b32) fixed !important;
-  color: #fff7ff !important;
-}
-
-html[data-theme="rainbow"] [class*="h-screen"][class*="bg-[#0b1329]"] {
-  background-image: linear-gradient(125deg, #100d20 0%, #211139 35%, #11233b 68%, #29132f 100%) !important;
-}
-
-html[data-theme="rainbow"] [class*="bg-[#0b1329]"],
-html[data-theme="rainbow"] [class*="bg-[#090f1d]"],
-html[data-theme="rainbow"] [class*="bg-slate-950"],
-html[data-theme="rainbow"] [class*="bg-slate-900"] {
-  background-color: #151126 !important;
-}
-
-html[data-theme="rainbow"] [class*="bg-[#132247]"],
-html[data-theme="rainbow"] [class*="bg-[#0f1b38]"],
-html[data-theme="rainbow"] [class*="bg-slate-800"],
-html[data-theme="rainbow"] [class*="bg-slate-800/"],
-html[data-theme="rainbow"] [class*="bg-slate-700"] {
-  background-color: #211a3d !important;
-}
-
-html[data-theme="rainbow"] [class*="border-[#19284d]"],
-html[data-theme="rainbow"] [class*="border-[#1e3a70]"],
-html[data-theme="rainbow"] [class*="border-slate-800"],
-html[data-theme="rainbow"] [class*="border-slate-700"] {
-  border-color: #624a91 !important;
-}
-
-html[data-theme="rainbow"] .card-duo {
-  background-color: #1b1634 !important;
-  border-color: rgb(192 132 252 / 62%) !important;
-  box-shadow: 0 5px 0 rgb(168 85 247 / 24%), 0 0 26px rgb(34 211 238 / 12%) !important;
-}
-
-html[data-theme="rainbow"] .card-duo:nth-child(3n + 1) {
-  border-color: rgb(34 211 238 / 58%) !important;
-  box-shadow: 0 5px 0 rgb(6 182 212 / 18%), 0 0 22px rgb(34 211 238 / 10%) !important;
-}
-
-html[data-theme="rainbow"] .card-duo:nth-child(3n + 2) {
-  border-color: rgb(244 114 182 / 58%) !important;
-  box-shadow: 0 5px 0 rgb(236 72 153 / 18%), 0 0 22px rgb(236 72 153 / 10%) !important;
-}
-
-html[data-theme="rainbow"] .card-duo[class*="bg-gradient-to"] {
-  background-image: linear-gradient(115deg, #211443, #19204b 55%, #351747) !important;
-}
-
-html[data-theme="rainbow"] button[class*="bg-blue-"][class*="text-white"],
-html[data-theme="rainbow"] button[class*="bg-violet-"][class*="text-white"],
-html[data-theme="rainbow"] button[class*="bg-purple-"][class*="text-white"],
-html[data-theme="rainbow"] button[class*="bg-rose-"][class*="text-white"],
-html[data-theme="rainbow"] button.btn-duo-primary {
-  background-image: linear-gradient(110deg, #06b6d4, #6366f1, #d946ef, #f97316) !important;
-  border-color: transparent !important;
-}
-
 html[data-theme="light"] body:not(:has(.login-page-root)) .home-hero-title {
   color: #0f172a !important;
 }
 
-html[data-theme="dark"] .home-hero-title,
-html[data-theme="rainbow"] .home-hero-title {
+html[data-theme="dark"] .home-hero-title {
   color: #fff7ff;
 }
 

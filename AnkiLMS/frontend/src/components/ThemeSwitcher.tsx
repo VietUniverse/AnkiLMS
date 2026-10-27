@@ -1,14 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check, Moon, Palette, Sun } from "lucide-react";
+import { Check, Moon, Sun } from "lucide-react";
 
-type Theme = "light" | "dark" | "rainbow";
+type Theme = "light" | "dark";
 
 const THEMES: { id: Theme; label: string; description: string; icon: typeof Sun }[] = [
   { id: "light", label: "Sáng", description: "Nền sáng, dễ đọc ban ngày", icon: Sun },
   { id: "dark", label: "Tối", description: "Giao diện tối HaechiVN", icon: Moon },
-  { id: "rainbow", label: "Rainbow", description: "Màu sắc rực rỡ", icon: Palette },
 ];
 
 const STORAGE_KEY = "haechivn_theme";
@@ -19,7 +18,7 @@ export function ThemeSwitcher() {
 
   useEffect(() => {
     const saved = window.localStorage.getItem(STORAGE_KEY);
-    const next: Theme = saved === "dark" || saved === "rainbow" ? saved : "light";
+    const next: Theme = saved === "dark" ? "dark" : "light";
     setTheme(next);
     document.documentElement.dataset.theme = next;
   }, []);
@@ -60,7 +59,7 @@ export function ThemeSwitcher() {
                 onClick={() => chooseTheme(id)}
                 className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition hover:bg-slate-800"
               >
-                <Icon className={`h-4 w-4 ${id === "light" ? "text-amber-300" : id === "rainbow" ? "text-fuchsia-300" : "text-sky-300"}`} />
+                <Icon className={`h-4 w-4 ${id === "light" ? "text-amber-300" : "text-sky-300"}`} />
                 <span className="min-w-0 flex-1"><span className="block text-xs font-bold text-white">{label}</span><span className="mt-0.5 block text-[10px] text-slate-400">{description}</span></span>
                 {theme === id && <Check className="h-4 w-4 text-emerald-300" />}
               </button>
