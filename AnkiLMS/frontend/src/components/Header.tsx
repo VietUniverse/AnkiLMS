@@ -79,7 +79,6 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onLogou
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="text-base font-black text-amber-400 font-noto">{item.hangul}</span>
-                        <span className="text-xs font-mono text-slate-400">/{item.romaja}/</span>
                         <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 font-bold">
                           {item.partOfSpeech}
                         </span>

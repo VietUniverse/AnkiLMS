@@ -42,35 +42,73 @@ html[data-theme="light"] {
 }
 
 html[data-theme="light"] body:not(:has(.login-page-root)) {
-  background: #f7f8fc !important;
-  color: #172033 !important;
+  background: #f8fafc !important;
+  color: #0f172a !important;
 }
 
+/* Khối container chính: nền trắng tinh, bóng đổ nhẹ tinh tế */
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-[#090f1e]"] {
+  background-color: #ffffff !important;
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.04) !important;
+}
+
+/* Các khối phụ, ô thống kê, footer thẻ */
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-[#0b1329]"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-[#070d1a]"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-[#111c38]"],
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-[#090f1d]"],
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-slate-950"],
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-slate-900"] {
   background-color: #f8fafc !important;
 }
 
+/* Khối nhấn phụ, ô nổi */
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-[#132247]"],
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-[#0f1b38]"],
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-slate-800"],
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-slate-800/"],
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-slate-700"] {
-  background-color: #e8eef7 !important;
+  background-color: #edf2f7 !important;
 }
 
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-slate-950/"],
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-slate-900/"] {
-  background-color: rgb(248 250 252 / 97%) !important;
+  background-color: rgb(255 255 255 / 96%) !important;
 }
 
+/* Đường viền sáng thanh thoát */
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="border-[#19284d]"],
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="border-[#1e3a70]"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="border-[#1e2f5a]"],
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="border-slate-800"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="border-slate-800/"],
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="border-slate-700"] {
-  border-color: #cbd5e1 !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* Sidebar & Header cho Light Mode */
+html[data-theme="light"] body:not(:has(.login-page-root)) aside {
+  background-color: #ffffff !important;
+  border-right-color: #e2e8f0 !important;
+}
+
+html[data-theme="light"] body:not(:has(.login-page-root)) aside a:not([class*="bg-blue-600"]) {
+  color: #475569 !important;
+}
+
+html[data-theme="light"] body:not(:has(.login-page-root)) aside a:not([class*="bg-blue-600"]):hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] body:not(:has(.login-page-root)) aside a[class*="bg-blue-600"] {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="light"] body:not(:has(.login-page-root)) header {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-bottom-color: #e2e8f0 !important;
 }
 
 /* Đảm bảo trang đăng nhập giữ nguyên giao diện kính tối trên nền wallpaper anime, không bị light mode đè */
@@ -107,16 +145,32 @@ html[data-theme="light"] .login-page-root [class*="bg-slate-950"] {
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-white"],
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-slate-100"],
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-slate-200"] {
-  color: #172033 !important;
+  color: #0f172a !important;
 }
 
-/* Saturated actions and rainbow labels retain white text on their colored surface. */
+/* Saturated actions and rainbow labels retain white text on their colored surface */
 html[data-theme="light"] .btn-duo,
+html[data-theme="light"] .btn-duo-primary,
+html[data-theme="light"] .btn-duo-primary *,
+html[data-theme="light"] [class*="bg-blue-600"],
+html[data-theme="light"] [class*="bg-blue-600"] *,
+html[data-theme="light"] [class*="bg-purple-600"],
+html[data-theme="light"] [class*="bg-purple-600"] *,
+html[data-theme="light"] [class*="bg-emerald-600"],
+html[data-theme="light"] [class*="bg-emerald-600"] *,
+html[data-theme="light"] [class*="bg-amber-600"],
+html[data-theme="light"] [class*="bg-amber-600"] *,
+html[data-theme="light"] [class*="bg-rose-600"],
+html[data-theme="light"] [class*="bg-rose-600"] *,
+html[data-theme="light"] [class*="bg-indigo-600"],
+html[data-theme="light"] [class*="bg-indigo-600"] *,
 html[data-theme="light"] [class*="bg-gradient-to"] [class*="text-white"],
 html[data-theme="light"] button[class*="bg-blue-"][class*="text-white"],
 html[data-theme="light"] button[class*="bg-purple-"][class*="text-white"],
 html[data-theme="light"] button[class*="bg-violet-"][class*="text-white"],
 html[data-theme="light"] button[class*="bg-rose-"][class*="text-white"],
+html[data-theme="light"] a[class*="bg-blue-600"],
+html[data-theme="light"] a[class*="bg-blue-600"] *,
 html[data-theme="light"] a[class*="bg-gradient-to"] [class*="text-white"] {
   color: #fff !important;
 }
@@ -126,37 +180,52 @@ html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-[#64748b
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-slate-300"],
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-slate-400"],
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-slate-500"] {
-  color: #52627a !important;
+  color: #64748b !important;
 }
 
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-[#38bdf8]"],
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-sky-300"],
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-sky-400"],
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-blue-300"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-blue-400"],
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-cyan-300"] {
-  color: #0369a1 !important;
+  color: #2563eb !important;
 }
 
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-emerald-300"],
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-emerald-400"] {
-  color: #047857 !important;
+  color: #059669 !important;
 }
 
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-amber-300"],
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-amber-400"],
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-yellow-300"] {
-  color: #92400e !important;
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-yellow-300"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-yellow-400"] {
+  color: #d97706 !important;
+}
+
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-purple-300"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-purple-400"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-violet-400"] {
+  color: #7c3aed !important;
+}
+
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-rose-400"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-red-400"] {
+  color: #dc2626 !important;
 }
 
 html[data-theme="light"] body:not(:has(.login-page-root)) input,
 html[data-theme="light"] body:not(:has(.login-page-root)) textarea,
 html[data-theme="light"] body:not(:has(.login-page-root)) select {
-  color: #172033 !important;
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
 }
 
 html[data-theme="light"] body:not(:has(.login-page-root)) input::placeholder,
 html[data-theme="light"] body:not(:has(.login-page-root)) textarea::placeholder {
-  color: #64748b !important;
+  color: #94a3b8 !important;
 }
 
 html[data-theme="light"] .card-duo {
@@ -244,40 +313,13 @@ html[data-theme="rainbow"] button.btn-duo-primary {
   border-color: transparent !important;
 }
 
-/* Light mode follows a strict ink-only text palette: no white or muted gray copy. */
-html[data-theme="light"] body:not(:has(.login-page-root)) * {
-  color: #172033 !important;
-}
-
 html[data-theme="light"] body:not(:has(.login-page-root)) .home-hero-title {
-  color: #172033 !important;
+  color: #0f172a !important;
 }
 
 html[data-theme="dark"] .home-hero-title,
 html[data-theme="rainbow"] .home-hero-title {
   color: #fff7ff;
-}
-
-html[data-theme="light"] body:not(:has(.login-page-root)) button.btn-duo,
-html[data-theme="light"] body:not(:has(.login-page-root)) button[class*="bg-gradient-to"],
-html[data-theme="light"] body:not(:has(.login-page-root)) a[class*="bg-gradient-to"],
-html[data-theme="light"] body:not(:has(.login-page-root)) button[class*="bg-blue-"],
-html[data-theme="light"] body:not(:has(.login-page-root)) button[class*="bg-purple-"],
-html[data-theme="light"] body:not(:has(.login-page-root)) button[class*="bg-violet-"],
-html[data-theme="light"] body:not(:has(.login-page-root)) button[class*="bg-rose-"],
-html[data-theme="light"] body:not(:has(.login-page-root)) button[class*="bg-sky-"] {
-  background-color: #dbeafe !important;
-  background-image: linear-gradient(110deg, #dbeafe, #ede9fe) !important;
-  border-color: #93c5fd !important;
-  text-shadow: none !important;
-}
-
-html[data-theme="light"] button.btn-duo-orange,
-html[data-theme="light"] button[class*="bg-orange-"],
-html[data-theme="light"] button[class*="bg-amber-"] {
-  background-color: #ffedd5 !important;
-  background-image: linear-gradient(110deg, #ffedd5, #fef3c7) !important;
-  border-color: #fdba74 !important;
 }
 
 /* Parroto Tactile 3D Buttons */
