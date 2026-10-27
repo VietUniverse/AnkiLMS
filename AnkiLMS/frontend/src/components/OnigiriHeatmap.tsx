@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from "react";
 import Image from "next/image";
 import { Flame, ChevronLeft, ChevronRight, Calendar, Sparkles } from "lucide-react";
+import { getLunarDate, formatLunarCellText } from "@/lib/lunarCalendar";
 
 export interface HeatmapItem {
   checkin_date: string; // YYYY-MM-DD
@@ -60,7 +61,16 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
     level: number;
     x: number;
     y: number;
+    lunarStr?: string;
   } | null>(null);
+
+  const getLunarLabel = (dateStr: string) => {
+    const parts = dateStr.split("-").map(Number);
+    if (parts.length !== 3) return "";
+    const [y, m, d] = parts;
+    const lunar = getLunarDate(d, m, y);
+    return `${lunar.day}/${lunar.month}${lunar.isLeap ? " (Nhuận)" : ""} Âm`;
+  };
 
   // Map data by date string
   const dataMap = useMemo(() => {
@@ -184,6 +194,8 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
       isToday: boolean;
       isFuture: boolean;
       item?: HeatmapItem;
+      lunarText?: string;
+      lunar?: import("@/lib/lunarCalendar").LunarDate;
     }> = [];
 
     // Empty lead cells
@@ -199,6 +211,8 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
       const isFuture = dateStr > todayStr;
       const item = dataMap.get(dateStr);
       const level = item ? getIntensityLevel(item.time_spent_minutes, dailyAverage) : 0;
+      const lunar = getLunarDate(day, selectedMonth + 1, selectedYear);
+      const lunarText = formatLunarCellText(lunar);
 
       cells.push({
         dayNum: day,
@@ -207,6 +221,8 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
         isToday,
         isFuture,
         item,
+        lunarText,
+        lunar,
       });
     }
 
@@ -231,6 +247,8 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
       const isFuture = dateStr > todayStr;
       const item = dataMap.get(dateStr);
       const level = item ? getIntensityLevel(item.time_spent_minutes, dailyAverage) : 0;
+      const lunar = getLunarDate(cur.getDate(), cur.getMonth() + 1, cur.getFullYear());
+      const lunarText = formatLunarCellText(lunar);
 
       days.push({
         name: dayNames[i],
@@ -241,6 +259,8 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
         isFuture,
         item,
         level,
+        lunarText,
+        lunar,
       });
     }
 
@@ -440,6 +460,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
                               level: cell.level,
                               x: rect.left + rect.width / 2,
                               y: rect.top,
+                              lunarStr: getLunarLabel(cell.dateStr),
                             });
                           }}
                           onMouseLeave={() => setHoveredCell(null)}
@@ -492,6 +513,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
                         level: c.level,
                         x: rect.left + rect.width / 2,
                         y: rect.top,
+                        lunarStr: getLunarLabel(c.dateStr),
                       });
                     }}
                     onMouseLeave={() => setHoveredCell(null)}
@@ -500,16 +522,25 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
                     } ${c.isFuture ? "opacity-25" : ""}`}
                   >
                     <span
-                      className={`text-xs font-bold ${
+                      className={`text-xs font-bold leading-tight ${
                         c.level > 4 ? "text-slate-900" : "text-slate-200"
                       }`}
                     >
                       {c.dayNum}
                     </span>
+                    {c.lunarText && (
+                      <span
+                        className={`onigiri-lunar-text text-[9px] font-medium leading-none ${
+                          c.level > 4 ? "text-slate-900/75" : "text-slate-400"
+                        }`}
+                      >
+                        {c.lunarText}
+                      </span>
+                    )}
                     {c.item && c.item.time_spent_minutes > 0 && (
                       <span
-                        className={`text-[9px] font-mono leading-none mt-0.5 ${
-                          c.level > 4 ? "text-slate-900/80" : "text-sky-300"
+                        className={`text-[8px] font-mono leading-none mt-0.5 ${
+                          c.level > 4 ? "text-slate-900/90 font-bold" : "text-sky-300"
                         }`}
                       >
                         {c.item.time_spent_minutes}p
@@ -542,11 +573,18 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
                     {day.name}
                   </p>
                   <p
-                    className={`text-lg font-black ${
+                    className={`text-lg font-black leading-tight ${
                       day.level > 4 ? "text-slate-950" : "text-white"
                     }`}
                   >
                     {day.dayNum}/{day.monthNum}
+                  </p>
+                  <p
+                    className={`onigiri-lunar-text text-[10px] font-semibold tracking-tight ${
+                      day.level > 4 ? "text-slate-900/75" : "text-slate-400"
+                    }`}
+                  >
+                    {day.lunarText} âm
                   </p>
                 </div>
 
@@ -634,9 +672,14 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
             top: hoveredCell.y - 8,
           }}
         >
-          <p className="font-bold text-sky-400 flex items-center gap-1.5">
+          <p className="font-bold text-sky-400 flex items-center gap-1.5 flex-wrap">
             <span>{hoveredCell.dateStr}</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded bg-sky-500/20 text-sky-300">
+            {hoveredCell.lunarStr && (
+              <span className="text-[11px] font-normal text-slate-300">
+                ({hoveredCell.lunarStr})
+              </span>
+            )}
+            <span className="text-[10px] px-1.5 py-0.2 rounded bg-sky-500/20 text-sky-300 ml-auto">
               Cấp {hoveredCell.level}/8
             </span>
           </p>

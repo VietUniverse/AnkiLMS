@@ -610,6 +610,48 @@ html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-level-8 {
   border: none !important;
 }
 
+/* Light mode text contrast for Onigiri heatmap cells */
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-0 span:not(.onigiri-lunar-text),
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-1 span:not(.onigiri-lunar-text),
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-2 span:not(.onigiri-lunar-text),
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-3 span:not(.onigiri-lunar-text) {
+  color: #0f172a !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-0 .onigiri-lunar-text,
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-1 .onigiri-lunar-text,
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-2 .onigiri-lunar-text,
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-3 .onigiri-lunar-text {
+  color: #64748b !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-0 p,
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-1 p,
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-2 p,
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-3 p {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-4 span:not(.onigiri-lunar-text),
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-5 span:not(.onigiri-lunar-text),
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-6 span:not(.onigiri-lunar-text),
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-7 span:not(.onigiri-lunar-text),
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-8 span:not(.onigiri-lunar-text) {
+  color: #ffffff !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-4 .onigiri-lunar-text,
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-5 .onigiri-lunar-text,
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-6 .onigiri-lunar-text,
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-7 .onigiri-lunar-text,
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-8 .onigiri-lunar-text {
+  color: #e2e8f0 !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-4 p,
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-5 p,
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-6 p,
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-7 p,
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-day-cell.onigiri-level-8 p {
+  color: #ffffff !important;
+}
+
 /* =========================================================================
    3 Dashboard Metric Cards (Streak, Level, XP) - Dark & Light Mode Dedicated
    ========================================================================= */
