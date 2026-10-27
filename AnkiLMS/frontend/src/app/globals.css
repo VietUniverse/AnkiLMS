@@ -400,6 +400,28 @@ html[data-theme="rainbow"] .home-hero-title {
   transition: transform 0.2s ease-out;
 }
 
+/* Top-down Garden Soil Tiles (Ô đất vườn vuông màu nâu nhìn từ trên xuống) */
+.soil-tile {
+  background-color: #351f15;
+  border: 1px solid #4a2c1e;
+  transition: all 0.15s ease-in-out;
+}
+
+.soil-tile:hover {
+  background-color: #44271b;
+  border-color: #5d3623;
+}
+
+html[data-theme="light"] body:not(:has(.login-page-root)) .soil-tile {
+  background-color: #7a492e !important;
+  border-color: #633b24 !important;
+}
+
+html[data-theme="light"] body:not(:has(.login-page-root)) .soil-tile:hover {
+  background-color: #8c5334 !important;
+  border-color: #724228 !important;
+}
+
 /* Parroto Tactile 3D Buttons */
 .btn-duo {
   position: relative;

@@ -520,17 +520,17 @@ export default function Home() {
                         }
 
                         let stage: 0 | 1 | 2 | 3 = 0;
-                        let tileStyle = "bg-[#0b1329] hover:bg-[#132247]";
+                        let tileStyle = "soil-tile";
 
                         if (day.match && day.match.time_spent_minutes > 0) {
                           if (day.match.time_spent_minutes >= 40) {
-                            tileStyle = "bg-rose-500/20 shadow-sm shadow-rose-500/25 ring-1 ring-rose-500/30";
+                            tileStyle = "soil-tile shadow-md shadow-rose-950/50 ring-1 ring-rose-500/40";
                             stage = 3; // Hoa nở rực rỡ
                           } else if (day.match.time_spent_minutes >= 20) {
-                            tileStyle = "bg-pink-500/20 shadow-sm shadow-pink-500/25";
+                            tileStyle = "soil-tile shadow-sm shadow-pink-950/40 ring-1 ring-pink-500/30";
                             stage = 2; // Nụ hoa
                           } else {
-                            tileStyle = "bg-emerald-500/20 shadow-sm shadow-emerald-500/25";
+                            tileStyle = "soil-tile shadow-sm shadow-emerald-950/40 ring-1 ring-emerald-500/30";
                             stage = 1; // Mầm xanh
                           }
                         }
@@ -548,7 +548,7 @@ export default function Home() {
                           <div
                             key={day.dateStr}
                             title={`${day.dateStr} (${statusText}): ${day.match ? `${day.match.time_spent_minutes} phút học, +${day.match.xp_earned} XP` : "Chưa học"}`}
-                            className={`garden-tile w-4 h-4 sm:w-5 sm:h-5 rounded-[4px] ${tileStyle} p-0.5 flex items-center justify-center transition-all hover:scale-125 hover:z-10 cursor-pointer select-none border-0`}
+                            className={`garden-tile w-4 h-4 sm:w-5 sm:h-5 rounded-[4px] ${tileStyle} p-0.5 flex items-center justify-center transition-all hover:scale-125 hover:z-10 cursor-pointer select-none`}
                           >
                             <GardenFlower stage={stage} className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5" />
                           </div>
@@ -561,12 +561,14 @@ export default function Home() {
             </div>
           </div>
 
-          {/* GitHub Footer & Legend: 3 tiến độ phát triển + Ô đất vuông */}
+          {/* GitHub Footer & Legend: 3 tiến độ phát triển + Ô đất vuông màu nâu */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-300 font-medium border-t border-[#132247] pt-3">
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-4 text-[10px] sm:text-[11px] text-slate-400">
               <span className="flex items-center gap-1.5 text-slate-400">
-                <span className="w-3.5 h-3.5 inline-flex items-center justify-center"><GardenFlower stage={0} className="w-3 h-3" animate={false} /></span>
-                <span>Ô đất vuông trống (Chưa học)</span>
+                <span className="w-3.5 h-3.5 rounded-[2px] soil-tile inline-flex items-center justify-center">
+                  <GardenFlower stage={0} className="w-3 h-3" animate={false} />
+                </span>
+                <span>Ô đất vuông nâu (Chưa học)</span>
               </span>
               <span className="flex items-center gap-1">🌱 Mầm xanh (&lt;20p)</span>
               <span className="flex items-center gap-1">🌷 Nụ hoa (20–39p)</span>
@@ -577,16 +579,16 @@ export default function Home() {
             <div className="flex items-center gap-2 text-xs text-slate-400">
               <span>Ít</span>
               <div className="flex items-center gap-1">
-                <div className="w-4 h-4 rounded-[3px] bg-[#0b1329] p-0.5 flex items-center justify-center" title="Ô đất vuông trống">
+                <div className="w-4 h-4 rounded-[3px] soil-tile p-0.5 flex items-center justify-center" title="Ô đất vuông nâu (Chưa học)">
                   <GardenFlower stage={0} className="w-3.5 h-3.5" animate={false} />
                 </div>
-                <div className="w-4 h-4 rounded-[3px] bg-emerald-500/20 p-0.5 flex items-center justify-center" title="Mầm xanh (<20p)">
+                <div className="w-4 h-4 rounded-[3px] soil-tile ring-1 ring-emerald-500/30 p-0.5 flex items-center justify-center" title="Mầm xanh (<20p)">
                   <GardenFlower stage={1} className="w-3.5 h-3.5" animate={false} />
                 </div>
-                <div className="w-4 h-4 rounded-[3px] bg-pink-500/20 p-0.5 flex items-center justify-center" title="Nụ hoa (20–39p)">
+                <div className="w-4 h-4 rounded-[3px] soil-tile ring-1 ring-pink-500/30 p-0.5 flex items-center justify-center" title="Nụ hoa (20–39p)">
                   <GardenFlower stage={2} className="w-3.5 h-3.5" animate={false} />
                 </div>
-                <div className="w-4 h-4 rounded-[3px] bg-rose-500/20 p-0.5 flex items-center justify-center ring-1 ring-rose-500/30" title="Hoa nở rực rỡ (40p+)">
+                <div className="w-4 h-4 rounded-[3px] soil-tile ring-1 ring-rose-500/40 p-0.5 flex items-center justify-center" title="Hoa nở rực rỡ (40p+)">
                   <GardenFlower stage={3} className="w-3.5 h-3.5" animate={false} />
                 </div>
               </div>
