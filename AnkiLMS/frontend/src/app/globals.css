@@ -610,6 +610,109 @@ html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-level-8 {
   border: none !important;
 }
 
+/* =========================================================================
+   3 Dashboard Metric Cards (Streak, Level, XP) - Dark & Light Mode Dedicated
+   ========================================================================= */
+
+/* Dark Mode Defaults */
+.metric-card {
+  background-color: rgba(17, 23, 38, 0.95);
+  border: 1px solid #232f48;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+}
+.metric-card-title {
+  color: #94a3b8;
+}
+.metric-card-icon-flame {
+  color: #d0eefb;
+  fill: #d0eefb;
+  filter: drop-shadow(0 0 8px rgba(208, 238, 251, 0.4));
+}
+.metric-card-icon-zap {
+  color: #d0eefb;
+  fill: #d0eefb;
+  filter: drop-shadow(0 0 8px rgba(208, 238, 251, 0.4));
+}
+.metric-card-value {
+  color: #ffffff;
+}
+.metric-card-unit {
+  color: #f1f5f9;
+}
+.metric-card-pill {
+  background-color: #182135;
+  border: 1px solid #24314c;
+  color: #e2e8f0;
+}
+.metric-card-badge {
+  border: 1px solid #22d3ee;
+  background-color: rgba(8, 47, 73, 0.6);
+  color: #67e8f9;
+}
+.metric-card-level-text {
+  color: #f1f5f9;
+}
+.metric-card-track {
+  background-color: #1b2438;
+}
+.metric-card-fill {
+  background: linear-gradient(to right, #22d3ee, #00f2fe);
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.85);
+}
+.metric-card-subtext {
+  color: #94a3b8;
+}
+
+/* Light Mode Overrides */
+html[data-theme="light"] body:not(:has(.login-page-root)) .metric-card {
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04) !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .metric-card-title {
+  color: #64748b !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .metric-card-icon-flame {
+  color: #ea580c !important;
+  fill: #f97316 !important;
+  filter: drop-shadow(0 2px 6px rgba(249, 115, 22, 0.35)) !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .metric-card-icon-zap {
+  color: #0284c7 !important;
+  fill: #0ea5e9 !important;
+  filter: drop-shadow(0 2px 6px rgba(14, 165, 233, 0.35)) !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .metric-card-value {
+  color: #0f172a !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .metric-card-unit {
+  color: #334155 !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .metric-card-pill {
+  background-color: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #334155 !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .metric-card-badge {
+  border: 1px solid #06b6d4 !important;
+  background-color: #ecfeff !important;
+  color: #0891b2 !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .metric-card-level-text {
+  color: #0f172a !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .metric-card-track {
+  background-color: #f1f5f9 !important;
+  border: 1px solid #e2e8f0 !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .metric-card-fill {
+  background: linear-gradient(to right, #06b6d4, #0284c7) !important;
+  box-shadow: 0 2px 8px rgba(6, 182, 212, 0.45) !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .metric-card-subtext {
+  color: #64748b !important;
+}
+
 /* Parroto Tactile 3D Buttons */
 .btn-duo {
   position: relative;

@@ -278,25 +278,25 @@ export default function Home() {
             </h2>
           </div>
 
-          {/* 3 Metric Cards: Chuỗi Streak, Cấp độ, Tổng Tích Lũy - Thiết kế chuẩn theo Gemini Image */}
+          {/* 3 Metric Cards: Chuỗi Streak, Cấp độ, Tổng Tích Lũy - Thiết kế chuẩn theo Gemini Image (Dark & Light) */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-5 relative">
             {/* Card 1: Chuỗi Streak */}
-            <div className="py-6 px-5 rounded-2xl bg-[#111726]/90 border border-[#232f48] flex flex-col items-center justify-between text-center min-h-[195px] shadow-lg relative group transition-all">
-              <span className="text-xs sm:text-[13px] font-extrabold text-slate-300 uppercase tracking-widest">
+            <div className="metric-card py-6 px-5 rounded-2xl flex flex-col items-center justify-between text-center min-h-[195px] relative group transition-all">
+              <span className="metric-card-title text-xs sm:text-[13px] font-extrabold uppercase tracking-widest">
                 CHUỖI STREAK
               </span>
 
               <div className="flex items-center justify-center gap-3 my-auto py-2">
-                <Flame className="w-8 h-8 sm:w-10 sm:h-10 text-[#d0eefb] fill-[#d0eefb] shrink-0 filter drop-shadow-[0_0_8px_rgba(208,238,251,0.4)]" />
-                <span className="text-4xl sm:text-5xl font-black text-white tracking-tight leading-none">
+                <Flame className="metric-card-icon-flame w-8 h-8 sm:w-10 sm:h-10 shrink-0" />
+                <span className="metric-card-value text-4xl sm:text-5xl font-black tracking-tight leading-none">
                   {currentUser?.streak || 1}
                 </span>
-                <span className="text-xl sm:text-2xl font-bold text-slate-100 leading-none">
+                <span className="metric-card-unit text-xl sm:text-2xl font-bold leading-none">
                   ngày
                 </span>
               </div>
 
-              <div className="w-full py-2 px-3 rounded-xl bg-[#182135] border border-[#24314c] flex items-center justify-center gap-2 text-xs font-semibold text-slate-200">
+              <div className="metric-card-pill w-full py-2 px-3 rounded-xl flex items-center justify-center gap-2 text-xs font-semibold">
                 <span>🏆</span>
                 <span>Streak cao nhất: {currentUser?.longest_streak || currentUser?.streak || 1} ngày</span>
                 <span>🏆</span>
@@ -304,28 +304,28 @@ export default function Home() {
             </div>
 
             {/* Card 2: Cấp độ (Level) */}
-            <div className="py-6 px-5 rounded-2xl bg-[#111726]/90 border border-[#232f48] flex flex-col items-center justify-between text-center min-h-[195px] shadow-lg relative group transition-all">
-              <span className="text-xs sm:text-[13px] font-extrabold text-slate-300 uppercase tracking-widest">
+            <div className="metric-card py-6 px-5 rounded-2xl flex flex-col items-center justify-between text-center min-h-[195px] relative group transition-all">
+              <span className="metric-card-title text-xs sm:text-[13px] font-extrabold uppercase tracking-widest">
                 CẤP ĐỘ (LEVEL)
               </span>
 
               <div className="flex items-center justify-center gap-2.5 my-auto py-1">
-                <div className="w-6 h-6 rounded-full border border-cyan-400 bg-cyan-950/60 text-cyan-300 font-black text-xs flex items-center justify-center shadow-sm">
+                <div className="metric-card-badge w-6 h-6 rounded-full font-black text-xs flex items-center justify-center shadow-sm">
                   <span>{userLevel || 1}</span>
                 </div>
-                <span className="text-sm sm:text-base font-bold text-slate-100">
+                <span className="metric-card-level-text text-sm sm:text-base font-bold">
                   Lên Lv.{(userLevel || 1) + 1} · Còn {neededXPForNext} XP
                 </span>
               </div>
 
               <div className="w-full space-y-2 mt-auto">
-                <div className="w-full h-4 bg-[#1b2438] rounded-full overflow-hidden p-0.5 relative">
+                <div className="metric-card-track w-full h-4 rounded-full overflow-hidden p-0.5 relative">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-[#00f2fe] shadow-[0_0_16px_rgba(6,182,212,0.85)] transition-all duration-500"
+                    className="metric-card-fill h-full rounded-full transition-all duration-500"
                     style={{ width: `${Math.max(8, levelProgressPercent || 50)}%` }}
                   />
                 </div>
-                <div className="flex items-center justify-between text-xs font-semibold text-slate-300 px-0.5">
+                <div className="metric-card-subtext flex items-center justify-between text-xs font-semibold px-0.5">
                   <span>{currentLevelProgressXP} / 300 XP</span>
                   <span>{levelProgressPercent}%</span>
                 </div>
@@ -333,22 +333,22 @@ export default function Home() {
             </div>
 
             {/* Card 3: Tổng Tích Lũy */}
-            <div className="py-6 px-5 rounded-2xl bg-[#111726]/90 border border-[#232f48] flex flex-col items-center justify-between text-center min-h-[195px] shadow-lg relative group transition-all">
-              <span className="text-xs sm:text-[13px] font-extrabold text-slate-300 uppercase tracking-widest">
+            <div className="metric-card py-6 px-5 rounded-2xl flex flex-col items-center justify-between text-center min-h-[195px] relative group transition-all">
+              <span className="metric-card-title text-xs sm:text-[13px] font-extrabold uppercase tracking-widest">
                 TỔNG TÍCH LŨY
               </span>
 
               <div className="flex items-center justify-center gap-3 my-auto py-2">
-                <Zap className="w-8 h-8 sm:w-10 sm:h-10 text-[#d0eefb] fill-[#d0eefb] shrink-0 filter drop-shadow-[0_0_8px_rgba(208,238,251,0.4)]" />
-                <span className="text-4xl sm:text-5xl font-black text-white tracking-tight leading-none">
+                <Zap className="metric-card-icon-zap w-8 h-8 sm:w-10 sm:h-10 shrink-0" />
+                <span className="metric-card-value text-4xl sm:text-5xl font-black tracking-tight leading-none">
                   {(currentUser?.xp || 150).toLocaleString()}
                 </span>
-                <span className="text-xl sm:text-2xl font-bold text-slate-100 leading-none">
+                <span className="metric-card-unit text-xl sm:text-2xl font-bold leading-none">
                   XP
                 </span>
               </div>
 
-              <div className="w-full py-2 px-3 rounded-xl bg-[#182135] border border-[#24314c] flex items-center justify-center gap-1.5 text-xs font-semibold text-slate-200">
+              <div className="metric-card-pill w-full py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 text-xs font-semibold">
                 <span>Đã quy đổi: {(currentUser?.xp || 150).toLocaleString()} 💎 kim cương</span>
               </div>
             </div>
