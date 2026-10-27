@@ -20,8 +20,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "sql.js": "^1.14.1",
-    "tailwind-merge": "^3.6.0",
-    "ts-fsrs": "5.4.2"
+    "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
     "@capacitor/cli": "^8.5.3",
