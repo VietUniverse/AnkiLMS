@@ -1300,3 +1300,89 @@ html[data-theme="light"] body:not(:has(.login-page-root)) .metric-card-subtext {
 .toggle-switch.checked::after {
   transform: translateX(1rem);
 }
+
+/* ==================================================
+   HAECHI VN - APPLE MINIMALIST FLASHCARD STYLES
+   ================================================== */
+@keyframes revealSlide {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-reveal {
+  animation: revealSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.hint-display {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  min-height: 36px;
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  user-select: none;
+}
+
+.hint-display .ch {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 24px;
+  height: 34px;
+  border-bottom: 2px solid rgba(148, 163, 184, 0.3);
+  color: #94a3b8;
+  transition: all 0.15s ease;
+}
+
+.hint-display .ch.blank {
+  color: #94a3b8;
+  opacity: 0.45;
+}
+
+.hint-display .ch.correct {
+  color: #10b981;
+  border-bottom-color: #10b981;
+  font-weight: 700;
+}
+
+.hint-display .ch.incorrect {
+  color: #ef4444;
+  border-bottom-color: #ef4444;
+}
+
+.hint-display .ch.active-cursor {
+  border-bottom-color: #38bdf8;
+  animation: appleCursor 1s infinite;
+}
+
+@keyframes appleCursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.pos-chip {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #0284c7;
+  background: rgba(2, 132, 199, 0.08);
+  border: 1px solid rgba(2, 132, 199, 0.2);
+  padding: 3px 10px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.dark .pos-chip {
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.25);
+}
+
