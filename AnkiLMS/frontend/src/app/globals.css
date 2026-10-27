@@ -497,6 +497,122 @@ html[data-theme="light"] body:not(:has(.login-page-root)) .garden-cell-3 {
   box-shadow: 0 2px 6px rgba(245, 158, 11, 0.25) !important;
 }
 
+/* Onigiri Heatmap Styles (Inspired by Anki Onigiri Addon by thepeacemonk) */
+.onigiri-day-cell {
+  position: relative;
+  transition: transform 0.14s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.14s ease;
+  user-select: none;
+}
+.onigiri-day-cell:hover {
+  transform: scale(1.18);
+  z-index: 10;
+}
+
+/* Dark Mode Intensity Levels (0 to 8) - Onigiri Azure/Cyan Palette */
+.onigiri-level-0 {
+  background-color: #171c26;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+.onigiri-level-0:hover {
+  background-color: #232b3a;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+.onigiri-level-1 {
+  background-color: #0c2d48;
+  border: 1px solid rgba(14, 165, 233, 0.25);
+}
+.onigiri-level-2 {
+  background-color: #11426c;
+  border: 1px solid rgba(14, 165, 233, 0.4);
+}
+.onigiri-level-3 {
+  background-color: #175a91;
+  border: 1px solid rgba(56, 189, 248, 0.5);
+}
+.onigiri-level-4 {
+  background-color: #0284c7;
+  border: 1px solid rgba(56, 189, 248, 0.65);
+}
+.onigiri-level-5 {
+  background-color: #0ea5e9;
+  border: 1px solid rgba(125, 211, 252, 0.7);
+  box-shadow: 0 0 6px rgba(14, 165, 233, 0.3);
+}
+.onigiri-level-6 {
+  background-color: #38bdf8;
+  border: 1px solid rgba(186, 230, 253, 0.85);
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.45);
+}
+.onigiri-level-7 {
+  background-color: #7dd3fc;
+  border: 1px solid #bae6fd;
+  box-shadow: 0 0 12px rgba(125, 211, 252, 0.55);
+}
+.onigiri-level-8 {
+  background-color: #bae6fd;
+  border: 1px solid #ffffff;
+  box-shadow: 0 0 16px rgba(186, 230, 253, 0.75);
+}
+
+/* Light Mode Overrides for Onigiri Heatmap */
+html[data-theme="light"] body:not(:has(.login-page-root)) #onigiri-heatmap-container {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #1e293b !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05) !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) #onigiri-heatmap-container .bg-\[\#0a0d14\] {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) #onigiri-heatmap-container .bg-\[\#181d28\] {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) #onigiri-heatmap-container h3 {
+  color: #0f172a !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-level-0 {
+  background-color: #edf2f7 !important;
+  border-color: #e2e8f0 !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-level-0:hover {
+  background-color: #e2e8f0 !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-level-1 {
+  background-color: #bae6fd !important;
+  border-color: #7dd3fc !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-level-2 {
+  background-color: #7dd3fc !important;
+  border-color: #38bdf8 !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-level-3 {
+  background-color: #38bdf8 !important;
+  border-color: #0ea5e9 !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-level-4 {
+  background-color: #0ea5e9 !important;
+  border-color: #0284c7 !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-level-5 {
+  background-color: #0284c7 !important;
+  border-color: #0369a1 !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-level-6 {
+  background-color: #0369a1 !important;
+  border-color: #075985 !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-level-7 {
+  background-color: #075985 !important;
+  border-color: #0c4a6e !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-level-8 {
+  background-color: #0c4a6e !important;
+  border-color: #082f49 !important;
+}
+
 /* Parroto Tactile 3D Buttons */
 .btn-duo {
   position: relative;

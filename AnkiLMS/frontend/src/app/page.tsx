@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AppShell } from "../components/AppShell";
-import { GardenFlower } from "../components/GardenFlower";
+import { OnigiriHeatmap } from "../components/OnigiriHeatmap";
 import { useApp } from "../contexts/AppProvider";
 import { Flame, Zap, Layers, Trophy, Calendar, CheckCircle2, Gamepad2, Target, X, LogIn, Search, Volume2 } from "lucide-react";
 import { VOCABULARY_DATA } from "../data/koreanData";
@@ -88,14 +88,13 @@ export default function Home() {
 
   const todayStr = new Date().toISOString().split("T")[0];
   const hasCheckedInToday = currentUser?.last_checkin_date === todayStr;
-  const WEEKS_COUNT = 22; // ~5 tháng đóng khung chuẩn GitHub
-  const [showDemo, setShowDemo] = React.useState(true); // Demo dữ liệu theo yêu cầu người dùng
+  const [showDemo, setShowDemo] = React.useState(true); // Demo dữ liệu mô phỏng theo Onigiri
 
-  // Dữ liệu mẫu demo vườn hoa học tập sinh động mô phỏng chuỗi 154 ngày
+  // Dữ liệu mẫu demo mô phỏng 180 ngày ôn tập liên tục
   const demoHeatmapData = React.useMemo(() => {
-    const list: Array<{ checkin_date: string; time_spent_minutes: number; xp_earned: number }> = [];
+    const list: Array<{ checkin_date: string; time_spent_minutes: number; xp_earned: number; cards_reviewed: number }> = [];
     const now = new Date();
-    for (let i = 154; i >= 0; i--) {
+    for (let i = 180; i >= 0; i--) {
       const d = new Date(now);
       d.setDate(d.getDate() - i);
       const dayOfWeek = d.getDay();
@@ -106,96 +105,32 @@ export default function Home() {
 
       const hash = dateStr.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
       const rand = (hash % 100) / 100;
-      const studyChance = dayOfWeek === 0 || dayOfWeek === 6 ? 0.45 : 0.75;
+      const studyChance = dayOfWeek === 0 || dayOfWeek === 6 ? 0.5 : 0.82;
 
       if (rand < studyChance) {
         let minutes = 15;
         let xp = 30;
-        if (rand < 0.28) {
-          minutes = 10 + (hash % 9); // Mầm (<20p)
+        let cards = 35;
+        if (rand < 0.25) {
+          minutes = 10 + (hash % 10);
           xp = 25;
-        } else if (rand < 0.55) {
-          minutes = 20 + (hash % 18); // Nụ (20-39p)
-          xp = 50;
+          cards = Math.round(minutes * 2.2);
+        } else if (rand < 0.6) {
+          minutes = 25 + (hash % 20);
+          xp = 60;
+          cards = Math.round(minutes * 2.5);
         } else {
-          minutes = 40 + (hash % 35); // Hoa (40p+)
-          xp = 90;
+          minutes = 45 + (hash % 45);
+          xp = 120;
+          cards = Math.round(minutes * 2.8);
         }
-        list.push({ checkin_date: dateStr, time_spent_minutes: minutes, xp_earned: xp });
+        list.push({ checkin_date: dateStr, time_spent_minutes: minutes, xp_earned: xp, cards_reviewed: cards });
       }
     }
     return list;
   }, []);
 
   const activeHeatmapSource = showDemo ? demoHeatmapData : heatmapData;
-
-  // Tính toán lưới đóng khung chuẩn GitHub 7 hàng (ngày trong tuần) x N cột (tuần)
-  const githubHeatmap = React.useMemo(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const currentDayOfWeek = today.getDay(); // 0 = CN, 6 = T7
-    const endOfCurrentWeek = new Date(today);
-    endOfCurrentWeek.setDate(today.getDate() + (6 - currentDayOfWeek));
-
-    const startDate = new Date(endOfCurrentWeek);
-    startDate.setDate(endOfCurrentWeek.getDate() - (WEEKS_COUNT * 7 - 1));
-
-    const weeks: Array<Array<{ dateStr: string; isFuture: boolean; match?: (typeof heatmapData)[0] }>> = [];
-    const monthLabels: Array<{ weekIndex: number; label: string }> = [];
-
-    let lastMonth = -1;
-
-    for (let w = 0; w < WEEKS_COUNT; w++) {
-      const weekDays = [];
-      const colStartDate = new Date(startDate);
-      colStartDate.setDate(startDate.getDate() + w * 7);
-
-      const colMonth = colStartDate.getMonth();
-      if (colMonth !== lastMonth) {
-        monthLabels.push({
-          weekIndex: w,
-          label: `Thg ${colMonth + 1}`,
-        });
-        lastMonth = colMonth;
-      }
-
-      for (let d = 0; d < 7; d++) {
-        const cellDate = new Date(startDate);
-        cellDate.setDate(startDate.getDate() + w * 7 + d);
-        const y = cellDate.getFullYear();
-        const m = String(cellDate.getMonth() + 1).padStart(2, "0");
-        const dayStr = String(cellDate.getDate()).padStart(2, "0");
-        const dateStr = `${y}-${m}-${dayStr}`;
-
-        const isFuture = cellDate.getTime() > today.getTime();
-        const match = isFuture ? undefined : activeHeatmapSource.find((h) => h.checkin_date === dateStr);
-
-        weekDays.push({
-          dateStr,
-          isFuture,
-          match,
-        });
-      }
-      weeks.push(weekDays);
-    }
-
-    const activeDaysCount = activeHeatmapSource.filter((h) => h.time_spent_minutes > 0 || h.xp_earned > 0).length;
-
-    return { weeks, monthLabels, activeDaysCount };
-  }, [activeHeatmapSource]);
-
-  const stageStats = React.useMemo(() => {
-    let sprouts = 0;
-    let buds = 0;
-    let blooms = 0;
-    activeHeatmapSource.forEach((item) => {
-      if (item.time_spent_minutes >= 40) blooms++;
-      else if (item.time_spent_minutes >= 20) buds++;
-      else if (item.time_spent_minutes > 0) sprouts++;
-    });
-    return { sprouts, buds, blooms };
-  }, [activeHeatmapSource]);
 
   const userXP = currentUser?.xp || 0;
   const userLevel = currentUser ? Math.floor(userXP / 300) + 1 : 0;
@@ -453,180 +388,13 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Heatmap Vườn Hoa - Thiết Kế Pixel Art Chuẩn New Cards Farm & GitHub */}
-        <div className="relative rounded-3xl p-6 sm:p-7 bg-[#090f1e] text-white shadow-2xl border border-slate-800/40 space-y-5 overflow-hidden animate-fadeIn">
-          {/* Hào quang nền dịu nhẹ sang trọng */}
-          <div className="pointer-events-none absolute -right-20 -top-20 w-72 h-72 rounded-full bg-amber-500/5 blur-3xl" />
-          <div className="pointer-events-none absolute -left-20 -bottom-20 w-72 h-72 rounded-full bg-emerald-500/5 blur-3xl" />
-
-          {/* Header Dashboard Tinh Tế */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 relative z-10">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500/20 to-yellow-500/10 border border-amber-500/30 flex items-center justify-center p-1 shadow-sm">
-                  <img src="/farm/farmer/Farmer_A.png" alt="Farmer" className="w-6 h-6 pixelated" />
-                </div>
-                <div>
-                  <h3 className="text-base sm:text-lg font-black tracking-tight text-white flex items-center gap-2">
-                    <span>Vườn Hoa Hoạt Động</span>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-300 font-bold uppercase tracking-wider">
-                      Pixel Farm
-                    </span>
-                  </h3>
-                  <p className="text-xs text-slate-400 font-medium">
-                    Mỗi ngày chuyên cần là một đóa hoa hướng dương bung nở theo chu kỳ học tập
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Điều khiển & Chỉ số */}
-            <div className="flex flex-wrap items-center gap-2 self-stretch sm:self-auto justify-between sm:justify-end">
-              <button
-                onClick={() => setShowDemo((prev) => !prev)}
-                className="text-xs font-semibold px-3 py-1.5 rounded-xl border border-slate-700/50 bg-[#0d1629] hover:bg-[#13203c] text-blue-400 hover:text-blue-300 transition-all cursor-pointer flex items-center gap-1.5 shadow-sm active:scale-95"
-                title="Bấm để chuyển đổi giữa dữ liệu thực và dữ liệu demo"
-              >
-                <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-                <span>{showDemo ? "Vườn mẫu (Demo)" : "Dữ liệu thực tế"}</span>
-                <span className="text-[10px] text-slate-400 font-normal">({showDemo ? "Đổi sang thật" : "Xem mẫu"})</span>
-              </button>
-              <div className="text-xs font-bold px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 flex items-center gap-1.5 shadow-sm">
-                <img src="/farm/Garden/sunflower_03.png" alt="Sunflower" className="w-4 h-4 pixelated" />
-                <span>{githubHeatmap.activeDaysCount} ngày rực rỡ</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Khung Lưới GitHub Canvas Tinh Tế */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-[#060a14] border border-[#131d33] shadow-inner relative z-10 overflow-x-auto scrollbar-thin">
-            <div className="inline-flex flex-col min-w-max mx-auto text-left">
-              {/* Hàng Tháng Chuẩn Cột Tuần */}
-              <div className="flex gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] font-mono text-slate-400 h-4 mb-2">
-                <div className="w-6 sm:w-7 shrink-0" />
-                <div className="flex gap-1 sm:gap-1.5">
-                  {githubHeatmap.weeks.map((_, wIdx) => {
-                    const monthEntry = githubHeatmap.monthLabels.find((m) => m.weekIndex === wIdx);
-                    return (
-                      <div key={wIdx} className="w-5 sm:w-5.5 shrink-0 relative overflow-visible">
-                        {monthEntry && (
-                          <span className="absolute left-0 top-0 whitespace-nowrap font-bold text-slate-400 uppercase tracking-wider text-[10px]">
-                            {monthEntry.label}
-                          </span>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Thân bảng 7 hàng × N tuần */}
-              <div className="flex gap-1.5 sm:gap-2 items-center">
-                {/* Cột Thứ */}
-                <div className="flex flex-col gap-1 sm:gap-1.5 text-[9px] sm:text-[10px] font-mono text-slate-500 select-none pr-1">
-                  <span className="w-6 sm:w-7 h-5 sm:h-5.5 flex items-center justify-end opacity-0">CN</span>
-                  <span className="w-6 sm:w-7 h-5 sm:h-5.5 flex items-center justify-end">T2</span>
-                  <span className="w-6 sm:w-7 h-5 sm:h-5.5 flex items-center justify-end opacity-0">T3</span>
-                  <span className="w-6 sm:w-7 h-5 sm:h-5.5 flex items-center justify-end">T4</span>
-                  <span className="w-6 sm:w-7 h-5 sm:h-5.5 flex items-center justify-end opacity-0">T5</span>
-                  <span className="w-6 sm:w-7 h-5 sm:h-5.5 flex items-center justify-end">T6</span>
-                  <span className="w-6 sm:w-7 h-5 sm:h-5.5 flex items-center justify-end opacity-0">T7</span>
-                </div>
-
-                {/* Các Cột Tuần */}
-                <div className="flex gap-1 sm:gap-1.5">
-                  {githubHeatmap.weeks.map((week, wIdx) => (
-                    <div key={wIdx} className="flex flex-col gap-1 sm:gap-1.5">
-                      {week.map((day) => {
-                        if (day.isFuture) {
-                          return (
-                            <div
-                              key={day.dateStr}
-                              className="w-5 h-5 sm:w-5.5 sm:h-5.5 rounded-[4px] opacity-0 pointer-events-none"
-                            />
-                          );
-                        }
-
-                        let stage: 0 | 1 | 2 | 3 = 0;
-                        if (day.match && day.match.time_spent_minutes > 0) {
-                          if (day.match.time_spent_minutes >= 40) {
-                            stage = 3; // Hoa nở rực rỡ
-                          } else if (day.match.time_spent_minutes >= 20) {
-                            stage = 2; // Nụ hoa
-                          } else {
-                            stage = 1; // Mầm non
-                          }
-                        }
-
-                        const statusText =
-                          stage === 3
-                            ? "🌻 Hoa hướng dương nở rộ"
-                            : stage === 2
-                            ? "🌿 Nụ hoa vươn cao"
-                            : stage === 1
-                            ? "🌱 Mầm non nhú đất"
-                            : "Ô đất trống (chờ gieo hạt)";
-
-                        return (
-                          <div
-                            key={day.dateStr}
-                            title={`${day.dateStr} (${statusText}): ${day.match ? `${day.match.time_spent_minutes} phút học, +${day.match.xp_earned} XP` : "Chưa học"}`}
-                            className={`garden-cell garden-cell-${stage} w-5 h-5 sm:w-5.5 sm:h-5.5 p-0.5 cursor-pointer`}
-                          >
-                            <GardenFlower stage={stage} theme="sunflower" className="w-full h-full" />
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Footer & Chú Giải Sang Trọng */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-300 font-medium pt-1 relative z-10">
-            {/* Thống kê từng nấc sinh trưởng */}
-            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 sm:gap-3 text-xs">
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800/40 border border-slate-700/40 text-slate-300">
-                <span className="w-2.5 h-2.5 rounded-sm bg-stone-500/40 border border-stone-600/50 inline-block" />
-                <span className="text-slate-400">Ô đất trống</span>
-              </div>
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-                <img src="/farm/Garden/sunflower_01.png" alt="Mầm" className="w-4 h-4 pixelated" />
-                <span><b>{stageStats.sprouts}</b> Mầm (&lt;20p)</span>
-              </div>
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-400">
-                <img src="/farm/Garden/sunflower_02.png" alt="Nụ" className="w-4 h-4 pixelated" />
-                <span><b>{stageStats.buds}</b> Nụ (20–39p)</span>
-              </div>
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-300">
-                <img src="/farm/Garden/sunflower_03.png" alt="Hoa" className="w-4 h-4 pixelated" />
-                <span><b>{stageStats.blooms}</b> Hoa nở (40p+)</span>
-              </div>
-            </div>
-
-            {/* Thang đo cấp độ chuẩn GitHub */}
-            <div className="flex items-center gap-2 text-xs text-slate-400">
-              <span className="text-[11px] font-medium text-slate-500">Ít</span>
-              <div className="flex items-center gap-1">
-                <div className="garden-cell garden-cell-0 w-4 h-4 p-0.5" title="Chưa học (Ô đất trống)">
-                  <GardenFlower stage={0} theme="sunflower" className="w-full h-full" animate={false} />
-                </div>
-                <div className="garden-cell garden-cell-1 w-4 h-4 p-0.5" title="Mầm non (<20p)">
-                  <GardenFlower stage={1} theme="sunflower" className="w-full h-full" animate={false} />
-                </div>
-                <div className="garden-cell garden-cell-2 w-4 h-4 p-0.5" title="Nụ hoa (20–39p)">
-                  <GardenFlower stage={2} theme="sunflower" className="w-full h-full" animate={false} />
-                </div>
-                <div className="garden-cell garden-cell-3 w-4 h-4 p-0.5" title="Hoa nở rực rỡ (40p+)">
-                  <GardenFlower stage={3} theme="sunflower" className="w-full h-full" animate={false} />
-                </div>
-              </div>
-              <span className="text-[11px] font-medium text-slate-500">Nhiều</span>
-            </div>
-          </div>
-        </div>
+        {/* Heatmap Hoạt Động Ôn Tập Chuẩn Onigiri Anki Addon */}
+        <OnigiriHeatmap
+          data={activeHeatmapSource}
+          streak={currentUser?.streak || 0}
+          showDemo={showDemo}
+          onToggleDemo={() => setShowDemo((prev) => !prev)}
+        />
       </div>
     </AppShell>
   );
