@@ -302,9 +302,6 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
               <h3 className="text-sm sm:text-base font-bold tracking-wider uppercase text-white">
                 HOẠT ĐỘNG ÔN TẬP
               </h3>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-sky-500/15 text-sky-400 tracking-wide border-0">
-                ONIGIRI
-              </span>
             </div>
             <p className="text-xs text-slate-400">
               Biểu đồ nhiệt chuyên cần & chu kỳ ôn tập Spaced Repetition
