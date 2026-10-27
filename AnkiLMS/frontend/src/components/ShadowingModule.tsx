@@ -156,7 +156,24 @@ export const ShadowingModule: React.FC = () => {
   }, [selectedLessonId, allLessons]);
 
   const currentSub = currentLesson?.segments?.[currentSubIndex] || currentLesson?.segments?.[0] || null;
-  const currentTranslation = translationLanguage === "en" ? currentSub?.translationEn : currentSub?.translation;
+  const currentTranslation = translationLanguage === "vi" ? currentSub?.translation : translationLanguage === "en" ? currentSub?.translationEn : undefined;
+  const [generatedTranslation, setGeneratedTranslation] = useState("");
+  useEffect(() => {
+    let cancelled = false;
+    setGeneratedTranslation("");
+    if (!currentSub?.text || currentTranslation?.trim()) return;
+    const cacheKey = `haechivn-translation:${translationLanguage}:${currentSub.text}`;
+    const cached = window.localStorage.getItem(cacheKey);
+    if (cached) { setGeneratedTranslation(cached); return; }
+    const url = new URL("https://translate.googleapis.com/translate_a/single");
+    url.search = new URLSearchParams({ client: "gtx", sl: "ko", tl: translationLanguage, dt: "t", q: currentSub.text }).toString();
+    void fetch(url).then((response) => response.json()).then((payload) => {
+      const chunks = Array.isArray(payload) && Array.isArray(payload[0]) ? payload[0] : [];
+      const translation = chunks.map((chunk) => Array.isArray(chunk) && typeof chunk[0] === "string" ? chunk[0] : "").join("").trim();
+      if (!cancelled && translation) { setGeneratedTranslation(translation); window.localStorage.setItem(cacheKey, translation); }
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [currentSub?.id, currentSub?.text, currentTranslation, translationLanguage]);
 
   // YouTube API Init
   useEffect(() => {
@@ -924,7 +941,7 @@ export const ShadowingModule: React.FC = () => {
               <span className="text-2xl md:text-3xl font-black text-white font-noto leading-relaxed block tracking-wide">
                 {currentSub.text}
               </span>
-              {currentTranslation && <p className="text-sm text-slate-400">{currentTranslation}</p>}
+              {(currentTranslation || generatedTranslation) && <p className="text-sm text-slate-400">{currentTranslation || generatedTranslation}</p>}
               <button
                 onClick={() => playSegment(currentSub)}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 text-xs font-bold hover:bg-rose-500/30 transition-all"

@@ -48,6 +48,11 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     const validState = await env.SESSIONS.get(stateKey);
     await env.SESSIONS.delete(stateKey);
     if (!validState || readStateCookie(request) !== state) return redirect(request, siteUrl, "oauth_state_expired");
+    let translationLanguage = "vi";
+    try {
+      const stateData = JSON.parse(validState) as { translationLanguage?: string };
+      if (["vi", "en", "ja"].includes(stateData.translationLanguage || "")) translationLanguage = stateData.translationLanguage!;
+    } catch { /* Older OAuth states default to Vietnamese. */ }
 
     const clientId = env.GOOGLE_CLIENT_ID;
     const clientSecret = env.GOOGLE_CLIENT_SECRET;
@@ -86,9 +91,9 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     if (!user) {
       const userId = `usr_${crypto.randomUUID()}`;
       await env.DB.prepare(
-      `INSERT INTO users (id, email, password_hash, name, avatar_url, streak, longest_streak, xp, gems, level)
-         VALUES (?, ?, '', ?, ?, 0, 0, 0, 100, 1)`
-      ).bind(userId, email, (profile.name || email.split("@")[0]).slice(0, 48), profile.picture || null).run();
+      `INSERT INTO users (id, email, password_hash, name, avatar_url, translation_language, streak, longest_streak, xp, gems, level)
+         VALUES (?, ?, '', ?, ?, ?, 0, 0, 0, 100, 1)`
+      ).bind(userId, email, (profile.name || email.split("@")[0]).slice(0, 48), profile.picture || null, translationLanguage).run();
       user = await env.DB.prepare("SELECT * FROM users WHERE id = ?").bind(userId).first<UserRow>();
     } else if (profile.picture && !user.avatar_url) {
       await env.DB.prepare("UPDATE users SET avatar_url = ? WHERE id = ?").bind(profile.picture, user.id).run();

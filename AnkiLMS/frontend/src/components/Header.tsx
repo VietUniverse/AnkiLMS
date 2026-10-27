@@ -6,6 +6,7 @@ import { Search, ChevronDown, Sparkles, Flame, Zap, Gem, LogOut, User as UserIco
 import { UserProfile, ApiClient } from "../lib/apiClient";
 import { searchLearningDictionary, DictionaryEntry, naverLookupUrl } from "../lib/dictionarySearch";
 import { ThemeSwitcher } from "./ThemeSwitcher";
+import { useTranslationLanguage } from "../lib/translationPreference";
 
 interface HeaderProps {
   currentUser: UserProfile | null;
@@ -20,6 +21,7 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onLogou
   const [searchLoading, setSearchLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [translationLanguage] = useTranslationLanguage();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -105,8 +107,7 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onLogou
                           <span className="text-base font-black text-amber-400 font-noto">{item.hangul}</span>
                           {item.partOfSpeech && <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 font-bold">{item.partOfSpeech}</span>}
                         </div>
-                        {item.vietnamese && <p className="text-xs font-bold text-white mt-0.5">VI · {item.vietnamese}</p>}
-                        {item.english && <p className="text-xs text-slate-300 mt-0.5">EN · {item.english}</p>}
+                        {(translationLanguage === "vi" ? item.vietnamese : translationLanguage === "en" ? item.english : item.japanese) && <p className="text-xs font-bold text-white mt-0.5">{translationLanguage.toUpperCase()} · {translationLanguage === "vi" ? item.vietnamese : translationLanguage === "en" ? item.english : item.japanese}</p>}
                         {item.source === "yomichan" && <p className="text-xs text-slate-300 mt-0.5">Biến thể trong chỉ mục Hàn–Nhật · tra nguồn để xem nghĩa</p>}
                       </div>
                       <div className="flex shrink-0 items-center gap-1">

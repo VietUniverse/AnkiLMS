@@ -1,5 +1,5 @@
 // Per-word glosses for built-in HaechiVN practice dialogues.
-export const KOREAN_WORD_GLOSSARY: Record<string, { vi: string; en: string }> = {
+export const KOREAN_WORD_GLOSSARY: Record<string, { vi: string; en: string; ja?: string }> = {
   "가기": {
     "vi": "đi",
     "en": "go"

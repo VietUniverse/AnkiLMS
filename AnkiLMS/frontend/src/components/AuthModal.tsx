@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { X, User, Mail, Lock, UserPlus, LogIn, Sparkles } from "lucide-react";
 import { ApiClient, UserProfile } from "../lib/apiClient";
+import { TranslationLanguage } from "../lib/translationPreference";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [translationLanguage, setTranslationLanguage] = useState<TranslationLanguage>("vi");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -44,7 +46,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     try {
       let user: UserProfile;
       if (isRegister) {
-        user = await ApiClient.register(email, name || email.split("@")[0], password);
+        user = await ApiClient.register(email, name || email.split("@")[0], password, translationLanguage);
       } else {
         user = await ApiClient.login(email, password);
       }
@@ -58,7 +60,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   };
 
   const handleGoogleLogin = () => {
-    ApiClient.loginWithGoogle();
+    ApiClient.loginWithGoogle(translationLanguage);
   };
 
   return (
@@ -138,6 +140,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </div>
             </div>
           )}
+
+          {isRegister && <label className="block"><span className="mb-1 block text-xs font-bold text-slate-400">Ngôn ngữ dịch khi học</span><select value={translationLanguage} onChange={(event) => setTranslationLanguage(event.target.value as TranslationLanguage)} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-xs text-white outline-none focus:border-blue-500"><option value="vi">Hàn – Việt</option><option value="en">Hàn – Anh</option><option value="ja">Hàn – Nhật</option></select></label>}
 
           <div>
             <label className="block text-xs font-bold text-slate-400 mb-1">Địa chỉ Email:</label>

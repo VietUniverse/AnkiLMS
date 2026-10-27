@@ -39,17 +39,18 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
   const user = await authenticateRequest(request, env);
   if (!user) return errorResponse("Đăng nhập để chỉnh sửa hồ sơ.", 401);
   try {
-    const body = await request.json() as { name?: unknown; bio?: unknown; profilePublic?: unknown };
+    const body = await request.json() as { name?: unknown; bio?: unknown; profilePublic?: unknown; translationLanguage?: unknown };
     const name = typeof body.name === "string" ? body.name.trim() : "";
     const bio = typeof body.bio === "string" ? body.bio.trim() : "";
     if (name.length < 2 || name.length > 32) return errorResponse("Tên hiển thị cần từ 2 đến 32 ký tự.");
     if (bio.length > 300) return errorResponse("Tiểu sử tối đa 300 ký tự.");
     if (typeof body.profilePublic !== "boolean") return errorResponse("Cài đặt quyền riêng tư không hợp lệ.");
+    if (!["vi", "en", "ja"].includes(String(body.translationLanguage))) return errorResponse("Ngôn ngữ học không hợp lệ.");
 
-    await env.DB.prepare("UPDATE users SET name = ?, bio = ?, profile_public = ? WHERE id = ?")
-      .bind(name, bio || null, body.profilePublic ? 1 : 0, user.id).run();
+    await env.DB.prepare("UPDATE users SET name = ?, bio = ?, profile_public = ?, translation_language = ? WHERE id = ?")
+      .bind(name, bio || null, body.profilePublic ? 1 : 0, body.translationLanguage, user.id).run();
     const updated = await env.DB.prepare(
-      `SELECT id, email, name, bio, avatar_url, profile_public, streak, longest_streak, xp, gems, level,
+      `SELECT id, email, name, bio, avatar_url, profile_public, translation_language, streak, longest_streak, xp, gems, level,
               active_badge, active_frame, active_background, role, last_checkin_date
        FROM users WHERE id = ?`,
     ).bind(user.id).first();

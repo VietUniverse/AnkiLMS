@@ -6,7 +6,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (Number(request.headers.get("Content-Length") || 0) > 8_192) return errorResponse("Nội dung gửi lên quá lớn.", 413);
 
   try {
-    const body = (await request.json()) as { email?: string; password?: string; name?: string; referralCode?: string };
+    const body = (await request.json()) as { email?: string; password?: string; name?: string; referralCode?: string; translationLanguage?: string };
     const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
     const password = typeof body.password === "string" ? body.password : "";
     const name = typeof body.name === "string" ? body.name.trim() : email.split("@")[0];
@@ -15,6 +15,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return errorResponse("Địa chỉ email chưa hợp lệ.");
     if (password.length < 8 || password.length > 128) return errorResponse("Mật khẩu phải có từ 8 đến 128 ký tự.");
     if (!name || name.length > 48) return errorResponse("Tên hiển thị phải có từ 1 đến 48 ký tự.");
+    const translationLanguage = body.translationLanguage || "vi";
+    if (!["vi", "en", "ja"].includes(translationLanguage)) return errorResponse("Ngôn ngữ học không hợp lệ.");
 
     const referralCode = typeof body.referralCode === "string" ? body.referralCode.trim() : "";
     const referrer = referralCode.length <= 80 && referralCode ? await env.DB.prepare("SELECT id FROM users WHERE id = ?").bind(referralCode).first<{ id: string }>() : null;
@@ -25,9 +27,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const userId = `usr_${crypto.randomUUID()}`;
     const passHash = await hashPassword(password);
     await env.DB.prepare(
-      `INSERT INTO users (id, email, password_hash, name, streak, longest_streak, xp, gems, level, referred_by)
-       VALUES (?, ?, ?, ?, 0, 0, 0, 100, 1, ?)`
-    ).bind(userId, email, passHash, name, referrer?.id || null).run();
+      `INSERT INTO users (id, email, password_hash, name, translation_language, streak, longest_streak, xp, gems, level, referred_by)
+       VALUES (?, ?, ?, ?, ?, 0, 0, 0, 100, 1, ?)`
+    ).bind(userId, email, passHash, name, translationLanguage, referrer?.id || null).run();
 
     const user = await env.DB.prepare("SELECT * FROM users WHERE id = ?").bind(userId).first<UserRow>();
     if (!user) return errorResponse("Không thể tạo tài khoản. Vui lòng thử lại.", 500);
@@ -42,6 +44,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
           avatar_url: user.avatar_url,
           bio: user.bio || null,
           profile_public: user.profile_public ?? 1,
+          translation_language: user.translation_language || "vi",
           streak: user.streak,
           longest_streak: user.longest_streak,
           xp: user.xp,

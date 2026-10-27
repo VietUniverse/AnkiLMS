@@ -35,6 +35,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
           avatar_url: user.avatar_url,
           bio: user.bio || null,
           profile_public: user.profile_public ?? 1,
+          translation_language: user.translation_language || "vi",
           streak: user.streak,
           longest_streak: user.longest_streak,
           xp: user.xp || 0,

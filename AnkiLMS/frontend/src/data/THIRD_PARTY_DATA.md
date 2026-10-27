@@ -1,45 +1,21 @@
 # Third-party vocabulary data
 
-## Korean Learners Dictionary (한국어기초사전)
+## Unified Korean lookup
 
-`niklKoreanViVocabulary.json` is a modified vocabulary extract from the Korean Learners Dictionary published by the National Institute of Korean Language (NIKL / 국립국어원).
+`public/data/dictionary-ko-multi.json` is the lookup asset used by the dictionary, header search, vocabulary games, and speaking practice. It contains **155,186 unique Korean forms** after deduplication across the selected sources. The current snapshot has 48,620 Vietnamese, 48,780 English, and 47,679 Japanese meanings; a form may have more than one target-language meaning.
 
-- Original work: [Korean Learners Dictionary](https://krdict.korean.go.kr/)
-- Dataset/API information: [NIKL Open API](https://krdict.korean.go.kr/kor/openApi/openApiInfo)
-- License: [Creative Commons Attribution-ShareAlike 2.0 Korea (CC BY-SA 2.0 KR)](https://creativecommons.org/licenses/by-sa/2.0/kr/)
-- Source snapshot mirror: [spellcheck-ko/korean-dict-nikl-krdict](https://github.com/spellcheck-ko/korean-dict-nikl-krdict)
-- Modifications: retained Korean headwords and Vietnamese equivalents, merged dictionary senses by headword, and removed pronunciation media URLs and other unused fields.
-- This earlier local fallback contains 4,593 headwords from the first XML
-  chunk. The game and speaking practice now load the complete Vietnamese
-  vocabulary below when available.
+### NIKL / Korean Learners Dictionary
 
-This derived vocabulary file is distributed under the same CC BY-SA 2.0 KR license. NIKL pronunciation recordings are not included.
+- Original work: [Korean Learners Dictionary](https://krdict.korean.go.kr/), National Institute of Korean Language.
+- Dataset: [NIKL Korean–English dictionary](https://huggingface.co/datasets/binjang/NIKL-korean-english-dictionary), pinned snapshot `3b4cfd2126debfd5440cade3ef6c2a3c20cf7cf9`.
+- XML snapshot: [spellcheck-ko/korean-dict-nikl-krdict](https://github.com/spellcheck-ko/korean-dict-nikl-krdict), eleven files.
+- License: the dataset declares MIT; the underlying NIKL-derived material carries [CC BY-SA 2.0 Korea](https://creativecommons.org/licenses/by-sa/2.0/kr/). Attribution and share-alike terms are retained for the NIKL-derived fields.
+- Modifications: deduplicated on Korean written form, retained the first English definition, merged Vietnamese and Japanese equivalents from the NIKL XML, and kept part-of-speech and level metadata. Unused media and other fields were removed.
 
-## NIKL Korean–English lookup
+### Yomichan Korean headword index
 
-`public/data/nikl-ko-en-vi.json` contains 48,795 distinct headwords generated
-from the [binjang/NIKL-korean-english-dictionary](https://huggingface.co/datasets/binjang/NIKL-korean-english-dictionary)
-snapshot at commit `3b4cfd2126debfd5440cade3ef6c2a3c20cf7cf9`. The source dataset
-lists 53,172 rows and marks itself MIT. It originates from the NIKL Korean
-Learners Dictionary; retain attribution to the original source and its
-CC BY-SA 2.0 KR terms as well. We retain the Korean headword, the first
-English definition, part of speech, and NIKL beginner/intermediate/advanced
-level, then merge Vietnamese lemmas from the
-[NIKL XML snapshot](https://github.com/spellcheck-ko/korean-dict-nikl-krdict)
-(all eleven files). 48,620 headwords have Vietnamese meanings. The snapshot
-is CC BY-SA 2.0 KR. English meanings are always labelled EN in the interface.
-The game and speaking practice load the complete Vietnamese vocabulary.
+- Source: [Lyroxide/yomichan-ko-dic](https://github.com/Lyroxide/yomichan-ko-dic), snapshot `b8da625a5f97ccaaea7d73003d04e51c14443013`.
+- 133,928 Korean forms were indexed; overlapping forms are deduplicated in the unified total.
+- The source archive does not declare a reuse license. HaechiVN includes only Korean headwords from this source, not its Japanese/Naver definitions, examples, or media. Entries without a licensed NIKL meaning are shown as headwords without an invented definition. Naver lookup is an explicit user-initiated external link; HaechiVN does not scrape Naver.
 
-## Yomichan Korean headword index
-
-`public/data/yomichan-headwords.json` contains 133,928 Korean headwords
-extracted from [Lyroxide/yomichan-ko-dic](https://github.com/Lyroxide/yomichan-ko-dic)
-at commit `b8da625a5f97ccaaea7d73003d04e51c14443013`. The repository's
-`naver_kr_jp_dict` archive is Korean–Japanese and does not declare a reuse
-license. Only headwords are included here as a search fallback. Its Japanese
-and Naver definitions, examples, and media are not redistributed. The
-interface links to Naver for a learner-initiated lookup. No automated
-requests to Naver are made by HaechiVN.
-
-Rebuild both lookup assets with `scripts/import-linked-dictionaries.py` using
-the two source files downloaded to a working directory outside the repo.
+The earlier `niklKoreanViVocabulary.json` file remains a small local fallback used by existing offline flows. Rebuild the unified lookup asset with `scripts/import-linked-dictionaries.py` and the downloaded source snapshots outside the repository.

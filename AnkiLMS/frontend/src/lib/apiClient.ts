@@ -17,6 +17,7 @@ export interface UserProfile {
   active_background?: string | null;
   last_checkin_date?: string;
   role?: "student" | "teacher" | "admin";
+  translation_language?: "vi" | "en" | "ja";
 }
 
 export interface StudyProfileSummary {
@@ -182,14 +183,14 @@ export class ApiClient {
     }
   }
 
-  public static async register(email: string, name: string, password: string): Promise<UserProfile> {
+  public static async register(email: string, name: string, password: string, translationLanguage: "vi" | "en" | "ja" = "vi"): Promise<UserProfile> {
     const referralCode = typeof window !== "undefined" ? localStorage.getItem("haechivn_referral_code") || new URLSearchParams(window.location.search).get("ref") || undefined : undefined;
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, name, password, referralCode }),
+        body: JSON.stringify({ email, name, password, referralCode, translationLanguage }),
       });
       if (res.status === 404) {
         const localUser: UserProfile = {
@@ -202,6 +203,7 @@ export class ApiClient {
           gems: 50,
           level: 1,
           role: "student",
+          translation_language: translationLanguage,
         };
         this.setSession(localUser);
         if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent("haechivn:user-updated", { detail: localUser }));
@@ -225,6 +227,7 @@ export class ApiClient {
         gems: 50,
         level: 1,
         role: "student",
+        translation_language: translationLanguage,
       };
       this.setSession(localUser);
       if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent("haechivn:user-updated", { detail: localUser }));
@@ -249,8 +252,8 @@ export class ApiClient {
     return guestUser;
   }
 
-  public static loginWithGoogle() {
-    window.location.href = "/api/auth/google";
+  public static loginWithGoogle(translationLanguage: "vi" | "en" | "ja" = "vi") {
+    window.location.href = `/api/auth/google?translationLanguage=${translationLanguage}`;
   }
 
   public static async logout(): Promise<void> {

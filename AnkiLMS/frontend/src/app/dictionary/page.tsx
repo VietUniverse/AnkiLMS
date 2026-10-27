@@ -5,12 +5,14 @@ import Link from "next/link";
 import { BookOpen, ExternalLink, Search, Volume2 } from "lucide-react";
 import { AppShell } from "../../components/AppShell";
 import { DictionaryEntry, naverLookupUrl, searchLearningDictionary } from "../../lib/dictionarySearch";
+import { useTranslationLanguage } from "../../lib/translationPreference";
 
 export default function DictionaryPage() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<DictionaryEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [translationLanguage] = useTranslationLanguage();
 
   useEffect(() => {
     setQuery(new URLSearchParams(window.location.search).get("q") || "");
@@ -46,7 +48,7 @@ export default function DictionaryPage() {
     <section className="card-duo p-5 sm:p-8">
       <p className="text-xs font-bold uppercase tracking-widest text-sky-300">Tra cứu tiếng Hàn</p>
       <h1 className="mt-2 text-2xl font-black text-white sm:text-3xl">Từ điển học tiếng Hàn</h1>
-      <p className="mt-2 text-sm text-slate-300">48.795 từ NIKL, trong đó 48.620 từ có nghĩa tiếng Việt. Tìm bằng Hangul, nghĩa tiếng Việt hoặc nghĩa tiếng Anh.</p>
+      <p className="mt-2 text-sm text-slate-300">155.186 dạng từ Hàn đã loại trùng: 48.620 nghĩa Việt, 48.780 nghĩa Anh và 47.679 nghĩa Nhật. Tìm bằng Hangul hoặc nghĩa theo ngôn ngữ đã chọn.</p>
       <label className="mt-5 flex items-center gap-3 rounded-2xl border border-sky-500/40 bg-[#091630] px-4 py-3">
         <Search className="h-5 w-5 shrink-0 text-sky-300" />
         <input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Nhập từ tiếng Hàn hoặc nghĩa cần tìm…" className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-slate-400" />
@@ -70,8 +72,12 @@ export default function DictionaryPage() {
                 {entry.partOfSpeech && <span className="rounded-lg bg-sky-500/15 px-2 py-1 text-[11px] font-bold text-sky-300">{entry.partOfSpeech}</span>}
                 {entry.level && <span className="rounded-lg bg-violet-500/15 px-2 py-1 text-[11px] font-bold text-violet-300">{entry.level}</span>}
               </div>
-              {entry.vietnamese && <p className="mt-2 text-sm text-emerald-200"><strong>VI</strong> · {entry.vietnamese}</p>}
-              {entry.english && <p className="mt-1 text-sm text-slate-200"><strong>EN</strong> · {entry.english}</p>}
+              {(translationLanguage === "vi" ? entry.vietnamese : translationLanguage === "en" ? entry.english : entry.japanese)
+                ? <p className="mt-2 text-sm text-emerald-200"><strong>{translationLanguage.toUpperCase()}</strong> · {translationLanguage === "vi" ? entry.vietnamese : translationLanguage === "en" ? entry.english : entry.japanese}</p>
+                : <p className="mt-2 text-sm text-amber-300">Chưa có mục từ nghĩa {translationLanguage.toUpperCase()} trong nguồn dữ liệu này.</p>}
+              {entry.vietnamese && translationLanguage !== "vi" && <p className="mt-1 text-sm text-slate-200"><strong>VI</strong> · {entry.vietnamese}</p>}
+              {entry.english && translationLanguage !== "en" && <p className="mt-1 text-sm text-slate-200"><strong>EN</strong> · {entry.english}</p>}
+              {entry.japanese && translationLanguage !== "ja" && <p className="mt-1 text-sm text-slate-200"><strong>JA</strong> · {entry.japanese}</p>}
               {entry.source === "yomichan" && <p className="mt-2 text-sm text-slate-300">Có trong chỉ mục Hàn–Nhật. Mở từ điển nguồn để xem nghĩa.</p>}
             </div>
             <button onClick={() => speak(entry.hangul)} aria-label={`Nghe ${entry.hangul}`} className="shrink-0 rounded-xl bg-sky-500/15 p-2 text-sky-300"><Volume2 className="h-5 w-5" /></button>

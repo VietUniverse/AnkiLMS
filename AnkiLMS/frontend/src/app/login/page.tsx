@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { UserPlus, LogIn } from "lucide-react";
 import { ApiClient, UserProfile } from "../../lib/apiClient";
 import { useApp } from "../../contexts/AppProvider";
+import { TranslationLanguage } from "../../lib/translationPreference";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,6 +15,7 @@ export default function LoginPage() {
   const [account, setAccount] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [translationLanguage, setTranslationLanguage] = useState<TranslationLanguage>("vi");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -48,7 +50,7 @@ export default function LoginPage() {
       const email = account.includes("@") ? account.trim() : `${account.trim()}@haechivn.local`;
 
       if (isRegister) {
-        user = await ApiClient.register(email, name.trim() || account.trim(), password);
+        user = await ApiClient.register(email, name.trim() || account.trim(), password, translationLanguage);
       } else {
         user = await ApiClient.login(email, password);
       }
@@ -163,6 +165,8 @@ export default function LoginPage() {
                 </div>
               )}
 
+              {isRegister && <label className="block space-y-1.5"><span className="text-xs font-bold text-slate-300">Bạn muốn học tiếng Hàn bằng ngôn ngữ nào?</span><select value={translationLanguage} onChange={(event) => setTranslationLanguage(event.target.value as TranslationLanguage)} className="w-full rounded-xl px-4 py-3.5 text-xs text-white outline-none focus:ring-2 focus:ring-blue-500" style={{ backgroundColor: "#132247" }}><option value="vi">Hàn – Việt</option><option value="en">Hàn – Anh</option><option value="ja">Hàn – Nhật</option></select></label>}
+
               {/* Dòng 1: Tài khoản */}
               <div>
                 <input
@@ -223,7 +227,7 @@ export default function LoginPage() {
             {/* Vào học bằng tài khoản Google - nguyên khối không viền */}
             <button
               type="button"
-              onClick={() => ApiClient.loginWithGoogle()}
+              onClick={() => ApiClient.loginWithGoogle(translationLanguage)}
               className="w-full py-3 rounded-xl bg-[#132247] hover:bg-[#1a2f60] text-slate-200 font-bold text-xs flex items-center justify-center gap-3 transition-colors cursor-pointer"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24">

@@ -309,7 +309,7 @@ export const DictationModule: React.FC = () => {
 
   const currentSub = currentLesson?.segments?.[currentSubIndex] || currentLesson?.segments?.[0] || null;
   const isFreeVideoDictation = currentLesson?.freeDictation === true;
-  const currentTranslation = translationLanguage === "en" ? currentSub?.translationEn : currentSub?.translation;
+  const currentTranslation = translationLanguage === "vi" ? currentSub?.translation : translationLanguage === "en" ? currentSub?.translationEn : undefined;
 
   useEffect(() => {
     let cancelled = false;
@@ -1315,7 +1315,7 @@ export const DictationModule: React.FC = () => {
             </div>}
 
             {currentSub?.text && <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-3" aria-live="polite">
-              <p className="text-[10px] font-black uppercase tracking-wider text-emerald-300">Dịch nghĩa · {translationLanguage === "vi" ? "Tiếng Việt" : "English"}</p>
+              <p className="text-[10px] font-black uppercase tracking-wider text-emerald-300">Dịch nghĩa · {{ vi: "Tiếng Việt", en: "English", ja: "日本語" }[translationLanguage]}</p>
               {displayedTranslation
                 ? <p className="mt-1 text-sm leading-6 text-slate-200">{displayedTranslation}</p>
                 : translationLoading

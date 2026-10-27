@@ -20,6 +20,7 @@ export interface UserRow {
   avatar_url: string | null;
   bio?: string | null;
   profile_public?: number;
+  translation_language?: "vi" | "en" | "ja";
   streak: number;
   longest_streak: number;
   xp: number;

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Check, ImagePlus, LoaderCircle, LockKeyhole, Palette, Save, UserRound, Users } from "lucide-react";
 import { useApp } from "../contexts/AppProvider";
+import { TranslationLanguage, useTranslationLanguage } from "../lib/translationPreference";
 
 type Reward = { id: string; name: string; description: string; icon: string; kind: "badge" | "frame" | "background"; visual: string };
 type Equipped = { active_badge?: string | null; active_frame?: string | null; active_background?: string | null; gems?: number };
@@ -25,6 +26,7 @@ export function ProfileSettingsModule() {
   const [equipped, setEquipped] = useState<Equipped>({});
   const [busy, setBusy] = useState("");
   const [message, setMessage] = useState("");
+  const [translationLanguage, setTranslationLanguage] = useTranslationLanguage();
 
   useEffect(() => {
     if (!currentUser) return;
@@ -51,7 +53,7 @@ export function ProfileSettingsModule() {
     event.preventDefault();
     setBusy("profile"); setMessage("");
     try {
-      const response = await fetch("/api/profile", { method: "PATCH", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name, bio, profilePublic: isPublic }) });
+      const response = await fetch("/api/profile", { method: "PATCH", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name, bio, profilePublic: isPublic, translationLanguage }) });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Không lưu được hồ sơ.");
       setCurrentUser((previous) => ({ ...previous, ...data.user } as NonNullable<typeof previous>));
@@ -108,6 +110,7 @@ export function ProfileSettingsModule() {
       </section>
 
       <div className="grid gap-4 sm:grid-cols-2"><label className="space-y-1.5"><span className="text-xs font-bold text-slate-300">Tên hiển thị</span><input value={name} onChange={(event) => setName(event.target.value)} maxLength={32} required minLength={2} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-sm text-white outline-none focus:border-sky-400" placeholder="Tên mọi người nhìn thấy" /></label><div className="space-y-1.5"><span className="text-xs font-bold text-slate-300">Email tài khoản</span><div className="rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-3 text-sm text-slate-400">{currentUser.email}</div></div></div>
+      <label className="block space-y-1.5"><span className="text-xs font-bold text-slate-300">Ngôn ngữ nghĩa khi học tiếng Hàn</span><select value={translationLanguage} onChange={(event) => setTranslationLanguage(event.target.value as TranslationLanguage)} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-sm text-white outline-none focus:border-sky-400"><option value="vi">Hàn – Việt</option><option value="en">Hàn – Anh</option><option value="ja">Hàn – Nhật</option></select><span className="block text-[11px] text-slate-400">Đồng bộ vào tài khoản và dùng chung Dictation, Shadowing cùng tra từ.</span></label>
       <label className="block space-y-1.5"><span className="text-xs font-bold text-slate-300">Giới thiệu bản thân</span><textarea value={bio} onChange={(event) => setBio(event.target.value)} maxLength={300} rows={4} className="w-full resize-y rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-sm leading-6 text-white outline-none focus:border-sky-400" placeholder="Chia sẻ đôi điều về hành trình học tiếng Hàn của bạn…" /><span className="block text-right text-[10px] text-slate-500">{bio.length}/300</span></label>
       <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-800 bg-slate-950/60 p-3"><input type="checkbox" checked={isPublic} onChange={(event) => setIsPublic(event.target.checked)} className="h-5 w-5 accent-sky-500" /><span className="flex-1"><span className="flex items-center gap-2 text-xs font-bold text-white">{isPublic ? <Users className="h-4 w-4 text-emerald-300" /> : <LockKeyhole className="h-4 w-4 text-amber-300" />}{isPublic ? "Cho phép mọi người xem hồ sơ" : "Hồ sơ riêng tư"}</span><span className="mt-1 block text-[11px] leading-5 text-slate-400">{isPublic ? "Hồ sơ và tiến độ tổng quan có thể được xem từ bảng xếp hạng." : "Chỉ bạn mới xem được hồ sơ và ảnh đại diện."}</span></span></label>
       <button type="submit" disabled={busy === "profile"} className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-sky-600 px-4 text-sm font-black text-white hover:bg-sky-500 disabled:opacity-60">{busy === "profile" ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}Lưu hồ sơ</button>
