@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./egg-toggle.css";
 
 @layer base {
   :root {
