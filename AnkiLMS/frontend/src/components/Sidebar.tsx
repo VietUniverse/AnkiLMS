@@ -30,6 +30,7 @@ import {
   Gamepad2,
   ListMusic,
   Compass,
+  Search,
   X,
   Menu,
 } from "lucide-react";
@@ -47,6 +48,7 @@ const mainNav = [
   { href: "/", label: "Trang chủ", icon: Home },
   { href: "/hangul", label: "Bảng Hangeul", icon: BookOpen, feature: "hangul" },
   { href: "/flashcards", label: "Từ vựng", icon: Brain, feature: "flashcards" },
+  { href: "/dictionary", label: "Tra từ điển", icon: Search, feature: "dictionary" },
   { href: "/dictation", label: "Luyện nghe chính tả", icon: Headphones, feature: "dictation" },
   { href: "/shadowing", label: "Shadowing", icon: Repeat, feature: "shadowing" },
   { href: "/listen", label: "Nghe thụ động", icon: ListMusic, badge: "MỚI", feature: "listen" },

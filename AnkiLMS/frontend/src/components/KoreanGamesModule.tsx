@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useApp } from "../contexts/AppProvider";
 import { ApiClient } from "../lib/apiClient";
 import { VOCABULARY_DATA } from "../data/koreanData";
 import NIKL_KOREAN_VI from "../data/niklKoreanViVocabulary.json";
+import { loadVietnameseVocabulary } from "../lib/dictionarySearch";
 import { ArrowRight, Check, Clock3, Gamepad2, RotateCcw, Volume2 } from "lucide-react";
 
 type Word = { korean: string; meaning: string; example?: string };
@@ -22,21 +23,28 @@ function shuffle<T,>(items: T[]): T[] {
 
 export function KoreanGamesModule() {
   const { userDecks } = useApp();
+  const [dictionaryWords, setDictionaryWords] = useState<Word[]>(() =>
+    NIKL_KOREAN_VI.map((item) => ({ korean: item.hangul, meaning: item.vietnamese })),
+  );
+  useEffect(() => {
+    void loadVietnameseVocabulary().then((items) => {
+      setDictionaryWords(items.map((item) => ({ korean: item.hangul, meaning: item.vietnamese })));
+    }).catch(() => {});
+  }, []);
   const words = useMemo(() => {
     const imported = userDecks.flatMap((deck) => deck.cards.map((card) => ({
       korean: (card.koreanText || card.frontText || "").replace(/<[^>]*>/g, "").trim(),
       meaning: (card.vietnameseMeaning || card.backText || "").replace(/<[^>]*>/g, "").trim(),
       example: card.exampleSentence,
     })));
-    const dictionary = NIKL_KOREAN_VI.map((item) => ({ korean: item.hangul, meaning: item.vietnamese }));
-    const merged = [...imported, ...VOCABULARY_DATA.map((item) => ({ korean: item.hangul, meaning: item.vietnamese, example: item.exampleSentence })), ...dictionary];
+    const merged = [...imported, ...VOCABULARY_DATA.map((item) => ({ korean: item.hangul, meaning: item.vietnamese, example: item.exampleSentence })), ...dictionaryWords];
     const unique = new Map<string, Word>();
     merged.filter((item) => item.korean && item.meaning).forEach((item) => {
       const key = item.korean.normalize("NFC").toLocaleLowerCase();
       if (!unique.has(key)) unique.set(key, item);
     });
     return [...unique.values()];
-  }, [userDecks]);
+  }, [userDecks, dictionaryWords]);
 
   const [mode, setMode] = useState<Mode | null>(null);
   const [round, setRound] = useState<Word[]>([]);

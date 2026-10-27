@@ -1,7 +1,7 @@
 import { Env, authenticateAdminRequest, errorResponse, isSameOriginRequest, jsonResponse } from "../_utils";
 
 const FEATURE_KEYS = new Set([
-  "classes", "hangul", "lessons", "flashcards", "topics", "dictation", "shadowing", "listen",
+  "classes", "hangul", "lessons", "flashcards", "dictionary", "topics", "dictation", "shadowing", "listen",
   "games", "aiSpeaking", "topik", "missions", "leaderboard", "achievements", "community", "chat",
   "feedback", "rewards", "referrals", "pricing", "profile", "ankiImport",
 ]);

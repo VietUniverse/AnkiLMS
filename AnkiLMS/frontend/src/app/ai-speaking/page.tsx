@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AppShell } from "../../components/AppShell";
 import { useApp } from "../../contexts/AppProvider";
 import { ApiClient } from "../../lib/apiClient";
 import { AudioLines, Mic, MicOff, RefreshCw, Volume2 } from "lucide-react";
 import NIKL_KOREAN_VI from "../../data/niklKoreanViVocabulary.json";
+import { loadVietnameseVocabulary } from "../../lib/dictionarySearch";
 
 const PROMPTS = [
   { korean: "안녕하세요. 만나서 반갑습니다.", vietnamese: "Xin chào. Rất vui được gặp bạn." },
@@ -19,7 +20,6 @@ const PROMPTS = [
 ];
 
 const SPEAKING_WORDS = NIKL_KOREAN_VI.map((item) => ({ korean: item.hangul, vietnamese: item.vietnamese, kind: "word" as const }));
-const PRACTICE_COUNT = PROMPTS.length + SPEAKING_WORDS.length;
 
 type RecognitionAlternative = { transcript: string };
 type RecognitionEvent = { results: ArrayLike<ArrayLike<RecognitionAlternative>> };
@@ -54,13 +54,19 @@ function similarity(target: string, actual: string): number {
 
 export default function SpeakingPracticePage() {
   const { currentUser } = useApp();
+  const [speakingWords, setSpeakingWords] = useState(SPEAKING_WORDS);
+  useEffect(() => {
+    void loadVietnameseVocabulary().then((items) => {
+      setSpeakingWords(items.map((item) => ({ korean: item.hangul, vietnamese: item.vietnamese, kind: "word" as const })));
+    }).catch(() => {});
+  }, []);
   const [index, setIndex] = useState(0);
   const [transcript, setTranscript] = useState("");
   const [score, setScore] = useState<number | null>(null);
   const [recording, setRecording] = useState(false);
   const [message, setMessage] = useState("");
   const recognitionRef = useRef<RecognitionLike | null>(null);
-  const prompt = index < PROMPTS.length ? { ...PROMPTS[index], kind: "sentence" as const } : SPEAKING_WORDS[index - PROMPTS.length];
+  const prompt = index < PROMPTS.length ? { ...PROMPTS[index], kind: "sentence" as const } : speakingWords[index - PROMPTS.length] || speakingWords[0];
 
   const percent = useMemo(() => transcript ? similarity(prompt.korean, transcript) : null, [prompt.korean, transcript]);
 
@@ -106,7 +112,7 @@ export default function SpeakingPracticePage() {
   function nextPrompt() {
     recognitionRef.current?.stop();
     setRecording(false);
-    setIndex((value) => value < PROMPTS.length - 1 ? value + 1 : PROMPTS.length + Math.floor(Math.random() * SPEAKING_WORDS.length));
+    setIndex((value) => value < PROMPTS.length - 1 ? value + 1 : PROMPTS.length + Math.floor(Math.random() * speakingWords.length));
     setTranscript("");
     setScore(null);
     setMessage("");
@@ -115,7 +121,7 @@ export default function SpeakingPracticePage() {
   return (
     <AppShell>
       <div className="mx-auto max-w-3xl space-y-5 animate-fadeIn">
-        <header className="card-duo p-6"><p className="text-xs font-bold uppercase tracking-widest text-violet-300">Luyện phát âm · {PRACTICE_COUNT.toLocaleString("vi-VN")} từ và câu mẫu</p><h1 className="mt-2 text-2xl font-black text-white">Nghe mẫu và nói theo</h1><p className="mt-2 text-sm text-slate-400">Luyện câu giao tiếp và gần 4.600 từ tiếng Hàn có nghĩa tiếng Việt từ Từ điển Học tiếng Hàn của Viện Ngôn ngữ Quốc gia Hàn Quốc. Bấm “Từ/câu tiếp” để lấy mẫu ngẫu nhiên. Dùng giọng đọc và nhận diện có sẵn trong trình duyệt.</p></header>
+        <header className="card-duo p-6"><p className="text-xs font-bold uppercase tracking-widest text-violet-300">Luyện phát âm · {(PROMPTS.length + speakingWords.length).toLocaleString("vi-VN")} từ và câu mẫu</p><h1 className="mt-2 text-2xl font-black text-white">Nghe mẫu và nói theo</h1><p className="mt-2 text-sm text-slate-400">Luyện câu giao tiếp và từ tiếng Hàn có nghĩa tiếng Việt từ Từ điển Học tiếng Hàn của Viện Ngôn ngữ Quốc gia Hàn Quốc. Bấm “Từ/câu tiếp” để lấy mẫu ngẫu nhiên. Dùng giọng đọc và nhận diện có sẵn trong trình duyệt.</p></header>
         <section className="card-duo space-y-6 p-6 sm:p-8">
           <div className="text-center"><span className="inline-flex rounded-full border border-slate-700 bg-slate-950/50 px-3 py-1 text-[10px] font-bold text-sky-300">{prompt.kind === "word" ? "Từ vựng · NIKL" : "Câu giao tiếp"}</span><p className="mt-4 font-noto text-2xl font-black leading-relaxed text-white sm:text-3xl">{prompt.korean}</p><p className="mt-3 text-sm text-slate-400">{prompt.vietnamese}</p></div>
           <div className="flex flex-wrap justify-center gap-3"><button type="button" onClick={speak} className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-4 py-3 text-xs font-bold text-slate-200 hover:border-sky-500"><Volume2 className="h-4 w-4 text-sky-300" /> Nghe mẫu</button><button type="button" onClick={recording ? () => recognitionRef.current?.stop() : startRecording} className={`btn-duo inline-flex items-center gap-2 px-5 py-3 text-xs ${recording ? "bg-rose-600 text-white" : "btn-duo-primary"}`}>{recording ? <><MicOff className="h-4 w-4" /> Dừng ghi âm</> : <><Mic className="h-4 w-4" /> Bắt đầu nói</>}</button><button type="button" onClick={nextPrompt} className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-4 py-3 text-xs font-bold text-slate-200 hover:border-violet-500"><RefreshCw className="h-4 w-4" /> Từ/câu tiếp</button></div>

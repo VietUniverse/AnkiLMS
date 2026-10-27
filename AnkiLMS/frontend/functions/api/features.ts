@@ -1,7 +1,7 @@
 import { Env, jsonResponse } from "./_utils";
 
 const FEATURE_KEYS = [
-  "classes", "hangul", "lessons", "flashcards", "topics", "dictation", "shadowing", "listen",
+  "classes", "hangul", "lessons", "flashcards", "dictionary", "topics", "dictation", "shadowing", "listen",
   "games", "aiSpeaking", "topik", "missions", "leaderboard", "achievements", "community", "chat",
   "feedback", "rewards", "referrals", "pricing", "profile", "ankiImport",
 ] as const;
