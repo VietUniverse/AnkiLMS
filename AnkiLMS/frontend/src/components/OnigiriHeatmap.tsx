@@ -443,12 +443,14 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
                             });
                           }}
                           onMouseLeave={() => setHoveredCell(null)}
-                          className={`onigiri-day-cell onigiri-level-${cell.level} w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-[3px] cursor-pointer transition-all duration-150 ${
-                            cell.isToday
-                              ? "ring-2 ring-sky-400 ring-offset-1 ring-offset-[#0a0d14]"
-                              : ""
-                          } ${cell.isFuture ? "opacity-35 border border-dashed border-slate-700" : ""}`}
-                        />
+                          className={`onigiri-day-cell onigiri-level-${cell.level} w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-[3px] cursor-pointer transition-transform duration-150 relative ${
+                            cell.isToday ? "scale-110 shadow-md z-10" : ""
+                          } ${cell.isFuture ? "opacity-20" : ""}`}
+                        >
+                          {cell.isToday && (
+                            <span className="w-1 h-1 rounded-full bg-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+                          )}
+                        </div>
                       );
                     })}
                   </div>
@@ -493,9 +495,9 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
                       });
                     }}
                     onMouseLeave={() => setHoveredCell(null)}
-                    className={`onigiri-day-cell onigiri-level-${c.level} aspect-square rounded-lg flex flex-col items-center justify-center p-1 cursor-pointer transition-all ${
-                      c.isToday ? "ring-2 ring-sky-400 ring-offset-1 ring-offset-[#0a0d14]" : ""
-                    } ${c.isFuture ? "opacity-40 border border-dashed border-slate-700" : ""}`}
+                    className={`onigiri-day-cell onigiri-level-${c.level} aspect-square rounded-lg flex flex-col items-center justify-center p-1 cursor-pointer transition-transform duration-150 ${
+                      c.isToday ? "scale-105 z-10 shadow-md ring-2 ring-sky-400/50" : ""
+                    } ${c.isFuture ? "opacity-25" : ""}`}
                   >
                     <span
                       className={`text-xs font-bold ${
@@ -527,9 +529,9 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
               <div
                 key={day.dateStr}
                 data-level={day.level}
-                className={`onigiri-day-cell onigiri-level-${day.level} rounded-xl p-3 flex flex-col items-center justify-between min-h-[110px] border transition-all ${
-                  day.isToday ? "ring-2 ring-sky-400 ring-offset-2 ring-offset-[#0a0d14]" : ""
-                } ${day.isFuture ? "opacity-40 border-dashed" : "border-slate-800"}`}
+                className={`onigiri-day-cell onigiri-level-${day.level} rounded-xl p-3 flex flex-col items-center justify-between min-h-[110px] transition-transform duration-150 ${
+                  day.isToday ? "scale-[1.02] shadow-lg ring-2 ring-sky-400/50 z-10" : ""
+                } ${day.isFuture ? "opacity-35" : ""}`}
               >
                 <div className="text-center">
                   <p
