@@ -1,6 +1,6 @@
 import { Env, jsonResponse, errorResponse, authenticateRequest, isSameOriginRequest } from "./_utils";
 
-const MODULES = new Set(["srs", "dictation", "shadowing", "passive_listening", "topik", "hangeul", "speaking"]);
+const MODULES = new Set(["srs", "dictation", "shadowing", "passive_listening", "topik", "hangeul", "speaking", "game_quiz", "game_spell", "game_match", "game_korean_shooter"]);
 const MODULE_TO_MISSION: Record<string, "vocabulary" | "shadowing" | "dictation"> = {
   srs: "vocabulary",
   shadowing: "shadowing",
@@ -52,25 +52,20 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (!body.module || !MODULES.has(body.module)) return errorResponse("Phân hệ học không hợp lệ.");
     if (!Number.isInteger(cardsReviewed) || cardsReviewed < 1 || cardsReviewed > 500) return errorResponse("Số thẻ đã học không hợp lệ.");
     if (!Number.isInteger(correctCount) || correctCount < 0 || correctCount > cardsReviewed) return errorResponse("Kết quả trả lời không hợp lệ.");
-    if (!Number.isInteger(durationSeconds) || durationSeconds < 0 || durationSeconds > 14_400) return errorResponse("Thời lượng phiên học không hợp lệ.");
+    if (!Number.isInteger(durationSeconds) || durationSeconds < 10 || durationSeconds > 14_400) return errorResponse("Phiên học cần ít nhất 10 giây hoạt động.");
 
     const now = new Date();
     const todayStr = new Date(now.getTime() + 7 * 60 * 60 * 1000).toISOString().slice(0, 10);
     const recentSessions = await env.DB.prepare(
       "SELECT COUNT(*) AS total FROM study_sessions WHERE user_id = ? AND created_at >= datetime('now', '-1 hour')",
     ).bind(user.id).first<{ total: number }>();
-    if ((recentSessions?.total || 0) >= 20) return errorResponse("Bạn đã đạt giới hạn phiên học trong giờ này. Hãy nghỉ một chút rồi học tiếp nhé.", 429);
-
-    const dailyReward = await env.DB.prepare(
-      "SELECT COALESCE(SUM(xp_earned), 0) AS total FROM study_sessions WHERE user_id = ? AND date(created_at, '+7 hours') = ?",
-    ).bind(user.id, todayStr).first<{ total: number }>();
-    const availableDailyXp = Math.max(0, 40 - (dailyReward?.total || 0));
+    if ((recentSessions?.total || 0) >= 12) return errorResponse("Bạn đã ghi nhận 12 lượt học trong giờ qua. Nghỉ một chút rồi tiếp tục nhé.", 429);
 
     // XP is derived on the server; a modified browser cannot choose its own reward.
-    // A normal activity is worth 1 XP. A longer, completed session can earn 2 XP.
-    // The daily ceiling prevents repeated short sessions from dominating the leaderboard.
-    const xpEarned = Math.min(availableDailyXp, cardsReviewed >= 10 && correctCount >= 5 && durationSeconds >= 60 ? 2 : 1);
-    const gemsEarned = Math.floor(xpEarned / 5);
+    // Keep leaderboard rewards small and server-derived. Zero-correct submissions earn no XP.
+    // A substantial session earns 2 XP; shorter valid sessions earn 1 XP. No daily XP cap.
+    const xpEarned = correctCount < 1 ? 0 : cardsReviewed >= 10 && correctCount >= 5 && durationSeconds >= 120 ? 2 : 1;
+    const gemsEarned = 0;
     const sessionId = `ses_${crypto.randomUUID()}`;
     const durationMinutes = Math.ceil(durationSeconds / 60);
     const insertSession = env.DB.prepare(

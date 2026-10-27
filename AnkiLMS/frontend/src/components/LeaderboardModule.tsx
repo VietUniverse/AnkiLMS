@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Trophy, Flame, Zap, Crown, Sparkles, Users } from "lucide-react";
 import { ApiClient, UserProfile } from "../lib/apiClient";
+import { getStudyRank } from "../lib/studyRanks";
 
 interface LeaderboardModuleProps {
   currentUser: UserProfile | null;
@@ -169,7 +170,7 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
                         )}
                       </p>
                       <p className="text-[10px] text-slate-400 font-mono">
-                        Cấp {user.level || 1} • {user.gems || 0} 💎
+                        {getStudyRank(user.level)} · Cấp {user.level || 1} • {user.gems || 0} 💎
                       </p>
                     </div>
                   </div>

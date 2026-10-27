@@ -49,7 +49,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
 
     const newLongestStreak = Math.max(user.longest_streak || 1, newStreak);
-    const newXp = user.xp + 50;
+    const rewardXp = 1;
+    const newXp = user.xp + rewardXp;
     const newGems = user.gems + 1;
     const newLevel = Math.floor(newXp / 300) + 1;
 
@@ -57,8 +58,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const checkinId = "chk_" + crypto.randomUUID().substring(0, 8);
     const insertCheckin = env.DB.prepare(
       `INSERT INTO checkins (id, user_id, checkin_date, xp_earned, time_spent_minutes)
-       VALUES (?, ?, ?, 50, 15)`
-    ).bind(checkinId, user.id, todayStr);
+       VALUES (?, ?, ?, ?, 15)`
+    ).bind(checkinId, user.id, todayStr, rewardXp);
 
     const updateUser = env.DB.prepare(
       `UPDATE users
@@ -86,8 +87,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     return jsonResponse({
       alreadyCheckedIn: false,
-      message: "Điểm danh thành công! +50 XP, +1 Kim Cương 💎",
-      rewardXp: 50,
+      message: "Điểm danh thành công! +1 XP, +1 Kim Cương 💎",
+      rewardXp,
       rewardGems: 1,
       user: {
         id: user.id,

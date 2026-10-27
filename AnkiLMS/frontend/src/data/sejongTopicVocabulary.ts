@@ -74,10 +74,10 @@ export const SEJONG_TOPIC_VOCABULARY: SejongTopicWord[] = rows.map(([level, topi
 }));
 
 export const TOPIK_LEVEL_GUIDE: { level: string; course: string; description: string }[] = [
-  { level: "TOPIK 1", course: "Sejong 1", description: "Chào hỏi và nhu cầu hằng ngày" },
-  { level: "TOPIK 2", course: "Sejong 2", description: "Sinh hoạt, dịch vụ và trải nghiệm" },
-  { level: "TOPIK 3", course: "Sejong 3", description: "Kể chuyện, nêu ý kiến và giải thích" },
-  { level: "TOPIK 4", course: "Sejong 4", description: "Chủ đề xã hội và lập luận rõ ràng" },
-  { level: "TOPIK 5", course: "Sejong 5", description: "Diễn đạt chuyên sâu và ngữ cảnh trang trọng" },
-  { level: "TOPIK 6", course: "Sejong 6", description: "Văn bản học thuật và vấn đề trừu tượng" },
+  { level: "TOPIK 1", course: "Sơ cấp 1 · Sejong 1", description: "Chào hỏi và nhu cầu hằng ngày" },
+  { level: "TOPIK 2", course: "Sơ cấp 2 · Sejong 2", description: "Sinh hoạt, dịch vụ và trải nghiệm" },
+  { level: "TOPIK 3", course: "Trung cấp 1 · Sejong 3", description: "Kể chuyện, nêu ý kiến và giải thích" },
+  { level: "TOPIK 4", course: "Trung cấp 2 · Sejong 4", description: "Chủ đề xã hội và lập luận rõ ràng" },
+  { level: "TOPIK 5", course: "Cao cấp 1 · Sejong 5", description: "Diễn đạt chuyên sâu và ngữ cảnh trang trọng" },
+  { level: "TOPIK 6", course: "Cao cấp 2 · Sejong 6", description: "Văn bản học thuật và vấn đề trừu tượng" },
 ];

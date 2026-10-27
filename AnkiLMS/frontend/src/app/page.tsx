@@ -13,6 +13,7 @@ import { speakKorean } from "../lib/koreanSpeech";
 import { ApiClient } from "../lib/apiClient";
 import { searchLearningDictionary } from "../lib/dictionarySearch";
 import { useTranslationLanguage } from "../lib/translationPreference";
+import { getStudyRank } from "../lib/studyRanks";
 
 function normalizeSearchText(value: string) {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase().replace(/đ/g, "d");
@@ -351,7 +352,7 @@ export default function Home() {
                   <span>{userLevel || 1}</span>
                 </div>
                 <span className="metric-card-level-text text-xs sm:text-base font-bold">
-                  Lên Lv.{(userLevel || 1) + 1} · Còn {neededXPForNext} XP
+                  {getStudyRank(userLevel)} · Lên Lv.{(userLevel || 1) + 1} · Còn {neededXPForNext} XP
                 </span>
               </div>
 

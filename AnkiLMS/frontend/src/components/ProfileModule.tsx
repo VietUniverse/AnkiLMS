@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Activity, BookOpen, CalendarDays, CheckCircle2, Clock3, Flame, Gem, LogOut, Mail, Mic2, NotebookPen, Play, Shield, Sparkles, Trophy, User, Zap } from "lucide-react";
 import { ApiClient, StudyProfileSummary, UserProfile } from "../lib/apiClient";
 import { ACHIEVEMENTS_DATA } from "../data/achievementsData";
+import { getStudyRank } from "../lib/studyRanks";
 
 interface ProfileModuleProps {
   currentUser: UserProfile | null;
@@ -98,7 +99,7 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
             <div className="rounded-[28px] bg-gradient-to-br from-amber-300 via-fuchsia-400 to-indigo-400 p-[3px] shadow-xl shadow-fuchsia-950/40" style={currentUser.active_frame && frameVisuals[currentUser.active_frame] ? { backgroundImage: frameVisuals[currentUser.active_frame], padding: "4px" } : undefined}>
               {currentUser.avatar_url ? <img src={currentUser.avatar_url} alt={currentUser.name} className="h-24 w-24 rounded-[25px] object-cover bg-slate-950" /> : <div className="flex h-24 w-24 items-center justify-center rounded-[25px] bg-slate-900 text-4xl font-black text-white">{currentUser.name.charAt(0).toUpperCase()}</div>}
             </div>
-            <span className="absolute -bottom-2 -right-2 rounded-full border-4 border-slate-900 bg-amber-400 px-2.5 py-1 text-xs font-black text-slate-950">Lv.{currentUser.level || 1}</span>
+            <span title={getStudyRank(currentUser.level)} className="absolute -bottom-2 -right-2 rounded-full border-4 border-slate-900 bg-amber-400 px-2.5 py-1 text-xs font-black text-slate-950">{getStudyRank(currentUser.level)}</span>
           </div>
           <div className="min-w-0 flex-1 text-center sm:text-left">
             <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-indigo-200"><Sparkles className="h-3.5 w-3.5" /> Hồ sơ học tập</div>

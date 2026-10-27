@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useApp } from "../contexts/AppProvider";
 import { FeatureKey } from "../lib/featureFlags";
+import { getStudyRank } from "../lib/studyRanks";
 import {
   Home,
   BookOpen,
@@ -233,7 +234,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     <div className="min-w-0">
                       <span className="font-bold text-xs text-white block truncate">{currentUser.name}</span>
                       <span className="text-[10px] text-amber-400 font-semibold block">
-                        Lv.{Math.floor((currentUser.xp || 0) / 300) + 1} · {currentUser.xp || 0} XP
+                        {getStudyRank(currentUser.level)} · Lv.{Math.floor((currentUser.xp || 0) / 300) + 1} · {currentUser.xp || 0} XP
                       </span>
                     </div>
                   </Link>
@@ -371,7 +372,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <div className="min-w-0">
                   <span className="font-bold text-xs text-white block truncate">{currentUser.name}</span>
                   <span className="text-[10px] text-amber-400 font-semibold block">
-                    Lv.{Math.floor((currentUser.xp || 0) / 300) + 1} · {currentUser.xp || 0} XP
+                        {getStudyRank(currentUser.level)} · Lv.{Math.floor((currentUser.xp || 0) / 300) + 1} · {currentUser.xp || 0} XP
                   </span>
                 </div>
               )}

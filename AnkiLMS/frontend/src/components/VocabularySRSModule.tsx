@@ -117,6 +117,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
   // Search & Tree expansion
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [deckLevelFilter, setDeckLevelFilter] = useState("Tất cả cấp độ");
+  const [deckTopicFilter, setDeckTopicFilter] = useState("Tất cả chủ đề");
   const [expandedDecks, setExpandedDecks] = useState<Record<string, boolean>>({
     "tieng-han-tong-hop-1": true,
     "tieng-han-tong-hop-1-bai-01": true,
@@ -436,10 +438,33 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       .filter(Boolean) as DeckTreeNode[];
   }, []);
 
+  const deckTopics = useMemo(() => {
+    const topics = new Set<string>();
+    const visit = (nodes: DeckTreeNode[]) => nodes.forEach((node) => node.children?.length ? visit(node.children) : topics.add(node.title));
+    visit(deckTree);
+    return [...topics].sort((a, b) => a.localeCompare(b, "vi"));
+  }, [deckTree]);
+
   const filteredTree = useMemo(() => {
-    if (!searchQuery.trim()) return deckTree;
-    return filterTree(deckTree, searchQuery.toLowerCase());
-  }, [deckTree, searchQuery, filterTree]);
+    const rankRoots: Record<string, string[]> = {
+      "Sơ cấp 1": ["tieng-han-tong-hop-1", "korean-basic"],
+      "Sơ cấp 2": ["tieng-han-tong-hop-2"],
+      "Bộ Anki cá nhân · chưa gán cấp độ": ["user-imported"],
+    };
+    let nodes = deckLevelFilter === "Tất cả cấp độ" ? deckTree : deckTree.filter((node) => (rankRoots[deckLevelFilter] || []).includes(node.id));
+    if (deckTopicFilter !== "Tất cả chủ đề") {
+      const selectTopic = (items: DeckTreeNode[]): DeckTreeNode[] => items.map((node) => {
+        if (node.children?.length) {
+          const children = selectTopic(node.children);
+          return children.length ? { ...node, children } : null;
+        }
+        const match = node.title === deckTopicFilter || node.cards.some((card) => card.pos === deckTopicFilter || card.tag_2 === deckTopicFilter);
+        return match ? node : null;
+      }).filter(Boolean) as DeckTreeNode[];
+      nodes = selectTopic(nodes);
+    }
+    return searchQuery.trim() ? filterTree(nodes, searchQuery.toLowerCase()) : nodes;
+  }, [deckTree, deckLevelFilter, deckTopicFilter, searchQuery, filterTree]);
 
   const exitStudy = useCallback(() => {
     finishSrsActivity();
@@ -859,6 +884,13 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                   />
                 </div>
 
+                <select aria-label="Lọc bộ thẻ theo độ khó" value={deckLevelFilter} onChange={(event) => setDeckLevelFilter(event.target.value)} className="rounded-xl border border-stone-200 bg-stone-100 px-3 py-2 text-xs font-semibold text-stone-700 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-200">
+                  {["Tất cả cấp độ", "Sơ cấp 1", "Sơ cấp 2", "Bộ Anki cá nhân · chưa gán cấp độ"].map((rank) => <option key={rank}>{rank}</option>)}
+                </select>
+                <select aria-label="Lọc bộ thẻ theo chủ đề" value={deckTopicFilter} onChange={(event) => setDeckTopicFilter(event.target.value)} className="max-w-48 rounded-xl border border-stone-200 bg-stone-100 px-3 py-2 text-xs font-semibold text-stone-700 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-200">
+                  {["Tất cả chủ đề", ...deckTopics].map((topic) => <option key={topic}>{topic}</option>)}
+                </select>
+
                 <button
                   onClick={toggleAllGroups}
                   className="px-3 py-2 rounded-xl text-xs font-semibold bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700 transition cursor-pointer"
@@ -892,7 +924,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
                 {filteredTree.length === 0 && (
                   <div className="text-center py-12 text-stone-400 text-xs sm:text-sm">
-                    Không tìm thấy bài học phù hợp với từ khóa &ldquo;{searchQuery}&rdquo;
+                    Không tìm thấy bộ thẻ hoặc từ vựng phù hợp với bộ lọc hiện tại.
                   </div>
                 )}
               </div>
