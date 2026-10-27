@@ -768,7 +768,7 @@ export const ShadowingModule: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
 
         {/* LEFT COLUMN: LESSONS MENU & TOPIK FILTER (Col 1-3) */}
-        <aside className="lg:col-span-3 bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-4 max-h-[820px] overflow-y-auto shadow-lg">
+        <aside className="order-2 lg:order-1 lg:col-span-3 bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-4 max-h-[420px] lg:max-h-[820px] overflow-y-auto shadow-lg">
           <div className="border-b border-slate-800 pb-3">
             <h3 className="text-sm font-black text-white flex items-center gap-2">
               <Repeat className="w-4 h-4 text-rose-400" aria-hidden="true" />
@@ -841,7 +841,7 @@ export const ShadowingModule: React.FC = () => {
         </aside>
 
         {/* CENTER COLUMN: MAIN WORKSPACE (Col 4-9) */}
-        <main className="lg:col-span-6 space-y-5">
+        <main className="order-1 min-w-0 lg:order-2 lg:col-span-6 space-y-5">
 
           {/* Top Video Player Card */}
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-lg">
@@ -985,7 +985,7 @@ export const ShadowingModule: React.FC = () => {
         </main>
 
         {/* RIGHT COLUMN: SUBTITLE TIMELINE LIST (BẢN PHÁT ÂM BÀI HỌC) (Col 10-12) */}
-        <aside className="lg:col-span-3 bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 max-h-[820px] overflow-y-auto shadow-lg">
+        <aside className="order-3 min-w-0 lg:col-span-3 bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 max-h-[420px] lg:max-h-[820px] overflow-y-auto shadow-lg">
           <div className="flex items-center justify-between border-b border-slate-800 pb-3">
             <h3 className="text-xs font-black text-slate-200 uppercase tracking-wider">BẢN PHÁT ÂM BÀI HỌC</h3>
             <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xs">

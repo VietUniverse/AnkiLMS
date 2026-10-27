@@ -66,7 +66,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   const routeDisabled = featureFlagsLoaded && routeFeature && !isFeatureEnabled(routeFeature);
 
   return (
-    <div className="flex h-screen bg-[#0b1329] text-white overflow-hidden font-sans">
+    <div className="flex h-[100dvh] min-h-[100svh] bg-[#0b1329] text-white overflow-hidden font-sans">
       {/* Sidebar Desktop & Mobile Drawer */}
       <Sidebar
         onOpenImporter={() => setIsImporterOpen(true)}
@@ -86,7 +86,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
           onToggleMobileMenu={() => setIsMobileMenuOpen((prev: boolean) => !prev)}
         />
 
-        <main className="flex-1 p-2.5 sm:p-4 pb-24 md:pb-6 w-full max-w-[1800px] mx-auto">
+        <main className="flex-1 min-w-0 overflow-x-hidden p-2.5 pb-[calc(6.5rem+env(safe-area-inset-bottom))] sm:p-4 sm:pb-28 lg:pb-4 w-full max-w-[1800px] mx-auto">
           {checkinMessage && (
             <div className="mb-4 p-4 rounded-2xl bg-amber-500/20 border border-amber-400 text-amber-300 font-bold text-xs flex items-center justify-between animate-fadeIn">
               <span>{checkinMessage}</span>

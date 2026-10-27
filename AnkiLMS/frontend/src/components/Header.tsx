@@ -51,24 +51,24 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onLogou
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-[#0b1329]/95 backdrop-blur-md border-b-2 border-[#19284d] px-3 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between gap-2 sm:gap-3 select-none">
+    <header className="sticky top-0 z-30 bg-[#0b1329]/95 backdrop-blur-md border-b-2 border-[#19284d] px-3 py-2 sm:px-4 sm:py-2.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 select-none">
       {/* Mobile Menu Button + Search Bar Left */}
-      <div className="flex items-center gap-1.5 sm:gap-2 flex-1 max-w-sm">
+      <div className="order-2 flex w-full max-w-none items-center gap-1.5 sm:order-1 sm:max-w-sm sm:flex-1 sm:gap-2">
         <button
           onClick={onToggleMobileMenu}
-          className="md:hidden p-1.5 -ml-1 text-slate-300 hover:text-white rounded-xl hover:bg-white/5 cursor-pointer shrink-0"
+          className="lg:hidden p-1.5 -ml-1 text-slate-300 hover:text-white rounded-xl hover:bg-white/5 cursor-pointer shrink-0"
           aria-label="Mở menu"
         >
           <Menu className="w-5 h-5" />
         </button>
 
-        <div className="relative flex-1" ref={dropdownRef}>
+        <div className="relative min-w-0 flex-1" ref={dropdownRef}>
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#8b9bb4]" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Tra từ điển tiếng Hàn..."
+          placeholder="Tra từ tiếng Hàn…"
             className="w-full bg-[#132247] border border-[#1e3a70] rounded-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-1.5 text-xs text-white placeholder-[#8b9bb4] placeholder:truncate focus:outline-none focus:border-blue-500 transition-all"
           />
 
@@ -117,26 +117,27 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onLogou
       </div>
 
       {/* User Stats Badges */}
-      <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+      <div className="order-1 flex w-full items-center justify-between gap-1 sm:order-2 sm:w-auto sm:justify-normal sm:gap-2.5 sm:shrink-0">
+        <span className="shrink-0 text-xs font-black tracking-tight text-white sm:hidden">Haechi<span className="text-sky-400">VN</span></span>
         <ThemeSwitcher />
         {currentUser ? (
           <>
             {/* Streak */}
-            <div className="flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-400 text-xs font-black">
+            <div className="flex items-center gap-1 px-1.5 py-1 sm:px-2.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-400 text-[11px] sm:text-xs font-black">
               <Flame className="w-3.5 h-3.5 fill-amber-400 animate-pulse" />
               <span>{currentUser.streak || 0}</span>
             </div>
 
             {/* XP - Hidden on small mobile to give search bar breathing room */}
-            <div className="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-400 text-xs font-black">
+            <div className="hidden items-center gap-1 px-2.5 py-1 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-400 text-xs font-black sm:flex">
               <Zap className="w-3.5 h-3.5 fill-blue-400" />
               <span>{currentUser.xp || 0} XP</span>
             </div>
 
             {/* Gem / Kim Cương */}
-            <div className="flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-xs font-black cursor-pointer hover:bg-cyan-500/25 transition-all" title="Kim Cương 💎 (Dùng để mua vật phẩm & Streak Freeze)">
+            <div className="flex items-center gap-1 px-1.5 py-1 sm:px-2.5 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-[11px] sm:text-xs font-black cursor-pointer hover:bg-cyan-500/25 transition-all" title="Kim Cương 💎 (Dùng để mua vật phẩm & Streak Freeze)">
               <Gem className="w-3.5 h-3.5 fill-cyan-400 text-cyan-400" />
-              <span>{(currentUser.gems || 0).toLocaleString()} 💎</span>
+              <span className="hidden sm:inline">{(currentUser.gems || 0).toLocaleString()} 💎</span>
             </div>
 
             {/* User Profile Menu */}

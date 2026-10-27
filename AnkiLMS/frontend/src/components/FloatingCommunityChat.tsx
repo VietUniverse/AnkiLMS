@@ -75,8 +75,8 @@ export function FloatingCommunityChat() {
 
   if (pathname === "/chat") return null;
 
-  return <div className="fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom))] right-4 z-[80] flex flex-col items-end gap-3 md:bottom-6 md:right-6">
-    {open && <section aria-label="Chat cộng đồng" className="flex h-[min(72vh,560px)] max-h-[calc(100dvh-8rem)] w-[min(380px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-indigo-500/40 bg-[#11182e] shadow-2xl shadow-black/50 animate-fadeIn">
+  return <div className="fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom))] right-2 z-[80] flex flex-col items-end gap-3 sm:right-4 md:bottom-6 md:right-6">
+    {open && <section aria-label="Chat cộng đồng" className="flex h-[min(72dvh,560px)] max-h-[calc(100dvh-9rem)] w-[min(380px,calc(100vw-1rem))] flex-col overflow-hidden rounded-2xl border border-indigo-500/40 bg-[#11182e] shadow-2xl shadow-black/50 animate-fadeIn">
       <header className="flex items-center gap-3 border-b border-indigo-500/20 bg-[#171c3b] px-4 py-3">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-500/15 text-sky-300"><MessagesSquare className="h-4 w-4" /></div>
         <div className="min-w-0 flex-1"><h2 className="text-sm font-black text-white">Chat cộng đồng</h2><p className="mt-0.5 text-[10px] text-slate-400">Trò chuyện cùng học viên HaechiVN</p></div>
