@@ -425,6 +425,9 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       setActiveStudySession({
         title: activeDeckTitle,
         onExit: exitStudy,
+        studyMode,
+        setStudyMode,
+        progressText: activeCardsList.length > 0 ? `${currentCardIndex + 1} / ${activeCardsList.length}` : "",
       });
     } else {
       setActiveStudySession(null);
@@ -432,7 +435,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     return () => {
       setActiveStudySession(null);
     };
-  }, [viewMode, activeDeckTitle, exitStudy, setActiveStudySession]);
+  }, [viewMode, activeDeckTitle, exitStudy, studyMode, setStudyMode, currentCardIndex, activeCardsList.length, setActiveStudySession]);
 
   const currentCard = activeCardsList[currentCardIndex] || activeCardsList[0];
 
@@ -756,71 +759,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   return (
     <div className="w-full min-h-[calc(100vh-6rem)] pb-12 transition-colors">
       {/* ====================================================================
-          1. HEADER THANH ĐIỀU KHIỂN HỌC (HIỆN KHI VÀO STUDY MODE)
-          ==================================================================== */}
-      {viewMode === "study" && (
-        <div className="mb-4 bg-white/90 dark:bg-stone-900/90 backdrop-blur-md rounded-2xl border border-stone-200 dark:border-stone-800 transition-colors shadow-xs">
-          <div className="max-w-4xl mx-auto px-4 h-12 flex items-center justify-between gap-2">
-            {/* Nút Trở Về */}
-            <button
-              onClick={exitStudy}
-              className="flex items-center gap-1.5 text-xs font-semibold text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white transition px-2.5 py-1.5 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 shrink-0 cursor-pointer"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Trở về</span>
-            </button>
-
-            {/* Cụm Giữa: Chuyển Lật thẻ / Gõ từ & Bộ đếm */}
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="flex items-center bg-stone-100 dark:bg-stone-800 p-0.5 rounded-lg text-xs font-medium select-none">
-                <button
-                  onClick={() => setStudyMode("flip")}
-                  className={`px-3 py-1 rounded-md text-xs font-semibold transition cursor-pointer ${
-                    studyMode === "flip"
-                      ? "bg-white dark:bg-stone-700 text-stone-900 dark:text-white shadow-xs"
-                      : "text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white"
-                  }`}
-                >
-                  Lật thẻ
-                </button>
-                <button
-                  onClick={() => setStudyMode("typing")}
-                  className={`px-3 py-1 rounded-md text-xs font-semibold transition cursor-pointer ${
-                    studyMode === "typing"
-                      ? "bg-white dark:bg-stone-700 text-stone-900 dark:text-white shadow-xs"
-                      : "text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white"
-                  }`}
-                >
-                  Gõ từ
-                </button>
-              </div>
-
-              <span className="text-xs font-mono font-bold text-stone-600 dark:text-stone-300">
-                {currentCardIndex + 1} / {activeCardsList.length}
-              </span>
-            </div>
-
-            {/* Cụm Phải: Nút Học Lại */}
-            <div className="flex items-center gap-1.5">
-              <button
-                onClick={() => {
-                  setCurrentCardIndex(0);
-                  setIsFlipped(false);
-                  setTypedInput("");
-                }}
-                className="text-xs text-stone-500 hover:text-rose-600 dark:text-stone-400 dark:hover:text-rose-400 transition px-2.5 py-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 flex items-center gap-1 cursor-pointer"
-                title="Học lại bài này từ đầu"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Học lại</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ====================================================================
-          2. NỘI DUNG CHÍNH (CONTAINER)
+          NỘI DUNG CHÍNH (CONTAINER)
           ==================================================================== */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6">
         {/* ==========================================
@@ -927,11 +866,25 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
         {viewMode === "study" && currentCard && (
           <div className="py-2 animate-reveal">
             {/* Thanh tiến độ bài học xanh ngọc mảnh phía trên */}
-            <div className="w-full h-1 bg-stone-200 dark:bg-stone-800 rounded-full mb-5 overflow-hidden">
-              <div
-                className="h-full bg-emerald-500 transition-all duration-300"
-                style={{ width: `${sessionProgress}%` }}
-              />
+            <div className="flex items-center justify-between gap-3 mb-5">
+              <div className="flex-1 h-1 bg-stone-200 dark:bg-stone-800 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-emerald-500 transition-all duration-300"
+                  style={{ width: `${sessionProgress}%` }}
+                />
+              </div>
+              <button
+                onClick={() => {
+                  setCurrentCardIndex(0);
+                  setIsFlipped(false);
+                  setTypedInput("");
+                }}
+                className="text-[11px] font-medium text-stone-400 hover:text-rose-500 transition flex items-center gap-1 cursor-pointer shrink-0"
+                title="Học lại bài này từ đầu"
+              >
+                <RotateCcw className="w-3 h-3" />
+                <span className="hidden sm:inline">Học lại</span>
+              </button>
             </div>
 
             {/* CHẾ ĐỘ 1: THẺ NHẬN DIỆN PHẲNG REVEAL (2 CỘT DESKTOP) */}

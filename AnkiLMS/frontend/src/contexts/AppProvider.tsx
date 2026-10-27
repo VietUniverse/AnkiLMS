@@ -5,6 +5,14 @@ import { AnkiDeck } from "../lib/ankiParser";
 import { ApiClient, UserProfile } from "../lib/apiClient";
 import { DEFAULT_FEATURE_FLAGS, FeatureFlags, FeatureKey } from "../lib/featureFlags";
 
+export interface StudySessionInfo {
+  title: string;
+  onExit: () => void;
+  studyMode?: "flip" | "typing";
+  setStudyMode?: (mode: "flip" | "typing") => void;
+  progressText?: string;
+}
+
 interface AppContextType {
   currentUser: UserProfile | null;
   setCurrentUser: React.Dispatch<React.SetStateAction<UserProfile | null>>;
@@ -27,8 +35,8 @@ interface AppContextType {
   handleLogout: () => void;
   handleCheckin: () => Promise<void>;
   handleDeckImported: (deck: AnkiDeck) => void;
-  activeStudySession: { title: string; onExit: () => void } | null;
-  setActiveStudySession: React.Dispatch<React.SetStateAction<{ title: string; onExit: () => void } | null>>;
+  activeStudySession: StudySessionInfo | null;
+  setActiveStudySession: React.Dispatch<React.SetStateAction<StudySessionInfo | null>>;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -51,7 +59,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isAuthReady, setIsAuthReady] = useState(false);
   const [featureFlags, setFeatureFlags] = useState<FeatureFlags>(DEFAULT_FEATURE_FLAGS);
   const [featureFlagsLoaded, setFeatureFlagsLoaded] = useState(false);
-  const [activeStudySession, setActiveStudySession] = useState<{ title: string; onExit: () => void } | null>(null);
+  const [activeStudySession, setActiveStudySession] = useState<StudySessionInfo | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
