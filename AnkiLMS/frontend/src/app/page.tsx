@@ -54,8 +54,9 @@ export default function Home() {
     const query = searchQuery.trim();
     if (!query) { setSearchResults([]); return; }
     let cancelled = false;
+    const controller = new AbortController();
     const timer = window.setTimeout(() => {
-      void searchLearningDictionary(query, 30).then((entries) => {
+      void searchLearningDictionary(query, 30, controller.signal).then((entries) => {
         if (cancelled) return;
         if (entries.length) {
           setSearchResults(entries.slice(0, 5).map((entry) => {
@@ -75,7 +76,7 @@ export default function Home() {
         }
       });
     }, 180);
-    return () => { cancelled = true; window.clearTimeout(timer); };
+    return () => { cancelled = true; controller.abort(); window.clearTimeout(timer); };
   }, [searchQuery, searchPool, translationLanguage]);
 
   // Nếu chưa đăng nhập thì tự động chuyển hướng sang trang đăng nhập /login

@@ -33,16 +33,19 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onLogou
       return;
     }
     let cancelled = false;
+    const controller = new AbortController();
     setShowDropdown(true);
     setSearchLoading(true);
-    void searchLearningDictionary(query, 8).then((results) => {
-      if (!cancelled) setSearchResults(results);
-    }).catch(() => {
-      if (!cancelled) setSearchResults([]);
-    }).finally(() => {
-      if (!cancelled) setSearchLoading(false);
-    });
-    return () => { cancelled = true; };
+    const timer = window.setTimeout(() => {
+      void searchLearningDictionary(query, 8, controller.signal).then((results) => {
+        if (!cancelled) setSearchResults(results);
+      }).catch(() => {
+        if (!cancelled) setSearchResults([]);
+      }).finally(() => {
+        if (!cancelled) setSearchLoading(false);
+      });
+    }, 220);
+    return () => { cancelled = true; controller.abort(); window.clearTimeout(timer); };
   }, [searchQuery]);
 
   // Click outside to close dropdowns
