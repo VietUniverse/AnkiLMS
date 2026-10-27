@@ -56,6 +56,13 @@ export interface VocabularyCard {
   deckName?: string;
 }
 
+export interface DeckTreeNode {
+  id: string;
+  title: string;
+  cards: VocabularyCard[];
+  children?: DeckTreeNode[];
+}
+
 // Clean image string helper
 const extractImageSrc = (imgStr?: string): string | null => {
   if (!imgStr) return null;
@@ -81,6 +88,16 @@ const cleanTextOnly = (str?: string): string => {
   return str.replace(/<[^>]*>/g, "").replace(/\[sound:.*?\]/gi, "").trim();
 };
 
+const toSlug = (str: string): string => {
+  return str
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+};
+
 export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDecks = [] }) => {
   const { currentUser } = useApp();
 
@@ -100,7 +117,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   // Search & Tree expansion
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [expandedDecks, setExpandedDecks] = useState<Record<string, boolean>>({
-    "thth-bài-01": true,
+    "tieng-han-tong-hop-1": true,
+    "tieng-han-tong-hop-1-bai-01": true,
   });
 
   // Modal zoom image
@@ -141,52 +159,68 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     }
   }, [currentUser]);
 
-  // Group THTH Decks by Lesson (Bài 01, Bài 02, etc.) as Parent Decks
-  const deckTree = useMemo(() => {
-    const groups: {
-      id: string;
-      title: string;
-      subDecks: {
-        id: string;
-        title: string;
-        cards: VocabularyCard[];
-      }[];
-    }[] = [];
+  // Group THTH Decks into 3 Levels:
+  // Level 1: Book (e.g. "Tiếng Hàn Tổng Hợp 1")
+  //   Level 2: Lesson (e.g. "Bài 01")
+  //     Level 3: Sub-deck (e.g. "1. Quốc gia (나라)")
+  const deckTree = useMemo<DeckTreeNode[]>(() => {
+    const rootNodes: DeckTreeNode[] = [];
 
-    // Map by lesson name: "Bài 01", "Bài 02", etc.
-    const lessonMap = new Map<string, { id: string; title: string; cards: VocabularyCard[] }[]>();
+    const booksMap = new Map<string, Map<string, { id: string; title: string; cards: VocabularyCard[] }[]>>();
 
     THTH_DECKS.forEach((d) => {
       const parts = d.name.split("::");
       // e.g. ["Tiếng Hàn Tổng Hợp", "Quyển 01", "Bài 01", "1. Quốc gia (나라)"]
-      const lessonKey = parts[2] ? parts[2].trim() : "Bài 01";
-      const subTitle = parts[3] ? parts[3].trim() : parts[parts.length - 1];
+      const rawBook = parts[1]?.trim() || "Quyển 01";
+      const bookNum = rawBook.match(/\d+/)?.[0] || "1";
+      const bookTitle = `Tiếng Hàn Tổng Hợp ${parseInt(bookNum, 10)}`;
+      const lessonTitle = parts[2]?.trim() || "Bài 01";
+      const subdeckTitle = parts[3]?.trim() || parts[parts.length - 1];
 
-      if (!lessonMap.has(lessonKey)) {
-        lessonMap.set(lessonKey, []);
+      if (!booksMap.has(bookTitle)) {
+        booksMap.set(bookTitle, new Map());
       }
-
-      lessonMap.get(lessonKey)!.push({
+      const lessonsMap = booksMap.get(bookTitle)!;
+      if (!lessonsMap.has(lessonTitle)) {
+        lessonsMap.set(lessonTitle, []);
+      }
+      lessonsMap.get(lessonTitle)!.push({
         id: d.id,
-        title: subTitle,
+        title: subdeckTitle,
         cards: d.cards as VocabularyCard[],
       });
     });
 
-    // Create a Parent Group for each Bài
-    lessonMap.forEach((subDecks, lessonKey) => {
-      const subSummary = subDecks
-        .slice(0, 3)
-        .map((s) => s.title.replace(/^\d+\.\s*/, "").split("(")[0].trim())
-        .join(", ");
+    // Build Book Nodes -> Lesson Nodes -> Sub-deck Nodes
+    booksMap.forEach((lessonsMap, bookTitle) => {
+      const lessonNodes: DeckTreeNode[] = [];
+      const allBookCards: VocabularyCard[] = [];
 
-      const parentTitle = `${lessonKey}${subSummary ? `: ${subSummary}` : ""}`;
-      const groupId = `thth-${lessonKey.toLowerCase().replace(/\s+/g, "-")}`;
+      lessonsMap.forEach((subdecks, lessonTitle) => {
+        const allLessonCards = subdecks.flatMap((s) => s.cards);
+        allBookCards.push(...allLessonCards);
 
-      groups.push({
-        id: groupId,
-        title: parentTitle,
-        subDecks: subDecks,
+        const leafNodes: DeckTreeNode[] = subdecks.map((s) => ({
+          id: s.id,
+          title: s.title,
+          cards: s.cards,
+        }));
+
+        const cleanKey = toSlug(`${bookTitle}-${lessonTitle}`);
+        lessonNodes.push({
+          id: cleanKey,
+          title: lessonTitle,
+          cards: allLessonCards,
+          children: leafNodes,
+        });
+      });
+
+      const bookId = toSlug(bookTitle);
+      rootNodes.push({
+        id: bookId,
+        title: bookTitle,
+        cards: allBookCards,
+        children: lessonNodes,
       });
     });
 
@@ -214,22 +248,16 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
         deckName: "Từ vựng cơ bản",
       }));
 
-      groups.push({
+      rootNodes.push({
         id: "korean-basic",
-        title: "Từ Vựng Tiếng Hàn Giao Tiếp Cơ Bản",
-        subDecks: [
-          {
-            id: "korean-basic-all",
-            title: "Trọn bộ từ vựng thường dùng",
-            cards: basicCards,
-          },
-        ],
+        title: "Từ Vựng Tiếng Hàn Cơ Bản",
+        cards: basicCards,
       });
     }
 
     // Group 3: User imported decks (if any)
     if (userDecks && userDecks.length > 0) {
-      const customSub = userDecks.map((ud) => ({
+      const userNodes: DeckTreeNode[] = userDecks.map((ud) => ({
         id: `user-${ud.id}`,
         title: ud.name,
         cards: ud.cards.map((c, idx) => ({
@@ -247,14 +275,15 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
         })),
       }));
 
-      groups.push({
+      rootNodes.push({
         id: "user-imported",
         title: "Bộ Thẻ Anki Cá Nhân (.apkg)",
-        subDecks: customSub,
+        cards: userNodes.flatMap((n) => n.cards),
+        children: userNodes,
       });
     }
 
-    return groups;
+    return rootNodes;
   }, [userDecks]);
 
   // Calculate Anki Stats (% battery, new, review)
@@ -290,30 +319,36 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     }
   }, []);
 
-  // Resume last lesson (fallback to first deck if none)
-  const resumeLastLesson = useCallback(() => {
-    const targetId = lastStudiedDeckId || deckTree[0]?.id;
-    if (!targetId) return;
+  // Recursive search for node by id
+  const findNodeById = useCallback((nodes: DeckTreeNode[], id: string): DeckTreeNode | null => {
+    for (const node of nodes) {
+      if (node.id === id) return node;
+      if (node.children) {
+        const found = findNodeById(node.children, id);
+        if (found) return found;
+      }
+    }
+    return null;
+  }, []);
 
-    for (const group of deckTree) {
-      if (group.id === targetId) {
-        const all = group.subDecks.flatMap((s) => s.cards);
-        startStudy(group.id, group.title, all);
+  // Resume last lesson (fallback to first available subdeck/lesson)
+  const resumeLastLesson = useCallback(() => {
+    const targetId = lastStudiedDeckId;
+    if (targetId) {
+      const found = findNodeById(deckTree, targetId);
+      if (found) {
+        startStudy(found.id, found.title, found.cards);
         return;
       }
-      for (const sub of group.subDecks) {
-        if (sub.id === targetId) {
-          startStudy(sub.id, sub.title, sub.cards);
-          return;
-        }
-      }
     }
 
-    if (deckTree[0]?.subDecks[0]) {
-      const first = deckTree[0].subDecks[0];
-      startStudy(first.id, first.title, first.cards);
+    const firstBook = deckTree[0];
+    const firstLesson = firstBook?.children?.[0] || firstBook;
+    const target = firstLesson?.children?.[0] || firstLesson;
+    if (target) {
+      startStudy(target.id, target.title, target.cards);
     }
-  }, [lastStudiedDeckId, deckTree, startStudy]);
+  }, [lastStudiedDeckId, deckTree, findNodeById, startStudy]);
 
   // Auto-resume if query param ?resume=true is present
   useEffect(() => {
@@ -321,6 +356,62 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       resumeLastLesson();
     }
   }, [searchParams, viewMode, resumeLastLesson]);
+
+  // Collect all container ids for toggle all
+  const getAllContainerIds = useCallback((nodes: DeckTreeNode[]): string[] => {
+    let ids: string[] = [];
+    nodes.forEach((n) => {
+      if (n.children && n.children.length > 0) {
+        ids.push(n.id);
+        ids = ids.concat(getAllContainerIds(n.children));
+      }
+    });
+    return ids;
+  }, []);
+
+  const toggleGroup = (id: string) => {
+    setExpandedDecks((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const toggleAllGroups = () => {
+    const allIds = getAllContainerIds(deckTree);
+    const anyOpen = allIds.some((id) => expandedDecks[id]);
+    const next: Record<string, boolean> = {};
+    allIds.forEach((id) => {
+      next[id] = !anyOpen;
+    });
+    setExpandedDecks(next);
+  };
+
+  // Filter tree recursively for search query
+  const filterTree = useCallback((nodes: DeckTreeNode[], q: string): DeckTreeNode[] => {
+    return nodes
+      .map((node) => {
+        const matchSelf =
+          node.title.toLowerCase().includes(q) ||
+          node.cards.some(
+            (c) =>
+              c.word.toLowerCase().includes(q) ||
+              c.meaning.toLowerCase().includes(q)
+          );
+
+        if (node.children && node.children.length > 0) {
+          const filteredChildren = filterTree(node.children, q);
+          if (filteredChildren.length > 0 || matchSelf) {
+            return { ...node, children: filteredChildren };
+          }
+          return null;
+        }
+
+        return matchSelf ? node : null;
+      })
+      .filter(Boolean) as DeckTreeNode[];
+  }, []);
+
+  const filteredTree = useMemo(() => {
+    if (!searchQuery.trim()) return deckTree;
+    return filterTree(deckTree, searchQuery.toLowerCase());
+  }, [deckTree, searchQuery, filterTree]);
 
   const exitStudy = () => {
     setViewMode("dashboard");
@@ -490,38 +581,105 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     return extractImageSrc(currentCard?.image);
   }, [currentCard]);
 
-  // Filtered Deck Groups for Search
-  const filteredGroups = useMemo(() => {
-    if (!searchQuery.trim()) return deckTree;
-    const q = searchQuery.toLowerCase();
-    return deckTree
-      .map((group) => {
-        const matchedSub = group.subDecks.filter(
-          (sub) =>
-            sub.title.toLowerCase().includes(q) ||
-            sub.cards.some(
-              (c) =>
-                c.word.toLowerCase().includes(q) ||
-                c.meaning.toLowerCase().includes(q)
-            )
-        );
-        return { ...group, subDecks: matchedSub };
-      })
-      .filter((g) => g.subDecks.length > 0);
-  }, [deckTree, searchQuery]);
+  // Recursive Tree Node Renderer supporting multi-level subdecks (Book -> Lesson -> Subdeck...)
+  const renderTreeNode = (node: DeckTreeNode, level = 0): React.ReactNode => {
+    const isExpanded = !!expandedDecks[node.id];
+    const hasChildren = Boolean(node.children && node.children.length > 0);
+    const stats = getDeckStats(node.cards);
 
-  // Toggle Deck in Tree
-  const toggleGroup = (id: string) => {
-    setExpandedDecks((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
+    const indentClass =
+      level === 0
+        ? "px-4 sm:px-5 h-14 bg-white dark:bg-stone-900/60"
+        : level === 1
+        ? "pl-8 sm:pl-10 pr-4 sm:pr-5 h-12 bg-stone-50/50 dark:bg-stone-900/30"
+        : "pl-14 sm:pl-16 pr-4 sm:pr-5 h-11 bg-stone-50/80 dark:bg-stone-950/40";
 
-  const toggleAllGroups = () => {
-    const allOpen = deckTree.every((g) => expandedDecks[g.id]);
-    const next: Record<string, boolean> = {};
-    deckTree.forEach((g) => {
-      next[g.id] = !allOpen;
-    });
-    setExpandedDecks(next);
+    return (
+      <div key={node.id} className="deck-group divide-y divide-stone-100 dark:divide-stone-800/60">
+        <div
+          onClick={() => startStudy(node.id, node.title, node.cards)}
+          className={`group relative overflow-hidden flex items-center justify-between cursor-pointer hover:bg-stone-100/70 dark:hover:bg-stone-800/50 transition-colors ${indentClass}`}
+          title={`Bấm để học ${node.cards.length} từ trong ${node.title}`}
+        >
+          {/* Vạch pin tiến độ xanh ngọc */}
+          <div
+            className={`absolute inset-y-0 left-0 pointer-events-none transition-all duration-700 ${
+              stats.percent > 0 ? "bg-emerald-500/10 dark:bg-emerald-500/15" : "bg-transparent"
+            }`}
+            style={{ width: `${stats.percent}%` }}
+          />
+          <div
+            className="absolute bottom-0 left-0 h-0.5 bg-emerald-500 transition-all duration-700 pointer-events-none"
+            style={{ width: `${stats.percent}%` }}
+          />
+
+          {/* Cột 1: Chevron / Tree marker + Tên */}
+          <div className="relative z-10 flex items-center gap-2 min-w-0 pr-2">
+            {hasChildren ? (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleGroup(node.id);
+                }}
+                className="w-6 h-6 -ml-1 rounded flex items-center justify-center text-stone-400 hover:text-stone-900 dark:hover:text-white hover:bg-stone-200/60 dark:hover:bg-stone-700/60 transition cursor-pointer"
+                aria-label="Đóng mở nhánh bài học"
+              >
+                <ChevronRight
+                  className={`w-4 h-4 transform transition-transform duration-200 ${
+                    isExpanded ? "rotate-90 text-stone-900 dark:text-white" : ""
+                  }`}
+                />
+              </button>
+            ) : (
+              <span className="text-stone-300 dark:text-stone-700 select-none text-xs w-4 text-center">
+                └
+              </span>
+            )}
+
+            <h3
+              className={`truncate flex items-center gap-2 ${
+                level === 0
+                  ? "text-sm sm:text-base font-bold text-stone-900 dark:text-white"
+                  : level === 1
+                  ? "text-xs sm:text-sm font-semibold text-stone-800 dark:text-stone-200"
+                  : "text-xs font-medium text-stone-600 dark:text-stone-400 group-hover:text-stone-900 dark:group-hover:text-white"
+              }`}
+            >
+              <span>{node.title}</span>
+              {hasChildren && (
+                <span className="text-[10px] font-mono font-normal px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 text-stone-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                  Học cả mục ({stats.total})
+                </span>
+              )}
+            </h3>
+          </div>
+
+          {/* Cột 2, 3, 4: Mới | Ôn | % */}
+          <div className="relative z-10 flex items-center gap-3 sm:gap-6 shrink-0 font-mono text-xs">
+            <div className="w-8 sm:w-10 text-center font-bold text-sky-600 dark:text-sky-400">
+              {stats.newCount > 0 ? stats.newCount : <span className="text-stone-300 dark:text-stone-700 font-normal">0</span>}
+            </div>
+            <div className="w-8 sm:w-10 text-center font-bold text-rose-500 dark:text-rose-400">
+              {stats.reviewCount > 0 ? stats.reviewCount : <span className="text-stone-300 dark:text-stone-700 font-normal">0</span>}
+            </div>
+            <div
+              className={`w-10 sm:w-12 text-right font-bold ${
+                stats.percent > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-stone-400"
+              }`}
+            >
+              {stats.percent}%
+            </div>
+          </div>
+        </div>
+
+        {/* Render nhánh con nếu đang mở */}
+        {hasChildren && isExpanded && (
+          <div className="divide-y divide-stone-100 dark:divide-stone-800/60">
+            {node.children!.map((child) => renderTreeNode(child, level + 1))}
+          </div>
+        )}
+      </div>
+    );
   };
 
   // Render typing hint display
@@ -734,146 +892,11 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                 </div>
               </div>
 
-              {/* Danh sách các nhóm bộ thẻ */}
+              {/* Danh sách cây bộ thẻ (Tree) */}
               <div className="divide-y divide-stone-100 dark:divide-stone-800/80">
-                {filteredGroups.map((group) => {
-                  const isExpanded = !!expandedDecks[group.id];
-                  const allGroupCards = group.subDecks.flatMap((s) => s.cards);
-                  const parentStats = getDeckStats(allGroupCards);
+                {filteredTree.map((node) => renderTreeNode(node, 0))}
 
-                  return (
-                    <div key={group.id} className="deck-group">
-                      {/* Dòng Bộ Thẻ Cha */}
-                      <div
-                        onClick={() => startStudy(group.id, group.title, allGroupCards)}
-                        className="group relative overflow-hidden h-14 px-4 sm:px-5 flex items-center justify-between cursor-pointer hover:bg-stone-50 dark:hover:bg-stone-800/40 transition-colors"
-                        title={`Bấm để học tất cả ${parentStats.total} từ vựng`}
-                      >
-                        {/* Vạch pin tiến độ xanh ngọc */}
-                        <div
-                          className={`absolute inset-y-0 left-0 pointer-events-none transition-all duration-700 ${
-                            parentStats.percent > 0 ? "bg-emerald-500/10 dark:bg-emerald-500/15" : "bg-transparent"
-                          }`}
-                          style={{ width: `${parentStats.percent}%` }}
-                        />
-                        <div
-                          className="absolute bottom-0 left-0 h-0.5 bg-emerald-500 transition-all duration-700 pointer-events-none"
-                          style={{ width: `${parentStats.percent}%` }}
-                        />
-
-                        {/* Cột 1: Tên bộ thẻ cha + Nút đóng mở */}
-                        <div className="relative z-10 flex items-center gap-2.5 min-w-0 pr-2">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleGroup(group.id);
-                            }}
-                            className="w-6 h-6 -ml-1 rounded flex items-center justify-center text-stone-400 hover:text-stone-900 dark:hover:text-white hover:bg-stone-200/60 dark:hover:bg-stone-700/60 transition cursor-pointer"
-                            aria-label="Đóng mở bài học con"
-                          >
-                            <ChevronRight
-                              className={`w-4 h-4 transform transition-transform duration-200 ${
-                                isExpanded ? "rotate-90 text-stone-900 dark:text-white" : ""
-                              }`}
-                            />
-                          </button>
-                          <h3 className="text-sm sm:text-base font-bold text-stone-900 dark:text-white truncate flex items-center gap-2">
-                            <span>{group.title}</span>
-                            <span className="text-[10px] font-mono font-normal px-2 py-0.5 rounded bg-stone-100 dark:bg-stone-800 text-stone-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                              Học cả bộ ({parentStats.total})
-                            </span>
-                          </h3>
-                        </div>
-
-                        {/* Cột 2, 3, 4: Mới | Ôn | % */}
-                        <div className="relative z-10 flex items-center gap-3 sm:gap-6 shrink-0 font-mono text-xs sm:text-sm">
-                          <div className="w-8 sm:w-10 text-center font-bold text-sky-600 dark:text-sky-400">
-                            {parentStats.newCount > 0 ? (
-                              parentStats.newCount
-                            ) : (
-                              <span className="text-stone-300 dark:text-stone-700 font-normal">0</span>
-                            )}
-                          </div>
-                          <div className="w-8 sm:w-10 text-center font-bold text-rose-500 dark:text-rose-400">
-                            {parentStats.reviewCount > 0 ? (
-                              parentStats.reviewCount
-                            ) : (
-                              <span className="text-stone-300 dark:text-stone-700 font-normal">0</span>
-                            )}
-                          </div>
-                          <div
-                            className={`w-10 sm:w-12 text-right font-bold ${
-                              parentStats.percent > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-stone-400"
-                            }`}
-                          >
-                            {parentStats.percent}%
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Danh Sách Bộ Thẻ Con (Sub-decks) */}
-                      {isExpanded && (
-                        <div className="bg-stone-50/60 dark:bg-stone-950/30 divide-y divide-stone-100 dark:divide-stone-800/60 border-t border-stone-100 dark:border-stone-800/80">
-                          {group.subDecks.map((sub) => {
-                            const subStats = getDeckStats(sub.cards);
-
-                            return (
-                              <div
-                                key={sub.id}
-                                onClick={() => startStudy(sub.id, sub.title, sub.cards)}
-                                className="group relative overflow-hidden h-12 pl-10 sm:pl-12 pr-4 sm:pr-5 flex items-center justify-between cursor-pointer hover:bg-stone-100/70 dark:hover:bg-stone-800/60 transition-colors"
-                              >
-                                <div
-                                  className={`absolute inset-y-0 left-0 pointer-events-none transition-all duration-700 ${
-                                    subStats.percent > 0 ? "bg-emerald-500/10 dark:bg-emerald-500/15" : "bg-transparent"
-                                  }`}
-                                  style={{ width: `${subStats.percent}%` }}
-                                />
-                                <div
-                                  className="absolute bottom-0 left-0 h-0.5 bg-emerald-500 transition-all duration-700 pointer-events-none"
-                                  style={{ width: `${subStats.percent}%` }}
-                                />
-
-                                <div className="relative z-10 flex items-center gap-2 min-w-0 pr-2">
-                                  <span className="text-stone-300 dark:text-stone-700 select-none text-xs">└</span>
-                                  <h4 className="text-xs sm:text-sm font-medium text-stone-700 dark:text-stone-300 group-hover:text-stone-950 dark:group-hover:text-white transition-colors truncate">
-                                    {sub.title}
-                                  </h4>
-                                </div>
-
-                                <div className="relative z-10 flex items-center gap-3 sm:gap-6 shrink-0 font-mono text-xs">
-                                  <div className="w-8 sm:w-10 text-center font-medium text-sky-600 dark:text-sky-400">
-                                    {subStats.newCount > 0 ? (
-                                      subStats.newCount
-                                    ) : (
-                                      <span className="text-stone-300 dark:text-stone-700 font-normal">0</span>
-                                    )}
-                                  </div>
-                                  <div className="w-8 sm:w-10 text-center font-medium text-rose-500 dark:text-rose-400">
-                                    {subStats.reviewCount > 0 ? (
-                                      subStats.reviewCount
-                                    ) : (
-                                      <span className="text-stone-300 dark:text-stone-700 font-normal">0</span>
-                                    )}
-                                  </div>
-                                  <div
-                                    className={`w-10 sm:w-12 text-right font-bold ${
-                                      subStats.percent > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-stone-400"
-                                    }`}
-                                  >
-                                    {subStats.percent}%
-                                  </div>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-
-                {filteredGroups.length === 0 && (
+                {filteredTree.length === 0 && (
                   <div className="text-center py-12 text-stone-400 text-xs sm:text-sm">
                     Không tìm thấy bài học phù hợp với từ khóa &ldquo;{searchQuery}&rdquo;
                   </div>
