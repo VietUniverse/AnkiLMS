@@ -112,7 +112,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   // Selected Deck and Lesson
   const [activeDeckTitle, setActiveDeckTitle] = useState<string>("1. Quốc gia (나라)");
   const [activeCardsList, setActiveCardsList] = useState<VocabularyCard[]>(
-    (THTH_DECKS[0]?.cards as VocabularyCard[]) || []
+    (THTH_CURRICULUM_DECKS[0]?.cards as VocabularyCard[]) || []
   );
   const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
   const [isFlipped, setIsFlipped] = useState<boolean>(false);
