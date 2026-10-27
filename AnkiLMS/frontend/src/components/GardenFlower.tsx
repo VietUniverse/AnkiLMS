@@ -15,7 +15,7 @@ interface GardenFlowerProps {
  * - Stage 3: Hoa (Đóa hoa 5 cánh bung nở rực rỡ nhìn từ trên xuống, thấy rõ cánh và nhụy hoa vàng).
  */
 export const GardenFlower: React.FC<GardenFlowerProps> = React.memo(({ stage, className = "w-full h-full", animate = true }) => {
-  // Stage 0: Ô đất vuông trống nhìn thẳng từ trên xuống (Top-down empty soil plot)
+  // Stage 0: Ô đất tĩnh chờ gieo mầm (Dormant cell)
   if (stage === 0) {
     return (
       <svg
@@ -24,9 +24,7 @@ export const GardenFlower: React.FC<GardenFlowerProps> = React.memo(({ stage, cl
         aria-hidden="true"
         fill="none"
       >
-        {/* Rãnh gieo hạt nhỏ ở tâm luống đất nâu */}
-        <ellipse cx="12" cy="12" rx="3.5" ry="2" className="fill-black/35" />
-        <circle cx="12" cy="12" r="1.2" className="fill-[#140b07] dark:fill-black/60" />
+        <circle cx="12" cy="12" r="1.5" className="fill-slate-500/35 dark:fill-slate-400/35" />
       </svg>
     );
   }

@@ -185,6 +185,18 @@ export default function Home() {
     return { weeks, monthLabels, activeDaysCount };
   }, [activeHeatmapSource]);
 
+  const stageStats = React.useMemo(() => {
+    let sprouts = 0;
+    let buds = 0;
+    let blooms = 0;
+    activeHeatmapSource.forEach((item) => {
+      if (item.time_spent_minutes >= 40) blooms++;
+      else if (item.time_spent_minutes >= 20) buds++;
+      else if (item.time_spent_minutes > 0) sprouts++;
+    });
+    return { sprouts, buds, blooms };
+  }, [activeHeatmapSource]);
+
   const userXP = currentUser?.xp || 0;
   const userLevel = currentUser ? Math.floor(userXP / 300) + 1 : 0;
   const xpForCurrentLevel = (userLevel - 1) * 300;
@@ -441,48 +453,61 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Heatmap Vườn Hoa - Đóng khung chuẩn GitHub 7 hàng (ngày trong tuần) x N tuần */}
-        <div className="rounded-3xl p-5 sm:p-6 bg-[#090f1e] text-white shadow-2xl border-0 space-y-4">
-          {/* Header */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-2.5 text-center sm:text-left">
-            <div>
-              <h3 className="text-sm sm:text-base font-black text-white flex items-center justify-center sm:justify-start gap-2">
-                <span className="w-5 h-5 inline-flex items-center justify-center"><GardenFlower stage={3} className="w-4 h-4" animate={false} /></span>
-                <span>Tiến Độ Học Tập – Heatmap Vườn Hoa</span>
-                <span className="w-5 h-5 inline-flex items-center justify-center"><GardenFlower stage={1} className="w-4 h-4" animate={false} /></span>
-              </h3>
-              <p className="text-xs text-slate-400 font-medium mt-0.5">
-                1 loài hoa duy nhất với 3 nấc sinh trưởng: 🌱 Mầm → 🌷 Nụ → 🌸 Hoa nở (Ô đất vuông khi chưa trồng)
-              </p>
+        {/* Heatmap Vườn Hoa - Thiết Kế Sang Trọng, Tinh Tế Chuẩn GitHub & Executive Dashboard */}
+        <div className="relative rounded-3xl p-6 sm:p-7 bg-[#090f1e] text-white shadow-2xl border border-slate-800/40 space-y-5 overflow-hidden animate-fadeIn">
+          {/* Hào quang nền dịu nhẹ sang trọng */}
+          <div className="pointer-events-none absolute -right-20 -top-20 w-72 h-72 rounded-full bg-rose-500/5 blur-3xl" />
+          <div className="pointer-events-none absolute -left-20 -bottom-20 w-72 h-72 rounded-full bg-emerald-500/5 blur-3xl" />
+
+          {/* Header Dashboard Tinh Tế */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 relative z-10">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-rose-500/20 to-pink-500/10 border border-rose-500/30 flex items-center justify-center p-1.5 shadow-sm">
+                  <GardenFlower stage={3} className="w-full h-full" animate={false} />
+                </div>
+                <div>
+                  <h3 className="text-base sm:text-lg font-black tracking-tight text-white flex items-center gap-2">
+                    <span>Vườn Hoa Hoạt Động</span>
+                  </h3>
+                  <p className="text-xs text-slate-400 font-medium">
+                    Mỗi ngày chuyên cần là một đóa hoa bung nở theo chu kỳ học tập
+                  </p>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
+
+            {/* Điều khiển & Chỉ số */}
+            <div className="flex flex-wrap items-center gap-2 self-stretch sm:self-auto justify-between sm:justify-end">
               <button
                 onClick={() => setShowDemo((prev) => !prev)}
-                className="text-xs font-semibold px-3 py-1.5 rounded-xl transition-all border-0 cursor-pointer flex items-center gap-1.5 bg-[#111c38] hover:bg-[#182850] text-blue-400"
+                className="text-xs font-semibold px-3 py-1.5 rounded-xl border border-slate-700/50 bg-[#0d1629] hover:bg-[#13203c] text-blue-400 hover:text-blue-300 transition-all cursor-pointer flex items-center gap-1.5 shadow-sm active:scale-95"
                 title="Bấm để chuyển đổi giữa dữ liệu thực và dữ liệu demo"
               >
-                <span>{showDemo ? "✨ Đang xem: Vườn mẫu (Demo)" : "📊 Dữ liệu thực tế"}</span>
-                <span className="text-[10px] text-slate-400 underline">({showDemo ? "Đổi sang thật" : "Xem mẫu"})</span>
+                <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+                <span>{showDemo ? "Vườn mẫu (Demo)" : "Dữ liệu thực tế"}</span>
+                <span className="text-[10px] text-slate-400 font-normal">({showDemo ? "Đổi sang thật" : "Xem mẫu"})</span>
               </button>
-              <div className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-[#111c38] text-emerald-400 shadow-inner">
-                {githubHeatmap.activeDaysCount} ngày có hoa
+              <div className="text-xs font-bold px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center gap-1.5 shadow-sm">
+                <span>🌸</span>
+                <span>{githubHeatmap.activeDaysCount} ngày rực rỡ</span>
               </div>
             </div>
           </div>
 
-          {/* GitHub Grid Container (Hỗ trợ cuộn ngang mượt mà trên mobile, căn giữa thanh lịch) */}
-          <div className="overflow-x-auto pb-2 pt-1 scrollbar-thin">
+          {/* Khung Lưới GitHub Canvas Tinh Tế */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-[#060a14] border border-[#131d33] shadow-inner relative z-10 overflow-x-auto scrollbar-thin">
             <div className="inline-flex flex-col min-w-max mx-auto text-left">
-              {/* Hàng tên các Tháng chuẩn theo từng cột tuần */}
-              <div className="flex gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] font-mono text-slate-400 h-4 mb-1.5">
-                <div className="w-5 sm:w-6 shrink-0" />
+              {/* Hàng Tháng Chuẩn Cột Tuần */}
+              <div className="flex gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] font-mono text-slate-400 h-4 mb-2">
+                <div className="w-6 sm:w-7 shrink-0" />
                 <div className="flex gap-1 sm:gap-1.5">
                   {githubHeatmap.weeks.map((_, wIdx) => {
                     const monthEntry = githubHeatmap.monthLabels.find((m) => m.weekIndex === wIdx);
                     return (
-                      <div key={wIdx} className="w-4 sm:w-5 shrink-0 relative overflow-visible">
+                      <div key={wIdx} className="w-4 sm:w-4.5 shrink-0 relative overflow-visible">
                         {monthEntry && (
-                          <span className="absolute left-0 top-0 whitespace-nowrap font-bold text-slate-400">
+                          <span className="absolute left-0 top-0 whitespace-nowrap font-bold text-slate-400 uppercase tracking-wider text-[10px]">
                             {monthEntry.label}
                           </span>
                         )}
@@ -492,20 +517,20 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Bảng 7 hàng (ngày trong tuần) x N cột (tuần) */}
+              {/* Thân bảng 7 hàng × N tuần */}
               <div className="flex gap-1.5 sm:gap-2 items-center">
-                {/* Nhãn các thứ (T2, T4, T6) căn chuẩn hàng như GitHub */}
-                <div className="flex flex-col gap-1 sm:gap-1.5 text-[9px] sm:text-[10px] font-mono text-slate-400 select-none pr-1">
-                  <span className="w-5 sm:w-6 h-4 sm:h-5 flex items-center justify-end opacity-0">CN</span>
-                  <span className="w-5 sm:w-6 h-4 sm:h-5 flex items-center justify-end">T2</span>
-                  <span className="w-5 sm:w-6 h-4 sm:h-5 flex items-center justify-end opacity-0">T3</span>
-                  <span className="w-5 sm:w-6 h-4 sm:h-5 flex items-center justify-end">T4</span>
-                  <span className="w-5 sm:w-6 h-4 sm:h-5 flex items-center justify-end opacity-0">T5</span>
-                  <span className="w-5 sm:w-6 h-4 sm:h-5 flex items-center justify-end">T6</span>
-                  <span className="w-5 sm:w-6 h-4 sm:h-5 flex items-center justify-end opacity-0">T7</span>
+                {/* Cột Thứ */}
+                <div className="flex flex-col gap-1 sm:gap-1.5 text-[9px] sm:text-[10px] font-mono text-slate-500 select-none pr-1">
+                  <span className="w-6 sm:w-7 h-4 sm:h-4.5 flex items-center justify-end opacity-0">CN</span>
+                  <span className="w-6 sm:w-7 h-4 sm:h-4.5 flex items-center justify-end">T2</span>
+                  <span className="w-6 sm:w-7 h-4 sm:h-4.5 flex items-center justify-end opacity-0">T3</span>
+                  <span className="w-6 sm:w-7 h-4 sm:h-4.5 flex items-center justify-end">T4</span>
+                  <span className="w-6 sm:w-7 h-4 sm:h-4.5 flex items-center justify-end opacity-0">T5</span>
+                  <span className="w-6 sm:w-7 h-4 sm:h-4.5 flex items-center justify-end">T6</span>
+                  <span className="w-6 sm:w-7 h-4 sm:h-4.5 flex items-center justify-end opacity-0">T7</span>
                 </div>
 
-                {/* Các cột tuần */}
+                {/* Các Cột Tuần */}
                 <div className="flex gap-1 sm:gap-1.5">
                   {githubHeatmap.weeks.map((week, wIdx) => (
                     <div key={wIdx} className="flex flex-col gap-1 sm:gap-1.5">
@@ -514,24 +539,19 @@ export default function Home() {
                           return (
                             <div
                               key={day.dateStr}
-                              className="w-4 h-4 sm:w-5 sm:h-5 rounded-[4px] opacity-0 pointer-events-none"
+                              className="w-4 h-4 sm:w-4.5 sm:h-4.5 rounded-[4px] opacity-0 pointer-events-none"
                             />
                           );
                         }
 
                         let stage: 0 | 1 | 2 | 3 = 0;
-                        let tileStyle = "soil-tile";
-
                         if (day.match && day.match.time_spent_minutes > 0) {
                           if (day.match.time_spent_minutes >= 40) {
-                            tileStyle = "soil-tile shadow-md shadow-rose-950/50 ring-1 ring-rose-500/40";
                             stage = 3; // Hoa nở rực rỡ
                           } else if (day.match.time_spent_minutes >= 20) {
-                            tileStyle = "soil-tile shadow-sm shadow-pink-950/40 ring-1 ring-pink-500/30";
                             stage = 2; // Nụ hoa
                           } else {
-                            tileStyle = "soil-tile shadow-sm shadow-emerald-950/40 ring-1 ring-emerald-500/30";
-                            stage = 1; // Mầm xanh
+                            stage = 1; // Mầm non
                           }
                         }
 
@@ -539,18 +559,18 @@ export default function Home() {
                           stage === 3
                             ? "🌸 Hoa nở rực rỡ"
                             : stage === 2
-                            ? "🌷 Nụ hoa đang lớn"
+                            ? "🌷 Nụ hoa e ấp"
                             : stage === 1
                             ? "🌱 Mầm non vươn nhú"
-                            : "Ô đất vuông trống (chưa trồng)";
+                            : "Ô đất tĩnh (chờ gieo mầm)";
 
                         return (
                           <div
                             key={day.dateStr}
                             title={`${day.dateStr} (${statusText}): ${day.match ? `${day.match.time_spent_minutes} phút học, +${day.match.xp_earned} XP` : "Chưa học"}`}
-                            className={`garden-tile w-4 h-4 sm:w-5 sm:h-5 rounded-[4px] ${tileStyle} p-0.5 flex items-center justify-center transition-all hover:scale-125 hover:z-10 cursor-pointer select-none`}
+                            className={`garden-cell garden-cell-${stage} w-4 h-4 sm:w-4.5 sm:h-4.5 p-0.5 cursor-pointer`}
                           >
-                            <GardenFlower stage={stage} className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5" />
+                            <GardenFlower stage={stage} className="w-full h-full" />
                           </div>
                         );
                       })}
@@ -561,38 +581,46 @@ export default function Home() {
             </div>
           </div>
 
-          {/* GitHub Footer & Legend: 3 tiến độ phát triển + Ô đất vuông màu nâu */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-300 font-medium border-t border-[#132247] pt-3">
-            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-4 text-[10px] sm:text-[11px] text-slate-400">
-              <span className="flex items-center gap-1.5 text-slate-400">
-                <span className="w-3.5 h-3.5 rounded-[2px] soil-tile inline-flex items-center justify-center">
-                  <GardenFlower stage={0} className="w-3 h-3" animate={false} />
-                </span>
-                <span>Ô đất vuông nâu (Chưa học)</span>
-              </span>
-              <span className="flex items-center gap-1">🌱 Mầm xanh (&lt;20p)</span>
-              <span className="flex items-center gap-1">🌷 Nụ hoa (20–39p)</span>
-              <span className="flex items-center gap-1">🌸 Hoa nở rực rỡ (40p+)</span>
+          {/* Footer & Chú Giải Sang Trọng */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-300 font-medium pt-1 relative z-10">
+            {/* Thống kê từng nấc sinh trưởng */}
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 sm:gap-3 text-xs">
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800/40 border border-slate-700/40 text-slate-300">
+                <span className="w-2 h-2 rounded-full bg-slate-500" />
+                <span className="text-slate-400">Chưa học</span>
+              </div>
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                <span>🌱</span>
+                <span><b>{stageStats.sprouts}</b> Mầm (&lt;20p)</span>
+              </div>
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-pink-500/10 border border-pink-500/20 text-pink-400">
+                <span>🌷</span>
+                <span><b>{stageStats.buds}</b> Nụ (20–39p)</span>
+              </div>
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-300">
+                <span>🌸</span>
+                <span><b>{stageStats.blooms}</b> Hoa (40p+)</span>
+              </div>
             </div>
 
-            {/* Thang đo cấp độ chuẩn GitHub: Ít [0][1][2][3] Nhiều */}
+            {/* Thang đo cấp độ chuẩn GitHub */}
             <div className="flex items-center gap-2 text-xs text-slate-400">
-              <span>Ít</span>
+              <span className="text-[11px] font-medium text-slate-500">Ít</span>
               <div className="flex items-center gap-1">
-                <div className="w-4 h-4 rounded-[3px] soil-tile p-0.5 flex items-center justify-center" title="Ô đất vuông nâu (Chưa học)">
-                  <GardenFlower stage={0} className="w-3.5 h-3.5" animate={false} />
+                <div className="garden-cell garden-cell-0 w-3.5 h-3.5 p-0.5" title="Chưa học">
+                  <GardenFlower stage={0} className="w-full h-full" animate={false} />
                 </div>
-                <div className="w-4 h-4 rounded-[3px] soil-tile ring-1 ring-emerald-500/30 p-0.5 flex items-center justify-center" title="Mầm xanh (<20p)">
-                  <GardenFlower stage={1} className="w-3.5 h-3.5" animate={false} />
+                <div className="garden-cell garden-cell-1 w-3.5 h-3.5 p-0.5" title="Mầm non (<20p)">
+                  <GardenFlower stage={1} className="w-full h-full" animate={false} />
                 </div>
-                <div className="w-4 h-4 rounded-[3px] soil-tile ring-1 ring-pink-500/30 p-0.5 flex items-center justify-center" title="Nụ hoa (20–39p)">
-                  <GardenFlower stage={2} className="w-3.5 h-3.5" animate={false} />
+                <div className="garden-cell garden-cell-2 w-3.5 h-3.5 p-0.5" title="Nụ hoa (20–39p)">
+                  <GardenFlower stage={2} className="w-full h-full" animate={false} />
                 </div>
-                <div className="w-4 h-4 rounded-[3px] soil-tile ring-1 ring-rose-500/40 p-0.5 flex items-center justify-center" title="Hoa nở rực rỡ (40p+)">
-                  <GardenFlower stage={3} className="w-3.5 h-3.5" animate={false} />
+                <div className="garden-cell garden-cell-3 w-3.5 h-3.5 p-0.5" title="Hoa nở rực rỡ (40p+)">
+                  <GardenFlower stage={3} className="w-full h-full" animate={false} />
                 </div>
               </div>
-              <span>Nhiều</span>
+              <span className="text-[11px] font-medium text-slate-500">Nhiều</span>
             </div>
           </div>
         </div>
