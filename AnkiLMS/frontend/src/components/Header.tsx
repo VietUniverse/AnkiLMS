@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Search, ChevronDown, Sparkles, Flame, Zap, Gem, LogOut, User as UserIcon, BookOpen, Volume2 } from "lucide-react";
+import { Search, ChevronDown, Sparkles, Flame, Zap, Gem, LogOut, User as UserIcon, BookOpen, Volume2, Menu } from "lucide-react";
 import { UserProfile, ApiClient } from "../lib/apiClient";
 import { searchDictionary, DictEntry } from "../data/koreanMiniDict";
 import { ThemeSwitcher } from "./ThemeSwitcher";
@@ -10,9 +10,10 @@ interface HeaderProps {
   currentUser: UserProfile | null;
   onOpenAuth: (isRegisterMode?: boolean) => void;
   onLogout: () => void;
+  onToggleMobileMenu?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onLogout }) => {
+export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onLogout, onToggleMobileMenu }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<DictEntry[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -50,80 +51,90 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onLogou
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-[#0b1329]/95 backdrop-blur-md border-b-2 border-[#19284d] px-4 py-2.5 flex items-center justify-between gap-3 select-none">
-      {/* Search Bar Left */}
-      <div className="relative flex-1 max-w-sm" ref={dropdownRef}>
-        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8b9bb4]" />
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Tra từ điển tiếng Hàn (VD: 안녕, cơm...)"
-          className="w-full bg-[#132247] border border-[#1e3a70] rounded-full pl-10 pr-4 py-1.5 text-xs text-white placeholder-[#8b9bb4] focus:outline-none focus:border-blue-500 transition-all"
-        />
+    <header className="sticky top-0 z-30 bg-[#0b1329]/95 backdrop-blur-md border-b-2 border-[#19284d] px-3 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between gap-2 sm:gap-3 select-none">
+      {/* Mobile Menu Button + Search Bar Left */}
+      <div className="flex items-center gap-1.5 sm:gap-2 flex-1 max-w-sm">
+        <button
+          onClick={onToggleMobileMenu}
+          className="md:hidden p-1.5 -ml-1 text-slate-300 hover:text-white rounded-xl hover:bg-white/5 cursor-pointer shrink-0"
+          aria-label="Mở menu"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
 
-        {/* Dictionary Search Dropdown Result */}
-        {showDropdown && (
-          <div className="absolute left-0 right-0 top-full mt-2 bg-[#0f1b38] border-2 border-blue-500/40 rounded-2xl shadow-2xl overflow-hidden z-50 animate-fadeIn">
-            <div className="p-2 border-b border-slate-800 text-[10px] font-bold text-slate-400 uppercase tracking-wider flex justify-between items-center">
-              <span>Từ điển Hàn - Việt inline</span>
-              <span className="text-blue-400">{searchResults.length} kết quả</span>
-            </div>
-            <div className="max-h-64 overflow-y-auto">
-              {searchResults.length > 0 ? (
-                searchResults.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="p-3 border-b border-slate-800/60 hover:bg-blue-600/10 flex items-center justify-between gap-3 cursor-pointer transition-colors"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-base font-black text-amber-400 font-noto">{item.hangul}</span>
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 font-bold">
-                          {item.partOfSpeech}
-                        </span>
-                      </div>
-                      <p className="text-xs font-bold text-white mt-0.5">{item.vietnamese}</p>
-                      {item.example && (
-                        <p className="text-[11px] text-slate-400 italic mt-0.5 font-noto">"{item.example}"</p>
-                      )}
-                    </div>
-                    <button
-                      onClick={() => playSound(item.hangul)}
-                      className="p-2 text-amber-400 hover:text-amber-300 rounded-xl bg-amber-500/10 shrink-0"
-                      title="Phát âm"
+        <div className="relative flex-1" ref={dropdownRef}>
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#8b9bb4]" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Tra từ điển tiếng Hàn..."
+            className="w-full bg-[#132247] border border-[#1e3a70] rounded-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-1.5 text-xs text-white placeholder-[#8b9bb4] placeholder:truncate focus:outline-none focus:border-blue-500 transition-all"
+          />
+
+          {/* Dictionary Search Dropdown Result */}
+          {showDropdown && (
+            <div className="absolute left-0 right-0 top-full mt-2 bg-[#0f1b38] border-2 border-blue-500/40 rounded-2xl shadow-2xl overflow-hidden z-50 animate-fadeIn">
+              <div className="p-2 border-b border-slate-800 text-[10px] font-bold text-slate-400 uppercase tracking-wider flex justify-between items-center">
+                <span>Từ điển Hàn - Việt inline</span>
+                <span className="text-blue-400">{searchResults.length} kết quả</span>
+              </div>
+              <div className="max-h-64 overflow-y-auto">
+                {searchResults.length > 0 ? (
+                  searchResults.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="p-3 border-b border-slate-800/60 hover:bg-blue-600/10 flex items-center justify-between gap-3 cursor-pointer transition-colors"
                     >
-                      <Volume2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))
-              ) : (
-                <div className="p-4 text-center text-xs text-slate-400">Không tìm thấy từ tương ứng</div>
-              )}
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-base font-black text-amber-400 font-noto">{item.hangul}</span>
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 font-bold">
+                            {item.partOfSpeech}
+                          </span>
+                        </div>
+                        <p className="text-xs font-bold text-white mt-0.5">{item.vietnamese}</p>
+                        {item.example && (
+                          <p className="text-[11px] text-slate-400 italic mt-0.5 font-noto">"{item.example}"</p>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => playSound(item.hangul)}
+                        className="p-2 text-amber-400 hover:text-amber-300 rounded-xl bg-amber-500/10 shrink-0"
+                        title="Phát âm"
+                      >
+                        <Volume2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <div className="p-4 text-center text-xs text-slate-400">Không tìm thấy từ tương ứng</div>
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* User Stats Badges */}
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
         <ThemeSwitcher />
         {currentUser ? (
           <>
             {/* Streak */}
-            <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-400 text-xs font-black">
+            <div className="flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-400 text-xs font-black">
               <Flame className="w-3.5 h-3.5 fill-amber-400 animate-pulse" />
               <span>{currentUser.streak || 0}</span>
             </div>
 
-            {/* XP */}
-            <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-400 text-xs font-black">
+            {/* XP - Hidden on small mobile to give search bar breathing room */}
+            <div className="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-400 text-xs font-black">
               <Zap className="w-3.5 h-3.5 fill-blue-400" />
               <span>{currentUser.xp || 0} XP</span>
             </div>
 
             {/* Gem / Kim Cương */}
-            <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-xs font-black cursor-pointer hover:bg-cyan-500/25 transition-all" title="Kim Cương 💎 (Dùng để mua vật phẩm & Streak Freeze)">
+            <div className="flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-xs font-black cursor-pointer hover:bg-cyan-500/25 transition-all" title="Kim Cương 💎 (Dùng để mua vật phẩm & Streak Freeze)">
               <Gem className="w-3.5 h-3.5 fill-cyan-400 text-cyan-400" />
               <span>{(currentUser.gems || 0).toLocaleString()} 💎</span>
             </div>

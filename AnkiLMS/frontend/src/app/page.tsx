@@ -279,24 +279,24 @@ export default function Home() {
           </div>
 
           {/* 3 Metric Cards: Chuỗi Streak, Cấp độ, Tổng Tích Lũy - Thiết kế chuẩn theo Gemini Image (Dark & Light) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-5 relative">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 lg:gap-5 relative">
             {/* Card 1: Chuỗi Streak */}
-            <div className="metric-card py-6 px-5 rounded-2xl flex flex-col items-center justify-between text-center min-h-[195px] relative group transition-all">
+            <div className="metric-card py-4 sm:py-6 px-4 sm:px-5 rounded-2xl flex flex-col items-center justify-between text-center min-h-[160px] sm:min-h-[195px] relative group transition-all">
               <span className="metric-card-title text-xs sm:text-[13px] font-extrabold uppercase tracking-widest">
                 CHUỖI STREAK
               </span>
 
-              <div className="flex items-center justify-center gap-3 my-auto py-2">
-                <Flame className="metric-card-icon-flame w-8 h-8 sm:w-10 sm:h-10 shrink-0" />
-                <span className="metric-card-value text-4xl sm:text-5xl font-black tracking-tight leading-none">
+              <div className="flex items-center justify-center gap-2.5 sm:gap-3 my-auto py-1 sm:py-2">
+                <Flame className="metric-card-icon-flame w-7 h-7 sm:w-10 sm:h-10 shrink-0" />
+                <span className="metric-card-value text-3xl sm:text-5xl font-black tracking-tight leading-none">
                   {currentUser?.streak || 1}
                 </span>
-                <span className="metric-card-unit text-xl sm:text-2xl font-bold leading-none">
+                <span className="metric-card-unit text-lg sm:text-2xl font-bold leading-none">
                   ngày
                 </span>
               </div>
 
-              <div className="metric-card-pill w-full py-2 px-3 rounded-xl flex items-center justify-center gap-2 text-xs font-semibold">
+              <div className="metric-card-pill w-full py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-xl flex items-center justify-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-semibold">
                 <span>🏆</span>
                 <span>Streak cao nhất: {currentUser?.longest_streak || currentUser?.streak || 1} ngày</span>
                 <span>🏆</span>
@@ -304,28 +304,28 @@ export default function Home() {
             </div>
 
             {/* Card 2: Cấp độ (Level) */}
-            <div className="metric-card py-6 px-5 rounded-2xl flex flex-col items-center justify-between text-center min-h-[195px] relative group transition-all">
+            <div className="metric-card py-4 sm:py-6 px-4 sm:px-5 rounded-2xl flex flex-col items-center justify-between text-center min-h-[160px] sm:min-h-[195px] relative group transition-all">
               <span className="metric-card-title text-xs sm:text-[13px] font-extrabold uppercase tracking-widest">
                 CẤP ĐỘ (LEVEL)
               </span>
 
-              <div className="flex items-center justify-center gap-2.5 my-auto py-1">
-                <div className="metric-card-badge w-6 h-6 rounded-full font-black text-xs flex items-center justify-center shadow-sm">
+              <div className="flex items-center justify-center gap-2 sm:gap-2.5 my-auto py-1">
+                <div className="metric-card-badge w-5 h-5 sm:w-6 sm:h-6 rounded-full font-black text-[11px] sm:text-xs flex items-center justify-center shadow-sm">
                   <span>{userLevel || 1}</span>
                 </div>
-                <span className="metric-card-level-text text-sm sm:text-base font-bold">
+                <span className="metric-card-level-text text-xs sm:text-base font-bold">
                   Lên Lv.{(userLevel || 1) + 1} · Còn {neededXPForNext} XP
                 </span>
               </div>
 
-              <div className="w-full space-y-2 mt-auto">
-                <div className="metric-card-track w-full h-4 rounded-full overflow-hidden p-0.5 relative">
+              <div className="w-full space-y-1.5 sm:space-y-2 mt-auto">
+                <div className="metric-card-track w-full h-3 sm:h-4 rounded-full overflow-hidden p-0.5 relative">
                   <div
                     className="metric-card-fill h-full rounded-full transition-all duration-500"
                     style={{ width: `${Math.max(8, levelProgressPercent || 50)}%` }}
                   />
                 </div>
-                <div className="metric-card-subtext flex items-center justify-between text-xs font-semibold px-0.5">
+                <div className="metric-card-subtext flex items-center justify-between text-[11px] sm:text-xs font-semibold px-0.5">
                   <span>{currentLevelProgressXP} / 300 XP</span>
                   <span>{levelProgressPercent}%</span>
                 </div>
@@ -333,22 +333,22 @@ export default function Home() {
             </div>
 
             {/* Card 3: Tổng Tích Lũy */}
-            <div className="metric-card py-6 px-5 rounded-2xl flex flex-col items-center justify-between text-center min-h-[195px] relative group transition-all">
+            <div className="metric-card py-4 sm:py-6 px-4 sm:px-5 rounded-2xl flex flex-col items-center justify-between text-center min-h-[160px] sm:min-h-[195px] relative group transition-all">
               <span className="metric-card-title text-xs sm:text-[13px] font-extrabold uppercase tracking-widest">
                 TỔNG TÍCH LŨY
               </span>
 
-              <div className="flex items-center justify-center gap-3 my-auto py-2">
-                <Zap className="metric-card-icon-zap w-8 h-8 sm:w-10 sm:h-10 shrink-0" />
-                <span className="metric-card-value text-4xl sm:text-5xl font-black tracking-tight leading-none">
+              <div className="flex items-center justify-center gap-2.5 sm:gap-3 my-auto py-1 sm:py-2">
+                <Zap className="metric-card-icon-zap w-7 h-7 sm:w-10 sm:h-10 shrink-0" />
+                <span className="metric-card-value text-3xl sm:text-5xl font-black tracking-tight leading-none">
                   {(currentUser?.xp || 150).toLocaleString()}
                 </span>
-                <span className="metric-card-unit text-xl sm:text-2xl font-bold leading-none">
+                <span className="metric-card-unit text-lg sm:text-2xl font-bold leading-none">
                   XP
                 </span>
               </div>
 
-              <div className="metric-card-pill w-full py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 text-xs font-semibold">
+              <div className="metric-card-pill w-full py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-xl flex items-center justify-center gap-1.5 text-[11px] sm:text-xs font-semibold">
                 <span>Đã quy đổi: {(currentUser?.xp || 150).toLocaleString()} 💎 kim cương</span>
               </div>
             </div>
@@ -360,12 +360,12 @@ export default function Home() {
           </div>
 
           {/* Dãy nút bấm hành động căn giữa gọn gàng - Nguyên khối không viền */}
-          <div className="p-3.5 rounded-2xl bg-[#070d1a] flex flex-wrap items-center justify-center gap-2.5 border-0">
+          <div className="p-3 sm:p-3.5 rounded-2xl bg-[#070d1a] flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 border-0">
             {/* Điểm danh */}
             {hasCheckedInToday ? (
               <button
                 disabled
-                className="px-5 py-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 font-bold text-xs flex items-center gap-2 cursor-not-allowed border-0"
+                className="px-4 sm:px-5 py-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 font-bold text-xs flex items-center gap-2 cursor-not-allowed border-0 min-h-[42px]"
               >
                 <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                 <span>ĐÃ ĐIỂM DANH (+50 💎)</span>
@@ -373,17 +373,18 @@ export default function Home() {
             ) : (
               <button
                 onClick={handleCheckin}
-                className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-[0.99] text-white font-bold text-xs shadow-lg shadow-blue-900/40 transition-all cursor-pointer flex items-center gap-2 border-0"
+                className="px-4 sm:px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-[0.99] text-white font-bold text-xs shadow-lg shadow-blue-900/40 transition-all cursor-pointer flex items-center gap-2 border-0 min-h-[42px]"
               >
                 <Flame className="w-4 h-4 text-white fill-white" />
-                <span>ĐIỂM DANH NGAY · NHẬN 50 💎 HÔM NAY</span>
+                <span className="hidden sm:inline">ĐIỂM DANH NGAY · NHẬN 50 💎 HÔM NAY</span>
+                <span className="sm:hidden">ĐIỂM DANH (+50 💎)</span>
               </button>
             )}
 
             {/* Từ vựng */}
             {isFeatureEnabled("flashcards") && <Link
               href="/flashcards"
-              className="px-5 py-2.5 rounded-xl bg-[#132247] hover:bg-[#1a2f60] active:scale-[0.99] text-white font-bold text-xs transition-colors flex items-center gap-2 border-0"
+              className="px-4 sm:px-5 py-2.5 rounded-xl bg-[#132247] hover:bg-[#1a2f60] active:scale-[0.99] text-white font-bold text-xs transition-colors flex items-center gap-2 border-0 min-h-[42px]"
             >
               <Layers className="w-4 h-4 text-blue-400" />
               <span>TỪ VỰNG</span>
@@ -392,19 +393,19 @@ export default function Home() {
             {/* Chơi game · Ôn từ */}
             {isFeatureEnabled("games") && <Link
               href="/games"
-              className="px-4 py-2.5 rounded-xl bg-[#111c38] hover:bg-[#182850] active:scale-[0.99] text-amber-300 font-bold text-xs transition-colors flex items-center gap-2 border-0"
+              className="px-3.5 sm:px-4 py-2.5 rounded-xl bg-[#111c38] hover:bg-[#182850] active:scale-[0.99] text-amber-300 font-bold text-xs transition-colors flex items-center gap-2 border-0 min-h-[42px]"
             >
               <Gamepad2 className="w-4 h-4 text-amber-400" />
-              <span>CHƠI GAME · ÔN TỪ</span>
+              <span>CHƠI GAME</span>
             </Link>}
 
             {/* Nhiệm vụ */}
             {isFeatureEnabled("missions") && <Link
               href="/missions"
-              className="px-4 py-2.5 rounded-xl bg-[#111c38] hover:bg-[#182850] active:scale-[0.99] text-sky-300 font-bold text-xs transition-colors flex items-center gap-2 border-0"
+              className="px-3.5 sm:px-4 py-2.5 rounded-xl bg-[#111c38] hover:bg-[#182850] active:scale-[0.99] text-sky-300 font-bold text-xs transition-colors flex items-center gap-2 border-0 min-h-[42px]"
             >
               <Target className="w-4 h-4 text-sky-400" />
-              <span>NHIỆM VỤ · {dailyMissionCount}/3</span>
+              <span>NHIỆM VỤ ({dailyMissionCount}/3)</span>
             </Link>}
           </div>
         </div>

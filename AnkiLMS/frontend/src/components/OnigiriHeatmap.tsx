@@ -53,6 +53,14 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
   const [view, setView] = useState<ViewMode>("year");
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth()); // 0-11
+  const yearScrollRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (view === "year" && yearScrollRef.current) {
+      const el = yearScrollRef.current;
+      el.scrollLeft = el.scrollWidth - el.clientWidth;
+    }
+  }, [view]);
   const [hoveredCell, setHoveredCell] = useState<{
     dateStr: string;
     minutes: number;
@@ -238,6 +246,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
 
     const days = [];
     const dayNames = ["Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ Nhật"];
+    const shortDayNames = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
 
     for (let i = 0; i < 7; i++) {
       const cur = new Date(monday);
@@ -252,6 +261,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
 
       days.push({
         name: dayNames[i],
+        shortName: shortDayNames[i],
         dayNum: cur.getDate(),
         monthNum: cur.getMonth() + 1,
         dateStr,
@@ -399,7 +409,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
       </div>
 
       {/* --- Heatmap Body --- */}
-      <div className="relative z-10 bg-[#0a0d14] rounded-xl p-4 overflow-x-auto scrollbar-thin border-0">
+      <div ref={yearScrollRef} className="relative z-10 bg-[#0a0d14] rounded-xl p-2.5 sm:p-4 overflow-x-auto scrollbar-thin border-0 touch-pan-x">
         {/* YEAR VIEW */}
         {view === "year" && (
           <div className="inline-flex flex-col min-w-max mx-auto text-left">
@@ -555,64 +565,69 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
 
         {/* WEEK VIEW */}
         {view === "week" && (
-          <div className="grid grid-cols-1 sm:grid-cols-7 gap-3 py-2">
+          <div className="grid grid-cols-7 gap-1 sm:gap-2.5 py-1 sm:py-2">
             {weekGrid.map((day) => (
               <div
                 key={day.dateStr}
                 data-level={day.level}
-                className={`onigiri-day-cell onigiri-level-${day.level} rounded-xl p-3 flex flex-col items-center justify-between min-h-[110px] transition-transform duration-150 ${
+                className={`onigiri-day-cell onigiri-level-${day.level} rounded-xl p-1.5 sm:p-3 flex flex-col items-center justify-between min-h-[95px] sm:min-h-[110px] transition-transform duration-150 ${
                   day.isToday ? "scale-[1.02] shadow-lg ring-2 ring-sky-400/50 z-10" : ""
                 } ${day.isFuture ? "opacity-35" : ""}`}
               >
-                <div className="text-center">
+                <div className="text-center w-full">
                   <p
-                    className={`text-xs font-bold ${
+                    className={`text-[10px] sm:text-xs font-bold ${
                       day.level > 4 ? "text-slate-900" : "text-slate-300"
                     }`}
                   >
-                    {day.name}
+                    <span className="sm:hidden">{day.shortName}</span>
+                    <span className="hidden sm:inline">{day.name}</span>
                   </p>
                   <p
-                    className={`text-lg font-black leading-tight ${
+                    className={`text-xs sm:text-lg font-black leading-tight ${
                       day.level > 4 ? "text-slate-950" : "text-white"
                     }`}
                   >
                     {day.dayNum}/{day.monthNum}
                   </p>
                   <p
-                    className={`onigiri-lunar-text text-[10px] font-semibold tracking-tight ${
+                    className={`onigiri-lunar-text text-[9px] sm:text-[10px] font-semibold tracking-tight ${
                       day.level > 4 ? "text-slate-900/75" : "text-slate-400"
                     }`}
                   >
-                    {day.lunarText} âm
+                    <span className="hidden sm:inline">{day.lunarText} âm</span>
+                    <span className="sm:hidden">{day.lunarText}</span>
                   </p>
                 </div>
 
-                <div className="text-center w-full mt-2 pt-2 bg-black/10 dark:bg-white/5 rounded-lg py-1.5 border-0">
+                <div className="text-center w-full mt-1 sm:mt-2 pt-1 sm:pt-2 bg-black/10 dark:bg-white/5 rounded-lg py-1 sm:py-1.5 border-0">
                   {day.item && day.item.time_spent_minutes > 0 ? (
                     <>
                       <p
-                        className={`text-xs font-extrabold ${
+                        className={`text-[10px] sm:text-xs font-extrabold ${
                           day.level > 4 ? "text-slate-950" : "text-sky-300"
                         }`}
                       >
-                        {day.item.time_spent_minutes} phút
+                        <span className="hidden sm:inline">{day.item.time_spent_minutes} phút</span>
+                        <span className="sm:hidden">{day.item.time_spent_minutes}p</span>
                       </p>
                       <p
-                        className={`text-[10px] ${
+                        className={`text-[9px] sm:text-[10px] ${
                           day.level > 4 ? "text-slate-800" : "text-slate-400"
                         }`}
                       >
-                        +{day.item.xp_earned} XP
+                        <span className="hidden sm:inline">+{day.item.xp_earned} XP</span>
+                        <span className="sm:hidden">+{day.item.xp_earned}</span>
                       </p>
                     </>
                   ) : (
                     <span
-                      className={`text-[11px] ${
+                      className={`text-[9px] sm:text-[11px] ${
                         day.level > 4 ? "text-slate-800" : "text-slate-500"
                       }`}
                     >
-                      {day.isFuture ? "Kế hoạch" : "Chưa học"}
+                      <span className="hidden sm:inline">{day.isFuture ? "Kế hoạch" : "Chưa học"}</span>
+                      <span className="sm:hidden">-</span>
                     </span>
                   )}
                 </div>

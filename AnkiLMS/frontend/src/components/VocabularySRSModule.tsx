@@ -93,8 +93,14 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const [selectedClassAssignmentId, setSelectedClassAssignmentId] = useState<string | null>(null);
 
   const [expandedLesson, setExpandedLesson] = useState<string | null>("Bài 01");
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const [tagFilter, setTagFilter] = useState<string>("all");
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth >= 1024) {
+      setIsSidebarOpen(true);
+    }
+  }, []);
 
   // Private Class Assignments List
   const [classAssignments, setClassAssignments] = useState<ClassAssignmentItem[]>([]);
@@ -1032,6 +1038,9 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                           }
                         }}
                         className="real-type-input"
+                        autoCapitalize="none"
+                        autoCorrect="off"
+                        spellCheck={false}
                         autoFocus
                       />
                       <div id="typeans-overlay" className="typeans-overlay">

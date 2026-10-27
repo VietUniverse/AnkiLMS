@@ -30,6 +30,8 @@ import {
   Gamepad2,
   ListMusic,
   Compass,
+  X,
+  Menu,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -37,6 +39,8 @@ interface SidebarProps {
   onOpenAuth: (isRegisterMode?: boolean) => void;
   currentUser: any;
   onLogout: () => void;
+  isOpenMobile?: boolean;
+  onCloseMobile?: () => void;
 }
 
 const mainNav = [
@@ -73,6 +77,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onOpenAuth,
   currentUser,
   onLogout,
+  isOpenMobile = false,
+  onCloseMobile,
 }) => {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
@@ -83,25 +89,26 @@ export const Sidebar: React.FC<SidebarProps> = ({
     return pathname.startsWith(href);
   };
 
-  const renderNavItem = (item: { href: string; label: string; icon: any; badge?: string; feature?: FeatureKey }) => {
+  const renderNavItem = (item: { href: string; label: string; icon: any; badge?: string; feature?: FeatureKey }, isMobile = false) => {
     const Icon = item.icon;
     const active = isActive(item.href);
     return (
       <Link
         key={item.href}
         href={item.href}
+        onClick={isMobile ? onCloseMobile : undefined}
         className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-colors border-0 ${
           active
             ? "bg-blue-600 text-white font-extrabold shadow-md shadow-blue-900/30"
             : "text-slate-400 hover:text-white hover:bg-[#111c38] font-medium"
         }`}
-        title={collapsed ? item.label : undefined}
+        title={!isMobile && collapsed ? item.label : undefined}
       >
         <div className="flex items-center gap-2.5">
           <Icon className={`w-4 h-4 shrink-0 ${active ? "text-white" : "text-slate-400"}`} />
-          {!collapsed && <span className="tracking-normal truncate">{item.label}</span>}
+          {(!collapsed || isMobile) && <span className="tracking-normal truncate">{item.label}</span>}
         </div>
-        {!collapsed && item.badge && (
+        {(!collapsed || isMobile) && item.badge && (
           <span
             className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md border-0 ${
               item.badge === "BETA"
@@ -117,11 +124,150 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <aside
-      className={`hidden lg:flex flex-col border-r border-[#111c38]/70 bg-[#090f1e] text-white h-screen sticky top-0 justify-between z-30 select-none transition-all duration-300 ${
-        collapsed ? "w-16" : "w-64"
-      }`}
-    >
+    <>
+      {/* Mobile Navigation Drawer */}
+      {isOpenMobile && (
+        <div className="fixed inset-0 z-50 md:hidden flex animate-fadeIn">
+          <div
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm"
+            onClick={onCloseMobile}
+          />
+          <div className="relative w-72 max-w-[85vw] h-full bg-[#090f1e] text-white flex flex-col justify-between shadow-2xl z-10 border-r border-[#19284d]">
+            {/* Mobile Header with Close button */}
+            <div className="flex h-16 items-center justify-between border-b border-[#111c38]/70 px-4 shrink-0">
+              <Link
+                href="/"
+                onClick={onCloseMobile}
+                className="flex items-center gap-2.5"
+              >
+                <div className="w-8 h-8 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
+                  <GraduationCap className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="font-black text-lg text-white tracking-tight block leading-none">
+                    Haechi<span className="text-blue-400">VN</span>
+                  </span>
+                  <span className="text-[9px] font-semibold text-slate-400 tracking-wider">Tiếng Hàn & Anki LMS</span>
+                </div>
+              </Link>
+              <button
+                onClick={onCloseMobile}
+                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+                aria-label="Đóng menu"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Mobile Scrollable Links */}
+            <div className="flex-1 overflow-y-auto p-3 space-y-4">
+              <div>
+                <p className="px-3 py-1 text-[10px] font-extrabold uppercase tracking-widest text-slate-500">
+                  HỌC TẬP
+                </p>
+                <nav className="space-y-0.5 mt-1">
+                  {mainNav.filter((item) => isFeatureEnabled("feature" in item ? item.feature : undefined)).map((item) => renderNavItem(item, true))}
+                  {currentUser?.role === "admin" && renderNavItem({ href: "/admin", label: "Quản trị hệ thống", icon: ShieldCheck }, true)}
+                </nav>
+              </div>
+
+              <div className="pt-3 border-t border-[#132247]/60">
+                <p className="px-3 py-1 text-[10px] font-extrabold uppercase tracking-widest text-slate-500">
+                  CỘNG ĐỒNG & XẾP HẠNG
+                </p>
+                <div className="space-y-0.5 mt-1">
+                  {communityNav.filter((item) => isFeatureEnabled(item.feature)).map((item) => renderNavItem(item, true))}
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-[#132247]/60">
+                <div className="px-3 py-1 flex items-center justify-between">
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-purple-400">
+                    TÍNH NĂNG BETA
+                  </span>
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">
+                    THỬ NGHIỆM
+                  </span>
+                </div>
+                <div className="space-y-0.5 mt-1">
+                  {betaNav.filter((item) => isFeatureEnabled(item.feature)).map((item) => renderNavItem(item, true))}
+                  {isFeatureEnabled("ankiImport") && (
+                    <button
+                      onClick={() => {
+                        onCloseMobile?.();
+                        onOpenImporter();
+                      }}
+                      className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-colors border-0 text-slate-400 hover:text-white hover:bg-[#111c38] font-medium cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <Upload className="w-4 h-4 text-purple-400 shrink-0" />
+                        <span className="tracking-normal truncate">Nhập thẻ Anki (.apkg)</span>
+                      </div>
+                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md border-0 bg-purple-500/20 text-purple-300">
+                        BETA
+                      </span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile Footer User info */}
+            <div className="p-3 border-t border-[#111c38]/70 bg-[#070d1a] shrink-0">
+              {currentUser ? (
+                <div className="flex items-center justify-between p-2 rounded-xl bg-[#0b1329]">
+                  <Link
+                    href="/profile"
+                    onClick={onCloseMobile}
+                    className="flex items-center gap-2.5 min-w-0"
+                  >
+                    {currentUser.avatar_url ? (
+                      <img src={currentUser.avatar_url} alt="" className="w-8 h-8 rounded-lg object-cover shrink-0" />
+                    ) : (
+                      <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-xs text-white shrink-0">
+                        {currentUser.name?.[0]?.toUpperCase() || "?"}
+                      </div>
+                    )}
+                    <div className="min-w-0">
+                      <span className="font-bold text-xs text-white block truncate">{currentUser.name}</span>
+                      <span className="text-[10px] text-amber-400 font-semibold block">
+                        Lv.{Math.floor((currentUser.xp || 0) / 300) + 1} · {currentUser.xp || 0} XP
+                      </span>
+                    </div>
+                  </Link>
+                  <button
+                    onClick={() => {
+                      onCloseMobile?.();
+                      onLogout();
+                    }}
+                    className="p-1.5 text-slate-400 hover:text-rose-400 rounded-lg transition-colors cursor-pointer"
+                    title="Đăng xuất"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    onCloseMobile?.();
+                    onOpenAuth(false);
+                  }}
+                  className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-md"
+                >
+                  ĐĂNG NHẬP
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Desktop Aside Sidebar */}
+      <aside
+        className={`hidden md:flex flex-col border-r border-[#111c38]/70 bg-[#090f1e] text-white h-screen sticky top-0 justify-between z-30 select-none transition-all duration-300 ${
+          collapsed ? "w-16" : "w-64"
+        }`}
+      >
       {/* HaechiVN Brand Header */}
       <Link
         href="/"
@@ -152,7 +298,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </p>
           )}
           <nav className="space-y-0.5 mt-1">
-            {mainNav.filter((item) => isFeatureEnabled("feature" in item ? item.feature : undefined)).map(renderNavItem)}
+            {mainNav.filter((item) => isFeatureEnabled("feature" in item ? item.feature : undefined)).map((item) => renderNavItem(item))}
             {currentUser?.role === "admin" && renderNavItem({ href: "/admin", label: "Quản trị hệ thống", icon: ShieldCheck })}
           </nav>
         </div>
@@ -165,7 +311,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </p>
           )}
           <div className="space-y-0.5 mt-1">
-            {communityNav.filter((item) => isFeatureEnabled(item.feature)).map(renderNavItem)}
+            {communityNav.filter((item) => isFeatureEnabled(item.feature)).map((item) => renderNavItem(item))}
           </div>
         </div>
 
@@ -182,7 +328,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
           )}
           <div className="space-y-0.5 mt-1">
-            {betaNav.filter((item) => isFeatureEnabled(item.feature)).map(renderNavItem)}
+            {betaNav.filter((item) => isFeatureEnabled(item.feature)).map((item) => renderNavItem(item))}
 
             {/* Tính năng Kéo thẻ Anki (.apkg) đưa vào mục Beta */}
             {isFeatureEnabled("ankiImport") && <button
@@ -254,5 +400,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </button>
       </div>
     </aside>
+    </>
   );
 };

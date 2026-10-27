@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Sidebar } from "./Sidebar";
 import { BottomNav } from "./BottomNav";
@@ -19,6 +19,11 @@ interface AppShellProps {
 export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   const router = useRouter();
   const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
 
   const {
     currentUser,
@@ -62,12 +67,14 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
 
   return (
     <div className="flex h-screen bg-[#0b1329] text-white overflow-hidden font-sans">
-      {/* Sidebar Desktop */}
+      {/* Sidebar Desktop & Mobile Drawer */}
       <Sidebar
         onOpenImporter={() => setIsImporterOpen(true)}
         onOpenAuth={handleOpenAuth}
         currentUser={currentUser}
         onLogout={handleLogout}
+        isOpenMobile={isMobileMenuOpen}
+        onCloseMobile={() => setIsMobileMenuOpen(false)}
       />
 
       {/* Main Content View */}
@@ -76,9 +83,10 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
           currentUser={currentUser}
           onOpenAuth={handleOpenAuth}
           onLogout={handleLogout}
+          onToggleMobileMenu={() => setIsMobileMenuOpen((prev: boolean) => !prev)}
         />
 
-        <main className="flex-1 p-2 md:p-4 w-full max-w-[1800px] mx-auto">
+        <main className="flex-1 p-2.5 sm:p-4 pb-24 md:pb-6 w-full max-w-[1800px] mx-auto">
           {checkinMessage && (
             <div className="mb-4 p-4 rounded-2xl bg-amber-500/20 border border-amber-400 text-amber-300 font-bold text-xs flex items-center justify-between animate-fadeIn">
               <span>{checkinMessage}</span>
@@ -101,7 +109,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
         </main>
       </div>
 
-      <BottomNav />
+      <BottomNav onOpenMobileMenu={() => setIsMobileMenuOpen(true)} />
       {pathname !== "/" && isFeatureEnabled("chat") && <FloatingCommunityChat />}
 
       {isFeatureEnabled("ankiImport") && <AnkiImporter
