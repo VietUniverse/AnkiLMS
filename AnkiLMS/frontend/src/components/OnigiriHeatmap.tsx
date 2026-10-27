@@ -288,14 +288,10 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
 
       {/* --- Onigiri Header --- */}
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-5 relative z-10">
-        {/* Header Left: Onigiri Avatar & Title */}
+        {/* Header Left: Activity Icon & Title */}
         <div className="flex items-center gap-3">
-          <div className="relative w-9 h-9 rounded-xl bg-sky-500/15 flex items-center justify-center p-1.5 shadow-sm group border-0">
-            <img
-              src="/onigiri.svg"
-              alt="Onigiri"
-              className="w-full h-full object-contain filter invert opacity-90 group-hover:scale-110 transition-transform duration-200"
-            />
+          <div className="relative w-9 h-9 rounded-xl bg-sky-500/15 flex items-center justify-center shadow-sm group border-0 text-sky-400">
+            <Calendar className="w-5 h-5 group-hover:scale-110 transition-transform duration-200" />
           </div>
           <div>
             <div className="flex items-center gap-2">
