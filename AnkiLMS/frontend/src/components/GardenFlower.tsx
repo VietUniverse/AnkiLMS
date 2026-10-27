@@ -1,13 +1,17 @@
 import React from "react";
 
 interface GardenFlowerProps {
-  stage: 0 | 1 | 2 | 3 | 4;
+  stage: 0 | 1 | 2 | 3; // 0: Đất trống, 1: Mầm, 2: Nụ, 3: Hoa
   className?: string;
   animate?: boolean;
 }
 
+/**
+ * GardenFlower: 1 loại hoa duy nhất với 3 tiến độ sinh trưởng tự nhiên (Mầm -> Nụ -> Hoa)
+ * và ô đất vuông trống khi chưa trồng.
+ */
 export const GardenFlower: React.FC<GardenFlowerProps> = React.memo(({ stage, className = "w-full h-full", animate = true }) => {
-  // Stage 0: Đất trống / Hạt mầm đang ngủ trong đất
+  // Stage 0: Ô đất vuông trống (chưa trồng)
   if (stage === 0) {
     return (
       <svg
@@ -16,13 +20,22 @@ export const GardenFlower: React.FC<GardenFlowerProps> = React.memo(({ stage, cl
         aria-hidden="true"
         fill="none"
       >
-        <ellipse cx="12" cy="18" rx="5.5" ry="1.8" className="fill-slate-700/40 dark:fill-slate-700/50" />
-        <circle cx="12" cy="17" r="1.3" className="fill-slate-500/50 dark:fill-slate-500/60" />
+        {/* Luống đất vuông bo góc nhẹ nhàng */}
+        <rect
+          x="3.5"
+          y="16.5"
+          width="17"
+          height="4.5"
+          rx="1.5"
+          className="fill-slate-700/40 dark:fill-slate-800/60"
+        />
+        {/* Rãnh gieo / hạt mầm đang ngủ */}
+        <ellipse cx="12" cy="18.5" rx="2" ry="1" className="fill-slate-500/35 dark:fill-slate-600/45" />
       </svg>
     );
   }
 
-  // Stage 1: Mầm xanh vươn nhú (<15 phút) - Procedural stem & baby leaves
+  // Stage 1: Mầm (Cọng mầm xanh vươn nhú với 2 lá mầm tươi non)
   if (stage === 1) {
     return (
       <svg
@@ -31,34 +44,41 @@ export const GardenFlower: React.FC<GardenFlowerProps> = React.memo(({ stage, cl
         aria-hidden="true"
         fill="none"
       >
-        {/* Đất nền màu tối êm */}
-        <ellipse cx="12" cy="19.5" rx="5.5" ry="1.8" className="fill-slate-700/40 dark:fill-slate-800/60" />
-        {/* Cọng mầm xanh vươn lên */}
+        {/* Đất */}
+        <rect
+          x="3.5"
+          y="17"
+          width="17"
+          height="4.5"
+          rx="1.5"
+          className="fill-slate-700/40 dark:fill-slate-800/60"
+        />
+        {/* Cọng mầm vươn lên */}
         <path
-          d="M 12 19.5 Q 11.5 15.5 12 11.5"
+          d="M 12 17.5 Q 11.5 14 12 11"
           stroke="#22c55e"
-          strokeWidth="2"
+          strokeWidth="2.2"
           strokeLinecap="round"
           className={animate ? "flower-stem" : ""}
         />
-        {/* Lá mầm bên trái */}
+        {/* Lá mầm trái */}
         <path
-          d="M 12 14 C 9 14 8 11 9 9 C 11 9 12 11 12 14 Z"
+          d="M 12 13.5 C 9 13.5 8 10.5 9 9 C 11 9 12 11 12 13.5 Z"
           fill="#4ade80"
           className={animate ? "flower-leaf" : ""}
         />
-        {/* Lá mầm bên phải */}
+        {/* Lá mầm phải */}
         <path
-          d="M 12 12.5 C 14.8 12.5 15.8 10 14.8 8.5 C 13.2 8.5 12 10 12 12.5 Z"
+          d="M 12 12 C 15 12 16 9.5 15 8 C 13 8 12 10 12 12 Z"
           fill="#16a34a"
           className={animate ? "flower-leaf" : ""}
-          style={animate ? { animationDelay: "0.2s" } : undefined}
+          style={animate ? { animationDelay: "0.18s" } : undefined}
         />
       </svg>
     );
   }
 
-  // Stage 2: Hoa Tulip / Nụ vươn nở (15-29 phút) - Procedural stem, foliage & blooming tulip cup
+  // Stage 2: Nụ (Cành vươn cao với lá thân và búp nụ e ấp)
   if (stage === 2) {
     return (
       <svg
@@ -68,101 +88,48 @@ export const GardenFlower: React.FC<GardenFlowerProps> = React.memo(({ stage, cl
         fill="none"
       >
         {/* Đất */}
-        <ellipse cx="12" cy="20" rx="5.5" ry="1.8" className="fill-slate-700/40 dark:fill-slate-800/60" />
-        {/* Thân cành */}
+        <rect
+          x="3.5"
+          y="17.5"
+          width="17"
+          height="4"
+          rx="1.5"
+          className="fill-slate-700/40 dark:fill-slate-800/60"
+        />
+        {/* Thân cành vươn cao */}
         <path
-          d="M 12 20 Q 12.5 15.5 12 9"
+          d="M 12 18 Q 12.3 14 12 8.5"
           stroke="#16a34a"
-          strokeWidth="2"
-          strokeLinecap="round"
-          className={animate ? "flower-stem" : ""}
-        />
-        {/* Lá thân dài duyên dáng */}
-        <path
-          d="M 12 16 Q 7.5 15 6.8 11.5 Q 9 12.5 12 15"
-          fill="#22c55e"
-          className={animate ? "flower-leaf" : ""}
-        />
-        {/* Cánh hoa Tulip: cụm cánh khép nở thanh tú */}
-        <g className={animate ? "flower-petal" : ""} style={{ transformOrigin: "12px 8px" }}>
-          {/* Cánh giữa */}
-          <ellipse cx="12" cy="7.2" rx="3.2" ry="4.5" fill="#f43f5e" />
-          {/* Cánh vòm trái */}
-          <path
-            d="M 12 11 C 9.2 11 8 8 9.5 5.5 C 11.2 7 12 9.8 12 11 Z"
-            fill="#fb7185"
-          />
-          {/* Cánh vòm phải */}
-          <path
-            d="M 12 11 C 14.8 11 16 8 14.5 5.5 C 12.8 7 12 9.8 12 11 Z"
-            fill="#e11d48"
-          />
-          {/* Vệt ánh sáng trên cánh hoa */}
-          <path
-            d="M 11.8 4 C 11.2 4.8 10.5 6.5 10.8 8"
-            stroke="#ffffff"
-            strokeWidth="0.8"
-            strokeLinecap="round"
-            opacity="0.45"
-          />
-        </g>
-      </svg>
-    );
-  }
-
-  // Stage 3: Hoa Hướng Dương / Rực rỡ ánh dương (30-44 phút) - Procedural stem, radial petals & seed disc
-  if (stage === 3) {
-    return (
-      <svg
-        viewBox="0 0 24 24"
-        className={`${className} overflow-visible`}
-        aria-hidden="true"
-        fill="none"
-      >
-        {/* Đất */}
-        <ellipse cx="12" cy="20.5" rx="6" ry="1.8" className="fill-slate-700/40 dark:fill-slate-800/60" />
-        {/* Thân hoa cứng cáp */}
-        <path
-          d="M 12 20.5 Q 11.5 16 12 10.5"
-          stroke="#15803d"
           strokeWidth="2.2"
           strokeLinecap="round"
           className={animate ? "flower-stem" : ""}
         />
-        {/* Lá kép hai bên */}
+        {/* Lá cành xòe 2 bên */}
         <path
-          d="M 12 17 Q 7.5 17 6.5 14 Q 9.5 15 12 16.5"
+          d="M 12 15 Q 7.5 14.5 7 12 Q 9.5 12.5 12 14"
           fill="#22c55e"
           className={animate ? "flower-leaf" : ""}
         />
         <path
-          d="M 12 15 Q 16.5 15 17.5 12 Q 14.5 13 12 14.5"
-          fill="#16a34a"
+          d="M 12 13.5 Q 16.5 13 17 10.5 Q 14.5 11 12 12.5"
+          fill="#15803d"
           className={animate ? "flower-leaf" : ""}
-          style={animate ? { animationDelay: "0.2s" } : undefined}
+          style={animate ? { animationDelay: "0.18s" } : undefined}
         />
-        {/* Vành hoa hướng dương xòe rộng */}
-        <g className={animate ? "flower-petal" : ""} style={{ transformOrigin: "12px 8.5px" }}>
-          <g fill="#f59e0b">
-            <ellipse cx="12" cy="3" rx="1.5" ry="3.2" />
-            <ellipse cx="12" cy="14" rx="1.5" ry="3.2" />
-            <ellipse cx="6.5" cy="8.5" rx="3.2" ry="1.5" />
-            <ellipse cx="17.5" cy="8.5" rx="3.2" ry="1.5" />
-            <ellipse cx="8" cy="4.5" rx="1.5" ry="3" transform="rotate(-45 8 4.5)" fill="#fbbf24" />
-            <ellipse cx="16" cy="4.5" rx="1.5" ry="3" transform="rotate(45 16 4.5)" fill="#fbbf24" />
-            <ellipse cx="8" cy="12.5" rx="1.5" ry="3" transform="rotate(45 8 12.5)" fill="#fbbf24" />
-            <ellipse cx="16" cy="12.5" rx="1.5" ry="3" transform="rotate(-45 16 12.5)" fill="#fbbf24" />
-          </g>
-          {/* Nhụy hạt hướng dương nâu ấm */}
-          <circle cx="12" cy="8.5" r="3.2" fill="#78350f" />
-          <circle cx="12" cy="8.5" r="2.2" fill="#92400e" />
-          <circle cx="11.2" cy="7.7" r="0.8" fill="#f59e0b" opacity="0.8" />
+        {/* Búp nụ hoa e ấp */}
+        <g className={animate ? "flower-petal" : ""} style={{ transformOrigin: "12px 7.5px" }}>
+          {/* Đài hoa xanh ôm gốc nụ */}
+          <path d="M 9.5 9 Q 12 10.5 14.5 9 Q 13.5 11 12 11 Q 10.5 11 9.5 9 Z" fill="#15803d" />
+          {/* Nụ hoa bầu bĩnh */}
+          <ellipse cx="12" cy="6.8" rx="3.2" ry="4.2" fill="#f43f5e" />
+          <path d="M 12 10.5 C 9.5 10.5 8.8 7.5 10.2 5 C 11.2 6.5 12 9 12 10.5 Z" fill="#fb7185" />
+          <path d="M 12 10.5 C 14.5 10.5 15.2 7.5 13.8 5 C 12.8 6.5 12 9 12 10.5 Z" fill="#e11d48" />
         </g>
       </svg>
     );
   }
 
-  // Stage 4: Hoa Anh Đào / Tuyệt phẩm Sakura nở bung (45+ phút) - 5 notched petals, pistil, shimmering pollen
+  // Stage 3: Hoa (Đóa hoa bung nở rực rỡ đầy đủ cánh và nhụy hoa)
   return (
     <svg
       viewBox="0 0 24 24"
@@ -171,36 +138,39 @@ export const GardenFlower: React.FC<GardenFlowerProps> = React.memo(({ stage, cl
       fill="none"
     >
       {/* Đất */}
-      <ellipse cx="12" cy="20.5" rx="6" ry="1.8" className="fill-slate-700/40 dark:fill-slate-800/60" />
-      {/* Thân cành */}
+      <rect
+        x="3.5"
+        y="18"
+        width="17"
+        height="3.5"
+        rx="1.5"
+        className="fill-slate-700/40 dark:fill-slate-800/60"
+      />
+      {/* Thân cành hoa */}
       <path
-        d="M 12 20.5 Q 12.8 16 12 11"
-        stroke="#15803d"
-        strokeWidth="2"
+        d="M 12 18.5 Q 12.5 14.5 12 10"
+        stroke="#16a34a"
+        strokeWidth="2.2"
         strokeLinecap="round"
         className={animate ? "flower-stem" : ""}
       />
-      {/* Lá xanh nhẹ */}
-      <path
-        d="M 12 16 Q 8 16 7 13.5 Q 9.5 14.5 12 15.5"
-        fill="#22c55e"
-        className={animate ? "flower-leaf" : ""}
-      />
-      {/* 5 cánh hoa anh đào nở bung */}
-      <g className={animate ? "flower-petal" : ""} style={{ transformOrigin: "12px 8.5px" }}>
+      {/* Lá cành */}
+      <path d="M 12 16 Q 8 15.5 7 13 Q 9.5 14 12 15" fill="#22c55e" className={animate ? "flower-leaf" : ""} />
+      <path d="M 12 14.5 Q 16 14 17 11.5 Q 14.5 12.5 12 13.5" fill="#15803d" className={animate ? "flower-leaf" : ""} style={animate ? { animationDelay: "0.18s" } : undefined} />
+      {/* 5 cánh hoa bung nở rực rỡ */}
+      <g className={animate ? "flower-petal" : ""} style={{ transformOrigin: "12px 7.5px" }}>
         {[0, 72, 144, 216, 288].map((deg, i) => (
-          <g key={i} transform={`rotate(${deg} 12 8.5)`}>
+          <g key={i} transform={`rotate(${deg} 12 7.5)`}>
             <path
-              d="M 12 8.5 C 9.8 6 9.2 2.8 11 1.8 C 11.6 2.2 12 2.5 12.4 2.2 C 14.2 2.8 13.6 6 12 8.5 Z"
+              d="M 12 7.5 C 9.8 5 9.2 1.8 11 0.8 C 11.6 1.2 12 1.5 12.4 1.2 C 14.2 1.8 13.6 5 12 7.5 Z"
               fill={i % 2 === 0 ? "#f43f5e" : "#fb7185"}
             />
           </g>
         ))}
-        {/* Đài hoa & Nhụy hoa */}
-        <circle cx="12" cy="8.5" r="2.2" fill="#be123c" />
-        <circle cx="12" cy="8.5" r="1.3" fill="#fef08a" />
-        {/* Điểm nhấn phấn hoa lấp lánh */}
-        <circle cx="11.3" cy="7.7" r="0.5" fill="#ffffff" />
+        {/* Nhụy hoa vàng và điểm phấn hoa */}
+        <circle cx="12" cy="7.5" r="2.2" fill="#be123c" />
+        <circle cx="12" cy="7.5" r="1.3" fill="#fef08a" />
+        <circle cx="11.3" cy="6.8" r="0.5" fill="#ffffff" />
       </g>
     </svg>
   );
