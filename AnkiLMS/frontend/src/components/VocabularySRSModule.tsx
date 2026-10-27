@@ -560,7 +560,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     }
 
     // Ignore key repeats/double clicks on the same card and enforce a short recall window.
-    // FSRS 4.5 calculation
+    // Official ts-fsrs scheduler; calculateFSRS45 remains as a compatibility adapter name.
     const rating: FSRSRating = customRating || (isMastered ? "good" : "again");
     const curState = cardStateMap[activeKey] || {
       interval: 1,

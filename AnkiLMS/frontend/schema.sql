@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS user_decks (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- 4. SRS Card States (FSRS-4.5 scheduler state)
+-- 4. SRS Card States (FSRS scheduler state)
 CREATE TABLE IF NOT EXISTS card_states (
     id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS card_states (
     interval INTEGER DEFAULT 1,
     ease_factor REAL DEFAULT 2.5,
     due_date TEXT NOT NULL, -- YYYY-MM-DD
+    due_at TEXT, -- precise timestamp for short-term FSRS steps
     reps INTEGER DEFAULT 0,
     lapses INTEGER DEFAULT 0,
     state TEXT DEFAULT 'new', -- new, learning, review
