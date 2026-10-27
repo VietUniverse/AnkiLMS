@@ -31,14 +31,25 @@ export function EggThemeToggle() {
 
   const toggleTheme = () => {
     const next = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    document.documentElement.dataset.theme = next;
-    if (next === "dark") {
-      document.documentElement.classList.add("dark");
+
+    const applyTheme = () => {
+      setTheme(next);
+      document.documentElement.dataset.theme = next;
+      if (next === "dark") {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+      localStorage.setItem(STORAGE_KEY, next);
+    };
+
+    if (typeof document !== "undefined" && "startViewTransition" in document) {
+      (document as unknown as { startViewTransition: (cb: () => void) => void }).startViewTransition(() => {
+        applyTheme();
+      });
     } else {
-      document.documentElement.classList.remove("dark");
+      applyTheme();
     }
-    localStorage.setItem(STORAGE_KEY, next);
   };
 
   const isLight = theme === "light";
