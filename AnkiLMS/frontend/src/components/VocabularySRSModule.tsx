@@ -26,6 +26,7 @@ import {
 import { calculateFSRS45, formatLocalDate, FSRSRating, FSRSState } from "../lib/fsrs45";
 import { ApiClient } from "../lib/apiClient";
 import { speakKorean } from "../lib/koreanSpeech";
+import { inferTopikLevel, getCourseRank } from "../lib/studyRanks";
 
 interface VocabularySRSModuleProps {
   userDecks?: AnkiDeck[];
@@ -286,9 +287,12 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
     // Group 3: User imported decks (if any)
     if (userDecks && userDecks.length > 0) {
-      const userNodes: DeckTreeNode[] = userDecks.map((ud) => ({
+      const userNodes: DeckTreeNode[] = userDecks.map((ud) => {
+        const detectedTopik = inferTopikLevel(ud.name, ...ud.cards.flatMap((card) => card.tags || []));
+        return ({
         id: `user-${ud.id}`,
         title: ud.name,
+        subtitle: detectedTopik ? `${getCourseRank(detectedTopik)} · TOPIK ${detectedTopik}` : "Chưa gán cấp độ",
         cards: ud.cards.map((c, idx) => ({
           id: c.id || `custom-${idx}`,
           word: c.koreanText || c.frontText || "",
@@ -302,7 +306,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
           tag_1: "Anki Custom",
           deckName: ud.name,
         })),
-      }));
+      });
+      });
 
       rootNodes.push({
         id: "user-imported",
@@ -467,12 +472,17 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   }, [deckTree]);
 
   const filteredTree = useMemo(() => {
-    const rankRoots: Record<string, string[]> = {
-      "Sơ cấp 1": ["tieng-han-tong-hop-1", "korean-basic"],
-      "Sơ cấp 2": ["tieng-han-tong-hop-2"],
-      "Bộ Anki cá nhân · chưa gán cấp độ": ["user-imported"],
-    };
-    let nodes = deckLevelFilter === "Tất cả cấp độ" ? deckTree : deckTree.filter((node) => (rankRoots[deckLevelFilter] || []).includes(node.id));
+    let nodes = deckTree;
+    if (deckLevelFilter !== "Tất cả cấp độ") {
+      nodes = deckTree.flatMap((node) => {
+        if (node.id === "user-imported") {
+          const children = (node.children || []).filter((child) => deckLevelFilter === "Bộ Anki cá nhân" ? true : deckLevelFilter === "Chưa gán cấp độ" ? child.subtitle === "Chưa gán cấp độ" : child.subtitle?.startsWith(deckLevelFilter));
+          return children.length ? [{ ...node, children, cards: children.flatMap((child) => child.cards) }] : [];
+        }
+        const rank = node.id === "tieng-han-tong-hop-1" || node.id === "korean-basic" ? "Sơ cấp 1" : node.id === "tieng-han-tong-hop-2" ? "Sơ cấp 2" : "";
+        return rank === deckLevelFilter ? [node] : [];
+      });
+    }
     if (deckTopicFilter !== "Tất cả chủ đề") {
       const selectTopic = (items: DeckTreeNode[]): DeckTreeNode[] => items.map((node) => {
         if (node.children?.length) {
@@ -899,7 +909,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                 </div>
 
                 <select aria-label="Lọc bộ thẻ theo độ khó" value={deckLevelFilter} onChange={(event) => setDeckLevelFilter(event.target.value)} className="rounded-xl border border-stone-200 bg-stone-100 px-3 py-2 text-xs font-semibold text-stone-700 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-200">
-                  {["Tất cả cấp độ", "Sơ cấp 1", "Sơ cấp 2", "Bộ Anki cá nhân · chưa gán cấp độ"].map((rank) => <option key={rank}>{rank}</option>)}
+                  {["Tất cả cấp độ", "Sơ cấp 1", "Sơ cấp 2", "Trung cấp 1", "Trung cấp 2", "Cao cấp 1", "Cao cấp 2", "Bộ Anki cá nhân", "Chưa gán cấp độ"].map((rank) => <option key={rank}>{rank}</option>)}
                 </select>
                 <select aria-label="Lọc bộ thẻ theo chủ đề" value={deckTopicFilter} onChange={(event) => setDeckTopicFilter(event.target.value)} className="max-w-48 rounded-xl border border-stone-200 bg-stone-100 px-3 py-2 text-xs font-semibold text-stone-700 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-200">
                   {["Tất cả chủ đề", ...deckTopics].map((topic) => <option key={topic}>{topic}</option>)}

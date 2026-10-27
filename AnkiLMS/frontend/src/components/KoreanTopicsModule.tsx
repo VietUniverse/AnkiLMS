@@ -8,6 +8,7 @@ import { BookOpen, Check, ChevronLeft, ChevronRight, Compass, Headphones, Layers
 import { useApp } from "../contexts/AppProvider";
 import { KoreanPractice, KoreanPracticePrompt } from "./KoreanPractice";
 import { speakKorean, stopKoreanSpeech } from "../lib/koreanSpeech";
+import { inferTopikLevel } from "../lib/studyRanks";
 
 type TopicItem = { korean: string; romanization: string; meaning: string; topic: string; level: string; example: string; translation: string; source: "HaechiVN" | "Anki" };
 const LEVEL_FILTERS = ["Tất cả", ...TOPIK_LEVEL_GUIDE.map((item) => item.level), "Anki"];
@@ -31,7 +32,7 @@ export function KoreanTopicsModule() {
       romanization: card.romanization || "",
       meaning: (card.vietnameseMeaning || card.backText || "").replace(/<[^>]*>/g, " ").trim(),
       topic: deck.name,
-      level: "Anki",
+      level: inferTopikLevel(deck.name, ...(card.tags || [])) ? `TOPIK ${inferTopikLevel(deck.name, ...(card.tags || []))}` : "Anki",
       example: card.exampleSentence || "",
       translation: "",
       source: "Anki" as const,

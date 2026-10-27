@@ -9,3 +9,14 @@ export function getStudyRank(level: number | null | undefined): string {
 export function getCourseRank(topikLevel: number): string {
   return STUDY_RANKS[Math.min(STUDY_RANKS.length - 1, Math.max(0, Math.floor(topikLevel) - 1))];
 }
+
+export function inferTopikLevel(...metadata: string[]): number | null {
+  const source = metadata.join(" ").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase();
+  const topik = source.match(/topik\s*[-_ ]?\s*([1-6])/i);
+  if (topik) return Number(topik[1]);
+  const rank = source.match(/(?:so cap|beginner|elementary)\s*([12])|(?:trung cap|intermediate)\s*([12])|(?:cao cap|advanced)\s*([12])/i);
+  if (!rank) return null;
+  if (rank[1]) return Number(rank[1]);
+  if (rank[2]) return Number(rank[2]) + 2;
+  return Number(rank[3]) + 4;
+}
