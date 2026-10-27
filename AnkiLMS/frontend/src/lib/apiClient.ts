@@ -39,6 +39,7 @@ export interface DailyMissionsSummary {
     completed: boolean;
     sessions: number;
     gemsAwarded: number;
+    gemReward: number;
     learnersToday: number;
   }>;
 }
@@ -124,7 +125,7 @@ export class ApiClient {
         streak: 15,
         longest_streak: 30,
         xp: 2500,
-        gems: 888,
+        gems: 2,
         level: 9,
         role: "admin",
       };
@@ -149,7 +150,7 @@ export class ApiClient {
           streak: 1,
           longest_streak: 1,
           xp: 150,
-          gems: 50,
+          gems: 2,
           level: 1,
           role: "student",
         };
@@ -173,7 +174,7 @@ export class ApiClient {
         streak: 1,
         longest_streak: 1,
         xp: 150,
-        gems: 50,
+        gems: 2,
         level: 1,
         role: "student",
       };
@@ -200,7 +201,7 @@ export class ApiClient {
           streak: 1,
           longest_streak: 1,
           xp: 100,
-          gems: 50,
+          gems: 2,
           level: 1,
           role: "student",
           translation_language: translationLanguage,
@@ -224,7 +225,7 @@ export class ApiClient {
         streak: 1,
         longest_streak: 1,
         xp: 100,
-        gems: 50,
+        gems: 2,
         level: 1,
         role: "student",
         translation_language: translationLanguage,
@@ -243,7 +244,7 @@ export class ApiClient {
       streak: 1,
       longest_streak: 1,
       xp: 120,
-      gems: 50,
+      gems: 2,
       level: 1,
       role: "student",
     };

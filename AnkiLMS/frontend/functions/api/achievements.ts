@@ -14,6 +14,10 @@ const CATALOG = [
 
 type Metric = "streak" | "level" | "sessions" | "minutes" | "cards" | "dictation" | "shadowing" | "topik" | "accuracy";
 
+function smallGemReward(originalReward: number): number {
+  return originalReward >= 100 ? 2 : 1;
+}
+
 async function getMetrics(env: Env, userId: string) {
   const [user, sessions] = await Promise.all([
     env.DB.prepare("SELECT streak, longest_streak, level FROM users WHERE id = ?").bind(userId).first<{ streak: number; longest_streak: number; level: number }>(),
@@ -37,8 +41,8 @@ async function getMetrics(env: Env, userId: string) {
 }
 
 function serialize(metricValues: Record<Metric, number>, claimed: Set<string>) {
-  return CATALOG.map(([id, metric, target, gems, minCards]) => ({
-    id, metric, target, gems, minCards, progress: Math.min(metricValues[metric], target),
+  return CATALOG.map(([id, metric, target, originalReward, minCards]) => ({
+    id, metric, target, gems: smallGemReward(originalReward), minCards, progress: Math.min(metricValues[metric], target),
     unlocked: metricValues[metric] >= target && (metric !== "accuracy" || metricValues.cards >= minCards),
     claimed: claimed.has(id),
   }));
@@ -67,7 +71,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     const body = await request.json() as { id?: string };
     const achievement = CATALOG.find((item) => item[0] === body.id);
     if (!achievement) return errorResponse("Thành tích không hợp lệ.");
-    const [id, metric, target, gems, minCards] = achievement;
+    const [id, metric, target, originalReward, minCards] = achievement;
+    const gems = smallGemReward(originalReward);
     const metrics = await getMetrics(env, user.id);
     if (metrics[metric] < target || (metric === "accuracy" && metrics.cards < minCards)) return errorResponse("Bạn chưa đạt điều kiện của mốc này.", 409);
     const existing = await env.DB.prepare("SELECT badge_id FROM achievements WHERE user_id = ? AND badge_id = ?").bind(user.id, id).first();

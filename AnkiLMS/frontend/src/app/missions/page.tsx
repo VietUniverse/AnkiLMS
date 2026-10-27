@@ -41,9 +41,9 @@ export default function DailyMissionsPage() {
 
   const completedCount = summary?.completedCount || 0;
   const fallbackMissions: DailyMissionsSummary["missions"] = [
-    { id: "shadowing", title: "Nhại câu sau", description: "Nghe một câu tiếng Hàn, thu âm và đọc lại.", href: "/shadowing", completed: false, sessions: 0, gemsAwarded: 0, learnersToday: 0 },
-    { id: "vocabulary", title: "Ôn từ vựng", description: "Ôn ít nhất một thẻ Anki và chọn mức độ nhớ.", href: "/flashcards", completed: false, sessions: 0, gemsAwarded: 0, learnersToday: 0 },
-    { id: "dictation", title: "Nghe chép chính tả", description: "Nghe và chép đúng ít nhất một câu.", href: "/dictation", completed: false, sessions: 0, gemsAwarded: 0, learnersToday: 0 },
+    { id: "shadowing", title: "Nhại câu sau", description: "Nghe một câu tiếng Hàn, thu âm và đọc lại.", href: "/shadowing", completed: false, sessions: 0, gemsAwarded: 0, gemReward: 1, learnersToday: 0 },
+    { id: "vocabulary", title: "Ôn từ vựng", description: "Ôn ít nhất một thẻ Anki và chọn mức độ nhớ.", href: "/flashcards", completed: false, sessions: 0, gemsAwarded: 0, gemReward: 1, learnersToday: 0 },
+    { id: "dictation", title: "Nghe chép chính tả", description: "Nghe và chép đúng ít nhất một câu.", href: "/dictation", completed: false, sessions: 0, gemsAwarded: 0, gemReward: 1, learnersToday: 0 },
   ];
   const dateLabel = summary?.date
     ? new Date(`${summary.date}T12:00:00+07:00`).toLocaleDateString("vi-VN", { weekday: "long", day: "numeric", month: "long" })
@@ -58,7 +58,7 @@ export default function DailyMissionsPage() {
             <div>
               <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-300"><Target className="h-4 w-4" /> Nhiệm vụ hôm nay</p>
               <h1 className="mt-2 text-2xl font-black text-white sm:text-3xl">Học một chút, tiến bộ mỗi ngày</h1>
-              <p className="mt-2 text-sm text-slate-400">{dateLabel} · Mỗi nhiệm vụ hoàn thành nhận 30 💎, tối đa 90 💎 mỗi ngày.</p>
+              <p className="mt-2 text-sm text-slate-400">{dateLabel} · Mỗi nhiệm vụ hoàn thành nhận 1 💎, tối đa 3 💎 mỗi ngày.</p>
             </div>
             <button onClick={refresh} disabled={loading} className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2 text-xs font-bold text-slate-300 hover:text-white disabled:opacity-50">
               <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} /> Làm mới
@@ -105,7 +105,7 @@ export default function DailyMissionsPage() {
                             {mission.id === "shadowing" && <DailyShadowingChallenge date={challengeDate} userId={currentUser?.id} completed={mission.completed} onComplete={refresh} />}
                           </div>
                         </div>
-                        <span className="rounded-full border border-amber-500/25 bg-amber-500/10 px-3 py-1.5 text-xs font-black text-amber-300">💎 30{mission.gemsAwarded ? " · Đã nhận" : ""}</span>
+                        <span className="rounded-full border border-amber-500/25 bg-amber-500/10 px-3 py-1.5 text-xs font-black text-amber-300">💎 {mission.gemReward}{mission.gemsAwarded ? " · Đã nhận" : ""}</span>
                       </div>
                       <Link href={mission.href} className="mt-4 inline-flex items-center gap-2 rounded-xl bg-sky-600/15 px-3 py-2 text-xs font-extrabold text-sky-200 transition-colors hover:bg-sky-600/25">
                         {mission.completed ? "Luyện thêm" : mission.id === "shadowing" ? "Mở thư viện Shadowing" : "Bắt đầu học"}<ArrowRight className="h-4 w-4" />

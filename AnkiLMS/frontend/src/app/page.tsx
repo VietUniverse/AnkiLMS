@@ -11,13 +11,9 @@ import { VOCABULARY_DATA } from "../data/koreanData";
 import { SEJONG_TOPIC_VOCABULARY } from "../data/sejongTopicVocabulary";
 import { speakKorean } from "../lib/koreanSpeech";
 import { ApiClient } from "../lib/apiClient";
-import { searchLearningDictionary } from "../lib/dictionarySearch";
+import { matchesDictionarySearchText, searchLearningDictionary } from "../lib/dictionarySearch";
 import { useTranslationLanguage } from "../lib/translationPreference";
 import { getStudyRank } from "../lib/studyRanks";
-
-function normalizeSearchText(value: string) {
-  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase().replace(/đ/g, "d");
-}
 
 export default function Home() {
   const router = useRouter();
@@ -65,7 +61,7 @@ export default function Home() {
     let cancelled = false;
     const controller = new AbortController();
     const timer = window.setTimeout(() => {
-      void searchLearningDictionary(query, 30, controller.signal).then((entries) => {
+      void searchLearningDictionary(query, 30, controller.signal, translationLanguage).then((entries) => {
         if (cancelled) return;
         if (entries.length) {
           setSearchResults(entries.slice(0, 5).map((entry) => {
@@ -76,12 +72,10 @@ export default function Home() {
           }));
           return;
         }
-        const q = normalizeSearchText(query);
-        setSearchResults(searchPool.filter((item) => [item.korean, item.meaning].some((value) => normalizeSearchText(value).includes(q))).slice(0, 5).map((item) => ({ ...item, language: "VI" })));
+        setSearchResults(translationLanguage === "vi" ? searchPool.filter((item) => matchesDictionarySearchText(item.korean, query) || matchesDictionarySearchText(item.meaning, query)).slice(0, 5).map((item) => ({ ...item, language: "VI" })) : []);
       }).catch(() => {
         if (!cancelled) {
-          const q = normalizeSearchText(query);
-          setSearchResults(searchPool.filter((item) => [item.korean, item.meaning].some((value) => normalizeSearchText(value).includes(q))).slice(0, 5).map((item) => ({ ...item, language: "VI" })));
+          setSearchResults(translationLanguage === "vi" ? searchPool.filter((item) => matchesDictionarySearchText(item.korean, query) || matchesDictionarySearchText(item.meaning, query)).slice(0, 5).map((item) => ({ ...item, language: "VI" })) : []);
         }
       });
     }, 180);
@@ -387,7 +381,7 @@ export default function Home() {
               </div>
 
               <div className="metric-card-pill w-full py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-xl flex items-center justify-center gap-1.5 text-[11px] sm:text-xs font-semibold">
-                <span>Đã quy đổi: {(currentUser?.xp || 150).toLocaleString()} 💎 kim cương</span>
+                <span>Tổng XP: {(currentUser?.xp || 0).toLocaleString()}</span>
               </div>
             </div>
 

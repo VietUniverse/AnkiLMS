@@ -6,6 +6,7 @@ const MODULE_TO_MISSION: Record<string, "vocabulary" | "shadowing" | "dictation"
   shadowing: "shadowing",
   dictation: "dictation",
 };
+const DAILY_MISSION_GEM_REWARD = 1;
 
 export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   try {
@@ -90,14 +91,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const missionClaim = missionClaimId && missionId
       ? env.DB.prepare(
           `INSERT OR IGNORE INTO daily_mission_claims (id, user_id, mission_id, mission_date, gems_awarded)
-           VALUES (?, ?, ?, ?, 30)`,
-        ).bind(missionClaimId, user.id, missionId, todayStr)
+           VALUES (?, ?, ?, ?, ?)`,
+        ).bind(missionClaimId, user.id, missionId, todayStr, DAILY_MISSION_GEM_REWARD)
       : null;
     const missionReward = missionClaimId
       ? env.DB.prepare(
-          `UPDATE users SET gems = gems + 30
+          `UPDATE users SET gems = gems + ?
            WHERE id = ? AND EXISTS (SELECT 1 FROM daily_mission_claims WHERE id = ? AND user_id = ?)`,
-        ).bind(user.id, missionClaimId, user.id)
+        ).bind(DAILY_MISSION_GEM_REWARD, user.id, missionClaimId, user.id)
       : null;
 
     await env.DB.batch([insertSession, updateUser, updateCheckin, ...(missionClaim ? [missionClaim] : []), ...(missionReward ? [missionReward] : [])]);
@@ -109,8 +110,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return jsonResponse({
       success: true,
       xpEarned,
-      gemsEarned: gemsEarned + (missionAward ? 30 : 0),
-      dailyMission: missionAward ? { id: missionAward.mission_id, gemsAwarded: 30 } : null,
+      gemsEarned: gemsEarned + (missionAward ? DAILY_MISSION_GEM_REWARD : 0),
+      dailyMission: missionAward ? { id: missionAward.mission_id, gemsAwarded: DAILY_MISSION_GEM_REWARD } : null,
       user: { id: user.id, ...updatedUser },
     });
   } catch {

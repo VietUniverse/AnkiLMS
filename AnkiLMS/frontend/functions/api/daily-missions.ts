@@ -29,9 +29,9 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     const claims = Object.fromEntries((claimResult.results || []).map((row) => [row.mission_id, row.gems_awarded]));
     const community = Object.fromEntries((communityResult.results || []).map((row) => [row.module, row.learners]));
     const missions = [
-      { id: "shadowing", module: "shadowing", title: "Nhại câu sau", description: "Nghe một câu tiếng Hàn, thu âm và đọc lại.", href: "/shadowing", sessions: activity.shadowing || 0 },
-      { id: "vocabulary", module: "srs", title: "Ôn từ vựng", description: "Ôn ít nhất một thẻ Anki và chọn mức độ nhớ.", href: "/flashcards", sessions: activity.srs || 0 },
-      { id: "dictation", module: "dictation", title: "Nghe chép chính tả", description: "Nghe và chép đúng ít nhất một câu.", href: "/dictation", sessions: activity.dictation || 0 },
+      { id: "shadowing", module: "shadowing", title: "Nhại câu sau", description: "Nghe một câu tiếng Hàn, thu âm và đọc lại.", href: "/shadowing", sessions: activity.shadowing || 0, gemReward: 1 },
+      { id: "vocabulary", module: "srs", title: "Ôn từ vựng", description: "Ôn ít nhất một thẻ Anki và chọn mức độ nhớ.", href: "/flashcards", sessions: activity.srs || 0, gemReward: 1 },
+      { id: "dictation", module: "dictation", title: "Nghe chép chính tả", description: "Nghe và chép đúng ít nhất một câu.", href: "/dictation", sessions: activity.dictation || 0, gemReward: 1 },
     ].map((mission) => ({
       ...mission,
       completed: mission.sessions > 0,

@@ -21,10 +21,11 @@ export default function DictionaryPage() {
   useEffect(() => {
     if (!query.trim()) { setResults([]); setLoading(false); return; }
     let cancelled = false;
+    const controller = new AbortController();
     setLoading(true);
     setError("");
     const timer = window.setTimeout(() => {
-      void searchLearningDictionary(query, 60).then((found) => {
+      void searchLearningDictionary(query, 60, controller.signal, translationLanguage).then((found) => {
         if (!cancelled) setResults(found);
       }).catch((cause) => {
         if (!cancelled) setError(cause instanceof Error ? cause.message : "Không tải được từ điển.");
@@ -32,8 +33,8 @@ export default function DictionaryPage() {
         if (!cancelled) setLoading(false);
       });
     }, 120);
-    return () => { cancelled = true; window.clearTimeout(timer); };
-  }, [query]);
+    return () => { cancelled = true; controller.abort(); window.clearTimeout(timer); };
+  }, [query, translationLanguage]);
 
   function speak(word: string) {
     if (!("speechSynthesis" in window)) return;
@@ -51,7 +52,7 @@ export default function DictionaryPage() {
       <p className="mt-2 text-sm text-slate-300">155.186 dạng từ Hàn đã loại trùng: 48.620 nghĩa Việt, 48.780 nghĩa Anh và 47.679 nghĩa Nhật. Tìm bằng Hangul hoặc nghĩa theo ngôn ngữ đã chọn.</p>
       <label className="mt-5 flex items-center gap-3 rounded-2xl border border-sky-500/40 bg-[#091630] px-4 py-3">
         <Search className="h-5 w-5 shrink-0 text-sky-300" />
-        <input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Nhập từ tiếng Hàn hoặc nghĩa cần tìm…" className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-slate-400" />
+        <input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => { if (event.key === "Escape") setQuery(""); }} placeholder={translationLanguage === "vi" ? "Nhập Hangul hoặc nghĩa tiếng Việt…" : translationLanguage === "en" ? "Nhập Hangul hoặc nghĩa tiếng Anh…" : "Nhập Hangul hoặc nghĩa tiếng Nhật…"} aria-label="Tìm từ trong từ điển tiếng Hàn" className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-slate-400" />
       </label>
       <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-300">
         <span>Nguồn: <a className="text-sky-300 underline" href="https://huggingface.co/datasets/binjang/NIKL-korean-english-dictionary" target="_blank" rel="noopener noreferrer">NIKL Korean–English</a></span>

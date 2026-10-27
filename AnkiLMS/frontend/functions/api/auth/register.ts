@@ -28,7 +28,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const passHash = await hashPassword(password);
     await env.DB.prepare(
       `INSERT INTO users (id, email, password_hash, name, translation_language, streak, longest_streak, xp, gems, level, referred_by)
-       VALUES (?, ?, ?, ?, ?, 0, 0, 0, 100, 1, ?)`
+       VALUES (?, ?, ?, ?, ?, 0, 0, 0, 2, 1, ?)`
     ).bind(userId, email, passHash, name, translationLanguage, referrer?.id || null).run();
 
     const user = await env.DB.prepare("SELECT * FROM users WHERE id = ?").bind(userId).first<UserRow>();

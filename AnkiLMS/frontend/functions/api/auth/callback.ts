@@ -92,7 +92,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       const userId = `usr_${crypto.randomUUID()}`;
       await env.DB.prepare(
       `INSERT INTO users (id, email, password_hash, name, avatar_url, translation_language, streak, longest_streak, xp, gems, level)
-         VALUES (?, ?, '', ?, ?, ?, 0, 0, 0, 100, 1)`
+         VALUES (?, ?, '', ?, ?, ?, 0, 0, 0, 2, 1)`
       ).bind(userId, email, (profile.name || email.split("@")[0]).slice(0, 48), profile.picture || null, translationLanguage).run();
       user = await env.DB.prepare("SELECT * FROM users WHERE id = ?").bind(userId).first<UserRow>();
     } else if (profile.picture && !user.avatar_url) {
