@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AppShell } from "../components/AppShell";
+import { GardenFlower } from "../components/GardenFlower";
 import { useApp } from "../contexts/AppProvider";
 import { Flame, Zap, Layers, Trophy, Calendar, CheckCircle2, Gamepad2, Target, X, LogIn, Search, Volume2 } from "lucide-react";
 import { VOCABULARY_DATA } from "../data/koreanData";
@@ -97,32 +98,32 @@ export default function Home() {
       const dateStr = d.toISOString().split("T")[0];
       const match = heatmapData.find((h) => h.checkin_date === dateStr);
 
-      let flowerIcon = null;
+      let stage: 0 | 1 | 2 | 3 | 4 = 0;
       let tileStyle = "bg-[#111c38]/70 hover:bg-[#182850]";
 
       if (match) {
         if (match.time_spent_minutes >= 45) {
-          tileStyle = "bg-rose-500/25 shadow-sm shadow-rose-500/30";
-          flowerIcon = "🌸";
+          tileStyle = "bg-rose-500/20 shadow-sm shadow-rose-500/25";
+          stage = 4;
         } else if (match.time_spent_minutes >= 30) {
-          tileStyle = "bg-amber-500/25 shadow-sm shadow-amber-500/30";
-          flowerIcon = "🌻";
+          tileStyle = "bg-amber-500/20 shadow-sm shadow-amber-500/25";
+          stage = 3;
         } else if (match.time_spent_minutes >= 15) {
-          tileStyle = "bg-pink-500/25 shadow-sm shadow-pink-500/30";
-          flowerIcon = "🌷";
+          tileStyle = "bg-pink-500/20 shadow-sm shadow-pink-500/25";
+          stage = 2;
         } else {
-          tileStyle = "bg-emerald-500/25 shadow-sm shadow-emerald-500/30";
-          flowerIcon = "🌱";
+          tileStyle = "bg-emerald-500/20 shadow-sm shadow-emerald-500/25";
+          stage = 1;
         }
       }
 
       days.push(
         <div
           key={dateStr}
-          title={`${dateStr}: ${match ? `${match.time_spent_minutes} phút, +${match.xp_earned} XP` : "Đất trống (chưa học)"}`}
-          className={`w-6 h-6 sm:w-7 sm:h-7 rounded-lg ${tileStyle} flex items-center justify-center text-xs transition-transform hover:scale-125 cursor-pointer select-none border-0`}
+          title={`${dateStr}: ${match ? `${match.time_spent_minutes} phút học, +${match.xp_earned} XP` : "Đất trống (chưa học)"}`}
+          className={`garden-tile w-6 h-6 sm:w-7 sm:h-7 rounded-lg ${tileStyle} p-0.5 flex items-center justify-center transition-all hover:scale-125 hover:z-10 cursor-pointer select-none border-0`}
         >
-          {flowerIcon ? flowerIcon : <span className="w-1.5 h-1.5 rounded-full bg-slate-700/60" />}
+          <GardenFlower stage={stage} className="w-5 h-5 sm:w-5.5 sm:h-5.5" />
         </div>
       );
     }
@@ -389,9 +390,9 @@ export default function Home() {
         <div className="rounded-3xl p-5 sm:p-6 bg-[#090f1e] text-white shadow-2xl border-0 space-y-3.5 text-center">
           <div className="space-y-0.5 text-center">
             <h3 className="text-sm sm:text-base font-black text-white flex items-center justify-center gap-2">
-              <span>🌸</span>
+              <span className="w-5 h-5 inline-flex items-center justify-center"><GardenFlower stage={4} className="w-4 h-4" animate={false} /></span>
               <span>Tiến Độ Học Tập 90 Ngày Gần Nhất – Heatmap Vườn Hoa</span>
-              <span>🌿</span>
+              <span className="w-5 h-5 inline-flex items-center justify-center"><GardenFlower stage={1} className="w-4 h-4" animate={false} /></span>
             </h3>
             <p className="text-xs text-slate-400 font-medium">
               Tính năng Heatmap dạng vườn hoa: Mỗi ngày bạn học là gieo mầm một đóa hoa rực rỡ ({heatmapData.length} ngày đã ghi nhận)
@@ -403,26 +404,36 @@ export default function Home() {
             {renderHeatmapGrid()}
           </div>
 
-          {/* Chú giải vườn hoa căn giữa 1 dòng gọn gàng */}
+          {/* Chú giải vườn hoa căn giữa 1 dòng gọn gàng với SVG hoa */}
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-5 text-[11px] text-slate-300 font-medium border-t border-[#132247] pt-3">
             <div className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-slate-700/60" />
+              <span className="w-4 h-4 inline-flex items-center justify-center">
+                <GardenFlower stage={0} className="w-3.5 h-3.5" animate={false} />
+              </span>
               <span className="text-slate-400">Đất trống (chưa học)</span>
             </div>
-            <div className="flex items-center gap-1">
-              <span>🌱</span>
+            <div className="flex items-center gap-1.5">
+              <span className="w-4 h-4 inline-flex items-center justify-center">
+                <GardenFlower stage={1} className="w-3.5 h-3.5" animate={false} />
+              </span>
               <span>Mầm xanh (&lt;15p)</span>
             </div>
-            <div className="flex items-center gap-1">
-              <span>🌷</span>
+            <div className="flex items-center gap-1.5">
+              <span className="w-4 h-4 inline-flex items-center justify-center">
+                <GardenFlower stage={2} className="w-3.5 h-3.5" animate={false} />
+              </span>
               <span>Tulip (15p+)</span>
             </div>
-            <div className="flex items-center gap-1">
-              <span>🌻</span>
+            <div className="flex items-center gap-1.5">
+              <span className="w-4 h-4 inline-flex items-center justify-center">
+                <GardenFlower stage={3} className="w-3.5 h-3.5" animate={false} />
+              </span>
               <span>Hướng dương (30p+)</span>
             </div>
-            <div className="flex items-center gap-1">
-              <span>🌸</span>
+            <div className="flex items-center gap-1.5">
+              <span className="w-4 h-4 inline-flex items-center justify-center">
+                <GardenFlower stage={4} className="w-3.5 h-3.5" animate={false} />
+              </span>
               <span>Anh đào (45p+)</span>
             </div>
           </div>

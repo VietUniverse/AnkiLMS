@@ -322,6 +322,84 @@ html[data-theme="rainbow"] .home-hero-title {
   color: #fff7ff;
 }
 
+/* Procedural Garden Flower Heatmap Animations */
+@keyframes flowerStemGrow {
+  0% {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+@keyframes flowerLeafUnfurl {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes flowerPetalBloom {
+  0% {
+    transform: scale(0) rotate(-20deg);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.18) rotate(4deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes flowerGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 1px rgba(244, 63, 94, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 3px rgba(251, 113, 133, 0.75));
+  }
+}
+
+.flower-stem {
+  transform-origin: bottom center;
+  animation: flowerStemGrow 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.flower-leaf {
+  transform-origin: center bottom;
+  animation: flowerLeafUnfurl 0.6s 0.15s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+.flower-petal {
+  transform-origin: center center;
+  animation: flowerPetalBloom 0.7s 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+.flower-sparkle {
+  animation: flowerGlow 3s ease-in-out infinite;
+}
+
+.garden-tile:hover .flower-petal {
+  transform: scale(1.22) rotate(6deg);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.garden-tile:hover .flower-stem {
+  transform: scaleY(1.08);
+  transition: transform 0.2s ease-out;
+}
+
 /* Parroto Tactile 3D Buttons */
 .btn-duo {
   position: relative;
