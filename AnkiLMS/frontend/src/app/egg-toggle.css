@@ -1,0 +1,194 @@
+/* ==========================================================================
+   SKEUOMORPHIC EGG TOGGLE SWITCH (Chảo rán ốp la 3D)
+   ========================================================================== */
+
+.pan-switch {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  transform-origin: center center;
+  transition: transform 0.4s cubic-bezier(0.65, -0.05, 0.36, 1.15);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
+}
+
+.pan-switch:hover {
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.45));
+}
+
+.pan-switch:active {
+  transform: scale(0.96);
+}
+
+.pan-switch.pan-checked {
+  transform: rotate(2.5deg);
+}
+
+.pan-switch:not(.pan-checked) {
+  transform: rotate(-2.5deg);
+}
+
+/* 1. Pan Handle */
+.pan-handle {
+  display: flex;
+  align-items: center;
+  margin-right: -1px;
+  position: relative;
+  z-index: 2;
+}
+
+.pan-handle-grip {
+  width: 22px;
+  height: 9px;
+  background: linear-gradient(180deg, #3a3f4b 0%, #1e222a 50%, #13161c 100%);
+  border-radius: 5px 0 0 5px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 3px;
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.2),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.8),
+    0 2px 3px rgba(0, 0, 0, 0.4);
+}
+
+.pan-handle-hole {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #0f1217;
+  box-shadow: 
+    inset 0 1px 1px rgba(0, 0, 0, 0.9),
+    0 0.5px 0.5px rgba(255, 255, 255, 0.2);
+}
+
+.pan-handle-neck {
+  width: 5px;
+  height: 6px;
+  background: linear-gradient(180deg, #788296 0%, #4a5160 50%, #2f3440 100%);
+  box-shadow: inset 0 0.5px 0.5px rgba(255, 255, 255, 0.3);
+}
+
+/* 2. Pan Body (Cast Iron Rim) */
+.pan-body {
+  width: 56px;
+  height: 30px;
+  background: linear-gradient(180deg, #3e4452 0%, #282c35 40%, #181b22 100%);
+  border-radius: 16px;
+  padding: 3px;
+  position: relative;
+  box-shadow: 
+    inset 0 1.5px 1.5px rgba(255, 255, 255, 0.25),
+    inset 0 -1.5px 2px rgba(0, 0, 0, 0.7),
+    0 3px 6px rgba(0, 0, 0, 0.45);
+}
+
+/* 3. Pan Cavity (Non-stick Interior Floor) */
+.pan-cavity {
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% 50%, #20242e 0%, #13161c 100%);
+  border-radius: 13px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    inset 0 3px 5px rgba(0, 0, 0, 0.85),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.08);
+}
+
+/* 4. Sliding Egg */
+.pan-egg {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 
+    left 0.42s cubic-bezier(0.65, -0.05, 0.36, 1.15),
+    transform 0.42s cubic-bezier(0.65, -0.05, 0.36, 1.15);
+}
+
+/* Unchecked (Tối / Trứng sống bên trái) */
+.pan-switch:not(.pan-checked) .pan-egg {
+  left: 2px;
+}
+
+/* Checked (Sáng / Trứng chín bên phải) */
+.pan-switch.pan-checked .pan-egg {
+  left: calc(100% - 26px);
+}
+
+/* 5. Egg White (Lòng trắng) */
+.egg-white {
+  position: absolute;
+  inset: 0;
+  border-radius: 54% 46% 48% 52% / 46% 54% 46% 54%;
+  transition: all 0.38s ease;
+}
+
+/* Trạng thái Trứng sống (Raw Egg - Chế độ Tối) */
+.pan-switch:not(.pan-checked) .egg-white {
+  background: radial-gradient(circle at 45% 45%, rgba(200, 230, 110, 0.32) 0%, rgba(160, 200, 80, 0.2) 70%, rgba(130, 170, 60, 0.08) 100%);
+  border: 1px solid rgba(220, 245, 140, 0.4);
+  box-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(0.5px);
+}
+
+/* Trạng thái Trứng chín (Sunny-side Up - Chế độ Sáng) */
+.pan-switch.pan-checked .egg-white {
+  background: radial-gradient(circle at 40% 40%, #ffffff 0%, #fbfbf8 65%, #f2efe9 100%);
+  border: 1px solid rgba(210, 180, 140, 0.6);
+  border-radius: 60% 40% 55% 45% / 45% 58% 42% 55%;
+  box-shadow: 
+    0 1.5px 4px rgba(0, 0, 0, 0.4),
+    inset 0 -1px 1.5px rgba(180, 140, 90, 0.3),
+    inset 0 1px 1px rgba(255, 255, 255, 0.9);
+}
+
+/* 6. Egg Yolk (Lòng đỏ) */
+.egg-yolk {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  position: relative;
+  z-index: 1;
+  background: radial-gradient(circle at 35% 35%, #ffb74d 0%, #f57c00 55%, #e65100 100%);
+  box-shadow: 
+    0 1.5px 3px rgba(0, 0, 0, 0.55),
+    inset 0 -1px 1.5px rgba(160, 50, 0, 0.5);
+  transition: transform 0.4s ease;
+}
+
+.pan-switch.pan-checked .egg-yolk {
+  background: radial-gradient(circle at 35% 35%, #ffca28 0%, #ff9800 60%, #ef6c00 100%);
+}
+
+/* Điểm sáng bóng trên lòng đỏ */
+.yolk-highlight-large {
+  position: absolute;
+  top: 2.5px;
+  left: 3px;
+  width: 4px;
+  height: 2.5px;
+  background: #ffffff;
+  border-radius: 50%;
+  transform: rotate(-25deg);
+  opacity: 0.85;
+}
+
+.yolk-highlight-small {
+  position: absolute;
+  top: 5.5px;
+  left: 2.5px;
+  width: 1.5px;
+  height: 1.5px;
+  background: #ffffff;
+  border-radius: 50%;
+  opacity: 0.65;
+}

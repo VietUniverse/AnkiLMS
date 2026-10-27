@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { ChevronDown, Flame, Zap, Gem, LogOut, User as UserIcon, Menu, ArrowLeft } from "lucide-react";
 import { UserProfile } from "../lib/apiClient";
-import { ThemeSwitcher } from "./ThemeSwitcher";
+import { EggThemeToggle } from "./EggThemeToggle";
 import { useApp } from "../contexts/AppProvider";
 
 interface HeaderProps {
@@ -92,7 +92,7 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onLogou
 
       {/* Vùng bên phải: User Stats Badges & Theme */}
       <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-        <ThemeSwitcher />
+        <EggThemeToggle />
         {currentUser ? (
           <>
             {/* Streak */}
