@@ -2,7 +2,6 @@
 
 import React, { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import DOMPurify from "dompurify";
-import { useSearchParams } from "next/navigation";
 import { VOCABULARY_DATA } from "../data/koreanData";
 import { THTH_CURRICULUM_DECKS } from "../data/ththCurriculum";
 import { AnkiDeck } from "../lib/ankiParser";
@@ -81,7 +80,10 @@ const extractImageSrc = (imgStr?: string): string | null => {
 const cleanHtmlText = (htmlContent?: string): string => {
   if (!htmlContent) return "";
   const withoutAudio = htmlContent.replace(/\[sound:.*?\]/gi, "").trim();
-  return DOMPurify.sanitize(withoutAudio, { USE_PROFILES: { html: true } });
+  if (typeof window !== "undefined" && DOMPurify && typeof DOMPurify.sanitize === "function") {
+    return DOMPurify.sanitize(withoutAudio, { USE_PROFILES: { html: true } });
+  }
+  return withoutAudio;
 };
 
 const cleanTextOnly = (str?: string): string => {
@@ -107,13 +109,13 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const [studyMode, setStudyMode] = useState<"flip" | "typing">("flip");
 
   // Selected Deck and Lesson
-  const [activeDeckTitle, setActiveDeckTitle] = useState<string>("Tiếng Hàn Tổng Hợp");
-  const [activeCardsList, setActiveCardsList] = useState<VocabularyCard[]>([]);
+  const [activeDeckTitle, setActiveDeckTitle] = useState<string>("1. Quốc gia (나라)");
+  const [activeCardsList, setActiveCardsList] = useState<VocabularyCard[]>(
+    (THTH_DECKS[0]?.cards as VocabularyCard[]) || []
+  );
   const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
   const [isFlipped, setIsFlipped] = useState<boolean>(false);
   const [typedInput, setTypedInput] = useState<string>("");
-
-  const searchParams = useSearchParams();
 
   // Search & Tree expansion
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -328,6 +330,15 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     return { total, mastered, percent, newCount, reviewCount };
   }, [masteredWords, reviewList]);
 
+  // Exit study session
+  const exitStudy = useCallback(() => {
+    finishSrsActivity();
+    setViewMode("dashboard");
+    setIsFlipped(false);
+    setTypedInput("");
+    setActiveStudySession(null);
+  }, [finishSrsActivity, setActiveStudySession]);
+
   // Start study session
   const startStudy = useCallback((deckId: string, title: string, cards: VocabularyCard[]) => {
     if (!cards || cards.length === 0) return;
@@ -341,13 +352,21 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     lastRatedCardRef.current = null;
     srsActivityRef.current = { reviewed: 0, correct: 0, startedAt: Date.now(), submitted: false };
 
+    setActiveStudySession({
+      title,
+      onExit: exitStudy,
+      studyMode,
+      setStudyMode,
+      progressText: `1 / ${cards.length}`,
+    });
+
     setLastStudiedDeckId(deckId);
     setLastStudiedTitle(title);
     if (typeof window !== "undefined") {
       localStorage.setItem("haechivn_last_lesson_id", deckId);
       localStorage.setItem("haechivn_last_lesson_title", title);
     }
-  }, []);
+  }, [exitStudy, studyMode, setActiveStudySession]);
 
   // Recursive search for node by id
   const findNodeById = useCallback((nodes: DeckTreeNode[], id: string): DeckTreeNode | null => {
@@ -380,12 +399,14 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     }
   }, [lastStudiedDeckId, deckTree, findNodeById, startStudy]);
 
-  // Auto-resume if query param ?resume=true is present
+  // Auto-resume if query param ?resume=true or ?study=true is present
   useEffect(() => {
-    if (searchParams?.get("resume") === "true" && viewMode === "dashboard") {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if ((params.get("resume") === "true" || params.get("study") === "true") && viewMode === "dashboard") {
       resumeLastLesson();
     }
-  }, [searchParams, viewMode, resumeLastLesson]);
+  }, [viewMode, resumeLastLesson]);
 
   // Collect all container ids for toggle all
   const getAllContainerIds = useCallback((nodes: DeckTreeNode[]): string[] => {
@@ -465,13 +486,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     }
     return searchQuery.trim() ? filterTree(nodes, searchQuery.toLowerCase()) : nodes;
   }, [deckTree, deckLevelFilter, deckTopicFilter, searchQuery, filterTree]);
-
-  const exitStudy = useCallback(() => {
-    finishSrsActivity();
-    setViewMode("dashboard");
-    setIsFlipped(false);
-    setTypedInput("");
-  }, [finishSrsActivity]);
 
   // Sync active study session to global Navbar
   useEffect(() => {

@@ -13,9 +13,7 @@ function FlashcardsContent() {
 export default function FlashcardsPage() {
   return (
     <AppShell>
-      <Suspense fallback={<div className="p-8 text-center text-xs text-slate-400">Đang tải từ vựng...</div>}>
-        <FlashcardsContent />
-      </Suspense>
+      <FlashcardsContent />
     </AppShell>
   );
 }

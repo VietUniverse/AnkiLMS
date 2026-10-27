@@ -171,8 +171,8 @@ html[data-theme="light"] button[class*="bg-violet-"][class*="text-white"],
 html[data-theme="light"] button[class*="bg-rose-"][class*="text-white"],
 html[data-theme="light"] a[class*="bg-blue-600"],
 html[data-theme="light"] a[class*="bg-blue-600"] *,
-html[data-theme="light"] [class*="bg-stone-900"],
-html[data-theme="light"] [class*="bg-stone-900"] *,
+html[data-theme="light"] button[class~="bg-stone-900"],
+html[data-theme="light"] button[class~="bg-stone-900"] *,
 html[data-theme="light"] a[class*="bg-gradient-to"] [class*="text-white"] {
   color: #fff !important;
 }
