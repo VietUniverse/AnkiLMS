@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { Activity, BookOpen, CalendarDays, CheckCircle2, Clock3, Flame, Gem, LogOut, Mail, Mic2, NotebookPen, Play, Shield, Sparkles, Trophy, User, Zap } from "lucide-react";
 import { ApiClient, StudyProfileSummary, UserProfile } from "../lib/apiClient";
 import { ACHIEVEMENTS_DATA } from "../data/achievementsData";
@@ -102,6 +103,7 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
           <div className="min-w-0 flex-1 text-center sm:text-left">
             <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-indigo-200"><Sparkles className="h-3.5 w-3.5" /> Hồ sơ học tập</div>
             <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl">{currentUser.name}</h1>
+            {currentUser.bio && <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-slate-200 sm:mx-0">{currentUser.bio}</p>}
             <p className="mt-1 flex items-center justify-center gap-1.5 text-sm text-slate-300 sm:justify-start"><Mail className="h-4 w-4" />{currentUser.email}</p>
             <div className="mt-4 flex flex-wrap justify-center gap-2 sm:justify-start">
               <span className="rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-xs font-bold text-amber-200"><Zap className="mr-1 inline h-3.5 w-3.5" />{(currentUser.xp || 0).toLocaleString("vi-VN")} XP</span>
@@ -109,7 +111,11 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
               {currentUser.active_badge && <span className="rounded-full border border-fuchsia-300/20 bg-fuchsia-300/10 px-3 py-1 text-xs font-bold text-fuchsia-100">🏅 {badgeNames[currentUser.active_badge] || "Huy hiệu Haechi"}</span>}
             </div>
           </div>
-          <button onClick={onLogout} className="inline-flex items-center justify-center gap-2 self-center rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-bold text-slate-200 transition hover:bg-rose-500/10 hover:text-rose-300 sm:self-start"><LogOut className="h-4 w-4" />Đăng xuất</button>
+          <div className="flex flex-wrap justify-center gap-2 sm:flex-col sm:items-stretch">
+            <Link href="/profile/settings" className="inline-flex items-center justify-center gap-2 rounded-xl border border-sky-300/20 bg-sky-300/10 px-4 py-2.5 text-xs font-bold text-sky-100 transition hover:bg-sky-300/20">Cài đặt hồ sơ</Link>
+            <Link href={`/member?id=${encodeURIComponent(currentUser.id)}`} className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-bold text-slate-100 transition hover:bg-white/10">Xem trang công khai</Link>
+            <button onClick={onLogout} className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-bold text-slate-200 transition hover:bg-rose-500/10 hover:text-rose-300"><LogOut className="h-4 w-4" />Đăng xuất</button>
+          </div>
         </div>
       </section>
 

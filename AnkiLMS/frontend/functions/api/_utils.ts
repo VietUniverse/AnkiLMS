@@ -18,6 +18,8 @@ export interface UserRow {
   password_hash: string | null;
   name: string;
   avatar_url: string | null;
+  bio?: string | null;
+  profile_public?: number;
   streak: number;
   longest_streak: number;
   xp: number;

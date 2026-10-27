@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   Users,
   Plus,
@@ -31,7 +32,6 @@ import {
 } from "lucide-react";
 import { ApiClient, UserProfile } from "../lib/apiClient";
 import { useApp } from "../contexts/AppProvider";
-import Link from "next/link";
 import { THTH_DECKS } from "../data/ththDecks";
 import { AnkiDeck, AnkiParser } from "../lib/ankiParser";
 
@@ -613,7 +613,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser })
                     </div>
                     <div>
                       <p className="text-xs font-black text-white flex items-center gap-1.5">
-                        <span>{member.name}</span>
+                        <Link href={`/member?id=${encodeURIComponent(member.id)}`} className="underline-offset-2 hover:text-sky-200 hover:underline">{member.name}</Link>
                         {member.role === "owner" && (
                           <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-400 text-slate-950 font-bold">Chủ lớp</span>
                         )}
@@ -701,7 +701,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser })
                   <div key={member.id} className="p-4 flex items-center justify-between gap-4">
                     <div>
                       <p className="text-xs font-black text-white flex items-center gap-2">
-                        <span>{member.name}</span>
+                        <Link href={`/member?id=${encodeURIComponent(member.id)}`} className="underline-offset-2 hover:text-sky-200 hover:underline">{member.name}</Link>
                         {member.role === "owner" && <span className="text-[10px] px-2 py-0.5 rounded bg-amber-400 text-slate-950 font-bold">Chủ Lớp</span>}
                         {member.role === "admin" && <span className="text-[10px] px-2 py-0.5 rounded bg-purple-500 text-white font-bold">Quản trị viên</span>}
                         {member.role === "staff" && <span className="text-[10px] px-2 py-0.5 rounded bg-cyan-500/20 border border-cyan-400/30 text-cyan-200 font-bold">Giáo vụ</span>}

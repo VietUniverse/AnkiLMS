@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import Link from "next/link";
 import { AppShell } from "../../components/AppShell";
 import { useApp } from "../../contexts/AppProvider";
 import { MessageCircle, Send, RefreshCw, Trash2 } from "lucide-react";
@@ -141,7 +142,7 @@ export default function CommunityPage() {
             <article key={post.id} className="card-duo space-y-3 p-5">
               <div className="flex flex-wrap items-center gap-2 text-xs text-slate-400">
                 <span className="rounded-full border border-sky-500/30 bg-sky-500/10 px-2.5 py-1 font-bold text-sky-300">{categoryNames[post.category] || "Cộng đồng"}</span>
-                <span>{post.author_name}</span><span aria-hidden="true">·</span><time dateTime={post.created_at}>{formatDate(post.created_at)}</time>
+                <Link href={`/member?id=${encodeURIComponent(post.author_id)}`} className="font-bold text-slate-300 underline-offset-2 hover:text-sky-200 hover:underline">{post.author_name}</Link><span aria-hidden="true">·</span><time dateTime={post.created_at}>{formatDate(post.created_at)}</time>
                 {currentUser?.id === post.author_id && <button type="button" disabled={deletingId === post.id} onClick={() => void deletePost(post)} className="ml-auto inline-flex items-center gap-1 rounded-lg px-2 py-1 text-rose-300 hover:bg-rose-500/10 disabled:opacity-50"><Trash2 className="h-3.5 w-3.5" />{deletingId === post.id ? "Đang xóa" : "Xóa"}</button>}
               </div>
               <h3 className="text-lg font-black text-white">{post.title}</h3>

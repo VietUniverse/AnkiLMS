@@ -7,6 +7,8 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash TEXT,
     name TEXT NOT NULL,
     avatar_url TEXT,
+    bio TEXT,
+    profile_public INTEGER NOT NULL DEFAULT 1 CHECK (profile_public IN (0, 1)),
     streak INTEGER DEFAULT 0,
     longest_streak INTEGER DEFAULT 0,
     xp INTEGER DEFAULT 0,

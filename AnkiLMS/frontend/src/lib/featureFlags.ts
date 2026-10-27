@@ -31,5 +31,6 @@ export const DEFAULT_FEATURE_FLAGS = Object.fromEntries(
 ) as FeatureFlags;
 
 export function featureForPath(pathname: string): FeatureKey | null {
+  if (pathname === "/member" || pathname.startsWith("/member/")) return "profile";
   return FEATURE_CATALOG.find((feature) => feature.route && (pathname === feature.route || pathname.startsWith(`${feature.route}/`)))?.key ?? null;
 }

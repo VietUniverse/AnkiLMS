@@ -5,6 +5,8 @@ export interface UserProfile {
   email: string;
   name: string;
   avatar_url?: string;
+  bio?: string | null;
+  profile_public?: number | boolean;
   streak: number;
   longest_streak?: number;
   xp: number;

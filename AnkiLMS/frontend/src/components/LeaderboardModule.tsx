@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { Trophy, Flame, Zap, Crown, Sparkles, Users } from "lucide-react";
 import { ApiClient, UserProfile } from "../lib/apiClient";
 
@@ -150,17 +151,19 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
                       {idx + 1}
                     </span>
 
-                    {user.avatar_url ? (
-                      <img src={user.avatar_url} alt={user.name} className="w-8 h-8 rounded-full object-cover" />
-                    ) : (
-                      <div className="w-8 h-8 rounded-full bg-blue-600 text-white font-black text-xs flex items-center justify-center">
-                        {user.name?.charAt(0)?.toUpperCase() || "?"}
-                      </div>
-                    )}
+                    <Link href={`/member?id=${encodeURIComponent(user.id)}`} aria-label={`Mở hồ sơ ${user.name}`} className="shrink-0">
+                      {user.avatar_url ? (
+                        <img src={user.avatar_url} alt={user.name} className="w-9 h-9 rounded-full object-cover" />
+                      ) : (
+                        <div className="w-9 h-9 rounded-full bg-blue-600 text-white font-black text-xs flex items-center justify-center">
+                          {user.name?.charAt(0)?.toUpperCase() || "?"}
+                        </div>
+                      )}
+                    </Link>
 
                     <div>
                       <p className="text-xs font-black text-white flex items-center gap-1.5">
-                        <span>{user.name}</span>
+                        <Link href={`/member?id=${encodeURIComponent(user.id)}`} className="truncate underline-offset-2 hover:text-sky-200 hover:underline">{user.name}</Link>
                         {isCurrentUser && (
                           <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-400 text-slate-950 font-bold">Bạn</span>
                         )}
