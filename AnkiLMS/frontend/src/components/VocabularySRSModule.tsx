@@ -22,8 +22,6 @@ import {
   ExternalLink,
   Menu,
   Check,
-  Upload,
-  Plus,
   ArrowLeft,
   ArrowRight,
   Brain,
@@ -82,7 +80,7 @@ const renderCleanHtml = (htmlContent: string) => {
 };
 
 export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDecks = [] }) => {
-  const { currentUser, setIsImporterOpen } = useApp();
+  const { currentUser } = useApp();
 
   // Mode: "catalog" (Parroto Base Page) vs "study" (Active Learning Workspace)
   const [viewMode, setViewMode] = useState<"catalog" | "study">("catalog");
@@ -626,30 +624,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       <div className="space-y-8 animate-fadeIn pb-24 max-w-[1800px] mx-auto select-none">
         {assignmentLoading && <div role="status" className="rounded-xl border border-sky-500/30 bg-sky-500/10 p-4 text-sm font-bold text-sky-200">Đang tải bộ thẻ Anki giáo viên giao…</div>}
         {assignmentLoadError && <div role="alert" className="rounded-xl border border-rose-500/30 bg-rose-500/10 p-4 text-sm text-rose-200">{assignmentLoadError}</div>}
-        {/* Parroto Hero Banner Header */}
-        <div className="card-duo p-6 md:p-8 bg-gradient-to-r from-[#13244e] via-[#162a5b] to-[#1d3572] border-[#274893] relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
-          <div className="space-y-3 z-10 text-center md:text-left flex-1">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/40 text-xs font-extrabold shadow-sm">
-              <Sparkles className="w-4 h-4 text-amber-400" />
-              <span>Hệ Thống Thẻ Từ Vựng Anki Flashcard SRS</span>
-            </div>
-            <h1 className="text-2xl md:text-4xl font-black tracking-tight text-white">
-              Học Từ Vựng Tiếng Hàn <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-sky-300 to-emerald-400">Theo Chủ Đề</span>
-            </h1>
-            <p className="text-xs md:text-sm text-slate-300 max-w-2xl leading-relaxed">
-              Thành thạo từ vựng với FSRS 4.5: lịch ôn được tính từ độ ổn định ghi nhớ, độ khó và thời gian từ lần ôn trước. Giọng Hàn dùng giọng có sẵn trên trình duyệt và thiết bị.
-            </p>
-            <div className="pt-2 flex flex-wrap items-center justify-center md:justify-start gap-3">
-              <button
-                onClick={() => setIsImporterOpen(true)}
-                className="btn-duo btn-duo-primary px-6 py-3 text-xs flex items-center gap-2 shadow-lg cursor-pointer"
-              >
-                <Upload className="w-4 h-4 text-amber-300 animate-bounce" />
-                <span>Kéo Thả Thẻ Anki (.apkg) của bạn</span>
-              </button>
-            </div>
-          </div>
-        </div>
 
         {/* =========================================================================
             SECTION 1: BỘ THẺ CỦA LỚP HỌC (PRIVATE CLASS ASSIGNED DECKS)
@@ -729,94 +703,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
             </div>
           </div>
         )}
-
-        {/* =========================================================================
-            SECTION 2: BỘ THẺ CỦA TÔI (MY CUSTOM / IMPORTED DECKS)
-           ========================================================================= */}
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center font-black">
-                <Brain className="w-5 h-5" />
-              </div>
-              <div>
-                <h2 className="text-lg font-black text-white">Bộ Thẻ Của Tôi</h2>
-                <span className="text-xs text-slate-400 font-medium">
-                  Bộ thẻ cá nhân tự tạo hoặc import từ file Anki (.apkg) · {userDecks.length} bộ thẻ
-                </span>
-              </div>
-            </div>
-
-            <button
-              onClick={() => setIsImporterOpen(true)}
-              className="px-4 py-2 rounded-xl bg-purple-600/30 border border-purple-500/50 hover:bg-purple-600/50 text-purple-300 font-bold text-xs flex items-center gap-2 transition-all cursor-pointer"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Tạo / Import Bộ Thẻ Mới</span>
-            </button>
-          </div>
-
-          {userDecks.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {userDecks.map((deck) => (
-                <div
-                  key={deck.id}
-                  className="card-duo card-duo-hover p-6 bg-[#0f1b38] border-[#1e3466] flex flex-col justify-between space-y-4 group cursor-pointer"
-                  onClick={() => startStudying("imported", "Bài 01", deck.id)}
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-300 flex items-center justify-center font-black">
-                        📁
-                      </div>
-                      <span className="px-2.5 py-1 rounded-full bg-purple-950/60 border border-purple-500/40 text-purple-300 text-[10px] font-black">
-                        {deck.cardCount} thẻ
-                      </span>
-                    </div>
-
-                    <h3 className="text-base font-black text-white group-hover:text-purple-300 transition-colors line-clamp-1">
-                      {deck.name}
-                    </h3>
-                    <p className="text-xs text-slate-400 line-clamp-2">
-                      Bộ thẻ cá nhân đọc từ file .apkg. Đầy đủ dữ liệu front/back HTML, hình ảnh và âm thanh.
-                    </p>
-                  </div>
-
-                  <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between">
-                    <span className="text-[11px] text-slate-500 font-semibold">Đã đồng bộ SRS</span>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        startStudying("imported", "Bài 01", deck.id);
-                      }}
-                      className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-xs flex items-center gap-1.5 shadow-md transition-all"
-                    >
-                      <Play className="w-3.5 h-3.5 fill-white" />
-                      <span>Bắt đầu Học</span>
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="card-duo p-8 text-center bg-[#0f1b38] border-[#1e3466] border-dashed space-y-3">
-              <div className="w-12 h-12 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center mx-auto text-xl font-black">
-                📥
-              </div>
-              <h3 className="text-base font-black text-white">Chưa Có Bộ Thẻ Cá Nhân Nào</h3>
-              <p className="text-xs text-slate-400 max-w-md mx-auto">
-                Bạn có thể kéo thả bất kỳ file thẻ Anki (.apkg) nào từ máy tính của bạn vào đây để hệ thống tự động đọc và lưu trữ!
-              </p>
-              <button
-                onClick={() => setIsImporterOpen(true)}
-                className="px-6 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs inline-flex items-center gap-2 shadow-lg cursor-pointer transition-all"
-              >
-                <Upload className="w-4 h-4 text-yellow-300" />
-                <span>Kéo Thả File Anki (.apkg) Ngay</span>
-              </button>
-            </div>
-          )}
-        </div>
 
         {/* =========================================================================
             SECTION 3: BỘ THẺ TIẾNG HÀN CÓ SẴN (SYSTEM BUILT-IN DECKS)
