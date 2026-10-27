@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import DOMPurify from "dompurify";
+import { useSearchParams } from "next/navigation";
 import { VOCABULARY_DATA } from "../data/koreanData";
 import { THTH_DECKS } from "../data/ththDecks";
 import { AnkiDeck } from "../lib/ankiParser";
@@ -94,10 +95,12 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const [isFlipped, setIsFlipped] = useState<boolean>(false);
   const [typedInput, setTypedInput] = useState<string>("");
 
+  const searchParams = useSearchParams();
+
   // Search & Tree expansion
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [expandedDecks, setExpandedDecks] = useState<Record<string, boolean>>({
-    "thth-q1": true,
+    "thth-bài-01": true,
   });
 
   // Modal zoom image
@@ -138,7 +141,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     }
   }, [currentUser]);
 
-  // Group THTH Decks into Book / Lesson hierarchy
+  // Group THTH Decks by Lesson (Bài 01, Bài 02, etc.) as Parent Decks
   const deckTree = useMemo(() => {
     const groups: {
       id: string;
@@ -150,25 +153,42 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       }[];
     }[] = [];
 
-    // Group 1: Tiếng Hàn Tổng Hợp - Quyển 01
-    const q1Subdecks: { id: string; title: string; cards: VocabularyCard[] }[] = [];
+    // Map by lesson name: "Bài 01", "Bài 02", etc.
+    const lessonMap = new Map<string, { id: string; title: string; cards: VocabularyCard[] }[]>();
+
     THTH_DECKS.forEach((d) => {
       const parts = d.name.split("::");
-      const title = parts.slice(2).join(" - ") || d.name;
-      q1Subdecks.push({
+      // e.g. ["Tiếng Hàn Tổng Hợp", "Quyển 01", "Bài 01", "1. Quốc gia (나라)"]
+      const lessonKey = parts[2] ? parts[2].trim() : "Bài 01";
+      const subTitle = parts[3] ? parts[3].trim() : parts[parts.length - 1];
+
+      if (!lessonMap.has(lessonKey)) {
+        lessonMap.set(lessonKey, []);
+      }
+
+      lessonMap.get(lessonKey)!.push({
         id: d.id,
-        title: title.replace(/^Bài\s*/i, "Bài "),
+        title: subTitle,
         cards: d.cards as VocabularyCard[],
       });
     });
 
-    if (q1Subdecks.length > 0) {
+    // Create a Parent Group for each Bài
+    lessonMap.forEach((subDecks, lessonKey) => {
+      const subSummary = subDecks
+        .slice(0, 3)
+        .map((s) => s.title.replace(/^\d+\.\s*/, "").split("(")[0].trim())
+        .join(", ");
+
+      const parentTitle = `${lessonKey}${subSummary ? `: ${subSummary}` : ""}`;
+      const groupId = `thth-${lessonKey.toLowerCase().replace(/\s+/g, "-")}`;
+
       groups.push({
-        id: "thth-q1",
-        title: "Tiếng Hàn Tổng Hợp - Quyển 01 (Sơ cấp 1)",
-        subDecks: q1Subdecks,
+        id: groupId,
+        title: parentTitle,
+        subDecks: subDecks,
       });
-    }
+    });
 
     // Group 2: Từ Vựng Cơ Bản
     if (VOCABULARY_DATA.length > 0) {
@@ -270,23 +290,37 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     }
   }, []);
 
-  // Resume last lesson
-  const resumeLastLesson = () => {
-    if (!lastStudiedDeckId) return;
+  // Resume last lesson (fallback to first deck if none)
+  const resumeLastLesson = useCallback(() => {
+    const targetId = lastStudiedDeckId || deckTree[0]?.id;
+    if (!targetId) return;
+
     for (const group of deckTree) {
-      if (group.id === lastStudiedDeckId) {
+      if (group.id === targetId) {
         const all = group.subDecks.flatMap((s) => s.cards);
         startStudy(group.id, group.title, all);
         return;
       }
       for (const sub of group.subDecks) {
-        if (sub.id === lastStudiedDeckId) {
+        if (sub.id === targetId) {
           startStudy(sub.id, sub.title, sub.cards);
           return;
         }
       }
     }
-  };
+
+    if (deckTree[0]?.subDecks[0]) {
+      const first = deckTree[0].subDecks[0];
+      startStudy(first.id, first.title, first.cards);
+    }
+  }, [lastStudiedDeckId, deckTree, startStudy]);
+
+  // Auto-resume if query param ?resume=true is present
+  useEffect(() => {
+    if (searchParams?.get("resume") === "true" && viewMode === "dashboard") {
+      resumeLastLesson();
+    }
+  }, [searchParams, viewMode, resumeLastLesson]);
 
   const exitStudy = () => {
     setViewMode("dashboard");

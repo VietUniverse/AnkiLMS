@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { AppShell } from "../components/AppShell";
 import { OnigiriHeatmap } from "../components/OnigiriHeatmap";
 import { useApp } from "../contexts/AppProvider";
-import { Flame, Zap, Layers, Trophy, Calendar, CheckCircle2, Gamepad2, Target, X, LogIn, Search, Volume2 } from "lucide-react";
+import { Flame, Zap, Layers, Trophy, Calendar, CheckCircle2, Gamepad2, Target, X, LogIn, Search, Volume2, Play } from "lucide-react";
 import { VOCABULARY_DATA } from "../data/koreanData";
 import { SEJONG_TOPIC_VOCABULARY } from "../data/sejongTopicVocabulary";
 import { speakKorean } from "../lib/koreanSpeech";
@@ -26,6 +26,14 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [searchResults, setSearchResults] = React.useState<Array<{ korean: string; meaning: string; language: string; example?: string; translation?: string }>>([]);
   const [translationLanguage] = useTranslationLanguage();
+  const [lastLessonTitle, setLastLessonTitle] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedTitle = localStorage.getItem("haechivn_last_lesson_title");
+      setLastLessonTitle(savedTitle);
+    }
+  }, []);
 
   const searchPool = React.useMemo(() => {
     const list = [
@@ -390,6 +398,20 @@ export default function Home() {
 
           {/* Dãy nút bấm hành động căn giữa gọn gàng - Nguyên khối không viền */}
           <div className="p-3 sm:p-3.5 rounded-2xl bg-[#070d1a] flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 border-0">
+            {/* Nút Học Tiếp Lượt Trước */}
+            {isFeatureEnabled("flashcards") && (
+              <Link
+                href="/flashcards?resume=true"
+                className="px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-[0.99] text-white font-extrabold text-xs shadow-lg shadow-emerald-950/40 transition-all flex items-center gap-2 border-0 min-h-[42px]"
+                title={lastLessonTitle ? `Học tiếp: ${lastLessonTitle}` : "Tiếp tục học từ vựng"}
+              >
+                <Play className="w-4 h-4 fill-white shrink-0" />
+                <span className="truncate max-w-[200px]">
+                  HỌC TIẾP{lastLessonTitle ? ` · ${lastLessonTitle.split(":")[0]}` : ""}
+                </span>
+              </Link>
+            )}
+
             {/* Điểm danh */}
             {hasCheckedInToday ? (
               <button
