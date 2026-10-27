@@ -27,6 +27,8 @@ interface AppContextType {
   handleLogout: () => void;
   handleCheckin: () => Promise<void>;
   handleDeckImported: (deck: AnkiDeck) => void;
+  activeStudySession: { title: string; onExit: () => void } | null;
+  setActiveStudySession: React.Dispatch<React.SetStateAction<{ title: string; onExit: () => void } | null>>;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -49,6 +51,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isAuthReady, setIsAuthReady] = useState(false);
   const [featureFlags, setFeatureFlags] = useState<FeatureFlags>(DEFAULT_FEATURE_FLAGS);
   const [featureFlagsLoaded, setFeatureFlagsLoaded] = useState(false);
+  const [activeStudySession, setActiveStudySession] = useState<{ title: string; onExit: () => void } | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -180,6 +183,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         handleLogout,
         handleCheckin,
         handleDeckImported,
+        activeStudySession,
+        setActiveStudySession,
       }}
     >
       {children}

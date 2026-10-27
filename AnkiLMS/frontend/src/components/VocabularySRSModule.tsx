@@ -99,7 +99,7 @@ const toSlug = (str: string): string => {
 };
 
 export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDecks = [] }) => {
-  const { currentUser } = useApp();
+  const { currentUser, setActiveStudySession } = useApp();
 
   // Navigation View: "dashboard" (Lộ trình cây bài học) | "study" (Màn hình học)
   const [viewMode, setViewMode] = useState<"dashboard" | "study">("dashboard");
@@ -413,11 +413,26 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     return filterTree(deckTree, searchQuery.toLowerCase());
   }, [deckTree, searchQuery, filterTree]);
 
-  const exitStudy = () => {
+  const exitStudy = useCallback(() => {
     setViewMode("dashboard");
     setIsFlipped(false);
     setTypedInput("");
-  };
+  }, []);
+
+  // Sync active study session to global Navbar
+  useEffect(() => {
+    if (viewMode === "study") {
+      setActiveStudySession({
+        title: activeDeckTitle,
+        onExit: exitStudy,
+      });
+    } else {
+      setActiveStudySession(null);
+    }
+    return () => {
+      setActiveStudySession(null);
+    };
+  }, [viewMode, activeDeckTitle, exitStudy, setActiveStudySession]);
 
   const currentCard = activeCardsList[currentCardIndex] || activeCardsList[0];
 
@@ -744,12 +759,12 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
           1. HEADER THANH ĐIỀU KHIỂN HỌC (HIỆN KHI VÀO STUDY MODE)
           ==================================================================== */}
       {viewMode === "study" && (
-        <div className="sticky top-0 z-30 mb-4 bg-white/95 dark:bg-stone-900/95 backdrop-blur-md border-b border-stone-200 dark:border-stone-800 transition-colors">
-          <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between gap-2">
+        <div className="mb-4 bg-white/90 dark:bg-stone-900/90 backdrop-blur-md rounded-2xl border border-stone-200 dark:border-stone-800 transition-colors shadow-xs">
+          <div className="max-w-4xl mx-auto px-4 h-12 flex items-center justify-between gap-2">
             {/* Nút Trở Về */}
             <button
               onClick={exitStudy}
-              className="flex items-center gap-1.5 text-xs font-semibold text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white transition px-2.5 py-1.5 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 shrink-0 cursor-pointer"
+              className="flex items-center gap-1.5 text-xs font-semibold text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white transition px-2.5 py-1.5 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 shrink-0 cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Trở về</span>
