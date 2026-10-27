@@ -368,7 +368,7 @@ export default function Home() {
                 className="px-4 sm:px-5 py-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 font-bold text-xs flex items-center gap-2 cursor-not-allowed border-0 min-h-[42px]"
               >
                 <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                <span>ĐÃ ĐIỂM DANH (+50 💎)</span>
+                <span>ĐÃ ĐIỂM DANH (+1 💎)</span>
               </button>
             ) : (
               <button
@@ -376,8 +376,8 @@ export default function Home() {
                 className="px-4 sm:px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-[0.99] text-white font-bold text-xs shadow-lg shadow-blue-900/40 transition-all cursor-pointer flex items-center gap-2 border-0 min-h-[42px]"
               >
                 <Flame className="w-4 h-4 text-white fill-white" />
-                <span className="hidden sm:inline">ĐIỂM DANH NGAY · NHẬN 50 💎 HÔM NAY</span>
-                <span className="sm:hidden">ĐIỂM DANH (+50 💎)</span>
+                <span className="hidden sm:inline">ĐIỂM DANH NGAY · NHẬN 1 💎 HÔM NAY</span>
+                <span className="sm:hidden">ĐIỂM DANH (+1 💎)</span>
               </button>
             )}
 

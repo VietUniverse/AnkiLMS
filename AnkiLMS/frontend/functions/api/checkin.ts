@@ -50,7 +50,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     const newLongestStreak = Math.max(user.longest_streak || 1, newStreak);
     const newXp = user.xp + 50;
-    const newGems = user.gems + 50;
+    const newGems = user.gems + 1;
     const newLevel = Math.floor(newXp / 300) + 1;
 
     // Record checkin
@@ -86,9 +86,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     return jsonResponse({
       alreadyCheckedIn: false,
-      message: "Điểm danh thành công! +50 XP, +50 Kim Cương 💎",
+      message: "Điểm danh thành công! +50 XP, +1 Kim Cương 💎",
       rewardXp: 50,
-      rewardGems: 50,
+      rewardGems: 1,
       user: {
         id: user.id,
         streak: newStreak,
