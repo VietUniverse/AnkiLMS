@@ -22,6 +22,7 @@ import {
   Maximize2,
   Layers,
   BookOpen,
+  CheckCircle2,
 } from "lucide-react";
 import { calculateFSRS45, formatLocalDate, FSRSRating, FSRSState } from "../lib/fsrs45";
 import { ApiClient } from "../lib/apiClient";
@@ -30,6 +31,8 @@ import { inferTopikLevel, getCourseRank } from "../lib/studyRanks";
 
 interface VocabularySRSModuleProps {
   userDecks?: AnkiDeck[];
+  initialViewMode?: "dashboard" | "study";
+  initialEmptyCards?: boolean;
 }
 
 export interface VocabularyCard {
@@ -102,17 +105,17 @@ const toSlug = (str: string): string => {
     .replace(/^-+|-+$/g, "");
 };
 
-export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDecks = [] }) => {
+export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDecks = [], initialViewMode = "dashboard", initialEmptyCards = false }) => {
   const { currentUser, setActiveStudySession } = useApp();
 
   // Navigation View: "dashboard" (Lộ trình cây bài học) | "study" (Màn hình học)
-  const [viewMode, setViewMode] = useState<"dashboard" | "study">("dashboard");
+  const [viewMode, setViewMode] = useState<"dashboard" | "study">(initialViewMode);
   const [studyMode, setStudyMode] = useState<"flip" | "typing">("flip");
 
   // Selected Deck and Lesson
   const [activeDeckTitle, setActiveDeckTitle] = useState<string>("1. Quốc gia (나라)");
   const [activeCardsList, setActiveCardsList] = useState<VocabularyCard[]>(
-    (THTH_CURRICULUM_DECKS[0]?.cards as VocabularyCard[]) || []
+    initialEmptyCards ? [] : ((THTH_CURRICULUM_DECKS[0]?.cards as VocabularyCard[]) || [])
   );
   const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
   const [isFlipped, setIsFlipped] = useState<boolean>(false);
@@ -131,8 +134,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const [modalImage, setModalImage] = useState<string | null>(null);
 
   // Resume banner state
-  const [lastStudiedDeckId, setLastStudiedDeckId] = useState<string | null>(null);
-  const [lastStudiedTitle, setLastStudiedTitle] = useState<string | null>(null);
+  const [lastStudiedDeckId, setLastStudiedDeckId] = useState<string | null>("thth-1-b1-1");
+  const [lastStudiedTitle, setLastStudiedTitle] = useState<string | null>("1. Quốc gia (나라)");
 
   // FSRS & Local Storage Card Memory
   const [masteredWords, setMasteredWords] = useState<string[]>([]);
@@ -344,11 +347,27 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     setActiveStudySession(null);
   }, [finishSrsActivity, setActiveStudySession]);
 
-  // Start study session
+  // Start study session (Filter only unlearned / review cards via FSRS state)
   const startStudy = useCallback((deckId: string, title: string, cards: VocabularyCard[]) => {
     if (!cards || cards.length === 0) return;
+
+    // Filter cards: show unlearned cards or cards due for review
+    const todayStr = formatLocalDate(new Date());
+    const cardsToStudy = cards.filter((c) => {
+      const activeKey = `${c.deckName || "deck"}_${c.id}`;
+      const state = cardStateMap[activeKey];
+      // If card has SRS state and is not due today and is mastered, skip
+      if (state && state.dueDate > todayStr && masteredWords.includes(c.word)) {
+        return false;
+      }
+      return true;
+    });
+
+    // If all cards mastered and none due today, cardsToStudy is empty
+    const activeList = cardsToStudy;
+
     setActiveDeckTitle(title);
-    setActiveCardsList(cards);
+    setActiveCardsList(activeList);
     setCurrentCardIndex(0);
     setIsFlipped(false);
     setTypedInput("");
@@ -362,7 +381,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       onExit: exitStudy,
       studyMode,
       setStudyMode,
-      progressText: `1 / ${cards.length}`,
+      progressText: activeList.length > 0 ? `1 / ${activeList.length}` : "Hoàn thành",
     });
 
     setLastStudiedDeckId(deckId);
@@ -371,7 +390,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       localStorage.setItem("haechivn_last_lesson_id", deckId);
       localStorage.setItem("haechivn_last_lesson_title", title);
     }
-  }, [exitStudy, studyMode, setActiveStudySession]);
+  }, [cardStateMap, masteredWords, exitStudy, studyMode, setActiveStudySession]);
 
   // Recursive search for node by id
   const findNodeById = useCallback((nodes: DeckTreeNode[], id: string): DeckTreeNode | null => {
@@ -403,6 +422,19 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       startStudy(target.id, target.title, target.cards);
     }
   }, [lastStudiedDeckId, deckTree, findNodeById, startStudy]);
+
+  // Sync study session with App context for Navbar controls
+  useEffect(() => {
+    if (viewMode === "study") {
+      setActiveStudySession({
+        title: activeDeckTitle,
+        onExit: exitStudy,
+        studyMode,
+        setStudyMode,
+        progressText: activeCardsList.length > 0 ? `${currentCardIndex + 1} / ${activeCardsList.length}` : "Hoàn thành",
+      });
+    }
+  }, [viewMode, activeDeckTitle, exitStudy, studyMode, setStudyMode, currentCardIndex, activeCardsList.length, setActiveStudySession]);
 
   // Auto-resume if query param ?resume=true or ?study=true is present
   useEffect(() => {
@@ -858,18 +890,18 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
           <div className="space-y-6 pt-2">
             {/* Banner tiếp tục học lượt trước */}
             {lastStudiedDeckId && lastStudiedTitle && (
-              <div className="p-4 rounded-2xl bg-stone-900 text-white dark:bg-stone-800/90 border border-stone-800 dark:border-stone-700/80 flex items-center justify-between gap-4 shadow-sm animate-reveal">
+              <div className="p-4 rounded-2xl bg-white dark:bg-[#141b2d] border border-stone-200/80 dark:border-stone-800/80 flex items-center justify-between gap-4 shadow-xs animate-reveal">
                 <div className="min-w-0">
-                  <span className="text-[10px] font-mono tracking-wider text-emerald-400 font-bold uppercase">
+                  <span className="inline-block text-[10px] font-mono tracking-wider text-emerald-700 dark:text-emerald-400 font-bold uppercase bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-200/50 dark:border-emerald-800/40">
                     Học tiếp lượt trước
                   </span>
-                  <h3 className="text-sm sm:text-base font-bold truncate mt-0.5 text-stone-100">
+                  <h3 className="text-sm sm:text-base font-bold truncate mt-1 text-stone-900 dark:text-white">
                     {lastStudiedTitle}
                   </h3>
                 </div>
                 <button
                   onClick={resumeLastLesson}
-                  className="w-9 h-9 rounded-full bg-white text-stone-900 hover:bg-stone-200 dark:bg-emerald-500 dark:text-stone-950 dark:hover:bg-emerald-400 flex items-center justify-center shrink-0 transition cursor-pointer shadow-sm"
+                  className="w-10 h-10 rounded-full bg-stone-900 text-white hover:bg-stone-800 dark:bg-emerald-500 dark:text-stone-950 dark:hover:bg-emerald-400 flex items-center justify-center shrink-0 transition-transform active:scale-95 cursor-pointer shadow-sm"
                   title="Học tiếp ngay"
                 >
                   <Play className="w-4 h-4 ml-0.5 fill-current" />
@@ -959,36 +991,80 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
         {/* ==========================================
             B. STUDY WORKSPACE (APPLE MINIMALIST REVEAL)
             ========================================== */}
-        {viewMode === "study" && currentCard && (
-          <div className="py-2 animate-reveal">
-            {/* Thanh tiến độ bài học xanh ngọc mảnh phía trên */}
-            <div className="flex items-center justify-between gap-3 mb-5">
-              <div className="flex-1 h-1 bg-stone-200 dark:bg-stone-800 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-emerald-500 transition-all duration-300"
-                  style={{ width: `${sessionProgress}%` }}
-                />
+        {viewMode === "study" && (
+          activeCardsList.length === 0 ? (
+            <div className="py-16 text-center animate-reveal max-w-lg mx-auto">
+              <div className="p-8 sm:p-10 rounded-[28px] bg-white dark:bg-[#141b2d] border border-stone-200/80 dark:border-stone-800/80 shadow-xs text-center">
+                <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center mx-auto mb-5">
+                  <CheckCircle2 className="w-8 h-8" />
+                </div>
+                <h3 className="text-xl font-bold text-stone-900 dark:text-stone-100 mb-2">
+                  Đã hoàn thành ôn tập hôm nay!
+                </h3>
+                <p className="text-sm text-stone-500 dark:text-stone-400 mb-8 leading-relaxed">
+                  Bạn đã thuộc hết từ vựng trong bộ thẻ này. Thuật toán FSRS sẽ tự động tính toán và nhắc bạn khi có từ đến hạn ôn lại tiếp theo.
+                </p>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                  <button
+                    onClick={exitStudy}
+                    className="w-full sm:w-auto px-6 py-3 rounded-xl bg-stone-900 text-white dark:bg-emerald-500 dark:text-stone-950 font-bold text-xs sm:text-sm hover:opacity-90 transition cursor-pointer shadow-xs"
+                  >
+                    Trở về danh sách bộ thẻ
+                  </button>
+                  <button
+                    onClick={() => {
+                      const found = findNodeById(deckTree, lastStudiedDeckId || "");
+                      const all = found?.cards || [];
+                      if (all.length > 0) {
+                        setActiveCardsList(all);
+                        setCurrentCardIndex(0);
+                        setActiveStudySession({
+                          title: activeDeckTitle,
+                          onExit: exitStudy,
+                          studyMode,
+                          setStudyMode,
+                          progressText: `1 / ${all.length}`,
+                        });
+                      }
+                    }}
+                    className="w-full sm:w-auto px-5 py-3 rounded-xl border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 font-semibold text-xs sm:text-sm hover:bg-stone-100 dark:hover:bg-stone-800 transition cursor-pointer"
+                  >
+                    Ôn lại tự do
+                  </button>
+                </div>
               </div>
-              <button
-                onClick={() => {
-                  setCurrentCardIndex(0);
-                  setIsFlipped(false);
-                  setTypedInput("");
-                }}
-                className="text-[11px] font-medium text-stone-400 hover:text-rose-500 transition flex items-center gap-1 cursor-pointer shrink-0"
-                title="Học lại bài này từ đầu"
-              >
-                <RotateCcw className="w-3 h-3" />
-                <span className="hidden sm:inline">Học lại</span>
-              </button>
             </div>
+          ) : currentCard ? (
+            <div className="min-h-[calc(100vh-140px)] flex flex-col justify-between py-2 animate-reveal">
+              <div className="flex-1 flex flex-col">
+                {/* Thanh tiến độ bài học xanh ngọc mảnh phía trên */}
+                <div className="flex items-center justify-between gap-3 mb-5">
+                  <div className="flex-1 h-1 bg-stone-200 dark:bg-stone-800 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-emerald-500 transition-all duration-300"
+                      style={{ width: `${sessionProgress}%` }}
+                    />
+                  </div>
+                  <button
+                    onClick={() => {
+                      setCurrentCardIndex(0);
+                      setIsFlipped(false);
+                      setTypedInput("");
+                    }}
+                    className="text-[11px] font-medium text-stone-400 hover:text-rose-500 transition flex items-center gap-1 cursor-pointer shrink-0"
+                    title="Học lại bài này từ đầu"
+                  >
+                    <RotateCcw className="w-3 h-3" />
+                    <span className="hidden sm:inline">Học lại</span>
+                  </button>
+                </div>
 
             {/* CHẾ ĐỘ 1: THẺ NHẬN DIỆN PHẲNG REVEAL (2 CỘT DESKTOP) */}
             {studyMode === "flip" && (
               <div className="w-full mb-5 select-text">
-                <div className="relative w-full min-h-[420px] rounded-[24px] border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-6 sm:p-8 flex flex-col justify-between shadow-xs transition-all">
+                <div className="relative w-full min-h-[440px] rounded-[24px] border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-[#141b2d] p-6 sm:p-8 flex flex-col justify-between shadow-xs transition-all">
                   {/* Top Bar: Loại từ + Nút Audio + ChatGPT */}
-                  <div className="w-full flex items-center justify-between pb-3.5 border-b border-stone-100 dark:border-stone-800/80">
+                  <div className="w-full flex items-center justify-between pb-3.5 border-b border-stone-100 dark:border-stone-800">
                     <span className="pos-chip">{currentCard.pos || "Từ vựng"}</span>
 
                     <div className="flex items-center gap-2">
@@ -1108,7 +1184,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
                       {/* Hộp Ví dụ: Tiếng Hàn luôn hiện, khi lật hiện thêm tiếng Việt */}
                       {currentCard.example && (
-                        <div className="p-4 rounded-xl bg-stone-50 dark:bg-stone-800/40 border border-stone-100 dark:border-stone-800 text-left">
+                        <div className="p-4 rounded-xl bg-stone-50 dark:bg-stone-800/50 border border-stone-100 dark:border-stone-700/70 text-left">
                           <p
                             className="text-sm sm:text-base font-semibold text-stone-800 dark:text-stone-200 leading-relaxed font-noto"
                             dangerouslySetInnerHTML={{ __html: cleanHtmlText(currentCard.example) }}
@@ -1125,21 +1201,9 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                   </div>
 
                   {/* Bottom Footer Hint */}
-                  <div className="w-full flex items-center justify-between pt-3.5 border-t border-stone-100 dark:border-stone-800/80 text-[11px]">
+                  <div className="w-full flex items-center justify-between pt-3 border-t border-stone-100 dark:border-stone-800/80 text-[11px]">
                     <span className="flex items-center gap-1 font-medium text-stone-400">
-                      {!isFlipped ? (
-                        <>
-                          Nhấn{" "}
-                          <kbd className="font-mono text-[9px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700">
-                            Space
-                          </kbd>{" "}
-                          hoặc{" "}
-                          <kbd className="font-mono text-[9px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700">
-                            Enter
-                          </kbd>{" "}
-                          để xem đáp án
-                        </>
-                      ) : (
+                      {isFlipped ? (
                         <>
                           <kbd className="font-mono text-[9px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700">
                             1
@@ -1154,6 +1218,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                           </kbd>{" "}
                           Nghe lại
                         </>
+                      ) : (
+                        <span>Thẻ nhận diện từ vựng</span>
                       )}
                     </span>
 
@@ -1170,7 +1236,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
             {/* CHẾ ĐỘ 2: THẺ GÕ TỪ (TYPING - 2 CỘT DESKTOP) */}
             {studyMode === "typing" && (
-              <div className="w-full mb-5 p-6 sm:p-8 rounded-[24px] border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 shadow-xs">
+              <div className="w-full mb-5 p-6 sm:p-8 rounded-[24px] border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-[#141b2d] shadow-xs">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
                   {/* Cột Trái: Ảnh Gợi Ý */}
                   {activeImageSrc && (
@@ -1260,7 +1326,9 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
             {/* ========================================================
                 NÚT HÀNH ĐỘNG DƯỚI THẺ (SHOW ANSWER vs GRADE BUTTONS)
                 ======================================================== */}
-            <div className="space-y-3">
+              </div>
+
+              <div className="sticky bottom-3 z-20 pt-3 pb-1 mt-4">
               {!isFlipped ? (
                 /* Trạng thái 1: Chưa lật -> Nút Hiện Đáp Án */
                 <button
@@ -1268,7 +1336,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                     revealAnswer();
                     inputRef.current?.blur();
                   }}
-                  className="w-full h-12 rounded-xl bg-stone-900 hover:bg-stone-800 dark:bg-white dark:hover:bg-stone-100 text-white dark:text-stone-900 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition shadow-xs cursor-pointer"
+                  className="srs-btn-dark w-full h-12 rounded-xl bg-stone-900 hover:bg-stone-800 dark:bg-white dark:hover:bg-stone-100 text-white dark:text-stone-900 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition shadow-xs cursor-pointer"
                 >
                   <span className="font-extrabold text-white dark:text-stone-900">Hiện đáp án</span>
                   <kbd className="hidden sm:inline font-mono text-[10px] text-white dark:text-stone-900 px-2 py-0.5 rounded border border-white/40 dark:border-stone-400 font-bold">
@@ -1342,8 +1410,9 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                   </div>
                 </div>
               )}
+              </div>
             </div>
-          </div>
+          ) : null
         )}
       </main>
 
