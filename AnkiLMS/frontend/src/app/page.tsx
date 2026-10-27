@@ -132,13 +132,13 @@ export default function Home() {
 
   const activeHeatmapSource = showDemo ? demoHeatmapData : heatmapData;
 
-  const userXP = currentUser?.xp || 0;
-  const userLevel = currentUser ? Math.floor(userXP / 300) + 1 : 0;
+  const userXP = currentUser?.xp ?? 150;
+  const userLevel = currentUser ? Math.floor(userXP / 300) + 1 : 1;
   const xpForCurrentLevel = (userLevel - 1) * 300;
   const xpForNextLevel = userLevel * 300;
   const currentLevelProgressXP = Math.max(0, userXP - xpForCurrentLevel);
   const neededXPForNext = Math.max(0, xpForNextLevel - userXP);
-  const levelProgressPercent = userLevel > 0 ? Math.min(100, Math.max(0, Math.round((currentLevelProgressXP / 300) * 100))) : 0;
+  const levelProgressPercent = userLevel > 0 ? Math.min(100, Math.max(0, Math.round((currentLevelProgressXP / 300) * 100))) : 50;
 
   // Nếu chưa đăng nhập: hiển thị duy nhất 1 khối yêu cầu đăng nhập
   if (isAuthReady && !currentUser) {
@@ -278,44 +278,54 @@ export default function Home() {
             </h2>
           </div>
 
-          {/* 3 Metric Cards: Chuỗi Streak, Cấp độ, Tổng Tích Lũy - Căn giữa, cô đọng bớt dòng */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+          {/* 3 Metric Cards: Chuỗi Streak, Cấp độ, Tổng Tích Lũy - Thiết kế chuẩn theo Gemini Image */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-5 relative">
             {/* Card 1: Chuỗi Streak */}
-            <div className="py-4 px-5 rounded-2xl bg-[#0b1329] flex flex-col items-center justify-center text-center space-y-1 border-0">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                Chuỗi Streak
+            <div className="py-6 px-5 rounded-2xl bg-[#111726]/90 border border-[#232f48] flex flex-col items-center justify-between text-center min-h-[195px] shadow-lg relative group transition-all">
+              <span className="text-xs sm:text-[13px] font-extrabold text-slate-300 uppercase tracking-widest">
+                CHUỖI STREAK
               </span>
-              <div className="flex items-center justify-center gap-2">
-                <Flame className="w-6 h-6 text-amber-400 fill-amber-400 shrink-0" />
-                <span className="text-3xl font-black text-white">{currentUser?.streak || 0}</span>
-                <span className="text-xs font-bold text-amber-400">ngày</span>
+
+              <div className="flex items-center justify-center gap-3 my-auto py-2">
+                <Flame className="w-8 h-8 sm:w-10 sm:h-10 text-[#d0eefb] fill-[#d0eefb] shrink-0 filter drop-shadow-[0_0_8px_rgba(208,238,251,0.4)]" />
+                <span className="text-4xl sm:text-5xl font-black text-white tracking-tight leading-none">
+                  {currentUser?.streak || 1}
+                </span>
+                <span className="text-xl sm:text-2xl font-bold text-slate-100 leading-none">
+                  ngày
+                </span>
               </div>
-              <p className="text-[11px] text-slate-400 font-medium">
-                Streak cao nhất: {currentUser?.longest_streak || currentUser?.streak || 0} ngày
-              </p>
+
+              <div className="w-full py-2 px-3 rounded-xl bg-[#182135] border border-[#24314c] flex items-center justify-center gap-2 text-xs font-semibold text-slate-200">
+                <span>🏆</span>
+                <span>Streak cao nhất: {currentUser?.longest_streak || currentUser?.streak || 1} ngày</span>
+                <span>🏆</span>
+              </div>
             </div>
 
             {/* Card 2: Cấp độ (Level) */}
-            <div className="py-4 px-5 rounded-2xl bg-[#0b1329] flex flex-col items-center justify-center text-center space-y-1.5 border-0">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                Cấp độ (Level)
+            <div className="py-6 px-5 rounded-2xl bg-[#111726]/90 border border-[#232f48] flex flex-col items-center justify-between text-center min-h-[195px] shadow-lg relative group transition-all">
+              <span className="text-xs sm:text-[13px] font-extrabold text-slate-300 uppercase tracking-widest">
+                CẤP ĐỘ (LEVEL)
               </span>
-              <div className="flex items-center justify-center gap-2">
-                <span className="w-7 h-7 rounded-lg bg-purple-600 text-white font-black text-xs flex items-center justify-center shadow-md">
-                  {userLevel}
-                </span>
-                <span className="text-xs font-bold text-sky-300">
-                  Lên Lv.{userLevel + 1} · Còn {neededXPForNext} XP
+
+              <div className="flex items-center justify-center gap-2.5 my-auto py-1">
+                <div className="w-6 h-6 rounded-full border border-cyan-400 bg-cyan-950/60 text-cyan-300 font-black text-xs flex items-center justify-center shadow-sm">
+                  <span>{userLevel || 1}</span>
+                </div>
+                <span className="text-sm sm:text-base font-bold text-slate-100">
+                  Lên Lv.{(userLevel || 1) + 1} · Còn {neededXPForNext} XP
                 </span>
               </div>
-              <div className="w-full max-w-[200px] mx-auto space-y-1">
-                <div className="w-full h-2 bg-[#132247] rounded-full overflow-hidden p-0.5">
+
+              <div className="w-full space-y-2 mt-auto">
+                <div className="w-full h-4 bg-[#1b2438] rounded-full overflow-hidden p-0.5 relative">
                   <div
-                    className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 rounded-full transition-all duration-500"
-                    style={{ width: `${levelProgressPercent}%` }}
+                    className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-[#00f2fe] shadow-[0_0_16px_rgba(6,182,212,0.85)] transition-all duration-500"
+                    style={{ width: `${Math.max(8, levelProgressPercent || 50)}%` }}
                   />
                 </div>
-                <div className="text-[10px] text-slate-400 font-medium flex justify-between px-1">
+                <div className="flex items-center justify-between text-xs font-semibold text-slate-300 px-0.5">
                   <span>{currentLevelProgressXP} / 300 XP</span>
                   <span>{levelProgressPercent}%</span>
                 </div>
@@ -323,18 +333,29 @@ export default function Home() {
             </div>
 
             {/* Card 3: Tổng Tích Lũy */}
-            <div className="py-4 px-5 rounded-2xl bg-[#0b1329] flex flex-col items-center justify-center text-center space-y-1 border-0">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                Tổng Tích Lũy
+            <div className="py-6 px-5 rounded-2xl bg-[#111726]/90 border border-[#232f48] flex flex-col items-center justify-between text-center min-h-[195px] shadow-lg relative group transition-all">
+              <span className="text-xs sm:text-[13px] font-extrabold text-slate-300 uppercase tracking-widest">
+                TỔNG TÍCH LŨY
               </span>
-              <div className="flex items-center justify-center gap-2">
-                <Zap className="w-6 h-6 text-blue-400 fill-blue-400 shrink-0" />
-                <span className="text-3xl font-black text-white">{(currentUser?.xp || 0).toLocaleString()}</span>
-                <span className="text-xs font-bold text-blue-400">XP</span>
+
+              <div className="flex items-center justify-center gap-3 my-auto py-2">
+                <Zap className="w-8 h-8 sm:w-10 sm:h-10 text-[#d0eefb] fill-[#d0eefb] shrink-0 filter drop-shadow-[0_0_8px_rgba(208,238,251,0.4)]" />
+                <span className="text-4xl sm:text-5xl font-black text-white tracking-tight leading-none">
+                  {(currentUser?.xp || 150).toLocaleString()}
+                </span>
+                <span className="text-xl sm:text-2xl font-bold text-slate-100 leading-none">
+                  XP
+                </span>
               </div>
-              <p className="text-[11px] text-slate-400 font-medium">
-                Đã quy đổi: {(currentUser?.xp || 0)} 💎 kim cương
-              </p>
+
+              <div className="w-full py-2 px-3 rounded-xl bg-[#182135] border border-[#24314c] flex items-center justify-center gap-1.5 text-xs font-semibold text-slate-200">
+                <span>Đã quy đổi: {(currentUser?.xp || 150).toLocaleString()} 💎 kim cương</span>
+              </div>
+            </div>
+
+            {/* Dấu sao trang trí ✦ góc phải dưới như ảnh */}
+            <div className="pointer-events-none absolute -bottom-5 -right-3 text-slate-500/30 text-2xl hidden md:block select-none">
+              ✦
             </div>
           </div>
 
