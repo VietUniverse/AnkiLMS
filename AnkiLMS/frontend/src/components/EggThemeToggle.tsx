@@ -5,27 +5,20 @@ import React, { useEffect, useState } from "react";
 const STORAGE_KEY = "haechivn_theme";
 
 export function EggThemeToggle() {
-  const [theme, setTheme] = useState<"light" | "dark">(() => {
-    if (typeof window !== "undefined") {
-      const p = new URLSearchParams(window.location.search);
-      const urlTheme = p.get("theme");
-      if (urlTheme === "dark" || urlTheme === "light") return urlTheme;
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved === "dark" || saved === "light") return saved;
-      return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
-    }
-    return "light";
-  });
+  const [theme, setTheme] = useState<"light" | "dark">("light");
 
   useEffect(() => {
     const p = new URLSearchParams(window.location.search);
     const urlTheme = p.get("theme");
     const saved = localStorage.getItem(STORAGE_KEY);
-    const initial = (urlTheme === "dark" || urlTheme === "light") 
-      ? urlTheme 
-      : (saved === "dark" || saved === "light") 
-        ? saved 
-        : (document.documentElement.dataset.theme === "dark" ? "dark" : "light");
+    const initial =
+      urlTheme === "dark" || urlTheme === "light"
+        ? urlTheme
+        : saved === "dark" || saved === "light"
+          ? saved
+          : document.documentElement.dataset.theme === "dark"
+            ? "dark"
+            : "light";
 
     setTheme(initial);
     document.documentElement.dataset.theme = initial;
@@ -53,6 +46,7 @@ export function EggThemeToggle() {
   return (
     <div
       className="egg-toggle-container relative flex items-center select-none"
+      suppressHydrationWarning
       title={isLight ? "Đang bật chế độ Sáng (Bấm để chuyển Tối)" : "Đang bật chế độ Tối (Bấm để chuyển Sáng)"}
     >
       <label className="egg-toggle-label relative flex items-center cursor-pointer">
@@ -61,11 +55,12 @@ export function EggThemeToggle() {
           className="sr-only"
           checked={isLight}
           onChange={toggleTheme}
+          suppressHydrationWarning
           aria-label="Chuyển đổi giao diện Sáng / Tối"
         />
 
         {/* Pan Wrapper */}
-        <div className={`pan-switch ${isLight ? "pan-checked" : ""}`}>
+        <div className={`pan-switch ${isLight ? "pan-checked" : ""}`} suppressHydrationWarning>
           {/* Pan Handle on the Left */}
           <div className="pan-handle">
             <span className="pan-handle-neck" />
