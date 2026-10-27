@@ -11,6 +11,12 @@ import { VOCABULARY_DATA } from "../data/koreanData";
 import { SEJONG_TOPIC_VOCABULARY } from "../data/sejongTopicVocabulary";
 import { speakKorean } from "../lib/koreanSpeech";
 import { ApiClient } from "../lib/apiClient";
+import { searchLearningDictionary } from "../lib/dictionarySearch";
+import { useTranslationLanguage } from "../lib/translationPreference";
+
+function normalizeSearchText(value: string) {
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase().replace(/đ/g, "d");
+}
 
 export default function Home() {
   const router = useRouter();
@@ -18,6 +24,8 @@ export default function Home() {
   const [dailyMissionCount, setDailyMissionCount] = React.useState(0);
   const [showWelcome, setShowWelcome] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
+  const [searchResults, setSearchResults] = React.useState<Array<{ korean: string; meaning: string; language: string; example?: string; translation?: string }>>([]);
+  const [translationLanguage] = useTranslationLanguage();
 
   const searchPool = React.useMemo(() => {
     const list = [
@@ -42,13 +50,33 @@ export default function Home() {
     return Array.from(unique.values());
   }, []);
 
-  const searchResults = React.useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-    if (!q) return [];
-    return searchPool
-      .filter((item) => item.korean.toLowerCase().includes(q) || item.meaning.toLowerCase().includes(q))
-      .slice(0, 5);
-  }, [searchQuery, searchPool]);
+  React.useEffect(() => {
+    const query = searchQuery.trim();
+    if (!query) { setSearchResults([]); return; }
+    let cancelled = false;
+    const timer = window.setTimeout(() => {
+      void searchLearningDictionary(query, 30).then((entries) => {
+        if (cancelled) return;
+        if (entries.length) {
+          setSearchResults(entries.slice(0, 5).map((entry) => {
+            const selectedMeaning = translationLanguage === "vi" ? entry.vietnamese : translationLanguage === "en" ? entry.english : entry.japanese;
+            const fallbackMeaning = entry.vietnamese || entry.english || entry.japanese;
+            const language = selectedMeaning ? translationLanguage.toUpperCase() : entry.vietnamese ? "VI" : entry.english ? "EN" : "JA";
+            return { korean: entry.hangul, meaning: selectedMeaning || fallbackMeaning || "Chưa có nghĩa trong dữ liệu", language };
+          }));
+          return;
+        }
+        const q = normalizeSearchText(query);
+        setSearchResults(searchPool.filter((item) => [item.korean, item.meaning].some((value) => normalizeSearchText(value).includes(q))).slice(0, 5).map((item) => ({ ...item, language: "VI" })));
+      }).catch(() => {
+        if (!cancelled) {
+          const q = normalizeSearchText(query);
+          setSearchResults(searchPool.filter((item) => [item.korean, item.meaning].some((value) => normalizeSearchText(value).includes(q))).slice(0, 5).map((item) => ({ ...item, language: "VI" })));
+        }
+      });
+    }, 180);
+    return () => { cancelled = true; window.clearTimeout(timer); };
+  }, [searchQuery, searchPool, translationLanguage]);
 
   // Nếu chưa đăng nhập thì tự động chuyển hướng sang trang đăng nhập /login
   React.useEffect(() => {
@@ -206,7 +234,7 @@ export default function Home() {
               <span>Tra Từ Vựng</span>
             </h3>
             <p className="text-xs text-slate-400 font-medium max-w-md mx-auto">
-              Tra cứu nhanh nghĩa tiếng Việt, câu ví dụ và phát âm chuẩn giọng Seoul
+              Tra từ và xem nghĩa {translationLanguage === "vi" ? "tiếng Việt" : translationLanguage === "en" ? "tiếng Anh" : "tiếng Nhật"}, phát âm chuẩn giọng Seoul
             </p>
           </div>
 
@@ -251,7 +279,7 @@ export default function Home() {
                           <Volume2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
-                      <p className="text-xs sm:text-sm font-semibold text-blue-300">{item.meaning}</p>
+                      <p className="text-xs sm:text-sm font-semibold text-blue-300"><span className="mr-1 text-[10px]">{item.language} ·</span>{item.meaning}</p>
                       {item.example && (
                         <p className="text-[11px] text-slate-400 font-normal">
                           {item.example} {item.translation ? `— ${item.translation}` : ""}
