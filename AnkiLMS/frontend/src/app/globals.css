@@ -30,7 +30,19 @@
     font-family: 'Inter', 'Noto Sans KR', system-ui, -apple-system, sans-serif;
     -webkit-tap-highlight-color: transparent;
     overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.25s ease, border-color 0.3s ease;
   }
+}
+
+/* Smooth View Transition for Theme Toggle */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.35s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+header, aside, main {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.25s ease;
 }
 
 /* User-selectable appearance. Keep contrast predictable across Tailwind utility colors. */
