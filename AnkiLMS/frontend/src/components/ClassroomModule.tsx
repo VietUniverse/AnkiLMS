@@ -32,7 +32,7 @@ import {
 } from "lucide-react";
 import { ApiClient, UserProfile } from "../lib/apiClient";
 import { useApp } from "../contexts/AppProvider";
-import { THTH_DECKS } from "../data/ththDecks";
+import { THTH_CURRICULUM_DECKS } from "../data/ththCurriculum";
 import { AnkiDeck, AnkiParser } from "../lib/ankiParser";
 
 export interface ClassMember {
@@ -106,7 +106,9 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser })
   // Assign Deck Modal
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [assignTitle, setAssignTitle] = useState("");
-  const [assignDeckId, setAssignDeckId] = useState(`builtin:${THTH_DECKS[0]?.id || ""}`);
+  const [assignDeckId, setAssignDeckId] = useState(`builtin:${THTH_CURRICULUM_DECKS[0]?.id || ""}`);
+  const [assignBookFilter, setAssignBookFilter] = useState("1");
+  const [assignTopicFilter, setAssignTopicFilter] = useState("all");
   const [uploadedAssignmentDecks, setUploadedAssignmentDecks] = useState<AnkiDeck[]>([]);
   const [parsingAssignmentApkg, setParsingAssignmentApkg] = useState(false);
   const [assignDueDate, setAssignDueDate] = useState("");
@@ -118,25 +120,28 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser })
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   const assignmentDecks = [
-    ...THTH_DECKS.map((deck) => ({ id: `builtin:${deck.id}`, name: deck.name.replaceAll("::", " · "), mediaAssets: [], cards: deck.cards.map((card) => ({
+    ...THTH_CURRICULUM_DECKS.map((deck) => ({ id: `builtin:${deck.id}`, name: deck.name.replaceAll("::", " · "), book: deck.book, topic: deck.topic, difficulty: deck.difficulty, mediaAssets: [], cards: deck.cards.map((card) => ({
       id: Number(card.id), korean: String(card.word || "").replace(/<[^>]*>/g, "").trim(),
       meaning: String(card.meaning || "").replace(/<[^>]*>/g, "").trim(),
       example: String(card.example || "").replace(/<[^>]*>/g, "").trim(), pronunciation: card.transliteration || "",
       mediaRefs: [] as string[],
     })) })),
-    ...userDecks.map((deck) => ({ id: `anki:${deck.id}`, name: `Anki · ${deck.name}`, mediaAssets: deck.mediaAssets || [], cards: deck.cards.map((card) => ({
+    ...userDecks.map((deck) => ({ id: `anki:${deck.id}`, name: `Anki · ${deck.name}`, book: 0, topic: "Bộ Anki đã nhập", difficulty: "Anki cá nhân", mediaAssets: deck.mediaAssets || [], cards: deck.cards.map((card) => ({
       id: Number(card.id), korean: (card.koreanText || card.frontText || "").replace(/<[^>]*>/g, "").trim(),
       meaning: (card.vietnameseMeaning || card.backText || "").replace(/<[^>]*>/g, "").trim(),
       example: (card.exampleSentence || "").replace(/<[^>]*>/g, "").trim(), pronunciation: card.romanization || "",
       mediaRefs: card.mediaRefs || [],
     })) })),
-    ...uploadedAssignmentDecks.map((deck) => ({ id: `upload:${deck.id}`, name: `Anki · ${deck.name}`, mediaAssets: deck.mediaAssets || [], cards: deck.cards.map((card) => ({
+    ...uploadedAssignmentDecks.map((deck) => ({ id: `upload:${deck.id}`, name: `Anki · ${deck.name}`, book: 0, topic: "Bộ Anki đã tải lên", difficulty: "Anki cá nhân", mediaAssets: deck.mediaAssets || [], cards: deck.cards.map((card) => ({
       id: Number(card.id), korean: (card.koreanText || card.frontText || "").replace(/<[^>]*>/g, "").trim(),
       meaning: (card.vietnameseMeaning || card.backText || "").replace(/<[^>]*>/g, "").trim(),
       example: (card.exampleSentence || "").replace(/<[^>]*>/g, "").trim(), pronunciation: card.romanization || "",
       mediaRefs: card.mediaRefs || [],
     })) })),
   ].filter((deck) => deck.cards.length > 0);
+  const builtinAssignmentDecks = assignmentDecks.filter((deck) => deck.book > 0);
+  const assignmentTopics = Array.from(new Set(builtinAssignmentDecks.filter((deck) => deck.book === Number(assignBookFilter)).map((deck) => deck.topic))).sort((a, b) => a.localeCompare(b, "vi"));
+  const visibleAssignmentDecks = assignmentDecks.filter((deck) => deck.book === 0 || (deck.book === Number(assignBookFilter) && (assignTopicFilter === "all" || deck.topic === assignTopicFilter)));
   const selectedAssignmentDeck = assignmentDecks.find((deck) => deck.id === assignDeckId) || assignmentDecks[0];
 
   // Classes are shared server-side so teachers and learners see the same state.
@@ -766,19 +771,49 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser })
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-slate-300 block mb-1">Chọn Bộ Thẻ Anki</label>
+                  <label className="text-xs font-bold text-slate-300 block mb-1">Nguồn thẻ có sẵn · lọc theo quyển/độ khó</label>
+                  <div className="mb-2 grid grid-cols-2 gap-2">
+                    <select
+                      value={assignBookFilter}
+                      onChange={(event) => {
+                        const nextBook = event.target.value;
+                        setAssignBookFilter(nextBook);
+                        setAssignTopicFilter("all");
+                        const firstDeck = builtinAssignmentDecks.find((deck) => deck.book === Number(nextBook));
+                        if (firstDeck) setAssignDeckId(firstDeck.id);
+                      }}
+                      className="min-w-0 rounded-xl border border-[#1e3a70] bg-[#132247] px-3 py-2.5 text-[11px] font-bold text-white"
+                    >
+                      <option value="1">Quyển 1 · Sơ cấp 1 · TOPIK 1–2</option>
+                      <option value="2">Quyển 2 · Sơ cấp 2 · TOPIK 2–3</option>
+                    </select>
+                    <select
+                      value={assignTopicFilter}
+                      onChange={(event) => {
+                        const nextTopic = event.target.value;
+                        setAssignTopicFilter(nextTopic);
+                        const firstDeck = builtinAssignmentDecks.find((deck) => deck.book === Number(assignBookFilter) && (nextTopic === "all" || deck.topic === nextTopic));
+                        if (firstDeck) setAssignDeckId(firstDeck.id);
+                      }}
+                      className="min-w-0 rounded-xl border border-[#1e3a70] bg-[#132247] px-3 py-2.5 text-[11px] font-bold text-white"
+                    >
+                      <option value="all">Tất cả chủ đề trong quyển</option>
+                      {assignmentTopics.map((topic) => <option key={topic} value={topic}>{topic}</option>)}
+                    </select>
+                  </div>
+                  <label className="text-xs font-bold text-slate-300 block mb-1">Chọn chủ đề/bộ thẻ để giao</label>
                   <select
-                    value={selectedAssignmentDeck?.id || ""}
+                    value={visibleAssignmentDecks.some((deck) => deck.id === assignDeckId) ? assignDeckId : visibleAssignmentDecks[0]?.id || ""}
                     onChange={(e) => setAssignDeckId(e.target.value)}
                     className="w-full px-3.5 py-2.5 rounded-xl bg-[#132247] border border-[#1e3a70] text-white text-xs font-bold"
                   >
-                    {assignmentDecks.map((deck) => (
+                    {visibleAssignmentDecks.map((deck) => (
                       <option key={deck.id} value={deck.id} disabled={deck.cards.filter((card) => card.korean && card.meaning).length === 0 || deck.cards.filter((card) => card.korean && card.meaning).length > 500}>
-                        {deck.name} · {deck.cards.filter((card) => card.korean && card.meaning).length} thẻ
+                        {deck.book ? `${deck.topic} · ${deck.name.split(" · ").slice(1, 3).join(" · ")} · ${deck.difficulty}` : deck.name} · {deck.cards.filter((card) => card.korean && card.meaning).length} thẻ
                       </option>
                     ))}
                   </select>
-                  <p className="mt-2 text-[10px] leading-4 text-slate-500">Tải file .apkg tại đây để đính kèm ảnh và âm thanh cho học sinh. Media được lưu riêng theo bài trên Cloudflare; tối đa 500 thẻ và 60 MB media mỗi bài.</p>
+                  <p className="mt-2 text-[10px] leading-4 text-slate-500">Thư viện có sẵn gồm từ, nghĩa, từ loại và ví dụ theo chủ đề. Để chia sẻ ảnh/âm thanh gốc của Anki, tải file .apkg bên dưới. Mỗi bài tối đa 500 thẻ và 60 MB media.</p>
                 </div>
 
                 <label className="block rounded-xl border border-dashed border-sky-500/40 bg-sky-950/20 p-3 text-center text-xs font-bold text-sky-200 cursor-pointer hover:bg-sky-900/30">

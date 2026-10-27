@@ -4,7 +4,7 @@ import React, { useState, useMemo, useEffect, useRef, useCallback } from "react"
 import DOMPurify from "dompurify";
 import { useSearchParams } from "next/navigation";
 import { VOCABULARY_DATA } from "../data/koreanData";
-import { THTH_DECKS } from "../data/ththDecks";
+import { THTH_CURRICULUM_DECKS } from "../data/ththCurriculum";
 import { AnkiDeck } from "../lib/ankiParser";
 import { useApp } from "../contexts/AppProvider";
 import {
@@ -59,6 +59,7 @@ export interface VocabularyCard {
 export interface DeckTreeNode {
   id: string;
   title: string;
+  subtitle?: string;
   cards: VocabularyCard[];
   children?: DeckTreeNode[];
 }
@@ -135,6 +136,27 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const [showFsrsDetailed, setShowFsrsDetailed] = useState<boolean>(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const answerShownAtRef = useRef(0);
+  const lastRatedCardRef = useRef<string | null>(null);
+  const srsActivityRef = useRef({ reviewed: 0, correct: 0, startedAt: 0, submitted: false });
+
+  const revealAnswer = useCallback(() => {
+    if (!isFlipped) answerShownAtRef.current = Date.now();
+    setIsFlipped(true);
+  }, [isFlipped]);
+
+  const finishSrsActivity = useCallback(() => {
+    const activity = srsActivityRef.current;
+    if (!currentUser || activity.submitted || activity.reviewed < 1) return;
+    activity.submitted = true;
+    const durationSeconds = Math.min(14_400, Math.max(1, Math.round((Date.now() - activity.startedAt) / 1000)));
+    void ApiClient.recordStudySession("srs", activity.reviewed, activity.correct, 1, durationSeconds).catch(() => {});
+  }, [currentUser]);
+
+  useEffect(() => {
+    answerShownAtRef.current = 0;
+    lastRatedCardRef.current = null;
+  }, [currentCardIndex, activeDeckTitle]);
 
   // Initialize storage
   useEffect(() => {
@@ -168,12 +190,13 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
     const booksMap = new Map<string, Map<string, { id: string; title: string; cards: VocabularyCard[] }[]>>();
 
-    THTH_DECKS.forEach((d) => {
+    THTH_CURRICULUM_DECKS.forEach((d) => {
       const parts = d.name.split("::");
       // e.g. ["Tiếng Hàn Tổng Hợp", "Quyển 01", "Bài 01", "1. Quốc gia (나라)"]
       const rawBook = parts[1]?.trim() || "Quyển 01";
       const bookNum = rawBook.match(/\d+/)?.[0] || "1";
-      const bookTitle = `Tiếng Hàn Tổng Hợp ${parseInt(bookNum, 10)}`;
+      const bookNumber = parseInt(bookNum, 10);
+      const bookTitle = `Tiếng Hàn Tổng Hợp ${bookNumber}`;
       const lessonTitle = parts[2]?.trim() || "Bài 01";
       const subdeckTitle = parts[3]?.trim() || parts[parts.length - 1];
 
@@ -193,6 +216,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
     // Build Book Nodes -> Lesson Nodes -> Sub-deck Nodes
     booksMap.forEach((lessonsMap, bookTitle) => {
+      const rootBookNumber = Number(bookTitle.match(/\d+$/)?.[0] || 1);
       const lessonNodes: DeckTreeNode[] = [];
       const allBookCards: VocabularyCard[] = [];
 
@@ -219,6 +243,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       rootNodes.push({
         id: bookId,
         title: bookTitle,
+        subtitle: rootBookNumber === 1 ? "Sơ cấp 1 · TOPIK 1–2" : "Sơ cấp 2 · TOPIK 2–3",
         cards: allBookCards,
         children: lessonNodes,
       });
@@ -310,6 +335,9 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     setIsFlipped(false);
     setTypedInput("");
     setViewMode("study");
+    answerShownAtRef.current = 0;
+    lastRatedCardRef.current = null;
+    srsActivityRef.current = { reviewed: 0, correct: 0, startedAt: Date.now(), submitted: false };
 
     setLastStudiedDeckId(deckId);
     setLastStudiedTitle(title);
@@ -414,10 +442,11 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   }, [deckTree, searchQuery, filterTree]);
 
   const exitStudy = useCallback(() => {
+    finishSrsActivity();
     setViewMode("dashboard");
     setIsFlipped(false);
     setTypedInput("");
-  }, []);
+  }, [finishSrsActivity]);
 
   // Sync active study session to global Navbar
   useEffect(() => {
@@ -450,6 +479,11 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const handleResponse = useCallback((isMastered: boolean, customRating?: FSRSRating) => {
     if (!currentCard) return;
     const wordKey = currentCard.word;
+    const activeKey = `${currentCard.deckName || "deck"}_${currentCard.id}`;
+    if (lastRatedCardRef.current === activeKey || Date.now() - answerShownAtRef.current < 450) return;
+    lastRatedCardRef.current = activeKey;
+    srsActivityRef.current.reviewed += 1;
+    if (isMastered) srsActivityRef.current.correct += 1;
 
     // Update Mastered & Review Lists
     if (isMastered) {
@@ -476,9 +510,9 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       });
     }
 
+    // Ignore key repeats/double clicks on the same card and enforce a short recall window.
     // FSRS 4.5 calculation
     const rating: FSRSRating = customRating || (isMastered ? "good" : "again");
-    const activeKey = `${currentCard.deckName || "deck"}_${currentCard.id}`;
     const curState = cardStateMap[activeKey] || {
       interval: 1,
       reps: 0,
@@ -509,9 +543,10 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       setCurrentCardIndex((i) => i + 1);
     } else {
       // Finished deck
+      finishSrsActivity();
       setViewMode("dashboard");
     }
-  }, [currentCard, cardStateMap, currentUser, activeDeckTitle, currentCardIndex, activeCardsList.length]);
+  }, [currentCard, cardStateMap, currentUser, activeDeckTitle, currentCardIndex, activeCardsList.length, finishSrsActivity]);
 
   // Give typing hint
   const handleGiveHint = () => {
@@ -521,7 +556,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       const nextTyped = typedInput + target[typedInput.length];
       setTypedInput(nextTyped);
       if (nextTyped.trim().normalize("NFC") === target.normalize("NFC")) {
-        setIsFlipped(true);
+        revealAnswer();
         inputRef.current?.blur();
       } else {
         inputRef.current?.focus();
@@ -534,6 +569,10 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     if (viewMode !== "study") return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.repeat && (e.key === " " || e.key === "Enter")) {
+        e.preventDefault();
+        return;
+      }
       if (modalImage) {
         if (e.key === "Escape") setModalImage(null);
         return;
@@ -543,7 +582,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       if (studyMode === "typing" && document.activeElement === inputRef.current && !isFlipped) {
         if (e.key === "Enter") {
           e.preventDefault();
-          setIsFlipped(true);
+          revealAnswer();
           inputRef.current?.blur();
         }
         return;
@@ -559,7 +598,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       // Flip: Space or Enter (when not flipped)
       if (!isFlipped && (e.key === " " || e.key === "Enter")) {
         e.preventDefault();
-        setIsFlipped(true);
+        revealAnswer();
         inputRef.current?.blur();
         return;
       }
@@ -585,7 +624,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [viewMode, isFlipped, studyMode, modalImage, playCurrentSound, handleResponse]);
+  }, [viewMode, isFlipped, studyMode, modalImage, playCurrentSound, handleResponse, revealAnswer]);
 
   // Auto-focus input when in typing mode and not flipped
   useEffect(() => {
@@ -664,6 +703,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
               }`}
             >
               <span>{node.title}</span>
+              {node.subtitle && <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[9px] font-bold text-sky-800 dark:bg-sky-950/60 dark:text-sky-300">{node.subtitle}</span>}
               {hasChildren && (
                 <span className="text-[10px] font-mono font-normal px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 text-stone-500 opacity-0 group-hover:opacity-100 transition-opacity">
                   Học cả mục ({stats.total})
@@ -1125,14 +1165,14 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                             setTypedInput(val);
                             const target = cleanTextOnly(currentCard.word);
                             if (val.trim().normalize("NFC") === target.normalize("NFC")) {
-                              setIsFlipped(true);
+                              revealAnswer();
                               inputRef.current?.blur();
                             }
                           }}
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {
                               e.preventDefault();
-                              setIsFlipped(true);
+                              revealAnswer();
                               inputRef.current?.blur();
                             }
                           }}
@@ -1169,7 +1209,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                 /* Trạng thái 1: Chưa lật -> Nút Hiện Đáp Án */
                 <button
                   onClick={() => {
-                    setIsFlipped(true);
+                    revealAnswer();
                     inputRef.current?.blur();
                   }}
                   className="w-full h-12 rounded-xl bg-stone-900 hover:bg-stone-800 dark:bg-white dark:hover:bg-stone-100 text-white dark:text-stone-900 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition shadow-xs cursor-pointer"

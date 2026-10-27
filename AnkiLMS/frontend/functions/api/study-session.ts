@@ -59,16 +59,17 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const recentSessions = await env.DB.prepare(
       "SELECT COUNT(*) AS total FROM study_sessions WHERE user_id = ? AND created_at >= datetime('now', '-1 hour')",
     ).bind(user.id).first<{ total: number }>();
-    if ((recentSessions?.total || 0) >= 30) return errorResponse("Bạn đã đạt giới hạn phiên học trong giờ này. Hãy nghỉ một chút rồi học tiếp nhé.", 429);
+    if ((recentSessions?.total || 0) >= 20) return errorResponse("Bạn đã đạt giới hạn phiên học trong giờ này. Hãy nghỉ một chút rồi học tiếp nhé.", 429);
 
     const dailyReward = await env.DB.prepare(
       "SELECT COALESCE(SUM(xp_earned), 0) AS total FROM study_sessions WHERE user_id = ? AND date(created_at, '+7 hours') = ?",
     ).bind(user.id, todayStr).first<{ total: number }>();
-    const availableDailyXp = Math.max(0, 300 - (dailyReward?.total || 0));
-    if (availableDailyXp === 0) return errorResponse("Bạn đã nhận đủ XP học tập trong hôm nay. Mai mình tiếp tục nhé!", 429);
+    const availableDailyXp = Math.max(0, 40 - (dailyReward?.total || 0));
 
     // XP is derived on the server; a modified browser cannot choose its own reward.
-    const xpEarned = Math.min(availableDailyXp, 25, Math.max(2, Math.min(correctCount, 10) * 2 + Math.min(Math.floor(durationSeconds / 60), 15)));
+    // A normal activity is worth 1 XP. A longer, completed session can earn 2 XP.
+    // The daily ceiling prevents repeated short sessions from dominating the leaderboard.
+    const xpEarned = Math.min(availableDailyXp, cardsReviewed >= 10 && correctCount >= 5 && durationSeconds >= 60 ? 2 : 1);
     const gemsEarned = Math.floor(xpEarned / 5);
     const sessionId = `ses_${crypto.randomUUID()}`;
     const durationMinutes = Math.ceil(durationSeconds / 60);
