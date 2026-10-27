@@ -453,25 +453,28 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Heatmap Vườn Hoa - Thiết Kế Sang Trọng, Tinh Tế Chuẩn GitHub & Executive Dashboard */}
+        {/* Heatmap Vườn Hoa - Thiết Kế Pixel Art Chuẩn New Cards Farm & GitHub */}
         <div className="relative rounded-3xl p-6 sm:p-7 bg-[#090f1e] text-white shadow-2xl border border-slate-800/40 space-y-5 overflow-hidden animate-fadeIn">
           {/* Hào quang nền dịu nhẹ sang trọng */}
-          <div className="pointer-events-none absolute -right-20 -top-20 w-72 h-72 rounded-full bg-rose-500/5 blur-3xl" />
+          <div className="pointer-events-none absolute -right-20 -top-20 w-72 h-72 rounded-full bg-amber-500/5 blur-3xl" />
           <div className="pointer-events-none absolute -left-20 -bottom-20 w-72 h-72 rounded-full bg-emerald-500/5 blur-3xl" />
 
           {/* Header Dashboard Tinh Tế */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 relative z-10">
             <div className="space-y-1">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-rose-500/20 to-pink-500/10 border border-rose-500/30 flex items-center justify-center p-1.5 shadow-sm">
-                  <GardenFlower stage={3} className="w-full h-full" animate={false} />
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500/20 to-yellow-500/10 border border-amber-500/30 flex items-center justify-center p-1 shadow-sm">
+                  <img src="/farm/farmer/Farmer_A.png" alt="Farmer" className="w-6 h-6 pixelated" />
                 </div>
                 <div>
                   <h3 className="text-base sm:text-lg font-black tracking-tight text-white flex items-center gap-2">
                     <span>Vườn Hoa Hoạt Động</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-300 font-bold uppercase tracking-wider">
+                      Pixel Farm
+                    </span>
                   </h3>
                   <p className="text-xs text-slate-400 font-medium">
-                    Mỗi ngày chuyên cần là một đóa hoa bung nở theo chu kỳ học tập
+                    Mỗi ngày chuyên cần là một đóa hoa hướng dương bung nở theo chu kỳ học tập
                   </p>
                 </div>
               </div>
@@ -488,8 +491,8 @@ export default function Home() {
                 <span>{showDemo ? "Vườn mẫu (Demo)" : "Dữ liệu thực tế"}</span>
                 <span className="text-[10px] text-slate-400 font-normal">({showDemo ? "Đổi sang thật" : "Xem mẫu"})</span>
               </button>
-              <div className="text-xs font-bold px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center gap-1.5 shadow-sm">
-                <span>🌸</span>
+              <div className="text-xs font-bold px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 flex items-center gap-1.5 shadow-sm">
+                <img src="/farm/Garden/sunflower_03.png" alt="Sunflower" className="w-4 h-4 pixelated" />
                 <span>{githubHeatmap.activeDaysCount} ngày rực rỡ</span>
               </div>
             </div>
@@ -505,7 +508,7 @@ export default function Home() {
                   {githubHeatmap.weeks.map((_, wIdx) => {
                     const monthEntry = githubHeatmap.monthLabels.find((m) => m.weekIndex === wIdx);
                     return (
-                      <div key={wIdx} className="w-4 sm:w-4.5 shrink-0 relative overflow-visible">
+                      <div key={wIdx} className="w-5 sm:w-5.5 shrink-0 relative overflow-visible">
                         {monthEntry && (
                           <span className="absolute left-0 top-0 whitespace-nowrap font-bold text-slate-400 uppercase tracking-wider text-[10px]">
                             {monthEntry.label}
@@ -521,13 +524,13 @@ export default function Home() {
               <div className="flex gap-1.5 sm:gap-2 items-center">
                 {/* Cột Thứ */}
                 <div className="flex flex-col gap-1 sm:gap-1.5 text-[9px] sm:text-[10px] font-mono text-slate-500 select-none pr-1">
-                  <span className="w-6 sm:w-7 h-4 sm:h-4.5 flex items-center justify-end opacity-0">CN</span>
-                  <span className="w-6 sm:w-7 h-4 sm:h-4.5 flex items-center justify-end">T2</span>
-                  <span className="w-6 sm:w-7 h-4 sm:h-4.5 flex items-center justify-end opacity-0">T3</span>
-                  <span className="w-6 sm:w-7 h-4 sm:h-4.5 flex items-center justify-end">T4</span>
-                  <span className="w-6 sm:w-7 h-4 sm:h-4.5 flex items-center justify-end opacity-0">T5</span>
-                  <span className="w-6 sm:w-7 h-4 sm:h-4.5 flex items-center justify-end">T6</span>
-                  <span className="w-6 sm:w-7 h-4 sm:h-4.5 flex items-center justify-end opacity-0">T7</span>
+                  <span className="w-6 sm:w-7 h-5 sm:h-5.5 flex items-center justify-end opacity-0">CN</span>
+                  <span className="w-6 sm:w-7 h-5 sm:h-5.5 flex items-center justify-end">T2</span>
+                  <span className="w-6 sm:w-7 h-5 sm:h-5.5 flex items-center justify-end opacity-0">T3</span>
+                  <span className="w-6 sm:w-7 h-5 sm:h-5.5 flex items-center justify-end">T4</span>
+                  <span className="w-6 sm:w-7 h-5 sm:h-5.5 flex items-center justify-end opacity-0">T5</span>
+                  <span className="w-6 sm:w-7 h-5 sm:h-5.5 flex items-center justify-end">T6</span>
+                  <span className="w-6 sm:w-7 h-5 sm:h-5.5 flex items-center justify-end opacity-0">T7</span>
                 </div>
 
                 {/* Các Cột Tuần */}
@@ -539,7 +542,7 @@ export default function Home() {
                           return (
                             <div
                               key={day.dateStr}
-                              className="w-4 h-4 sm:w-4.5 sm:h-4.5 rounded-[4px] opacity-0 pointer-events-none"
+                              className="w-5 h-5 sm:w-5.5 sm:h-5.5 rounded-[4px] opacity-0 pointer-events-none"
                             />
                           );
                         }
@@ -557,20 +560,20 @@ export default function Home() {
 
                         const statusText =
                           stage === 3
-                            ? "🌸 Hoa nở rực rỡ"
+                            ? "🌻 Hoa hướng dương nở rộ"
                             : stage === 2
-                            ? "🌷 Nụ hoa e ấp"
+                            ? "🌿 Nụ hoa vươn cao"
                             : stage === 1
-                            ? "🌱 Mầm non vươn nhú"
-                            : "Ô đất tĩnh (chờ gieo mầm)";
+                            ? "🌱 Mầm non nhú đất"
+                            : "Ô đất trống (chờ gieo hạt)";
 
                         return (
                           <div
                             key={day.dateStr}
                             title={`${day.dateStr} (${statusText}): ${day.match ? `${day.match.time_spent_minutes} phút học, +${day.match.xp_earned} XP` : "Chưa học"}`}
-                            className={`garden-cell garden-cell-${stage} w-4 h-4 sm:w-4.5 sm:h-4.5 p-0.5 cursor-pointer`}
+                            className={`garden-cell garden-cell-${stage} w-5 h-5 sm:w-5.5 sm:h-5.5 p-0.5 cursor-pointer`}
                           >
-                            <GardenFlower stage={stage} className="w-full h-full" />
+                            <GardenFlower stage={stage} theme="sunflower" className="w-full h-full" />
                           </div>
                         );
                       })}
@@ -586,20 +589,20 @@ export default function Home() {
             {/* Thống kê từng nấc sinh trưởng */}
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 sm:gap-3 text-xs">
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800/40 border border-slate-700/40 text-slate-300">
-                <span className="w-2 h-2 rounded-full bg-slate-500" />
-                <span className="text-slate-400">Chưa học</span>
+                <span className="w-2.5 h-2.5 rounded-sm bg-stone-500/40 border border-stone-600/50 inline-block" />
+                <span className="text-slate-400">Ô đất trống</span>
               </div>
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-                <span>🌱</span>
+                <img src="/farm/Garden/sunflower_01.png" alt="Mầm" className="w-4 h-4 pixelated" />
                 <span><b>{stageStats.sprouts}</b> Mầm (&lt;20p)</span>
               </div>
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-pink-500/10 border border-pink-500/20 text-pink-400">
-                <span>🌷</span>
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-400">
+                <img src="/farm/Garden/sunflower_02.png" alt="Nụ" className="w-4 h-4 pixelated" />
                 <span><b>{stageStats.buds}</b> Nụ (20–39p)</span>
               </div>
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-300">
-                <span>🌸</span>
-                <span><b>{stageStats.blooms}</b> Hoa (40p+)</span>
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-300">
+                <img src="/farm/Garden/sunflower_03.png" alt="Hoa" className="w-4 h-4 pixelated" />
+                <span><b>{stageStats.blooms}</b> Hoa nở (40p+)</span>
               </div>
             </div>
 
@@ -607,17 +610,17 @@ export default function Home() {
             <div className="flex items-center gap-2 text-xs text-slate-400">
               <span className="text-[11px] font-medium text-slate-500">Ít</span>
               <div className="flex items-center gap-1">
-                <div className="garden-cell garden-cell-0 w-3.5 h-3.5 p-0.5" title="Chưa học">
-                  <GardenFlower stage={0} className="w-full h-full" animate={false} />
+                <div className="garden-cell garden-cell-0 w-4 h-4 p-0.5" title="Chưa học (Ô đất trống)">
+                  <GardenFlower stage={0} theme="sunflower" className="w-full h-full" animate={false} />
                 </div>
-                <div className="garden-cell garden-cell-1 w-3.5 h-3.5 p-0.5" title="Mầm non (<20p)">
-                  <GardenFlower stage={1} className="w-full h-full" animate={false} />
+                <div className="garden-cell garden-cell-1 w-4 h-4 p-0.5" title="Mầm non (<20p)">
+                  <GardenFlower stage={1} theme="sunflower" className="w-full h-full" animate={false} />
                 </div>
-                <div className="garden-cell garden-cell-2 w-3.5 h-3.5 p-0.5" title="Nụ hoa (20–39p)">
-                  <GardenFlower stage={2} className="w-full h-full" animate={false} />
+                <div className="garden-cell garden-cell-2 w-4 h-4 p-0.5" title="Nụ hoa (20–39p)">
+                  <GardenFlower stage={2} theme="sunflower" className="w-full h-full" animate={false} />
                 </div>
-                <div className="garden-cell garden-cell-3 w-3.5 h-3.5 p-0.5" title="Hoa nở rực rỡ (40p+)">
-                  <GardenFlower stage={3} className="w-full h-full" animate={false} />
+                <div className="garden-cell garden-cell-3 w-4 h-4 p-0.5" title="Hoa nở rực rỡ (40p+)">
+                  <GardenFlower stage={3} theme="sunflower" className="w-full h-full" animate={false} />
                 </div>
               </div>
               <span className="text-[11px] font-medium text-slate-500">Nhiều</span>
