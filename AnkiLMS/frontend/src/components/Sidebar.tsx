@@ -59,7 +59,6 @@ const mainNav = [
 
 const communityNav = [
   { href: "/leaderboard", label: "Bảng xếp hạng", icon: Trophy, feature: "leaderboard" },
-  { href: "/achievements", label: "Huy hiệu & Mốc thưởng", icon: Award, feature: "achievements" },
   { href: "/feedback", label: "Góp ý & Đánh giá", icon: MessageSquareHeart, feature: "feedback" },
 ] as const;
 
@@ -70,6 +69,7 @@ const betaNav = [
   { href: "/lessons", label: "Lộ trình bài học", icon: BookOpen, badge: "BETA", feature: "lessons" },
   { href: "/ai-speaking", label: "Luyện nói tiếng Hàn", icon: Mic, badge: "BETA", feature: "aiSpeaking" },
   { href: "/topik", label: "Luyện thi TOPIK I/II", icon: GraduationCap, badge: "BETA", feature: "topik" },
+  { href: "/achievements", label: "Huy hiệu & Mốc thưởng", icon: Award, badge: "BETA", feature: "achievements" },
   { href: "/community", label: "Cộng đồng Haechi", icon: MessageSquare, badge: "BETA", feature: "community" },
   { href: "/chat", label: "Phòng Trò chuyện", icon: MessagesSquare, badge: "BETA", feature: "chat" },
   { href: "/rewards", label: "Cửa hàng Đổi quà", icon: ShoppingBag, badge: "BETA", feature: "rewards" },
