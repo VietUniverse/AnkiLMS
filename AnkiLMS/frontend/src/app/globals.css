@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./egg-toggle.css";
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *, .dark, .dark *));
 
 @layer base {
   :root {
@@ -182,11 +183,20 @@ html[data-theme="light"] button[class*="bg-blue-"][class*="text-white"],
 html[data-theme="light"] button[class*="bg-purple-"][class*="text-white"],
 html[data-theme="light"] button[class*="bg-violet-"][class*="text-white"],
 html[data-theme="light"] button[class*="bg-rose-"][class*="text-white"],
+html[data-theme="light"] body:not(:has(.login-page-root)) button[class~="bg-stone-900"],
+html[data-theme="light"] body:not(:has(.login-page-root)) button[class~="bg-stone-900"] *,
+html[data-theme="light"] body:not(:has(.login-page-root)) .srs-btn-dark,
+html[data-theme="light"] body:not(:has(.login-page-root)) .srs-btn-dark *,
 html[data-theme="light"] a[class*="bg-blue-600"],
 html[data-theme="light"] a[class*="bg-blue-600"] *,
 html[data-theme="light"] button[class~="bg-stone-900"],
 html[data-theme="light"] button[class~="bg-stone-900"] *,
 html[data-theme="light"] a[class*="bg-gradient-to"] [class*="text-white"] {
+  color: #fff !important;
+}
+
+html[data-theme="light"] body:not(:has(.login-page-root)) .srs-btn-dark kbd {
+  border-color: rgba(255, 255, 255, 0.4) !important;
   color: #fff !important;
 }
 

@@ -34,6 +34,11 @@ export default function RootLayout({
     <html lang="vi" data-theme="light" suppressHydrationWarning>
       <head>
         <link rel="apple-touch-icon" href="/favicon.ico" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var p=new URLSearchParams(window.location.search);var t=p.get('theme')||localStorage.getItem('haechivn_theme')||'light';document.documentElement.dataset.theme=t;if(t==='dark'){document.documentElement.classList.add('dark');}else{document.documentElement.classList.remove('dark');}}catch(e){}`,
+          }}
+        />
       </head>
       <body
         suppressHydrationWarning

@@ -2,6 +2,7 @@ export const FEATURE_CATALOG = [
   { key: "classes", label: "Lớp học AnkiVN", description: "Tạo lớp, giao bài và theo dõi tiến độ học viên.", route: "/classes" },
   { key: "hangul", label: "Bảng Hangeul", description: "Bảng chữ cái và luyện đọc Hangeul.", route: "/hangul" },
   { key: "lessons", label: "Lộ trình bài học", description: "Các bài học theo lộ trình tiếng Hàn.", route: "/lessons" },
+  { key: "explore", label: "Khám phá bộ thẻ", description: "Kho bộ thẻ tuyển chọn để thêm vào Flashcards.", route: "/explore" },
   { key: "flashcards", label: "Từ vựng SRS / Ôn Anki", description: "Ôn tập thẻ Anki theo lịch SRS.", route: "/flashcards" },
   { key: "dictionary", label: "Từ điển Hàn–Việt–Anh", description: "Tra cứu từ vựng trong bộ NIKL.", route: "/dictionary" },
   { key: "topics", label: "Học theo chủ đề", description: "Từ vựng và câu mẫu theo chủ đề.", route: "/topics" },
@@ -27,8 +28,41 @@ export const FEATURE_CATALOG = [
 export type FeatureKey = (typeof FEATURE_CATALOG)[number]["key"];
 export type FeatureFlags = Record<FeatureKey, boolean>;
 
+/**
+ * Danh sách các tính năng đang trong giai đoạn thử nghiệm (Beta).
+ * Chỉ hiển thị ở môi trường kiểm thử / dev, tự động ẩn khi lên bản phát hành (Production).
+ */
+export const BETA_FEATURE_KEYS: readonly FeatureKey[] = [
+  "hangul",
+  "topics",
+  "lessons",
+  "aiSpeaking",
+  "topik",
+  "achievements",
+  "community",
+  "chat",
+  "rewards",
+  "referrals",
+  "pricing",
+  "ankiImport",
+] as const;
+
+/**
+ * Cấu hình hiển thị tính năng Thử nghiệm (Beta):
+ * - Khi lên phát hành (Production - process.env.NODE_ENV === "production"):
+ *   Mặc định KHÔNG hiển thị và tắt các tính năng beta này.
+ * - Khi ở môi trường kiểm thử / dev (NODE_ENV !== "production") hoặc bật NEXT_PUBLIC_ENABLE_BETA_FEATURES="true":
+ *   Cho phép hiển thị để kiểm thử.
+ */
+export const IS_BETA_FEATURES_ENABLED: boolean =
+  process.env.NEXT_PUBLIC_ENABLE_BETA_FEATURES === "true" ||
+  (process.env.NODE_ENV !== "production" && process.env.NEXT_PUBLIC_ENABLE_BETA_FEATURES !== "false");
+
 export const DEFAULT_FEATURE_FLAGS = Object.fromEntries(
-  FEATURE_CATALOG.map(({ key }) => [key, true]),
+  FEATURE_CATALOG.map(({ key }) => {
+    const isBeta = BETA_FEATURE_KEYS.includes(key);
+    return [key, isBeta ? IS_BETA_FEATURES_ENABLED : true];
+  }),
 ) as FeatureFlags;
 
 export function featureForPath(pathname: string): FeatureKey | null {

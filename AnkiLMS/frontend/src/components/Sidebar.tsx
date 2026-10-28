@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useApp } from "../contexts/AppProvider";
-import { FeatureKey } from "../lib/featureFlags";
+import { FeatureKey, IS_BETA_FEATURES_ENABLED } from "../lib/featureFlags";
 import { getStudyRank } from "../lib/studyRanks";
 import {
   Home,
@@ -31,6 +31,7 @@ import {
   Gamepad2,
   ListMusic,
   Compass,
+  Layers,
   Search,
   X,
   Menu,
@@ -47,7 +48,7 @@ interface SidebarProps {
 
 const mainNav = [
   { href: "/", label: "Trang chủ", icon: Home },
-  { href: "/hangul", label: "Bảng Hangeul", icon: BookOpen, feature: "hangul" },
+  { href: "/explore", label: "Khám phá", icon: Layers, badge: "MỚI", feature: "explore" },
   { href: "/flashcards", label: "Từ vựng", icon: Brain, feature: "flashcards" },
   { href: "/dictionary", label: "Tra từ điển", icon: Search, feature: "dictionary" },
   { href: "/dictation", label: "Luyện nghe chính tả", icon: Headphones, feature: "dictation" },
@@ -58,16 +59,17 @@ const mainNav = [
 
 const communityNav = [
   { href: "/leaderboard", label: "Bảng xếp hạng", icon: Trophy, feature: "leaderboard" },
-  { href: "/achievements", label: "Huy hiệu & Mốc thưởng", icon: Award, feature: "achievements" },
   { href: "/feedback", label: "Góp ý & Đánh giá", icon: MessageSquareHeart, feature: "feedback" },
 ] as const;
 
 // LƯU Ý BACKEND: Các tính năng Beta đang thử nghiệm UX/UI, không đưa lên production
 const betaNav = [
+  { href: "/hangul", label: "Bảng Hangeul", icon: BookOpen, badge: "BETA", feature: "hangul" },
   { href: "/topics", label: "Học theo chủ đề", icon: Compass, badge: "BETA", feature: "topics" },
   { href: "/lessons", label: "Lộ trình bài học", icon: BookOpen, badge: "BETA", feature: "lessons" },
   { href: "/ai-speaking", label: "Luyện nói tiếng Hàn", icon: Mic, badge: "BETA", feature: "aiSpeaking" },
   { href: "/topik", label: "Luyện thi TOPIK I/II", icon: GraduationCap, badge: "BETA", feature: "topik" },
+  { href: "/achievements", label: "Huy hiệu & Mốc thưởng", icon: Award, badge: "BETA", feature: "achievements" },
   { href: "/community", label: "Cộng đồng Haechi", icon: MessageSquare, badge: "BETA", feature: "community" },
   { href: "/chat", label: "Phòng Trò chuyện", icon: MessagesSquare, badge: "BETA", feature: "chat" },
   { href: "/rewards", label: "Cửa hàng Đổi quà", icon: ShoppingBag, badge: "BETA", feature: "rewards" },
@@ -183,36 +185,38 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-[#132247]/60">
-                <div className="px-3 py-1 flex items-center justify-between">
-                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-purple-400">
-                    TÍNH NĂNG BETA
-                  </span>
-                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">
-                    THỬ NGHIỆM
-                  </span>
+              {IS_BETA_FEATURES_ENABLED && (
+                <div className="pt-3 border-t border-[#132247]/60">
+                  <div className="px-3 py-1 flex items-center justify-between">
+                    <span className="text-[10px] font-extrabold uppercase tracking-widest text-purple-400">
+                      TÍNH NĂNG BETA
+                    </span>
+                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">
+                      THỬ NGHIỆM
+                    </span>
+                  </div>
+                  <div className="space-y-0.5 mt-1">
+                    {betaNav.filter((item) => isFeatureEnabled(item.feature)).map((item) => renderNavItem(item, true))}
+                    {isFeatureEnabled("ankiImport") && (
+                      <button
+                        onClick={() => {
+                          onCloseMobile?.();
+                          onOpenImporter();
+                        }}
+                        className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-colors border-0 text-slate-400 hover:text-white hover:bg-[#111c38] font-medium cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <Upload className="w-4 h-4 text-purple-400 shrink-0" />
+                          <span className="tracking-normal truncate">Nhập thẻ Anki (.apkg)</span>
+                        </div>
+                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md border-0 bg-purple-500/20 text-purple-300">
+                          BETA
+                        </span>
+                      </button>
+                    )}
+                  </div>
                 </div>
-                <div className="space-y-0.5 mt-1">
-                  {betaNav.filter((item) => isFeatureEnabled(item.feature)).map((item) => renderNavItem(item, true))}
-                  {isFeatureEnabled("ankiImport") && (
-                    <button
-                      onClick={() => {
-                        onCloseMobile?.();
-                        onOpenImporter();
-                      }}
-                      className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-colors border-0 text-slate-400 hover:text-white hover:bg-[#111c38] font-medium cursor-pointer"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <Upload className="w-4 h-4 text-purple-400 shrink-0" />
-                        <span className="tracking-normal truncate">Nhập thẻ Anki (.apkg)</span>
-                      </div>
-                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md border-0 bg-purple-500/20 text-purple-300">
-                        BETA
-                      </span>
-                    </button>
-                  )}
-                </div>
-              </div>
+              )}
             </div>
 
             {/* Mobile Footer User info */}
@@ -319,38 +323,40 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         {/* Section 3: TÍNH NĂNG BETA (Xuống dưới cùng) */}
-        <div className="pt-3 border-t border-[#132247]/60">
-          {!collapsed && (
-            <div className="px-3 py-1 flex items-center justify-between">
-              <span className="text-[10px] font-extrabold uppercase tracking-widest text-purple-400">
-                TÍNH NĂNG BETA
-              </span>
-              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">
-                THỬ NGHIỆM
-              </span>
-            </div>
-          )}
-          <div className="space-y-0.5 mt-1">
-            {betaNav.filter((item) => isFeatureEnabled(item.feature)).map((item) => renderNavItem(item))}
-
-            {/* Tính năng Kéo thẻ Anki (.apkg) đưa vào mục Beta */}
-            {isFeatureEnabled("ankiImport") && <button
-              onClick={onOpenImporter}
-              className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-colors border-0 text-slate-400 hover:text-white hover:bg-[#111c38] font-medium cursor-pointer"
-              title={collapsed ? "Nhập thẻ Anki (.apkg)" : undefined}
-            >
-              <div className="flex items-center gap-2.5">
-                <Upload className="w-4 h-4 text-purple-400 shrink-0" />
-                {!collapsed && <span className="tracking-normal truncate">Nhập thẻ Anki (.apkg)</span>}
-              </div>
-              {!collapsed && (
-                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md border-0 bg-purple-500/20 text-purple-300">
-                  BETA
+        {IS_BETA_FEATURES_ENABLED && (
+          <div className="pt-3 border-t border-[#132247]/60">
+            {!collapsed && (
+              <div className="px-3 py-1 flex items-center justify-between">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-purple-400">
+                  TÍNH NĂNG BETA
                 </span>
-              )}
-            </button>}
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">
+                  THỬ NGHIỆM
+                </span>
+              </div>
+            )}
+            <div className="space-y-0.5 mt-1">
+              {betaNav.filter((item) => isFeatureEnabled(item.feature)).map((item) => renderNavItem(item))}
+
+              {/* Tính năng Kéo thẻ Anki (.apkg) đưa vào mục Beta */}
+              {isFeatureEnabled("ankiImport") && <button
+                onClick={onOpenImporter}
+                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-colors border-0 text-slate-400 hover:text-white hover:bg-[#111c38] font-medium cursor-pointer"
+                title={collapsed ? "Nhập thẻ Anki (.apkg)" : undefined}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Upload className="w-4 h-4 text-purple-400 shrink-0" />
+                  {!collapsed && <span className="tracking-normal truncate">Nhập thẻ Anki (.apkg)</span>}
+                </div>
+                {!collapsed && (
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md border-0 bg-purple-500/20 text-purple-300">
+                    BETA
+                  </span>
+                )}
+              </button>}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Bottom Action Area: Login / User Profile */}
