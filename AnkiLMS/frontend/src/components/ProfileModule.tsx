@@ -97,7 +97,7 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
         <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center">
           <div className="relative mx-auto sm:mx-0">
             <div className="rounded-[28px] bg-gradient-to-br from-amber-300 via-fuchsia-400 to-indigo-400 p-[3px] shadow-xl shadow-fuchsia-950/40" style={currentUser.active_frame && frameVisuals[currentUser.active_frame] ? { backgroundImage: frameVisuals[currentUser.active_frame], padding: "4px" } : undefined}>
-              {currentUser.avatar_url ? <img src={currentUser.avatar_url} alt={currentUser.name} className="h-24 w-24 rounded-[25px] object-cover bg-slate-950" /> : <div className="flex h-24 w-24 items-center justify-center rounded-[25px] bg-slate-900 text-4xl font-black text-white">{currentUser.name.charAt(0).toUpperCase()}</div>}
+              {currentUser.avatar_url ? <img src={currentUser.avatar_url} alt={currentUser.name} className="h-24 w-24 rounded-[25px] object-cover bg-slate-950" /> : currentUser.role === "admin" ? <img src="/brand/haechivn-mark.webp" alt="HaechiVN admin" className="h-24 w-24 rounded-[25px] object-contain bg-slate-900" /> : <div className="flex h-24 w-24 items-center justify-center rounded-[25px] bg-slate-900 text-4xl font-black text-white">{currentUser.name.charAt(0).toUpperCase()}</div>}
             </div>
             <span title={getStudyRank(currentUser.level)} className="absolute -bottom-2 -right-2 rounded-full border-4 border-slate-900 bg-amber-400 px-2.5 py-1 text-xs font-black text-slate-950">{getStudyRank(currentUser.level)}</span>
           </div>

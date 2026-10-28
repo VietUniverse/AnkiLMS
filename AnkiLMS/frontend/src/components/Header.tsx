@@ -125,6 +125,8 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onLogou
                     alt={currentUser.name}
                     className="w-6 h-6 rounded-full object-cover"
                   />
+                ) : currentUser.role === "admin" ? (
+                  <img src="/brand/haechivn-mark.webp" alt="HaechiVN admin" className="w-6 h-6 rounded-full object-contain" />
                 ) : (
                   <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-[10px]">
                     {currentUser.name.charAt(0).toUpperCase()}

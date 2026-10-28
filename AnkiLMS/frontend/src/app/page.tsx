@@ -11,7 +11,7 @@ import { VOCABULARY_DATA } from "../data/koreanData";
 import { SEJONG_TOPIC_VOCABULARY } from "../data/sejongTopicVocabulary";
 import { speakKorean } from "../lib/koreanSpeech";
 import { ApiClient } from "../lib/apiClient";
-import { matchesDictionarySearchText, searchLearningDictionary } from "../lib/dictionarySearch";
+import { detectDictionarySearchLanguage, matchesDictionarySearchText, searchLearningDictionary } from "../lib/dictionarySearch";
 import { useTranslationLanguage } from "../lib/translationPreference";
 import { getStudyRank } from "../lib/studyRanks";
 
@@ -61,21 +61,22 @@ export default function Home() {
     let cancelled = false;
     const controller = new AbortController();
     const timer = window.setTimeout(() => {
-      void searchLearningDictionary(query, 30, controller.signal, translationLanguage).then((entries) => {
+      const searchLanguage = detectDictionarySearchLanguage(query, translationLanguage);
+      void searchLearningDictionary(query, 30, controller.signal, searchLanguage).then((entries) => {
         if (cancelled) return;
         if (entries.length) {
           setSearchResults(entries.slice(0, 5).map((entry) => {
-            const selectedMeaning = translationLanguage === "vi" ? entry.vietnamese : translationLanguage === "en" ? entry.english : entry.japanese;
+            const selectedMeaning = searchLanguage === "vi" ? entry.vietnamese : searchLanguage === "en" ? entry.english : entry.japanese;
             const fallbackMeaning = entry.vietnamese || entry.english || entry.japanese;
-            const language = selectedMeaning ? translationLanguage.toUpperCase() : entry.vietnamese ? "VI" : entry.english ? "EN" : "JA";
+            const language = selectedMeaning ? searchLanguage.toUpperCase() : entry.vietnamese ? "VI" : entry.english ? "EN" : "JA";
             return { korean: entry.hangul, meaning: selectedMeaning || fallbackMeaning || "Chưa có nghĩa trong dữ liệu", language };
           }));
           return;
         }
-        setSearchResults(translationLanguage === "vi" ? searchPool.filter((item) => matchesDictionarySearchText(item.korean, query) || matchesDictionarySearchText(item.meaning, query)).slice(0, 5).map((item) => ({ ...item, language: "VI" })) : []);
+        setSearchResults(searchLanguage === "vi" ? searchPool.filter((item) => matchesDictionarySearchText(item.korean, query) || matchesDictionarySearchText(item.meaning, query)).slice(0, 5).map((item) => ({ ...item, language: "VI" })) : []);
       }).catch(() => {
         if (!cancelled) {
-          setSearchResults(translationLanguage === "vi" ? searchPool.filter((item) => matchesDictionarySearchText(item.korean, query) || matchesDictionarySearchText(item.meaning, query)).slice(0, 5).map((item) => ({ ...item, language: "VI" })) : []);
+          setSearchResults(searchLanguage === "vi" ? searchPool.filter((item) => matchesDictionarySearchText(item.korean, query) || matchesDictionarySearchText(item.meaning, query)).slice(0, 5).map((item) => ({ ...item, language: "VI" })) : []);
         }
       });
     }, 180);
@@ -120,50 +121,6 @@ export default function Home() {
 
   const todayStr = new Date().toISOString().split("T")[0];
   const hasCheckedInToday = currentUser?.last_checkin_date === todayStr;
-  const [showDemo, setShowDemo] = React.useState(true); // Demo dữ liệu mô phỏng theo Onigiri
-
-  // Dữ liệu mẫu demo mô phỏng 180 ngày ôn tập liên tục
-  const demoHeatmapData = React.useMemo(() => {
-    const list: Array<{ checkin_date: string; time_spent_minutes: number; xp_earned: number; cards_reviewed: number }> = [];
-    const now = new Date();
-    for (let i = 180; i >= 0; i--) {
-      const d = new Date(now);
-      d.setDate(d.getDate() - i);
-      const dayOfWeek = d.getDay();
-      const y = d.getFullYear();
-      const m = String(d.getMonth() + 1).padStart(2, "0");
-      const dayStr = String(d.getDate()).padStart(2, "0");
-      const dateStr = `${y}-${m}-${dayStr}`;
-
-      const hash = dateStr.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
-      const rand = (hash % 100) / 100;
-      const studyChance = dayOfWeek === 0 || dayOfWeek === 6 ? 0.5 : 0.82;
-
-      if (rand < studyChance) {
-        let minutes = 15;
-        let xp = 30;
-        let cards = 35;
-        if (rand < 0.25) {
-          minutes = 10 + (hash % 10);
-          xp = 25;
-          cards = Math.round(minutes * 2.2);
-        } else if (rand < 0.6) {
-          minutes = 25 + (hash % 20);
-          xp = 60;
-          cards = Math.round(minutes * 2.5);
-        } else {
-          minutes = 45 + (hash % 45);
-          xp = 120;
-          cards = Math.round(minutes * 2.8);
-        }
-        list.push({ checkin_date: dateStr, time_spent_minutes: minutes, xp_earned: xp, cards_reviewed: cards });
-      }
-    }
-    return list;
-  }, []);
-
-  const activeHeatmapSource = showDemo ? demoHeatmapData : heatmapData;
-
   const userXP = currentUser?.xp ?? 150;
   const userLevel = currentUser ? Math.floor(userXP / 300) + 1 : 1;
   const xpForCurrentLevel = (userLevel - 1) * 300;
@@ -458,10 +415,8 @@ export default function Home() {
 
         {/* Heatmap Hoạt Động Ôn Tập Chuẩn Onigiri Anki Addon */}
         <OnigiriHeatmap
-          data={activeHeatmapSource}
+          data={heatmapData}
           streak={currentUser?.streak || 0}
-          showDemo={showDemo}
-          onToggleDemo={() => setShowDemo((prev) => !prev)}
         />
       </div>
     </AppShell>

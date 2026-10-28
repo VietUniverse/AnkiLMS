@@ -1347,3 +1347,21 @@ html[data-theme="light"] body:not(:has(.login-page-root)) .metric-card-subtext {
   border-color: rgba(56, 189, 248, 0.25);
 }
 
+@keyframes haechiRun {
+  0%, 100% { transform: translateX(-18px) translateY(0) scaleX(1); }
+  42% { transform: translateX(15px) translateY(-5px) scaleX(1); }
+  50% { transform: translateX(18px) translateY(0) scaleX(-1); }
+  92% { transform: translateX(-15px) translateY(-5px) scaleX(-1); }
+}
+
+.animate-haechi-run {
+  animation: haechiRun 1.15s ease-in-out infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-haechi-run {
+    animation-duration: 3s;
+  }
+}
+

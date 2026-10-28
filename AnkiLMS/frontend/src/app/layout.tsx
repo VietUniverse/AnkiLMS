@@ -10,6 +10,10 @@ export const metadata: Metadata = {
   title: "HaechiVN – Nền tảng Học Tiếng Hàn Duo-Style",
   description: "Học tiếng Hàn phong cách HaechiVN, đọc file Anki .apkg, Luyện nghe Dictation, Shadowing, SRS Flashcard & Thi thử TOPIK",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/brand/haechivn-mark.png?v=20261028",
+    apple: "/brand/haechivn-mark.png?v=20261028",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -33,7 +37,8 @@ export default function RootLayout({
   return (
     <html lang="vi" data-theme="light" suppressHydrationWarning>
       <head>
-        <link rel="apple-touch-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" href="/brand/haechivn-mark.png?v=20261028" />
+        <link rel="apple-touch-icon" href="/brand/haechivn-mark.png?v=20261028" />
         <script
           dangerouslySetInnerHTML={{
             __html: `try{var p=new URLSearchParams(window.location.search);var t=p.get('theme')||localStorage.getItem('haechivn_theme')||'light';document.documentElement.dataset.theme=t;if(t==='dark'){document.documentElement.classList.add('dark');}else{document.documentElement.classList.remove('dark');}}catch(e){}`,

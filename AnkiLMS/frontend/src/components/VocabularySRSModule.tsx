@@ -31,6 +31,7 @@ import { calculateFSRS45, formatLocalDate, FSRSRating, FSRSState } from "../lib/
 import { ApiClient } from "../lib/apiClient";
 import { speakKorean } from "../lib/koreanSpeech";
 import { inferTopikLevel, getCourseRank } from "../lib/studyRanks";
+import { TopikDeck, loadCourseVocabulary } from "../lib/courseVocabulary";
 
 interface VocabularySRSModuleProps {
   userDecks?: AnkiDeck[];
@@ -110,6 +111,16 @@ const toSlug = (str: string): string => {
 
 export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDecks = [], initialViewMode = "dashboard", initialEmptyCards = false }) => {
   const { currentUser, setActiveStudySession } = useApp();
+  const isAdmin = currentUser?.role === "admin";
+  const [courseDecks, setCourseDecks] = useState<TopikDeck[]>([]);
+
+  useEffect(() => {
+    let active = true;
+    void loadCourseVocabulary().then((data) => {
+      if (active) setCourseDecks(data?.decks || []);
+    });
+    return () => { active = false; };
+  }, []);
 
   // Navigation View: "dashboard" (Lộ trình cây bài học) | "study" (Màn hình học)
   const [viewMode, setViewMode] = useState<"dashboard" | "study">(initialViewMode);
@@ -124,7 +135,10 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const [isFlipped, setIsFlipped] = useState<boolean>(false);
   const [typedInput, setTypedInput] = useState<string>("");
 
-  // Tree expansion
+  // Search, filters, and tree expansion for the learner's active library.
+  const [searchQuery, setSearchQuery] = useState("");
+  const [deckLevelFilter, setDeckLevelFilter] = useState("Tất cả cấp độ");
+  const [deckTopicFilter, setDeckTopicFilter] = useState("Tất cả chủ đề");
   const [expandedDecks, setExpandedDecks] = useState<Record<string, boolean>>({
     "tieng-han-tong-hop-1": true,
     "tieng-han-tong-hop-1-bai-01": true,
@@ -140,6 +154,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   // FSRS & Local Storage Card Memory
   const [masteredWords, setMasteredWords] = useState<string[]>([]);
   const [reviewList, setReviewList] = useState<string[]>([]);
+  const masteredWordSet = useMemo(() => new Set(masteredWords), [masteredWords]);
+  const reviewWordSet = useMemo(() => new Set(reviewList), [reviewList]);
   const [cardStateMap, setCardStateMap] = useState<Record<string, FSRSState>>({});
   const [showFsrsDetailed, setShowFsrsDetailed] = useState<boolean>(false);
 
@@ -198,7 +214,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
     const booksMap = new Map<string, Map<string, { id: string; title: string; cards: VocabularyCard[] }[]>>();
 
-    THTH_CURRICULUM_DECKS.forEach((d) => {
+    if (isAdmin) THTH_CURRICULUM_DECKS.forEach((d) => {
       const parts = d.name.split("::");
       // e.g. ["Tiếng Hàn Tổng Hợp", "Quyển 01", "Bài 01", "1. Quốc gia (나라)"]
       const rawBook = parts[1]?.trim() || "Quyển 01";
@@ -320,23 +336,69 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       });
     }
 
-    return rootNodes;
-  }, [userDecks]);
+    // Six TOPIK decks, retaining each course and unit hierarchy.
+    for (const group of courseDecks) {
+      const courseNodes = group.courses.map((course) => {
+        const unitNodes: DeckTreeNode[] = course.units.map((unit) => ({
+          id: `course-${course.id}-unit-${unit.number}`,
+          title: unit.title,
+          subtitle: `${unit.words.length} thẻ · ${course.level} · ${course.topik}`,
+          cards: unit.words.map(([id, word, meaning, romanization, hanja, pronunciation]) => ({
+            id,
+            code: `${course.id}-${unit.number}-${id}`,
+            word,
+            meaning,
+            pos: "Từ vựng",
+            transliteration: romanization,
+            explain: [hanja, pronunciation].filter(Boolean).join(" · "),
+            image: "",
+            example: "",
+            example_translated: "",
+            tag_1: course.level,
+            tag_2: course.title,
+            tag_3: unit.title,
+            deckName: `${group.id} · ${course.id} · ${unit.number}`,
+          })),
+        }));
+        return {
+          id: `course-${course.id}`,
+          title: course.title,
+          subtitle: `${course.level} · ${course.topik} · ${course.wordCount.toLocaleString("vi-VN")} thẻ`,
+          cards: unitNodes.flatMap((unit) => unit.cards),
+          children: unitNodes,
+        };
+      });
+      rootNodes.push({
+        id: group.id,
+        title: group.title,
+        subtitle: `${group.subtitle} · ${courseNodes.reduce((sum, course) => sum + course.cards.length, 0).toLocaleString("vi-VN")} thẻ`,
+        cards: courseNodes.flatMap((course) => course.cards),
+        children: courseNodes,
+      });
+    }
+
+    // Keep the six curriculum decks at the top of the library so newly added
+    // study material is immediately discoverable.
+    return [
+      ...rootNodes.filter((node) => node.id.startsWith("topik-")),
+      ...rootNodes.filter((node) => !node.id.startsWith("topik-")),
+    ];
+  }, [userDecks, courseDecks, isAdmin]);
 
   // Calculate Anki Stats (% battery, new, review)
   const getDeckStats = useCallback((cards: VocabularyCard[]) => {
     const total = cards.length;
     if (total === 0) return { total: 0, mastered: 0, percent: 0, newCount: 0, reviewCount: 0 };
 
-    const mastered = cards.filter((c) => masteredWords.includes(c.word)).length;
+    const mastered = cards.filter((c) => masteredWordSet.has(c.word)).length;
     const percent = Math.min(100, Math.round((mastered / total) * 100));
     const unlearned = total - mastered;
-    const reviewed = cards.filter((c) => reviewList.includes(c.word)).length;
+    const reviewed = cards.filter((c) => reviewWordSet.has(c.word)).length;
     const reviewCount = Math.min(reviewed, unlearned);
     const newCount = Math.max(0, unlearned - reviewCount);
 
     return { total, mastered, percent, newCount, reviewCount };
-  }, [masteredWords, reviewList]);
+  }, [masteredWordSet, reviewWordSet]);
 
   // Exit study session
   const exitStudy = useCallback(() => {
@@ -471,7 +533,69 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     setExpandedDecks(next);
   };
 
-  const filteredTree = deckTree;
+  // Filter tree recursively for search query
+  const filterTree = useCallback((nodes: DeckTreeNode[], q: string): DeckTreeNode[] => {
+    return nodes
+      .map((node) => {
+        const matchSelf =
+          node.title.toLowerCase().includes(q) ||
+          (!node.children?.length && node.cards.some(
+            (c) =>
+              c.word.toLowerCase().includes(q) ||
+              c.meaning.toLowerCase().includes(q)
+          ));
+
+        if (node.children && node.children.length > 0) {
+          const filteredChildren = filterTree(node.children, q);
+          if (filteredChildren.length > 0 || matchSelf) {
+            return { ...node, children: filteredChildren };
+          }
+          return null;
+        }
+
+        return matchSelf ? node : null;
+      })
+      .filter(Boolean) as DeckTreeNode[];
+  }, []);
+
+  const deckTopics = useMemo(() => {
+    const topics = new Set<string>();
+    deckTree.forEach((node) => {
+      if (node.id.startsWith("topik-") && node.children?.length) node.children.forEach((course) => topics.add(course.title));
+      else {
+        const visit = (nodes: DeckTreeNode[]) => nodes.forEach((child) => child.children?.length ? visit(child.children) : topics.add(child.title));
+        visit([node]);
+      }
+    });
+    return [...topics].sort((a, b) => a.localeCompare(b, "vi"));
+  }, [deckTree]);
+
+  const filteredTree = useMemo(() => {
+    let nodes = deckTree;
+    if (deckLevelFilter !== "Tất cả cấp độ") {
+      nodes = deckTree.flatMap((node) => {
+        if (node.id === "user-imported") {
+          const children = (node.children || []).filter((child) => deckLevelFilter === "Bộ Anki cá nhân" || child.subtitle?.includes(deckLevelFilter));
+          return children.length ? [{ ...node, children, cards: children.flatMap((child) => child.cards) }] : [];
+        }
+        if (node.id.startsWith("topik-")) return node.id === deckLevelFilter.toLowerCase().replace(" ", "-") ? [node] : [];
+        const rank = node.id === "tieng-han-tong-hop-1" || node.id === "korean-basic" ? "TOPIK 1" : node.id === "tieng-han-tong-hop-2" ? "TOPIK 2" : "";
+        return rank === deckLevelFilter ? [node] : [];
+      });
+    }
+    if (deckTopicFilter !== "Tất cả chủ đề") {
+      const selectTopic = (items: DeckTreeNode[]): DeckTreeNode[] => items.map((node) => {
+        if (node.children?.length) {
+          const children = selectTopic(node.children);
+          return children.length ? { ...node, children } : null;
+        }
+        const match = node.title === deckTopicFilter || node.cards.some((card) => card.pos === deckTopicFilter || card.tag_2 === deckTopicFilter);
+        return match ? node : null;
+      }).filter(Boolean) as DeckTreeNode[];
+      nodes = selectTopic(nodes);
+    }
+    return searchQuery.trim() ? filterTree(nodes, searchQuery.toLowerCase()) : nodes;
+  }, [deckTree, deckLevelFilter, deckTopicFilter, searchQuery, filterTree]);
 
   // Sync active study session to global Navbar
   useEffect(() => {
@@ -864,14 +988,48 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                 </p>
               </div>
 
-              <Link
-                href="/explore"
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-300 border border-sky-200 dark:border-sky-800/80 hover:bg-sky-100 dark:hover:bg-sky-900/60 transition w-fit"
-              >
-                <Compass className="w-4 h-4 text-sky-500" />
-                Khám phá thêm bộ thẻ
-                <ArrowRight className="w-3.5 h-3.5 ml-0.5" />
-              </Link>
+              {/* Thanh công cụ tìm kiếm và thu gọn */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <div className="relative flex-1 sm:w-56">
+                  <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      if (e.target.value.trim()) {
+                        const allOpen: Record<string, boolean> = {};
+                        deckTree.forEach((g) => (allOpen[g.id] = true));
+                        setExpandedDecks(allOpen);
+                      }
+                    }}
+                    placeholder="Tìm bài học hoặc từ vựng..."
+                    className="w-full text-xs pl-8 pr-3 py-2 rounded-xl bg-stone-100 dark:bg-stone-800/80 border border-stone-200 dark:border-stone-700/60 text-stone-900 dark:text-stone-100 focus:outline-none focus:border-stone-400 transition"
+                  />
+                </div>
+
+                <select aria-label="Lọc bộ thẻ theo độ khó" value={deckLevelFilter} onChange={(event) => setDeckLevelFilter(event.target.value)} className="rounded-xl border border-stone-200 bg-stone-100 px-3 py-2 text-xs font-semibold text-stone-700 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-200">
+                  {["Tất cả cấp độ", "TOPIK 1", "TOPIK 2", "TOPIK 3", "TOPIK 4", "TOPIK 5", "TOPIK 6", "Bộ Anki cá nhân"].map((rank) => <option key={rank}>{rank}</option>)}
+                </select>
+                <select aria-label="Lọc bộ thẻ theo chủ đề" value={deckTopicFilter} onChange={(event) => setDeckTopicFilter(event.target.value)} className="max-w-48 rounded-xl border border-stone-200 bg-stone-100 px-3 py-2 text-xs font-semibold text-stone-700 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-200">
+                  {["Tất cả chủ đề", ...deckTopics].map((topic) => <option key={topic}>{topic}</option>)}
+                </select>
+
+                <button
+                  onClick={toggleAllGroups}
+                  className="px-3 py-2 rounded-xl text-xs font-semibold bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700 transition cursor-pointer"
+                >
+                  {deckTree.every((g) => expandedDecks[g.id]) ? "Thu gọn" : "Mở rộng"}
+                </button>
+                <Link
+                  href="/explore"
+                  className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-300 border border-sky-200 dark:border-sky-800/80 hover:bg-sky-100 dark:hover:bg-sky-900/60 transition w-fit"
+                >
+                  <Compass className="w-4 h-4 text-sky-500" />
+                  Khám phá thêm bộ thẻ
+                  <ArrowRight className="w-3.5 h-3.5 ml-0.5" />
+                </Link>
+              </div>
             </div>
 
             {/* BẢNG ANKI ĐỒNG NHẤT TOÀN TRANG (DECK TREE) */}

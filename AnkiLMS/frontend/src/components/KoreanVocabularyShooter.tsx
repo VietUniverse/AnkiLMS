@@ -5,6 +5,7 @@ import { ApiClient } from "../lib/apiClient";
 import { Pause, Play, Rocket, RotateCcw, X } from "lucide-react";
 
 type Word = { korean: string; meaning: string; example?: string };
+type WordMode = "random" | "fsrs";
 type GameState = {
   status: "intro" | "playing" | "paused" | "won" | "lost";
   targets: Word[];
@@ -23,10 +24,15 @@ const emptyGame = (): GameState => ({ status: "intro", targets: [], targetIndex:
 const normalize = (text: string) => text.normalize("NFC").replace(/[\s\p{P}\p{S}]/gu, "").toLocaleLowerCase("ko-KR");
 
 function sample<T,>(items: T[], count: number): T[] {
-  return [...items].sort(() => Math.random() - 0.5).slice(0, count);
+  const shuffled = [...items];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const swap = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[swap]] = [shuffled[swap], shuffled[index]];
+  }
+  return shuffled.slice(0, count);
 }
 
-export function KoreanVocabularyShooter({ words, onExit }: { words: Word[]; onExit: () => void }) {
+export function KoreanVocabularyShooter({ words, learnedWords = [], initialMode = "random", onExit }: { words: Word[]; learnedWords?: Word[]; initialMode?: WordMode; onExit: () => void }) {
   const koreanWords = useMemo(() => {
     const unique = new Map<string, Word>();
     words.forEach((word) => {
@@ -35,6 +41,16 @@ export function KoreanVocabularyShooter({ words, onExit }: { words: Word[]; onEx
     });
     return [...unique.values()];
   }, [words]);
+  const learnedKeys = useMemo(() => new Set(learnedWords.map((word) => normalize(word.korean))), [learnedWords]);
+  const learnedCount = useMemo(() => koreanWords.filter((word) => learnedKeys.has(normalize(word.korean))).length, [koreanWords, learnedKeys]);
+  const [wordMode, setWordMode] = useState<WordMode>(initialMode);
+  const selectSessionWords = useCallback((mode: WordMode) => {
+    const learned = koreanWords.filter((word) => learnedKeys.has(normalize(word.korean)));
+    if (mode === "fsrs") return sample(learned, learned.length);
+    const fresh = koreanWords.filter((word) => !learnedKeys.has(normalize(word.korean)));
+    const learnedSample = sample(learned, Math.min(30, learned.length, 100));
+    return sample([...learnedSample, ...sample(fresh, Math.max(0, Math.min(100, koreanWords.length) - learnedSample.length))], Math.min(100, koreanWords.length));
+  }, [koreanWords, learnedKeys]);
   const [game, setGame] = useState<GameState>(emptyGame);
   const [answer, setAnswer] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -56,13 +72,14 @@ export function KoreanVocabularyShooter({ words, onExit }: { words: Word[]; onEx
   }, [update]);
 
   const startGame = useCallback(() => {
-    if (!koreanWords.length) return;
+    const sessionWords = selectSessionWords(wordMode);
+    if (!sessionWords.length) return;
     recordedRef.current = false;
     setAnswer("");
     lastFrameRef.current = performance.now();
-    update({ ...emptyGame(), status: "playing", targets: sample(koreanWords, Math.min(12, koreanWords.length)) });
+    update({ ...emptyGame(), status: "playing", targets: sessionWords });
     window.setTimeout(() => inputRef.current?.focus(), 50);
-  }, [koreanWords, update]);
+  }, [selectSessionWords, update, wordMode]);
 
   useEffect(() => {
     if (game.status !== "playing") return;
@@ -128,10 +145,15 @@ export function KoreanVocabularyShooter({ words, onExit }: { words: Word[]; onEx
   if (game.status === "intro") return <section className="overflow-hidden rounded-3xl border border-indigo-400/20 bg-[#090d20] text-white shadow-2xl">
     <div className="relative bg-[radial-gradient(ellipse_at_top,#45216e_0%,#11142d_48%,#090d20_100%)] p-6 sm:p-10">
       <button onClick={leave} aria-label="Thoát" className="absolute right-4 top-4 rounded-full border border-white/15 bg-black/30 p-2 text-slate-300 hover:text-white"><X className="h-4 w-4" /></button>
-      <div className="mx-auto max-w-2xl py-6 text-center"><div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl border border-cyan-300/30 bg-cyan-300/10 text-cyan-200"><Rocket className="h-10 w-10" /></div><p className="mt-6 text-xs font-black uppercase tracking-[0.25em] text-cyan-300">Haechi Space Mission</p><h2 className="mt-2 text-3xl font-black sm:text-4xl">Phi đội Hangul</h2><p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-300">Chỉ chơi với từ đã vào trạng thái ôn tập và có khoảng nhớ từ 3 ngày theo FSRS. Nghĩa tiếng Việt rơi xuống; gõ đúng Hangul để tàu bắn trúng. Gõ sai sẽ làm thiên thạch tăng tốc.</p>
+      <div className="mx-auto max-w-2xl py-6 text-center"><div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl border border-cyan-300/30 bg-cyan-300/10 text-cyan-200"><Rocket className="h-10 w-10" /></div><p className="mt-6 text-xs font-black uppercase tracking-[0.25em] text-cyan-300">Haechi Space Mission</p><h2 className="mt-2 text-3xl font-black sm:text-4xl">Phi đội Hangul</h2><p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-300">Chọn ôn toàn bộ từ đã học theo FSRS hoặc bắn thử tối đa 100 từ ngẫu nhiên. Chơi từ ngẫu nhiên không cần học trước.</p>
+        <div className="mx-auto mt-6 grid max-w-lg grid-cols-2 gap-3" role="group" aria-label="Chọn bộ từ chơi">
+          <button type="button" onClick={() => setWordMode("random")} aria-pressed={wordMode === "random"} className={`rounded-2xl border p-4 text-left transition ${wordMode === "random" ? "border-cyan-300 bg-cyan-400/15 text-cyan-100" : "border-white/10 bg-black/20 text-slate-300 hover:border-cyan-300/40"}`}><span className="block text-sm font-black">Từ ngẫu nhiên</span><span className="mt-1 block text-xs opacity-80">Lấy từ toàn bộ {koreanWords.length.toLocaleString("vi-VN")} mục có nghĩa Việt</span></button>
+          <button type="button" onClick={() => setWordMode("fsrs")} aria-pressed={wordMode === "fsrs"} className={`rounded-2xl border p-4 text-left transition ${wordMode === "fsrs" ? "border-fuchsia-300 bg-fuchsia-400/15 text-fuchsia-100" : "border-white/10 bg-black/20 text-slate-300 hover:border-fuchsia-300/40"}`}><span className="block text-sm font-black">Ôn từ FSRS</span><span className="mt-1 block text-xs opacity-80">{learnedCount.toLocaleString("vi-VN")} từ đã học</span></button>
+        </div>
         <div className="mt-6 grid gap-3 text-left sm:grid-cols-3"><div className="rounded-2xl border border-white/10 bg-black/20 p-4"><p className="text-xs font-bold text-cyan-200">01 · Đọc nghĩa</p><p className="mt-1 text-xs leading-5 text-slate-400">Nghĩa tiếng Việt rơi từ trên xuống.</p></div><div className="rounded-2xl border border-white/10 bg-black/20 p-4"><p className="text-xs font-bold text-fuchsia-200">02 · Gõ Hangul</p><p className="mt-1 text-xs leading-5 text-slate-400">Gõ đúng từ tiếng Hàn rồi nhấn Enter.</p></div><div className="rounded-2xl border border-white/10 bg-black/20 p-4"><p className="text-xs font-bold text-amber-200">03 · Tăng độ khó</p><p className="mt-1 text-xs leading-5 text-slate-400">Tốc độ tăng nhẹ theo từng 4 từ; sai sẽ tăng tốc mục tiêu hiện tại.</p></div></div>
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-3"><button onClick={startGame} disabled={!koreanWords.length} className="inline-flex min-h-12 items-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 px-7 text-sm font-black text-white disabled:opacity-40"><Play className="h-4 w-4 fill-current" />Bắt đầu nhiệm vụ</button><span className="text-xs text-slate-400">{koreanWords.length} từ đã thuộc theo FSRS · tối đa 12 mục tiêu · 3 lượt</span></div>
-        {!koreanWords.length && <p className="mt-3 text-xs font-bold text-amber-300">Chưa có từ nào đủ điều kiện. Hãy ôn đến khi FSRS chuyển thẻ sang trạng thái ôn tập (khoảng nhớ từ 3 ngày).</p>}
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3"><button onClick={startGame} disabled={wordMode === "fsrs" ? !learnedCount : !koreanWords.length} className="inline-flex min-h-12 items-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 px-7 text-sm font-black text-white disabled:opacity-40"><Play className="h-4 w-4 fill-current" />{wordMode === "fsrs" ? "Ôn từ đã học" : "Chơi từ ngẫu nhiên"}</button><span className="text-xs text-slate-400">{wordMode === "fsrs" ? `${learnedCount.toLocaleString("vi-VN")} từ đã học FSRS · 3 lượt` : `Tối đa ${Math.min(100, koreanWords.length)} từ ngẫu nhiên · 3 lượt`}</span></div>
+        {!koreanWords.length && <p className="mt-3 text-xs font-bold text-amber-300">Đang tải từ điển. Hãy thử lại sau giây lát.</p>}
+        {wordMode === "fsrs" && !learnedCount && <p className="mt-3 text-xs font-bold text-amber-300">Chưa có từ đã học trong bộ từ hiện tại. Hãy chọn Từ ngẫu nhiên hoặc học từ bằng FSRS trước.</p>}
       </div>
     </div>
   </section>;

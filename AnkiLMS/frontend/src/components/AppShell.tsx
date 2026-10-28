@@ -11,6 +11,7 @@ import { FloatingCommunityChat } from "./FloatingCommunityChat";
 import { useApp } from "../contexts/AppProvider";
 import { Sparkles } from "lucide-react";
 import { featureForPath } from "../lib/featureFlags";
+import { BrandLoadingMascot } from "./BrandLoadingMascot";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -52,12 +53,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   if (isAuthReady && !currentUser && pathname !== "/login") {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-[#0b1329] text-white font-sans">
-        <div className="flex flex-col items-center gap-3 animate-fadeIn">
-          <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-xs text-slate-400 font-semibold tracking-wide">
-            Đang chuyển hướng sang trang đăng nhập...
-          </p>
-        </div>
+        <BrandLoadingMascot label="Đang chuyển hướng sang trang đăng nhập…" className="animate-fadeIn" />
       </div>
     );
   }
