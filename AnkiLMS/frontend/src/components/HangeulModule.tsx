@@ -42,14 +42,19 @@ export const HangeulModule: React.FC = () => {
       {/* Module Title Banner */}
       <div className="card-duo p-6 bg-gradient-to-r from-emerald-950/60 via-slate-900 to-slate-900 border-emerald-500/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold mb-2">
-            <Sparkles className="w-3.5 h-3.5" /> Level 1: Nhập môn Tiếng Hàn
+          <div className="flex items-center gap-2 mb-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold">
+              <Sparkles className="w-3.5 h-3.5" /> Level 1: Nhập môn Tiếng Hàn
+            </div>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/40">
+              BETA
+            </span>
           </div>
           <h2 className="text-2xl font-black text-white tracking-tight">
             Bảng Chữ Cái Hangeul (한글 Master)
           </h2>
           <p className="text-xs text-slate-400 mt-1">
-            Học 19 phụ âm và 21 nguyên âm, luyện ghép thành âm tiết và nghe phát âm tiếng Hàn
+            Tính năng đang thử nghiệm (Beta). Học 19 phụ âm và 21 nguyên âm, luyện ghép thành âm tiết và nghe phát âm tiếng Hàn
           </p>
         </div>
 
