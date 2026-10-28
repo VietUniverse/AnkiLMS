@@ -5,6 +5,7 @@ import Link from "next/link";
 import { AppShell } from "../../../components/AppShell";
 import { useApp } from "../../../contexts/AppProvider";
 import { CURATED_DECKS, curatedDeckToAnkiDeck } from "../../../data/curatedDecks";
+import { DeckIcon } from "../../../components/DeckIcon";
 import { speakKorean } from "../../../lib/koreanSpeech";
 import {
   ArrowLeft,
@@ -134,7 +135,9 @@ export default function DeckDetailClient({ id }: { id: string }) {
             {/* Header Bộ Thẻ */}
             <div className="space-y-3">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-3xl">{deck.icon}</span>
+                <div className="w-12 h-12 rounded-2xl bg-sky-500/10 dark:bg-sky-500/20 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0 border border-sky-500/20">
+                  <DeckIcon name={deck.iconName} className="w-6 h-6" />
+                </div>
                 <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${deck.badgeColor}`}>
                   {deck.categoryLabel}
                 </span>

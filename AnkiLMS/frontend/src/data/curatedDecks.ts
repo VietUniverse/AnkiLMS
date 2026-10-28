@@ -16,7 +16,7 @@ export interface CuratedDeckItem {
   level: "Sơ cấp" | "Trung cấp" | "Cao cấp" | "Mọi cấp độ";
   description: string;
   detailedDescription?: string;
-  icon: string;
+  iconName: string;
   badgeColor: string;
   bannerGradient?: string;
   tags: string[];
@@ -71,7 +71,7 @@ export const CURATED_DECKS: CuratedDeckItem[] = [
     level: "Sơ cấp",
     description: "Trọn bộ mẫu câu cửa miệng tự tin đi ăn quán tại Hàn: gọi món, xin panchan, dặn không cay và thanh toán.",
     detailedDescription: "Bộ thẻ thiết yếu cho người du lịch hoặc sinh sống tại Hàn Quốc. Bao gồm các khẩu ngữ thực tế người bản xứ nói mỗi ngày tại quán thịt nướng (K-BBQ), quán cơm canh (Gukbap), quán cà phê và quán nhậu pocha.",
-    icon: "🍲",
+    iconName: "UtensilsCrossed",
     badgeColor: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30",
     bannerGradient: "from-amber-950/70 via-stone-900 to-orange-950/70",
     tags: ["Quán ăn", "Gọi món", "Ẩm thực", "K-Food"],
@@ -114,7 +114,7 @@ export const CURATED_DECKS: CuratedDeckItem[] = [
     level: "Sơ cấp",
     description: "Bộ từ vựng nền tảng cốt lõi nhất thường xuyên xuất hiện trong đề thi TOPIK I (kỹ năng Đọc & Nghe).",
     detailedDescription: "Bộ thẻ tổng hợp 25 từ vựng xuất hiện với tần suất cao nhất trong các kỳ thi TOPIK I chính thức từ Viện Giáo dục Quốc tế Hàn Quốc (NIIED). Phù hợp ôn cấp tốc đạt 160-200 điểm TOPIK Cấp 2.",
-    icon: "🎯",
+    iconName: "Target",
     badgeColor: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30",
     bannerGradient: "from-blue-950/70 via-slate-900 to-indigo-950/70",
     tags: ["TOPIK I", "Sơ cấp", "Kỳ thi"],
@@ -164,7 +164,7 @@ export const CURATED_DECKS: CuratedDeckItem[] = [
     level: "Mọi cấp độ",
     description: "Mẫu câu cửa miệng người bản xứ dùng hằng ngày: ăn uống, gọi món, mua sắm và hỏi đường.",
     detailedDescription: "Những mẫu câu sinh động ngắn gọn, không rập khuôn sách vở giúp bạn phản xạ tức thì khi bước chân sang Hàn Quốc hay giao tiếp với bạn bè đồng nghiệp.",
-    icon: "💬",
+    iconName: "MessageSquare",
     badgeColor: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
     bannerGradient: "from-emerald-950/70 via-slate-900 to-teal-950/70",
     tags: ["Giao tiếp", "Cửa miệng", "Đời sống"],
@@ -205,7 +205,7 @@ export const CURATED_DECKS: CuratedDeckItem[] = [
     level: "Trung cấp",
     description: "Bộ từ lóng hot trend của giới trẻ Hàn Quốc, thường gặp trong K-Drama, show thực tế và mạng xã hội.",
     detailedDescription: "Học tiếng Hàn qua ngôn ngữ Gen Z xứ kim chi! Bạn sẽ hiểu ngay các meme nổi tiếng trên Instagram, hiểu trọn vẹn lời thoại nhân vật trong phim truyền hình mà từ điển truyền thống không dạy.",
-    icon: "🎬",
+    iconName: "Clapperboard",
     badgeColor: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30",
     bannerGradient: "from-purple-950/70 via-slate-900 to-pink-950/70",
     tags: ["Từ lóng", "K-Drama", "Trend"],
@@ -245,7 +245,7 @@ export const CURATED_DECKS: CuratedDeckItem[] = [
     level: "Trung cấp",
     description: "Tăng vốn từ gấp 3 lần bằng quy luật âm Hán Hàn (Học - 학, Sinh - 생, Nhân - 인, Thất - 실, Quốc - 국).",
     detailedDescription: "Hơn 60% từ vựng tiếng Hàn có nguồn gốc từ chữ Hán, tương tự từ Hán-Việt trong tiếng Việt. Khi nắm vững các gốc từ cốt lõi, bạn có thể đoán nghĩa chính xác hàng nghìn từ vựng mới chỉ trong nháy mắt.",
-    icon: "⛩️",
+    iconName: "Languages",
     badgeColor: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30",
     bannerGradient: "from-amber-950/70 via-stone-900 to-yellow-950/70",
     tags: ["Hán Hàn", "Tăng tốc", "Gốc từ"],
@@ -286,7 +286,7 @@ export const CURATED_DECKS: CuratedDeckItem[] = [
     level: "Sơ cấp",
     description: "Bộ thẻ cứu cánh khi sang Hàn: thủ tục nhập cảnh, nạp thẻ tàu T-Money, đổi tiền và hỏi đường.",
     detailedDescription: "Hành trang bỏ túi không thể thiếu cho các chuyến bay đến sân bay quốc tế Incheon và khám phá các thành phố Hàn Quốc. Giúp bạn tự tin giao tiếp tại quầy check-in, mua sim và đón tàu AREX về trung tâm.",
-    icon: "✈️",
+    iconName: "Plane",
     badgeColor: "bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/30",
     bannerGradient: "from-sky-950/70 via-slate-900 to-cyan-950/70",
     tags: ["Du lịch", "Sân bay", "Khách sạn"],
@@ -321,7 +321,7 @@ export const CURATED_DECKS: CuratedDeckItem[] = [
     level: "Sơ cấp",
     description: "Thuật ngữ nhà máy thiết yếu: thiết bị máy móc, an toàn lao động, giao tiếp với quản lý và lương thưởng.",
     detailedDescription: "Bộ thẻ chuyên dụng hỗ trợ người lao động EPS-TOPIK nhanh chóng hòa nhập với môi trường xưởng sản xuất cơ khí, may mặc, nông nghiệp tại Hàn Quốc. Chú trọng các thuật ngữ mệnh lệnh an toàn phòng chống tai nạn.",
-    icon: "🏭",
+    iconName: "Factory",
     badgeColor: "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30",
     bannerGradient: "from-rose-950/70 via-slate-900 to-amber-950/70",
     tags: ["EPS", "Nhà xưởng", "Lao động"],

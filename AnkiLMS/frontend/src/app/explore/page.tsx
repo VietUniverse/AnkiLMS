@@ -5,6 +5,7 @@ import Link from "next/link";
 import { AppShell } from "../../components/AppShell";
 import { useApp } from "../../contexts/AppProvider";
 import { CURATED_DECKS, curatedDeckToAnkiDeck, CuratedDeckItem } from "../../data/curatedDecks";
+import { DeckIcon } from "../../components/DeckIcon";
 import {
   Layers,
   Search,
@@ -162,7 +163,9 @@ export default function ExplorePage() {
                 <div>
                   {/* Top Meta */}
                   <div className="flex items-center justify-between gap-2 mb-3">
-                    <span className="text-2xl">{deck.icon}</span>
+                    <div className="w-10 h-10 rounded-xl bg-sky-500/10 dark:bg-sky-500/20 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0 border border-sky-500/20">
+                      <DeckIcon name={deck.iconName} className="w-5 h-5" />
+                    </div>
                     <div className="flex items-center gap-1.5 flex-wrap">
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${deck.badgeColor}`}>
                         {deck.categoryLabel}
