@@ -63,6 +63,18 @@ export default function DeckDetailClient({ id }: { id: string }) {
     );
   }, [deck, userDecks]);
 
+  const deckCards = deck?.cards ?? [];
+  const filteredCards = useMemo(() => deckCards.filter((c) => {
+    const q = cardSearch.toLowerCase().trim();
+    if (!q) return true;
+    return (
+      (c.koreanText || "").toLowerCase().includes(q) ||
+      (c.vietnameseMeaning || "").toLowerCase().includes(q)
+    );
+  }), [deckCards, cardSearch]);
+  const visibleCards = filteredCards.slice(0, visibleCardCount);
+  const currentPreviewCard = deckCards[activePreviewIndex] || deckCards[0];
+
   const handleAdd = () => {
     if (!deck) return;
     const ankiDeck = curatedDeckToAnkiDeck(deck);
@@ -105,18 +117,6 @@ export default function DeckDetailClient({ id }: { id: string }) {
       </AppShell>
     );
   }
-
-  const filteredCards = useMemo(() => deck.cards.filter((c) => {
-    const q = cardSearch.toLowerCase().trim();
-    if (!q) return true;
-    return (
-      (c.koreanText || "").toLowerCase().includes(q) ||
-      (c.vietnameseMeaning || "").toLowerCase().includes(q)
-    );
-  }), [deck.cards, cardSearch]);
-  const visibleCards = filteredCards.slice(0, visibleCardCount);
-
-  const currentPreviewCard = deck.cards[activePreviewIndex] || deck.cards[0];
 
   return (
     <AppShell>
