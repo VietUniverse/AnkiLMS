@@ -265,7 +265,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
         word: item.hangul,
         meaning: item.vietnamese,
         pos: item.topic || "Từ vựng",
-        transliteration: item.romaja,
+        transliteration: "",
         explain: "",
         image: "",
         example: item.exampleSentence || "",
@@ -301,7 +301,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
           word: c.koreanText || c.frontText || "",
           meaning: c.vietnameseMeaning || c.backText || "",
           pos: "Từ vựng",
-          transliteration: c.romanization || "",
+          transliteration: "",
           explain: "",
           image: c.imageUrls?.[0] ? `<img src="${c.imageUrls[0]}" />` : "",
           example: c.exampleSentence || "",
@@ -1046,12 +1046,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                         <div className="target-word text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-stone-900 dark:text-white">
                           {currentCard.word}
                         </div>
-
-                        {currentCard.transliteration && (
-                          <div className="text-xs font-mono text-amber-500 font-bold">
-                            /{currentCard.transliteration}/
-                          </div>
-                        )}
 
                         {/* PHẦN ĐÁP ÁN: MỞ RA TRƯỢT ÊM ÁI KHI BẤM "HIỆN ĐÁP ÁN" */}
                         {isFlipped && (

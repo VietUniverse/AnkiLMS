@@ -85,8 +85,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
     if (!q) return true;
     return (
       (c.koreanText || "").toLowerCase().includes(q) ||
-      (c.vietnameseMeaning || "").toLowerCase().includes(q) ||
-      (c.romanization || "").toLowerCase().includes(q)
+      (c.vietnameseMeaning || "").toLowerCase().includes(q)
     );
   });
 
@@ -215,12 +214,6 @@ export default function DeckDetailClient({ id }: { id: string }) {
                       {currentPreviewCard.koreanText || currentPreviewCard.frontText}
                     </div>
 
-                    {currentPreviewCard.romanization && (
-                      <div className="text-xs font-mono text-amber-500 font-bold">
-                        /{currentPreviewCard.romanization}/
-                      </div>
-                    )}
-
                     {isPreviewFlipped && (
                       <div className="pt-2 animate-fadeIn space-y-1">
                         <div className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
@@ -300,11 +293,6 @@ export default function DeckDetailClient({ id }: { id: string }) {
                           <span className="font-bold text-base font-noto text-stone-900 dark:text-white">
                             {card.koreanText}
                           </span>
-                          {card.romanization && (
-                            <span className="text-[11px] font-mono text-amber-500 font-semibold">
-                              /{card.romanization}/
-                            </span>
-                          )}
                         </div>
                         <div className="text-xs text-stone-600 dark:text-stone-300 font-medium">
                           {card.vietnameseMeaning}
