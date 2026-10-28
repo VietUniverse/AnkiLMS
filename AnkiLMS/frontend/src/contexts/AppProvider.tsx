@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { AnkiDeck } from "../lib/ankiParser";
 import { ApiClient, UserProfile } from "../lib/apiClient";
-import { DEFAULT_FEATURE_FLAGS, FeatureFlags, FeatureKey } from "../lib/featureFlags";
+import { BETA_FEATURE_KEYS, DEFAULT_FEATURE_FLAGS, FeatureFlags, FeatureKey, IS_BETA_FEATURES_ENABLED } from "../lib/featureFlags";
 
 export interface StudySessionInfo {
   title: string;
@@ -106,7 +106,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           setFeatureFlags({ ...DEFAULT_FEATURE_FLAGS, ...payload.features });
         }
         setFeatureFlagsLoaded(true);
-        const decks = ApiClient.getSavedDecks();
+        const decks = await ApiClient.getSavedDecks();
         setUserDecks(decks);
 
         if (user) {
@@ -137,7 +137,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setUserDecks((prev) => {
       const filtered = prev.filter((d) => d.id !== deck.id && d.name !== deck.name);
       const updated = [...filtered, deck];
-      ApiClient.saveDecks(updated);
+      void ApiClient.saveDecks(updated).catch((error) => console.error("Could not save study decks", error));
       return updated;
     });
     setIsImporterOpen(false);
@@ -146,7 +146,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const handleRemoveDeck = useCallback((deckId: string) => {
     setUserDecks((prev) => {
       const updated = prev.filter((d) => d.id !== deckId && `user-${d.id}` !== deckId && `curated-${d.id}` !== deckId);
-      ApiClient.saveDecks(updated);
+      void ApiClient.saveDecks(updated).catch((error) => console.error("Could not save study decks", error));
       return updated;
     });
   }, []);
@@ -196,7 +196,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         isAuthReady,
         featureFlags,
         featureFlagsLoaded,
-        isFeatureEnabled: (key) => !key || featureFlags[key],
+        isFeatureEnabled: (key) => !key || (featureFlags[key] && (IS_BETA_FEATURES_ENABLED || !BETA_FEATURE_KEYS.includes(key))),
         handleOpenAuth,
         handleLogout,
         handleCheckin,

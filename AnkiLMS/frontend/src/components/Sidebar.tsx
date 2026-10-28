@@ -100,7 +100,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     const Icon = item.icon;
     const active = isActive(item.href);
     return (
-      <Link
+      <a
         key={item.href}
         href={item.href}
         onClick={isMobile ? onCloseMobile : undefined}
@@ -126,7 +126,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {item.badge}
           </span>
         )}
-      </Link>
+      </a>
     );
   };
 

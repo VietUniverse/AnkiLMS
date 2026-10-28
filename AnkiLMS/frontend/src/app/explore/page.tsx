@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import Link from "next/link";
+import React, { useState, useMemo, useEffect } from "react";
 import { AppShell } from "../../components/AppShell";
 import { useApp } from "../../contexts/AppProvider";
 import { CURATED_DECKS, curatedDeckToAnkiDeck, CuratedDeckItem, IS_DEMO_DECKS_ENABLED } from "../../data/curatedDecks";
 import { DeckIcon } from "../../components/DeckIcon";
+import { courseToExploreDeck, loadCourseVocabulary } from "../../lib/courseVocabulary";
 import {
   Layers,
   Search,
@@ -24,6 +24,20 @@ export default function ExplorePage() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [previewDeckId, setPreviewDeckId] = useState<string | null>(null);
   const [addedNotice, setAddedNotice] = useState<string | null>(null);
+  const [courseDecks, setCourseDecks] = useState<import("../../lib/courseVocabulary").TopikDeck[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+    void loadCourseVocabulary().then((data) => {
+      if (mounted) setCourseDecks(data?.decks || []);
+    });
+    return () => { mounted = false; };
+  }, []);
+
+  const exploreDecks = useMemo(() => [
+    ...(IS_DEMO_DECKS_ENABLED ? CURATED_DECKS : []),
+    ...courseDecks.flatMap((group) => group.courses.map(courseToExploreDeck)),
+  ], [courseDecks]);
 
   // Check if a curated deck is already inside userDecks
   const isDeckAdded = (deck: CuratedDeckItem) => {
@@ -49,6 +63,7 @@ export default function ExplorePage() {
     { id: "all", label: "Tất cả bộ thẻ" },
     { id: "food", label: "Quán ăn & Ẩm thực" },
     { id: "topik", label: "TOPIK I/II" },
+    ...[1, 2, 3, 4, 5, 6].map((level) => ({ id: `topik-${level}`, label: `TOPIK ${level}` })),
     { id: "conversation", label: "Giao tiếp đời sống" },
     { id: "drama", label: "K-Drama & Slang" },
     { id: "hanja", label: "Gốc từ Hán Hàn" },
@@ -57,22 +72,17 @@ export default function ExplorePage() {
   ];
 
   const filteredDecks = useMemo(() => {
-    return CURATED_DECKS.filter((deck) => {
-      const matchCat = selectedCategory === "all" || deck.category === selectedCategory;
+    return exploreDecks.filter((deck) => {
+      const matchCat = selectedCategory === "all" || deck.category === selectedCategory || (selectedCategory.startsWith("topik-") && deck.tags.includes(selectedCategory.replace("topik-", "TOPIK ")));
       const q = searchQuery.toLowerCase().trim();
       const matchQuery =
         !q ||
         deck.title.toLowerCase().includes(q) ||
         deck.description.toLowerCase().includes(q) ||
-        deck.tags.some((t) => t.toLowerCase().includes(q)) ||
-        deck.cards.some(
-          (c) =>
-            (c.koreanText || "").toLowerCase().includes(q) ||
-            (c.vietnameseMeaning || "").toLowerCase().includes(q)
-        );
+        deck.tags.some((t) => t.toLowerCase().includes(q));
       return matchCat && matchQuery;
     });
-  }, [selectedCategory, searchQuery]);
+  }, [exploreDecks, selectedCategory, searchQuery]);
 
   return (
     <AppShell>
@@ -82,12 +92,12 @@ export default function ExplorePage() {
           <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-emerald-600 text-white shadow-xl shadow-emerald-900/30 font-medium text-xs animate-slideUp">
             <Check className="w-4 h-4 shrink-0" />
             <span>{addedNotice}</span>
-            <Link
+            <a
               href="/flashcards"
               className="ml-2 underline font-bold hover:text-emerald-100"
             >
               Xem ngay →
-            </Link>
+            </a>
           </div>
         )}
 
@@ -113,18 +123,18 @@ export default function ExplorePage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <Link
+            <a
               href="/flashcards"
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-white border border-white/15 transition cursor-pointer"
             >
               <BookOpen className="w-4 h-4 text-sky-400" />
               Đến Kho Thẻ (/flashcards)
               <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+            </a>
           </div>
         </div>
 
-        {!IS_DEMO_DECKS_ENABLED ? (
+        {exploreDecks.length === 0 ? (
           <div className="card-duo p-12 text-center space-y-4 max-w-xl mx-auto border-dashed border-2 border-stone-300 dark:border-stone-800 bg-stone-50/50 dark:bg-stone-900/30">
             <div className="w-14 h-14 rounded-2xl bg-sky-500/10 text-sky-500 flex items-center justify-center mx-auto">
               <Sparkles className="w-7 h-7" />
@@ -138,13 +148,13 @@ export default function ExplorePage() {
               </p>
             </div>
             <div className="pt-2">
-              <Link
+              <a
                 href="/flashcards"
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-sky-500 hover:bg-sky-600 text-white shadow-md shadow-sky-900/20 transition cursor-pointer"
               >
                 <BookOpen className="w-4 h-4" />
                 Đến Kho Thẻ Cá Nhân (/flashcards)
-              </Link>
+              </a>
             </div>
           </div>
         ) : (
@@ -209,14 +219,14 @@ export default function ExplorePage() {
                   </div>
 
                   {/* Title & Description */}
-                  <Link
+                  <a
                     href={`/explore/${deck.id}`}
                     className="block group cursor-pointer"
                   >
                     <h3 className="text-base font-bold text-stone-900 dark:text-white leading-snug group-hover:text-sky-500 transition">
                       {deck.title}
                     </h3>
-                  </Link>
+                  </a>
                   <p className="text-xs text-stone-500 dark:text-stone-400 mt-1.5 line-clamp-2 leading-relaxed">
                     {deck.description}
                   </p>
@@ -263,24 +273,24 @@ export default function ExplorePage() {
 
                 {/* Footer Buttons */}
                 <div className="mt-4 pt-3 border-t border-stone-100 dark:border-stone-800/80 flex items-center justify-between gap-2">
-                  <Link
+                  <a
                     href={`/explore/${deck.id}`}
                     className="inline-flex items-center gap-1.5 text-xs font-bold text-stone-600 hover:text-sky-600 dark:text-stone-300 dark:hover:text-sky-400 transition py-1.5 px-2 rounded-lg cursor-pointer"
                   >
                     <span>Chi tiết</span>
                     <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
+                  </a>
 
                   <div className="flex items-center gap-1.5">
                     {added ? (
                       <>
-                        <Link
+                        <a
                           href="/flashcards"
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/25 transition cursor-pointer"
                         >
                           <Check className="w-3.5 h-3.5" />
                           Đã thêm (Học ngay)
-                        </Link>
+                        </a>
                         <button
                           onClick={() => handleRemoveCurated(deck)}
                           title="Gỡ bộ thẻ khỏi /flashcards"

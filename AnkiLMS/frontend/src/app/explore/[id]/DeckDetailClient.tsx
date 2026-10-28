@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import Link from "next/link";
+import React, { useState, useMemo, useEffect } from "react";
 import { AppShell } from "../../../components/AppShell";
 import { useApp } from "../../../contexts/AppProvider";
 import { CURATED_DECKS, curatedDeckToAnkiDeck, IS_DEMO_DECKS_ENABLED } from "../../../data/curatedDecks";
 import { DeckIcon } from "../../../components/DeckIcon";
 import { speakKorean } from "../../../lib/koreanSpeech";
+import { courseToExploreDeck, loadCourseVocabulary } from "../../../lib/courseVocabulary";
+import type { CuratedDeckItem } from "../../../data/curatedDecks";
+import { romanizeKorean } from "../../../lib/romanization";
 import {
   ArrowLeft,
   Check,
@@ -26,12 +28,29 @@ import {
 
 export default function DeckDetailClient({ id }: { id: string }) {
   const { userDecks, handleDeckImported, handleRemoveDeck } = useApp();
+  const [courseDeck, setCourseDeck] = useState<CuratedDeckItem | null>(null);
+  const [courseLoaded, setCourseLoaded] = useState(!id.startsWith("course-"));
 
-  const deck = useMemo(() => {
-    return CURATED_DECKS.find((d) => d.id === id);
+  useEffect(() => {
+    if (!id.startsWith("course-")) return;
+    let active = true;
+    void loadCourseVocabulary().then((data) => {
+      const course = data?.decks.flatMap((group) => group.courses).find((item) => `course-${item.id}` === id);
+      if (active) {
+        setCourseDeck(course ? courseToExploreDeck(course) : null);
+        setCourseLoaded(true);
+      }
+    });
+    return () => { active = false; };
   }, [id]);
 
+  const deck = useMemo(() => {
+    return CURATED_DECKS.find((d) => d.id === id) || courseDeck;
+  }, [id, courseDeck]);
+  const isDemoDeck = CURATED_DECKS.some((item) => item.id === id);
+
   const [cardSearch, setCardSearch] = useState("");
+  const [visibleCardCount, setVisibleCardCount] = useState(50);
   const [activePreviewIndex, setActivePreviewIndex] = useState(0);
   const [isPreviewFlipped, setIsPreviewFlipped] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -58,39 +77,44 @@ export default function DeckDetailClient({ id }: { id: string }) {
     handleRemoveDeck(ankiDeck.id);
   };
 
-  if (!IS_DEMO_DECKS_ENABLED || !deck) {
+  if (!courseLoaded) {
+    return <AppShell><div className="py-20 text-center text-sm text-sky-500">Đang tải bộ từ vựng…</div></AppShell>;
+  }
+
+  if (!deck || (isDemoDeck && !IS_DEMO_DECKS_ENABLED)) {
     return (
       <AppShell>
         <div className="max-w-2xl mx-auto py-20 text-center space-y-4">
           <Layers className="w-12 h-12 text-stone-400 mx-auto" />
           <h1 className="text-xl font-bold text-stone-900 dark:text-white">
-            {!IS_DEMO_DECKS_ENABLED ? "Bộ thẻ mẫu tạm ẩn trên Production" : "Không tìm thấy bộ thẻ yêu cầu"}
+            {isDemoDeck && !IS_DEMO_DECKS_ENABLED ? "Bộ thẻ mẫu tạm ẩn trên Production" : "Không tìm thấy bộ thẻ yêu cầu"}
           </h1>
           <p className="text-xs text-stone-500 dark:text-stone-400 max-w-md mx-auto">
-            {!IS_DEMO_DECKS_ENABLED
+            {isDemoDeck && !IS_DEMO_DECKS_ENABLED
               ? "Dữ liệu mẫu thử nghiệm đã được tự động tắt trên môi trường chính thức (Production). Tính năng sẽ hiển thị khi kết nối dữ liệu thực tế."
               : "Bộ thẻ này có thể đã được gỡ bỏ hoặc đường dẫn không chính xác."}
           </p>
-          <Link
+          <a
             href="/explore"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-sky-500 text-white"
           >
             <ArrowLeft className="w-4 h-4" />
             Quay lại trang Khám phá
-          </Link>
+          </a>
         </div>
       </AppShell>
     );
   }
 
-  const filteredCards = deck.cards.filter((c) => {
+  const filteredCards = useMemo(() => deck.cards.filter((c) => {
     const q = cardSearch.toLowerCase().trim();
     if (!q) return true;
     return (
       (c.koreanText || "").toLowerCase().includes(q) ||
       (c.vietnameseMeaning || "").toLowerCase().includes(q)
     );
-  });
+  }), [deck.cards, cardSearch]);
+  const visibleCards = filteredCards.slice(0, visibleCardCount);
 
   const currentPreviewCard = deck.cards[activePreviewIndex] || deck.cards[0];
 
@@ -102,24 +126,24 @@ export default function DeckDetailClient({ id }: { id: string }) {
           <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-emerald-600 text-white shadow-xl shadow-emerald-900/30 font-medium text-xs animate-slideUp">
             <Check className="w-4 h-4 shrink-0" />
             <span>{toastMessage}</span>
-            <Link
+            <a
               href="/flashcards"
               className="ml-2 underline font-bold hover:text-emerald-100"
             >
               Học ngay →
-            </Link>
+            </a>
           </div>
         )}
 
         {/* Nút Quay Lại */}
         <div className="flex items-center justify-between">
-          <Link
+          <a
             href="/explore"
             className="inline-flex items-center gap-1.5 text-xs font-bold text-stone-500 dark:text-stone-400 hover:text-sky-600 dark:hover:text-sky-400 transition"
           >
             <ArrowLeft className="w-4 h-4" />
             Quay lại Thư viện Khám phá
-          </Link>
+          </a>
 
           <div className="flex items-center gap-2 text-xs text-stone-400">
             <span>Khám phá</span>
@@ -223,6 +247,9 @@ export default function DeckDetailClient({ id }: { id: string }) {
                     <div className="text-3xl font-black text-stone-900 dark:text-white font-noto tracking-tight">
                       {currentPreviewCard.koreanText || currentPreviewCard.frontText}
                     </div>
+                    <div className="mt-1 text-sm text-stone-500 dark:text-stone-400" lang="en-Latn">
+                      {romanizeKorean(currentPreviewCard.koreanText || currentPreviewCard.frontText || "")}
+                    </div>
 
                     {isPreviewFlipped && (
                       <div className="pt-2 animate-fadeIn space-y-1">
@@ -289,7 +316,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
               </div>
 
               <div className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 overflow-hidden shadow-xs divide-y divide-stone-100 dark:divide-stone-800/80">
-                {filteredCards.map((card, idx) => (
+                {visibleCards.map((card, idx) => (
                   <div
                     key={card.id}
                     className="p-3.5 sm:p-4 flex items-center justify-between gap-4 hover:bg-stone-50/80 dark:hover:bg-stone-800/50 transition"
@@ -303,6 +330,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
                           <span className="font-bold text-base font-noto text-stone-900 dark:text-white">
                             {card.koreanText}
                           </span>
+                          <span className="text-[11px] text-stone-500 dark:text-stone-400" lang="en-Latn">{romanizeKorean(card.koreanText || "")}</span>
                         </div>
                         <div className="text-xs text-stone-600 dark:text-stone-300 font-medium">
                           {card.vietnameseMeaning}
@@ -325,6 +353,15 @@ export default function DeckDetailClient({ id }: { id: string }) {
                   </div>
                 ))}
               </div>
+              {visibleCards.length < filteredCards.length && (
+                <button
+                  type="button"
+                  onClick={() => setVisibleCardCount((count) => count + 50)}
+                  className="w-full rounded-xl border border-sky-500/30 px-4 py-3 text-sm font-bold text-sky-600 transition hover:bg-sky-500/10 dark:text-sky-400"
+                >
+                  Hiện thêm {Math.min(50, filteredCards.length - visibleCards.length)} / {filteredCards.length - visibleCards.length} từ
+                </button>
+              )}
             </div>
           </div>
 
@@ -347,13 +384,13 @@ export default function DeckDetailClient({ id }: { id: string }) {
               {/* Nút Hành Động Chính */}
               {isAdded ? (
                 <div className="space-y-2">
-                  <Link
+                  <a
                     href="/flashcards?study=true"
                     className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-black bg-emerald-500 hover:bg-emerald-600 text-white shadow-md shadow-emerald-900/20 transition cursor-pointer"
                   >
                     <BookOpen className="w-4 h-4" />
                     Đã Có Trong Kho Thẻ (Học Ngay)
-                  </Link>
+                  </a>
                   <button
                     onClick={handleRemove}
                     className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-semibold text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
@@ -419,10 +456,9 @@ export default function DeckDetailClient({ id }: { id: string }) {
                       {deck.author.name}
                     </h4>
                     {deck.author.verified && (
-                      <ShieldCheck
-                        className="w-4 h-4 text-sky-500"
-                        title="Tác giả được xác minh bởi HaechiVN"
-                      />
+                      <span title="Tác giả được xác minh bởi HaechiVN" aria-label="Tác giả được xác minh bởi HaechiVN">
+                        <ShieldCheck className="w-4 h-4 text-sky-500" />
+                      </span>
                     )}
                   </div>
                   <p className="text-[11px] text-stone-400 leading-tight">

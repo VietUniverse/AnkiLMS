@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Layers, Headphones, Repeat, Menu } from "lucide-react";
 import { useApp } from "../contexts/AppProvider";
@@ -32,7 +31,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onOpenMobileMenu }) => {
         const Icon = item.icon;
         const active = isActive(item.href);
         return (
-          <Link
+          <a
             key={item.href}
             href={item.href}
             className={`flex min-w-0 flex-1 flex-col items-center gap-1 px-1 py-1.5 rounded-xl transition-all ${
@@ -41,7 +40,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onOpenMobileMenu }) => {
           >
             <Icon className={`w-5 h-5 ${active ? "text-blue-400" : "text-slate-400"}`} />
             <span className="max-w-full truncate text-[10px] font-bold">{item.label}</span>
-          </Link>
+          </a>
         );
       })}
 

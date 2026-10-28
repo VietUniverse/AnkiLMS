@@ -47,6 +47,21 @@ export interface DailyMissionsSummary {
 const LOCAL_STORAGE_TOKEN_KEY = "haechivn_auth_token";
 const LOCAL_STORAGE_USER_KEY = "haechivn_user_profile";
 const LOCAL_STORAGE_DECKS_KEY = "haechivn_decks";
+const DECK_DB_NAME = "haechivn-storage";
+const DECK_STORE_NAME = "app-data";
+let deckDbPromise: Promise<IDBDatabase> | null = null;
+let deckSaveQueue: Promise<void> = Promise.resolve();
+
+function openDeckDatabase(): Promise<IDBDatabase> {
+  if (typeof indexedDB === "undefined") return Promise.reject(new Error("IndexedDB is unavailable"));
+  deckDbPromise ??= new Promise((resolve, reject) => {
+    const request = indexedDB.open(DECK_DB_NAME, 1);
+    request.onupgradeneeded = () => request.result.createObjectStore(DECK_STORE_NAME);
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error || new Error("Could not open local deck database"));
+  });
+  return deckDbPromise;
+}
 
 export class ApiClient {
   public static getToken(): string | null {
@@ -452,19 +467,42 @@ export class ApiClient {
     }
   }
 
-  public static saveDecks(decks: AnkiDeck[]): void {
-    if (typeof window === "undefined") return;
-    // Binary media is transient and uploaded when a teacher assigns an Anki deck.
-    localStorage.setItem(LOCAL_STORAGE_DECKS_KEY, JSON.stringify(decks.map(({ mediaAssets: _mediaAssets, ...deck }) => deck)));
+  public static saveDecks(decks: AnkiDeck[]): Promise<void> {
+    if (typeof window === "undefined") return Promise.resolve();
+    // IndexedDB is not subject to localStorage's ~5 MB quota; deck cards stay local and are structured-cloned.
+    const storedDecks = decks.map(({ mediaAssets: _mediaAssets, ...deck }) => deck);
+    deckSaveQueue = deckSaveQueue.catch(() => undefined).then(async () => {
+      const db = await openDeckDatabase();
+      await new Promise<void>((resolve, reject) => {
+        const tx = db.transaction(DECK_STORE_NAME, "readwrite");
+        tx.objectStore(DECK_STORE_NAME).put(storedDecks, "decks");
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error || new Error("Could not save decks"));
+        tx.onabort = () => reject(tx.error || new Error("Deck save was aborted"));
+      });
+      try { localStorage.removeItem(LOCAL_STORAGE_DECKS_KEY); } catch { /* Storage may be disabled. */ }
+    });
+    return deckSaveQueue;
   }
 
-  public static getSavedDecks(): AnkiDeck[] {
+  public static async getSavedDecks(): Promise<AnkiDeck[]> {
     if (typeof window === "undefined") return [];
-    const data = localStorage.getItem(LOCAL_STORAGE_DECKS_KEY);
-    if (!data) return [];
     try {
-      return JSON.parse(data);
-    } catch (e) {
+      const db = await openDeckDatabase();
+      const decks = await new Promise<AnkiDeck[] | undefined>((resolve, reject) => {
+        const request = db.transaction(DECK_STORE_NAME, "readonly").objectStore(DECK_STORE_NAME).get("decks");
+        request.onsuccess = () => resolve(request.result as AnkiDeck[] | undefined);
+        request.onerror = () => reject(request.error);
+      });
+      if (decks) return decks;
+    } catch { /* Migrate legacy localStorage data when IndexedDB is unavailable or empty. */ }
+    try {
+      const legacy = localStorage.getItem(LOCAL_STORAGE_DECKS_KEY);
+      if (!legacy) return [];
+      const decks = JSON.parse(legacy) as AnkiDeck[];
+      void this.saveDecks(decks);
+      return decks;
+    } catch {
       return [];
     }
   }
