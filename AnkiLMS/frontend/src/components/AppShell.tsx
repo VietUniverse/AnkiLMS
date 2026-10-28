@@ -63,7 +63,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   }
 
   const routeFeature = featureForPath(pathname);
-  const routeDisabled = featureFlagsLoaded && routeFeature && !isFeatureEnabled(routeFeature);
+  const routeDisabled = !!(routeFeature && !isFeatureEnabled(routeFeature));
 
   return (
     <div className="flex h-[100dvh] min-h-[100svh] bg-[#0b1329] text-white overflow-hidden font-sans">
@@ -101,9 +101,11 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
           )}
 
           {routeDisabled ? (
-            <section className="mx-auto mt-12 max-w-xl rounded-2xl border border-blue-500/30 bg-[#101a32] p-8 text-center">
+            <section className="mx-auto mt-12 max-w-xl rounded-2xl border border-blue-500/30 bg-[#101a32] p-8 text-center space-y-3">
               <h1 className="text-xl font-black text-white">Tính năng hiện chưa khả dụng</h1>
-              <p className="mt-2 text-sm text-slate-300">Tính năng này đang được tạm ẩn trên HaechiVN.</p>
+              <p className="text-sm text-slate-300">
+                Tính năng này đang trong giai đoạn thử nghiệm và chỉ khả dụng ở môi trường kiểm thử.
+              </p>
             </section>
           ) : children}
         </main>
