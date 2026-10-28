@@ -1145,13 +1145,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                         <span>Thẻ nhận diện từ vựng</span>
                       )}
                     </span>
-
-                    {/* Tags */}
-                    {currentCard.tag_2 && (
-                      <span className="text-[10px] font-mono text-stone-400">
-                        #{currentCard.tag_2}
-                      </span>
-                    )}
                   </div>
                 </div>
               </div>
