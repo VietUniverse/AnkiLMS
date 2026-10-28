@@ -131,16 +131,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     "tieng-han-tong-hop-1-bai-01": true,
   });
 
-  // Explore decks are nested under this group and usually load asynchronously.
-  // Expand it when saved decks arrive so newly added decks are visible by name.
-  useEffect(() => {
-    if (userDecks.length > 0) {
-      setExpandedDecks((current) =>
-        current["user-imported"] ? current : { ...current, "user-imported": true }
-      );
-    }
-  }, [userDecks.length]);
-
   // Modal zoom image
   const [modalImage, setModalImage] = useState<string | null>(null);
 
@@ -301,7 +291,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       });
     }
 
-    // Group 3: User imported decks (if any)
+    // User-owned and Explore decks are independent decks, at the same level
+    // as the curriculum decks. Do not hide them inside an aggregate parent.
     if (userDecks && userDecks.length > 0) {
       const userNodes: DeckTreeNode[] = userDecks.map((ud) => {
         const detectedTopik = inferTopikLevel(ud.name, ...ud.cards.flatMap((card) => card.tags || []));
@@ -325,12 +316,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       });
       });
 
-      rootNodes.push({
-        id: "user-imported",
-        title: "Bộ Thẻ Cá Nhân & Đã Thêm",
-        cards: userNodes.flatMap((n) => n.cards),
-        children: userNodes,
-      });
+      rootNodes.push(...userNodes);
     }
 
     return rootNodes;
