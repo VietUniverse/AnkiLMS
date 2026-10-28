@@ -207,7 +207,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       const rawBook = parts[1]?.trim() || "Quyển 01";
       const bookNum = rawBook.match(/\d+/)?.[0] || "1";
       const bookNumber = parseInt(bookNum, 10);
-      if (removedBuiltInDeckIds.includes(`tieng-han-tong-hop-${bookNumber}`)) return;
+
       const bookTitle = `Tiếng Hàn Tổng Hợp ${bookNumber}`;
       const lessonTitle = parts[2]?.trim() || "Bài 01";
       const subdeckTitle = parts[3]?.trim() || parts[parts.length - 1];
@@ -262,7 +262,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     });
 
     // Group 2: Từ Vựng Cơ Bản
-    if (VOCABULARY_DATA.length > 0 && !removedBuiltInDeckIds.includes("korean-basic")) {
+    if (VOCABULARY_DATA.length > 0) {
       const basicCards: VocabularyCard[] = VOCABULARY_DATA.map((item, idx) => ({
         id: `basic-${idx + 1}`,
         code: item.id,

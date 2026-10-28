@@ -54,7 +54,7 @@ export function useApp(): AppContextType {
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const accountDeckCleanupEmail = "anki@adminvn.com";
-  const accountDeckCleanupIds = ["tieng-han-tong-hop-1", "tieng-han-tong-hop-2", "korean-basic"];
+  const accountDeckCleanupIds: string[] = [];
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [userDecks, setUserDecks] = useState<AnkiDeck[]>([]);
   const [removedBuiltInDeckIds, setRemovedBuiltInDeckIds] = useState<string[]>([]);
