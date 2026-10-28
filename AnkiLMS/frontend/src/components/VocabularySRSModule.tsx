@@ -126,10 +126,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
   // Search and tree expansion for the learner's active library.
   const [searchQuery, setSearchQuery] = useState("");
-  const [expandedDecks, setExpandedDecks] = useState<Record<string, boolean>>({
-    "tieng-han-tong-hop-1": true,
-    "tieng-han-tong-hop-1-bai-01": true,
-  });
+  const [expandedDecks, setExpandedDecks] = useState<Record<string, boolean>>({});
 
   // Modal zoom image
   const [modalImage, setModalImage] = useState<string | null>(null);
