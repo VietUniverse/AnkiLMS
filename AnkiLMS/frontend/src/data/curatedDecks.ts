@@ -1,16 +1,30 @@
 import { AnkiCard, AnkiDeck } from "../lib/ankiParser";
 
+export interface DeckAuthor {
+  name: string;
+  avatar: string;
+  role: string;
+  bio: string;
+  verified: boolean;
+}
+
 export interface CuratedDeckItem {
   id: string;
   title: string;
-  category: "topik" | "conversation" | "drama" | "hanja" | "travel" | "work";
+  category: "topik" | "conversation" | "drama" | "hanja" | "travel" | "work" | "food";
   categoryLabel: string;
   level: "Sơ cấp" | "Trung cấp" | "Cao cấp" | "Mọi cấp độ";
   description: string;
-  icon: string; // Emoji icon
+  detailedDescription?: string;
+  icon: string;
   badgeColor: string;
+  bannerGradient?: string;
   tags: string[];
   cards: AnkiCard[];
+  author: DeckAuthor;
+  rating: number;
+  downloads: number;
+  estimatedMinutes: number;
 }
 
 function makeCard(
@@ -50,15 +64,70 @@ function makeCard(
 
 export const CURATED_DECKS: CuratedDeckItem[] = [
   {
+    id: "korean-restaurant",
+    title: "Tiếng Hàn Quán Ăn & Gọi Món (K-Restaurant)",
+    category: "food",
+    categoryLabel: "Quán ăn & Ẩm thực",
+    level: "Sơ cấp",
+    description: "Trọn bộ mẫu câu cửa miệng tự tin đi ăn quán tại Hàn: gọi món, xin panchan, dặn không cay và thanh toán.",
+    detailedDescription: "Bộ thẻ thiết yếu cho người du lịch hoặc sinh sống tại Hàn Quốc. Bao gồm các khẩu ngữ thực tế người bản xứ nói mỗi ngày tại quán thịt nướng (K-BBQ), quán cơm canh (Gukbap), quán cà phê và quán nhậu pocha.",
+    icon: "🍲",
+    badgeColor: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30",
+    bannerGradient: "from-amber-950/70 via-stone-900 to-orange-950/70",
+    tags: ["Quán ăn", "Gọi món", "Ẩm thực", "K-Food"],
+    rating: 4.9,
+    downloads: 1420,
+    estimatedMinutes: 25,
+    author: {
+      name: "Cô Kim Min-seo",
+      avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+      role: "Chuyên gia Văn hóa & Ẩm thực Hàn Quốc",
+      bio: "Giảng viên giao tiếp tiếng Hàn thực chiến, cựu du học sinh Đại học Yonsei.",
+      verified: true,
+    },
+    cards: [
+      makeCard(701, "저기요!", "Bạn ơi / Em ơi! (dùng gọi phục vụ quán)", "jeo-gi-yo!", "저기요! 여기 주문할게요.", "Em ơi! Cho bàn mình gọi món với.", "Tiếng Hàn Quán Ăn", ["Restaurant"]),
+      makeCard(702, "메뉴판 좀 주세요", "Cho tôi xin quyển menu với ạ", "me-nyu-pan jom ju-se-yo", "사장님, 메뉴판 좀 갖다 주세요.", "Chủ quán ơi, mang giúp mình quyển thực đơn nhé.", "Tiếng Hàn Quán Ăn", ["Restaurant"]),
+      makeCard(703, "여기 주문할게요!", "Bàn mình gọi món với ạ!", "yeo-gi ju-mun-hal-ge-yo!", "저기요, 여기 주문 먼저 할게요.", "Em ơi, cho bàn mình gọi đồ trước nhé.", "Tiếng Hàn Quán Ăn", ["Restaurant"]),
+      makeCard(704, "삼겹살 2인분 주세요", "Cho tôi 2 suất thịt ba chỉ nướng", "sam-gyeop-sal i-in-bun ju-se-yo", "삼겹살 2인분하고 소주 한 병 주세요.", "Cho 2 phần ba chỉ nướng và 1 chai rượu soju.", "Tiếng Hàn Quán Ăn", ["Restaurant"]),
+      makeCard(705, "물 좀 더 주세요", "Cho tôi xin thêm nước lọc", "mul jom deo ju-se-yo", "시원한 물 좀 더 주실 수 있나요?", "Cho mình xin thêm ít nước mát được không ạ?", "Tiếng Hàn Quán Ăn", ["Restaurant"]),
+      makeCard(706, "반찬 리필 되나요?", "Có được lấy thêm đồ ăn kèm (panchan) không ạ?", "ban-chan ri-pil doe-na-yo?", "여기 김치 반찬 리필 되나요?", "Kim chi ở đây có được lấy thêm miễn phí không ạ?", "Tiếng Hàn Quán Ăn", ["Restaurant"]),
+      makeCard(707, "맵지 않게 해 주세요", "Làm không cay giúp tôi nhé", "maep-ji an-ge hae ju-se-yo", "매운 걸 못 먹어서 맵지 않게 해 주세요.", "Tôi không ăn được cay nên làm không cay giúp tôi nhé.", "Tiếng Hàn Quán Ăn", ["Restaurant"]),
+      makeCard(708, "덜 맵게 해 주세요", "Làm bớt cay lại một chút", "deol maep-ge hae ju-se-yo", "신라면보다 덜 맵게 해 주세요.", "Làm bớt cay hơn mì Shin Ramyun một chút ạ.", "Tiếng Hàn Quán Ăn", ["Restaurant"]),
+      makeCard(709, "밥 한 공기 추가해 주세요", "Cho tôi gọi thêm 1 bát cơm", "bap han gong-gi chu-ga-hae ju-se-yo", "공깃밥 하나 더 추가해 주세요.", "Cho em gọi thêm 1 bát cơm trắng nữa ạ.", "Tiếng Hàn Quán Ăn", ["Restaurant"]),
+      makeCard(710, "숟가락하고 젓가락 주세요", "Cho tôi xin thìa và đũa", "sut-ga-rak-ha-go jeot-ga-rak ju-se-yo", "테이블 서랍에 수저가 없어서 숟가락 좀 주세요.", "Trong ngăn bàn hết đũa thìa rồi, lấy giúp tôi với.", "Tiếng Hàn Quán Ăn", ["Restaurant"]),
+      makeCard(711, "물티슈 좀 주세요", "Cho tôi xin khăn ướt", "mul-ti-syu jom ju-se-yo", "손 닦게 물티슈 두 장만 주세요.", "Cho tôi xin 2 chiếc khăn ướt để lau tay với ạ.", "Tiếng Hàn Quán Ăn", ["Restaurant"]),
+      makeCard(712, "불판 좀 갈아 주세요", "Thay vỉ nướng giúp tôi với ạ", "bul-pan jom ga-ra ju-se-yo", "고기 타는데 불판 좀 갈아 주세요.", "Thịt cháy rồi, thay giúp tôi cái vỉ nướng mới nhé.", "Tiếng Hàn Quán Ăn", ["Restaurant"]),
+      makeCard(713, "볶음밥 1인분 볶아 주세요", "Rang giúp tôi 1 suất cơm rang", "bok-keum-bap il-in-bun bo-kka ju-se-yo", "다 먹고 볶음밥 1인분 볶아 주세요.", "Ăn xong rồi, rang giúp mình 1 suất cơm rang nhé.", "Tiếng Hàn Quán Ăn", ["Restaurant"]),
+      makeCard(714, "남은 음식 포장해 주세요", "Đồ ăn thừa gói mang về giúp tôi ạ", "nam-eun eum-sik po-jang-hae ju-se-yo", "남은 전 포장해 주실 수 있나요?", "Bánh jeon còn thừa gói mang về giúp tôi được không?", "Tiếng Hàn Quán Ăn", ["Restaurant"]),
+      makeCard(715, "계산해 주세요", "Tính tiền giúp tôi ạ", "gye-san-hae ju-se-yo", "사장님, 3번 테이블 계산해 주세요.", "Chủ quán ơi, tính tiền cho bàn số 3 với ạ.", "Tiếng Hàn Quán Ăn", ["Restaurant"]),
+      makeCard(716, "따로따로 계산할게요", "Chúng tôi chia tiền tính riêng từng người", "tta-ro-tta-ro gye-san-hal-ge-yo", "카드로 각자 따로따로 계산해도 될까요?", "Chúng tôi thanh toán thẻ tính riêng được không ạ?", "Tiếng Hàn Quán Ăn", ["Restaurant"]),
+      makeCard(717, "정말 맛있게 잘 먹었습니다", "Bữa ăn rất ngon miệng, cảm ơn quán!", "jeong-mal mas-it-ge jal meo-geot-seum-ni-da", "음식이 너무 맛있네요, 잘 먹었습니다!", "Món ăn ngon quá chừng, cảm ơn quán nhé!", "Tiếng Hàn Quán Ăn", ["Restaurant"]),
+      makeCard(718, "앞치마 있어요?", "Quán có tạp dề không ạ?", "ap-chi-ma iss-eo-yo?", "국물 튈까 봐 그런데 앞치마 있어요?", "Sợ nước canh bắn, quán có tạp dề không ạ?", "Tiếng Hàn Quán Ăn", ["Restaurant"]),
+    ],
+  },
+  {
     id: "topik-1-essential",
     title: "TOPIK I · Từ Vựng Trọng Tâm (Cấp 1-2)",
     category: "topik",
     categoryLabel: "Luyện thi TOPIK",
     level: "Sơ cấp",
     description: "Bộ từ vựng nền tảng cốt lõi nhất thường xuyên xuất hiện trong đề thi TOPIK I (kỹ năng Đọc & Nghe).",
+    detailedDescription: "Bộ thẻ tổng hợp 25 từ vựng xuất hiện với tần suất cao nhất trong các kỳ thi TOPIK I chính thức từ Viện Giáo dục Quốc tế Hàn Quốc (NIIED). Phù hợp ôn cấp tốc đạt 160-200 điểm TOPIK Cấp 2.",
     icon: "🎯",
     badgeColor: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30",
+    bannerGradient: "from-blue-950/70 via-slate-900 to-indigo-950/70",
     tags: ["TOPIK I", "Sơ cấp", "Kỳ thi"],
+    rating: 5.0,
+    downloads: 2150,
+    estimatedMinutes: 30,
+    author: {
+      name: "Thầy Park Min-jun",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+      role: "Chuyên gia Luyện thi TOPIK HaechiVN",
+      bio: "Thạc sĩ Ngôn ngữ Hàn Đại học Quốc gia Seoul (SNU), 8 năm kinh nghiệm đào tạo TOPIK I-II.",
+      verified: true,
+    },
     cards: [
       makeCard(101, "학생", "Học sinh, sinh viên", "hak-saeng", "저는 대학교 학생이에요.", "Tôi là sinh viên đại học.", "TOPIK I · Từ Vựng Trọng Tâm", ["TOPIK1"]),
       makeCard(102, "선생님", "Thầy/cô giáo", "seon-saeng-nim", "선생님께서 한국어를 가르치십니다.", "Cô giáo đang dạy tiếng Hàn.", "TOPIK I · Từ Vựng Trọng Tâm", ["TOPIK1"]),
@@ -94,9 +163,21 @@ export const CURATED_DECKS: CuratedDeckItem[] = [
     categoryLabel: "Giao tiếp hàng ngày",
     level: "Mọi cấp độ",
     description: "Mẫu câu cửa miệng người bản xứ dùng hằng ngày: ăn uống, gọi món, mua sắm và hỏi đường.",
+    detailedDescription: "Những mẫu câu sinh động ngắn gọn, không rập khuôn sách vở giúp bạn phản xạ tức thì khi bước chân sang Hàn Quốc hay giao tiếp với bạn bè đồng nghiệp.",
     icon: "💬",
     badgeColor: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30",
+    bannerGradient: "from-emerald-950/70 via-slate-900 to-teal-950/70",
     tags: ["Giao tiếp", "Cửa miệng", "Đời sống"],
+    rating: 4.8,
+    downloads: 1890,
+    estimatedMinutes: 20,
+    author: {
+      name: "Ban Biên tập HaechiVN",
+      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      role: "Đội ngũ Học liệu HaechiVN",
+      bio: "Nhóm biên soạn giáo trình tiếng Hàn ứng dụng kết hợp phương pháp Spaced Repetition.",
+      verified: true,
+    },
     cards: [
       makeCard(201, "얼마예요?", "Bao nhiêu tiền ạ?", "eol-ma-ye-yo?", "이거 하나에 얼마예요?", "Cái này một cái bao nhiêu tiền thế ạ?", "Giao Tiếp Thực Chiến", ["GiaoTiep"]),
       makeCard(202, "깎아 주세요", "Bớt giá cho tôi đi ạ", "kka-kka ju-se-yo", "조금만 깎아 주세요.", "Bớt cho cháu một chút xíu đi ạ.", "Giao Tiếp Thực Chiến", ["GiaoTiep"]),
@@ -123,9 +204,21 @@ export const CURATED_DECKS: CuratedDeckItem[] = [
     categoryLabel: "Phim ảnh & Trend",
     level: "Trung cấp",
     description: "Bộ từ lóng hot trend của giới trẻ Hàn Quốc, thường gặp trong K-Drama, show thực tế và mạng xã hội.",
+    detailedDescription: "Học tiếng Hàn qua ngôn ngữ Gen Z xứ kim chi! Bạn sẽ hiểu ngay các meme nổi tiếng trên Instagram, hiểu trọn vẹn lời thoại nhân vật trong phim truyền hình mà từ điển truyền thống không dạy.",
     icon: "🎬",
     badgeColor: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30",
+    bannerGradient: "from-purple-950/70 via-slate-900 to-pink-950/70",
     tags: ["Từ lóng", "K-Drama", "Trend"],
+    rating: 4.9,
+    downloads: 1680,
+    estimatedMinutes: 20,
+    author: {
+      name: "Cô Lee Ha-neul",
+      avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80",
+      role: "Content Creator K-Drama & Slang",
+      bio: "Nhà sáng tạo nội dung văn hóa Hàn Quốc, YouTuber giải mã phim truyền hình.",
+      verified: true,
+    },
     cards: [
       makeCard(301, "대박", "Đỉnh chóp, tuyệt vời, quá đỉnh", "dae-bak", "와, 대박! 진짜 맛있어!", "Woa, đỉnh thật đấy! Ngon quá chừng!", "K-Drama & K-Slang", ["Slang"]),
       makeCard(302, "꿀잼", "Siêu vui, cực kỳ hay", "kkul-jaem", "어제 본 영화 진짜 꿀잼이야.", "Bộ phim hôm qua xem siêu hay luôn.", "K-Drama & K-Slang", ["Slang"]),
@@ -151,9 +244,21 @@ export const CURATED_DECKS: CuratedDeckItem[] = [
     categoryLabel: "Gốc từ Hán-Hàn",
     level: "Trung cấp",
     description: "Tăng vốn từ gấp 3 lần bằng quy luật âm Hán Hàn (Học - 학, Sinh - 생, Nhân - 인, Thất - 실, Quốc - 국).",
+    detailedDescription: "Hơn 60% từ vựng tiếng Hàn có nguồn gốc từ chữ Hán, tương tự từ Hán-Việt trong tiếng Việt. Khi nắm vững các gốc từ cốt lõi, bạn có thể đoán nghĩa chính xác hàng nghìn từ vựng mới chỉ trong nháy mắt.",
     icon: "⛩️",
     badgeColor: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30",
+    bannerGradient: "from-amber-950/70 via-stone-900 to-yellow-950/70",
     tags: ["Hán Hàn", "Tăng tốc", "Gốc từ"],
+    rating: 4.9,
+    downloads: 1350,
+    estimatedMinutes: 25,
+    author: {
+      name: "Thầy Trịnh Văn Nam",
+      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      role: "Nghiên cứu Ngôn ngữ học Đối chiếu",
+      bio: "Tác giả bộ sách 'Mở rộng 5000 từ vựng qua âm Hán-Hàn', cựu giảng viên ĐH Ngoại ngữ.",
+      verified: true,
+    },
     cards: [
       makeCard(401, "학생 (學生)", "Học sinh (Học + Sinh)", "hak-saeng", "학(Học) + 생(Sinh): người đang đi học.", "học sinh trong trường", "Từ Vựng Hán Hàn", ["Hanja"]),
       makeCard(402, "학교 (學校)", "Trường học (Học + Hiệu)", "hak-gyo", "학(Học) + 교(Hiệu): nơi để học tập.", "trường học phổ thông", "Từ Vựng Hán Hàn", ["Hanja"]),
@@ -180,9 +285,21 @@ export const CURATED_DECKS: CuratedDeckItem[] = [
     categoryLabel: "Du lịch & Sân bay",
     level: "Sơ cấp",
     description: "Bộ thẻ cứu cánh khi sang Hàn: thủ tục nhập cảnh, nạp thẻ tàu T-Money, đổi tiền và hỏi đường.",
+    detailedDescription: "Hành trang bỏ túi không thể thiếu cho các chuyến bay đến sân bay quốc tế Incheon và khám phá các thành phố Hàn Quốc. Giúp bạn tự tin giao tiếp tại quầy check-in, mua sim và đón tàu AREX về trung tâm.",
     icon: "✈️",
     badgeColor: "bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/30",
+    bannerGradient: "from-sky-950/70 via-slate-900 to-cyan-950/70",
     tags: ["Du lịch", "Sân bay", "Khách sạn"],
+    rating: 4.8,
+    downloads: 1120,
+    estimatedMinutes: 20,
+    author: {
+      name: "Cô Vũ Mai Anh",
+      avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80",
+      role: "Hướng dẫn viên & Tour Leader Hàn Quốc",
+      bio: "10 năm dẫn tour du lịch tự túc Seoul - Busan - Jeju, chia sẻ kinh nghiệm sinh tồn xứ Kim Chi.",
+      verified: true,
+    },
     cards: [
       makeCard(501, "여권", "Hộ chiếu (Passport)", "yeo-gwon", "여권과 탑승권을 보여주세요.", "Xin vui lòng xuất trình hộ chiếu và thẻ lên máy bay.", "Tiếng Hàn Du Lịch", ["Travel"]),
       makeCard(502, "탑승권", "Thẻ lên máy bay (Boarding pass)", "tap-seung-gwon", "몇 번 탑승구에서 타나요?", "Lên máy bay ở cửa số mấy ạ?", "Tiếng Hàn Du Lịch", ["Travel"]),
@@ -203,9 +320,21 @@ export const CURATED_DECKS: CuratedDeckItem[] = [
     categoryLabel: "Xuất khẩu lao động",
     level: "Sơ cấp",
     description: "Thuật ngữ nhà máy thiết yếu: thiết bị máy móc, an toàn lao động, giao tiếp với quản lý và lương thưởng.",
+    detailedDescription: "Bộ thẻ chuyên dụng hỗ trợ người lao động EPS-TOPIK nhanh chóng hòa nhập với môi trường xưởng sản xuất cơ khí, may mặc, nông nghiệp tại Hàn Quốc. Chú trọng các thuật ngữ mệnh lệnh an toàn phòng chống tai nạn.",
     icon: "🏭",
     badgeColor: "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30",
+    bannerGradient: "from-rose-950/70 via-slate-900 to-amber-950/70",
     tags: ["EPS", "Nhà xưởng", "Lao động"],
+    rating: 4.8,
+    downloads: 980,
+    estimatedMinutes: 20,
+    author: {
+      name: "Kỹ sư Đoàn Quốc Tuấn",
+      avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80",
+      role: "Cố vấn Kỹ thuật & Lao động EPS",
+      bio: "6 năm làm việc tại Gyeonggi-do, quản lý an toàn lao động và hỗ trợ phiên dịch cho công nhân Việt Nam.",
+      verified: true,
+    },
     cards: [
       makeCard(601, "안전모", "Mũ bảo hộ lao động", "an-jeon-mo", "작업장에서는 반드시 안전모를 착용하세요.", "Trong xưởng làm việc bắt buộc phải đội mũ bảo hộ.", "Tiếng Hàn Nhà Xưởng", ["Work"]),
       makeCard(602, "안전화", "Giày bảo hộ", "an-jeon-hwa", "발을 보호하기 위해 안전화를 신으세요.", "Hãy mang giày bảo hộ để bảo vệ đôi chân.", "Tiếng Hàn Nhà Xưởng", ["Work"]),

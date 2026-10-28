@@ -46,6 +46,7 @@ export default function ExplorePage() {
 
   const categories = [
     { id: "all", label: "Tất cả bộ thẻ" },
+    { id: "food", label: "Quán ăn & Ẩm thực" },
     { id: "topik", label: "TOPIK I/II" },
     { id: "conversation", label: "Giao tiếp đời sống" },
     { id: "drama", label: "K-Drama & Slang" },
@@ -173,9 +174,14 @@ export default function ExplorePage() {
                   </div>
 
                   {/* Title & Description */}
-                  <h3 className="text-base font-bold text-stone-900 dark:text-white leading-snug">
-                    {deck.title}
-                  </h3>
+                  <Link
+                    href={`/explore/${deck.id}`}
+                    className="block group cursor-pointer"
+                  >
+                    <h3 className="text-base font-bold text-stone-900 dark:text-white leading-snug group-hover:text-sky-500 transition">
+                      {deck.title}
+                    </h3>
+                  </Link>
                   <p className="text-xs text-stone-500 dark:text-stone-400 mt-1.5 line-clamp-2 leading-relaxed">
                     {deck.description}
                   </p>
@@ -222,13 +228,13 @@ export default function ExplorePage() {
 
                 {/* Footer Buttons */}
                 <div className="mt-4 pt-3 border-t border-stone-100 dark:border-stone-800/80 flex items-center justify-between gap-2">
-                  <button
-                    onClick={() => setPreviewDeckId(isPreviewing ? null : deck.id)}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-white transition py-1.5 px-2 rounded-lg cursor-pointer"
+                  <Link
+                    href={`/explore/${deck.id}`}
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-stone-600 hover:text-sky-600 dark:text-stone-300 dark:hover:text-sky-400 transition py-1.5 px-2 rounded-lg cursor-pointer"
                   >
-                    <Eye className="w-3.5 h-3.5" />
-                    {isPreviewing ? "Đóng xem" : "Xem trước"}
-                  </button>
+                    <span>Chi tiết</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
 
                   <div className="flex items-center gap-1.5">
                     {added ? (
