@@ -4,6 +4,9 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { AnkiDeck } from "../lib/ankiParser";
 import { ApiClient, UserProfile } from "../lib/apiClient";
 import { BETA_FEATURE_KEYS, DEFAULT_FEATURE_FLAGS, FeatureFlags, FeatureKey, IS_BETA_FEATURES_ENABLED } from "../lib/featureFlags";
+import { CURATED_DECKS, curatedDeckToAnkiDeck } from "../data/curatedDecks";
+import { courseToExploreDeck, loadCourseVocabulary } from "../lib/courseVocabulary";
+import { syncManagedDecks } from "../lib/deckSync";
 
 export interface StudySessionInfo {
   title: string;
@@ -127,6 +130,30 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     window.addEventListener("haechivn:user-updated", handleUserUpdate);
     return () => window.removeEventListener("haechivn:user-updated", handleUserUpdate);
   }, []);
+
+  // Refresh Explore decks on app startup. New/updated cards are synchronized
+  // while each learner's review schedule and removed cards are retained.
+  const [publishedDecks, setPublishedDecks] = useState<AnkiDeck[] | null>(null);
+  useEffect(() => {
+    let active = true;
+    void loadCourseVocabulary().then((courseData) => {
+      if (!active) return;
+      const decks = [
+        ...CURATED_DECKS.map(curatedDeckToAnkiDeck),
+        ...(courseData?.decks.flatMap((group) => group.courses.map(courseToExploreDeck)) || []).map(curatedDeckToAnkiDeck),
+      ];
+      setPublishedDecks(decks);
+    });
+    return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
+    if (!publishedDecks || !isAuthReady) return;
+    const synchronized = syncManagedDecks(userDecks, publishedDecks);
+    if (synchronized === userDecks) return;
+    setUserDecks(synchronized);
+    void ApiClient.saveDecks(synchronized).catch((error) => console.error("Could not sync published decks", error));
+  }, [isAuthReady, publishedDecks, userDecks]);
 
   const handleOpenAuth = useCallback((register?: boolean) => {
     setAuthRegisterMode(!!register);
