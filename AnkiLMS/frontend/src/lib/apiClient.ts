@@ -467,7 +467,7 @@ export class ApiClient {
     }
   }
 
-  public static saveDecks(decks: AnkiDeck[]): Promise<void> {
+  public static saveDecks(decks: AnkiDeck[], userId?: string): Promise<void> {
     if (typeof window === "undefined") return Promise.resolve();
     // IndexedDB is not subject to localStorage's ~5 MB quota; deck cards stay local and are structured-cloned.
     const storedDecks = decks.map(({ mediaAssets: _mediaAssets, ...deck }) => deck);
@@ -475,32 +475,51 @@ export class ApiClient {
       const db = await openDeckDatabase();
       await new Promise<void>((resolve, reject) => {
         const tx = db.transaction(DECK_STORE_NAME, "readwrite");
-        tx.objectStore(DECK_STORE_NAME).put(storedDecks, "decks");
+        tx.objectStore(DECK_STORE_NAME).put(storedDecks, userId ? `decks:${userId}` : "decks");
         tx.oncomplete = () => resolve();
         tx.onerror = () => reject(tx.error || new Error("Could not save decks"));
         tx.onabort = () => reject(tx.error || new Error("Deck save was aborted"));
       });
-      try { localStorage.removeItem(LOCAL_STORAGE_DECKS_KEY); } catch { /* Storage may be disabled. */ }
+      // Keep the legacy unscoped data intact when writing one account's copy.
+      if (!userId) {
+        try { localStorage.removeItem(LOCAL_STORAGE_DECKS_KEY); } catch { /* Storage may be disabled. */ }
+      }
     });
     return deckSaveQueue;
   }
 
-  public static async getSavedDecks(): Promise<AnkiDeck[]> {
+  public static async getSavedDecks(userId?: string): Promise<AnkiDeck[]> {
     if (typeof window === "undefined") return [];
     try {
       const db = await openDeckDatabase();
       const decks = await new Promise<AnkiDeck[] | undefined>((resolve, reject) => {
-        const request = db.transaction(DECK_STORE_NAME, "readonly").objectStore(DECK_STORE_NAME).get("decks");
-        request.onsuccess = () => resolve(request.result as AnkiDeck[] | undefined);
+        const store = db.transaction(DECK_STORE_NAME, "readonly").objectStore(DECK_STORE_NAME);
+        const request = store.get(userId ? `decks:${userId}` : "decks");
+        request.onsuccess = () => {
+          const saved = request.result as AnkiDeck[] | undefined;
+          if (saved || !userId) {
+            resolve(saved);
+            return;
+          }
+          // First signed-in load adopts the legacy shared browser deck list into
+          // this account's partition; the legacy copy remains for other accounts.
+          const legacyRequest = store.get("decks");
+          legacyRequest.onsuccess = () => resolve(legacyRequest.result as AnkiDeck[] | undefined);
+          legacyRequest.onerror = () => reject(legacyRequest.error);
+        };
         request.onerror = () => reject(request.error);
       });
-      if (decks) return decks;
+      if (decks) {
+        if (userId) void this.saveDecks(decks, userId);
+        return decks;
+      }
     } catch { /* Migrate legacy localStorage data when IndexedDB is unavailable or empty. */ }
     try {
       const legacy = localStorage.getItem(LOCAL_STORAGE_DECKS_KEY);
       if (!legacy) return [];
       const decks = JSON.parse(legacy) as AnkiDeck[];
-      void this.saveDecks(decks);
+      // Migrate legacy browser storage into the signed-in account's own deck store.
+      void this.saveDecks(decks, userId);
       return decks;
     } catch {
       return [];

@@ -21,6 +21,7 @@ interface AppContextType {
   setCurrentUser: React.Dispatch<React.SetStateAction<UserProfile | null>>;
   userDecks: AnkiDeck[];
   setUserDecks: React.Dispatch<React.SetStateAction<AnkiDeck[]>>;
+  removedBuiltInDeckIds: string[];
   heatmapData: { checkin_date: string; time_spent_minutes: number; xp_earned: number }[];
   setHeatmapData: React.Dispatch<React.SetStateAction<{ checkin_date: string; time_spent_minutes: number; xp_earned: number }[]>>;
   isImporterOpen: boolean;
@@ -52,8 +53,11 @@ export function useApp(): AppContextType {
 }
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const accountDeckCleanupEmail = "anki@adminvn.com";
+  const accountDeckCleanupIds = ["tieng-han-tong-hop-1", "tieng-han-tong-hop-2", "korean-basic"];
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [userDecks, setUserDecks] = useState<AnkiDeck[]>([]);
+  const [removedBuiltInDeckIds, setRemovedBuiltInDeckIds] = useState<string[]>([]);
   const [heatmapData, setHeatmapData] = useState<{ checkin_date: string; time_spent_minutes: number; xp_earned: number }[]>([]);
   const [isImporterOpen, setIsImporterOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -109,7 +113,38 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           setFeatureFlags({ ...DEFAULT_FEATURE_FLAGS, ...payload.features });
         }
         setFeatureFlagsLoaded(true);
-        const decks = await ApiClient.getSavedDecks();
+        let decks = await ApiClient.getSavedDecks(user?.id);
+        if (user?.email.toLowerCase() === accountDeckCleanupEmail) {
+          setRemovedBuiltInDeckIds(accountDeckCleanupIds);
+          const cleanupKey = `haechivn_account_deck_cleanup_v1_${user.id}`;
+          if (!localStorage.getItem(cleanupKey)) {
+            const isCopiedDeck = (name: string) => {
+              const normalized = name.trim().toLocaleLowerCase();
+              return normalized === "từ vựng tiếng hàn cơ bản" ||
+                normalized === "tiếng hàn tổng hợp::sách 4::bài 01" ||
+                normalized.startsWith("tiếng hàn tổng hợp::quyển 01::") ||
+                normalized.startsWith("tiếng hàn tổng hợp::quyển 02::");
+            };
+            let removedCards = 0;
+            const cleanedDecks = decks.flatMap((deck) => {
+              if (isCopiedDeck(deck.name)) {
+                removedCards += deck.cards?.length || 0;
+                return [];
+              }
+              const cards = (deck.cards || []).filter((card) => !isCopiedDeck(card.deckName));
+              removedCards += (deck.cards?.length || 0) - cards.length;
+              if (cards.length === 0) return [];
+              return cards.length === deck.cards.length
+                ? [deck]
+                : [{ ...deck, cards, cardCount: cards.length }];
+            });
+            if (cleanedDecks.length !== decks.length || removedCards > 0) {
+              await ApiClient.saveDecks(cleanedDecks, user.id);
+              decks = cleanedDecks;
+            }
+            localStorage.setItem(cleanupKey, "done");
+          }
+        }
         setUserDecks(decks);
 
         if (user) {
@@ -148,12 +183,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, []);
 
   useEffect(() => {
-    if (!publishedDecks || !isAuthReady) return;
+    if (!publishedDecks || !isAuthReady || !currentUser) return;
     const synchronized = syncManagedDecks(userDecks, publishedDecks);
     if (synchronized === userDecks) return;
     setUserDecks(synchronized);
-    void ApiClient.saveDecks(synchronized).catch((error) => console.error("Could not sync published decks", error));
-  }, [isAuthReady, publishedDecks, userDecks]);
+    void ApiClient.saveDecks(synchronized, currentUser?.id).catch((error) => console.error("Could not sync published decks", error));
+  }, [currentUser?.id, isAuthReady, publishedDecks, userDecks]);
 
   const handleOpenAuth = useCallback((register?: boolean) => {
     setAuthRegisterMode(!!register);
@@ -164,19 +199,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setUserDecks((prev) => {
       const filtered = prev.filter((d) => d.id !== deck.id && d.name !== deck.name);
       const updated = [...filtered, deck];
-      void ApiClient.saveDecks(updated).catch((error) => console.error("Could not save study decks", error));
+      void ApiClient.saveDecks(updated, currentUser?.id).catch((error) => console.error("Could not save study decks", error));
       return updated;
     });
     setIsImporterOpen(false);
-  }, []);
+  }, [currentUser?.id]);
 
   const handleRemoveDeck = useCallback((deckId: string) => {
     setUserDecks((prev) => {
       const updated = prev.filter((d) => d.id !== deckId && `user-${d.id}` !== deckId && `curated-${d.id}` !== deckId);
-      void ApiClient.saveDecks(updated).catch((error) => console.error("Could not save study decks", error));
+      void ApiClient.saveDecks(updated, currentUser?.id).catch((error) => console.error("Could not save study decks", error));
       return updated;
     });
-  }, []);
+  }, [currentUser?.id]);
 
   const handleCheckin = useCallback(async () => {
     if (!currentUser) {
@@ -211,6 +246,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setCurrentUser,
         userDecks,
         setUserDecks,
+        removedBuiltInDeckIds,
         heatmapData,
         setHeatmapData,
         isImporterOpen,
