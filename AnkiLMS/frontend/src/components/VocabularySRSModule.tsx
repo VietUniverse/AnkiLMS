@@ -131,6 +131,16 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     "tieng-han-tong-hop-1-bai-01": true,
   });
 
+  // Explore decks are nested under this group and usually load asynchronously.
+  // Expand it when saved decks arrive so newly added decks are visible by name.
+  useEffect(() => {
+    if (userDecks.length > 0) {
+      setExpandedDecks((current) =>
+        current["user-imported"] ? current : { ...current, "user-imported": true }
+      );
+    }
+  }, [userDecks.length]);
+
   // Modal zoom image
   const [modalImage, setModalImage] = useState<string | null>(null);
 
