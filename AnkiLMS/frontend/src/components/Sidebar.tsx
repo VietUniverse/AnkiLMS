@@ -31,6 +31,7 @@ import {
   Gamepad2,
   ListMusic,
   Compass,
+  Layers,
   Search,
   X,
   Menu,
@@ -47,6 +48,7 @@ interface SidebarProps {
 
 const mainNav = [
   { href: "/", label: "Trang chủ", icon: Home },
+  { href: "/explore", label: "Khám phá", icon: Layers, badge: "MỚI", feature: "explore" },
   { href: "/flashcards", label: "Từ vựng", icon: Brain, feature: "flashcards" },
   { href: "/dictionary", label: "Tra từ điển", icon: Search, feature: "dictionary" },
   { href: "/dictation", label: "Luyện nghe chính tả", icon: Headphones, feature: "dictation" },

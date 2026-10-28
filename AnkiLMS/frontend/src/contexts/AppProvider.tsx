@@ -35,6 +35,7 @@ interface AppContextType {
   handleLogout: () => void;
   handleCheckin: () => Promise<void>;
   handleDeckImported: (deck: AnkiDeck) => void;
+  handleRemoveDeck: (deckId: string) => void;
   activeStudySession: StudySessionInfo | null;
   setActiveStudySession: React.Dispatch<React.SetStateAction<StudySessionInfo | null>>;
 }
@@ -134,11 +135,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const handleDeckImported = useCallback((deck: AnkiDeck) => {
     setUserDecks((prev) => {
-      const updated = [...prev, deck];
+      const filtered = prev.filter((d) => d.id !== deck.id && d.name !== deck.name);
+      const updated = [...filtered, deck];
       ApiClient.saveDecks(updated);
       return updated;
     });
     setIsImporterOpen(false);
+  }, []);
+
+  const handleRemoveDeck = useCallback((deckId: string) => {
+    setUserDecks((prev) => {
+      const updated = prev.filter((d) => d.id !== deckId && `user-${d.id}` !== deckId && `curated-${d.id}` !== deckId);
+      ApiClient.saveDecks(updated);
+      return updated;
+    });
   }, []);
 
   const handleCheckin = useCallback(async () => {
@@ -191,6 +201,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         handleLogout,
         handleCheckin,
         handleDeckImported,
+        handleRemoveDeck,
         activeStudySession,
         setActiveStudySession,
       }}
