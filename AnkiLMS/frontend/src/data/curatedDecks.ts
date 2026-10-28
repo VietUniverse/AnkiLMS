@@ -358,3 +358,19 @@ export function curatedDeckToAnkiDeck(deck: CuratedDeckItem): AnkiDeck {
     cards: deck.cards,
   };
 }
+
+/**
+ * Cấu hình hiển thị bộ thẻ Demo:
+ * - Khi build & deploy lên main production (process.env.NODE_ENV === "production"):
+ *   Mặc định KHÔNG hiển thị các bộ thẻ demo này (chờ nguồn dữ liệu thực tế).
+ * - Ở môi trường dev (NODE_ENV !== "production") hoặc khi set NEXT_PUBLIC_ENABLE_DEMO_DECKS="true":
+ *   Cho phép hiển thị để kiểm thử và demo giao diện.
+ */
+export const IS_DEMO_DECKS_ENABLED: boolean =
+  process.env.NEXT_PUBLIC_ENABLE_DEMO_DECKS === "true" ||
+  (process.env.NODE_ENV !== "production" && process.env.NEXT_PUBLIC_ENABLE_DEMO_DECKS !== "false");
+
+export function getCuratedDecks(): CuratedDeckItem[] {
+  return IS_DEMO_DECKS_ENABLED ? CURATED_DECKS : [];
+}
+

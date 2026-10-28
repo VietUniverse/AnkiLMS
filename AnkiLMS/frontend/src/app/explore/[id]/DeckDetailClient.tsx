@@ -4,7 +4,7 @@ import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { AppShell } from "../../../components/AppShell";
 import { useApp } from "../../../contexts/AppProvider";
-import { CURATED_DECKS, curatedDeckToAnkiDeck } from "../../../data/curatedDecks";
+import { CURATED_DECKS, curatedDeckToAnkiDeck, IS_DEMO_DECKS_ENABLED } from "../../../data/curatedDecks";
 import { DeckIcon } from "../../../components/DeckIcon";
 import { speakKorean } from "../../../lib/koreanSpeech";
 import {
@@ -58,16 +58,18 @@ export default function DeckDetailClient({ id }: { id: string }) {
     handleRemoveDeck(ankiDeck.id);
   };
 
-  if (!deck) {
+  if (!IS_DEMO_DECKS_ENABLED || !deck) {
     return (
       <AppShell>
         <div className="max-w-2xl mx-auto py-20 text-center space-y-4">
           <Layers className="w-12 h-12 text-stone-400 mx-auto" />
           <h1 className="text-xl font-bold text-stone-900 dark:text-white">
-            Không tìm thấy bộ thẻ yêu cầu
+            {!IS_DEMO_DECKS_ENABLED ? "Bộ thẻ mẫu tạm ẩn trên Production" : "Không tìm thấy bộ thẻ yêu cầu"}
           </h1>
-          <p className="text-xs text-stone-500 dark:text-stone-400">
-            Bộ thẻ này có thể đã được gỡ bỏ hoặc đường dẫn không chính xác.
+          <p className="text-xs text-stone-500 dark:text-stone-400 max-w-md mx-auto">
+            {!IS_DEMO_DECKS_ENABLED
+              ? "Dữ liệu mẫu thử nghiệm đã được tự động tắt trên môi trường chính thức (Production). Tính năng sẽ hiển thị khi kết nối dữ liệu thực tế."
+              : "Bộ thẻ này có thể đã được gỡ bỏ hoặc đường dẫn không chính xác."}
           </p>
           <Link
             href="/explore"
@@ -144,6 +146,11 @@ export default function DeckDetailClient({ id }: { id: string }) {
                 <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700">
                   {deck.level}
                 </span>
+                {IS_DEMO_DECKS_ENABLED && (
+                  <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-500 border border-amber-500/30">
+                    Dữ liệu Demo
+                  </span>
+                )}
                 <div className="flex items-center gap-1 text-xs font-bold text-amber-500 ml-1">
                   <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
                   <span>{deck.rating.toFixed(1)}</span>

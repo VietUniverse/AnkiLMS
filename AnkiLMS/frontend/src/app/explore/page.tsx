@@ -4,7 +4,7 @@ import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { AppShell } from "../../components/AppShell";
 import { useApp } from "../../contexts/AppProvider";
-import { CURATED_DECKS, curatedDeckToAnkiDeck, CuratedDeckItem } from "../../data/curatedDecks";
+import { CURATED_DECKS, curatedDeckToAnkiDeck, CuratedDeckItem, IS_DEMO_DECKS_ENABLED } from "../../data/curatedDecks";
 import { DeckIcon } from "../../components/DeckIcon";
 import {
   Layers,
@@ -94,8 +94,15 @@ export default function ExplorePage() {
         {/* Banner Header */}
         <div className="card-duo p-6 sm:p-8 bg-gradient-to-r from-sky-950/60 via-slate-900 to-indigo-950/60 border-sky-500/30 flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div className="space-y-2 max-w-xl">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-500/20 text-sky-400 text-xs font-bold">
-              <Sparkles className="w-3.5 h-3.5" /> Thư Viện Bộ Thẻ Mở Rộng
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-500/20 text-sky-400 text-xs font-bold">
+                <Sparkles className="w-3.5 h-3.5" /> Thư Viện Bộ Thẻ Mở Rộng
+              </span>
+              {IS_DEMO_DECKS_ENABLED && (
+                <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-500 border border-amber-500/30 text-[11px] font-semibold">
+                  Chế độ Demo (Tự động ẩn trên Production)
+                </span>
+              )}
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
               Khám Phá Bộ Thẻ Tiếng Hàn
@@ -117,7 +124,32 @@ export default function ExplorePage() {
           </div>
         </div>
 
-        {/* Thanh Tìm Kiếm & Tabs Phân Loại */}
+        {!IS_DEMO_DECKS_ENABLED ? (
+          <div className="card-duo p-12 text-center space-y-4 max-w-xl mx-auto border-dashed border-2 border-stone-300 dark:border-stone-800 bg-stone-50/50 dark:bg-stone-900/30">
+            <div className="w-14 h-14 rounded-2xl bg-sky-500/10 text-sky-500 flex items-center justify-center mx-auto">
+              <Sparkles className="w-7 h-7" />
+            </div>
+            <div className="space-y-1.5">
+              <h3 className="text-lg font-black text-stone-900 dark:text-stone-100">
+                Kho Bộ Thẻ Thực Tế Đang Được Biên Soạn
+              </h3>
+              <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed">
+                Các bộ thẻ mẫu thử nghiệm đã được ẩn trên môi trường chính thức (Production). Tính năng Khám phá sẽ chính thức mở khi kho dữ liệu thực tế được cập nhật từ hệ thống.
+              </p>
+            </div>
+            <div className="pt-2">
+              <Link
+                href="/flashcards"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-sky-500 hover:bg-sky-600 text-white shadow-md shadow-sky-900/20 transition cursor-pointer"
+              >
+                <BookOpen className="w-4 h-4" />
+                Đến Kho Thẻ Cá Nhân (/flashcards)
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Thanh Tìm Kiếm & Tabs Phân Loại */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           {/* Tabs */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
@@ -284,6 +316,8 @@ export default function ExplorePage() {
               Thử tìm kiếm với từ khóa khác hoặc chuyển sang danh mục "Tất cả bộ thẻ".
             </p>
           </div>
+        )}
+          </>
         )}
       </div>
     </AppShell>
