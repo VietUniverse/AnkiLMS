@@ -1,4 +1,5 @@
 import { dictionaryLevelFromTopik, loadCourseVocabulary } from "./courseVocabulary";
+import { romanizeKorean } from "./romanization";
 
 export type DictionaryEntry = {
   hangul: string;
@@ -13,14 +14,15 @@ export type DictionaryEntry = {
   hanja?: string;
   pronunciation?: string;
   topik?: string;
+  courseId?: string;
 };
 
-type PackedEntry = [string, string, string, string, string, string, string?, string?, string?, string?, string?, string?];
+type PackedEntry = [string, string, string, string, string, string, string?, string?, string?, string?, string?, string?, string?];
 type TopicVocabularyRow = [string, string, string, string?];
 const HANGUL_CHAR = /[\u1100-\u11ff\u3130-\u318f\uac00-\ud7a3]/u;
 let entriesPromise: Promise<PackedEntry[]> | null = null;
-type IndexedEntry = { row: PackedEntry; hangul: string; meaning: string; definitions: string[]; tokens: string[] };
-type DictionaryIndex = { rows: IndexedEntry[]; hangulKeys: string[]; meaningTokens: string[]; tokenRows: Map<string, IndexedEntry[]> };
+type IndexedEntry = { row: PackedEntry; hangul: string; romanization: string; meaning: string; definitions: string[]; tokens: string[] };
+type DictionaryIndex = { rows: IndexedEntry[]; hangulKeys: string[]; romanizationKeys: string[]; romanizationRows: Map<string, IndexedEntry[]>; meaningTokens: string[]; tokenRows: Map<string, IndexedEntry[]> };
 const indexedEntriesPromises: Partial<Record<SearchLanguage, Promise<DictionaryIndex>>> = {};
 
 async function loadEntries(): Promise<PackedEntry[]> {
@@ -74,11 +76,12 @@ async function loadEntries(): Promise<PackedEntry[]> {
                 existing[9] ||= hanja;
                 existing[10] ||= pronunciation;
                 existing[11] ||= course.topik;
+                existing[12] ||= course.id;
                 continue;
               }
               const added: PackedEntry = [
                 hangul, "", vietnamese, "", "", dictionaryLevelFromTopik(course.topik),
-                topicLabel, "course-vocabulary", romanization, hanja, pronunciation, course.topik,
+                topicLabel, "course-vocabulary", romanization, hanja, pronunciation, course.topik, course.id,
               ];
               base.push(added);
               byHeadword.set(hangul, added);
@@ -111,6 +114,7 @@ async function loadIndexedEntries(language: SearchLanguage): Promise<DictionaryI
   indexedEntriesPromises[language] ??= loadEntries().then(async (rows) => {
     const indexed: IndexedEntry[] = [];
     const tokenRows = new Map<string, IndexedEntry[]>();
+    const romanizationRows = new Map<string, IndexedEntry[]>();
     const meaningColumn = language === "vi" ? 2 : language === "en" ? 1 : 3;
     // Build a reusable token index in short batches. Input is never blocked by a
     // full 155k-row scan on every keystroke.
@@ -122,12 +126,16 @@ async function loadIndexedEntries(language: SearchLanguage): Promise<DictionaryI
         const entry: IndexedEntry = {
           row,
           hangul: normalize(row[0]),
+          romanization: normalize(romanizeKorean(row[0])),
           meaning: normalizeDictionaryText(rawMeaning),
           definitions: rawMeaning.split(/[;；/／|]/).map(normalizeDictionaryText).filter(Boolean),
           tokens: [],
         };
-        entry.tokens = [...new Set(entry.meaning.split(" ").filter((token) => token.length > 1))];
+        entry.tokens = [...new Set([...entry.meaning.split(" "), ...entry.romanization.split(" ")].filter((token) => token.length > 1))];
         indexed.push(entry);
+        const romanizationBucket = romanizationRows.get(entry.romanization);
+        if (romanizationBucket) romanizationBucket.push(entry);
+        else romanizationRows.set(entry.romanization, [entry]);
         for (const token of entry.tokens) {
           const bucket = tokenRows.get(token);
           if (bucket) bucket.push(entry);
@@ -137,7 +145,7 @@ async function loadIndexedEntries(language: SearchLanguage): Promise<DictionaryI
       if (end < rows.length) await yieldToBrowser();
     }
     indexed.sort((a, b) => a.hangul < b.hangul ? -1 : a.hangul > b.hangul ? 1 : 0);
-    return { rows: indexed, hangulKeys: indexed.map((entry) => entry.hangul), meaningTokens: [...tokenRows.keys()].sort(), tokenRows };
+    return { rows: indexed, hangulKeys: indexed.map((entry) => entry.hangul), romanizationKeys: [...romanizationRows.keys()].sort(), romanizationRows, meaningTokens: [...tokenRows.keys()].sort(), tokenRows };
   }).catch((error) => { delete indexedEntriesPromises[language]; throw error; });
   return indexedEntriesPromises[language]!;
 }
@@ -204,6 +212,10 @@ export async function searchLearningDictionary(query: string, limit = 30, signal
   };
   // Hangul headword lookup: binary-search the sorted dictionary keys.
   addPrefixMatches(index.hangulKeys, q, (_key, position) => candidates.add(index.rows[position]));
+  // Let learners find Korean entries by Revised Romanization too.
+  addPrefixMatches(index.romanizationKeys, q, (key) => {
+    for (const entry of index.romanizationRows.get(key) || []) candidates.add(entry);
+  });
   // Meaning lookup: get only entries containing a matching first token; full
   // phrase and exact-definition relevance is scored below.
   const firstToken = q.split(" ")[0];
@@ -212,9 +224,9 @@ export async function searchLearningDictionary(query: string, limit = 30, signal
   });
   if (signal?.aborted) return [];
   const ranked: Array<{ score: number; entry: DictionaryEntry }> = [];
-  for (const { row, hangul, meaning, definitions, tokens } of candidates) {
+  for (const { row, hangul, romanization, meaning, definitions, tokens } of candidates) {
     if (level !== "all" && row[11] !== level) continue;
-    const score = hangul === q ? 1400 : hangul.startsWith(q) ? 1200 : meaningScore(meaning, definitions, q);
+    const score = hangul === q ? 1400 : hangul.startsWith(q) ? 1200 : romanization === q ? 1100 : romanization.startsWith(q) ? 1000 : meaningScore(meaning, definitions, q);
     if (!score) continue;
     // Prefer a whole Vietnamese/English/Japanese meaning over an incidental
     // token occurrence (e.g. "yêu" should rank 사랑하다 above 동성애).
@@ -227,10 +239,11 @@ export async function searchLearningDictionary(query: string, limit = 30, signal
       partOfSpeech: row[4], level: row[5],
       source: (row[7]?.includes("course-vocabulary") ? "course-vocabulary" : row[7]?.includes("topic-pdf") || row[7]?.includes("user-pdf") ? "topic-pdf" : "nikl") as DictionaryEntry["source"],
       topic: row[6] || undefined,
-      romanization: row[8] || undefined,
+      romanization,
       hanja: row[9] || undefined,
       pronunciation: row[10] || undefined,
       topik: row[11] || undefined,
+      courseId: row[12] || undefined,
     };
     ranked.push({ score: score + lexicalBoost + levelBoost, entry });
   }
@@ -251,10 +264,11 @@ export async function browseLearningDictionary(level: DictionaryLevel, language:
       partOfSpeech: row[4], level: row[5],
       source: row[7]?.includes("course-vocabulary") ? "course-vocabulary" : row[7]?.includes("topic-pdf") || row[7]?.includes("user-pdf") ? "topic-pdf" : "nikl",
       topic: row[6] || undefined,
-      romanization: row[8] || undefined,
+      romanization: romanizeKorean(row[0]),
       hanja: row[9] || undefined,
       pronunciation: row[10] || undefined,
       topik: row[11] || undefined,
+      courseId: row[12] || undefined,
     });
     if (result.length >= limit) break;
   }

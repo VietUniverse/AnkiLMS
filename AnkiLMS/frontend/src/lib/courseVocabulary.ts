@@ -1,6 +1,5 @@
 import type { AnkiCard } from "./ankiParser";
 import type { CuratedDeckItem } from "../data/curatedDecks";
-import { romanizeKorean } from "./romanization";
 
 export type CoursePackedWord = [number, string, string, string, string, string];
 export type VocabularyUnit = { number: number; title: string; words: CoursePackedWord[] };
@@ -37,11 +36,10 @@ export function courseToExploreDeck(course: VocabularyCourse): CuratedDeckItem {
     backHtml: meaning,
     frontText: korean,
     backText: meaning,
-    fields: [korean, meaning, romanizeKorean(korean), hanja, pronunciation, unit.title],
+    fields: [korean, meaning, "", hanja, pronunciation, unit.title],
     tags: [course.level, course.topik, course.topic, unit.title],
     koreanText: korean,
     vietnameseMeaning: meaning,
-    romanization: romanizeKorean(korean),
     exampleSentence: "",
     audioUrls: [],
     imageUrls: [],

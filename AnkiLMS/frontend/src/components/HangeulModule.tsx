@@ -100,9 +100,6 @@ export const HangeulModule: React.FC = () => {
                   }`}
                 >
                   <span className="text-3xl font-black text-white font-noto mb-1">{item.char}</span>
-                  <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">
-                    {item.romaja}
-                  </span>
                 </button>
               );
             })}
@@ -123,7 +120,7 @@ export const HangeulModule: React.FC = () => {
                 >
                   {HANGEUL_DATA.filter((i) => i.type === "consonant").map((c) => (
                     <option key={c.char} value={c.char}>
-                      {c.char} ({c.romaja})
+                      {c.char}
                     </option>
                   ))}
                 </select>
@@ -138,7 +135,7 @@ export const HangeulModule: React.FC = () => {
                 >
                   {HANGEUL_DATA.filter((i) => i.type === "vowel").map((v) => (
                     <option key={v.char} value={v.char}>
-                      {v.char} ({v.romaja})
+                      {v.char}
                     </option>
                   ))}
                 </select>
@@ -195,7 +192,6 @@ export const HangeulModule: React.FC = () => {
                 {selectedChar.char}
               </span>
               <h3 className="text-lg font-bold text-emerald-400 mt-2">{selectedChar.name}</h3>
-              <p className="text-xs text-slate-400 font-mono mt-1">Phiên âm: /{selectedChar.romaja}/</p>
             </div>
 
             <div className="space-y-4 py-4 text-xs">

@@ -20,7 +20,7 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "ts-fsrs": ["./node_modules/ts-fsrs", "./src/lib/ts-fsrs-fallback"]
+      "ts-fsrs": ["./node_modules/ts-fsrs"]
     }
   },
   "include": [

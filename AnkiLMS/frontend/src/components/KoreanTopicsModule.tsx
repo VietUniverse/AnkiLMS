@@ -10,7 +10,7 @@ import { KoreanPractice, KoreanPracticePrompt } from "./KoreanPractice";
 import { speakKorean, stopKoreanSpeech } from "../lib/koreanSpeech";
 import { inferTopikLevel } from "../lib/studyRanks";
 
-type TopicItem = { korean: string; romanization: string; meaning: string; topic: string; level: string; example: string; translation: string; source: "HaechiVN" | "Anki" };
+type TopicItem = { korean: string; meaning: string; topic: string; level: string; example: string; translation: string; source: "HaechiVN" | "Anki" };
 const LEVEL_FILTERS = ["Tất cả", ...TOPIK_LEVEL_GUIDE.map((item) => item.level), "Anki"];
 
 export function KoreanTopicsModule() {
@@ -23,13 +23,12 @@ export function KoreanTopicsModule() {
 
   const allItems = useMemo(() => {
     const legacy = VOCABULARY_DATA.map((item, index) => ({
-      korean: item.hangul, romanization: item.romaja, meaning: item.vietnamese, topic: item.topic,
+      korean: item.hangul, meaning: item.vietnamese, topic: item.topic,
       level: index < 6 ? "TOPIK 1" : "TOPIK 2", example: item.exampleSentence, translation: item.exampleTranslation, source: "HaechiVN" as const,
     }));
     const original = SEJONG_TOPIC_VOCABULARY.map((item) => ({ ...item, example: item.example, translation: item.translation, source: "HaechiVN" as const }));
     const imported = userDecks.flatMap((deck) => deck.cards.map((card) => ({
       korean: (card.koreanText || card.frontText || "").replace(/<[^>]*>/g, " ").trim(),
-      romanization: card.romanization || "",
       meaning: (card.vietnameseMeaning || card.backText || "").replace(/<[^>]*>/g, " ").trim(),
       topic: deck.name,
       level: inferTopikLevel(deck.name, ...(card.tags || [])) ? `TOPIK ${inferTopikLevel(deck.name, ...(card.tags || []))}` : "Anki",
@@ -50,7 +49,7 @@ export function KoreanTopicsModule() {
     const normalized = query.trim().toLocaleLowerCase("vi");
     return allItems.filter((item) => (level === "Tất cả" || item.level === level)
       && (topic === "Tất cả chủ đề" || item.topic === topic)
-      && (!normalized || `${item.korean} ${item.romanization} ${item.meaning} ${item.example} ${item.translation}`.toLocaleLowerCase().includes(normalized)));
+      && (!normalized || `${item.korean} ${item.meaning} ${item.example} ${item.translation}`.toLocaleLowerCase().includes(normalized)));
   }, [allItems, level, topic, query]);
   const visibleItems = filteredItems.slice(0, visibleCount);
   const levelCounts = useMemo(() => Object.fromEntries(TOPIK_LEVEL_GUIDE.map((entry) => [entry.level, allItems.filter((item) => item.level === entry.level).length])), [allItems]);
@@ -81,9 +80,9 @@ export function KoreanTopicsModule() {
     </header>
 
     <section className="card-duo p-4 sm:p-5">
-      <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="font-black text-white">Chọn chủ điểm</h2><p className="mt-1 text-xs text-slate-500">Lọc theo tình huống hoặc tìm từ bằng Hangul, phiên âm và nghĩa.</p></div><span className="rounded-full bg-slate-800 px-3 py-1.5 text-[10px] font-bold text-slate-300">{filteredItems.length} kết quả</span></div>
+      <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="font-black text-white">Chọn chủ điểm</h2><p className="mt-1 text-xs text-slate-500">Lọc theo tình huống hoặc tìm từ bằng Hangul và nghĩa.</p></div><span className="rounded-full bg-slate-800 px-3 py-1.5 text-[10px] font-bold text-slate-300">{filteredItems.length} kết quả</span></div>
       <div className="mt-4 flex gap-2 overflow-x-auto pb-1">{topics.map((item) => <button key={item} onClick={() => selectTopic(item)} aria-pressed={topic === item} className={`shrink-0 rounded-xl border px-3 py-2 text-xs font-bold transition ${topic === item ? "border-violet-400/50 bg-violet-400/10 text-violet-200" : "border-slate-700 bg-slate-950/40 text-slate-400 hover:text-white"}`}>{item}</button>)}</div>
-      <label className="mt-4 flex max-w-xl items-center gap-2 rounded-xl border border-slate-700 bg-slate-950/60 px-3 focus-within:border-sky-500"><Search className="h-4 w-4 shrink-0 text-slate-500" /><input value={query} onChange={(event) => { setQuery(event.target.value); setVisibleCount(12); }} className="w-full bg-transparent py-3 text-sm text-white outline-none placeholder:text-slate-600" placeholder="Tìm Hangul, phiên âm, nghĩa hoặc câu ví dụ…" /><kbd className="hidden rounded border border-slate-700 px-1.5 py-1 text-[10px] text-slate-500 sm:block">⌕</kbd></label>
+      <label className="mt-4 flex max-w-xl items-center gap-2 rounded-xl border border-slate-700 bg-slate-950/60 px-3 focus-within:border-sky-500"><Search className="h-4 w-4 shrink-0 text-slate-500" /><input value={query} onChange={(event) => { setQuery(event.target.value); setVisibleCount(12); }} className="w-full bg-transparent py-3 text-sm text-white outline-none placeholder:text-slate-600" placeholder="Tìm Hangul, nghĩa hoặc câu ví dụ…" /><kbd className="hidden rounded border border-slate-700 px-1.5 py-1 text-[10px] text-slate-500 sm:block">⌕</kbd></label>
     </section>
 
     {practicePrompt && <KoreanPractice title="Nghe chép & shadowing · Chủ đề tiếng Hàn" prompts={practicePrompt} />}

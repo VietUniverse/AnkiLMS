@@ -31,7 +31,6 @@ import { calculateFSRS45, formatLocalDate, FSRSRating, FSRSState } from "../lib/
 import { ApiClient } from "../lib/apiClient";
 import { speakKorean } from "../lib/koreanSpeech";
 import { inferTopikLevel, getCourseRank } from "../lib/studyRanks";
-import { TopikDeck, loadCourseVocabulary } from "../lib/courseVocabulary";
 
 interface VocabularySRSModuleProps {
   userDecks?: AnkiDeck[];
@@ -112,16 +111,6 @@ const toSlug = (str: string): string => {
 export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDecks = [], initialViewMode = "dashboard", initialEmptyCards = false }) => {
   const { currentUser, setActiveStudySession } = useApp();
   const isAdmin = currentUser?.role === "admin";
-  const [courseDecks, setCourseDecks] = useState<TopikDeck[]>([]);
-
-  useEffect(() => {
-    let active = true;
-    void loadCourseVocabulary().then((data) => {
-      if (active) setCourseDecks(data?.decks || []);
-    });
-    return () => { active = false; };
-  }, []);
-
   // Navigation View: "dashboard" (Lộ trình cây bài học) | "study" (Màn hình học)
   const [viewMode, setViewMode] = useState<"dashboard" | "study">(initialViewMode);
   const [studyMode, setStudyMode] = useState<"flip" | "typing">("flip");
@@ -135,10 +124,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const [isFlipped, setIsFlipped] = useState<boolean>(false);
   const [typedInput, setTypedInput] = useState<string>("");
 
-  // Search, filters, and tree expansion for the learner's active library.
+  // Search and tree expansion for the learner's active library.
   const [searchQuery, setSearchQuery] = useState("");
-  const [deckLevelFilter, setDeckLevelFilter] = useState("Tất cả cấp độ");
-  const [deckTopicFilter, setDeckTopicFilter] = useState("Tất cả chủ đề");
   const [expandedDecks, setExpandedDecks] = useState<Record<string, boolean>>({
     "tieng-han-tong-hop-1": true,
     "tieng-han-tong-hop-1-bai-01": true,
@@ -336,54 +323,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       });
     }
 
-    // Six TOPIK decks, retaining each course and unit hierarchy.
-    for (const group of courseDecks) {
-      const courseNodes = group.courses.map((course) => {
-        const unitNodes: DeckTreeNode[] = course.units.map((unit) => ({
-          id: `course-${course.id}-unit-${unit.number}`,
-          title: unit.title,
-          subtitle: `${unit.words.length} thẻ · ${course.level} · ${course.topik}`,
-          cards: unit.words.map(([id, word, meaning, romanization, hanja, pronunciation]) => ({
-            id,
-            code: `${course.id}-${unit.number}-${id}`,
-            word,
-            meaning,
-            pos: "Từ vựng",
-            transliteration: romanization,
-            explain: [hanja, pronunciation].filter(Boolean).join(" · "),
-            image: "",
-            example: "",
-            example_translated: "",
-            tag_1: course.level,
-            tag_2: course.title,
-            tag_3: unit.title,
-            deckName: `${group.id} · ${course.id} · ${unit.number}`,
-          })),
-        }));
-        return {
-          id: `course-${course.id}`,
-          title: course.title,
-          subtitle: `${course.level} · ${course.topik} · ${course.wordCount.toLocaleString("vi-VN")} thẻ`,
-          cards: unitNodes.flatMap((unit) => unit.cards),
-          children: unitNodes,
-        };
-      });
-      rootNodes.push({
-        id: group.id,
-        title: group.title,
-        subtitle: `${group.subtitle} · ${courseNodes.reduce((sum, course) => sum + course.cards.length, 0).toLocaleString("vi-VN")} thẻ`,
-        cards: courseNodes.flatMap((course) => course.cards),
-        children: courseNodes,
-      });
-    }
-
-    // Keep the six curriculum decks at the top of the library so newly added
-    // study material is immediately discoverable.
-    return [
-      ...rootNodes.filter((node) => node.id.startsWith("topik-")),
-      ...rootNodes.filter((node) => !node.id.startsWith("topik-")),
-    ];
-  }, [userDecks, courseDecks, isAdmin]);
+    return rootNodes;
+  }, [userDecks, isAdmin]);
 
   // Calculate Anki Stats (% battery, new, review)
   const getDeckStats = useCallback((cards: VocabularyCard[]) => {
@@ -558,44 +499,9 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       .filter(Boolean) as DeckTreeNode[];
   }, []);
 
-  const deckTopics = useMemo(() => {
-    const topics = new Set<string>();
-    deckTree.forEach((node) => {
-      if (node.id.startsWith("topik-") && node.children?.length) node.children.forEach((course) => topics.add(course.title));
-      else {
-        const visit = (nodes: DeckTreeNode[]) => nodes.forEach((child) => child.children?.length ? visit(child.children) : topics.add(child.title));
-        visit([node]);
-      }
-    });
-    return [...topics].sort((a, b) => a.localeCompare(b, "vi"));
-  }, [deckTree]);
-
   const filteredTree = useMemo(() => {
-    let nodes = deckTree;
-    if (deckLevelFilter !== "Tất cả cấp độ") {
-      nodes = deckTree.flatMap((node) => {
-        if (node.id === "user-imported") {
-          const children = (node.children || []).filter((child) => deckLevelFilter === "Bộ Anki cá nhân" || child.subtitle?.includes(deckLevelFilter));
-          return children.length ? [{ ...node, children, cards: children.flatMap((child) => child.cards) }] : [];
-        }
-        if (node.id.startsWith("topik-")) return node.id === deckLevelFilter.toLowerCase().replace(" ", "-") ? [node] : [];
-        const rank = node.id === "tieng-han-tong-hop-1" || node.id === "korean-basic" ? "TOPIK 1" : node.id === "tieng-han-tong-hop-2" ? "TOPIK 2" : "";
-        return rank === deckLevelFilter ? [node] : [];
-      });
-    }
-    if (deckTopicFilter !== "Tất cả chủ đề") {
-      const selectTopic = (items: DeckTreeNode[]): DeckTreeNode[] => items.map((node) => {
-        if (node.children?.length) {
-          const children = selectTopic(node.children);
-          return children.length ? { ...node, children } : null;
-        }
-        const match = node.title === deckTopicFilter || node.cards.some((card) => card.pos === deckTopicFilter || card.tag_2 === deckTopicFilter);
-        return match ? node : null;
-      }).filter(Boolean) as DeckTreeNode[];
-      nodes = selectTopic(nodes);
-    }
-    return searchQuery.trim() ? filterTree(nodes, searchQuery.toLowerCase()) : nodes;
-  }, [deckTree, deckLevelFilter, deckTopicFilter, searchQuery, filterTree]);
+    return searchQuery.trim() ? filterTree(deckTree, searchQuery.toLowerCase()) : deckTree;
+  }, [deckTree, searchQuery, filterTree]);
 
   // Sync active study session to global Navbar
   useEffect(() => {
@@ -623,6 +529,13 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     const wordText = cleanTextOnly(currentCard.word);
     speakKorean(wordText);
   }, [currentCard]);
+
+  // Speak each card when a study session starts and whenever the learner moves
+  // to another card. Depend on its text/index so unrelated renders do not replay it.
+  const currentWordForAudio = currentCard ? cleanTextOnly(currentCard.word) : "";
+  useEffect(() => {
+    if (viewMode === "study" && currentWordForAudio) speakKorean(currentWordForAudio);
+  }, [viewMode, currentCardIndex, currentWordForAudio]);
 
   // Handle Response (Quên: false | Thuộc: true)
   const handleResponse = useCallback((isMastered: boolean, customRating?: FSRSRating) => {
@@ -1007,13 +920,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                     className="w-full text-xs pl-8 pr-3 py-2 rounded-xl bg-stone-100 dark:bg-stone-800/80 border border-stone-200 dark:border-stone-700/60 text-stone-900 dark:text-stone-100 focus:outline-none focus:border-stone-400 transition"
                   />
                 </div>
-
-                <select aria-label="Lọc bộ thẻ theo độ khó" value={deckLevelFilter} onChange={(event) => setDeckLevelFilter(event.target.value)} className="rounded-xl border border-stone-200 bg-stone-100 px-3 py-2 text-xs font-semibold text-stone-700 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-200">
-                  {["Tất cả cấp độ", "TOPIK 1", "TOPIK 2", "TOPIK 3", "TOPIK 4", "TOPIK 5", "TOPIK 6", "Bộ Anki cá nhân"].map((rank) => <option key={rank}>{rank}</option>)}
-                </select>
-                <select aria-label="Lọc bộ thẻ theo chủ đề" value={deckTopicFilter} onChange={(event) => setDeckTopicFilter(event.target.value)} className="max-w-48 rounded-xl border border-stone-200 bg-stone-100 px-3 py-2 text-xs font-semibold text-stone-700 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-200">
-                  {["Tất cả chủ đề", ...deckTopics].map((topic) => <option key={topic}>{topic}</option>)}
-                </select>
 
                 <button
                   onClick={toggleAllGroups}

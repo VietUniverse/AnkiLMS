@@ -49,7 +49,6 @@ function makeCard(
     tags,
     koreanText: korean,
     vietnameseMeaning: vietnamese,
-    romanization: "",
     exampleSentence: `${example} (${exampleTrans})`,
     audioUrls: [],
     imageUrls: [],

@@ -34,6 +34,7 @@ import { ApiClient, UserProfile } from "../lib/apiClient";
 import { useApp } from "../contexts/AppProvider";
 import { THTH_CURRICULUM_DECKS } from "../data/ththCurriculum";
 import { AnkiDeck, AnkiParser } from "../lib/ankiParser";
+import { loadCourseVocabulary, TopikDeck } from "../lib/courseVocabulary";
 
 export interface ClassMember {
   id: string;
@@ -89,6 +90,7 @@ interface ClassroomModuleProps {
 
 export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser }) => {
   const { handleOpenAuth, userDecks } = useApp();
+  const [courseDeckGroups, setCourseDeckGroups] = useState<TopikDeck[]>([]);
 
   const [classes, setClasses] = useState<Classroom[]>([]);
   const [loading, setLoading] = useState(true);
@@ -119,23 +121,44 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser })
   // Copy feedback
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
+  useEffect(() => {
+    let active = true;
+    void loadCourseVocabulary().then((data) => {
+      if (active) setCourseDeckGroups(data?.decks || []);
+    });
+    return () => { active = false; };
+  }, []);
+
   const assignmentDecks = [
+    ...courseDeckGroups.flatMap((group) => group.courses.flatMap((course) => course.units.map((unit) => ({
+      id: `course:${course.id}:${unit.number}`,
+      name: `${course.title} · ${unit.title}`,
+      book: Number(course.topik.match(/\d+/)?.[0] || 1),
+      topic: course.title,
+      difficulty: course.topik,
+      mediaAssets: [],
+      cards: unit.words.filter(([, korean, meaning]) => korean && meaning).map(([id, korean, meaning, , hanja, pronunciation]) => ({
+        id, korean, meaning,
+        example: [hanja, pronunciation].filter(Boolean).join(" · "),
+        mediaRefs: [] as string[],
+      })),
+    })))),
     ...THTH_CURRICULUM_DECKS.map((deck) => ({ id: `builtin:${deck.id}`, name: deck.name.replaceAll("::", " · "), book: deck.book, topic: deck.topic, difficulty: deck.difficulty, mediaAssets: [], cards: deck.cards.map((card) => ({
       id: Number(card.id), korean: String(card.word || "").replace(/<[^>]*>/g, "").trim(),
       meaning: String(card.meaning || "").replace(/<[^>]*>/g, "").trim(),
-      example: String(card.example || "").replace(/<[^>]*>/g, "").trim(), pronunciation: card.transliteration || "",
+      example: String(card.example || "").replace(/<[^>]*>/g, "").trim(),
       mediaRefs: [] as string[],
     })) })),
     ...userDecks.map((deck) => ({ id: `anki:${deck.id}`, name: `Anki · ${deck.name}`, book: 0, topic: "Bộ Anki đã nhập", difficulty: "Anki cá nhân", mediaAssets: deck.mediaAssets || [], cards: deck.cards.map((card) => ({
       id: Number(card.id), korean: (card.koreanText || card.frontText || "").replace(/<[^>]*>/g, "").trim(),
       meaning: (card.vietnameseMeaning || card.backText || "").replace(/<[^>]*>/g, "").trim(),
-      example: (card.exampleSentence || "").replace(/<[^>]*>/g, "").trim(), pronunciation: card.romanization || "",
+      example: (card.exampleSentence || "").replace(/<[^>]*>/g, "").trim(),
       mediaRefs: card.mediaRefs || [],
     })) })),
     ...uploadedAssignmentDecks.map((deck) => ({ id: `upload:${deck.id}`, name: `Anki · ${deck.name}`, book: 0, topic: "Bộ Anki đã tải lên", difficulty: "Anki cá nhân", mediaAssets: deck.mediaAssets || [], cards: deck.cards.map((card) => ({
       id: Number(card.id), korean: (card.koreanText || card.frontText || "").replace(/<[^>]*>/g, "").trim(),
       meaning: (card.vietnameseMeaning || card.backText || "").replace(/<[^>]*>/g, "").trim(),
-      example: (card.exampleSentence || "").replace(/<[^>]*>/g, "").trim(), pronunciation: card.romanization || "",
+      example: (card.exampleSentence || "").replace(/<[^>]*>/g, "").trim(),
       mediaRefs: card.mediaRefs || [],
     })) })),
   ].filter((deck) => deck.cards.length > 0);
@@ -784,8 +807,12 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser })
                       }}
                       className="min-w-0 rounded-xl border border-[#1e3a70] bg-[#132247] px-3 py-2.5 text-[11px] font-bold text-white"
                     >
-                      <option value="1">Quyển 1 · Sơ cấp 1 · TOPIK 1–2</option>
-                      <option value="2">Quyển 2 · Sơ cấp 2 · TOPIK 2–3</option>
+                      <option value="1">TOPIK 1 · Sơ cấp</option>
+                      <option value="2">TOPIK 2 · Sơ cấp</option>
+                      <option value="3">TOPIK 3 · Trung cấp</option>
+                      <option value="4">TOPIK 4 · Trung cấp</option>
+                      <option value="5">TOPIK 5 · Cao cấp</option>
+                      <option value="6">TOPIK 6 · Cao cấp</option>
                     </select>
                     <select
                       value={assignTopicFilter}

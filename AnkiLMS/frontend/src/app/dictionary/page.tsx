@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BookOpen, ExternalLink, Search, Volume2 } from "lucide-react";
 import { AppShell } from "../../components/AppShell";
+import { useApp } from "../../contexts/AppProvider";
+import { CURATED_DECKS } from "../../data/curatedDecks";
 import { browseLearningDictionary, detectDictionarySearchLanguage, DictionaryEntry, DictionaryLevel, naverLookupUrl, searchLearningDictionary } from "../../lib/dictionarySearch";
 
 type NaverLookup = {
@@ -17,6 +19,7 @@ type NaverLookup = {
 };
 
 export default function DictionaryPage() {
+  const { userDecks } = useApp();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<DictionaryEntry[]>([]);
   const [loading, setLoading] = useState(false);
@@ -94,6 +97,22 @@ export default function DictionaryPage() {
     window.speechSynthesis.speak(utterance);
   }
 
+  function studyHref(entry: DictionaryEntry) {
+    const curatedDeck = CURATED_DECKS.find((deck) => deck.cards.some((card) =>
+      (card.koreanText || card.frontText).trim() === entry.hangul,
+    ));
+    const deckId = entry.courseId ? `curated-course-${entry.courseId}` : curatedDeck ? `curated-${curatedDeck.id}` : "";
+    const deckName = curatedDeck?.title || entry.topic || "";
+    const alreadyAdded = deckId
+      ? userDecks.some((deck) => deck.id === deckId || (deckName && deck.name === deckName))
+      : userDecks.some((deck) => deck.cards.some((card) => (card.koreanText || card.frontText).trim() === entry.hangul));
+    if (alreadyAdded) return "/flashcards";
+    const exploreId = entry.courseId ? `course-${entry.courseId}` : curatedDeck?.id;
+    return exploreId
+      ? `/explore/${exploreId}?word=${encodeURIComponent(entry.hangul)}`
+      : `/explore?search=${encodeURIComponent(entry.hangul)}`;
+  }
+
   return <AppShell><main className="mx-auto max-w-5xl space-y-5 pb-12">
     <section className="card-duo p-5 sm:p-8">
       <p className="text-xs font-bold uppercase tracking-widest text-sky-300">Tra cứu từ điển đa ngôn ngữ</p>
@@ -106,13 +125,6 @@ export default function DictionaryPage() {
       <div className="mt-4 flex flex-wrap gap-2" aria-label="Lọc theo cấp từ điển">
         {levelFilters.map((item) => <button key={item.value} type="button" onClick={() => { setLevel(item.value); setPage(0); }} aria-pressed={level === item.value} className={`rounded-full border px-3 py-1.5 text-xs font-bold ${level === item.value ? "border-sky-400 bg-sky-500/20 text-sky-200" : "border-slate-700 text-slate-300 hover:border-sky-500/50"}`}>{item.label}</button>)}
       </div>
-      <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-300">
-        <span>Nguồn từ điển: <a className="text-sky-300 underline" href="https://huggingface.co/datasets/binjang/NIKL-korean-english-dictionary" target="_blank" rel="noopener noreferrer">NIKL Korean–English</a></span>
-        <span>·</span>
-        <span>Biến thể: <a className="text-sky-300 underline" href="https://github.com/Lyroxide/yomichan-ko-dic" target="_blank" rel="noopener noreferrer">Yomichan Korean</a></span>
-        <span>·</span>
-        <span>Khóa học tiếng Hàn · 6 cấp TOPIK</span>
-      </div>
     </section>
 
     {!query.trim() && level === "all" ? <section className="card-duo p-8 text-center text-slate-300"><BookOpen className="mx-auto mb-3 h-8 w-8 text-sky-300" />Nhập tiếng Việt, Hangul hoặc English để tra cứu.</section>
@@ -124,7 +136,6 @@ export default function DictionaryPage() {
         {naverEntry && <article className="card-duo border border-emerald-500/30 p-4 sm:p-5">
           <div className="flex flex-wrap items-center gap-2"><span className="rounded-full bg-emerald-500/15 px-2.5 py-1 text-[11px] font-black text-emerald-300">NAVER DICTIONARY · TRA CỨU TRỰC TIẾP</span>{naverEntry.topik && <span className="rounded-full bg-sky-500/15 px-2.5 py-1 text-[11px] font-bold text-sky-300">{naverEntry.topik}</span>}{naverEntry.importance > 0 && <span className="text-amber-300">{"★".repeat(naverEntry.importance)}</span>}</div>
           <h2 className="mt-3 font-noto text-2xl font-black text-white">{naverEntry.hangul}{naverEntry.hanja && <span className="ml-2 text-base font-semibold text-slate-300">{naverEntry.hanja}</span>}</h2>
-          {naverEntry.pronunciation && <p className="mt-1 text-sm text-slate-300">{naverEntry.pronunciation}</p>}
           {naverEntry.meanings.map((meaning, index) => <div key={`${meaning.meaning}-${index}`} className="mt-3 border-t border-slate-700/70 pt-3">
             <p className="text-sm font-bold text-emerald-200">{meaning.meaning}{meaning.partOfSpeech && <span className="ml-2 text-xs font-medium text-slate-300">{meaning.partOfSpeech}</span>}</p>
             {meaning.english && <p className="mt-1 text-sm text-slate-200">{meaning.english}</p>}
@@ -143,19 +154,18 @@ export default function DictionaryPage() {
                 {entry.topik && <span className="rounded-lg bg-violet-500/15 px-2 py-1 text-[11px] font-bold text-violet-300">{entry.topik}</span>}
                 {entry.topic && <span className="rounded-lg bg-amber-500/15 px-2 py-1 text-[11px] font-bold text-amber-300">{entry.topic}</span>}
               </div>
-              {(entry.romanization || entry.hanja || entry.pronunciation) && <p className="mt-1 text-xs text-slate-400">{[entry.romanization, entry.hanja, entry.pronunciation].filter(Boolean).join(" · ")}</p>}
+              {entry.hanja && <p className="mt-1 text-xs text-slate-400">漢字 · {entry.hanja}</p>}
               {entry.vietnamese ? <p className="mt-2 text-sm text-emerald-200"><strong>VI</strong> · {entry.vietnamese}</p> : <p className="mt-2 text-sm text-amber-300">Mục này chưa có nghĩa tiếng Việt.</p>}
               {entry.english && <p className="mt-1 text-sm text-slate-200"><strong>EN</strong> · {entry.english}</p>}
               {entry.japanese && <p className="mt-1 text-sm text-slate-200"><strong>JA</strong> · {entry.japanese}</p>}
               {entry.source === "yomichan" && <p className="mt-2 text-sm text-slate-300">Có trong chỉ mục Hàn–Nhật. Mở từ điển nguồn để xem nghĩa.</p>}
               {entry.source === "topic-pdf" && <p className="mt-2 text-xs text-slate-400">Từ đầu mục trong danh sách TOPIK theo chủ đề; nghĩa hiển thị khi có trong dữ liệu từ điển HaechiVN.</p>}
-              {entry.source === "course-vocabulary" && <p className="mt-2 text-xs text-slate-400">Có trong bộ từ theo khóa học; mở mục Ôn từ vựng rồi chọn cấp TOPIK tương ứng để học bằng SRS.</p>}
             </div>
             <button onClick={() => speak(entry.hangul)} aria-label={`Nghe ${entry.hangul}`} className="shrink-0 rounded-xl bg-sky-500/15 p-2 text-sky-300"><Volume2 className="h-5 w-5" /></button>
           </div>
           <div className="mt-4 flex flex-wrap gap-3 text-xs font-bold">
             <a href={naverLookupUrl(entry.hangul)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sky-300 hover:underline">Tra Naver <ExternalLink className="h-3.5 w-3.5" /></a>
-            <Link href="/flashcards" className="text-violet-300 hover:underline">Ôn tập từ vựng</Link>
+            <Link href={studyHref(entry)} className="text-violet-300 hover:underline">{studyHref(entry) === "/flashcards" ? "Mở flashcard" : "Xem bộ thẻ & thêm vào học"}</Link>
           </div>
         </article>)}
         {!results.length && <a href={naverLookupUrl(query.trim())} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-bold text-sky-300 hover:underline">Tra từ này trên Naver <ExternalLink className="h-4 w-4" /></a>}

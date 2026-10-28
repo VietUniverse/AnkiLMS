@@ -8,7 +8,6 @@ import { DeckIcon } from "../../../components/DeckIcon";
 import { speakKorean } from "../../../lib/koreanSpeech";
 import { courseToExploreDeck, loadCourseVocabulary } from "../../../lib/courseVocabulary";
 import type { CuratedDeckItem } from "../../../data/curatedDecks";
-import { romanizeKorean } from "../../../lib/romanization";
 import {
   ArrowLeft,
   Check,
@@ -54,6 +53,16 @@ export default function DeckDetailClient({ id }: { id: string }) {
   const [activePreviewIndex, setActivePreviewIndex] = useState(0);
   const [isPreviewFlipped, setIsPreviewFlipped] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!deck) return;
+    const requestedWord = new URLSearchParams(window.location.search).get("word");
+    if (!requestedWord) return;
+    const target = deck.cards.findIndex((card) =>
+      (card.koreanText || card.frontText || "").trim() === requestedWord,
+    );
+    if (target >= 0) setActivePreviewIndex(target);
+  }, [deck]);
 
   const isAdded = useMemo(() => {
     if (!deck) return false;
@@ -247,10 +256,6 @@ export default function DeckDetailClient({ id }: { id: string }) {
                     <div className="text-3xl font-black text-stone-900 dark:text-white font-noto tracking-tight">
                       {currentPreviewCard.koreanText || currentPreviewCard.frontText}
                     </div>
-                    <div className="mt-1 text-sm text-stone-500 dark:text-stone-400" lang="en-Latn">
-                      {romanizeKorean(currentPreviewCard.koreanText || currentPreviewCard.frontText || "")}
-                    </div>
-
                     {isPreviewFlipped && (
                       <div className="pt-2 animate-fadeIn space-y-1">
                         <div className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
@@ -330,7 +335,6 @@ export default function DeckDetailClient({ id }: { id: string }) {
                           <span className="font-bold text-base font-noto text-stone-900 dark:text-white">
                             {card.koreanText}
                           </span>
-                          <span className="text-[11px] text-stone-500 dark:text-stone-400" lang="en-Latn">{romanizeKorean(card.koreanText || "")}</span>
                         </div>
                         <div className="text-xs text-stone-600 dark:text-stone-300 font-medium">
                           {card.vietnameseMeaning}
