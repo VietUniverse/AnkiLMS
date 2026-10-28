@@ -7,8 +7,12 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const notoKorean = Noto_Sans_KR({ subsets: ["latin"], weight: ["400", "500", "700", "900"], variable: "--font-noto-kr" });
 
 export const metadata: Metadata = {
-  title: "HaechiVN – Nền tảng Học Tiếng Hàn Duo-Style",
-  description: "Học tiếng Hàn phong cách HaechiVN, đọc file Anki .apkg, Luyện nghe Dictation, Shadowing, SRS Flashcard & Thi thử TOPIK",
+  metadataBase: new URL("https://lms.ankivn.com"),
+  title: { default: "HaechiVN | Học tiếng Hàn với Flashcard, Dictation và Shadowing", template: "%s | HaechiVN" },
+  description: "Học tiếng Hàn tại HaechiVN với flashcard ôn tập SRS, từ điển Hàn–Việt, luyện nghe chép chính tả và shadowing theo video. Bắt đầu học miễn phí.",
+  applicationName: "HaechiVN",
+  openGraph: { type: "website", locale: "vi_VN", siteName: "HaechiVN", title: "HaechiVN | Học tiếng Hàn mỗi ngày", description: "Flashcard SRS, từ điển Hàn–Việt, dictation và shadowing trên một nền tảng học tiếng Hàn.", url: "https://lms.ankivn.com", images: [{ url: "/brand/haechivn-mark.png", alt: "HaechiVN" }] },
+  twitter: { card: "summary", title: "HaechiVN | Học tiếng Hàn mỗi ngày", description: "Flashcard SRS, từ điển Hàn–Việt, dictation và shadowing." },
   manifest: "/manifest.json",
   icons: {
     icon: "/brand/haechivn-mark.png?v=20261028",
@@ -37,6 +41,7 @@ export default function RootLayout({
   return (
     <html lang="vi" data-theme="light" suppressHydrationWarning>
       <head>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "WebSite", name: "HaechiVN", url: "https://lms.ankivn.com", inLanguage: "vi", description: "Nền tảng học tiếng Hàn với flashcard SRS, từ điển, dictation và shadowing." }) }} />
         <link rel="icon" type="image/png" href="/brand/haechivn-mark.png?v=20261028" />
         <link rel="apple-touch-icon" href="/brand/haechivn-mark.png?v=20261028" />
         <script
