@@ -24,8 +24,8 @@ CREATE TABLE IF NOT EXISTS checkins (
     id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
     checkin_date TEXT NOT NULL, -- YYYY-MM-DD
-    xp_earned INTEGER DEFAULT 50,
-    time_spent_minutes INTEGER DEFAULT 15,
+    xp_earned INTEGER DEFAULT 1,
+    time_spent_minutes INTEGER DEFAULT 0,
     cards_reviewed INTEGER DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,

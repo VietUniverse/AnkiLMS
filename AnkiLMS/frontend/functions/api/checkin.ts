@@ -57,8 +57,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     // Record checkin
     const checkinId = "chk_" + crypto.randomUUID().substring(0, 8);
     const insertCheckin = env.DB.prepare(
-      `INSERT INTO checkins (id, user_id, checkin_date, xp_earned, time_spent_minutes)
-       VALUES (?, ?, ?, ?, 15)`
+      `INSERT INTO checkins (id, user_id, checkin_date, xp_earned, time_spent_minutes, cards_reviewed)
+       VALUES (?, ?, ?, ?, 0, 0)`
     ).bind(checkinId, user.id, todayStr, rewardXp);
 
     const updateUser = env.DB.prepare(
