@@ -5,7 +5,7 @@ import { AnkiDeck } from "../lib/ankiParser";
 import { ApiClient, UserProfile } from "../lib/apiClient";
 import { BETA_FEATURE_KEYS, DEFAULT_FEATURE_FLAGS, FeatureFlags, FeatureKey, IS_BETA_FEATURES_ENABLED } from "../lib/featureFlags";
 import { CURATED_DECKS, curatedDeckToAnkiDeck } from "../data/curatedDecks";
-import { courseToExploreDeck, loadCourseVocabulary } from "../lib/courseVocabulary";
+import { courseToExploreDeck, loadCourseVocabulary, loadSeoul1AExploreDeck } from "../lib/courseVocabulary";
 import { syncManagedDecks } from "../lib/deckSync";
 
 export interface StudySessionInfo {
@@ -172,11 +172,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [publishedDecks, setPublishedDecks] = useState<AnkiDeck[] | null>(null);
   useEffect(() => {
     let active = true;
-    void loadCourseVocabulary().then((courseData) => {
+    void Promise.all([loadCourseVocabulary(), loadSeoul1AExploreDeck()]).then(([courseData, seoul1ADeck]) => {
       if (!active) return;
       const decks = [
         ...CURATED_DECKS.map(curatedDeckToAnkiDeck),
         ...(courseData?.decks.flatMap((group) => group.courses.map(courseToExploreDeck)) || []).map(curatedDeckToAnkiDeck),
+        ...(seoul1ADeck ? [curatedDeckToAnkiDeck(seoul1ADeck)] : []),
       ];
       setPublishedDecks(decks);
     });

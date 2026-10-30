@@ -5,7 +5,7 @@ import { AppShell } from "../../components/AppShell";
 import { useApp } from "../../contexts/AppProvider";
 import { CURATED_DECKS, curatedDeckToAnkiDeck, CuratedDeckItem, IS_DEMO_DECKS_ENABLED, sharedDeckToExploreDeck } from "../../data/curatedDecks";
 import { DeckIcon } from "../../components/DeckIcon";
-import { courseToExploreDeck, loadCourseVocabulary } from "../../lib/courseVocabulary";
+import { courseToExploreDeck, loadCourseVocabulary, loadSeoul1AExploreDeck } from "../../lib/courseVocabulary";
 import { ApiClient } from "../../lib/apiClient";
 import {
   Layers,
@@ -28,12 +28,21 @@ export default function ExplorePage() {
   const [previewDeckId, setPreviewDeckId] = useState<string | null>(null);
   const [addedNotice, setAddedNotice] = useState<string | null>(null);
   const [courseDecks, setCourseDecks] = useState<import("../../lib/courseVocabulary").TopikDeck[]>([]);
+  const [seoul1ADeck, setSeoul1ADeck] = useState<CuratedDeckItem | null>(null);
   const [sharedDecks, setSharedDecks] = useState<CuratedDeckItem[]>([]);
 
   useEffect(() => {
     let mounted = true;
     void loadCourseVocabulary().then((data) => {
       if (mounted) setCourseDecks(data?.decks || []);
+    });
+    return () => { mounted = false; };
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    void loadSeoul1AExploreDeck().then((deck) => {
+      if (mounted) setSeoul1ADeck(deck);
     });
     return () => { mounted = false; };
   }, []);
@@ -49,8 +58,9 @@ export default function ExplorePage() {
   const exploreDecks = useMemo(() => [
     ...(IS_DEMO_DECKS_ENABLED ? CURATED_DECKS : []),
     ...courseDecks.flatMap((group) => group.courses.map(courseToExploreDeck)),
+    ...(seoul1ADeck ? [seoul1ADeck] : []),
     ...sharedDecks,
-  ], [courseDecks, sharedDecks]);
+  ], [courseDecks, seoul1ADeck, sharedDecks]);
 
   const deckHref = (deck: CuratedDeckItem) => deck.id.startsWith("shared-")
     ? `/explore/shared?id=${encodeURIComponent(deck.id.slice("shared-".length))}`

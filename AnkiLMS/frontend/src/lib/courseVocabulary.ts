@@ -71,6 +71,51 @@ export function courseToExploreDeck(course: VocabularyCourse): CuratedDeckItem {
   };
 }
 
+type Seoul1AData = {
+  id: string;
+  title: string;
+  description: string;
+  topik: string;
+  cards: AnkiCard[];
+};
+
+let seoul1ADeckPromise: Promise<CuratedDeckItem | null> | null = null;
+
+export function loadSeoul1AExploreDeck(): Promise<CuratedDeckItem | null> {
+  seoul1ADeckPromise ??= fetch("/data/seoul-1a.json")
+    .then(async (response) => {
+      if (!response.ok) return null;
+      const data = await response.json() as Seoul1AData;
+      return {
+        id: "seoul-1a",
+        title: data.title,
+        category: "topik",
+        categoryLabel: "TOPIK 1",
+        level: "Sơ cấp",
+        description: data.description,
+        detailedDescription: `Bộ từ vựng Seoul Korean Plus 1A gồm ${data.cards.length.toLocaleString("vi-VN")} thẻ, từ Hangul cơ bản đến các bài 01–08.`,
+        iconName: "BookOpen",
+        badgeColor: "bg-sky-500/10 text-sky-600 dark:text-sky-300 border-sky-500/30",
+        tags: ["TOPIK 1", "Seoul Korean Plus", "1A"],
+        cards: data.cards,
+        cardCount: data.cards.length,
+        author: {
+          name: "Seoul Korean Plus",
+          avatar: "/brand/haechivn-mark.webp",
+          role: "Giáo trình · Quyển 1A",
+          bio: "Bộ thẻ Seoul Korean Plus 1A được phân loại theo từng bài học.",
+          verified: false,
+        },
+        visibility: "public",
+        rating: 0,
+        downloads: 0,
+        estimatedMinutes: Math.max(1, Math.ceil(data.cards.length / 20)),
+      } satisfies CuratedDeckItem;
+    })
+    .catch(() => null);
+  return seoul1ADeckPromise;
+}
+
 let dataPromise: Promise<CourseVocabularyData | null> | null = null;
 
 export function loadCourseVocabulary(): Promise<CourseVocabularyData | null> {

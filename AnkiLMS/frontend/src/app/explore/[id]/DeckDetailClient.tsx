@@ -6,7 +6,7 @@ import { useApp } from "../../../contexts/AppProvider";
 import { CURATED_DECKS, curatedDeckToAnkiDeck, IS_DEMO_DECKS_ENABLED, sharedDeckToExploreDeck } from "../../../data/curatedDecks";
 import { DeckIcon } from "../../../components/DeckIcon";
 import { speakKorean } from "../../../lib/koreanSpeech";
-import { courseToExploreDeck, loadCourseVocabulary } from "../../../lib/courseVocabulary";
+import { courseToExploreDeck, loadCourseVocabulary, loadSeoul1AExploreDeck } from "../../../lib/courseVocabulary";
 import { ApiClient } from "../../../lib/apiClient";
 import type { CuratedDeckItem } from "../../../data/curatedDecks";
 import {
@@ -30,7 +30,19 @@ import {
 export default function DeckDetailClient({ id }: { id: string }) {
   const { userDecks, handleDeckImported, handleRemoveDeck } = useApp();
   const [courseDeck, setCourseDeck] = useState<CuratedDeckItem | null>(null);
-  const [courseLoaded, setCourseLoaded] = useState(!id.startsWith("course-") && !id.startsWith("shared-"));
+  const [courseLoaded, setCourseLoaded] = useState(!id.startsWith("course-") && !id.startsWith("shared-") && id !== "seoul-1a");
+
+  useEffect(() => {
+    if (id !== "seoul-1a") return;
+    let active = true;
+    void loadSeoul1AExploreDeck().then((loadedDeck) => {
+      if (active) {
+        setCourseDeck(loadedDeck);
+        setCourseLoaded(true);
+      }
+    });
+    return () => { active = false; };
+  }, [id]);
 
   useEffect(() => {
     if (!id.startsWith("course-")) return;
