@@ -31,6 +31,7 @@ import { calculateFSRS45, formatLocalDate, FSRSRating, FSRSState } from "../lib/
 import { ApiClient } from "../lib/apiClient";
 import { speakKorean } from "../lib/koreanSpeech";
 import { inferTopikLevel, getCourseRank } from "../lib/studyRanks";
+import { LockKeyhole, Globe2 } from "lucide-react";
 
 interface VocabularySRSModuleProps {
   userDecks?: AnkiDeck[];
@@ -109,7 +110,7 @@ const toSlug = (str: string): string => {
 };
 
 export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDecks = [], initialViewMode = "dashboard", initialEmptyCards = false }) => {
-  const { currentUser, setActiveStudySession, removedBuiltInDeckIds } = useApp();
+  const { currentUser, setActiveStudySession, removedBuiltInDeckIds, userDecks: ownedDecks, setUserDecks, handleOpenAuth } = useApp();
   const isAdmin = currentUser?.role === "admin";
   // Navigation View: "dashboard" (Lộ trình cây bài học) | "study" (Màn hình học)
   const [viewMode, setViewMode] = useState<"dashboard" | "study">(initialViewMode);
@@ -127,6 +128,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   // Search and tree expansion for the learner's active library.
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedDecks, setExpandedDecks] = useState<Record<string, boolean>>({});
+  const [visibilityBusyDeckId, setVisibilityBusyDeckId] = useState<string | null>(null);
 
   // Modal zoom image
   const [modalImage, setModalImage] = useState<string | null>(null);
@@ -699,6 +701,9 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     const isExpanded = !!expandedDecks[node.id];
     const hasChildren = Boolean(node.children && node.children.length > 0);
     const stats = getDeckStats(node.cards);
+    const sourceUserDeck = level === 0 && node.id.startsWith("user-")
+      ? ownedDecks.find((deck) => !deck.id.startsWith("curated-") && node.id === `user-${deck.id}`)
+      : undefined;
 
     const indentClass =
       level === 0
@@ -770,6 +775,39 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
           {/* Cột 2, 3, 4: Mới | Ôn | % */}
           <div className="relative z-10 flex items-center gap-3 sm:gap-6 shrink-0 font-mono text-xs">
+            {sourceUserDeck && (
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  if (!currentUser) {
+                    handleOpenAuth(false);
+                    return;
+                  }
+                  if (visibilityBusyDeckId) return;
+                  const visibility: "public" | "private" = sourceUserDeck.visibility === "public" ? "private" : "public";
+                  setVisibilityBusyDeckId(sourceUserDeck.id);
+                  void (async () => {
+                    try {
+                      const sharedId = await ApiClient.saveSharedDeck({ ...sourceUserDeck, visibility });
+                      const updatedDecks = ownedDecks.map((deck) => deck.id === sourceUserDeck.id ? { ...deck, visibility, sharedId } : deck);
+                      setUserDecks(updatedDecks);
+                      await ApiClient.saveDecks(updatedDecks, currentUser.id);
+                    } catch (error) {
+                      window.alert(error instanceof Error ? error.message : "Không cập nhật được quyền bộ thẻ.");
+                    } finally {
+                      setVisibilityBusyDeckId(null);
+                    }
+                  })();
+                }}
+                disabled={visibilityBusyDeckId === sourceUserDeck.id}
+                title={sourceUserDeck.visibility === "public" ? "Đổi sang riêng tư" : "Đăng bộ thẻ công khai"}
+                className={`inline-flex items-center gap-1 rounded-lg border px-2 py-1 text-[9px] font-sans font-bold transition disabled:opacity-60 ${sourceUserDeck.visibility === "public" ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300" : "border-stone-300 dark:border-stone-700 bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300"}`}
+              >
+                {sourceUserDeck.visibility === "public" ? <Globe2 className="h-3 w-3" /> : <LockKeyhole className="h-3 w-3" />}
+                {visibilityBusyDeckId === sourceUserDeck.id ? "Đang lưu…" : sourceUserDeck.visibility === "public" ? "Công khai" : "Riêng tư"}
+              </button>
+            )}
             <div className="w-8 sm:w-10 text-center font-bold text-sky-600 dark:text-sky-400">
               {stats.newCount > 0 ? stats.newCount : <span className="text-stone-300 dark:text-stone-700 font-normal">0</span>}
             </div>

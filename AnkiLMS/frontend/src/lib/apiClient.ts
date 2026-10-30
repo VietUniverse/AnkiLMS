@@ -1,4 +1,5 @@
 import { AnkiDeck } from "./ankiParser";
+import type { SharedDeckRecord } from "../data/curatedDecks";
 
 export interface UserProfile {
   id: string;
@@ -465,6 +466,58 @@ export class ApiClient {
     } catch {
       return null;
     }
+  }
+
+  public static async getPublicSharedDecks(): Promise<SharedDeckRecord[]> {
+    try {
+      const response = await fetch("/api/shared-decks", { credentials: "same-origin", cache: "no-store" });
+      if (!response.ok) return [];
+      const payload = await response.json() as { decks?: SharedDeckRecord[] };
+      return payload.decks || [];
+    } catch {
+      return [];
+    }
+  }
+
+  public static async getSharedDeck(sharedId: string): Promise<SharedDeckRecord | null> {
+    try {
+      const response = await fetch(`/api/shared-decks?id=${encodeURIComponent(sharedId)}`, { credentials: "same-origin", cache: "no-store" });
+      if (!response.ok) return null;
+      const payload = await response.json() as { deck?: SharedDeckRecord };
+      return payload.deck || null;
+    } catch {
+      return null;
+    }
+  }
+
+  public static async getMySharedDecks(): Promise<SharedDeckRecord[]> {
+    try {
+      const response = await fetch("/api/shared-decks?mine=1", { credentials: "same-origin", cache: "no-store" });
+      if (!response.ok) return [];
+      const payload = await response.json() as { decks?: SharedDeckRecord[] };
+      return payload.decks || [];
+    } catch {
+      return [];
+    }
+  }
+
+  public static async saveSharedDeck(deck: AnkiDeck): Promise<string> {
+    const response = await fetch("/api/shared-decks", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sharedId: deck.sharedId,
+        deckId: deck.id,
+        title: deck.name,
+        description: deck.description || "",
+        visibility: deck.visibility || "private",
+        cards: deck.cards,
+      }),
+    });
+    const payload = await response.json() as { sharedId?: string; error?: string };
+    if (!response.ok || !payload.sharedId) throw new Error(payload.error || "Không lưu được bộ thẻ chia sẻ.");
+    return payload.sharedId;
   }
 
   public static saveDecks(decks: AnkiDeck[], userId?: string): Promise<void> {

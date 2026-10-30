@@ -64,6 +64,7 @@ export function courseToExploreDeck(course: VocabularyCourse): CuratedDeckItem {
     tags: [course.topik, course.level, course.topic],
     cards,
     author: { name: "HaechiVN", avatar: "/brand/haechivn-mark.webp", role: "Biên soạn", bio: "Kho học liệu HaechiVN", verified: true },
+    visibility: "public",
     rating: 0,
     downloads: 0,
     estimatedMinutes: Math.max(1, Math.ceil(cards.length / 20)),

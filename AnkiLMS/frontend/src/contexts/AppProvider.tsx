@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { AnkiDeck } from "../lib/ankiParser";
 import { ApiClient, UserProfile } from "../lib/apiClient";
 import { BETA_FEATURE_KEYS, DEFAULT_FEATURE_FLAGS, FeatureFlags, FeatureKey, IS_BETA_FEATURES_ENABLED } from "../lib/featureFlags";
@@ -68,6 +68,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [featureFlags, setFeatureFlags] = useState<FeatureFlags>(DEFAULT_FEATURE_FLAGS);
   const [featureFlagsLoaded, setFeatureFlagsLoaded] = useState(false);
   const [activeStudySession, setActiveStudySession] = useState<StudySessionInfo | null>(null);
+  const syncingDeckIds = useRef(new Set<string>());
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -190,6 +191,75 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     void ApiClient.saveDecks(synchronized, currentUser?.id).catch((error) => console.error("Could not sync published decks", error));
   }, [currentUser?.id, isAuthReady, publishedDecks, userDecks]);
 
+  // Back up user-created decks to R2/D1 and restore server copies missing from
+  // this browser. Curated Explore decks remain managed by the published catalog.
+  useEffect(() => {
+    if (!isAuthReady || !currentUser) return;
+    let active = true;
+    const userId = currentUser.id;
+    const localDecks = userDecks.filter((deck) => !deck.id.startsWith("curated-"));
+
+    void (async () => {
+      const remoteRecords = await ApiClient.getMySharedDecks();
+      if (!active) return;
+      const localIds = new Set(localDecks.map((deck) => deck.id));
+      const localSharedIds = new Set(localDecks.map((deck) => deck.sharedId).filter((id): id is string => !!id));
+      const remoteDeckIds = new Set(remoteRecords.map((record) => record.deckId));
+
+      const missingLocally = remoteRecords.filter((record) => !localIds.has(record.deckId) && !localSharedIds.has(record.sharedId));
+      const restored: AnkiDeck[] = [];
+      for (let offset = 0; offset < missingLocally.length; offset += 4) {
+        const records = missingLocally.slice(offset, offset + 4);
+        const results = await Promise.all(records.map((record) => ApiClient.getSharedDeck(record.sharedId)));
+        results.forEach((result, index) => {
+          const record = result || records[index];
+          if (!result?.cards?.length) return;
+          restored.push({
+            id: record.deckId,
+            name: record.title,
+            description: record.description,
+            cardCount: record.cardCount,
+            cards: result.cards,
+            visibility: record.visibility,
+            sharedId: record.sharedId,
+            author: record.author,
+          });
+        });
+      }
+
+      const localMissingRemotely = localDecks.filter((deck) => !remoteDeckIds.has(deck.id) && !syncingDeckIds.current.has(deck.id));
+      localMissingRemotely.forEach((deck) => syncingDeckIds.current.add(deck.id));
+      const uploaded = await Promise.all(localMissingRemotely.map(async (deck) => {
+        try {
+          const sharedId = await ApiClient.saveSharedDeck({ ...deck, visibility: deck.visibility || "private" });
+          return { id: deck.id, sharedId };
+        } catch (error) {
+          console.error("Could not back up study deck to server", error);
+          return null;
+        } finally {
+          syncingDeckIds.current.delete(deck.id);
+        }
+      }));
+      if (!active) return;
+
+      const sharedIdsByDeckId = new Map(remoteRecords.map((record) => [record.deckId, record.sharedId]));
+      uploaded.forEach((item) => { if (item) sharedIdsByDeckId.set(item.id, item.sharedId); });
+      if (restored.length || localDecks.some((deck) => sharedIdsByDeckId.has(deck.id) && deck.sharedId !== sharedIdsByDeckId.get(deck.id))) {
+        setUserDecks((previous) => {
+          const next = previous.map((deck) => sharedIdsByDeckId.has(deck.id)
+            ? { ...deck, sharedId: sharedIdsByDeckId.get(deck.id) }
+            : deck);
+          const existingIds = new Set(next.map((deck) => deck.id));
+          next.push(...restored.filter((deck) => !existingIds.has(deck.id)));
+          void ApiClient.saveDecks(next, userId).catch((error) => console.error("Could not save synchronized decks locally", error));
+          return next;
+        });
+      }
+    })().catch((error) => console.error("Could not synchronize decks with server", error));
+
+    return () => { active = false; };
+  }, [currentUser?.id, isAuthReady, userDecks]);
+
   const handleOpenAuth = useCallback((register?: boolean) => {
     setAuthRegisterMode(!!register);
     setIsAuthOpen(true);
@@ -197,8 +267,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const handleDeckImported = useCallback((deck: AnkiDeck) => {
     setUserDecks((prev) => {
-      const filtered = prev.filter((d) => d.id !== deck.id && d.name !== deck.name);
-      const updated = [...filtered, deck];
+      const existing = prev.find((item) => item.id === deck.id || item.name === deck.name);
+      const preparedDeck: AnkiDeck = {
+        ...deck,
+        description: deck.description || existing?.description || "",
+        visibility: deck.visibility || existing?.visibility || "private",
+        sharedId: deck.sharedId || existing?.sharedId,
+        author: deck.author || existing?.author || (currentUser ? {
+          userId: currentUser.id,
+          name: currentUser.name,
+          avatar: currentUser.avatar_url || undefined,
+          bio: currentUser.bio || undefined,
+        } : undefined),
+      };
+      const filtered = prev.filter((d) => d.id !== preparedDeck.id && d.name !== preparedDeck.name);
+      const updated = [...filtered, preparedDeck];
       void ApiClient.saveDecks(updated, currentUser?.id).catch((error) => console.error("Could not save study decks", error));
       return updated;
     });

@@ -1,11 +1,13 @@
 import { AnkiCard, AnkiDeck } from "../lib/ankiParser";
 
 export interface DeckAuthor {
+  userId?: string;
   name: string;
   avatar: string;
   role: string;
   bio: string;
   verified: boolean;
+  profileUrl?: string;
 }
 
 export interface CuratedDeckItem {
@@ -21,7 +23,10 @@ export interface CuratedDeckItem {
   bannerGradient?: string;
   tags: string[];
   cards: AnkiCard[];
+  cardCount?: number;
   author: DeckAuthor;
+  visibility?: "public" | "private";
+  sharedId?: string;
   rating: number;
   downloads: number;
   estimatedMinutes: number;
@@ -350,11 +355,64 @@ export const CURATED_DECKS: CuratedDeckItem[] = [
 ];
 
 export function curatedDeckToAnkiDeck(deck: CuratedDeckItem): AnkiDeck {
+  const isCommunityDeck = deck.id.startsWith("shared-");
+  const sharedId = deck.sharedId || (isCommunityDeck ? deck.id.slice("shared-".length) : undefined);
   return {
-    id: `curated-${deck.id}`,
+    id: isCommunityDeck ? `community-copy-${sharedId}` : `curated-${deck.id}`,
     name: deck.title,
-    cardCount: deck.cards.length,
+    cardCount: deck.cardCount || deck.cards.length,
     cards: deck.cards,
+    visibility: isCommunityDeck ? "private" : deck.visibility || "public",
+    sharedId: isCommunityDeck ? undefined : deck.sharedId,
+    author: isCommunityDeck ? undefined : {
+      userId: deck.author.userId,
+      name: deck.author.name,
+      avatar: deck.author.avatar,
+      bio: deck.author.bio,
+    },
+  };
+}
+
+export type SharedDeckRecord = {
+  sharedId: string;
+  deckId: string;
+  title: string;
+  description: string;
+  visibility: "public" | "private";
+  cardCount: number;
+  cards?: AnkiCard[];
+  author: { userId: string; name: string; avatar?: string; bio?: string };
+};
+
+export function sharedDeckToExploreDeck(record: SharedDeckRecord): CuratedDeckItem {
+  const cards = record.cards || [];
+  return {
+    id: `shared-${record.sharedId}`,
+    sharedId: record.sharedId,
+    title: record.title,
+    category: "conversation",
+    categoryLabel: "Cộng đồng",
+    level: "Mọi cấp độ",
+    description: record.description || "Bộ thẻ được chia sẻ bởi cộng đồng HaechiVN.",
+    detailedDescription: record.description || "Bộ thẻ được chia sẻ bởi cộng đồng HaechiVN.",
+    iconName: "BookOpen",
+    badgeColor: "bg-violet-500/10 text-violet-700 dark:text-violet-300 border-violet-500/30",
+    tags: ["Cộng đồng", "Người học biên soạn"],
+    cards,
+    author: {
+      userId: record.author.userId,
+      name: record.author.name,
+      avatar: record.author.avatar || "/brand/haechivn-mark.webp",
+      role: "Tác giả cộng đồng",
+      bio: record.author.bio || "Người học chia sẻ bộ thẻ với cộng đồng HaechiVN.",
+      verified: false,
+      profileUrl: `/profile/${record.author.userId}`,
+    },
+    visibility: record.visibility,
+    cardCount: record.cardCount,
+    rating: 0,
+    downloads: 0,
+    estimatedMinutes: Math.max(1, Math.ceil(record.cardCount / 20)),
   };
 }
 

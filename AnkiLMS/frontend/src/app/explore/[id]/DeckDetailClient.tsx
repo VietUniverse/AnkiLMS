@@ -3,10 +3,11 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { AppShell } from "../../../components/AppShell";
 import { useApp } from "../../../contexts/AppProvider";
-import { CURATED_DECKS, curatedDeckToAnkiDeck, IS_DEMO_DECKS_ENABLED } from "../../../data/curatedDecks";
+import { CURATED_DECKS, curatedDeckToAnkiDeck, IS_DEMO_DECKS_ENABLED, sharedDeckToExploreDeck } from "../../../data/curatedDecks";
 import { DeckIcon } from "../../../components/DeckIcon";
 import { speakKorean } from "../../../lib/koreanSpeech";
 import { courseToExploreDeck, loadCourseVocabulary } from "../../../lib/courseVocabulary";
+import { ApiClient } from "../../../lib/apiClient";
 import type { CuratedDeckItem } from "../../../data/curatedDecks";
 import {
   ArrowLeft,
@@ -23,12 +24,13 @@ import {
   Trash2,
   ChevronRight,
   RotateCcw,
+  Globe2,
 } from "lucide-react";
 
 export default function DeckDetailClient({ id }: { id: string }) {
   const { userDecks, handleDeckImported, handleRemoveDeck } = useApp();
   const [courseDeck, setCourseDeck] = useState<CuratedDeckItem | null>(null);
-  const [courseLoaded, setCourseLoaded] = useState(!id.startsWith("course-"));
+  const [courseLoaded, setCourseLoaded] = useState(!id.startsWith("course-") && !id.startsWith("shared-"));
 
   useEffect(() => {
     if (!id.startsWith("course-")) return;
@@ -37,6 +39,18 @@ export default function DeckDetailClient({ id }: { id: string }) {
       const course = data?.decks.flatMap((group) => group.courses).find((item) => `course-${item.id}` === id);
       if (active) {
         setCourseDeck(course ? courseToExploreDeck(course) : null);
+        setCourseLoaded(true);
+      }
+    });
+    return () => { active = false; };
+  }, [id]);
+
+  useEffect(() => {
+    if (!id.startsWith("shared-")) return;
+    let active = true;
+    void ApiClient.getSharedDeck(id.slice("shared-".length)).then((record) => {
+      if (active) {
+        setCourseDeck(record ? sharedDeckToExploreDeck(record) : null);
         setCourseLoaded(true);
       }
     });
@@ -178,6 +192,9 @@ export default function DeckDetailClient({ id }: { id: string }) {
                 </span>
                 <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700">
                   {deck.level}
+                </span>
+                <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-300">
+                  <Globe2 className="h-3 w-3" /> {deck.visibility === "private" ? "Riêng tư" : "Công khai"}
                 </span>
                 {IS_DEMO_DECKS_ENABLED && (
                   <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-500 border border-amber-500/30">
@@ -445,7 +462,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
             {/* HỘP THÔNG TIN TÁC GIẢ */}
             <div className="card-duo p-5 border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/80 space-y-3.5">
               <div className="text-[11px] font-extrabold uppercase tracking-wider text-stone-400">
-                Thông tin người biên soạn
+                Tác giả bộ thẻ
               </div>
 
               <div className="flex items-center gap-3">

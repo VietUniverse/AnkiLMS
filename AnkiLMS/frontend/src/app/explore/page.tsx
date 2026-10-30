@@ -3,9 +3,10 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { AppShell } from "../../components/AppShell";
 import { useApp } from "../../contexts/AppProvider";
-import { CURATED_DECKS, curatedDeckToAnkiDeck, CuratedDeckItem, IS_DEMO_DECKS_ENABLED } from "../../data/curatedDecks";
+import { CURATED_DECKS, curatedDeckToAnkiDeck, CuratedDeckItem, IS_DEMO_DECKS_ENABLED, sharedDeckToExploreDeck } from "../../data/curatedDecks";
 import { DeckIcon } from "../../components/DeckIcon";
 import { courseToExploreDeck, loadCourseVocabulary } from "../../lib/courseVocabulary";
+import { ApiClient } from "../../lib/apiClient";
 import {
   Layers,
   Search,
@@ -16,6 +17,8 @@ import {
   ArrowRight,
   Eye,
   Trash2,
+  ShieldCheck,
+  Globe2,
 } from "lucide-react";
 
 export default function ExplorePage() {
@@ -25,6 +28,7 @@ export default function ExplorePage() {
   const [previewDeckId, setPreviewDeckId] = useState<string | null>(null);
   const [addedNotice, setAddedNotice] = useState<string | null>(null);
   const [courseDecks, setCourseDecks] = useState<import("../../lib/courseVocabulary").TopikDeck[]>([]);
+  const [sharedDecks, setSharedDecks] = useState<CuratedDeckItem[]>([]);
 
   useEffect(() => {
     let mounted = true;
@@ -34,10 +38,23 @@ export default function ExplorePage() {
     return () => { mounted = false; };
   }, []);
 
+  useEffect(() => {
+    let mounted = true;
+    void ApiClient.getPublicSharedDecks().then((decks) => {
+      if (mounted) setSharedDecks(decks.map(sharedDeckToExploreDeck));
+    });
+    return () => { mounted = false; };
+  }, []);
+
   const exploreDecks = useMemo(() => [
     ...(IS_DEMO_DECKS_ENABLED ? CURATED_DECKS : []),
     ...courseDecks.flatMap((group) => group.courses.map(courseToExploreDeck)),
-  ], [courseDecks]);
+    ...sharedDecks,
+  ], [courseDecks, sharedDecks]);
+
+  const deckHref = (deck: CuratedDeckItem) => deck.id.startsWith("shared-")
+    ? `/explore/shared?id=${encodeURIComponent(deck.id.slice("shared-".length))}`
+    : `/explore/${deck.id}`;
 
   // Check if a curated deck is already inside userDecks
   const isDeckAdded = (deck: CuratedDeckItem) => {
@@ -79,6 +96,7 @@ export default function ExplorePage() {
         !q ||
         deck.title.toLowerCase().includes(q) ||
         deck.description.toLowerCase().includes(q) ||
+        deck.author.name.toLowerCase().includes(q) ||
         deck.tags.some((t) => t.toLowerCase().includes(q));
       return matchCat && matchQuery;
     });
@@ -220,7 +238,7 @@ export default function ExplorePage() {
 
                   {/* Title & Description */}
                   <a
-                    href={`/explore/${deck.id}`}
+                    href={deckHref(deck)}
                     className="block group cursor-pointer"
                   >
                     <h3 className="text-base font-bold text-stone-900 dark:text-white leading-snug group-hover:text-sky-500 transition">
@@ -231,10 +249,26 @@ export default function ExplorePage() {
                     {deck.description}
                   </p>
 
+                  <div className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-stone-100 dark:border-stone-800/80 bg-stone-50/70 dark:bg-stone-950/30 px-2.5 py-2">
+                    <div className="flex min-w-0 items-center gap-2">
+                      <img src={deck.author.avatar} alt="" className="h-7 w-7 shrink-0 rounded-full border border-sky-500/25 object-cover" />
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1 text-[11px] font-bold text-stone-800 dark:text-stone-200">
+                          <span className="truncate">{deck.author.name}</span>
+                          {deck.author.verified && <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-sky-500" aria-label="Tác giả đã xác minh" />}
+                        </div>
+                        <div className="truncate text-[10px] text-stone-500 dark:text-stone-400">{deck.author.role}</div>
+                      </div>
+                    </div>
+                    <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-1 text-[9px] font-bold text-emerald-700 dark:text-emerald-300">
+                      <Globe2 className="h-3 w-3" /> {deck.visibility === "private" ? "Riêng tư" : "Công khai"}
+                    </span>
+                  </div>
+
                   {/* Tags & Count */}
                   <div className="flex items-center gap-2 mt-3 pt-3 border-t border-stone-100 dark:border-stone-800/80 text-[11px] text-stone-400">
                     <span className="font-bold text-sky-600 dark:text-sky-400">
-                      {deck.cards.length} thẻ học
+                      {deck.cardCount ?? deck.cards.length} thẻ học
                     </span>
                     <span>•</span>
                     <div className="flex items-center gap-1">
@@ -274,7 +308,7 @@ export default function ExplorePage() {
                 {/* Footer Buttons */}
                 <div className="mt-4 pt-3 border-t border-stone-100 dark:border-stone-800/80 flex items-center justify-between gap-2">
                   <a
-                    href={`/explore/${deck.id}`}
+                    href={deckHref(deck)}
                     className="inline-flex items-center gap-1.5 text-xs font-bold text-stone-600 hover:text-sky-600 dark:text-stone-300 dark:hover:text-sky-400 transition py-1.5 px-2 rounded-lg cursor-pointer"
                   >
                     <span>Chi tiết</span>
@@ -300,13 +334,19 @@ export default function ExplorePage() {
                         </button>
                       </>
                     ) : (
-                      <button
-                        onClick={() => handleAddDeck(deck)}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-sky-500 hover:bg-sky-600 text-white shadow-sm shadow-sky-900/20 transition cursor-pointer"
-                      >
-                        <Plus className="w-3.5 h-3.5" />
-                        Thêm vào /flashcard
-                      </button>
+                      deck.id.startsWith("shared-") ? (
+                        <a href={deckHref(deck)} className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-sky-500 hover:bg-sky-600 text-white shadow-sm shadow-sky-900/20 transition">
+                          <Eye className="w-3.5 h-3.5" /> Xem & thêm
+                        </a>
+                      ) : (
+                        <button
+                          onClick={() => handleAddDeck(deck)}
+                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-sky-500 hover:bg-sky-600 text-white shadow-sm shadow-sky-900/20 transition cursor-pointer"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          Thêm vào /flashcard
+                        </button>
+                      )
                     )}
                   </div>
                 </div>

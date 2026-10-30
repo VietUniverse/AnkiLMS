@@ -31,6 +31,16 @@ export interface AnkiDeck {
   cardCount: number;
   cards: AnkiCard[];
   mediaAssets?: AnkiMediaAsset[];
+  /** Private by default; public decks are eligible for the shared Explore catalog. */
+  visibility?: "public" | "private";
+  sharedId?: string;
+  description?: string;
+  author?: {
+    userId?: string;
+    name: string;
+    avatar?: string;
+    bio?: string;
+  };
 }
 
 export interface AnkiMediaAsset {
