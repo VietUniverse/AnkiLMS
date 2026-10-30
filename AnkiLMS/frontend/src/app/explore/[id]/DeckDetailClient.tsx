@@ -223,7 +223,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
                 </span>
                 {IS_DEMO_DECKS_ENABLED && (
                   <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-500 border border-amber-500/30">
-                    Dữ liệu Demo
+                    Demo
                   </span>
                 )}
                 <div className="flex items-center gap-1 text-xs font-bold text-amber-500 ml-1">
@@ -395,14 +395,14 @@ export default function DeckDetailClient({ id }: { id: string }) {
                     className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-black bg-emerald-500 hover:bg-emerald-600 text-white shadow-md shadow-emerald-900/20 transition cursor-pointer"
                   >
                     <BookOpen className="w-4 h-4" />
-                    Đã Có Trong Kho Thẻ (Học Ngay)
+                    Đã có trong kho thẻ (Học ngay)
                   </a>
                   <button
                     onClick={handleRemove}
                     className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-semibold text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
-                    Gỡ khỏi /flashcards
+                    Gỡ khỏi kho thẻ
                   </button>
                 </div>
               ) : (
@@ -411,7 +411,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
                   className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl text-xs font-black bg-sky-500 hover:bg-sky-600 text-white shadow-md shadow-sky-900/30 transition cursor-pointer"
                 >
                   <Plus className="w-4 h-4 stroke-[3]" />
-                  Thêm vào /flashcard
+                  Thêm vào kho thẻ
                 </button>
               )}
 
