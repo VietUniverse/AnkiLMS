@@ -68,7 +68,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
       return jsonResponse({ decks: (result.results || []).map((row) => toRecord(row)) }, 200, { "Cache-Control": "private, no-store" });
     }
 
-    const result = await env.DB.prepare(`${deckSelect} WHERE d.visibility = 'public' ORDER BY d.updated_at DESC LIMIT 200`).all<SharedDeckRow>();
+    const result = await env.DB.prepare(`${deckSelect} WHERE d.visibility = 'public' AND d.deck_id NOT LIKE 'catalog:%' ORDER BY d.updated_at DESC LIMIT 200`).all<SharedDeckRow>();
     return jsonResponse({ decks: (result.results || []).map((row) => toRecord(row)) }, 200, {
       "Cache-Control": "public, max-age=60, s-maxage=60",
     });

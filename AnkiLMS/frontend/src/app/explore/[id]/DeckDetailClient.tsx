@@ -30,6 +30,8 @@ import {
 export default function DeckDetailClient({ id }: { id: string }) {
   const { userDecks, handleDeckImported, handleRemoveDeck } = useApp();
   const [courseDeck, setCourseDeck] = useState<CuratedDeckItem | null>(null);
+  const [catalogOverride, setCatalogOverride] = useState<Partial<CuratedDeckItem> | null>(null);
+  const [catalogHidden, setCatalogHidden] = useState(false);
   const [courseLoaded, setCourseLoaded] = useState(!id.startsWith("course-") && !id.startsWith("shared-") && id !== "seoul-1a");
 
   useEffect(() => {
@@ -69,9 +71,28 @@ export default function DeckDetailClient({ id }: { id: string }) {
     return () => { active = false; };
   }, [id]);
 
-  const deck = useMemo(() => {
-    return CURATED_DECKS.find((d) => d.id === id) || courseDeck;
-  }, [id, courseDeck]);
+  useEffect(() => {
+    if (id.startsWith("shared-")) return;
+    let active = true;
+    void fetch("/api/explore/deck-overrides", { cache: "no-store" })
+      .then(async (response) => response.ok ? response.json() as Promise<{ overrides?: Array<{ deckId: string; visibility: "public" | "private" }> }> : null)
+      .then(async (index) => {
+        if (!active) return;
+        const entry = index?.overrides?.find((item) => item.deckId === `catalog:${id}`);
+        if (entry?.visibility === "private") { setCatalogHidden(true); return; }
+        if (!entry) return;
+        const response = await fetch(`/api/explore/deck-overrides?id=${encodeURIComponent(id)}`, { cache: "no-store" });
+        if (response.ok) {
+          const payload = await response.json() as { deck?: { title: string; description: string; visibility: "public" | "private"; cardCount: number; cards: CuratedDeckItem["cards"] } };
+          if (active && payload.deck) setCatalogOverride(payload.deck);
+        }
+      })
+      .catch(() => undefined);
+    return () => { active = false; };
+  }, [id]);
+
+  const sourceDeck = useMemo(() => CURATED_DECKS.find((d) => d.id === id) || courseDeck, [id, courseDeck]);
+  const deck = useMemo(() => sourceDeck && catalogOverride ? { ...sourceDeck, ...catalogOverride, id: sourceDeck.id, cards: catalogOverride.cards || sourceDeck.cards } : sourceDeck, [sourceDeck, catalogOverride]);
   const isDemoDeck = CURATED_DECKS.some((item) => item.id === id);
 
   const [activePreviewIndex, setActivePreviewIndex] = useState(0);
@@ -141,13 +162,13 @@ export default function DeckDetailClient({ id }: { id: string }) {
     return <AppShell><div className="py-20 text-center text-sm text-sky-500">Đang tải bộ từ vựng…</div></AppShell>;
   }
 
-  if (!deck || (isDemoDeck && !IS_DEMO_DECKS_ENABLED)) {
+  if (!deck || catalogHidden || (isDemoDeck && !IS_DEMO_DECKS_ENABLED)) {
     return (
       <AppShell>
         <div className="max-w-2xl mx-auto py-20 text-center space-y-4">
           <Layers className="w-12 h-12 text-stone-400 mx-auto" />
           <h1 className="text-xl font-bold text-stone-900 dark:text-white">
-            {isDemoDeck && !IS_DEMO_DECKS_ENABLED ? "Bộ thẻ mẫu tạm ẩn trên Production" : "Không tìm thấy bộ thẻ yêu cầu"}
+            {catalogHidden ? "Bộ thẻ không còn được chia sẻ" : isDemoDeck && !IS_DEMO_DECKS_ENABLED ? "Bộ thẻ mẫu tạm ẩn trên Production" : "Không tìm thấy bộ thẻ yêu cầu"}
           </h1>
           <p className="text-xs text-stone-500 dark:text-stone-400 max-w-md mx-auto">
             {isDemoDeck && !IS_DEMO_DECKS_ENABLED

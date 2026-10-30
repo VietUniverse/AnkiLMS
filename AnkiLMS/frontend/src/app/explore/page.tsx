@@ -48,6 +48,7 @@ export default function ExplorePage() {
   const [courseDecks, setCourseDecks] = useState<TopikDeck[]>([]);
   const [seoul1ADeck, setSeoul1ADeck] = useState<CuratedDeckItem | null>(null);
   const [sharedDecks, setSharedDecks] = useState<CuratedDeckItem[]>([]);
+  const [deckOverrides, setDeckOverrides] = useState<Array<{ sharedId: string; deckId: string; title: string; description: string; visibility: "public" | "private"; cardCount: number }>>([]);
 
   useEffect(() => {
     let mounted = true;
@@ -70,15 +71,26 @@ export default function ExplorePage() {
     void ApiClient.getPublicSharedDecks().then((decks) => {
       if (mounted) setSharedDecks(decks.map(sharedDeckToExploreDeck));
     });
+    void fetch("/api/explore/deck-overrides", { cache: "no-store" }).then((r) => r.ok ? r.json() : null)
+      .then((data) => { if (mounted) setDeckOverrides(data?.overrides || []); }).catch(() => undefined);
     return () => { mounted = false; };
   }, []);
 
-  const exploreDecks = useMemo(() => [
+  const baseDecks = useMemo(() => [
     ...(IS_DEMO_DECKS_ENABLED ? CURATED_DECKS : []),
     ...courseDecks.flatMap((group) => group.courses.map(courseToExploreDeck)),
     ...(seoul1ADeck ? [seoul1ADeck] : []),
     ...sharedDecks,
   ], [courseDecks, seoul1ADeck, sharedDecks]);
+  const exploreDecks = useMemo(() => {
+    const overrideMap = new Map(deckOverrides.map((item) => [item.deckId.replace(/^catalog:/, ""), item]));
+    return baseDecks.flatMap((deck) => {
+      const override = overrideMap.get(deck.id);
+      if (override?.visibility === "private") return [];
+      if (!override) return [deck];
+      return [{ ...deck, title: override.title, description: override.description, cardCount: override.cardCount, sharedId: override.sharedId }];
+    });
+  }, [baseDecks, deckOverrides]);
 
   const deckHref = (deck: CuratedDeckItem) => deck.id.startsWith("shared-")
     ? `/explore/shared?id=${encodeURIComponent(deck.id.slice("shared-".length))}`
@@ -92,10 +104,18 @@ export default function ExplorePage() {
     );
   };
 
-  const handleAddDeck = (deck: CuratedDeckItem) => {
-    const ankiDeck = curatedDeckToAnkiDeck(deck);
-    handleDeckImported(ankiDeck);
-    setAddedNotice(`Đã thêm bộ thẻ "${deck.title}" vào Kho thẻ!`);
+  const handleAddDeck = async (deck: CuratedDeckItem) => {
+    let currentDeck = deck;
+    const override = deckOverrides.find((item) => item.deckId.replace(/^catalog:/, "") === deck.id);
+    if (override) {
+      const response = await fetch(`/api/explore/deck-overrides?id=${encodeURIComponent(deck.id)}`, { cache: "no-store" });
+      if (response.ok) {
+        const payload = await response.json() as { deck?: { cards?: CuratedDeckItem["cards"] } };
+        if (payload.deck?.cards) currentDeck = { ...deck, cards: payload.deck.cards };
+      }
+    }
+    handleDeckImported(curatedDeckToAnkiDeck(currentDeck));
+    setAddedNotice(`Đã thêm bộ thẻ "${currentDeck.title}" vào Kho thẻ!`);
     setTimeout(() => setAddedNotice(null), 3500);
   };
 
