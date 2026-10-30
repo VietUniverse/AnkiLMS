@@ -35,7 +35,7 @@ topic_levels = defaultdict(list)
 for hangul, _, topic, *_ in topics:
     topic_levels[topic].extend(existing_levels.get(hangul, []))
 
-by_level = {level: defaultdict(list) for level in range(1, 7)}
+by_topic = defaultdict(list)
 coarse = {"초급": 2, "중급": 4, "고급": 6}
 for hangul, meaning, topic, *_ in topics:
     meaning = meaning or pdf_meanings.get(hangul, "")
@@ -46,33 +46,33 @@ for hangul, meaning, topic, *_ in topics:
     related = topic_levels.get(topic, [])
     inferred = round(statistics.median(related)) if related else 3
     level = max(1, min(6, declared or inferred))
-    by_level[level][topic].append((hangul, meaning))
+    by_topic[topic].append((hangul, meaning, f"TOPIK {level}"))
     existing.add(hangul)
 
-added = 0
-for level, topic_words in by_level.items():
-    group = next(group for group in catalog["decks"] if group["id"] == f"topik-{level}")
-    units = []
-    for unit_number, (topic, words) in enumerate(sorted(topic_words.items()), 1):
-        units.append({
-            "number": unit_number,
-            "title": topic,
-            "words": [[410000000 + level * 1000000 + unit_number * 1000 + index, hangul, meaning, "", "", ""]
-                      for index, (hangul, meaning) in enumerate(words, 1)],
-        })
-        added += len(words)
-    if units:
-        group["courses"].append({
-            "id": str(4100 + level),
-            "title": "Từ vựng TOPIK theo chủ đề",
-            "level": f"TOPIK {level}",
-            "topik": f"TOPIK {level}",
-            "topic": "Từ vựng theo chủ đề",
-            "units": units,
-            "wordCount": sum(len(unit["words"]) for unit in units),
-        })
+units = []
+for unit_number, (topic, words) in enumerate(sorted(by_topic.items()), 1):
+    units.append({
+        "number": unit_number,
+        "title": topic,
+        "words": [[410000000 + unit_number * 10000 + index, hangul, meaning, "", "", "", level]
+                  for index, (hangul, meaning, level) in enumerate(words, 1)],
+    })
+topic_course = {
+    "id": "topic-vocabulary",
+    "title": "Từ vựng TOPIK theo chủ đề",
+    "level": "TOPIK 1–6",
+    "topik": "TOPIK 1–6",
+    "topic": "Từ vựng theo chủ đề",
+    "units": units,
+    "wordCount": sum(len(unit["words"]) for unit in units),
+}
+topic_group = next((group for group in catalog["decks"] if group["id"] == "topic-vocabulary"), None)
+if topic_group is None:
+    topic_group = {"id": "topic-vocabulary", "title": "Từ vựng theo chủ đề", "subtitle": "TOPIK 1–6 · Chọn chủ đề khi học", "courses": []}
+    catalog["decks"].append(topic_group)
+topic_group["courses"] = [topic_course]
 
 catalog["courseCount"] = sum(len(group["courses"]) for group in catalog["decks"])
 catalog["wordCount"] = sum(course["wordCount"] for group in catalog["decks"] for course in group["courses"])
 COURSES.write_text(json.dumps(catalog, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
-print(f"Added {added} verified words to {sum(bool(topics) for topics in by_level.values())} TOPIK courses")
+print(f"Added {topic_course['wordCount']} verified words across {len(units)} topics in one TOPIK 1–6 deck")

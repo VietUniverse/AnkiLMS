@@ -1,7 +1,7 @@
 import type { AnkiCard } from "./ankiParser";
 import type { CuratedDeckItem } from "../data/curatedDecks";
 
-export type CoursePackedWord = [number, string, string, string, string, string];
+export type CoursePackedWord = [number, string, string, string, string, string, string?];
 export type VocabularyUnit = { number: number; title: string; words: CoursePackedWord[] };
 export type VocabularyCourse = {
   id: string;
@@ -28,16 +28,18 @@ export type CourseVocabularyData = {
 
 export function courseToExploreDeck(course: VocabularyCourse): CuratedDeckItem {
   const topik = course.topik.match(/\d+/)?.[0] || "1";
-  const cards: AnkiCard[] = course.units.flatMap((unit) => unit.words.map(([id, korean, meaning, , hanja, pronunciation]) => ({
+  const cards: AnkiCard[] = course.units.flatMap((unit) => unit.words.map(([id, korean, meaning, , hanja, pronunciation, wordTopik]) => {
+    const topik = wordTopik || course.topik;
+    return ({
     id,
     noteId: id,
-    deckName: course.title,
+    deckName: `${course.title}::${unit.title}`,
     frontHtml: korean,
     backHtml: meaning,
     frontText: korean,
     backText: meaning,
     fields: [korean, meaning, "", hanja, pronunciation, unit.title],
-    tags: [course.level, course.topik, course.topic, unit.title],
+    tags: [topik, course.topic, unit.title],
     koreanText: korean,
     vietnameseMeaning: meaning,
     exampleSentence: "",
@@ -49,19 +51,23 @@ export function courseToExploreDeck(course: VocabularyCourse): CuratedDeckItem {
     reps: 0,
     lapses: 0,
     state: "new" as const,
-  })).filter((card) => card.koreanText && card.vietnameseMeaning));
-  const level = Number(topik) <= 2 ? "Sơ cấp" : Number(topik) <= 4 ? "Trung cấp" : "Cao cấp";
+  });
+  }).filter((card) => card.koreanText && card.vietnameseMeaning));
+  const topicCollection = course.id === "topic-vocabulary";
+  const level = topicCollection ? "Mọi cấp độ" : Number(topik) <= 2 ? "Sơ cấp" : Number(topik) <= 4 ? "Trung cấp" : "Cao cấp";
   return {
     id: `course-${course.id}`,
     title: course.title,
     category: "topik",
-    categoryLabel: course.topik,
+    categoryLabel: topicCollection ? "TOPIK 1–6" : course.topik,
     level,
     description: `${course.topic} · ${course.level}`,
-    detailedDescription: `Bộ từ vựng theo ${course.topik}, gồm ${cards.length.toLocaleString("vi-VN")} từ và cụm từ được chia theo bài học.`,
+    detailedDescription: topicCollection
+      ? `Một bộ duy nhất gồm ${cards.length.toLocaleString("vi-VN")} từ và cụm từ, được chia thành các chủ đề để người học tự chọn.`
+      : `Bộ từ vựng theo ${course.topik}, gồm ${cards.length.toLocaleString("vi-VN")} từ và cụm từ được chia theo bài học.`,
     iconName: "BookOpen",
     badgeColor: "bg-sky-500/10 text-sky-600 dark:text-sky-300 border-sky-500/30",
-    tags: [course.topik, course.level, course.topic],
+    tags: topicCollection ? ["TOPIK 1–6", "Theo chủ đề"] : [course.topik, course.level, course.topic],
     cards,
     author: { name: "HaechiVN", avatar: "/brand/haechivn-mark.webp", role: "Biên soạn", bio: "Kho học liệu HaechiVN", verified: true },
     visibility: "public",

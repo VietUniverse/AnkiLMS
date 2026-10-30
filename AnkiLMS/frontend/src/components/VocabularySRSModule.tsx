@@ -295,12 +295,9 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     // as the curriculum decks. Do not hide them inside an aggregate parent.
     if (userDecks && userDecks.length > 0) {
       const userNodes: DeckTreeNode[] = userDecks.map((ud) => {
-        const detectedTopik = inferTopikLevel(ud.name, ...ud.cards.flatMap((card) => card.tags || []));
-        return ({
-        id: `user-${ud.id}`,
-        title: ud.name,
-        subtitle: detectedTopik ? `${getCourseRank(detectedTopik)} · TOPIK ${detectedTopik}` : "Chưa gán cấp độ",
-        cards: ud.cards.map((c, idx) => ({
+        const isTopicVocabularyDeck = ud.id === "curated-course-topic-vocabulary";
+        const detectedTopik = isTopicVocabularyDeck ? undefined : inferTopikLevel(ud.name, ...ud.cards.flatMap((card) => card.tags || []));
+        const toVocabularyCard = (c: AnkiDeck["cards"][number], idx: number): VocabularyCard => ({
           id: c.id || `custom-${idx}`,
           word: c.koreanText || c.frontText || "",
           meaning: c.vietnameseMeaning || c.backText || "",
@@ -311,8 +308,28 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
           example: c.exampleSentence || "",
           example_translated: "",
           tag_1: "Anki Custom",
+          tag_2: c.deckName?.split("::").slice(1).join("::") || "",
           deckName: ud.name,
-        })),
+        });
+        const cards = ud.cards.map(toVocabularyCard);
+        const topicChildren = ud.id === "curated-course-topic-vocabulary"
+          ? [...new Set(ud.cards.map((card) => card.deckName?.split("::").slice(1).join("::").trim()).filter((topic): topic is string => !!topic))]
+              .sort((left, right) => left.localeCompare(right, "ko"))
+              .map((topic) => ({
+                id: `user-${ud.id}-${toSlug(topic)}`,
+                title: topic,
+                cards: ud.cards
+                  .map((card, idx) => ({ card, idx }))
+                  .filter(({ card }) => card.deckName?.split("::").slice(1).join("::").trim() === topic)
+                  .map(({ card, idx }) => toVocabularyCard(card, idx)),
+              }))
+          : undefined;
+        return ({
+        id: `user-${ud.id}`,
+        title: ud.name,
+        subtitle: isTopicVocabularyDeck ? "TOPIK 1–6 · Chọn chủ đề để học" : detectedTopik ? `${getCourseRank(detectedTopik)} · TOPIK ${detectedTopik}` : "Chưa gán cấp độ",
+        cards,
+        children: topicChildren,
       });
       });
 

@@ -74,9 +74,8 @@ export default function DeckDetailClient({ id }: { id: string }) {
   }, [id, courseDeck]);
   const isDemoDeck = CURATED_DECKS.some((item) => item.id === id);
 
-  const [cardSearch, setCardSearch] = useState("");
-  const [visibleCardCount, setVisibleCardCount] = useState(50);
   const [activePreviewIndex, setActivePreviewIndex] = useState(0);
+  const [requestedPreviewCardId, setRequestedPreviewCardId] = useState<number | null>(null);
   const [isPreviewFlipped, setIsPreviewFlipped] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -87,7 +86,10 @@ export default function DeckDetailClient({ id }: { id: string }) {
     const target = deck.cards.findIndex((card) =>
       (card.koreanText || card.frontText || "").trim() === requestedWord,
     );
-    if (target >= 0) setActivePreviewIndex(target);
+    if (target >= 0) {
+      setRequestedPreviewCardId(target >= 10 ? deck.cards[target].id : null);
+      setActivePreviewIndex(Math.min(target, 9));
+    }
   }, [deck]);
 
   const isAdded = useMemo(() => {
@@ -99,15 +101,26 @@ export default function DeckDetailClient({ id }: { id: string }) {
   }, [deck, userDecks]);
 
   const deckCards = deck?.cards ?? [];
-  const filteredCards = useMemo(() => deckCards.filter((c) => {
-    const q = cardSearch.toLowerCase().trim();
-    if (!q) return true;
-    return (
-      (c.koreanText || "").toLowerCase().includes(q) ||
-      (c.vietnameseMeaning || "").toLowerCase().includes(q)
-    );
-  }), [deckCards, cardSearch]);
-  const visibleCards = filteredCards.slice(0, visibleCardCount);
+  const previewCards = useMemo(() => {
+    const samples = deckCards.slice(0, 10);
+    if (!requestedPreviewCardId) return samples;
+    const requested = deckCards.find((card) => card.id === requestedPreviewCardId);
+    if (!requested || samples.some((card) => card.id === requested.id)) return samples;
+    return [...samples.slice(0, 9), requested];
+  }, [deckCards, requestedPreviewCardId]);
+  const topicSubdecks = useMemo(() => {
+    if (deck?.id !== "course-topic-vocabulary") return [];
+    const topics = new Map<string, { count: number; levels: Set<string> }>();
+    for (const card of deck.cards) {
+      const topic = card.deckName?.split("::").slice(1).join("::").trim();
+      if (!topic) continue;
+      const item = topics.get(topic) || { count: 0, levels: new Set<string>() };
+      item.count += 1;
+      for (const tag of card.tags || []) if (/^TOPIK [1-6]$/.test(tag)) item.levels.add(tag);
+      topics.set(topic, item);
+    }
+    return [...topics.entries()].sort(([left], [right]) => left.localeCompare(right, "ko"));
+  }, [deck]);
   const currentPreviewCard = deckCards[activePreviewIndex] || deckCards[0];
 
   const handleAdd = () => {
@@ -247,7 +260,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
                 <div className="flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-sky-500" />
                   <span className="text-xs font-extrabold uppercase tracking-wider text-stone-500 dark:text-stone-400">
-                    Xem Thử Thẻ Flashcard (Mẫu {activePreviewIndex + 1}/{deck.cards.length})
+                    Xem Thử Thẻ Flashcard (Mẫu {activePreviewIndex + 1}/{previewCards.length})
                   </span>
                 </div>
                 <button
@@ -309,11 +322,12 @@ export default function DeckDetailClient({ id }: { id: string }) {
 
               {/* Selector chuyển các thẻ mẫu */}
               <div className="flex items-center justify-center gap-1.5 pt-1 overflow-x-auto">
-                {deck.cards.slice(0, 10).map((c, i) => (
+                {previewCards.map((c, i) => (
                   <button
                     key={c.id}
                     onClick={() => {
                       setActivePreviewIndex(i);
+                      setRequestedPreviewCardId(null);
                       setIsPreviewFlipped(false);
                     }}
                     className={`px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
@@ -328,72 +342,31 @@ export default function DeckDetailClient({ id }: { id: string }) {
               </div>
             </div>
 
-            {/* DANH SÁCH CHI TIẾT TẤT CẢ CÁC THẺ TRONG BỘ */}
             <div className="space-y-4">
-              <div className="flex items-center justify-between flex-wrap gap-2">
-                <div>
-                  <h2 className="text-lg font-bold text-stone-900 dark:text-white">
-                    Nội dung bộ thẻ ({deck.cards.length} thẻ)
-                  </h2>
-                  <p className="text-xs text-stone-400">
-                    Toàn bộ từ vựng và câu mẫu có trong bộ thẻ này
-                  </p>
-                </div>
-
-                <input
-                  type="text"
-                  value={cardSearch}
-                  onChange={(e) => setCardSearch(e.target.value)}
-                  placeholder="Lọc từ vựng..."
-                  className="text-xs px-3 py-1.5 rounded-xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none focus:border-sky-400 w-44"
-                />
-              </div>
-
-              <div className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 overflow-hidden shadow-xs divide-y divide-stone-100 dark:divide-stone-800/80">
-                {visibleCards.map((card, idx) => (
-                  <div
-                    key={card.id}
-                    className="p-3.5 sm:p-4 flex items-center justify-between gap-4 hover:bg-stone-50/80 dark:hover:bg-stone-800/50 transition"
-                  >
-                    <div className="flex items-start gap-3 min-w-0">
-                      <span className="text-xs font-mono text-stone-400 pt-0.5 w-6 shrink-0">
-                        {(idx + 1).toString().padStart(2, "0")}
-                      </span>
-                      <div className="space-y-0.5 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-base font-noto text-stone-900 dark:text-white">
-                            {card.koreanText}
-                          </span>
-                        </div>
-                        <div className="text-xs text-stone-600 dark:text-stone-300 font-medium">
-                          {card.vietnameseMeaning}
-                        </div>
-                        {card.exampleSentence && (
-                          <div className="text-[11px] text-stone-400 italic truncate max-w-md pt-0.5">
-                            {card.exampleSentence}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => speakKorean(card.koreanText || "")}
-                      className="p-2 rounded-xl text-stone-400 hover:text-sky-500 hover:bg-sky-500/10 transition shrink-0"
-                      title="Nghe phát âm"
-                    >
-                      <Volume2 className="w-4 h-4" />
-                    </button>
+              {topicSubdecks.length > 0 ? (
+                <>
+                  <div>
+                    <h2 className="text-lg font-bold text-stone-900 dark:text-white">
+                      Chủ đề học ({topicSubdecks.length})
+                    </h2>
+                    <p className="text-xs text-stone-400">
+                      Một bộ thẻ duy nhất gồm {deck.cards.length.toLocaleString("vi-VN")} từ. Khi thêm vào Flashcard, mở bộ này để chọn một chủ đề hoặc học toàn bộ.
+                    </p>
                   </div>
-                ))}
-              </div>
-              {visibleCards.length < filteredCards.length && (
-                <button
-                  type="button"
-                  onClick={() => setVisibleCardCount((count) => count + 50)}
-                  className="w-full rounded-xl border border-sky-500/30 px-4 py-3 text-sm font-bold text-sky-600 transition hover:bg-sky-500/10 dark:text-sky-400"
-                >
-                  Hiện thêm {Math.min(50, filteredCards.length - visibleCards.length)} / {filteredCards.length - visibleCards.length} từ
-                </button>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {topicSubdecks.map(([topic, info]) => (
+                      <div key={topic} className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 px-4 py-3 flex items-center justify-between gap-3">
+                        <span className="font-semibold text-sm text-stone-800 dark:text-stone-200">{topic}</span>
+                        <span className="text-xs text-sky-600 dark:text-sky-400 shrink-0">{info.count} thẻ</span>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 p-4">
+                  <h2 className="text-lg font-bold text-stone-900 dark:text-white">Bộ thẻ gồm {deck.cards.length.toLocaleString("vi-VN")} thẻ</h2>
+                  <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">Đây là bản xem thử. Thêm bộ thẻ vào Flashcard để xem và học toàn bộ nội dung.</p>
+                </div>
               )}
             </div>
           </div>

@@ -37,7 +37,32 @@ export function syncManagedDecks(savedDecks: AnkiDeck[], publishedDecks: AnkiDec
   const publishedById = new Map(publishedDecks.map((deck) => [deck.id, deck]));
   let changed = false;
 
-  const nextDecks = savedDecks.map((savedDeck) => {
+  // The TOPIK topic vocabulary used to be published as six separate decks.
+  // Fold those learner copies into the new single deck while retaining each
+  // card's FSRS/review state and stable Anki identity.
+  const topicDeckId = "curated-course-topic-vocabulary";
+  const oldTopicDeckIds = new Set(Array.from({ length: 6 }, (_, index) => `curated-course-410${index + 1}`));
+  const oldTopicDecks = savedDecks.filter((deck) => oldTopicDeckIds.has(deck.id));
+  const publishedTopicDeck = publishedById.get(topicDeckId);
+  let decksToSync = savedDecks;
+  if (oldTopicDecks.length && publishedTopicDeck) {
+    const existingTopicDeck = savedDecks.find((deck) => deck.id === topicDeckId);
+    const sourceCards = [...oldTopicDecks.flatMap((deck) => deck.cards || []), ...(existingTopicDeck?.cards || [])];
+    const uniqueSavedCards = new Map<string, AnkiCard>();
+    for (const card of sourceCards) uniqueSavedCards.set(`${card.id}:${card.noteId}`, card);
+    const consolidated: AnkiDeck = {
+      ...publishedTopicDeck,
+      ...(existingTopicDeck || {}),
+      id: topicDeckId,
+      name: publishedTopicDeck.name,
+      cards: [...uniqueSavedCards.values()],
+    };
+    consolidated.cardCount = consolidated.cards.length;
+    decksToSync = [...savedDecks.filter((deck) => !oldTopicDeckIds.has(deck.id) && deck.id !== topicDeckId), consolidated];
+    changed = true;
+  }
+
+  const nextDecks = decksToSync.map((savedDeck) => {
     if (!savedDeck.id.startsWith("curated-")) return savedDeck;
     const published = publishedById.get(savedDeck.id);
     if (!published) return savedDeck;
