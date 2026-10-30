@@ -24,25 +24,22 @@ import {
 
 // Điều hướng dùng <a> thay vì next/link vì app build static export.
 const CATEGORIES: { id: string; label: string }[] = [
-  { id: "all", label: "Tất cả" },
+  { id: "all", label: "Tất cả chủ đề" },
   { id: "food", label: "Quán ăn & Ẩm thực" },
-  { id: "topik", label: "TOPIK" },
-  ...[1, 2, 3, 4, 5, 6].map((level) => ({ id: `topik-${level}`, label: `TOPIK ${level}` })),
   { id: "conversation", label: "Giao tiếp đời sống" },
-  { id: "drama", label: "K-Drama & Slang" },
+  { id: "drama", label: "Phim ảnh & tiếng lóng" },
   { id: "hanja", label: "Gốc từ Hán Hàn" },
-  { id: "travel", label: "Du lịch & Sân bay" },
-  { id: "work", label: "Nhà xưởng EPS" },
+  { id: "travel", label: "Du lịch" },
+  { id: "work", label: "Công việc & EPS" },
 ];
 
 const matchCategory = (deck: CuratedDeckItem, id: string) =>
-  id === "all" ||
-  deck.category === id ||
-  (id.startsWith("topik-") && deck.tags.includes(id.replace("topik-", "TOPIK ")));
+  id === "all" || deck.category === id;
 
 export default function ExplorePage() {
   const { userDecks, handleDeckImported, handleRemoveDeck } = useApp();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedTopikLevel, setSelectedTopikLevel] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [addedNotice, setAddedNotice] = useState<string | null>(null);
   const [courseDecks, setCourseDecks] = useState<TopikDeck[]>([]);
@@ -92,6 +89,18 @@ export default function ExplorePage() {
     });
   }, [baseDecks, deckOverrides]);
 
+  const topikLevelsByDeck = useMemo(() => new Map(exploreDecks.map((deck) => {
+    const levels = new Set<string>();
+    const collect = (value?: string) => {
+      const match = value?.match(/\bTOPIK\s*([1-6])\b/i);
+      if (match) levels.add(match[1]);
+    };
+    collect(deck.categoryLabel);
+    deck.tags.forEach(collect);
+    deck.cards.forEach((card) => card.tags?.forEach(collect));
+    return [deck.id, levels] as const;
+  })), [exploreDecks]);
+
   const deckHref = (deck: CuratedDeckItem) => deck.id.startsWith("shared-")
     ? `/explore/shared?id=${encodeURIComponent(deck.id.slice("shared-".length))}`
     : `/explore/${deck.id}`;
@@ -124,7 +133,7 @@ export default function ExplorePage() {
     handleRemoveDeck(ankiDeck.id);
   };
 
-  // Chip chỉ hiện khi có bộ thẻ thuộc danh mục đó.
+  // Chỉ hiện chủ đề có bộ thẻ; TOPIK được lọc riêng để không trộn hai loại bộ lọc.
   const categories = useMemo(
     () =>
       CATEGORIES.map((cat) => ({
@@ -139,13 +148,14 @@ export default function ExplorePage() {
     return exploreDecks.filter(
       (deck) =>
         matchCategory(deck, selectedCategory) &&
+        (selectedTopikLevel === "all" || topikLevelsByDeck.get(deck.id)?.has(selectedTopikLevel)) &&
         (!q ||
           deck.title.toLowerCase().includes(q) ||
           deck.description.toLowerCase().includes(q) ||
           deck.author.name.toLowerCase().includes(q) ||
           deck.tags.some((t) => t.toLowerCase().includes(q)))
     );
-  }, [exploreDecks, selectedCategory, searchQuery]);
+  }, [exploreDecks, selectedCategory, selectedTopikLevel, searchQuery, topikLevelsByDeck]);
 
   return (
     <AppShell>
@@ -226,36 +236,22 @@ export default function ExplorePage() {
           </div>
         ) : (
           <>
-            {/* Bộ lọc danh mục + số kết quả */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-                {categories.map((cat) => {
-                  const isSelected = selectedCategory === cat.id;
-                  return (
-                    <button
-                      key={cat.id}
-                      onClick={() => setSelectedCategory(cat.id)}
-                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer ${
-                        isSelected
-                          ? "bg-sky-500 text-white shadow-sm shadow-sky-900/20"
-                          : "bg-white dark:bg-stone-900/60 text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 border border-stone-200 dark:border-stone-800"
-                      }`}
-                    >
-                      <span>{cat.label}</span>
-                      <span
-                        className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-md ${
-                          isSelected ? "bg-white/20 text-white" : "bg-stone-100 dark:bg-stone-800 text-stone-400"
-                        }`}
-                      >
-                        {cat.count}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-              <div className="text-xs text-stone-500 dark:text-stone-400 font-medium px-0.5">
-                {filteredDecks.length} bộ thẻ
-              </div>
+            {/* Tách chủ đề và cấp TOPIK thành hai bộ lọc rõ ràng, không lặp lựa chọn. */}
+            <div className="flex flex-wrap items-end gap-3">
+              <label className="min-w-[220px] flex-1 text-[11px] font-bold text-stone-500 dark:text-stone-400">
+                Chủ đề
+                <select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)} className="mt-1 block w-full rounded-xl border border-stone-200 bg-white px-3 py-2.5 text-xs font-semibold text-stone-800 outline-none focus:border-sky-400 dark:border-stone-800 dark:bg-stone-900 dark:text-stone-100">
+                  {categories.map((category) => <option key={category.id} value={category.id}>{category.label} · {category.count}</option>)}
+                </select>
+              </label>
+              <label className="min-w-[180px] flex-1 text-[11px] font-bold text-stone-500 dark:text-stone-400">
+                Cấp độ
+                <select value={selectedTopikLevel} onChange={(event) => setSelectedTopikLevel(event.target.value)} className="mt-1 block w-full rounded-xl border border-stone-200 bg-white px-3 py-2.5 text-xs font-semibold text-stone-800 outline-none focus:border-sky-400 dark:border-stone-800 dark:bg-stone-900 dark:text-stone-100">
+                  <option value="all">Tất cả cấp độ</option>
+                  {[1, 2, 3, 4, 5, 6].map((level) => <option key={level} value={String(level)}>TOPIK {level}</option>)}
+                </select>
+              </label>
+              <p className="pb-2 text-xs font-medium text-stone-500 dark:text-stone-400">{filteredDecks.length} bộ thẻ</p>
             </div>
 
             {/* Lưới bộ thẻ */}
