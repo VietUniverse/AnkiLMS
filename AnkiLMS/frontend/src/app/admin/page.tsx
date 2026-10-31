@@ -281,9 +281,31 @@ export default function AdminPage() {
 
   return <AppShell>
     <main className="mx-auto max-w-7xl space-y-6 pb-24">
-      <header className="card-duo flex flex-wrap items-center justify-between gap-4 border-sky-500/30 bg-gradient-to-r from-[#13244e] to-[#10203c] p-6">
-        <div className="flex items-center gap-4"><div className="rounded-2xl bg-sky-500/15 p-3 text-sky-300"><ShieldCheck className="h-7 w-7" /></div><div><h1 className="text-2xl font-black text-white">Quản trị HaechiVN</h1><p className="mt-1 text-sm text-slate-400">Quản lý học viên, nội dung học, lớp và cộng đồng trên toàn hệ thống.</p></div></div>
-        {currentUser?.role === "admin" && <button onClick={() => void load()} className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:border-sky-400"><RefreshCw className="h-4 w-4" />Làm mới dữ liệu</button>}
+      <header className="card-duo rounded-3xl flex flex-wrap items-center justify-between gap-4 p-5 sm:p-6">
+        <div className="flex items-center gap-4 min-w-0">
+          <div className="rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 p-3 shrink-0">
+            <ShieldCheck className="h-7 w-7" />
+          </div>
+          <div className="min-w-0">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-stone-900 dark:text-white">
+              Quản trị <span className="text-blue-500 dark:text-blue-400">HaechiVN</span>
+            </h1>
+            <p className="mt-1 text-xs sm:text-sm text-stone-500 dark:text-slate-400">
+              Quản lý học viên, nội dung học, lớp và cộng đồng trên toàn hệ thống.
+            </p>
+          </div>
+        </div>
+        {currentUser?.role === "admin" && (
+          <button
+            type="button"
+            onClick={() => void load()}
+            className="inline-flex items-center gap-2 rounded-xl border border-stone-200 dark:border-slate-700 bg-stone-100 hover:bg-stone-200 dark:bg-[#132247] dark:hover:bg-[#1a2f60] px-3.5 py-2.5 text-xs font-bold text-stone-700 dark:text-slate-200 transition-colors shrink-0"
+            title="Làm mới dữ liệu"
+          >
+            <RefreshCw className="h-4 w-4 text-blue-500 dark:text-blue-400" />
+            <span className="hidden sm:inline">Làm mới dữ liệu</span>
+          </button>
+        )}
       </header>
       {!currentUser ? <div className="card-duo rounded-2xl p-8 text-center"><p className="mb-4 text-stone-600 dark:text-slate-300">Đăng nhập bằng tài khoản quản trị để tiếp tục.</p><button onClick={() => handleOpenAuth(false)} className="btn-duo btn-duo-primary px-5 py-2">Đăng nhập</button></div>
       : currentUser.role !== "admin" ? <div className="card-duo rounded-2xl p-8 text-center text-rose-600 dark:text-rose-300">Tài khoản này không có quyền quản trị.</div>
