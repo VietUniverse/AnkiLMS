@@ -10,6 +10,11 @@ type DeckRow = { sharedId: string; deckId: string; title: string; description: s
 type EditableDeck = { id: string; deckId?: string; sharedId?: string; title: string; description: string; visibility: "public" | "private"; cards: AnkiCard[]; source: "catalog" | "shared" };
 type Props = { request: <T>(path: string, init?: RequestInit) => Promise<T>; onError: (message: string) => void };
 
+const fieldCls = "w-full rounded-xl border border-stone-200 dark:border-transparent bg-white dark:bg-[#132247] px-3.5 py-2 text-xs text-stone-900 dark:text-white placeholder:text-stone-400 dark:placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-inner";
+const labelCls = "block text-xs font-bold text-stone-700 dark:text-slate-300";
+const ghostBtnCls = "inline-flex items-center justify-center gap-1.5 rounded-xl border border-stone-200 dark:border-slate-700 bg-stone-100 hover:bg-stone-200 dark:bg-[#132247] dark:hover:bg-[#1a2f60] px-3 py-2 text-xs font-bold text-stone-700 dark:text-slate-200 transition-colors";
+const dangerBtnCls = "inline-flex items-center justify-center gap-1.5 rounded-xl border border-rose-300 dark:border-rose-700/50 bg-rose-50/50 hover:bg-rose-100 dark:bg-transparent dark:hover:bg-rose-950/40 px-3 py-2 text-xs font-bold text-rose-600 dark:text-rose-300 transition-colors disabled:opacity-50";
+
 function text(value: unknown): string { return typeof value === "string" ? value : ""; }
 function normalizeCard(raw: Record<string, unknown>, index: number, title: string): AnkiCard {
   const fields = Array.isArray(raw.fields) ? raw.fields.map(text) : [];
@@ -123,20 +128,250 @@ export function ExploreDeckManager({ request, onError }: Props) {
 
   const filteredCards = selected?.cards.filter((card) => `${card.frontText} ${card.backText}`.toLocaleLowerCase().includes(cardQuery.trim().toLocaleLowerCase())) || [];
   const visibleCards = filteredCards.slice(page * perPage, (page + 1) * perPage);
-      return <section className="card-duo space-y-4 p-5">
-    <div><h2 className="font-bold text-white">Quản lý toàn bộ thư viện Explore</h2><p className="mt-1 text-xs leading-5 text-slate-400">Sửa bộ gốc, bộ cộng đồng và từng thẻ. Bản cập nhật của bộ gốc được lưu trên máy chủ rồi áp dụng cho trang Explore.</p></div>
-    {!selected ? <>
-      <label className="flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-950 px-3"><Search className="h-4 w-4 text-slate-500"/><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Tìm bộ thẻ theo tên hoặc tác giả" className="w-full bg-transparent py-3 text-sm text-white outline-none"/></label>
-      <div className="max-h-[70vh] divide-y divide-slate-800 overflow-y-auto rounded-xl border border-slate-800">{loading ? <p className="p-4 text-sm text-slate-400">Đang tải thư viện…</p> : rows.map((row) => <article key={`${row.kind}:${row.id}`} className="flex flex-wrap items-center justify-between gap-3 p-3"><div className="min-w-0"><p className="truncate text-sm font-bold text-white">{row.title}</p><p className="mt-1 text-xs text-slate-400">{row.cardCount.toLocaleString("vi-VN")} thẻ · {row.kind === "catalog" ? "Bộ gốc HaechiVN" : `Cộng đồng · ${row.author}`} · {row.visibility === "public" ? "Công khai" : "Riêng tư"}</p></div><button disabled={saving} onClick={() => void openDeck(row)} className="inline-flex items-center gap-1 rounded-lg border border-sky-700/50 px-3 py-2 text-xs font-bold text-sky-300"><Pencil className="h-3.5 w-3.5"/>Mở chỉnh sửa</button></article>)}{!loading && !rows.length && <p className="p-4 text-sm text-slate-400">Không có bộ thẻ khớp.</p>}</div>
-    </> : <>
-      <div className="flex flex-wrap justify-between gap-2 border-b border-slate-800 pb-3"><div><h3 className="font-bold text-white">Đang sửa: {selected.title}</h3><p className="mt-1 text-xs text-slate-400">{selected.cards.length.toLocaleString("vi-VN")} thẻ · {selected.source === "catalog" ? "Bộ gốc" : "Bộ cộng đồng"}</p></div><button onClick={() => setSelected(null)} className="inline-flex h-9 items-center gap-1 rounded-lg border border-slate-700 px-3 text-xs text-slate-300"><X className="h-4 w-4"/>Đóng</button></div>
-      <div className="grid gap-3 sm:grid-cols-2"><label className="text-xs font-bold text-slate-300">Tên bộ<input value={selected.title} maxLength={120} onChange={(e) => setSelected({ ...selected, title: e.target.value })} className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white"/></label><label className="text-xs font-bold text-slate-300">Quyền truy cập<select value={selected.visibility} onChange={(e) => setSelected({ ...selected, visibility: e.target.value as "public" | "private" })} className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white"><option value="public">Công khai</option><option value="private">Riêng tư / ẩn khỏi Explore</option></select></label></div>
-      <label className="block text-xs font-bold text-slate-300">Mô tả<textarea value={selected.description} maxLength={1000} rows={2} onChange={(e) => setSelected({ ...selected, description: e.target.value })} className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white"/></label>
-      <div className="flex flex-wrap items-center justify-between gap-2"><h4 className="text-sm font-bold text-white">Thẻ trong bộ ({selected.cards.length.toLocaleString("vi-VN")})</h4><input value={cardQuery} onChange={(e) => { setCardQuery(e.target.value); setPage(0); }} placeholder="Lọc thẻ" className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-xs text-white"/></div>
-      <div className="grid gap-2 sm:grid-cols-[1fr_1fr_auto]"><input value={newFront} onChange={(e) => setNewFront(e.target.value)} placeholder="Mặt trước · Hangul" className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white"/><input value={newBack} onChange={(e) => setNewBack(e.target.value)} placeholder="Mặt sau · Nghĩa" className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white"/><button onClick={() => { if (!newFront.trim() || !newBack.trim() || !selected) return; const card = normalizeCard({ frontText: newFront.trim(), backText: newBack.trim(), koreanText: newFront.trim(), vietnameseMeaning: newBack.trim(), fields: [newFront.trim(), newBack.trim()] }, selected.cards.length, selected.title); setSelected({ ...selected, cards: [...selected.cards, card] }); setNewFront(""); setNewBack(""); }} className="inline-flex items-center justify-center gap-1 rounded-lg border border-emerald-700/50 px-3 py-2 text-xs font-bold text-emerald-300"><Plus className="h-4 w-4"/>Thêm thẻ</button></div>
-      <div className="max-h-[48vh] divide-y divide-slate-800 overflow-y-auto rounded-xl border border-slate-800">{visibleCards.map((card) => { const index = selected.cards.indexOf(card); return <article key={`${card.id}:${index}`} className="grid gap-2 p-3 sm:grid-cols-[1fr_1fr_auto]"><input aria-label="Mặt trước" value={card.frontText} onChange={(e) => setSelected({ ...selected, cards: selected.cards.map((item, i) => i === index ? setCardSide(item, "front", e.target.value) : item) })} className="rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white"/><input aria-label="Mặt sau" value={card.backText} onChange={(e) => setSelected({ ...selected, cards: selected.cards.map((item, i) => i === index ? setCardSide(item, "back", e.target.value) : item) })} className="rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-white"/><button aria-label="Xóa thẻ" onClick={() => setSelected({ ...selected, cards: selected.cards.filter((_, i) => i !== index) })} className="rounded-lg border border-rose-900/50 p-2 text-rose-300"><Trash2 className="h-4 w-4"/></button></article>; })}{!visibleCards.length && <p className="p-4 text-sm text-slate-400">Không có thẻ khớp.</p>}</div>
-      <div className="flex flex-wrap items-center justify-between gap-3"><p className="text-xs text-slate-400">Hiển thị {filteredCards.length ? page * perPage + 1 : 0}–{Math.min((page + 1) * perPage, filteredCards.length)} / {filteredCards.length.toLocaleString("vi-VN")}</p><div className="flex gap-2"><button disabled={page === 0} onClick={() => setPage(page - 1)} className="rounded-lg border border-slate-700 px-3 py-2 text-xs text-slate-300 disabled:opacity-40">Trước</button><button disabled={(page + 1) * perPage >= filteredCards.length} onClick={() => setPage(page + 1)} className="rounded-lg border border-slate-700 px-3 py-2 text-xs text-slate-300 disabled:opacity-40">Sau</button></div></div>
-      <div className="flex flex-wrap justify-between gap-2 border-t border-slate-800 pt-3"><button onClick={() => void removeDeck()} disabled={saving} className="inline-flex items-center gap-1 rounded-lg border border-rose-800/60 px-3 py-2 text-xs font-bold text-rose-300"><Trash2 className="h-4 w-4"/>{selected.source === "catalog" ? "Ẩn khỏi Explore" : "Xóa bộ"}</button><button onClick={() => void save()} disabled={saving || selected.cards.length < 1 || selected.title.trim().length < 2} className="inline-flex items-center gap-2 rounded-lg bg-sky-600 px-4 py-2.5 text-xs font-bold text-white disabled:opacity-50">{saving ? <Loader2 className="h-4 w-4 animate-spin"/> : <Save className="h-4 w-4"/>}Lưu bộ và thẻ lên máy chủ</button></div>
-    </>}
-  </section>;
+  return (
+    <section className="card-duo rounded-2xl space-y-4 p-5 sm:p-6">
+      <div>
+        <h2 className="text-base font-bold text-stone-900 dark:text-white">Quản lý toàn bộ thư viện Explore</h2>
+        <p className="mt-1 text-xs leading-5 text-stone-500 dark:text-slate-400">
+          Sửa bộ gốc, bộ cộng đồng và từng thẻ. Bản cập nhật của bộ gốc được lưu trên máy chủ rồi áp dụng cho trang Explore.
+        </p>
+      </div>
+
+      {!selected ? (
+        <>
+          <label className="flex items-center gap-2 rounded-xl border border-stone-200 dark:border-transparent bg-white dark:bg-[#132247] px-3.5 shadow-inner">
+            <Search className="h-4 w-4 text-stone-400 dark:text-slate-500" />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Tìm bộ thẻ theo tên hoặc tác giả"
+              className="w-full bg-transparent py-2.5 text-xs sm:text-sm text-stone-900 dark:text-white placeholder:text-stone-400 dark:placeholder:text-slate-400 outline-none"
+            />
+          </label>
+          <div className="max-h-[70vh] divide-y divide-stone-200 dark:divide-slate-800 overflow-y-auto rounded-xl border border-stone-200 dark:border-slate-800 bg-white dark:bg-slate-950/40">
+            {loading ? (
+              <p className="p-4 text-sm text-stone-500 dark:text-slate-400">Đang tải thư viện…</p>
+            ) : (
+              rows.map((row) => (
+                <article
+                  key={`${row.kind}:${row.id}`}
+                  className="flex flex-wrap items-center justify-between gap-3 p-3.5 transition hover:bg-stone-50 dark:hover:bg-slate-900/40"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-bold text-stone-900 dark:text-white">{row.title}</p>
+                    <p className="mt-1 text-xs text-stone-500 dark:text-slate-400">
+                      {row.cardCount.toLocaleString("vi-VN")} thẻ · {row.kind === "catalog" ? "Bộ gốc HaechiVN" : `Cộng đồng · ${row.author}`} ·{" "}
+                      {row.visibility === "public" ? (
+                        <span className="font-bold text-emerald-600 dark:text-emerald-300">Công khai</span>
+                      ) : (
+                        <span className="font-bold text-amber-600 dark:text-amber-300">Riêng tư</span>
+                      )}
+                    </p>
+                  </div>
+                  <button
+                    disabled={saving}
+                    onClick={() => void openDeck(row)}
+                    className={`${ghostBtnCls} h-8 px-3 text-xs`}
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                    Mở chỉnh sửa
+                  </button>
+                </article>
+              ))
+            )}
+            {!loading && !rows.length && (
+              <p className="p-4 text-sm text-stone-400 dark:text-slate-500">Không có bộ thẻ khớp.</p>
+            )}
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-200 dark:border-slate-800 pb-3">
+            <div>
+              <h3 className="text-base font-bold text-stone-900 dark:text-white">Đang sửa: {selected.title}</h3>
+              <p className="mt-1 text-xs text-stone-500 dark:text-slate-400">
+                {selected.cards.length.toLocaleString("vi-VN")} thẻ · {selected.source === "catalog" ? "Bộ gốc" : "Bộ cộng đồng"}
+              </p>
+            </div>
+            <button onClick={() => setSelected(null)} className={`${ghostBtnCls} h-8 px-3 text-xs`}>
+              <X className="h-4 w-4" />
+              Đóng
+            </button>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className={labelCls}>
+              Tên bộ
+              <input
+                value={selected.title}
+                maxLength={120}
+                onChange={(e) => setSelected({ ...selected, title: e.target.value })}
+                className={`mt-1.5 ${fieldCls}`}
+              />
+            </label>
+            <label className={labelCls}>
+              Quyền truy cập
+              <select
+                value={selected.visibility}
+                onChange={(e) => setSelected({ ...selected, visibility: e.target.value as "public" | "private" })}
+                className={`mt-1.5 ${fieldCls}`}
+              >
+                <option value="public">Công khai</option>
+                <option value="private">Riêng tư / ẩn khỏi Explore</option>
+              </select>
+            </label>
+          </div>
+
+          <label className={labelCls}>
+            Mô tả
+            <textarea
+              value={selected.description}
+              maxLength={1000}
+              rows={2}
+              onChange={(e) => setSelected({ ...selected, description: e.target.value })}
+              className={`mt-1.5 ${fieldCls}`}
+            />
+          </label>
+
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
+            <h4 className="text-sm font-bold text-stone-900 dark:text-white">
+              Thẻ trong bộ ({selected.cards.length.toLocaleString("vi-VN")})
+            </h4>
+            <input
+              value={cardQuery}
+              onChange={(e) => {
+                setCardQuery(e.target.value);
+                setPage(0);
+              }}
+              placeholder="Lọc thẻ"
+              className="rounded-xl border border-stone-200 dark:border-transparent bg-white dark:bg-[#132247] px-3 py-1.5 text-xs text-stone-900 dark:text-white placeholder:text-stone-400 dark:placeholder:text-slate-400 outline-none shadow-inner"
+            />
+          </div>
+
+          <div className="grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
+            <input
+              value={newFront}
+              onChange={(e) => setNewFront(e.target.value)}
+              placeholder="Mặt trước · Hangul"
+              className={fieldCls}
+            />
+            <input
+              value={newBack}
+              onChange={(e) => setNewBack(e.target.value)}
+              placeholder="Mặt sau · Nghĩa"
+              className={fieldCls}
+            />
+            <button
+              onClick={() => {
+                if (!newFront.trim() || !newBack.trim() || !selected) return;
+                const card = normalizeCard(
+                  {
+                    frontText: newFront.trim(),
+                    backText: newBack.trim(),
+                    koreanText: newFront.trim(),
+                    vietnameseMeaning: newBack.trim(),
+                    fields: [newFront.trim(), newBack.trim()],
+                  },
+                  selected.cards.length,
+                  selected.title
+                );
+                setSelected({ ...selected, cards: [...selected.cards, card] });
+                setNewFront("");
+                setNewBack("");
+              }}
+              className="btn-duo btn-duo-primary inline-flex items-center justify-center gap-1 px-4 py-2 text-xs font-bold"
+            >
+              <Plus className="h-4 w-4" />
+              Thêm thẻ
+            </button>
+          </div>
+
+          <div className="max-h-[48vh] divide-y divide-stone-200 dark:divide-slate-800 overflow-y-auto rounded-xl border border-stone-200 dark:border-slate-800 bg-white dark:bg-slate-950/40">
+            {visibleCards.map((card) => {
+              const index = selected.cards.indexOf(card);
+              return (
+                <article
+                  key={`${card.id}:${index}`}
+                  className="grid gap-2 p-3 sm:grid-cols-[1fr_1fr_auto] transition hover:bg-stone-50 dark:hover:bg-slate-900/40"
+                >
+                  <input
+                    aria-label="Mặt trước"
+                    value={card.frontText}
+                    onChange={(e) =>
+                      setSelected({
+                        ...selected,
+                        cards: selected.cards.map((item, i) => (i === index ? setCardSide(item, "front", e.target.value) : item)),
+                      })
+                    }
+                    className={fieldCls}
+                  />
+                  <input
+                    aria-label="Mặt sau"
+                    value={card.backText}
+                    onChange={(e) =>
+                      setSelected({
+                        ...selected,
+                        cards: selected.cards.map((item, i) => (i === index ? setCardSide(item, "back", e.target.value) : item)),
+                      })
+                    }
+                    className={fieldCls}
+                  />
+                  <button
+                    aria-label="Xóa thẻ"
+                    onClick={() => setSelected({ ...selected, cards: selected.cards.filter((_, i) => i !== index) })}
+                    className="self-center rounded-xl border border-rose-300 dark:border-rose-900/50 bg-rose-50/50 hover:bg-rose-100 dark:bg-transparent dark:hover:bg-rose-950/40 p-2 text-rose-600 dark:text-rose-300 transition-colors"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </article>
+              );
+            })}
+            {!visibleCards.length && <p className="p-4 text-sm text-stone-500 dark:text-slate-400">Không có thẻ khớp.</p>}
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+            <p className="text-xs text-stone-500 dark:text-slate-400">
+              Hiển thị {filteredCards.length ? page * perPage + 1 : 0}–
+              {Math.min((page + 1) * perPage, filteredCards.length)} / {filteredCards.length.toLocaleString("vi-VN")}
+            </p>
+            <div className="flex gap-2">
+              <button
+                disabled={page === 0}
+                onClick={() => setPage(page - 1)}
+                className={`${ghostBtnCls} h-8 px-3 text-xs disabled:opacity-40`}
+              >
+                Trước
+              </button>
+              <button
+                disabled={(page + 1) * perPage >= filteredCards.length}
+                onClick={() => setPage(page + 1)}
+                className={`${ghostBtnCls} h-8 px-3 text-xs disabled:opacity-40`}
+              >
+                Sau
+              </button>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap justify-between gap-2 border-t border-stone-200 dark:border-slate-800 pt-4">
+            <button
+              onClick={() => void removeDeck()}
+              disabled={saving}
+              className={`${dangerBtnCls} h-9 px-4 text-xs font-bold`}
+            >
+              <Trash2 className="h-4 w-4" />
+              {selected.source === "catalog" ? "Ẩn khỏi Explore" : "Xóa bộ"}
+            </button>
+            <button
+              onClick={() => void save()}
+              disabled={saving || selected.cards.length < 1 || selected.title.trim().length < 2}
+              className="btn-duo btn-duo-primary inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold disabled:opacity-50"
+            >
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+              Lưu bộ và thẻ lên máy chủ
+            </button>
+          </div>
+        </>
+      )}
+    </section>
+  );
 }

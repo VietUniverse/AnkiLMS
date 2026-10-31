@@ -60,7 +60,6 @@ const selectCls = "rounded-xl border border-stone-200 dark:border-transparent bg
 const labelCls = "block text-xs font-bold text-stone-700 dark:text-slate-300";
 const ghostBtnCls = "inline-flex items-center justify-center gap-1.5 rounded-xl border border-stone-200 dark:border-slate-700 bg-stone-100 hover:bg-stone-200 dark:bg-[#132247] dark:hover:bg-[#1a2f60] px-3 py-2 text-xs font-bold text-stone-700 dark:text-slate-200 transition-colors";
 const dangerBtnCls = "inline-flex items-center justify-center gap-1.5 rounded-xl border border-rose-300 dark:border-rose-700/50 bg-rose-50/50 hover:bg-rose-100 dark:bg-transparent dark:hover:bg-rose-950/40 px-3 py-2 text-xs font-bold text-rose-600 dark:text-rose-300 transition-colors disabled:cursor-not-allowed disabled:opacity-50";
-const actionBtnCls = "inline-flex items-center justify-center gap-1.5 h-8 px-3 text-xs rounded-xl font-bold border border-stone-200 dark:border-slate-700 bg-stone-100 hover:bg-stone-200 dark:bg-[#132247] dark:hover:bg-[#1a2f60] text-stone-700 dark:text-slate-200 transition-colors disabled:opacity-50";
 
 export default function AdminPage() {
   const { currentUser, handleOpenAuth } = useApp();
