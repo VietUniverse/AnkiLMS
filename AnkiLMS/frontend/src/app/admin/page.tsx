@@ -353,10 +353,75 @@ export default function AdminPage() {
           })}
         </nav>
         {!overview ? <div className="card-duo rounded-2xl p-8 text-center text-stone-500 dark:text-slate-400">Đang tải dữ liệu quản trị…</div> : <>
-          {panel === "overview" && <>
-            <section className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">{[["Tài khoản", overview.users], ["Học viên", overview.students], ["Giáo viên", overview.teachers], ["Lớp học", overview.classes], ["Bài cộng đồng", overview.posts], ["Góp ý mới", overview.pendingFeedback]].map(([label, count]) => <button key={label} onClick={() => setPanel(label === "Lớp học" ? "classes" : label === "Bài cộng đồng" ? "community" : label === "Góp ý mới" ? "feedback" : "students")} className="card-duo p-4 text-left hover:border-sky-500/50"><div className="text-2xl font-black text-white">{count}</div><div className="mt-1 text-xs text-slate-400">{label}</div></button>)}</section>
-            <section className="grid gap-4 lg:grid-cols-2"><div className="card-duo p-5"><h2 className="font-bold text-white">Hoạt động học tập</h2><p className="mt-2 text-sm text-slate-400">Mở Tài khoản để tìm học viên, xem XP, chuỗi ngày học và gán vai trò giáo viên.</p><button onClick={() => setPanel("students")} className="mt-4 text-xs font-bold text-sky-300">Quản lý học viên →</button></div><div className="card-duo p-5"><h2 className="font-bold text-white">Nội dung đào tạo</h2><p className="mt-2 text-sm text-slate-400">Tạo bài Dictation/Shadowing dùng chung cho học viên. Câu tiếng Hàn và bản dịch đặt cùng thứ tự dòng.</p><button onClick={() => setPanel("lessons")} className="mt-4 text-xs font-bold text-sky-300">Quản lý bài học →</button></div></section>
-          </>}
+          {panel === "overview" && (
+            <div className="space-y-6">
+              <section className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+                {[
+                  ["Tài khoản", overview.users],
+                  ["Học viên", overview.students],
+                  ["Giáo viên", overview.teachers],
+                  ["Lớp học", overview.classes],
+                  ["Bài cộng đồng", overview.posts],
+                  ["Góp ý mới", overview.pendingFeedback],
+                ].map(([label, count]) => (
+                  <button
+                    key={label}
+                    onClick={() =>
+                      setPanel(
+                        label === "Lớp học"
+                          ? "classes"
+                          : label === "Bài cộng đồng"
+                          ? "community"
+                          : label === "Góp ý mới"
+                          ? "feedback"
+                          : "students"
+                      )
+                    }
+                    className="card-duo rounded-2xl p-5 text-left transition hover:border-blue-500/50 cursor-pointer"
+                  >
+                    <div className="text-[11px] font-extrabold uppercase tracking-widest text-stone-500 dark:text-slate-400">
+                      {label}
+                    </div>
+                    <div className="mt-2 text-3xl font-black text-stone-900 dark:text-white">
+                      {count}
+                    </div>
+                  </button>
+                ))}
+              </section>
+              <section className="grid gap-4 lg:grid-cols-2">
+                <div className="card-duo rounded-2xl p-5 sm:p-6 flex flex-col justify-between">
+                  <div>
+                    <h2 className="text-base font-bold text-stone-900 dark:text-white">Hoạt động học tập</h2>
+                    <p className="mt-2 text-xs sm:text-sm leading-6 text-stone-500 dark:text-slate-400">
+                      Mở Tài khoản để tìm học viên, xem XP, chuỗi ngày học và gán vai trò giáo viên.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setPanel("students")}
+                    className="mt-4 inline-flex items-center text-xs font-bold text-blue-600 dark:text-sky-400 hover:underline cursor-pointer"
+                  >
+                    Quản lý học viên →
+                  </button>
+                </div>
+                <div className="card-duo rounded-2xl p-5 sm:p-6 flex flex-col justify-between">
+                  <div>
+                    <h2 className="text-base font-bold text-stone-900 dark:text-white">Nội dung đào tạo</h2>
+                    <p className="mt-2 text-xs sm:text-sm leading-6 text-stone-500 dark:text-slate-400">
+                      Tạo bài Dictation/Shadowing dùng chung cho học viên. Câu tiếng Hàn và bản dịch đặt cùng thứ tự dòng.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setPanel("lessons")}
+                    className="mt-4 inline-flex items-center text-xs font-bold text-blue-600 dark:text-sky-400 hover:underline cursor-pointer"
+                  >
+                    Quản lý bài học →
+                  </button>
+                </div>
+              </section>
+            </div>
+          )}
 
           {panel === "features" && <section className="space-y-4"><div className="card-duo border-sky-500/20 p-5"><h2 className="font-bold text-white">Ẩn hoặc hiện tính năng trên production</h2><p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">Tắt tính năng sẽ gỡ mục khỏi menu trên máy tính và điện thoại, đồng thời chặn trang đó khi người học mở trực tiếp. Dữ liệu được giữ nguyên và có thể bật lại bất cứ lúc nào.</p><p className="mt-3 text-xs font-bold text-sky-300">{Object.values(featureFlags).filter(Boolean).length} / {FEATURE_CATALOG.length} tính năng đang hiện</p></div><div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">{FEATURE_CATALOG.map((feature) => { const enabled = featureFlags[feature.key]; const busyKey = `feature:${feature.key}`; return <article key={feature.key} className={`card-duo flex items-center justify-between gap-4 p-4 transition ${enabled ? "border-emerald-500/20" : "border-amber-500/20 opacity-80"}`}><div className="min-w-0"><h3 className="text-sm font-bold text-white">{feature.label}</h3><p className="mt-1 text-xs leading-5 text-slate-400">{feature.description}</p><span className={`mt-2 inline-block rounded-full px-2 py-1 text-[10px] font-black ${enabled ? "bg-emerald-500/10 text-emerald-300" : "bg-amber-500/10 text-amber-300"}`}>{enabled ? "Đang hiện" : "Đang ẩn"}</span></div><button type="button" role="switch" aria-checked={enabled} aria-label={`${enabled ? "Ẩn" : "Hiện lại"} ${feature.label}`} disabled={busy === busyKey} onClick={() => toggleFeature(feature.key)} className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full border transition disabled:cursor-wait disabled:opacity-50 ${enabled ? "border-emerald-400 bg-emerald-500/30" : "border-slate-600 bg-slate-800"}`}><span className={`flex h-5 w-5 items-center justify-center rounded-full transition ${enabled ? "translate-x-6 bg-emerald-400 text-emerald-950" : "translate-x-1 bg-slate-400 text-slate-900"}`}><Power className="h-3 w-3" /></span></button></article>; })}</div></section>}
 
