@@ -4,7 +4,7 @@ import React, { FormEvent, useCallback, useEffect, useState } from "react";
 import { AppShell } from "../../components/AppShell";
 import { useApp } from "../../contexts/AppProvider";
 import { ApiClient } from "../../lib/apiClient";
-import { AlertCircle, BookOpen, Check, Loader2, MessageSquare, RefreshCw, Search, ShieldCheck, Trash2, Users, SlidersHorizontal, Power, Plus, Save, X, Pencil, Globe, LockKeyhole } from "lucide-react";
+import { AlertCircle, BarChart3, BookOpen, Check, Loader2, MessageSquare, RefreshCw, Search, ShieldCheck, Trash2, Users, SlidersHorizontal, Power, Plus, Save, X, Pencil, Globe, LockKeyhole, Languages, LibraryBig } from "lucide-react";
 import { DEFAULT_FEATURE_FLAGS, FEATURE_CATALOG, FeatureFlags, FeatureKey } from "../../lib/featureFlags";
 import topikLessonsData from "../../data/topik_lessons.json";
 import curatedKoreanPractice from "../../data/curated_korean_practice.json";
@@ -23,12 +23,24 @@ type DeckRow = { userId: string; deckId: string; cardCount: number; updatedAt: s
 type DeckWord = Pick<DictionaryEntry, "hangul" | "vietnamese" | "english" | "japanese" | "partOfSpeech" | "level" | "topik" | "topic">;
 type ContentDeck = { sharedId: string; deckId: string; title: string; description: string; visibility: "public" | "private"; cardCount: number; updatedAt: string };
 type ContentDeckWithCards = ContentDeck & { cards: Array<Record<string, unknown>> };
+type VocabularyInventory = {
+  generatedAt: string;
+  dictionaryUnique: number;
+  translations: { vietnamese: number; english: number; japanese: number };
+  courseEntries: number;
+  courseUnique: number;
+  topicCourseUnique: number;
+  topicIndexUnique: number;
+  seoul1ACards: number;
+  levels: Record<string, number>;
+};
+type SharedDeckInventory = { decks: number; cards: number; publicDecks: number; privateDecks: number };
 const BUILTIN_LESSONS: { id: string; title: string; level: string; lessonType: string; count: number }[] = [
   ...topikLessonsData.map((lesson: any) => ({ id: lesson.id, title: lesson.title, level: lesson.topikName, lessonType: "Video · Dictation + Shadowing", count: lesson.segments.length })),
   ...curatedKoreanPractice.map((lesson: any) => ({ id: lesson.id, title: lesson.title, level: lesson.topikName, lessonType: "Bài sáng tác · Dictation + Shadowing", count: lesson.segments.length })),
   ...KOREAN_COURSE.map((lesson) => ({ id: lesson.id, title: lesson.title, level: lesson.level, lessonType: "Khóa học tiếng Hàn", count: lesson.dialogue.length })),
 ];
-type Panel = "overview" | "students" | "decks" | "vocabularyDecks" | "lessons" | "classes" | "community" | "chat" | "feedback" | "features";
+type Panel = "overview" | "students" | "decks" | "vocabularyStats" | "vocabularyDecks" | "lessons" | "classes" | "community" | "chat" | "feedback" | "features";
 
 async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const token = ApiClient.getToken();
@@ -46,6 +58,7 @@ const panelLabels: { id: Panel; label: string; icon: React.ReactNode }[] = [
   { id: "overview", label: "Tổng quan", icon: <ShieldCheck className="h-4 w-4" /> },
   { id: "students", label: "Tài khoản", icon: <Users className="h-4 w-4" /> },
   { id: "decks", label: "Bộ Anki", icon: <BookOpen className="h-4 w-4" /> },
+  { id: "vocabularyStats", label: "Kho từ vựng", icon: <BarChart3 className="h-4 w-4" /> },
   { id: "vocabularyDecks", label: "Bộ từ Explore", icon: <BookOpen className="h-4 w-4" /> },
   { id: "lessons", label: "Bài học", icon: <BookOpen className="h-4 w-4" /> },
   { id: "classes", label: "Lớp học", icon: <Users className="h-4 w-4" /> },
@@ -86,6 +99,8 @@ export default function AdminPage() {
   const [lessonForm, setLessonForm] = useState({ title: "", lessonType: "both", level: "TOPIK 1", description: "", koreanText: "", vietnameseText: "", sourceUrl: "" });
   const [contentDecks, setContentDecks] = useState<ContentDeck[]>([]);
   const [contentDecksLoading, setContentDecksLoading] = useState(false);
+  const [vocabularyInventory, setVocabularyInventory] = useState<VocabularyInventory | null>(null);
+  const [sharedDeckInventory, setSharedDeckInventory] = useState<SharedDeckInventory | null>(null);
   const [dictionaryQuery, setDictionaryQuery] = useState("");
   const [dictionaryResults, setDictionaryResults] = useState<DictionaryEntry[]>([]);
   const [dictionaryLoading, setDictionaryLoading] = useState(false);
@@ -126,6 +141,30 @@ export default function AdminPage() {
       .then((data) => { if (!cancelled) setContentDecks(data.decks); })
       .catch((cause) => { if (!cancelled) setError(cause instanceof Error ? cause.message : "Không tải được bộ từ Explore."); })
       .finally(() => { if (!cancelled) setContentDecksLoading(false); });
+    return () => { cancelled = true; };
+  }, [panel, currentUser]);
+
+  useEffect(() => {
+    if (panel !== "vocabularyStats" || currentUser?.role !== "admin") return;
+    let cancelled = false;
+    Promise.all([
+      fetch("/data/vocabulary-stats.json", { cache: "no-store" }).then(async (response) => {
+        if (!response.ok) throw new Error("Không tải được thống kê kho từ vựng.");
+        return await response.json() as VocabularyInventory;
+      }),
+      adminFetch<{ decks: ContentDeck[] }>("/api/admin/content-decks"),
+    ]).then(([inventory, result]) => {
+      if (cancelled) return;
+      setVocabularyInventory(inventory);
+      setSharedDeckInventory({
+        decks: result.decks.length,
+        cards: result.decks.reduce((sum, deck) => sum + deck.cardCount, 0),
+        publicDecks: result.decks.filter((deck) => deck.visibility === "public").length,
+        privateDecks: result.decks.filter((deck) => deck.visibility === "private").length,
+      });
+    }).catch((cause) => {
+      if (!cancelled) setError(cause instanceof Error ? cause.message : "Không tải được thống kê kho từ vựng.");
+    });
     return () => { cancelled = true; };
   }, [panel, currentUser]);
 
@@ -314,6 +353,7 @@ export default function AdminPage() {
           {panelLabels.map((item) => {
             const count = item.id === "students" ? (overview?.students ?? 0)
               : item.id === "decks" ? decks.length
+              : item.id === "vocabularyStats" ? (vocabularyInventory?.dictionaryUnique ?? null)
               : item.id === "lessons" ? lessons.length + BUILTIN_LESSONS.length
               : item.id === "classes" ? classes.length
               : item.id === "community" ? posts.length
@@ -419,6 +459,72 @@ export default function AdminPage() {
                   </button>
                 </div>
               </section>
+            </div>
+          )}
+
+          {panel === "vocabularyStats" && (
+            <div className="space-y-5">
+              <section className="card-duo rounded-2xl flex flex-wrap items-start justify-between gap-3 p-5 sm:p-6">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <BarChart3 className="h-5 w-5 text-blue-600 dark:text-sky-400" />
+                    <h2 className="text-base font-bold text-stone-900 dark:text-white">Thống kê kho từ vựng</h2>
+                  </div>
+                  <p className="mt-2 max-w-3xl text-xs leading-5 text-stone-500 dark:text-slate-400">
+                    Số Hangul đã gộp trùng trong từ điển, dữ liệu khóa học theo TOPIK và bộ thẻ Explore lưu trên máy chủ.
+                  </p>
+                </div>
+                {vocabularyInventory && <span className="text-[11px] text-stone-500 dark:text-slate-400">Dữ liệu từ điển cập nhật {new Date(vocabularyInventory.generatedAt).toLocaleString("vi-VN")}</span>}
+              </section>
+
+              {!vocabularyInventory && !error && <div className="card-duo rounded-2xl p-8 text-center text-sm text-stone-500 dark:text-slate-400"><Loader2 className="mx-auto mb-2 h-5 w-5 animate-spin" />Đang tải số liệu kho từ…</div>}
+
+              {vocabularyInventory && <>
+                <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                  {[
+                    { label: "Từ Hangul duy nhất", count: vocabularyInventory.dictionaryUnique, icon: <LibraryBig className="h-4 w-4" />, color: "text-blue-600 dark:text-sky-400" },
+                    { label: "Mục có nghĩa tiếng Việt", count: vocabularyInventory.translations.vietnamese, icon: <Languages className="h-4 w-4" />, color: "text-emerald-600 dark:text-emerald-400" },
+                    { label: "Lượt từ trong khóa học", count: vocabularyInventory.courseEntries, icon: <BookOpen className="h-4 w-4" />, color: "text-amber-600 dark:text-amber-400" },
+                    { label: "Thẻ Explore trên máy chủ", count: sharedDeckInventory?.cards ?? 0, icon: <Globe className="h-4 w-4" />, color: "text-violet-600 dark:text-violet-400" },
+                  ].map((metric) => (
+                    <article key={metric.label} className="card-duo rounded-2xl p-4 sm:p-5">
+                      <div className={`flex items-center gap-2 text-[11px] font-bold text-stone-500 dark:text-slate-400`}><span className={metric.color}>{metric.icon}</span>{metric.label}</div>
+                      <div className="mt-3 text-2xl font-black text-stone-900 dark:text-white">{metric.count.toLocaleString("vi-VN")}</div>
+                    </article>
+                  ))}
+                </section>
+
+                <section className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
+                  <div className="card-duo rounded-2xl p-5 sm:p-6">
+                    <h3 className="text-sm font-bold text-stone-900 dark:text-white">Phân bổ từ trong khóa học</h3>
+                    <p className="mt-1 text-xs text-stone-500 dark:text-slate-400">Đếm Hangul duy nhất trong từng cấp; một từ có thể xuất hiện ở nhiều cấp.</p>
+                    <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                      {[1, 2, 3, 4, 5, 6].map((level) => {
+                        const count = vocabularyInventory.levels[`TOPIK ${level}`] || 0;
+                        const max = Math.max(...Object.values(vocabularyInventory.levels), 1);
+                        return <div key={level} className="rounded-xl border border-stone-200 dark:border-slate-800 bg-stone-50 dark:bg-[#0b1329] p-3">
+                          <div className="flex items-center justify-between gap-2"><span className="text-xs font-bold text-stone-700 dark:text-slate-200">TOPIK {level}</span><span className="text-xs font-black text-blue-600 dark:text-sky-400">{count.toLocaleString("vi-VN")}</span></div>
+                          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-stone-200 dark:bg-slate-800"><div className="h-full rounded-full bg-blue-500" style={{ width: `${Math.max(2, count / max * 100)}%` }} /></div>
+                        </div>;
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="card-duo rounded-2xl p-5 sm:p-6">
+                    <h3 className="text-sm font-bold text-stone-900 dark:text-white">Phạm vi dữ liệu</h3>
+                    <dl className="mt-3 divide-y divide-stone-200 dark:divide-slate-800 text-xs">
+                      <div className="flex justify-between gap-3 py-2.5"><dt className="text-stone-500 dark:text-slate-400">Hangul duy nhất trong bộ khóa học</dt><dd className="font-bold text-stone-900 dark:text-white">{vocabularyInventory.courseUnique.toLocaleString("vi-VN")}</dd></div>
+                      <div className="flex justify-between gap-3 py-2.5"><dt className="text-stone-500 dark:text-slate-400">Từ trong bộ TOPIK theo chủ đề</dt><dd className="font-bold text-stone-900 dark:text-white">{vocabularyInventory.topicCourseUnique.toLocaleString("vi-VN")}</dd></div>
+                      <div className="flex justify-between gap-3 py-2.5"><dt className="text-stone-500 dark:text-slate-400">Mục từ điển bổ sung từ tài liệu chủ đề</dt><dd className="font-bold text-stone-900 dark:text-white">{vocabularyInventory.topicIndexUnique.toLocaleString("vi-VN")}</dd></div>
+                      <div className="flex justify-between gap-3 py-2.5"><dt className="text-stone-500 dark:text-slate-400">Bộ Explore đã lưu · công khai / riêng tư</dt><dd className="font-bold text-stone-900 dark:text-white">{(sharedDeckInventory?.decks ?? 0).toLocaleString("vi-VN")} · {(sharedDeckInventory?.publicDecks ?? 0).toLocaleString("vi-VN")} / {(sharedDeckInventory?.privateDecks ?? 0).toLocaleString("vi-VN")}</dd></div>
+                      <div className="flex justify-between gap-3 py-2.5"><dt className="text-stone-500 dark:text-slate-400">Thẻ Seoul Korean Plus 1A</dt><dd className="font-bold text-stone-900 dark:text-white">{vocabularyInventory.seoul1ACards.toLocaleString("vi-VN")}</dd></div>
+                    </dl>
+                    <p className="mt-3 rounded-xl bg-blue-500/5 p-3 text-[11px] leading-5 text-stone-500 dark:text-slate-400">
+                      Các nguồn có thể chứa cùng một từ. Không cộng các dòng trên thành một tổng; “Từ Hangul duy nhất” là tổng đã khử trùng lặp của kho tra cứu.
+                    </p>
+                  </div>
+                </section>
+              </>}
             </div>
           )}
 
