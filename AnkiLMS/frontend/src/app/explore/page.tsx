@@ -192,12 +192,12 @@ export default function ExplorePage() {
     return groups;
   }, [filteredDecks, sort, selectedCategory, selectedTopikLevel, searchQuery]);
 
-  const rowAction = "inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer justify-self-end shrink-0";
+  const rowAction = "inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer self-start sm:self-auto sm:justify-self-end shrink-0";
 
   const renderDeckRow = (deck: CuratedDeckItem) => {
     const added = isDeckAdded(deck);
     return (
-      <li key={deck.id} className={`${ROW_GRID} flex py-3`}>
+      <li key={deck.id} className={`${ROW_GRID} flex flex-col items-stretch sm:flex-row sm:items-center gap-1.5 py-3`}>
         <a href={deckHref(deck)} className="flex items-center gap-3 min-w-0 flex-1 group cursor-pointer">
           <DeckIcon name={deck.iconName} className="w-5 h-5 shrink-0 text-stone-400 group-hover:text-sky-500 transition" />
           <div className="min-w-0 flex-1">
@@ -211,7 +211,7 @@ export default function ExplorePage() {
         <span className="hidden sm:block text-xs text-stone-500 dark:text-stone-400 tabular-nums text-right">{deckCardCount(deck)}</span>
 
         {added ? (
-          <div className="flex items-center justify-end gap-1 shrink-0">
+          <div className="flex items-center justify-start sm:justify-end gap-1 shrink-0 pl-[22px] sm:pl-0">
             <a href="/flashcards" className={`${rowAction} text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10`}>
               <Check className="w-3.5 h-3.5" /> Học
             </a>
@@ -225,14 +225,14 @@ export default function ExplorePage() {
             </button>
           </div>
         ) : deck.id.startsWith("shared-") ? (
-          <a href={deckHref(deck)} className={`${rowAction} text-sky-600 dark:text-sky-400 hover:bg-sky-500/10`}>
+          <a href={deckHref(deck)} className={`${rowAction} ml-[22px] sm:ml-0 text-sky-600 dark:text-sky-400 hover:bg-sky-500/10`}>
             <Eye className="w-3.5 h-3.5" /> Xem
           </a>
         ) : (
           <button
             onClick={() => handleAddDeck(deck)}
             aria-label={`Thêm ${deck.title} vào kho thẻ`}
-            className={`${rowAction} text-sky-600 dark:text-sky-400 hover:bg-sky-500/10`}
+            className={`${rowAction} ml-[22px] sm:ml-0 text-sky-600 dark:text-sky-400 hover:bg-sky-500/10`}
           >
             <Plus className="w-3.5 h-3.5" /> Thêm
           </button>
