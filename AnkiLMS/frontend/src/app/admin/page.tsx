@@ -311,10 +311,47 @@ export default function AdminPage() {
       : currentUser.role !== "admin" ? <div className="card-duo rounded-2xl p-8 text-center text-rose-600 dark:text-rose-300">Tài khoản này không có quyền quản trị.</div>
       : <>
         {error && <div role="alert" className="flex items-center gap-2 rounded-xl border border-rose-300 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-950/30 p-4 text-sm text-rose-700 dark:text-rose-200"><AlertCircle className="h-4 w-4 shrink-0" />{error}</div>}
-        <nav aria-label="Khu vực quản trị" className="grid grid-cols-2 gap-2 sm:grid-cols-4 xl:grid-cols-8">{panelLabels.map((item) => {
-          const count = item.id === "students" ? (overview?.students ?? 0) : item.id === "decks" ? decks.length : item.id === "lessons" ? lessons.length + BUILTIN_LESSONS.length : item.id === "classes" ? classes.length : item.id === "community" ? posts.length : item.id === "chat" ? messages.length : item.id === "feedback" ? feedback.length : null;
-          return <button key={item.id} onClick={() => setPanel(item.id)} aria-current={panel === item.id ? "page" : undefined} className={`flex min-h-[72px] items-center gap-3 rounded-2xl border px-3 py-3 text-left transition ${panel === item.id ? "border-sky-400/70 bg-sky-500/15 text-white shadow-lg shadow-sky-950/20" : "border-slate-800 bg-slate-950/50 text-slate-400 hover:border-slate-600 hover:text-white"}`}><span className={`rounded-xl p-2 ${panel === item.id ? "bg-sky-400/15 text-sky-200" : "bg-slate-800/70 text-slate-400"}`}>{item.icon}</span><span className="min-w-0 flex-1"><span className="block truncate text-xs font-bold">{item.label}</span>{count !== null && <span className="mt-1 block text-[10px] text-slate-500">{count.toLocaleString("vi-VN")} mục</span>}</span></button>;
-        })}</nav>
+        <nav aria-label="Khu vực quản trị" className="flex items-center gap-2 overflow-x-auto py-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {panelLabels.map((item) => {
+            const count = item.id === "students" ? (overview?.students ?? 0)
+              : item.id === "decks" ? decks.length
+              : item.id === "lessons" ? lessons.length + BUILTIN_LESSONS.length
+              : item.id === "classes" ? classes.length
+              : item.id === "community" ? posts.length
+              : item.id === "chat" ? messages.length
+              : item.id === "feedback" ? feedback.length
+              : null;
+            const active = panel === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setPanel(item.id)}
+                aria-current={active ? "page" : undefined}
+                className={`inline-flex shrink-0 items-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-bold transition-all cursor-pointer ${
+                  active
+                    ? "border-blue-500 bg-blue-600 text-white shadow-lg shadow-blue-900/30"
+                    : "border-stone-200 dark:border-slate-800 bg-stone-100 hover:bg-stone-200 dark:bg-[#132247] dark:hover:bg-[#1a2f60] text-stone-600 dark:text-slate-300"
+                }`}
+              >
+                <span className={active ? "text-white" : "text-stone-500 dark:text-slate-400"}>
+                  {item.icon}
+                </span>
+                <span>{item.label}</span>
+                {count !== null && (
+                  <span
+                    className={`ml-0.5 rounded-full px-1.5 py-0.5 text-[10px] font-extrabold ${
+                      active
+                        ? "bg-blue-500/40 text-white"
+                        : "bg-stone-200 dark:bg-slate-800 text-stone-500 dark:text-slate-400"
+                    }`}
+                  >
+                    {count.toLocaleString("vi-VN")}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </nav>
         {!overview ? <div className="card-duo rounded-2xl p-8 text-center text-stone-500 dark:text-slate-400">Đang tải dữ liệu quản trị…</div> : <>
           {panel === "overview" && <>
             <section className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">{[["Tài khoản", overview.users], ["Học viên", overview.students], ["Giáo viên", overview.teachers], ["Lớp học", overview.classes], ["Bài cộng đồng", overview.posts], ["Góp ý mới", overview.pendingFeedback]].map(([label, count]) => <button key={label} onClick={() => setPanel(label === "Lớp học" ? "classes" : label === "Bài cộng đồng" ? "community" : label === "Góp ý mới" ? "feedback" : "students")} className="card-duo p-4 text-left hover:border-sky-500/50"><div className="text-2xl font-black text-white">{count}</div><div className="mt-1 text-xs text-slate-400">{label}</div></button>)}</section>
