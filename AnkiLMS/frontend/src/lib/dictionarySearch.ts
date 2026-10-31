@@ -124,6 +124,16 @@ async function loadEntries(): Promise<PackedEntry[]> {
   return entriesPromise;
 }
 
+/** Number of unique Hangul headwords in the effective dictionary used by search and study. */
+export async function countLearningDictionaryEntries(): Promise<number> {
+  return (await loadEntries()).length;
+}
+
+export function refreshLearningDictionaryCache(): void {
+  entriesPromise = null;
+  for (const language of Object.keys(indexedEntriesPromises) as SearchLanguage[]) delete indexedEntriesPromises[language];
+}
+
 export async function loadVietnameseVocabulary(): Promise<Array<{ hangul: string; vietnamese: string }>> {
   const rows = await loadEntries();
   return rows.filter((row) => Boolean(row[2])).map((row) => ({ hangul: row[0], vietnamese: row[2] }));

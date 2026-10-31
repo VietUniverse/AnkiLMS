@@ -10,7 +10,7 @@ import topikLessonsData from "../../data/topik_lessons.json";
 import curatedKoreanPractice from "../../data/curated_korean_practice.json";
 import { ExploreDeckManager } from "../../components/admin/ExploreDeckManager";
 import { KOREAN_COURSE } from "../../data/koreanCourse";
-import { browseLearningDictionary, DictionaryEntry, DictionaryLevel, detectDictionarySearchLanguage, searchLearningDictionary } from "../../lib/dictionarySearch";
+import { browseLearningDictionary, countLearningDictionaryEntries, DictionaryEntry, DictionaryLevel, detectDictionarySearchLanguage, refreshLearningDictionaryCache, searchLearningDictionary } from "../../lib/dictionarySearch";
 
 type Overview = { users: number; students: number; teachers: number; classes: number; posts: number; pendingFeedback: number };
 type UserRow = { id: string; email: string; name: string; role: "student" | "teacher" | "admin"; xp: number; gems: number; streak: number; created_at: string; decks: number; studySessions: number; lastStudied: string | null };
@@ -89,6 +89,7 @@ export default function AdminPage() {
   const [contentDecksLoading, setContentDecksLoading] = useState(false);
   const [dictionaryManagerQuery, setDictionaryManagerQuery] = useState("");
   const [dictionaryManagerResults, setDictionaryManagerResults] = useState<DictionaryEntry[]>([]);
+  const [dictionaryManagerTotal, setDictionaryManagerTotal] = useState<number | null>(null);
   const [dictionaryManagerPage, setDictionaryManagerPage] = useState(0);
   const [dictionaryManagerLoading, setDictionaryManagerLoading] = useState(false);
   const [editingDictionaryWord, setEditingDictionaryWord] = useState<DictionaryEntry | null>(null);
@@ -145,7 +146,9 @@ export default function AdminPage() {
       const lookup = queryText
         ? searchLearningDictionary(queryText, 60, undefined, detectDictionarySearchLanguage(queryText))
         : browseLearningDictionary("all", "vi", dictionaryManagerPage * 30, 30);
-      void lookup.then((results) => { if (!cancelled) setDictionaryManagerResults(results); })
+      void Promise.all([lookup, countLearningDictionaryEntries()]).then(([results, total]) => {
+        if (!cancelled) { setDictionaryManagerResults(results); setDictionaryManagerTotal(total); }
+      })
         .catch((cause) => { if (!cancelled) setError(cause instanceof Error ? cause.message : "Không tải được kho từ."); })
         .finally(() => { if (!cancelled) setDictionaryManagerLoading(false); });
     }, queryText ? 220 : 0);
@@ -299,6 +302,19 @@ export default function AdminPage() {
     });
   }
 
+  async function reloadDictionaryManager() {
+    refreshLearningDictionaryCache();
+    const queryText = dictionaryManagerQuery.trim();
+    const [total, results] = await Promise.all([
+      countLearningDictionaryEntries(),
+      queryText
+        ? searchLearningDictionary(queryText, 60, undefined, detectDictionarySearchLanguage(queryText))
+        : browseLearningDictionary("all", "vi", dictionaryManagerPage * 30, 30),
+    ]);
+    setDictionaryManagerTotal(total);
+    setDictionaryManagerResults(results);
+  }
+
   async function saveDictionaryWord(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setBusy("save-dictionary-word"); setError("");
@@ -307,6 +323,7 @@ export default function AdminPage() {
         method: "POST",
         body: JSON.stringify({ ...dictionaryWordForm, oldHangul: editingDictionaryWord?.hangul || "" }),
       });
+      await reloadDictionaryManager();
       setEditingDictionaryWord(null);
       setDictionaryWordForm({ hangul: "", vietnamese: "", english: "", japanese: "", partOfSpeech: "", topik: "", topic: "" });
       setError("");
@@ -320,7 +337,7 @@ export default function AdminPage() {
     setBusy(`delete-word:${entry.hangul}`); setError("");
     try {
       await adminFetch(`/api/admin/dictionary?hangul=${encodeURIComponent(entry.hangul)}`, { method: "DELETE" });
-      setDictionaryManagerResults((current) => current.filter((item) => item.hangul !== entry.hangul));
+      await reloadDictionaryManager();
     } catch (cause) { setError(cause instanceof Error ? cause.message : "Không xóa được mục từ."); }
     finally { setBusy(""); }
   }
@@ -663,7 +680,10 @@ export default function AdminPage() {
                       <h2 className="text-base font-bold text-stone-900 dark:text-white">Quản lý từ điển</h2>
                       <p className="mt-1 text-xs text-stone-500 dark:text-slate-400">Tìm và duyệt từ trong kho hiện có; chọn một mục để sửa, hoặc tạo mục mới.</p>
                     </div>
-                    <button type="button" onClick={() => startDictionaryEdit()} className="btn-duo btn-duo-primary inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold"><Plus className="h-4 w-4" />Thêm từ</button>
+                    <div className="flex items-center gap-2">
+                      <span className="rounded-xl border border-blue-200 dark:border-blue-900/60 bg-blue-50 dark:bg-blue-950/40 px-3 py-2 text-xs font-extrabold text-blue-700 dark:text-sky-300">Tổng kho: {dictionaryManagerTotal === null ? "Đang đếm…" : `${dictionaryManagerTotal.toLocaleString("vi-VN")} từ`}</span>
+                      <button type="button" onClick={() => startDictionaryEdit()} className="btn-duo btn-duo-primary inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold"><Plus className="h-4 w-4" />Thêm từ</button>
+                    </div>
                   </div>
                   <label className="mt-4 flex items-center gap-2 rounded-xl border border-stone-200 dark:border-slate-700 bg-white dark:bg-[#0b1329] px-3.5">
                     <Search className="h-4 w-4 text-blue-500" />
@@ -671,6 +691,7 @@ export default function AdminPage() {
                     {dictionaryManagerQuery && <button type="button" onClick={() => setDictionaryManagerQuery("")} aria-label="Xóa tìm kiếm" className="text-stone-500"><X className="h-4 w-4" /></button>}
                   </label>
                 </div>
+                <div className="flex items-center justify-between gap-2 border-b border-stone-200 dark:border-slate-800 px-4 py-2 text-[11px] text-stone-500 dark:text-slate-400"><span>{dictionaryManagerQuery.trim() ? `Kết quả tìm kiếm: ${dictionaryManagerResults.length}${dictionaryManagerResults.length === 60 ? "+ (đang hiển thị tối đa 60)" : ""}` : `Mục ${dictionaryManagerPage * 30 + (dictionaryManagerResults.length ? 1 : 0)}–${dictionaryManagerPage * 30 + dictionaryManagerResults.length}`}</span><span>{dictionaryManagerTotal?.toLocaleString("vi-VN") ?? "—"} mục từ duy nhất</span></div>
                 <div className="divide-y divide-stone-200 dark:divide-slate-800">
                   {dictionaryManagerLoading && <div className="p-6 text-center text-xs text-stone-500"><Loader2 className="mx-auto mb-2 h-5 w-5 animate-spin" />Đang tải từ vựng…</div>}
                   {!dictionaryManagerLoading && dictionaryManagerResults.map((entry) => (
