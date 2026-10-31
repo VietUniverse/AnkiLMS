@@ -13,7 +13,7 @@ export async function generateStaticParams() {
   }
   return [...CURATED_DECKS.map((deck) => ({
     id: deck.id,
-  })), ...courseIds.map((id) => ({ id })), { id: "seoul-1a" }];
+  })), ...courseIds.map((id) => ({ id })), { id: "curriculum-sejong" }, { id: "curriculum-kiip" }, { id: "seoul-1a" }];
 }
 
 export default async function DeckDetailPage({

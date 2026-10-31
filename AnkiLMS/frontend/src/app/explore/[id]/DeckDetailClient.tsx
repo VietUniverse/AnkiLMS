@@ -6,7 +6,7 @@ import { useApp } from "../../../contexts/AppProvider";
 import { CURATED_DECKS, curatedDeckToAnkiDeck, IS_DEMO_DECKS_ENABLED, sharedDeckToExploreDeck } from "../../../data/curatedDecks";
 import { DeckIcon } from "../../../components/DeckIcon";
 import { speakKorean } from "../../../lib/koreanSpeech";
-import { courseToExploreDeck, loadCourseVocabulary, loadSeoul1AExploreDeck } from "../../../lib/courseVocabulary";
+import { courseToExploreDeck, curriculumToExploreDeck, loadCourseVocabulary, loadSeoul1AExploreDeck } from "../../../lib/courseVocabulary";
 import { ApiClient } from "../../../lib/apiClient";
 import type { CuratedDeckItem } from "../../../data/curatedDecks";
 import {
@@ -32,7 +32,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
   const [courseDeck, setCourseDeck] = useState<CuratedDeckItem | null>(null);
   const [catalogOverride, setCatalogOverride] = useState<Partial<CuratedDeckItem> | null>(null);
   const [catalogHidden, setCatalogHidden] = useState(false);
-  const [courseLoaded, setCourseLoaded] = useState(!id.startsWith("course-") && !id.startsWith("shared-") && id !== "seoul-1a");
+  const [courseLoaded, setCourseLoaded] = useState(!id.startsWith("course-") && !id.startsWith("curriculum-") && !id.startsWith("shared-") && id !== "seoul-1a");
 
   useEffect(() => {
     if (id !== "seoul-1a") return;
@@ -47,12 +47,20 @@ export default function DeckDetailClient({ id }: { id: string }) {
   }, [id]);
 
   useEffect(() => {
-    if (!id.startsWith("course-")) return;
+    if (!id.startsWith("course-") && !id.startsWith("curriculum-")) return;
     let active = true;
     void loadCourseVocabulary().then((data) => {
-      const course = data?.decks.flatMap((group) => group.courses).find((item) => `course-${item.id}` === id);
+      const courses = data?.decks.flatMap((group) => group.courses) || [];
+      const course = id.startsWith("course-")
+        ? courses.find((item) => `course-${item.id}` === id)
+        : null;
+      const curriculum = id === "curriculum-sejong"
+        ? curriculumToExploreDeck(courses, "sejong")
+        : id === "curriculum-kiip"
+          ? curriculumToExploreDeck(courses, "kiip")
+          : null;
       if (active) {
-        setCourseDeck(course ? courseToExploreDeck(course) : null);
+        setCourseDeck(course ? courseToExploreDeck(course) : curriculum);
         setCourseLoaded(true);
       }
     });
@@ -129,18 +137,21 @@ export default function DeckDetailClient({ id }: { id: string }) {
     if (!requested || samples.some((card) => card.id === requested.id)) return samples;
     return [...samples.slice(0, 9), requested];
   }, [deckCards, requestedPreviewCardId]);
-  const topicSubdecks = useMemo(() => {
-    if (deck?.id !== "course-topic-vocabulary") return [];
-    const topics = new Map<string, { count: number; levels: Set<string> }>();
+  const curriculumSections = useMemo(() => {
+    if (!deck || (!deck.id.startsWith("curriculum-") && deck.id !== "course-topic-vocabulary")) return [];
+    const sections = new Map<string, { count: number; children: Set<string>; levels: Set<string> }>();
     for (const card of deck.cards) {
-      const topic = card.deckName?.split("::").slice(1).join("::").trim();
-      if (!topic) continue;
-      const item = topics.get(topic) || { count: 0, levels: new Set<string>() };
+      const parts = card.deckName?.split("::").slice(1).map((part) => part.trim()).filter(Boolean) || [];
+      const section = parts[0];
+      if (!section) continue;
+      const item = sections.get(section) || { count: 0, children: new Set<string>(), levels: new Set<string>() };
       item.count += 1;
+      if (parts[1]) item.children.add(parts[1]);
       for (const tag of card.tags || []) if (/^TOPIK [1-6]$/.test(tag)) item.levels.add(tag);
-      topics.set(topic, item);
+      sections.set(section, item);
     }
-    return [...topics.entries()].sort(([left], [right]) => left.localeCompare(right, "ko"));
+    return [...sections.entries()].map(([name, info]) => [name, { count: info.count, childCount: info.children.size }] as const)
+      .sort(([left], [right]) => left.localeCompare(right, "ko", { numeric: true }));
   }, [deck]);
   const currentPreviewCard = deckCards[activePreviewIndex] || deckCards[0];
 
@@ -364,21 +375,23 @@ export default function DeckDetailClient({ id }: { id: string }) {
             </div>
 
             <div className="space-y-4">
-              {topicSubdecks.length > 0 ? (
+              {curriculumSections.length > 0 ? (
                 <>
                   <div>
                     <h2 className="text-lg font-bold text-stone-900 dark:text-white">
-                      Chủ đề học ({topicSubdecks.length})
+                      {deck.id === "course-topic-vocabulary" ? "Chủ đề học" : "Nội dung theo giáo trình"} ({curriculumSections.length})
                     </h2>
                     <p className="text-xs text-stone-400">
-                      Một bộ thẻ duy nhất gồm {deck.cards.length.toLocaleString("vi-VN")} từ. Khi thêm vào Flashcard, mở bộ này để chọn một chủ đề hoặc học toàn bộ.
+                      {deck.id === "course-topic-vocabulary"
+                        ? `Một bộ thẻ duy nhất gồm ${deck.cards.length.toLocaleString("vi-VN")} từ. Khi thêm vào Flashcard, mở bộ này để chọn một chủ đề hoặc học toàn bộ.`
+                        : `Một bộ giáo trình gồm ${deck.cards.length.toLocaleString("vi-VN")} từ. Khi thêm vào Flashcards, mở bộ cha để chọn quyển/cấp rồi chọn bài học.`}
                     </p>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {topicSubdecks.map(([topic, info]) => (
-                      <div key={topic} className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 px-4 py-3 flex items-center justify-between gap-3">
-                        <span className="font-semibold text-sm text-stone-800 dark:text-stone-200">{topic}</span>
-                        <span className="text-xs text-sky-600 dark:text-sky-400 shrink-0">{info.count} thẻ</span>
+                    {curriculumSections.map(([section, info]) => (
+                      <div key={section} className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 px-4 py-3 flex items-center justify-between gap-3">
+                        <span className="font-semibold text-sm text-stone-800 dark:text-stone-200">{section}</span>
+                        <span className="text-xs text-sky-600 dark:text-sky-400 shrink-0">{info.count.toLocaleString("vi-VN")} thẻ{info.childCount ? ` · ${info.childCount} bài` : ""}</span>
                       </div>
                     ))}
                   </div>

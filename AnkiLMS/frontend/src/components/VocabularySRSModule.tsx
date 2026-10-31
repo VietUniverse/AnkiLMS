@@ -309,27 +309,42 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
           example_translated: "",
           tag_1: "Anki Custom",
           tag_2: c.deckName?.split("::").slice(1).join("::") || "",
-          deckName: ud.name,
+          deckName: c.deckName || ud.name,
         });
         const cards = ud.cards.map(toVocabularyCard);
-        const topicChildren = ud.id === "curated-course-topic-vocabulary"
-          ? [...new Set(ud.cards.map((card) => card.deckName?.split("::").slice(1).join("::").trim()).filter((topic): topic is string => !!topic))]
-              .sort((left, right) => left.localeCompare(right, "ko"))
-              .map((topic) => ({
-                id: `user-${ud.id}-${toSlug(topic)}`,
-                title: topic,
-                cards: ud.cards
-                  .map((card, idx) => ({ card, idx }))
-                  .filter(({ card }) => card.deckName?.split("::").slice(1).join("::").trim() === topic)
-                  .map(({ card, idx }) => toVocabularyCard(card, idx)),
-              }))
-          : undefined;
+        type ImportTreeBranch = { title: string; path: string; entries: Array<{ card: AnkiDeck["cards"][number]; idx: number }>; children: Map<string, ImportTreeBranch> };
+        const subdeckRoot: ImportTreeBranch = { title: "", path: "", entries: [], children: new Map() };
+        ud.cards.forEach((card, idx) => {
+          const rawParts = (card.deckName || ud.name).split("::").map((part) => part.trim()).filter(Boolean);
+          const parts = rawParts[0] === ud.name ? rawParts.slice(1) : rawParts;
+          let branch = subdeckRoot;
+          const pathParts: string[] = [];
+          for (const part of parts) {
+            pathParts.push(part);
+            let child = branch.children.get(part);
+            if (!child) {
+              child = { title: part, path: pathParts.join("::"), entries: [], children: new Map() };
+              branch.children.set(part, child);
+            }
+            branch = child;
+            branch.entries.push({ card, idx });
+          }
+        });
+        const buildSubdeckNodes = (branch: ImportTreeBranch): DeckTreeNode[] => [...branch.children.values()]
+          .sort((a, b) => a.title.localeCompare(b.title, "ko", { numeric: true }))
+          .map((child) => ({
+            id: `user-${ud.id}-${toSlug(child.path)}`,
+            title: child.title,
+            cards: child.entries.map(({ card, idx }) => toVocabularyCard(card, idx)),
+            children: buildSubdeckNodes(child),
+          }));
+        const subdeckChildren = buildSubdeckNodes(subdeckRoot);
         return ({
         id: `user-${ud.id}`,
         title: ud.name,
         subtitle: isTopicVocabularyDeck ? "TOPIK 1–6 · Chọn chủ đề để học" : detectedTopik ? `${getCourseRank(detectedTopik)} · TOPIK ${detectedTopik}` : "Chưa gán cấp độ",
         cards,
-        children: topicChildren,
+        children: subdeckChildren.length ? subdeckChildren : undefined,
       });
       });
 

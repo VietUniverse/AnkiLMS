@@ -77,6 +77,81 @@ export function courseToExploreDeck(course: VocabularyCourse): CuratedDeckItem {
   };
 }
 
+type CurriculumKind = "sejong" | "kiip";
+
+const curriculumConfig: Record<CurriculumKind, { title: string; topic: string; description: string }> = {
+  sejong: {
+    title: "Sejong Korean",
+    topic: "Giáo trình Sejong Hakdang",
+    description: "Từ vựng Sejong Korean được sắp theo quyển, bài học và cấp TOPIK.",
+  },
+  kiip: {
+    title: "KIIP · Tiếng Hàn hội nhập xã hội",
+    topic: "Giáo trình KIIP",
+    description: "Từ vựng KIIP được sắp theo cấp học, bài học và cấp TOPIK.",
+  },
+};
+
+function courseCurriculumNumber(course: VocabularyCourse, kind: CurriculumKind): number {
+  if (kind === "sejong") return Number(course.title.match(/Sejong\s+(\d+)/i)?.[1] || 1);
+  return Number(course.title.match(/KIIP\s+(\d+)/i)?.[1] || 1);
+}
+
+export function isCurriculumCourse(course: VocabularyCourse): boolean {
+  return /\bSejong\s+[1-6]\b/i.test(course.title) || /\bKIIP\s+[1-4]\b/i.test(course.title);
+}
+
+export function curriculumToExploreDeck(courses: VocabularyCourse[], kind: CurriculumKind): CuratedDeckItem | null {
+  const config = curriculumConfig[kind];
+  const matchingCourses = courses
+    .filter((course) => kind === "sejong" ? /\bSejong\s+[1-6]\b/i.test(course.title) : /\bKIIP\s+[1-4]\b/i.test(course.title))
+    .sort((a, b) => courseCurriculumNumber(a, kind) - courseCurriculumNumber(b, kind));
+  if (!matchingCourses.length) return null;
+
+  const cards = matchingCourses.flatMap((course) => {
+    const volume = courseCurriculumNumber(course, kind);
+    const branch = kind === "sejong" ? `Quyển ${volume}` : `Cấp ${volume} · ${course.level}`;
+    return courseToExploreDeck(course).cards.map((card) => ({
+      ...card,
+      deckName: `${config.title}::${branch}::${card.deckName?.split("::").slice(1).join("::") || "Bài học"}`,
+      tags: [...new Set([...(card.tags || []), config.topic, branch])],
+    }));
+  });
+  const topikNumbers = [...new Set(matchingCourses.map((course) => Number(course.topik.match(/\d+/)?.[0] || 1)))];
+  const topikRange = `${Math.min(...topikNumbers)}–${Math.max(...topikNumbers)}`;
+  const volumeLabel = kind === "sejong" ? `${matchingCourses.length} quyển` : `${matchingCourses.length} cấp học`;
+
+  return {
+    id: `curriculum-${kind}`,
+    title: config.title,
+    category: "topik",
+    categoryLabel: `TOPIK ${topikRange}`,
+    level: Math.max(...topikNumbers) <= 2 ? "Sơ cấp" : Math.min(...topikNumbers) >= 5 ? "Cao cấp" : "Trung cấp",
+    description: config.description,
+    detailedDescription: `${volumeLabel}, ${matchingCourses.length} chặng học và ${cards.length.toLocaleString("vi-VN")} từ/cụm từ. Trong Flashcards, mở bộ này để chọn quyển hoặc từng bài học.`,
+    iconName: "BookOpen",
+    badgeColor: "bg-sky-500/10 text-sky-600 dark:text-sky-300 border-sky-500/30",
+    tags: [config.topic, `${matchingCourses.length} ${kind === "sejong" ? "quyển" : "cấp"}`, `TOPIK ${topikRange}`],
+    cards,
+    cardCount: cards.length,
+    author: { name: "HaechiVN", avatar: "/brand/haechivn-mark.webp", role: "Biên soạn", bio: "Kho học liệu HaechiVN", verified: true },
+    visibility: "public",
+    rating: 0,
+    downloads: 0,
+    estimatedMinutes: Math.max(1, Math.ceil(cards.length / 20)),
+  };
+}
+
+export function courseVocabularyToExploreDecks(data: CourseVocabularyData): CuratedDeckItem[] {
+  const courses = data.decks.flatMap((group) => group.courses);
+  const curricula = [
+    curriculumToExploreDeck(courses, "sejong"),
+    curriculumToExploreDeck(courses, "kiip"),
+  ].filter((deck): deck is CuratedDeckItem => deck !== null);
+  const standalone = courses.filter((course) => !isCurriculumCourse(course)).map(courseToExploreDeck);
+  return [...standalone, ...curricula];
+}
+
 type Seoul1AData = {
   id: string;
   title: string;

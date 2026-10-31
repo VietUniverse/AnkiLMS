@@ -5,7 +5,7 @@ import { AppShell } from "../../components/AppShell";
 import { useApp } from "../../contexts/AppProvider";
 import { CURATED_DECKS, curatedDeckToAnkiDeck, CuratedDeckItem, IS_DEMO_DECKS_ENABLED, sharedDeckToExploreDeck } from "../../data/curatedDecks";
 import { DeckIcon } from "../../components/DeckIcon";
-import { courseToExploreDeck, loadCourseVocabulary, loadSeoul1AExploreDeck } from "../../lib/courseVocabulary";
+import { courseVocabularyToExploreDecks, loadCourseVocabulary, loadSeoul1AExploreDeck } from "../../lib/courseVocabulary";
 import type { TopikDeck } from "../../lib/courseVocabulary";
 import { ApiClient } from "../../lib/apiClient";
 import {
@@ -83,7 +83,7 @@ export default function ExplorePage() {
 
   const baseDecks = useMemo(() => [
     ...(IS_DEMO_DECKS_ENABLED ? CURATED_DECKS : []),
-    ...courseDecks.flatMap((group) => group.courses.map(courseToExploreDeck)),
+    ...courseVocabularyToExploreDecks({ version: 1, source: "", courseCount: 0, wordCount: 0, decks: courseDecks }),
     ...(seoul1ADeck ? [seoul1ADeck] : []),
     ...sharedDecks,
   ], [courseDecks, seoul1ADeck, sharedDecks]);
