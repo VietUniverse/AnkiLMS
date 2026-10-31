@@ -32,6 +32,7 @@ import { ApiClient } from "../lib/apiClient";
 import { speakKorean } from "../lib/koreanSpeech";
 import { inferTopikLevel, getCourseRank } from "../lib/studyRanks";
 import { LockKeyhole, Globe2 } from "lucide-react";
+import { VocabularySizeTest } from "./VocabularySizeTest";
 
 interface VocabularySRSModuleProps {
   userDecks?: AnkiDeck[];
@@ -1001,6 +1002,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                 </Link>
               </div>
             </div>
+
+            <VocabularySizeTest />
 
             {/* BẢNG ANKI ĐỒNG NHẤT TOÀN TRANG (DECK TREE) */}
             <div className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 overflow-hidden shadow-xs">

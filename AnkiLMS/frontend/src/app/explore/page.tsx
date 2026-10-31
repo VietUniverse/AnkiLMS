@@ -5,6 +5,7 @@ import { AppShell } from "../../components/AppShell";
 import { useApp } from "../../contexts/AppProvider";
 import { CURATED_DECKS, curatedDeckToAnkiDeck, CuratedDeckItem, IS_DEMO_DECKS_ENABLED, sharedDeckToExploreDeck } from "../../data/curatedDecks";
 import { DeckIcon } from "../../components/DeckIcon";
+import { VocabularySizeTest } from "../../components/VocabularySizeTest";
 import { courseVocabularyToExploreDecks, loadCourseVocabulary, loadSeoul1AExploreDeck } from "../../lib/courseVocabulary";
 import type { TopikDeck } from "../../lib/courseVocabulary";
 import { ApiClient } from "../../lib/apiClient";
@@ -271,6 +272,8 @@ export default function ExplorePage() {
             </a>
           </div>
         )}
+
+        <VocabularySizeTest />
 
         {/* Một hàng duy nhất: tìm kiếm + danh mục */}
         <div className="flex flex-wrap items-center gap-2 pt-1">
