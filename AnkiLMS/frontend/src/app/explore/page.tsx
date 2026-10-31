@@ -38,8 +38,8 @@ const matchCategory = (deck: CuratedDeckItem, id: string) =>
 type SortKey = "name" | "level" | "cards";
 const LEVEL_ORDER: Record<string, number> = { "Sơ cấp": 0, "Trung cấp": 1, "Cao cấp": 2, "Mọi cấp độ": 3 };
 const deckCardCount = (d: CuratedDeckItem) => d.cardCount ?? d.cards.length;
-// Cột: tên | (cấp độ) | số thẻ | hành động. Cấp độ ẩn ở mobile và hiện dưới tên.
-const ROW_GRID = "grid grid-cols-[minmax(0,1fr)_3.5rem_6.5rem] sm:grid-cols-[minmax(0,1fr)_6rem_4.5rem_6.5rem] items-center gap-3";
+// Desktop: bảng 4 cột (tên | cấp độ | số thẻ | hành động). Mobile: danh sách một cột, cấp độ và số thẻ nằm dưới tên.
+const ROW_GRID = "sm:grid sm:grid-cols-[minmax(0,1fr)_6rem_4.5rem_6.5rem] items-center gap-3";
 
 const THEME_CATEGORIES = new Set(["food", "conversation", "drama", "hanja", "travel", "work"]);
 
@@ -192,26 +192,26 @@ export default function ExplorePage() {
     return groups;
   }, [filteredDecks, sort, selectedCategory, selectedTopikLevel, searchQuery]);
 
-  const rowAction = "inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer justify-self-end";
+  const rowAction = "inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer justify-self-end shrink-0";
 
   const renderDeckRow = (deck: CuratedDeckItem) => {
     const added = isDeckAdded(deck);
     return (
-      <li key={deck.id} className={`${ROW_GRID} py-3`}>
-        <a href={deckHref(deck)} className="flex items-center gap-3 min-w-0 group cursor-pointer">
+      <li key={deck.id} className={`${ROW_GRID} flex py-3`}>
+        <a href={deckHref(deck)} className="flex items-center gap-3 min-w-0 flex-1 group cursor-pointer">
           <DeckIcon name={deck.iconName} className="w-5 h-5 shrink-0 text-stone-400 group-hover:text-sky-500 transition" />
           <div className="min-w-0 flex-1">
             <h3 className="text-sm font-semibold text-stone-900 dark:text-white line-clamp-2 sm:line-clamp-1 group-hover:text-sky-500 transition">
               {deck.title}
             </h3>
-            <p className="text-xs text-stone-400 sm:hidden">{deck.level}</p>
+            <p className="text-xs text-stone-400 sm:hidden">{deck.level} · {deckCardCount(deck)} thẻ</p>
           </div>
         </a>
         <span className="hidden sm:block text-xs text-stone-500 dark:text-stone-400 truncate">{deck.level}</span>
-        <span className="text-xs text-stone-500 dark:text-stone-400 tabular-nums text-right">{deckCardCount(deck)}</span>
+        <span className="hidden sm:block text-xs text-stone-500 dark:text-stone-400 tabular-nums text-right">{deckCardCount(deck)}</span>
 
         {added ? (
-          <div className="flex items-center justify-end gap-1">
+          <div className="flex items-center justify-end gap-1 shrink-0">
             <a href="/flashcards" className={`${rowAction} text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10`}>
               <Check className="w-3.5 h-3.5" /> Học
             </a>
@@ -336,9 +336,15 @@ export default function ExplorePage() {
           </div>
         ) : (
           <div className="space-y-1">
-            <div className={`${ROW_GRID} px-0 pb-2 border-b border-stone-200 dark:border-stone-800`}>
+            <div className="flex items-center gap-4 pb-2 border-b border-stone-200 dark:border-stone-800 sm:hidden">
+              <span className="text-[11px] uppercase tracking-wider text-stone-400">Sắp xếp</span>
+              {sortHeader("name", "Tên")}
+              {sortHeader("level", "Cấp độ")}
+              {sortHeader("cards", "Thẻ")}
+            </div>
+            <div className={`${ROW_GRID} hidden pb-2 border-b border-stone-200 dark:border-stone-800`}>
               <div className="pl-8">{sortHeader("name", "Tên")}</div>
-              <div className="hidden sm:block">{sortHeader("level", "Cấp độ")}</div>
+              <div>{sortHeader("level", "Cấp độ")}</div>
               <div className="text-right">{sortHeader("cards", "Thẻ", "justify-end w-full")}</div>
               <span />
             </div>
