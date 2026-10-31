@@ -9,7 +9,6 @@ import { courseToExploreDeck, loadCourseVocabulary, loadSeoul1AExploreDeck } fro
 import type { TopikDeck } from "../../lib/courseVocabulary";
 import { ApiClient } from "../../lib/apiClient";
 import {
-  Layers,
   Search,
   Check,
   Plus,
@@ -17,9 +16,8 @@ import {
   Sparkles,
   Eye,
   Trash2,
-  Clock,
-  Star,
-  ShieldCheck,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
 
 // Điều hướng dùng <a> thay vì next/link vì app build static export.
@@ -36,11 +34,21 @@ const CATEGORIES: { id: string; label: string }[] = [
 const matchCategory = (deck: CuratedDeckItem, id: string) =>
   id === "all" || deck.category === id;
 
+
+type SortKey = "name" | "level" | "cards";
+const LEVEL_ORDER: Record<string, number> = { "Sơ cấp": 0, "Trung cấp": 1, "Cao cấp": 2, "Mọi cấp độ": 3 };
+const deckCardCount = (d: CuratedDeckItem) => d.cardCount ?? d.cards.length;
+// Cột: tên | (cấp độ) | số thẻ | hành động. Cấp độ ẩn ở mobile và hiện dưới tên.
+const ROW_GRID = "grid grid-cols-[minmax(0,1fr)_3.5rem_6.5rem] sm:grid-cols-[minmax(0,1fr)_6rem_4.5rem_6.5rem] items-center gap-3";
+
+const THEME_CATEGORIES = new Set(["food", "conversation", "drama", "hanja", "travel", "work"]);
+
 export default function ExplorePage() {
   const { userDecks, handleDeckImported, handleRemoveDeck } = useApp();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedTopikLevel, setSelectedTopikLevel] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [sort, setSort] = useState<{ key: SortKey; dir: "asc" | "desc" } | null>(null);
   const [addedNotice, setAddedNotice] = useState<string | null>(null);
   const [courseDecks, setCourseDecks] = useState<TopikDeck[]>([]);
   const [seoul1ADeck, setSeoul1ADeck] = useState<CuratedDeckItem | null>(null);
@@ -157,9 +165,102 @@ export default function ExplorePage() {
     );
   }, [exploreDecks, selectedCategory, selectedTopikLevel, searchQuery, topikLevelsByDeck]);
 
+  const sortedDecks = useMemo(() => {
+    if (!sort) return filteredDecks;
+    const sign = sort.dir === "asc" ? 1 : -1;
+    const cmp = (a: CuratedDeckItem, b: CuratedDeckItem) =>
+      sort.key === "name"
+        ? a.title.localeCompare(b.title, "vi")
+        : sort.key === "level"
+          ? (LEVEL_ORDER[a.level] ?? 9) - (LEVEL_ORDER[b.level] ?? 9)
+          : deckCardCount(a) - deckCardCount(b);
+    return [...filteredDecks].sort((a, b) => sign * cmp(a, b));
+  }, [filteredDecks, sort]);
+
+  const toggleSort = (key: SortKey) =>
+    setSort((prev) => (prev?.key === key ? { key, dir: prev.dir === "asc" ? "desc" : "asc" } : { key, dir: "asc" }));
+
+  const groupedDecks = useMemo(() => {
+    if (sort || selectedCategory !== "all" || selectedTopikLevel !== "all" || searchQuery.trim()) {
+      return null;
+    }
+    const themes = filteredDecks.filter((d) => THEME_CATEGORIES.has(d.category));
+    const coursesAndTopik = filteredDecks.filter((d) => !THEME_CATEGORIES.has(d.category));
+    const groups: { label: string; decks: CuratedDeckItem[] }[] = [];
+    if (themes.length > 0) groups.push({ label: "Chủ đề", decks: themes });
+    if (coursesAndTopik.length > 0) groups.push({ label: "Giáo trình & TOPIK", decks: coursesAndTopik });
+    return groups;
+  }, [filteredDecks, sort, selectedCategory, selectedTopikLevel, searchQuery]);
+
+  const rowAction = "inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer justify-self-end";
+
+  const renderDeckRow = (deck: CuratedDeckItem) => {
+    const added = isDeckAdded(deck);
+    return (
+      <li key={deck.id} className={`${ROW_GRID} py-3`}>
+        <a href={deckHref(deck)} className="flex items-center gap-3 min-w-0 group cursor-pointer">
+          <DeckIcon name={deck.iconName} className="w-5 h-5 shrink-0 text-stone-400 group-hover:text-sky-500 transition" />
+          <div className="min-w-0 flex-1">
+            <h3 className="text-sm font-semibold text-stone-900 dark:text-white line-clamp-2 sm:line-clamp-1 group-hover:text-sky-500 transition">
+              {deck.title}
+            </h3>
+            <p className="text-xs text-stone-400 sm:hidden">{deck.level}</p>
+          </div>
+        </a>
+        <span className="hidden sm:block text-xs text-stone-500 dark:text-stone-400 truncate">{deck.level}</span>
+        <span className="text-xs text-stone-500 dark:text-stone-400 tabular-nums text-right">{deckCardCount(deck)}</span>
+
+        {added ? (
+          <div className="flex items-center justify-end gap-1">
+            <a href="/flashcards" className={`${rowAction} text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10`}>
+              <Check className="w-3.5 h-3.5" /> Học
+            </a>
+            <button
+              onClick={() => handleRemoveCurated(deck)}
+              title="Gỡ bộ thẻ khỏi kho thẻ"
+              aria-label="Gỡ bộ thẻ khỏi kho thẻ"
+              className="p-1.5 rounded-lg text-stone-400 hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer shrink-0"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+        ) : deck.id.startsWith("shared-") ? (
+          <a href={deckHref(deck)} className={`${rowAction} text-sky-600 dark:text-sky-400 hover:bg-sky-500/10`}>
+            <Eye className="w-3.5 h-3.5" /> Xem
+          </a>
+        ) : (
+          <button
+            onClick={() => handleAddDeck(deck)}
+            aria-label={`Thêm ${deck.title} vào kho thẻ`}
+            className={`${rowAction} text-sky-600 dark:text-sky-400 hover:bg-sky-500/10`}
+          >
+            <Plus className="w-3.5 h-3.5" /> Thêm
+          </button>
+        )}
+      </li>
+    );
+  };
+
+  const sortHeader = (key: SortKey, label: string, className = "") => {
+    const active = sort?.key === key;
+    const Arrow = sort?.dir === "desc" ? ArrowDown : ArrowUp;
+    return (
+      <button
+        onClick={() => toggleSort(key)}
+        aria-label={`Sắp xếp theo ${label}`}
+        className={`inline-flex items-center gap-1 text-[11px] uppercase tracking-wider font-semibold cursor-pointer transition ${
+          active ? "text-sky-500" : "text-stone-400 hover:text-stone-600 dark:hover:text-stone-300"
+        } ${className}`}
+      >
+        {label}
+        {active && <Arrow className="w-3 h-3" />}
+      </button>
+    );
+  };
+
   return (
     <AppShell>
-      <div className="space-y-6 pb-20 animate-fadeIn">
+      <div className="max-w-3xl mx-auto space-y-5 pb-20 animate-fadeIn">
         {/* Toast thông báo khi thêm thẻ (nằm trên BottomNav ở mobile) */}
         {addedNotice && (
           <div className="fixed bottom-24 lg:bottom-6 left-1/2 -translate-x-1/2 lg:left-auto lg:right-6 lg:translate-x-0 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-emerald-600 text-white shadow-xl shadow-emerald-900/30 font-medium text-xs animate-slideUp whitespace-nowrap">
@@ -171,218 +272,95 @@ export default function ExplorePage() {
           </div>
         )}
 
-        {/* Đầu trang gọn: tiêu đề + tìm kiếm */}
-        <div className="card-duo p-4 sm:p-5 border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/70 space-y-3 shadow-xs">
-          <div className="flex items-center justify-between gap-4">
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <h1 className="text-xl sm:text-2xl font-black text-stone-900 dark:text-white tracking-tight">
-                  Khám phá bộ thẻ
-                </h1>
-                {IS_DEMO_DECKS_ENABLED && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                    Demo
-                  </span>
-                )}
-              </div>
-              <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5 truncate sm:whitespace-normal">
-                Kho bộ thẻ tiếng Hàn chất lượng cao ôn tập cùng thuật toán FSRS.
-              </p>
-            </div>
-
-            <a
-              href="/flashcards"
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white bg-stone-100 dark:bg-stone-800/80 hover:bg-stone-200 dark:hover:bg-stone-700/80 border border-stone-200 dark:border-stone-700 transition cursor-pointer shrink-0"
-            >
-              <BookOpen className="w-4 h-4 text-sky-500" />
-              <span>Kho thẻ của tôi</span>
-            </a>
-          </div>
-
-          <div className="relative w-full">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+        {/* Một hàng duy nhất: tìm kiếm + danh mục */}
+        <div className="flex flex-wrap items-center gap-2 pt-1">
+          <div className="relative basis-full sm:basis-0 flex-1 min-w-0">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Tìm bộ thẻ, chủ đề hoặc tác giả…"
+              placeholder="Tìm bộ thẻ…"
               aria-label="Tìm bộ thẻ"
-              className="w-full text-xs sm:text-sm pl-9 pr-3.5 py-2 rounded-xl bg-stone-50 dark:bg-stone-950/50 border border-stone-200 dark:border-stone-800 text-stone-900 dark:text-stone-100 placeholder:text-stone-400 focus:outline-none focus:border-sky-500 transition"
+              className="w-full h-10 text-sm pl-9 pr-3 rounded-xl bg-transparent border border-stone-200 dark:border-stone-800 text-stone-900 dark:text-stone-100 placeholder:text-stone-400 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition"
             />
           </div>
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            aria-label="Danh mục"
+            className="h-10 text-sm pl-3 pr-2 rounded-xl bg-transparent border border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 cursor-pointer flex-1 sm:flex-none sm:max-w-[220px] [color-scheme:light] dark:[color-scheme:dark]"
+          >
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id} className="bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100">
+                {cat.label} ({cat.count})
+              </option>
+            ))}
+          </select>
+          <select
+            value={selectedTopikLevel}
+            onChange={(e) => setSelectedTopikLevel(e.target.value)}
+            aria-label="Cấp độ TOPIK"
+            className="h-10 text-sm pl-3 pr-2 rounded-xl bg-transparent border border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 cursor-pointer flex-1 sm:flex-none sm:max-w-[140px] [color-scheme:light] dark:[color-scheme:dark]"
+          >
+            <option value="all" className="bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100">Mọi cấp</option>
+            {[1, 2, 3, 4, 5, 6].map((level) => (
+              <option key={level} value={String(level)} className="bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100">TOPIK {level}</option>
+            ))}
+          </select>
         </div>
 
         {exploreDecks.length === 0 ? (
-          <div className="card-duo p-8 text-center space-y-3 max-w-md mx-auto border-dashed border-2 border-stone-300 dark:border-stone-800 bg-stone-50/50 dark:bg-stone-900/30">
-            <div className="w-12 h-12 rounded-2xl bg-sky-500/10 text-sky-500 flex items-center justify-center mx-auto">
-              <Sparkles className="w-6 h-6" />
-            </div>
-            <h3 className="text-base font-bold text-stone-900 dark:text-stone-100">
-              Kho bộ thẻ đang được biên soạn
-            </h3>
-            <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed">
-              Các bộ thẻ chính thức sẽ sớm có mặt. Bạn vẫn có thể tạo và ôn tập flashcard cá nhân.
+          <div className="text-center py-16 space-y-3">
+            <Sparkles className="w-8 h-8 text-stone-300 dark:text-stone-600 mx-auto" />
+            <p className="text-sm text-stone-500 dark:text-stone-400">
+              Kho bộ thẻ đang được biên soạn.
             </p>
-            <div className="pt-1">
-              <a
-                href="/flashcards"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-sky-500 hover:bg-sky-600 text-white shadow-sm shadow-sky-900/20 transition cursor-pointer"
-              >
-                <BookOpen className="w-4 h-4" />
-                Đến kho thẻ của tôi
-              </a>
-            </div>
+            <a href="/flashcards" className="inline-flex items-center gap-1.5 text-sm font-semibold text-sky-500 hover:text-sky-600">
+              <BookOpen className="w-4 h-4" /> Đến kho thẻ của tôi
+            </a>
+          </div>
+        ) : filteredDecks.length === 0 ? (
+          <div className="text-center py-16 space-y-3">
+            <p className="text-sm text-stone-500 dark:text-stone-400">Không tìm thấy bộ thẻ phù hợp.</p>
+            <button
+              onClick={() => {
+                setSelectedCategory("all");
+                setSelectedTopikLevel("all");
+                setSearchQuery("");
+              }}
+              className="text-sm font-semibold text-sky-500 hover:text-sky-600 cursor-pointer"
+            >
+              Xóa bộ lọc
+            </button>
           </div>
         ) : (
-          <>
-            {/* Tách chủ đề và cấp TOPIK thành hai bộ lọc rõ ràng, không lặp lựa chọn. */}
-            <div className="flex flex-wrap items-end gap-3">
-              <label className="min-w-[220px] flex-1 text-[11px] font-bold text-stone-500 dark:text-stone-400">
-                Chủ đề
-                <select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)} className="mt-1 block w-full rounded-xl border border-stone-200 bg-white px-3 py-2.5 text-xs font-semibold text-stone-800 outline-none focus:border-sky-400 dark:border-stone-800 dark:bg-stone-900 dark:text-stone-100">
-                  {categories.map((category) => <option key={category.id} value={category.id}>{category.label} · {category.count}</option>)}
-                </select>
-              </label>
-              <label className="min-w-[180px] flex-1 text-[11px] font-bold text-stone-500 dark:text-stone-400">
-                Cấp độ
-                <select value={selectedTopikLevel} onChange={(event) => setSelectedTopikLevel(event.target.value)} className="mt-1 block w-full rounded-xl border border-stone-200 bg-white px-3 py-2.5 text-xs font-semibold text-stone-800 outline-none focus:border-sky-400 dark:border-stone-800 dark:bg-stone-900 dark:text-stone-100">
-                  <option value="all">Tất cả cấp độ</option>
-                  {[1, 2, 3, 4, 5, 6].map((level) => <option key={level} value={String(level)}>TOPIK {level}</option>)}
-                </select>
-              </label>
-              <p className="pb-2 text-xs font-medium text-stone-500 dark:text-stone-400">{filteredDecks.length} bộ thẻ</p>
+          <div className="space-y-1">
+            <div className={`${ROW_GRID} px-0 pb-2 border-b border-stone-200 dark:border-stone-800`}>
+              <div className="pl-8">{sortHeader("name", "Tên")}</div>
+              <div className="hidden sm:block">{sortHeader("level", "Cấp độ")}</div>
+              <div className="text-right">{sortHeader("cards", "Thẻ", "justify-end w-full")}</div>
+              <span />
             </div>
-
-            {/* Lưới bộ thẻ */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              {filteredDecks.map((deck) => {
-                const added = isDeckAdded(deck);
-                const isShared = deck.id.startsWith("shared-");
-
-                return (
-                  <div
-                    key={deck.id}
-                    className="card-duo p-4 sm:p-5 flex flex-col justify-between border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/70 hover:border-sky-400/50 dark:hover:border-sky-500/50 transition duration-200 shadow-sm"
-                  >
-                    <div className="space-y-2.5">
-                      {/* Icon + tiêu đề + cấp độ */}
-                      <div className="flex items-start justify-between gap-3">
-                        <a href={deckHref(deck)} className="flex items-center gap-3 min-w-0 group cursor-pointer flex-1">
-                          <div className="w-10 h-10 rounded-xl bg-sky-500/10 dark:bg-sky-500/20 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0 border border-sky-500/20">
-                            <DeckIcon name={deck.iconName} className="w-5 h-5" />
-                          </div>
-                          <h3 className="text-base font-bold text-stone-900 dark:text-white leading-snug group-hover:text-sky-500 transition line-clamp-2">
-                            {deck.title}
-                          </h3>
-                        </a>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700/60 shrink-0">
-                          {deck.level}
-                        </span>
-                      </div>
-
-                      <a
-                        href={deckHref(deck)}
-                        className="block text-xs text-stone-500 dark:text-stone-400 line-clamp-2 leading-relaxed hover:text-stone-700 dark:hover:text-stone-300 transition cursor-pointer"
-                      >
-                        {deck.description}
-                      </a>
-
-                      {/* Tác giả */}
-                      <div className="flex items-center gap-1 text-[11px] font-semibold text-stone-600 dark:text-stone-300 min-w-0">
-                        <span className="truncate">{deck.author.name}</span>
-                        {deck.author.verified && (
-                          <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-sky-500" aria-label="Tác giả đã xác minh" />
-                        )}
-                      </div>
-
-                      {/* Meta: số thẻ · thời lượng · đánh giá */}
-                      <div className="flex items-center gap-2 text-[11px] text-stone-400">
-                        <span className="inline-flex items-center gap-1 font-bold text-sky-600 dark:text-sky-400">
-                          <Layers className="w-3.5 h-3.5" />
-                          {deck.cardCount ?? deck.cards.length} thẻ
-                        </span>
-                        <span>•</span>
-                        <span className="inline-flex items-center gap-1">
-                          <Clock className="w-3.5 h-3.5" />
-                          ~{deck.estimatedMinutes} phút
-                        </span>
-                        {deck.rating > 0 && (
-                          <>
-                            <span>•</span>
-                            <span className="inline-flex items-center gap-1 text-amber-500 font-semibold">
-                              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                              {deck.rating.toFixed(1)}
-                            </span>
-                          </>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Một hành động chính */}
-                    <div className="mt-4 pt-3 border-t border-stone-100 dark:border-stone-800/80">
-                      {added ? (
-                        <div className="flex items-center gap-2">
-                          <a
-                            href="/flashcards"
-                            className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/25 transition cursor-pointer"
-                          >
-                            <Check className="w-3.5 h-3.5" />
-                            Học ngay
-                          </a>
-                          <button
-                            onClick={() => handleRemoveCurated(deck)}
-                            title="Gỡ bộ thẻ khỏi kho thẻ"
-                            aria-label="Gỡ bộ thẻ khỏi kho thẻ"
-                            className="p-2 rounded-xl text-stone-400 hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer shrink-0"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      ) : isShared ? (
-                        <a
-                          href={deckHref(deck)}
-                          className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-bold bg-sky-500 hover:bg-sky-600 text-white shadow-sm shadow-sky-900/20 transition cursor-pointer"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                          Xem & thêm
-                        </a>
-                      ) : (
-                        <button
-                          onClick={() => handleAddDeck(deck)}
-                          className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-bold bg-sky-500 hover:bg-sky-600 text-white shadow-sm shadow-sky-900/20 transition cursor-pointer"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                          Thêm vào kho thẻ
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {filteredDecks.length === 0 && (
-              <div className="text-center py-14 space-y-3">
-                <Layers className="w-10 h-10 text-stone-300 dark:text-stone-600 mx-auto" />
-                <h3 className="text-base font-bold text-stone-700 dark:text-stone-300">
-                  Không tìm thấy bộ thẻ phù hợp
-                </h3>
-                <p className="text-xs text-stone-400 max-w-sm mx-auto">
-                  Thử tìm kiếm với từ khóa khác hoặc chuyển sang danh mục khác.
-                </p>
-                <button
-                  onClick={() => {
-                    setSelectedCategory("all");
-                    setSearchQuery("");
-                  }}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-sky-500 hover:bg-sky-600 text-white transition cursor-pointer"
-                >
-                  Xóa bộ lọc
-                </button>
+            {groupedDecks ? (
+          <div className="space-y-6">
+            {groupedDecks.map((group) => (
+              <div key={group.label} className="space-y-1">
+                <h2 className="text-[11px] uppercase tracking-wider text-stone-400 font-semibold px-0.5">
+                  {group.label}
+                </h2>
+                <ul className="divide-y divide-stone-200/70 dark:divide-stone-800/70">
+                  {group.decks.map((deck) => renderDeckRow(deck))}
+                </ul>
               </div>
+            ))}
+          </div>
+        ) : (
+          <ul className="divide-y divide-stone-200/70 dark:divide-stone-800/70">
+            {sortedDecks.map((deck) => renderDeckRow(deck))}
+          </ul>
             )}
-          </>
+          </div>
         )}
       </div>
     </AppShell>
