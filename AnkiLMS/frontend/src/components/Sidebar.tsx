@@ -36,6 +36,7 @@ import {
   X,
   Menu,
   Users,
+  ClipboardCheck,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -51,6 +52,7 @@ const mainNav = [
   { href: "/", label: "Trang chủ", icon: Home },
   { href: "/classes", label: "Lớp học", icon: Users, feature: "classes" },
   { href: "/explore", label: "Khám phá", icon: Layers, badge: "MỚI", feature: "explore" },
+  { href: "/placement-test", label: "Kiểm tra đầu vào", icon: ClipboardCheck, feature: "placementTest" },
   { href: "/flashcards", label: "Từ vựng", icon: Brain, feature: "flashcards" },
   { href: "/dictionary", label: "Tra từ điển", icon: Search, feature: "dictionary" },
   { href: "/dictation", label: "Luyện nghe chính tả", icon: Headphones, feature: "dictation" },
