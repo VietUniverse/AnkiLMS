@@ -8,7 +8,7 @@ export type DictionaryEntry = {
   japanese: string;
   partOfSpeech: string;
   level: string;
-  source: "nikl" | "yomichan" | "topic-pdf" | "course-vocabulary";
+  source: "nikl" | "yomichan" | "topic-pdf" | "course-vocabulary" | "admin";
   topic?: string;
   romanization?: string;
   hanja?: string;
@@ -89,7 +89,36 @@ async function loadEntries(): Promise<PackedEntry[]> {
           }
         }
       }
-      return base;
+      // Admin edits are kept in D1 as a small overlay over the published base
+      // dictionary. This avoids rebuilding or re-downloading the large corpus.
+      const overridesResponse = await fetch("/api/dictionary/overrides", { cache: "no-store" }).catch(() => null);
+      const overrides = overridesResponse?.ok
+        ? await overridesResponse.json().then((data) => Array.isArray(data.entries) ? data.entries as Array<Record<string, unknown>> : []).catch(() => [])
+        : [];
+      for (const item of overrides) {
+        const hangul = typeof item.hangul === "string" ? item.hangul : "";
+        if (!hangul) continue;
+        if (Number(item.isDeleted) === 1 || item.isDeleted === true) {
+          byHeadword.delete(hangul);
+          continue;
+        }
+        const override: PackedEntry = [
+          hangul,
+          typeof item.english === "string" ? item.english : "",
+          typeof item.vietnamese === "string" ? item.vietnamese : "",
+          typeof item.japanese === "string" ? item.japanese : "",
+          typeof item.partOfSpeech === "string" ? item.partOfSpeech : "",
+          "",
+          typeof item.topic === "string" ? item.topic : "",
+          "admin",
+          undefined,
+          undefined,
+          undefined,
+          typeof item.topik === "string" ? item.topik : "",
+        ];
+        byHeadword.set(hangul, override);
+      }
+      return [...byHeadword.values()];
     })
     .catch((error) => { entriesPromise = null; throw error; });
   return entriesPromise;
@@ -237,7 +266,7 @@ export async function searchLearningDictionary(query: string, limit = 30, signal
     const entry = {
       hangul: row[0], english: row[1], vietnamese: row[2], japanese: row[3],
       partOfSpeech: row[4], level: row[5],
-      source: (row[7]?.includes("course-vocabulary") ? "course-vocabulary" : row[7]?.includes("topic-pdf") || row[7]?.includes("user-pdf") ? "topic-pdf" : "nikl") as DictionaryEntry["source"],
+      source: (row[7]?.includes("admin") ? "admin" : row[7]?.includes("course-vocabulary") ? "course-vocabulary" : row[7]?.includes("topic-pdf") || row[7]?.includes("user-pdf") ? "topic-pdf" : "nikl") as DictionaryEntry["source"],
       topic: row[6] || undefined,
       romanization,
       hanja: row[9] || undefined,
@@ -262,7 +291,7 @@ export async function browseLearningDictionary(level: DictionaryLevel, language:
     result.push({
       hangul: row[0], english: row[1], vietnamese: row[2], japanese: row[3],
       partOfSpeech: row[4], level: row[5],
-      source: row[7]?.includes("course-vocabulary") ? "course-vocabulary" : row[7]?.includes("topic-pdf") || row[7]?.includes("user-pdf") ? "topic-pdf" : "nikl",
+      source: row[7]?.includes("admin") ? "admin" : row[7]?.includes("course-vocabulary") ? "course-vocabulary" : row[7]?.includes("topic-pdf") || row[7]?.includes("user-pdf") ? "topic-pdf" : "nikl",
       topic: row[6] || undefined,
       romanization: romanizeKorean(row[0]),
       hanja: row[9] || undefined,
