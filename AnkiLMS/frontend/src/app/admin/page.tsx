@@ -598,18 +598,598 @@ export default function AdminPage() {
             </section>
           )}
 
-          {panel === "vocabularyDecks" && <div className="space-y-5"><ExploreDeckManager request={adminFetch} onError={setError} /><div className="grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
-            <section className="card-duo space-y-4 p-5">
-              <div><div className="flex flex-wrap items-center justify-between gap-2"><h2 className="font-bold text-white">{editingContentDeck ? "Cập nhật bộ từ Explore" : "Tạo bộ thẻ từ kho từ vựng"}</h2>{editingContentDeck && <button type="button" onClick={() => { setEditingContentDeck(""); setBuilderWords([]); setBuilderForm({ title: "", description: "", visibility: "public" }); }} className="rounded-lg border border-slate-700 px-3 py-2 text-xs font-bold text-slate-300">Tạo bộ mới</button>}</div><p className="mt-1 text-xs leading-5 text-slate-400">Tìm từ trong kho từ điển của web, chọn kết quả, sửa nghĩa nếu cần rồi lưu thành bộ thẻ trên máy chủ. Bộ công khai sẽ hiện trong Khám phá.</p></div>
-              <label className="block text-xs font-bold text-slate-300">Tìm bằng Hangul hoặc nghĩa tiếng Việt / Anh / Nhật<div className="mt-1.5 flex gap-2"><span className="flex min-w-[180px] flex-1 items-center gap-2 rounded-xl border border-slate-700 bg-slate-950 px-3"><Search className="h-4 w-4 text-slate-500"/><input value={dictionaryQuery} onChange={(event) => setDictionaryQuery(event.target.value)} placeholder="사랑, tình yêu, love" className="w-full bg-transparent py-3 text-sm text-white outline-none" /></span><select value={builderTopik} onChange={(event) => setBuilderTopik(event.target.value)} className="rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-xs text-white"><option value="all">Mọi cấp</option>{[1, 2, 3, 4, 5, 6].map((level) => <option key={level} value={`TOPIK ${level}`}>TOPIK {level}</option>)}</select></div></label>
-              <div className="max-h-72 divide-y divide-slate-800 overflow-y-auto rounded-xl border border-slate-800 bg-slate-950/60">{dictionaryLoading && <p className="p-4 text-xs text-slate-400">Đang tìm…</p>}{!dictionaryLoading && dictionaryQuery.trim() && dictionaryResults.length === 0 && <p className="p-4 text-xs text-slate-500">Không thấy kết quả phù hợp.</p>}{dictionaryResults.map((entry) => { const added = builderWords.some((word) => word.hangul === entry.hangul); return <article key={`${entry.hangul}:${entry.vietnamese}`} className="flex items-center justify-between gap-3 p-3"><div className="min-w-0"><p className="truncate font-noto text-sm font-bold text-white">{entry.hangul}<span className="ml-2 font-sans text-[10px] font-medium text-sky-300">{entry.topik || entry.level || "Chưa gán cấp"}</span></p><p className="mt-1 truncate text-xs text-slate-300">{entry.vietnamese || entry.english || entry.japanese || "Chưa có nghĩa"}</p>{entry.topic && <p className="mt-1 truncate text-[10px] text-slate-500">{entry.topic}</p>}</div><button type="button" disabled={added || builderWords.length >= 2000} onClick={() => addDictionaryWord(entry)} className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-sky-700/50 px-3 py-2 text-xs font-bold text-sky-300 disabled:opacity-50">{added ? <><Check className="h-3.5 w-3.5"/>Đã chọn</> : <><Plus className="h-3.5 w-3.5"/>Thêm</>}</button></article>; })}{!dictionaryQuery.trim() && <p className="p-4 text-xs text-slate-500">Nhập từ khóa để tìm và chọn từ.</p>}</div>
-              <form onSubmit={saveContentDeck} className="space-y-3 border-t border-slate-800 pt-4"><div className="grid gap-3 sm:grid-cols-2"><label className="text-xs font-bold text-slate-300">Tên bộ thẻ<input required minLength={2} maxLength={120} value={builderForm.title} onChange={(event) => setBuilderForm({ ...builderForm, title: event.target.value })} className="mt-1.5 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white" /></label><label className="text-xs font-bold text-slate-300">Quyền<select value={builderForm.visibility} onChange={(event) => setBuilderForm({ ...builderForm, visibility: event.target.value as "public" | "private" })} className="mt-1.5 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white"><option value="public">Công khai trên Explore</option><option value="private">Riêng tư</option></select></label></div><label className="block text-xs font-bold text-slate-300">Mô tả<textarea maxLength={1000} rows={2} value={builderForm.description} onChange={(event) => setBuilderForm({ ...builderForm, description: event.target.value })} className="mt-1.5 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white" /></label><div className="flex flex-wrap items-center justify-between gap-2"><span className="text-xs text-slate-400">{builderWords.length} từ đã chọn · tối đa 2.000</span><button disabled={busy === "save-content-deck" || !builderWords.length} className="btn-duo btn-duo-primary inline-flex items-center gap-2 px-5 py-3 text-xs disabled:opacity-50">{busy === "save-content-deck" ? <Loader2 className="h-4 w-4 animate-spin"/> : <Save className="h-4 w-4"/>}{editingContentDeck ? "Lưu cập nhật" : "Tạo bộ thẻ"}</button></div></form>
-            </section>
-            <section className="card-duo overflow-hidden"><div className="border-b border-slate-700 p-4"><h2 className="font-bold text-white">Từ trong bộ đang soạn ({builderWords.length})</h2><p className="mt-1 text-xs text-slate-500">Có thể chỉnh nghĩa hoặc bỏ từ trước khi lưu.</p></div><div className="max-h-[34rem] divide-y divide-slate-800 overflow-y-auto">{builderWords.map((word, index) => <article key={`${word.hangul}:${index}`} className="grid grid-cols-[minmax(0,1fr)_auto] gap-2 p-3"><div className="min-w-0"><p className="font-noto text-sm font-bold text-white">{word.hangul}<span className="ml-2 font-sans text-[10px] text-slate-500">{word.topik || word.level || ""}</span></p><input aria-label={`Nghĩa tiếng Việt cho ${word.hangul}`} value={word.vietnamese} onChange={(event) => setBuilderWords((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, vietnamese: event.target.value } : item))} placeholder={word.english || "Nhập nghĩa tiếng Việt"} className="mt-1 w-full rounded-lg border border-slate-800 bg-slate-950 px-2.5 py-2 text-xs text-white outline-none focus:border-sky-500" />{word.topic && <p className="mt-1 truncate text-[10px] text-slate-500">{word.topic}</p>}</div><button type="button" aria-label={`Bỏ ${word.hangul}`} onClick={() => setBuilderWords((current) => current.filter((_, itemIndex) => itemIndex !== index))} className="self-start rounded-lg border border-rose-900/40 p-2 text-rose-300"><X className="h-4 w-4"/></button></article>)}{!builderWords.length && <p className="p-5 text-sm text-slate-500">Chưa chọn từ nào.</p>}</div></section>
-            <section className="card-duo overflow-hidden xl:col-span-2"><div className="border-b border-slate-700 p-4"><h2 className="font-bold text-white">Bộ thẻ do admin quản lý ({contentDecks.length})</h2><p className="mt-1 text-xs text-slate-500">Sửa nội dung hoặc quyền truy cập; gỡ bộ sẽ xóa dữ liệu trên máy chủ.</p></div><div className="divide-y divide-slate-800">{contentDecksLoading && <p className="p-4 text-sm text-slate-400">Đang tải…</p>}{contentDecks.map((deck) => <article key={deck.sharedId} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"><div className="min-w-0"><h3 className="truncate font-bold text-white">{deck.title}</h3><p className="mt-1 line-clamp-2 text-xs text-slate-400">{deck.description || "Chưa có mô tả"}</p><p className="mt-1 text-[10px] text-slate-500">{deck.cardCount} thẻ · {deck.visibility === "public" ? <span className="text-emerald-300">Công khai</span> : <span className="text-amber-300">Riêng tư</span>} · {String(deck.updatedAt).slice(0, 10)}</p></div><div className="flex shrink-0 gap-2"><button disabled={busy === `load:${deck.sharedId}`} onClick={() => void editContentDeck(deck)} className="inline-flex items-center gap-1 rounded-lg border border-sky-700/50 px-3 py-2 text-xs font-bold text-sky-300"><Pencil className="h-3.5 w-3.5"/>Sửa</button><button disabled={busy === `delete:${deck.sharedId}`} onClick={() => void deleteContentDeck(deck)} className="inline-flex items-center gap-1 rounded-lg border border-rose-700/50 px-3 py-2 text-xs text-rose-300"><Trash2 className="h-3.5 w-3.5"/>Gỡ</button></div></article>)}{!contentDecksLoading && !contentDecks.length && <p className="p-5 text-sm text-slate-500">Chưa có bộ thẻ Explore do admin tạo.</p>}</div></section>
-          </div></div>}
-          {panel === "lessons" && <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]"><form onSubmit={createLesson} className="card-duo space-y-4 p-5"><div><h2 className="font-bold text-white">{editingLessonId ? "Sửa bài học" : "Thêm bài học dùng chung"}</h2><p className="mt-1 text-xs leading-5 text-slate-400">Mỗi dòng là một câu tiếng Hàn. Bản dịch cùng thứ tự; có thể để trống. Nội dung xuất hiện trong thư viện học của học viên.</p></div><label className="block text-xs font-bold text-slate-300">Tên bài<input required maxLength={160} value={lessonForm.title} onChange={(event) => setLessonForm({ ...lessonForm, title: event.target.value })} className="mt-1.5 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white" /></label><div className="grid grid-cols-2 gap-3"><label className="text-xs font-bold text-slate-300">Loại<select value={lessonForm.lessonType} onChange={(event) => setLessonForm({ ...lessonForm, lessonType: event.target.value })} className="mt-1.5 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 text-xs text-white"><option value="both">Dictation + Shadowing</option><option value="dictation">Dictation</option><option value="shadowing">Shadowing</option></select></label><label className="text-xs font-bold text-slate-300">Cấp độ<input value={lessonForm.level} onChange={(event) => setLessonForm({ ...lessonForm, level: event.target.value })} className="mt-1.5 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 text-xs text-white" /></label></div><label className="block text-xs font-bold text-slate-300">Mô tả<textarea rows={2} value={lessonForm.description} onChange={(event) => setLessonForm({ ...lessonForm, description: event.target.value })} className="mt-1.5 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white" /></label><label className="block text-xs font-bold text-slate-300">Câu tiếng Hàn · mỗi câu một dòng<textarea required rows={7} value={lessonForm.koreanText} onChange={(event) => setLessonForm({ ...lessonForm, koreanText: event.target.value })} className="mt-1.5 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 font-noto text-sm text-white" /></label><label className="block text-xs font-bold text-slate-300">Dịch tiếng Việt · cùng thứ tự<textarea rows={5} value={lessonForm.vietnameseText} onChange={(event) => setLessonForm({ ...lessonForm, vietnameseText: event.target.value })} className="mt-1.5 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white" /></label><label className="block text-xs font-bold text-slate-300">Link nguồn (không bắt buộc)<input type="url" value={lessonForm.sourceUrl} onChange={(event) => setLessonForm({ ...lessonForm, sourceUrl: event.target.value })} className="mt-1.5 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white" /></label><button disabled={busy === "new-lesson"} className="btn-duo btn-duo-primary w-full px-4 py-3 text-xs disabled:opacity-50">{busy === "new-lesson" ? "Đang lưu…" : editingLessonId ? "Lưu thay đổi" : "Tạo và phát hành bài học"}</button></form>
-            <section className="card-duo overflow-hidden"><div className="border-b border-slate-700 p-4"><h2 className="font-bold text-white">Thư viện bài do quản trị viên thêm ({lessons.length})</h2><p className="mt-1 text-xs text-slate-500">Bài xóa sẽ biến mất khỏi thư viện học viên.</p></div><div className="divide-y divide-slate-800">{lessons.map((lesson) => <article key={lesson.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-start sm:justify-between"><div className="min-w-0"><div className="flex flex-wrap gap-2"><span className="rounded-full bg-sky-500/10 px-2 py-1 text-[10px] font-bold text-sky-300">{lesson.lessonType}</span><span className="rounded-full bg-violet-500/10 px-2 py-1 text-[10px] font-bold text-violet-300">{lesson.level}</span></div><h3 className="mt-2 font-bold text-white">{lesson.title}</h3>{lesson.description && <p className="mt-1 text-xs text-slate-400">{lesson.description}</p>}<p className="mt-2 line-clamp-2 whitespace-pre-line font-noto text-xs text-slate-400">{lesson.koreanText}</p><p className="mt-1 text-[10px] text-slate-600">{lesson.koreanText.split(/\r?\n/).filter(Boolean).length} câu · {String(lesson.createdAt).slice(0, 10)}</p></div><button onClick={() => { setEditingLessonId(lesson.id); setLessonForm({ title: lesson.title, lessonType: lesson.lessonType, level: lesson.level, description: lesson.description, koreanText: lesson.koreanText, vietnameseText: lesson.vietnameseText, sourceUrl: lesson.sourceUrl }); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="rounded-lg border border-slate-700 px-3 py-2 text-xs text-slate-300">Sửa</button><button disabled={busy === lesson.id} onClick={() => deleteLesson(lesson)} className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-rose-700/50 px-3 py-2 text-xs text-rose-300 hover:bg-rose-950/40 disabled:opacity-50"><Trash2 className="h-4 w-4"/>Xóa bài</button></article>)}{lessons.length === 0 && <p className="p-5 text-sm text-slate-400">Chưa có bài do quản trị viên tạo.</p>}</div></section><details className="card-duo overflow-hidden group"><summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 [&::-webkit-details-marker]:hidden"><div><div className="flex flex-wrap items-center gap-2"><h2 className="font-bold text-white">Kho bài học có sẵn</h2><span className="rounded-full bg-slate-800 px-2.5 py-1 text-[10px] font-bold text-slate-300">{BUILTIN_LESSONS.length} bài</span><span className="rounded-full bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold text-emerald-300">{BUILTIN_LESSONS.length - hiddenLessonIds.length} đang hiện</span></div><p className="mt-1 text-xs text-slate-500">Tìm bài, lọc theo cấp độ, rồi ẩn hoặc khôi phục khỏi thư viện học viên.</p></div><span className="rounded-lg border border-slate-700 px-3 py-2 text-xs font-bold text-sky-300 group-open:hidden">Mở kho bài</span><span className="hidden rounded-lg border border-slate-700 px-3 py-2 text-xs font-bold text-slate-300 group-open:inline">Thu gọn</span></summary><div className="border-t border-slate-800"><div className="sticky top-0 z-10 flex flex-wrap gap-2 border-b border-slate-800 bg-slate-950/95 p-3 backdrop-blur"><label className="flex min-w-[200px] flex-1 items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-3"><Search className="h-4 w-4 text-slate-500"/><input value={builtInQuery} onChange={(event) => { setBuiltInQuery(event.target.value); setShowAllBuiltIns(false); }} placeholder="Tìm tên bài học…" className="w-full bg-transparent py-2 text-xs text-white outline-none" /></label><select value={builtInLevel} onChange={(event) => { setBuiltInLevel(event.target.value); setShowAllBuiltIns(false); }} className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-white"><option value="all">Mọi cấp độ</option>{Array.from(new Set(BUILTIN_LESSONS.map((lesson) => lesson.level))).map((level) => <option key={level} value={level}>{level}</option>)}</select><select value={builtInVisibility} onChange={(event) => setBuiltInVisibility(event.target.value)} className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-white"><option value="all">Hiện cả bài ẩn</option><option value="visible">Chỉ bài đang hiện</option><option value="hidden">Chỉ bài đang ẩn</option></select></div><div className="divide-y divide-slate-800">{(() => { const normalizedQuery = builtInQuery.trim().toLocaleLowerCase("vi"); const filtered = BUILTIN_LESSONS.filter((lesson) => { const hidden = hiddenLessonIds.includes(lesson.id); const searchMatches = !normalizedQuery || lesson.title.toLocaleLowerCase("vi").includes(normalizedQuery); const levelMatches = builtInLevel === "all" || lesson.level === builtInLevel; const visibilityMatches = builtInVisibility === "hidden" ? hidden : builtInVisibility === "visible" ? !hidden : true; return searchMatches && levelMatches && visibilityMatches; }); const shown = showAllBuiltIns ? filtered : filtered.slice(0, 12); return <>{shown.map((lesson) => { const hidden = hiddenLessonIds.includes(lesson.id); return <article key={lesson.id} className="flex flex-col gap-3 p-4 transition hover:bg-slate-900/40 sm:flex-row sm:items-center sm:justify-between"><div className="min-w-0"><h3 className={`truncate text-sm font-bold ${hidden ? "text-slate-500" : "text-white"}`}>{lesson.title}</h3><div className="mt-1.5 flex flex-wrap items-center gap-2 text-[10px] text-slate-500"><span className="rounded bg-slate-800 px-2 py-1">{lesson.level}</span><span>{lesson.lessonType}</span><span>{lesson.count} câu</span><span className={`rounded px-2 py-1 font-bold ${hidden ? "bg-amber-500/10 text-amber-300" : "bg-emerald-500/10 text-emerald-300"}`}>{hidden ? "Đang ẩn" : "Đang hiển thị"}</span></div></div><button disabled={busy === lesson.id} onClick={() => void action(lesson.id, () => adminFetch("/api/admin/lessons", { method: "PATCH", body: JSON.stringify({ id: lesson.id, visibilityOnly: true, isPublished: hidden }) }))} className={`shrink-0 rounded-lg border px-3 py-2 text-xs font-bold ${hidden ? "border-emerald-700/50 text-emerald-300 hover:bg-emerald-950/30" : "border-slate-700 text-slate-300 hover:border-amber-500/50 hover:text-amber-200"}`}>{hidden ? "Khôi phục bài" : "Ẩn khỏi học viên"}</button></article>; })}{filtered.length === 0 && <p className="p-6 text-center text-sm text-slate-500">Không tìm thấy bài học phù hợp.</p>}{filtered.length > 12 && <div className="p-3 text-center"><button onClick={() => setShowAllBuiltIns((value) => !value)} className="rounded-lg border border-slate-700 px-4 py-2 text-xs font-bold text-sky-300">{showAllBuiltIns ? "Thu gọn danh sách" : `Xem thêm ${filtered.length - shown.length} bài`}</button></div>}</>; })()}</div></div></details></div>}
+          {panel === "vocabularyDecks" && (
+            <div className="space-y-6">
+              <ExploreDeckManager request={adminFetch} onError={setError} />
+              <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+                <section className="card-duo rounded-2xl space-y-4 p-5 sm:p-6">
+                  <div>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <h2 className="text-base font-bold text-stone-900 dark:text-white">
+                        {editingContentDeck ? "Cập nhật bộ từ Explore" : "Tạo bộ thẻ từ kho từ vựng"}
+                      </h2>
+                      {editingContentDeck && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingContentDeck("");
+                            setBuilderWords([]);
+                            setBuilderForm({ title: "", description: "", visibility: "public" });
+                          }}
+                          className={`${ghostBtnCls} h-8 px-3 text-xs`}
+                        >
+                          Tạo bộ mới
+                        </button>
+                      )}
+                    </div>
+                    <p className="mt-1 text-xs leading-5 text-stone-500 dark:text-slate-400">
+                      Tìm từ trong kho từ điển của web, chọn kết quả, sửa nghĩa nếu cần rồi lưu thành bộ thẻ trên máy chủ. Bộ công khai sẽ hiện trong Khám phá.
+                    </p>
+                  </div>
+
+                  <label className={labelCls}>
+                    Tìm bằng Hangul hoặc nghĩa tiếng Việt / Anh / Nhật
+                    <div className="mt-1.5 flex gap-2">
+                      <span className="flex min-w-[180px] flex-1 items-center gap-2 rounded-xl border border-stone-200 dark:border-transparent bg-white dark:bg-[#132247] px-3.5 shadow-inner">
+                        <Search className="h-4 w-4 text-stone-400 dark:text-slate-500" />
+                        <input
+                          value={dictionaryQuery}
+                          onChange={(event) => setDictionaryQuery(event.target.value)}
+                          placeholder="사랑, tình yêu, love"
+                          className="w-full bg-transparent py-2.5 text-xs text-stone-900 dark:text-white placeholder:text-stone-400 dark:placeholder:text-slate-400 outline-none"
+                        />
+                      </span>
+                      <select
+                        value={builderTopik}
+                        onChange={(event) => setBuilderTopik(event.target.value)}
+                        className={selectCls}
+                      >
+                        <option value="all">Mọi cấp</option>
+                        {[1, 2, 3, 4, 5, 6].map((level) => (
+                          <option key={level} value={`TOPIK ${level}`}>
+                            TOPIK {level}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </label>
+
+                  <div className="max-h-72 divide-y divide-stone-200 dark:divide-slate-800 overflow-y-auto rounded-xl border border-stone-200 dark:border-slate-800 bg-stone-50/50 dark:bg-slate-950/60">
+                    {dictionaryLoading && <p className="p-4 text-xs text-stone-500 dark:text-slate-400">Đang tìm…</p>}
+                    {!dictionaryLoading && dictionaryQuery.trim() && dictionaryResults.length === 0 && (
+                      <p className="p-4 text-xs text-stone-400 dark:text-slate-500">Không thấy kết quả phù hợp.</p>
+                    )}
+                    {dictionaryResults.map((entry) => {
+                      const added = builderWords.some((word) => word.hangul === entry.hangul);
+                      return (
+                        <article
+                          key={`${entry.hangul}:${entry.vietnamese}`}
+                          className="flex items-center justify-between gap-3 p-3 transition hover:bg-stone-100/60 dark:hover:bg-slate-900/40"
+                        >
+                          <div className="min-w-0">
+                            <p className="truncate font-noto text-sm font-bold text-stone-900 dark:text-white">
+                              {entry.hangul}
+                              <span className="ml-2 font-sans text-[10px] font-bold text-blue-600 dark:text-sky-300">
+                                {entry.topik || entry.level || "Chưa gán cấp"}
+                              </span>
+                            </p>
+                            <p className="mt-1 truncate text-xs text-stone-600 dark:text-slate-300">
+                              {entry.vietnamese || entry.english || entry.japanese || "Chưa có nghĩa"}
+                            </p>
+                            {entry.topic && (
+                              <p className="mt-1 truncate text-[10px] text-stone-400 dark:text-slate-500">{entry.topic}</p>
+                            )}
+                          </div>
+                          <button
+                            type="button"
+                            disabled={added || builderWords.length >= 2000}
+                            onClick={() => addDictionaryWord(entry)}
+                            className="inline-flex shrink-0 items-center gap-1 rounded-xl border border-blue-500/50 dark:border-sky-700/50 px-3 py-1.5 text-xs font-bold text-blue-600 dark:text-sky-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 disabled:opacity-50 transition-colors"
+                          >
+                            {added ? (
+                              <>
+                                <Check className="h-3.5 w-3.5" />
+                                Đã chọn
+                              </>
+                            ) : (
+                              <>
+                                <Plus className="h-3.5 w-3.5" />
+                                Thêm
+                              </>
+                            )}
+                          </button>
+                        </article>
+                      );
+                    })}
+                    {!dictionaryQuery.trim() && (
+                      <p className="p-4 text-xs text-stone-400 dark:text-slate-500">Nhập từ khóa để tìm và chọn từ.</p>
+                    )}
+                  </div>
+
+                  <form onSubmit={saveContentDeck} className="space-y-3 border-t border-stone-200 dark:border-slate-800 pt-4">
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <label className={labelCls}>
+                        Tên bộ thẻ
+                        <input
+                          required
+                          minLength={2}
+                          maxLength={120}
+                          value={builderForm.title}
+                          onChange={(event) => setBuilderForm({ ...builderForm, title: event.target.value })}
+                          className={`mt-1.5 ${fieldCls}`}
+                        />
+                      </label>
+                      <label className={labelCls}>
+                        Quyền
+                        <select
+                          value={builderForm.visibility}
+                          onChange={(event) =>
+                            setBuilderForm({ ...builderForm, visibility: event.target.value as "public" | "private" })
+                          }
+                          className={`mt-1.5 ${fieldCls}`}
+                        >
+                          <option value="public">Công khai trên Explore</option>
+                          <option value="private">Riêng tư</option>
+                        </select>
+                      </label>
+                    </div>
+                    <label className={labelCls}>
+                      Mô tả
+                      <textarea
+                        maxLength={1000}
+                        rows={2}
+                        value={builderForm.description}
+                        onChange={(event) => setBuilderForm({ ...builderForm, description: event.target.value })}
+                        className={`mt-1.5 ${fieldCls}`}
+                      />
+                    </label>
+                    <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                      <span className="text-xs text-stone-500 dark:text-slate-400">
+                        {builderWords.length} từ đã chọn · tối đa 2.000
+                      </span>
+                      <button
+                        disabled={busy === "save-content-deck" || !builderWords.length}
+                        className="btn-duo btn-duo-primary inline-flex items-center gap-2 px-5 py-3 text-xs font-bold disabled:opacity-50"
+                      >
+                        {busy === "save-content-deck" ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Save className="h-4 w-4" />
+                        )}
+                        {editingContentDeck ? "Lưu cập nhật" : "Tạo bộ thẻ"}
+                      </button>
+                    </div>
+                  </form>
+                </section>
+
+                <section className="card-duo rounded-2xl overflow-hidden">
+                  <div className="border-b border-stone-200 dark:border-slate-800 p-4 sm:p-5">
+                    <h2 className="text-base font-bold text-stone-900 dark:text-white">
+                      Từ trong bộ đang soạn ({builderWords.length})
+                    </h2>
+                    <p className="mt-1 text-xs text-stone-500 dark:text-slate-400">
+                      Có thể chỉnh nghĩa hoặc bỏ từ trước khi lưu.
+                    </p>
+                  </div>
+                  <div className="max-h-[34rem] divide-y divide-stone-200 dark:divide-slate-800 overflow-y-auto">
+                    {builderWords.map((word, index) => (
+                      <article key={`${word.hangul}:${index}`} className="grid grid-cols-[minmax(0,1fr)_auto] gap-2 p-3">
+                        <div className="min-w-0">
+                          <p className="font-noto text-sm font-bold text-stone-900 dark:text-white">
+                            {word.hangul}
+                            <span className="ml-2 font-sans text-[10px] text-stone-400 dark:text-slate-500">
+                              {word.topik || word.level || ""}
+                            </span>
+                          </p>
+                          <input
+                            aria-label={`Nghĩa tiếng Việt cho ${word.hangul}`}
+                            value={word.vietnamese}
+                            onChange={(event) =>
+                              setBuilderWords((current) =>
+                                current.map((item, itemIndex) =>
+                                  itemIndex === index ? { ...item, vietnamese: event.target.value } : item
+                                )
+                              )
+                            }
+                            placeholder={word.english || "Nhập nghĩa tiếng Việt"}
+                            className={`mt-1 ${fieldCls}`}
+                          />
+                          {word.topic && (
+                            <p className="mt-1 truncate text-[10px] text-stone-400 dark:text-slate-500">{word.topic}</p>
+                          )}
+                        </div>
+                        <button
+                          type="button"
+                          aria-label={`Bỏ ${word.hangul}`}
+                          onClick={() => setBuilderWords((current) => current.filter((_, itemIndex) => itemIndex !== index))}
+                          className="self-start rounded-xl border border-rose-300 dark:border-rose-900/40 bg-rose-50/50 hover:bg-rose-100 dark:bg-transparent dark:hover:bg-rose-950/40 p-2 text-rose-600 dark:text-rose-300 transition-colors"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </article>
+                    ))}
+                    {!builderWords.length && (
+                      <p className="p-5 text-sm text-stone-400 dark:text-slate-500">Chưa chọn từ nào.</p>
+                    )}
+                  </div>
+                </section>
+
+                <section className="card-duo rounded-2xl overflow-hidden xl:col-span-2">
+                  <div className="border-b border-stone-200 dark:border-slate-800 p-4 sm:p-5">
+                    <h2 className="text-base font-bold text-stone-900 dark:text-white">
+                      Bộ thẻ do admin quản lý ({contentDecks.length})
+                    </h2>
+                    <p className="mt-1 text-xs text-stone-500 dark:text-slate-400">
+                      Sửa nội dung hoặc quyền truy cập; gỡ bộ sẽ xóa dữ liệu trên máy chủ.
+                    </p>
+                  </div>
+                  <div className="divide-y divide-stone-200 dark:divide-slate-800">
+                    {contentDecksLoading && <p className="p-4 text-sm text-stone-500 dark:text-slate-400">Đang tải…</p>}
+                    {contentDecks.map((deck) => (
+                      <article
+                        key={deck.sharedId}
+                        className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between transition hover:bg-stone-50 dark:hover:bg-slate-900/40"
+                      >
+                        <div className="min-w-0">
+                          <h3 className="truncate font-bold text-stone-900 dark:text-white">{deck.title}</h3>
+                          <p className="mt-1 line-clamp-2 text-xs text-stone-500 dark:text-slate-400">
+                            {deck.description || "Chưa có mô tả"}
+                          </p>
+                          <p className="mt-1 text-[11px] text-stone-400 dark:text-slate-500">
+                            {deck.cardCount} thẻ ·{" "}
+                            {deck.visibility === "public" ? (
+                              <span className="font-bold text-emerald-600 dark:text-emerald-300">Công khai</span>
+                            ) : (
+                              <span className="font-bold text-amber-600 dark:text-amber-300">Riêng tư</span>
+                            )}{" "}
+                            · {String(deck.updatedAt).slice(0, 10)}
+                          </p>
+                        </div>
+                        <div className="flex shrink-0 gap-2">
+                          <button
+                            disabled={busy === `load:${deck.sharedId}`}
+                            onClick={() => void editContentDeck(deck)}
+                            className={`${ghostBtnCls} h-8 px-3 text-xs`}
+                          >
+                            <Pencil className="h-3.5 w-3.5" />
+                            Sửa
+                          </button>
+                          <button
+                            disabled={busy === `delete:${deck.sharedId}`}
+                            onClick={() => void deleteContentDeck(deck)}
+                            className={`${dangerBtnCls} h-8 px-3 text-xs`}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                            Gỡ
+                          </button>
+                        </div>
+                      </article>
+                    ))}
+                    {!contentDecksLoading && !contentDecks.length && (
+                      <p className="p-5 text-sm text-stone-400 dark:text-slate-500">
+                        Chưa có bộ thẻ Explore do admin tạo.
+                      </p>
+                    )}
+                  </div>
+                </section>
+              </div>
+            </div>
+          )}
+
+          {panel === "lessons" && (
+            <div className="space-y-6">
+              <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+                <form onSubmit={createLesson} className="card-duo rounded-2xl space-y-4 p-5 sm:p-6">
+                  <div>
+                    <h2 className="text-base font-bold text-stone-900 dark:text-white">
+                      {editingLessonId ? "Sửa bài học" : "Thêm bài học dùng chung"}
+                    </h2>
+                    <p className="mt-1 text-xs leading-5 text-stone-500 dark:text-slate-400">
+                      Mỗi dòng là một câu tiếng Hàn. Bản dịch cùng thứ tự; có thể để trống. Nội dung xuất hiện trong thư viện học của học viên.
+                    </p>
+                  </div>
+                  <label className={labelCls}>
+                    Tên bài
+                    <input
+                      required
+                      maxLength={160}
+                      value={lessonForm.title}
+                      onChange={(event) => setLessonForm({ ...lessonForm, title: event.target.value })}
+                      className={`mt-1.5 ${fieldCls}`}
+                    />
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <label className={labelCls}>
+                      Loại
+                      <select
+                        value={lessonForm.lessonType}
+                        onChange={(event) => setLessonForm({ ...lessonForm, lessonType: event.target.value })}
+                        className={`mt-1.5 ${fieldCls}`}
+                      >
+                        <option value="both">Dictation + Shadowing</option>
+                        <option value="dictation">Dictation</option>
+                        <option value="shadowing">Shadowing</option>
+                      </select>
+                    </label>
+                    <label className={labelCls}>
+                      Cấp độ
+                      <input
+                        value={lessonForm.level}
+                        onChange={(event) => setLessonForm({ ...lessonForm, level: event.target.value })}
+                        className={`mt-1.5 ${fieldCls}`}
+                      />
+                    </label>
+                  </div>
+                  <label className={labelCls}>
+                    Mô tả
+                    <textarea
+                      rows={2}
+                      value={lessonForm.description}
+                      onChange={(event) => setLessonForm({ ...lessonForm, description: event.target.value })}
+                      className={`mt-1.5 ${fieldCls}`}
+                    />
+                  </label>
+                  <label className={labelCls}>
+                    Câu tiếng Hàn · mỗi câu một dòng
+                    <textarea
+                      required
+                      rows={7}
+                      value={lessonForm.koreanText}
+                      onChange={(event) => setLessonForm({ ...lessonForm, koreanText: event.target.value })}
+                      className={`mt-1.5 font-noto ${fieldCls}`}
+                    />
+                  </label>
+                  <label className={labelCls}>
+                    Dịch tiếng Việt · cùng thứ tự
+                    <textarea
+                      rows={5}
+                      value={lessonForm.vietnameseText}
+                      onChange={(event) => setLessonForm({ ...lessonForm, vietnameseText: event.target.value })}
+                      className={`mt-1.5 ${fieldCls}`}
+                    />
+                  </label>
+                  <label className={labelCls}>
+                    Link nguồn (không bắt buộc)
+                    <input
+                      type="url"
+                      value={lessonForm.sourceUrl}
+                      onChange={(event) => setLessonForm({ ...lessonForm, sourceUrl: event.target.value })}
+                      className={`mt-1.5 ${fieldCls}`}
+                    />
+                  </label>
+                  <button
+                    disabled={busy === "new-lesson"}
+                    className="btn-duo btn-duo-primary w-full px-4 py-3.5 text-xs font-bold disabled:opacity-50"
+                  >
+                    {busy === "new-lesson" ? "Đang lưu…" : editingLessonId ? "Lưu thay đổi" : "Tạo và phát hành bài học"}
+                  </button>
+                </form>
+
+                <section className="card-duo rounded-2xl overflow-hidden">
+                  <div className="border-b border-stone-200 dark:border-slate-800 p-4 sm:p-5">
+                    <h2 className="text-base font-bold text-stone-900 dark:text-white">
+                      Thư viện bài do quản trị viên thêm ({lessons.length})
+                    </h2>
+                    <p className="mt-1 text-xs text-stone-500 dark:text-slate-400">
+                      Bài xóa sẽ biến mất khỏi thư viện học viên.
+                    </p>
+                  </div>
+                  <div className="divide-y divide-stone-200 dark:divide-slate-800">
+                    {lessons.map((lesson) => (
+                      <article
+                        key={lesson.id}
+                        className="flex flex-col gap-3 p-4 sm:flex-row sm:items-start sm:justify-between transition hover:bg-stone-50 dark:hover:bg-slate-900/40"
+                      >
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap gap-2">
+                            <span className="rounded-full bg-blue-500/10 px-2 py-0.5 text-[10px] font-bold text-blue-600 dark:text-sky-300">
+                              {lesson.lessonType}
+                            </span>
+                            <span className="rounded-full bg-violet-500/10 px-2 py-0.5 text-[10px] font-bold text-violet-600 dark:text-violet-300">
+                              {lesson.level}
+                            </span>
+                          </div>
+                          <h3 className="mt-2 font-bold text-stone-900 dark:text-white">{lesson.title}</h3>
+                          {lesson.description && (
+                            <p className="mt-1 text-xs text-stone-500 dark:text-slate-400">{lesson.description}</p>
+                          )}
+                          <p className="mt-2 line-clamp-2 whitespace-pre-line font-noto text-xs text-stone-600 dark:text-slate-300">
+                            {lesson.koreanText}
+                          </p>
+                          <p className="mt-1 text-[10px] text-stone-400 dark:text-slate-500">
+                            {lesson.koreanText.split(/\r?\n/).filter(Boolean).length} câu · {String(lesson.createdAt).slice(0, 10)}
+                          </p>
+                        </div>
+                        <div className="flex shrink-0 gap-2">
+                          <button
+                            onClick={() => {
+                              setEditingLessonId(lesson.id);
+                              setLessonForm({
+                                title: lesson.title,
+                                lessonType: lesson.lessonType,
+                                level: lesson.level,
+                                description: lesson.description,
+                                koreanText: lesson.koreanText,
+                                vietnameseText: lesson.vietnameseText,
+                                sourceUrl: lesson.sourceUrl,
+                              });
+                              window.scrollTo({ top: 0, behavior: "smooth" });
+                            }}
+                            className={`${ghostBtnCls} h-8 px-3 text-xs`}
+                          >
+                            Sửa
+                          </button>
+                          <button
+                            disabled={busy === lesson.id}
+                            onClick={() => deleteLesson(lesson)}
+                            className={`${dangerBtnCls} h-8 px-3 text-xs`}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                            Xóa bài
+                          </button>
+                        </div>
+                      </article>
+                    ))}
+                    {lessons.length === 0 && (
+                      <p className="p-5 text-sm text-stone-500 dark:text-slate-400">Chưa có bài do quản trị viên tạo.</p>
+                    )}
+                  </div>
+                </section>
+              </div>
+
+              <details className="card-duo rounded-2xl overflow-hidden group">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 sm:p-6 [&::-webkit-details-marker]:hidden">
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h2 className="text-base font-bold text-stone-900 dark:text-white">Kho bài học có sẵn</h2>
+                      <span className="rounded-full bg-stone-100 dark:bg-slate-800 px-2.5 py-1 text-[10px] font-bold text-stone-600 dark:text-slate-300">
+                        {BUILTIN_LESSONS.length} bài
+                      </span>
+                      <span className="rounded-full bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-300">
+                        {BUILTIN_LESSONS.length - hiddenLessonIds.length} đang hiện
+                      </span>
+                    </div>
+                    <p className="mt-1 text-xs text-stone-500 dark:text-slate-400">
+                      Tìm bài, lọc theo cấp độ, rồi ẩn hoặc khôi phục khỏi thư viện học viên.
+                    </p>
+                  </div>
+                  <span className={`${ghostBtnCls} h-8 px-3 text-xs text-blue-600 dark:text-sky-300 group-open:hidden`}>
+                    Mở kho bài
+                  </span>
+                  <span className={`hidden ${ghostBtnCls} h-8 px-3 text-xs group-open:inline-flex`}>
+                    Thu gọn
+                  </span>
+                </summary>
+                <div className="border-t border-stone-200 dark:border-slate-800">
+                  <div className="sticky top-0 z-10 flex flex-wrap gap-2 border-b border-stone-200 dark:border-slate-800 bg-stone-50/90 dark:bg-slate-950/95 p-3 backdrop-blur">
+                    <label className="flex min-w-[200px] flex-1 items-center gap-2 rounded-xl border border-stone-200 dark:border-transparent bg-white dark:bg-[#132247] px-3 shadow-inner">
+                      <Search className="h-4 w-4 text-stone-400 dark:text-slate-500" />
+                      <input
+                        value={builtInQuery}
+                        onChange={(event) => {
+                          setBuiltInQuery(event.target.value);
+                          setShowAllBuiltIns(false);
+                        }}
+                        placeholder="Tìm tên bài học…"
+                        className="w-full bg-transparent py-2 text-xs text-stone-900 dark:text-white placeholder:text-stone-400 dark:placeholder:text-slate-400 outline-none"
+                      />
+                    </label>
+                    <select
+                      value={builtInLevel}
+                      onChange={(event) => {
+                        setBuiltInLevel(event.target.value);
+                        setShowAllBuiltIns(false);
+                      }}
+                      className={selectCls}
+                    >
+                      <option value="all">Mọi cấp độ</option>
+                      {Array.from(new Set(BUILTIN_LESSONS.map((lesson) => lesson.level))).map((level) => (
+                        <option key={level} value={level}>
+                          {level}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      value={builtInVisibility}
+                      onChange={(event) => setBuiltInVisibility(event.target.value)}
+                      className={selectCls}
+                    >
+                      <option value="all">Hiện cả bài ẩn</option>
+                      <option value="visible">Chỉ bài đang hiện</option>
+                      <option value="hidden">Chỉ bài đang ẩn</option>
+                    </select>
+                  </div>
+                  <div className="divide-y divide-stone-200 dark:divide-slate-800">
+                    {(() => {
+                      const normalizedQuery = builtInQuery.trim().toLocaleLowerCase("vi");
+                      const filtered = BUILTIN_LESSONS.filter((lesson) => {
+                        const hidden = hiddenLessonIds.includes(lesson.id);
+                        const searchMatches =
+                          !normalizedQuery || lesson.title.toLocaleLowerCase("vi").includes(normalizedQuery);
+                        const levelMatches = builtInLevel === "all" || lesson.level === builtInLevel;
+                        const visibilityMatches =
+                          builtInVisibility === "hidden" ? hidden : builtInVisibility === "visible" ? !hidden : true;
+                        return searchMatches && levelMatches && visibilityMatches;
+                      });
+                      const shown = showAllBuiltIns ? filtered : filtered.slice(0, 12);
+                      return (
+                        <>
+                          {shown.map((lesson) => {
+                            const hidden = hiddenLessonIds.includes(lesson.id);
+                            return (
+                              <article
+                                key={lesson.id}
+                                className="flex flex-col gap-3 p-4 transition hover:bg-stone-50 dark:hover:bg-slate-900/40 sm:flex-row sm:items-center sm:justify-between"
+                              >
+                                <div className="min-w-0">
+                                  <h3
+                                    className={`truncate text-sm font-bold ${
+                                      hidden ? "text-stone-400 dark:text-slate-500" : "text-stone-900 dark:text-white"
+                                    }`}
+                                  >
+                                    {lesson.title}
+                                  </h3>
+                                  <div className="mt-1.5 flex flex-wrap items-center gap-2 text-[10px] text-stone-500 dark:text-slate-400">
+                                    <span className="rounded-md bg-stone-100 dark:bg-slate-800 px-2 py-0.5 font-medium">
+                                      {lesson.level}
+                                    </span>
+                                    <span>{lesson.lessonType}</span>
+                                    <span>{lesson.count} câu</span>
+                                    <span
+                                      className={`rounded-md px-2 py-0.5 font-bold ${
+                                        hidden
+                                          ? "bg-amber-500/10 text-amber-600 dark:text-amber-300"
+                                          : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-300"
+                                      }`}
+                                    >
+                                      {hidden ? "Đang ẩn" : "Đang hiển thị"}
+                                    </span>
+                                  </div>
+                                </div>
+                                <button
+                                  disabled={busy === lesson.id}
+                                  onClick={() =>
+                                    void action(lesson.id, () =>
+                                      adminFetch("/api/admin/lessons", {
+                                        method: "PATCH",
+                                        body: JSON.stringify({ id: lesson.id, visibilityOnly: true, isPublished: hidden }),
+                                      })
+                                    )
+                                  }
+                                  className={`shrink-0 rounded-xl border px-3 py-1.5 text-xs font-bold transition-colors cursor-pointer ${
+                                    hidden
+                                      ? "border-emerald-300 dark:border-emerald-700/50 bg-emerald-50/50 hover:bg-emerald-100 dark:bg-transparent dark:hover:bg-emerald-950/30 text-emerald-600 dark:text-emerald-300"
+                                      : "border-stone-200 dark:border-slate-700 bg-stone-100 hover:bg-stone-200 dark:bg-[#132247] dark:hover:bg-[#1a2f60] text-stone-700 dark:text-slate-300 hover:border-amber-500/50 hover:text-amber-600 dark:hover:text-amber-200"
+                                  }`}
+                                >
+                                  {hidden ? "Khôi phục bài" : "Ẩn khỏi học viên"}
+                                </button>
+                              </article>
+                            );
+                          })}
+                          {filtered.length === 0 && (
+                            <p className="p-6 text-center text-sm text-stone-500 dark:text-slate-400">
+                              Không tìm thấy bài học phù hợp.
+                            </p>
+                          )}
+                          {filtered.length > 12 && (
+                            <div className="p-3 text-center">
+                              <button
+                                onClick={() => setShowAllBuiltIns((value) => !value)}
+                                className={`${ghostBtnCls} h-8 px-4 text-xs text-blue-600 dark:text-sky-300`}
+                              >
+                                {showAllBuiltIns ? "Thu gọn danh sách" : `Xem thêm ${filtered.length - shown.length} bài`}
+                              </button>
+                            </div>
+                          )}
+                        </>
+                      );
+                    })()}
+                  </div>
+                </div>
+              </details>
+            </div>
+          )}
 
           {panel === "classes" && (
             <section className="card-duo rounded-2xl overflow-hidden">
