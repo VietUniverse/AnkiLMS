@@ -20,9 +20,28 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
          FROM study_sessions WHERE user_id = ?`,
       ).bind(userId).first(),
       env.DB.prepare(
-        `SELECT checkin_date AS day, time_spent_minutes AS minutes, cards_reviewed AS cards
-         FROM checkins WHERE user_id = ? AND checkin_date >= date('now', '-27 days') ORDER BY checkin_date ASC`,
-      ).bind(userId).all(),
+        `WITH session_days AS (
+           SELECT date(created_at, '+7 hours') AS day,
+                  SUM(duration_seconds) AS duration_seconds,
+                  SUM(cards_reviewed) AS cards_reviewed,
+                  SUM(xp_earned) AS session_xp
+           FROM study_sessions
+           WHERE user_id = ? AND date(created_at, '+7 hours') >= date('now', '+7 hours', '-27 days')
+           GROUP BY date(created_at, '+7 hours')
+         ), active_days AS (
+           SELECT checkin_date AS day FROM checkins
+           WHERE user_id = ? AND checkin_date >= date('now', '+7 hours', '-27 days')
+           UNION SELECT day FROM session_days
+         )
+         SELECT active_days.day AS day,
+                COALESCE(CAST((session_days.duration_seconds + 59) / 60 AS INTEGER), 0) AS minutes,
+                COALESCE(session_days.cards_reviewed, 0) AS cards,
+                COALESCE(session_days.session_xp, 0) + CASE WHEN checkins.id IS NULL THEN 0 ELSE 1 END AS xp
+         FROM active_days
+         LEFT JOIN checkins ON checkins.user_id = ? AND checkins.checkin_date = active_days.day
+         LEFT JOIN session_days ON session_days.day = active_days.day
+         ORDER BY active_days.day ASC`,
+      ).bind(userId, userId, userId).all(),
       env.DB.prepare(
         `SELECT module, cards_reviewed, correct_count, duration_seconds, created_at
          FROM study_sessions WHERE user_id = ? ORDER BY created_at DESC LIMIT 8`,

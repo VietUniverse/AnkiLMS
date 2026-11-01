@@ -16,7 +16,7 @@ type PublicProfile = {
 type ProfileData = {
   profile: PublicProfile;
   summary: { session_count: number; cards_reviewed: number; duration_seconds: number };
-  days: { day: string; minutes: number; cards: number }[];
+  days: { day: string; minutes: number; cards: number; xp: number }[];
   sessions: { module: string; cards_reviewed: number; duration_seconds: number; created_at: string }[];
 };
 
@@ -59,7 +59,7 @@ export function PublicProfileModule({ profileId }: { profileId: string }) {
   const heatmap: HeatmapItem[] = days.map((day) => ({
     checkin_date: day.day,
     time_spent_minutes: day.minutes,
-    xp_earned: 0,
+    xp_earned: day.xp,
     cards_reviewed: day.cards,
   }));
   const isMine = currentUser?.id === profile.id;
