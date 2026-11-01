@@ -29,6 +29,8 @@ import {
 } from "lucide-react";
 import { calculateFSRS45, formatLocalDate, FSRSRating, FSRSState } from "../lib/fsrs45";
 import { ApiClient } from "../lib/apiClient";
+import { DailyLimitsPanel } from "./DailyLimitsPanel";
+import { DailyLimits, DEFAULT_LIMITS, loadLimits, loadProgress, recordCard, remaining, saveLimits } from "../lib/dailyLimits";
 import { speakKorean } from "../lib/koreanSpeech";
 import { inferTopikLevel, getCourseRank } from "../lib/studyRanks";
 import { LockKeyhole, Globe2 } from "lucide-react";
@@ -145,6 +147,20 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const reviewWordSet = useMemo(() => new Set(reviewList), [reviewList]);
   const [cardStateMap, setCardStateMap] = useState<Record<string, FSRSState>>({});
   const [showFsrsDetailed, setShowFsrsDetailed] = useState<boolean>(false);
+  const [dailyLimits, setDailyLimits] = useState<DailyLimits>(DEFAULT_LIMITS);
+  const [dailyProgress, setDailyProgress] = useState(() => ({ newDone: 0, reviewDone: 0 }));
+  const [limitNotice, setLimitNotice] = useState<string | null>(null);
+
+  useEffect(() => {
+    setDailyLimits(loadLimits());
+    setDailyProgress(loadProgress());
+  }, []);
+
+  const updateLimits = useCallback((next: DailyLimits) => {
+    setDailyLimits(next);
+    saveLimits(next);
+    setLimitNotice(null);
+  }, []);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const answerShownAtRef = useRef(0);
@@ -383,20 +399,25 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const startStudy = useCallback((deckId: string, title: string, cards: VocabularyCard[]) => {
     if (!cards || cards.length === 0) return;
 
-    // Filter cards: show unlearned cards or cards due for review
+    // Lọc thẻ: chỉ lấy thẻ mới hoặc đến hạn, rồi áp giới hạn mỗi ngày (ôn lại trước, từ mới sau).
     const todayStr = formatLocalDate(new Date());
-    const cardsToStudy = cards.filter((c) => {
-      const activeKey = `${c.deckName || "deck"}_${c.id}`;
-      const state = cardStateMap[activeKey];
-      // If card has SRS state and is not due today and is mastered, skip
-      if (state && state.dueDate > todayStr && masteredWords.includes(c.word)) {
-        return false;
-      }
-      return true;
-    });
-
-    // If all cards mastered and none due today, cardsToStudy is empty
-    const activeList = cardsToStudy;
+    const progress = loadProgress();
+    const newLeft = remaining(dailyLimits.newPerDay, progress.newDone);
+    const reviewLeft = remaining(dailyLimits.reviewPerDay, progress.reviewDone);
+    const dueCards: VocabularyCard[] = [];
+    const newCards: VocabularyCard[] = [];
+    for (const c of cards) {
+      const state = cardStateMap[`${c.deckName || "deck"}_${c.id}`];
+      if (state && state.dueDate > todayStr && masteredWords.includes(c.word)) continue;
+      (state && state.state !== "new" ? dueCards : newCards).push(c);
+    }
+    const activeList = [...dueCards.slice(0, reviewLeft), ...newCards.slice(0, newLeft)];
+    setDailyProgress(progress);
+    if (activeList.length === 0 && dueCards.length + newCards.length > 0) {
+      setLimitNotice("Bạn đã đạt giới hạn học hôm nay. Phần còn lại sẽ chuyển sang ngày mai, hoặc tăng giới hạn ở mục tiêu hôm nay.");
+      return;
+    }
+    setLimitNotice(null);
 
     setActiveDeckTitle(title);
     setActiveCardsList(activeList);
@@ -422,7 +443,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       localStorage.setItem("haechivn_last_lesson_id", deckId);
       localStorage.setItem("haechivn_last_lesson_title", title);
     }
-  }, [cardStateMap, masteredWords, exitStudy, studyMode, setActiveStudySession]);
+  }, [cardStateMap, masteredWords, dailyLimits, exitStudy, studyMode, setActiveStudySession]);
 
   // Recursive search for node by id
   const findNodeById = useCallback((nodes: DeckTreeNode[], id: string): DeckTreeNode | null => {
@@ -616,6 +637,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       easeFactor: 2.5,
     };
     const newState = calculateFSRS45(rating, curState);
+    if (curState.reps === 0 || curState.state === "new") setDailyProgress(recordCard(true));
+    else setDailyProgress(recordCard(false));
     setCardStateMap((prev) => {
       const updated = { ...prev, [activeKey]: newState };
       const srsKey = currentUser ? `haechivn_srs_state_${currentUser.id}` : "haechivn_srs_state_guest";
@@ -1002,6 +1025,13 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                 </Link>
               </div>
             </div>
+
+            {limitNotice && (
+              <div role="status" className="rounded-xl border border-amber-300/60 bg-amber-50 dark:bg-amber-500/10 dark:border-amber-500/30 px-4 py-3 text-xs text-amber-800 dark:text-amber-200">
+                {limitNotice}
+              </div>
+            )}
+            <DailyLimitsPanel limits={dailyLimits} progress={dailyProgress} onChange={updateLimits} />
 
             <VocabularySizeTest />
 
