@@ -1543,7 +1543,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
               ))}
             </div>
             <div className="space-y-2">
-              <button type="submit" disabled={!moreValid} style={{ color: "#fff" }} className="w-full cursor-pointer rounded-xl bg-sky-500 py-2.5 text-sm font-black transition hover:bg-sky-600 disabled:opacity-40">Học thêm</button>
+              <button type="submit" disabled={!moreValid} style={{ color: "#fff" }} className="w-full cursor-pointer rounded-xl bg-sky-500 py-2.5 text-sm font-black transition hover:bg-sky-600 disabled:opacity-40">Thêm</button>
             </div>
           </form>
         </div>,
