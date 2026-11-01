@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { Check, ChevronLeft, ChevronRight, Flame, Target } from "lucide-react";
-import { DEFAULT_LIMITS, loadLimits, loadProgress, type DailyLimits, type DailyProgress } from "../lib/dailyLimits";
+import { DEFAULT_LIMITS, effectiveNewLimit, loadLimits, loadProgress, type DailyLimits, type DailyProgress } from "../lib/dailyLimits";
 
 type CheckinItem = { checkin_date: string; time_spent_minutes?: number; xp_earned?: number };
 
@@ -44,7 +44,7 @@ function GoalRing({ done, goal }: { done: number; goal: number }) {
 
 export function StreakPanel({ data, streak, longestStreak, publicView = false }: { data: CheckinItem[]; streak: number; longestStreak: number; publicView?: boolean }) {
   const [limits, setLimits] = useState<DailyLimits>(DEFAULT_LIMITS);
-  const [progress, setProgress] = useState<DailyProgress>({ newDone: 0, reviewDone: 0 });
+  const [progress, setProgress] = useState<DailyProgress>({ newDone: 0, reviewDone: 0, extraNew: 0 });
   const [showMonth, setShowMonth] = useState(false);
   const [cursor, setCursor] = useState(() => { const n = new Date(); return new Date(n.getFullYear(), n.getMonth(), 1); });
 
@@ -71,7 +71,7 @@ export function StreakPanel({ data, streak, longestStreak, publicView = false }:
   });
 
   // Mục tiêu ngày chỉ tính từ mới; ôn lại không giới hạn.
-  const goal = limits.newPerDay || 0;
+  const goal = effectiveNewLimit(limits, progress);
   const doneToday = progress.newDone;
   const learnedToday = studied.has(todayKey) || doneToday > 0 || progress.reviewDone > 0;
 

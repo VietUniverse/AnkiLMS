@@ -1,6 +1,7 @@
 // Giới hạn số thẻ học mỗi ngày (lưu cục bộ trên thiết bị). 0 = không giới hạn.
 export type DailyLimits = { newPerDay: number; reviewPerDay: number };
-export type DailyProgress = { newDone: number; reviewDone: number };
+// extraNew: số từ mới người học xin học thêm trong hôm nay (cộng vào giới hạn, hết ngày thì mất).
+export type DailyProgress = { newDone: number; reviewDone: number; extraNew: number };
 
 const LIMITS_KEY = "haechivn_daily_limits";
 const PROGRESS_KEY = "haechivn_daily_progress";
@@ -33,9 +34,9 @@ export function saveLimits(limits: DailyLimits) {
 export function loadProgress(): DailyProgress {
   try {
     const raw = JSON.parse(localStorage.getItem(PROGRESS_KEY) || "null");
-    if (raw?.date === today()) return { newDone: clamp(raw.newDone, 0), reviewDone: clamp(raw.reviewDone, 0) };
+    if (raw?.date === today()) return { newDone: clamp(raw.newDone, 0), reviewDone: clamp(raw.reviewDone, 0), extraNew: clamp(raw.extraNew, 0) };
   } catch { /* dùng giá trị mặc định */ }
-  return { newDone: 0, reviewDone: 0 };
+  return { newDone: 0, reviewDone: 0, extraNew: 0 };
 }
 
 export function recordCard(isNew: boolean): DailyProgress {
@@ -44,6 +45,17 @@ export function recordCard(isNew: boolean): DailyProgress {
   try { localStorage.setItem(PROGRESS_KEY, JSON.stringify({ date: today(), ...next })); } catch { /* bỏ qua */ }
   return next;
 }
+
+/** Cho phép học thêm `count` từ mới trong hôm nay. */
+export function addExtraNew(count: number): DailyProgress {
+  const p = loadProgress();
+  const next = { ...p, extraNew: Math.min(9999, p.extraNew + Math.max(0, Math.floor(count))) };
+  try { localStorage.setItem(PROGRESS_KEY, JSON.stringify({ date: today(), ...next })); } catch { /* bỏ qua */ }
+  return next;
+}
+
+/** Giới hạn từ mới thực tế hôm nay (0 = không giới hạn). */
+export const effectiveNewLimit = (limits: DailyLimits, progress: DailyProgress) => (limits.newPerDay === 0 ? 0 : limits.newPerDay + progress.extraNew);
 
 /** Số thẻ còn được học hôm nay (Infinity nếu không giới hạn). */
 export const remaining = (limit: number, done: number) => (limit === 0 ? Infinity : Math.max(0, limit - done));

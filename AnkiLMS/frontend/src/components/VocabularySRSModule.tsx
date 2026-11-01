@@ -32,7 +32,7 @@ import { ankiScheduleToFSRSState, calculateFSRS45, formatLocalDate, FSRSRating, 
 import { ApiClient } from "../lib/apiClient";
 import { DailyLimitsPanel } from "./DailyLimitsPanel";
 import { useStudyBackground } from "../lib/studyBackground";
-import { DailyLimits, DEFAULT_LIMITS, loadLimits, loadProgress, recordCard, remaining, saveLimits } from "../lib/dailyLimits";
+import { addExtraNew, DailyLimits, DEFAULT_LIMITS, effectiveNewLimit, loadLimits, loadProgress, recordCard, remaining, saveLimits } from "../lib/dailyLimits";
 import { speakKorean } from "../lib/koreanSpeech";
 import { inferTopikLevel, getCourseRank } from "../lib/studyRanks";
 import { LockKeyhole, Globe2 } from "lucide-react";
@@ -174,8 +174,11 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const reviewWordSet = useMemo(() => new Set(reviewList), [reviewList]);
   const [cardStateMap, setCardStateMap] = useState<Record<string, FSRSState>>({});
   const [dailyLimits, setDailyLimits] = useState<DailyLimits>(DEFAULT_LIMITS);
-  const [dailyProgress, setDailyProgress] = useState(() => ({ newDone: 0, reviewDone: 0 }));
+  const [dailyProgress, setDailyProgress] = useState(() => ({ newDone: 0, reviewDone: 0, extraNew: 0 }));
   const [limitNotice, setLimitNotice] = useState<string | null>(null);
+  // Đã chạm giới hạn từ mới mà người học bấm vào một bộ: hỏi muốn học thêm bao nhiêu từ mới.
+  const [morePrompt, setMorePrompt] = useState<{ deckId: string; title: string; cards: VocabularyCard[]; available: number; hasDue: boolean } | null>(null);
+  const [moreAmount, setMoreAmount] = useState("10");
 
   useEffect(() => {
     setDailyLimits(loadLimits());
@@ -428,13 +431,13 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   }, [finishSrsActivity, setActiveStudySession, router]);
 
   // Start study session (Filter only unlearned / review cards via FSRS state)
-  const startStudy = useCallback((deckId: string, title: string, cards: VocabularyCard[]) => {
+  const startStudy = useCallback((deckId: string, title: string, cards: VocabularyCard[], options?: { skipMorePrompt?: boolean }) => {
     if (!cards || cards.length === 0) return;
 
     // Lọc thẻ: chỉ lấy thẻ mới hoặc đến hạn, rồi áp giới hạn mỗi ngày (ôn lại trước, từ mới sau).
     const todayStr = formatLocalDate(new Date());
     const progress = loadProgress();
-    const newLeft = remaining(dailyLimits.newPerDay, progress.newDone);
+    const newLeft = remaining(effectiveNewLimit(dailyLimits, progress), progress.newDone);
     const reviewLeft = remaining(dailyLimits.reviewPerDay, progress.reviewDone);
     const dueCards: VocabularyCard[] = [];
     const newCards: VocabularyCard[] = [];
@@ -448,6 +451,11 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     }
     const activeList = [...dueCards.slice(0, reviewLeft), ...newCards.slice(0, newLeft)];
     setDailyProgress(progress);
+    if (newLeft === 0 && newCards.length > 0 && !options?.skipMorePrompt) {
+      setMoreAmount(String(Math.min(10, newCards.length)));
+      setMorePrompt({ deckId, title, cards, available: newCards.length, hasDue: dueCards.length > 0 });
+      return;
+    }
     if (activeList.length === 0 && dueCards.length + newCards.length > 0) {
       setLimitNotice("Bạn đã đạt giới hạn học hôm nay. Phần còn lại sẽ chuyển sang ngày mai, hoặc tăng giới hạn ở mục tiêu hôm nay.");
       return;
@@ -1059,6 +1067,17 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     </>
   );
 
+  const confirmMore = () => {
+    if (!morePrompt) return;
+    const amount = Math.floor(Number(moreAmount));
+    if (!Number.isFinite(amount) || amount < 1) return;
+    addExtraNew(Math.min(amount, morePrompt.available));
+    const { deckId, title, cards } = morePrompt;
+    setMorePrompt(null);
+    startStudy(deckId, title, cards);
+  };
+  const moreValid = Number.isInteger(Number(moreAmount)) && Number(moreAmount) >= 1 && moreAmount !== "";
+
   return (
     <div className="w-full min-h-[calc(100vh-6rem)] pb-12 transition-colors">
       {/* ====================================================================
@@ -1473,6 +1492,59 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
           ) : null
         )}
       </main>
+
+      {morePrompt && hydrated && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/55 p-4" onClick={() => { setMorePrompt(null); if (viewMode === "study") exitStudy(); }}>
+          <form
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="more-new-title"
+            className="w-full max-w-xs space-y-4 rounded-2xl border border-stone-200 bg-white p-5 text-stone-900 shadow-2xl dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100"
+            onClick={(e) => e.stopPropagation()}
+            onSubmit={(e) => { e.preventDefault(); confirmMore(); }}
+          >
+            <div>
+              <h2 id="more-new-title" className="text-base font-black">Bạn muốn học thêm bao nhiêu từ MỚI vậy dạ?</h2>
+              <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">Hôm nay bạn đã học đủ từ mới. Bộ này còn {morePrompt.available} từ mới.</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                autoFocus
+                type="number"
+                inputMode="numeric"
+                min={1}
+                max={morePrompt.available}
+                value={moreAmount}
+                onChange={(e) => setMoreAmount(e.target.value)}
+                aria-label="Số từ mới muốn học thêm"
+                className="h-12 w-full rounded-xl border border-stone-300 bg-transparent px-4 text-center text-xl font-black tabular-nums focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 dark:border-stone-600"
+              />
+              <span className="shrink-0 text-sm text-stone-500 dark:text-stone-400">từ</span>
+            </div>
+            <div className="flex gap-2">
+              {[5, 10, 20].filter((n) => n <= morePrompt.available).map((n) => (
+                <button key={n} type="button" onClick={() => setMoreAmount(String(n))} className="flex-1 cursor-pointer rounded-lg bg-stone-100 py-1.5 text-xs font-bold hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700">{n}</button>
+              ))}
+            </div>
+            <div className="space-y-2">
+              <button type="submit" disabled={!moreValid} style={{ color: "#fff" }} className="w-full cursor-pointer rounded-xl bg-sky-500 py-2.5 text-sm font-black transition hover:bg-sky-600 disabled:opacity-40">Học thêm</button>
+              <div className="flex gap-2">
+                {morePrompt.hasDue && (
+                  <button
+                    type="button"
+                    onClick={() => { const p = morePrompt; setMorePrompt(null); startStudy(p.deckId, p.title, p.cards, { skipMorePrompt: true }); }}
+                    className="flex-1 cursor-pointer rounded-xl py-2 text-xs font-bold text-stone-600 hover:bg-stone-100 dark:text-stone-300 dark:hover:bg-stone-800"
+                  >
+                    Chỉ ôn lại
+                  </button>
+                )}
+                <button type="button" onClick={() => { setMorePrompt(null); if (viewMode === "study") exitStudy(); }} className="flex-1 cursor-pointer rounded-xl py-2 text-xs font-bold text-stone-600 hover:bg-stone-100 dark:text-stone-300 dark:hover:bg-stone-800">Để mai</button>
+              </div>
+            </div>
+          </form>
+        </div>,
+        document.body
+      )}
 
       {/* ====================================================================
           3. MODAL PHÓNG TO ẢNH (IMAGE ZOOM OVERLAY)
