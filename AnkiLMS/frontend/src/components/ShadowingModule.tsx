@@ -881,11 +881,11 @@ export const ShadowingModule: React.FC = () => {
             </div>
 
             {/* Control Buttons & Speed bar */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-nowrap items-center justify-between gap-2 pt-1">
+              <div className="flex shrink-0 items-center gap-2">
                 <button
                   onClick={playFullLesson}
-                  className="h-11 w-11 rounded-xl bg-rose-600 hover:bg-rose-500 text-white flex items-center justify-center shadow-lg shadow-rose-900/40 transition-all cursor-pointer"
+                  className="h-9 w-9 sm:h-11 sm:w-11 rounded-xl bg-rose-600 hover:bg-rose-500 text-white flex items-center justify-center shadow-lg shadow-rose-900/40 transition-all cursor-pointer"
                   aria-label="Phát toàn bộ bài học"
                   title="Phát cả bài"
                 >
@@ -894,7 +894,7 @@ export const ShadowingModule: React.FC = () => {
 
                 <button
                   onClick={() => playSegment(currentSub)}
-                  className="h-11 w-11 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center transition-all cursor-pointer"
+                  className="h-9 w-9 sm:h-11 sm:w-11 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center transition-all cursor-pointer"
                   aria-label="Phát lại câu hiện tại"
                   title="Phát lại câu"
                 >
@@ -903,13 +903,12 @@ export const ShadowingModule: React.FC = () => {
               </div>
 
               {/* Speed Selector */}
-              <div className="flex items-center gap-1 bg-slate-950 p-1.5 rounded-xl border border-slate-800">
-                <span className="text-[11px] font-bold text-slate-400 px-1">Tốc độ:</span>
+              <div className="flex min-w-0 items-center gap-0.5 sm:gap-1 bg-slate-950 p-1 sm:p-1.5 rounded-xl border border-slate-800">
                 {[0.5, 0.75, 1.0, 1.25, 1.5].map((s) => (
                   <button
                     key={s}
                     onClick={() => setPlaybackSpeed(Math.min(2, Math.max(0.5, s)))}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-bold font-mono transition-all ${
+                    className={`px-1 sm:px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-bold font-mono transition-all ${
                       playbackSpeed === s
                         ? "bg-rose-600 text-white"
                         : "text-slate-400 hover:text-slate-200"
