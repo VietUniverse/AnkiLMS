@@ -4,7 +4,8 @@ export type DailyProgress = { newDone: number; reviewDone: number };
 
 const LIMITS_KEY = "haechivn_daily_limits";
 const PROGRESS_KEY = "haechivn_daily_progress";
-export const DEFAULT_LIMITS: DailyLimits = { newPerDay: 20, reviewPerDay: 100 };
+// Chỉ giới hạn từ mới. Từ đến hạn ôn lại luôn không giới hạn (0): có bao nhiêu phải ôn hết bấy nhiêu.
+export const DEFAULT_LIMITS: DailyLimits = { newPerDay: 20, reviewPerDay: 0 };
 
 const today = () => {
   const d = new Date();
@@ -19,7 +20,7 @@ const clamp = (value: unknown, fallback: number) => {
 export function loadLimits(): DailyLimits {
   try {
     const raw = JSON.parse(localStorage.getItem(LIMITS_KEY) || "null");
-    return { newPerDay: clamp(raw?.newPerDay, DEFAULT_LIMITS.newPerDay), reviewPerDay: clamp(raw?.reviewPerDay, DEFAULT_LIMITS.reviewPerDay) };
+    return { newPerDay: clamp(raw?.newPerDay, DEFAULT_LIMITS.newPerDay), reviewPerDay: 0 };
   } catch {
     return DEFAULT_LIMITS;
   }

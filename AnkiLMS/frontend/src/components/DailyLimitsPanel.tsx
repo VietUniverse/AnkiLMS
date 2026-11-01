@@ -21,7 +21,7 @@ function GoalCard({ label, done, value, onOpen }: { label: string; done: number;
       type="button"
       onClick={onOpen}
       aria-label={`${label}: đã ${done}${value ? ` trên ${value}` : ""}. Bấm để đổi giới hạn`}
-      className="group flex-1 min-w-36 rounded-xl border border-stone-200 dark:border-stone-700 px-3 py-2.5 text-left space-y-1.5 transition hover:border-sky-400 hover:bg-sky-50 dark:hover:bg-stone-800 cursor-pointer"
+      className="group block w-full rounded-xl border border-stone-200 dark:border-stone-700 px-3 py-2.5 text-left space-y-1.5 transition hover:border-sky-400 hover:bg-sky-50 dark:hover:bg-stone-800 cursor-pointer"
     >
       <span className="flex items-center justify-between text-xs text-stone-500 dark:text-stone-400">
         {label}
@@ -61,10 +61,8 @@ export const DailyLimitsPanel: React.FC<Props> = ({ limits, progress, onChange }
       <h2 className="mb-3 flex items-center gap-2 text-sm font-bold text-stone-900 dark:text-white">
         <Target className="w-4 h-4 text-sky-500" /> Mục tiêu hôm nay
       </h2>
-      <div className="flex flex-wrap gap-3">
-        <GoalCard label="Từ mới" done={progress.newDone} value={limits.newPerDay} onOpen={() => open("newPerDay")} />
-        <GoalCard label="Ôn lại" done={progress.reviewDone} value={limits.reviewPerDay} onOpen={() => open("reviewPerDay")} />
-      </div>
+      <GoalCard label="Từ mới" done={progress.newDone} value={limits.newPerDay} onOpen={() => open("newPerDay")} />
+      <p className="mt-2 text-xs text-stone-500 dark:text-stone-400">Từ đến hạn ôn lại không giới hạn: có bao nhiêu, ôn hết bấy nhiêu.</p>
 
       {editing && (
         <div

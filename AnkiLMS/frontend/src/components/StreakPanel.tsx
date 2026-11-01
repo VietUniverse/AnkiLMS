@@ -65,9 +65,10 @@ export function StreakPanel({ data, streak, longestStreak }: { data: CheckinItem
     return { label, key, date: d.getDate(), done: studied.has(key), isToday: key === todayKey, future: key > todayKey };
   });
 
-  const goal = (limits.newPerDay || 0) + (limits.reviewPerDay || 0);
-  const doneToday = progress.newDone + progress.reviewDone;
-  const learnedToday = studied.has(todayKey) || doneToday > 0;
+  // Mục tiêu ngày chỉ tính từ mới; ôn lại không giới hạn.
+  const goal = limits.newPerDay || 0;
+  const doneToday = progress.newDone;
+  const learnedToday = studied.has(todayKey) || doneToday > 0 || progress.reviewDone > 0;
 
   // Lịch tháng: ô trống đầu tháng + các ngày; ngày học liền nhau nối thành một dải.
   const first = new Date(cursor.getFullYear(), cursor.getMonth(), 1);
@@ -97,7 +98,7 @@ export function StreakPanel({ data, streak, longestStreak }: { data: CheckinItem
         </div>
         <div className="flex flex-col items-center gap-1">
           <GoalRing done={doneToday} goal={goal} />
-          <span className="text-[11px] font-semibold text-stone-500 dark:text-stone-400">Mục tiêu hôm nay</span>
+          <span className="text-[11px] font-semibold text-stone-500 dark:text-stone-400">Từ mới hôm nay</span>
         </div>
       </div>
 
