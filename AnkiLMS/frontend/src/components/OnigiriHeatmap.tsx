@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import Image from "next/image";
-import { Flame, ChevronLeft, ChevronRight, Calendar, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getLunarDate, formatLunarCellText } from "@/lib/lunarCalendar";
 
 export interface HeatmapItem {
@@ -280,41 +280,17 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
   return (
     <div
       id="onigiri-heatmap-container"
-      className={`relative rounded-2xl p-5 sm:p-6 bg-[#0f131a] text-slate-100 shadow-xl overflow-hidden border-0 ${className}`}
+      className={`relative rounded-2xl border border-stone-200 bg-white p-4 text-stone-900 dark:border-stone-800 dark:bg-stone-900/70 dark:text-stone-100 sm:p-5 ${className}`}
     >
-      {/* Background radial glow */}
-      <div className="pointer-events-none absolute -top-24 -right-24 w-80 h-80 rounded-full bg-sky-500/10 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-indigo-500/10 blur-3xl" />
-
       {/* --- Onigiri Header --- */}
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-5 relative z-10">
-        {/* Header Left: Activity Icon & Title */}
-        <div className="flex items-center gap-3">
-          <div className="relative w-9 h-9 rounded-xl bg-sky-500/15 flex items-center justify-center shadow-sm group border-0 text-sky-400">
-            <Calendar className="w-5 h-5 group-hover:scale-110 transition-transform duration-200" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-sm sm:text-base font-bold tracking-wider uppercase text-white">
-                HOẠT ĐỘNG ÔN TẬP
-              </h3>
-            </div>
-          </div>
-        </div>
+        {/* Header Left: tiêu đề gọn như các khối khác */}
+        <h3 className="text-sm font-black text-stone-900 dark:text-white">Hoạt động ôn tập</h3>
 
         {/* Header Right: Streak + Nav + Views filter */}
         <div className="flex flex-wrap items-center gap-2.5 self-stretch lg:self-auto justify-between lg:justify-end">
-          {/* Streak Counter Chip */}
-          <div
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-orange-500/15 text-orange-400 text-xs font-semibold shadow-sm border-0"
-            title="Chuỗi ngày liên tục học tập"
-          >
-            <Flame className="w-4 h-4 text-orange-400 animate-pulse fill-orange-400/30" />
-            <span>{streak} ngày liên tiếp</span>
-          </div>
-
           {/* Navigation Year / Month Buttons */}
-          <div className="flex items-center gap-1 px-1 py-0.5 rounded-lg bg-[#181d28] text-xs border-0">
+          <div className="flex items-center gap-1 px-1 py-0.5 rounded-lg bg-stone-100 text-xs dark:bg-stone-800">
             <button
               onClick={() => {
                 if (view === "month") {
@@ -324,12 +300,12 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
                   setSelectedYear((y) => y - 1);
                 }
               }}
-              className="p-1 rounded hover:bg-[#252c3c] text-slate-300 transition-colors"
+              className="p-1 rounded hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-600 dark:text-stone-300 transition-colors"
               title="Lùi lại"
             >
               <ChevronLeft className="w-3.5 h-3.5" />
             </button>
-            <span className="px-2 font-semibold text-slate-200">
+            <span className="px-2 font-semibold text-stone-800 dark:text-stone-200">
               {view === "month" ? `Thg ${selectedMonth + 1}, ${selectedYear}` : selectedYear}
             </span>
             <button
@@ -341,7 +317,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
                   setSelectedYear((y) => y + 1);
                 }
               }}
-              className="p-1 rounded hover:bg-[#252c3c] text-slate-300 transition-colors"
+              className="p-1 rounded hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-600 dark:text-stone-300 transition-colors"
               title="Tiến lên"
             >
               <ChevronRight className="w-3.5 h-3.5" />
@@ -349,13 +325,13 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
           </div>
 
           {/* View Filter Pill Switcher (Year, Month, Week) */}
-          <div className="flex items-center p-0.5 rounded-lg bg-[#181d28] text-xs border-0">
+          <div className="flex items-center p-0.5 rounded-lg bg-stone-100 text-xs dark:bg-stone-800">
             <button
               onClick={() => setView("year")}
               className={`px-2.5 py-1 rounded-md font-semibold transition-all border-0 ${
                 view === "year"
-                  ? "bg-sky-500 text-white shadow-sm"
-                  : "text-slate-400 hover:text-slate-200"
+                  ? "bg-sky-500 text-white"
+                  : "text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-200"
               }`}
             >
               Năm
@@ -364,8 +340,8 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
               onClick={() => setView("month")}
               className={`px-2.5 py-1 rounded-md font-semibold transition-all border-0 ${
                 view === "month"
-                  ? "bg-sky-500 text-white shadow-sm"
-                  : "text-slate-400 hover:text-slate-200"
+                  ? "bg-sky-500 text-white"
+                  : "text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-200"
               }`}
             >
               Tháng
@@ -374,8 +350,8 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
               onClick={() => setView("week")}
               className={`px-2.5 py-1 rounded-md font-semibold transition-all border-0 ${
                 view === "week"
-                  ? "bg-sky-500 text-white shadow-sm"
-                  : "text-slate-400 hover:text-slate-200"
+                  ? "bg-sky-500 text-white"
+                  : "text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-200"
               }`}
             >
               Tuần
@@ -386,7 +362,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
           {onToggleDemo && (
             <button
               onClick={onToggleDemo}
-              className="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-[#181d28] hover:bg-[#202736] text-slate-300 transition-all flex items-center gap-1.5 border-0"
+              className="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-600 dark:text-stone-300 transition-all flex items-center gap-1.5"
               title="Bật/Tắt dữ liệu demo"
             >
               <span
@@ -399,7 +375,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
       </div>
 
       {/* --- Heatmap Body --- */}
-      <div ref={yearScrollRef} className="relative z-10 bg-[#0a0d14] rounded-xl p-2.5 sm:p-4 overflow-x-auto scrollbar-thin border-0 touch-pan-x">
+      <div ref={yearScrollRef} className="relative z-10 rounded-xl bg-stone-50 p-2.5 dark:bg-stone-950/40 sm:p-4 overflow-x-auto scrollbar-thin touch-pan-x">
         {/* YEAR VIEW */}
         {view === "year" && (
           <div className="flex flex-col w-full max-w-[1200px] mx-auto text-left">
@@ -457,7 +433,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
         {/* MONTH VIEW */}
         {view === "month" && (
           <div className="max-w-md mx-auto py-2">
-            <div className="grid grid-cols-7 gap-2 mb-2 text-center text-xs font-bold text-slate-400">
+            <div className="grid grid-cols-7 gap-2 mb-2 text-center text-xs font-bold text-stone-400">
               <span>T2</span>
               <span>T3</span>
               <span>T4</span>
@@ -601,22 +577,22 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
       </div>
 
       {/* --- Footer: Stats & Level Scale --- */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-300 font-medium pt-4 relative z-10">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-stone-600 dark:text-stone-300 font-medium pt-4 relative z-10">
         {/* Onigiri Metrics */}
         <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-4 text-xs">
-          <div className="flex items-center gap-1.5 text-slate-300">
+          <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-sky-400" />
             <span>
               Tổng số: <b>{activeDaysCount}</b> ngày học
             </span>
           </div>
-          <div className="flex items-center gap-1.5 text-slate-300">
+          <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-400" />
             <span>
               Chuỗi dài nhất: <b>{longestStreak}</b> ngày
             </span>
           </div>
-          <div className="flex items-center gap-1.5 text-slate-300">
+          <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-indigo-400" />
             <span>
               Trung bình: <b>{dailyAverage}</b> phút/ngày
@@ -625,8 +601,8 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
         </div>
 
         {/* 9-Level Intensity Scale (0 to 8) */}
-        <div className="flex items-center gap-2 text-xs text-slate-400">
-          <span className="text-[11px] font-medium text-slate-400">Ít</span>
+        <div className="flex items-center gap-2 text-xs text-stone-400">
+          <span className="text-[11px] font-medium text-stone-400">Ít</span>
           <div className="flex items-center gap-1">
             {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((lvl) => (
               <div
@@ -637,7 +613,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
               />
             ))}
           </div>
-          <span className="text-[11px] font-medium text-slate-400">Nhiều</span>
+          <span className="text-[11px] font-medium text-stone-400">Nhiều</span>
         </div>
       </div>
 

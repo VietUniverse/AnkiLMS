@@ -513,24 +513,6 @@ html[data-theme="light"] body:not(:has(.login-page-root)) .garden-cell-3 {
 }
 
 /* Light Mode Overrides - Pure Solid Blocks (Màu Nguyên Khối) */
-html[data-theme="light"] body:not(:has(.login-page-root)) #onigiri-heatmap-container {
-  background-color: #f1f4f9 !important;
-  border: none !important;
-  color: #1e293b !important;
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05) !important;
-}
-html[data-theme="light"] body:not(:has(.login-page-root)) #onigiri-heatmap-container .bg-\[\#0a0d14\] {
-  background-color: #ffffff !important;
-  border: none !important;
-}
-html[data-theme="light"] body:not(:has(.login-page-root)) #onigiri-heatmap-container .bg-\[\#181d28\] {
-  background-color: #e2e8f0 !important;
-  border: none !important;
-  color: #334155 !important;
-}
-html[data-theme="light"] body:not(:has(.login-page-root)) #onigiri-heatmap-container h3 {
-  color: #0f172a !important;
-}
 html[data-theme="light"] body:not(:has(.login-page-root)) .onigiri-level-0 {
   background-color: #ebedf2 !important;
   border: none !important;
