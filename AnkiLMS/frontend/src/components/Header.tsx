@@ -29,9 +29,6 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onToggl
               <ArrowLeft className="w-4 h-4 text-stone-600 dark:text-stone-300" />
               <span>Trở về</span>
             </button>
-            <span className="hidden md:inline-block text-xs font-bold text-stone-800 dark:text-stone-200 truncate max-w-[180px]">
-              {activeStudySession.title}
-            </span>
           </div>
         ) : (
           <div className="flex items-center gap-2">

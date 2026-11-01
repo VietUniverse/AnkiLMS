@@ -1342,27 +1342,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                     </div>
                   </div>
 
-                  {/* Bottom Footer Hint */}
-                  {isFlipped && <div className="hidden sm:flex w-full items-center justify-between pt-3 border-t border-stone-100 dark:border-stone-800/80 text-[11px]">
-                    <span className="flex items-center gap-1 font-medium text-stone-400">
-                      {isFlipped ? (
-                        <>
-                          <kbd className="font-mono text-[9px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700">
-                            1
-                          </kbd>{" "}
-                          Quên &bull;{" "}
-                          <kbd className="font-mono text-[9px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700">
-                            2
-                          </kbd>{" "}
-                          Thuộc &bull;{" "}
-                          <kbd className="font-mono text-[9px] px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700">
-                            R
-                          </kbd>{" "}
-                          Nghe lại
-                        </>
-                      ) : null}
-                    </span>
-                  </div>}
                 </div>
               </div>
             )}

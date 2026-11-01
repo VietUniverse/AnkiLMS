@@ -87,14 +87,14 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
         )}
 
         <main className="flex-1 min-w-0 overflow-x-hidden p-2.5 pb-[calc(6.5rem+env(safe-area-inset-bottom))] sm:p-4 sm:pb-28 lg:pb-4 w-full max-w-[1800px] mx-auto">
-          {checkinMessage && (
+          {checkinMessage && !activeStudySession && (
             <div className="mb-4 p-4 rounded-2xl bg-amber-500/20 border border-amber-400 text-amber-300 font-bold text-xs flex items-center justify-between animate-fadeIn">
               <span>{checkinMessage}</span>
               <Sparkles className="w-4 h-4 text-amber-400" />
             </div>
           )}
 
-          {authErrorMessage && (
+          {authErrorMessage && !activeStudySession && (
             <div className="mb-4 p-4 rounded-2xl bg-rose-500/20 border border-rose-500 text-rose-300 font-bold text-xs flex items-center justify-between animate-fadeIn">
               <span>{authErrorMessage}</span>
             </div>
