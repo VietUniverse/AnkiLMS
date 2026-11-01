@@ -5,8 +5,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AppShell } from "../components/AppShell";
 import { OnigiriHeatmap } from "../components/OnigiriHeatmap";
+import { StreakPanel } from "../components/StreakPanel";
 import { useApp } from "../contexts/AppProvider";
-import { Flame, Zap, Layers, Trophy, Calendar, CheckCircle2, Gamepad2, Target, X, LogIn, Search, Volume2, Play, ClipboardCheck, ArrowRight } from "lucide-react";
+import { Flame, Zap, Layers, CheckCircle2, Gamepad2, Target, X, LogIn, Search, Volume2, Play, ClipboardCheck, ArrowRight } from "lucide-react";
 import { VOCABULARY_DATA } from "../data/koreanData";
 import { SEJONG_TOPIC_VOCABULARY } from "../data/sejongTopicVocabulary";
 import { speakKorean } from "../lib/koreanSpeech";
@@ -230,6 +231,100 @@ export default function Home() {
           </section>
         )}
 
+        {/* Bảng điều khiển kiểu Duolingo: streak là nhân vật chính, rồi nút học tiếp, điểm danh, cấp độ, lối tắt */}
+        {currentUser && (
+          <section className="space-y-4" aria-label="Tiến độ hôm nay">
+            <div className="flex items-end justify-between gap-3 px-1">
+              <h1 className="text-xl sm:text-2xl font-black tracking-tight text-stone-900 dark:text-white">Chào {currentUser.name || "bạn"}</h1>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-violet-500/10 px-3 py-1 text-xs font-black text-violet-700 dark:text-violet-300">
+                💎 {(currentUser.gems || 0).toLocaleString("vi-VN")}
+              </span>
+            </div>
+
+            <StreakPanel data={heatmapData} streak={currentUser.streak || 0} longestStreak={currentUser.longest_streak || 0} />
+
+            {/* Hành động chính */}
+            <div className="grid gap-3 sm:grid-cols-2">
+              {isFeatureEnabled("flashcards") && (
+                <Link
+                  href="/flashcards?resume=true"
+                  title={lastLessonTitle ? `Học tiếp: ${lastLessonTitle}` : "Tiếp tục học từ vựng"}
+                  style={{ color: "#fff" }}
+                  className="flex min-h-16 items-center gap-3 rounded-2xl bg-sky-500 px-5 py-3 shadow-sm transition hover:bg-sky-600 active:scale-[0.99]"
+                >
+                  <Play className="h-6 w-6 shrink-0 fill-current" />
+                  <span className="min-w-0">
+                    <span className="block text-base font-black">Học tiếp</span>
+                    {lastLessonTitle && <span className="block truncate text-xs opacity-90">{lastLessonTitle.split(":")[0]}</span>}
+                  </span>
+                </Link>
+              )}
+              {hasCheckedInToday ? (
+                <div className="flex min-h-16 items-center gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-5 py-3 text-emerald-700 dark:text-emerald-300">
+                  <CheckCircle2 className="h-6 w-6 shrink-0" />
+                  <span className="text-sm font-black">Đã điểm danh hôm nay</span>
+                </div>
+              ) : (
+                <button
+                  onClick={handleCheckin}
+                  style={{ color: "#fff" }}
+                  className="flex min-h-16 cursor-pointer items-center gap-3 rounded-2xl bg-amber-500 px-5 py-3 text-left shadow-sm transition hover:bg-amber-600 active:scale-[0.99]"
+                >
+                  <Flame className="h-6 w-6 shrink-0 fill-current" />
+                  <span>
+                    <span className="block text-base font-black">Điểm danh</span>
+                    <span className="block text-xs opacity-90">Nhận 1 💎 hôm nay</span>
+                  </span>
+                </button>
+              )}
+            </div>
+
+            {/* Cấp độ và XP */}
+            <div className="rounded-2xl border border-stone-200 bg-white p-4 dark:border-stone-800 dark:bg-stone-900/70">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/15 text-base font-black text-amber-700 dark:text-amber-300">{userLevel || 1}</span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-black text-stone-900 dark:text-white">{getStudyRank(userLevel)}</p>
+                    <p className="text-xs text-stone-500 dark:text-stone-400">Còn {neededXPForNext} XP lên Lv.{(userLevel || 1) + 1}</p>
+                  </div>
+                </div>
+                <p className="flex shrink-0 items-center gap-1 text-sm font-black tabular-nums text-stone-900 dark:text-white"><Zap className="h-4 w-4 fill-amber-400 text-amber-500" />{(currentUser.xp || 0).toLocaleString("vi-VN")}</p>
+              </div>
+              <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-stone-200 dark:bg-stone-800" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={levelProgressPercent}>
+                <div className="h-full rounded-full bg-amber-400 transition-all duration-500" style={{ width: `${Math.max(4, levelProgressPercent || 0)}%` }} />
+              </div>
+            </div>
+
+            {/* Lối tắt */}
+            <div className="grid grid-cols-3 gap-3">
+              {isFeatureEnabled("flashcards") && (
+                <Link href="/flashcards" className="flex flex-col items-center gap-1.5 rounded-2xl border border-stone-200 bg-white px-2 py-4 text-center transition hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900/70">
+                  <Layers className="h-6 w-6 text-sky-500" />
+                  <span className="text-xs font-bold text-stone-800 dark:text-stone-200">Từ vựng</span>
+                </Link>
+              )}
+              {isFeatureEnabled("missions") && (
+                <Link href="/missions" className="flex flex-col items-center gap-1.5 rounded-2xl border border-stone-200 bg-white px-2 py-4 text-center transition hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900/70">
+                  <Target className="h-6 w-6 text-rose-500" />
+                  <span className="text-xs font-bold text-stone-800 dark:text-stone-200">Nhiệm vụ <span className="tabular-nums text-stone-500 dark:text-stone-400">{dailyMissionCount}/3</span></span>
+                </Link>
+              )}
+              {isFeatureEnabled("games") && (
+                <Link href="/games" className="flex flex-col items-center gap-1.5 rounded-2xl border border-stone-200 bg-white px-2 py-4 text-center transition hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900/70">
+                  <Gamepad2 className="h-6 w-6 text-amber-500" />
+                  <span className="text-xs font-bold text-stone-800 dark:text-stone-200">Chơi game</span>
+                </Link>
+              )}
+            </div>
+
+            {/* Heatmap cả năm chỉ cho màn từ tablet trở lên */}
+            <div className="hidden md:block">
+              <OnigiriHeatmap data={heatmapData} streak={currentUser.streak || 0} />
+            </div>
+          </section>
+        )}
+
         {/* Khối Tra Từ Vựng - Căn giữa, ngay trên khối tiến độ */}
         <div className="rounded-3xl bg-[#090f1e] text-white p-5 sm:p-6 shadow-2xl border-0 space-y-3.5 animate-fadeIn text-center">
           <div className="space-y-1 text-center">
@@ -300,167 +395,6 @@ export default function Home() {
             </div>
           )}
         </div>
-
-        {/* Master Dashboard Block - Căn giữa toàn bộ layout, tinh gọn bớt dòng, phong cách Dark Solid Block */}
-        <div className="rounded-3xl bg-[#090f1e] text-white p-5 sm:p-6 space-y-4 shadow-2xl border-0 overflow-hidden animate-fadeIn text-center">
-          {/* Header căn giữa gọn 1 dòng */}
-          <div className="text-center">
-            <h2 className="text-base sm:text-lg font-black tracking-tight text-white">
-              {currentUser ? `Chào ${currentUser.name || "bạn"}, tiếp tục chuỗi học và điểm danh nhận 💎 hôm nay!` : "Bảng Tiến Độ & Nhiệm Vụ Hôm Nay"}
-            </h2>
-          </div>
-
-          {/* 3 Metric Cards: Chuỗi Streak, Cấp độ, Tổng Tích Lũy - Thiết kế chuẩn theo Gemini Image (Dark & Light) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 lg:gap-5 relative">
-            {/* Card 1: Chuỗi Streak */}
-            <div className="metric-card py-4 sm:py-6 px-4 sm:px-5 rounded-2xl flex flex-col items-center justify-between text-center min-h-[160px] sm:min-h-[195px] relative group transition-all">
-              <span className="metric-card-title text-xs sm:text-[13px] font-extrabold uppercase tracking-widest">
-                CHUỖI STREAK
-              </span>
-
-              <div className="flex items-center justify-center gap-2.5 sm:gap-3 my-auto py-1 sm:py-2">
-                <Flame className="metric-card-icon-flame w-7 h-7 sm:w-10 sm:h-10 shrink-0" />
-                <span className="metric-card-value text-3xl sm:text-5xl font-black tracking-tight leading-none">
-                  {currentUser?.streak || 1}
-                </span>
-                <span className="metric-card-unit text-lg sm:text-2xl font-bold leading-none">
-                  ngày
-                </span>
-              </div>
-
-              <div className="metric-card-pill w-full py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-xl flex items-center justify-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-semibold">
-                <span>🏆</span>
-                <span>Streak cao nhất: {currentUser?.longest_streak || currentUser?.streak || 1} ngày</span>
-                <span>🏆</span>
-              </div>
-            </div>
-
-            {/* Card 2: Cấp độ (Level) */}
-            <div className="metric-card py-4 sm:py-6 px-4 sm:px-5 rounded-2xl flex flex-col items-center justify-between text-center min-h-[160px] sm:min-h-[195px] relative group transition-all">
-              <span className="metric-card-title text-xs sm:text-[13px] font-extrabold uppercase tracking-widest">
-                CẤP ĐỘ (LEVEL)
-              </span>
-
-              <div className="flex items-center justify-center gap-2 sm:gap-2.5 my-auto py-1">
-                <div className="metric-card-badge w-5 h-5 sm:w-6 sm:h-6 rounded-full font-black text-[11px] sm:text-xs flex items-center justify-center shadow-sm">
-                  <span>{userLevel || 1}</span>
-                </div>
-                <span className="metric-card-level-text text-xs sm:text-base font-bold">
-                  {getStudyRank(userLevel)} · Lên Lv.{(userLevel || 1) + 1} · Còn {neededXPForNext} XP
-                </span>
-              </div>
-
-              <div className="w-full space-y-1.5 sm:space-y-2 mt-auto">
-                <div className="metric-card-track w-full h-3 sm:h-4 rounded-full overflow-hidden p-0.5 relative">
-                  <div
-                    className="metric-card-fill h-full rounded-full transition-all duration-500"
-                    style={{ width: `${Math.max(8, levelProgressPercent || 50)}%` }}
-                  />
-                </div>
-                <div className="metric-card-subtext flex items-center justify-between text-[11px] sm:text-xs font-semibold px-0.5">
-                  <span>{currentLevelProgressXP} / 300 XP</span>
-                  <span>{levelProgressPercent}%</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 3: Tổng Tích Lũy */}
-            <div className="metric-card py-4 sm:py-6 px-4 sm:px-5 rounded-2xl flex flex-col items-center justify-between text-center min-h-[160px] sm:min-h-[195px] relative group transition-all">
-              <span className="metric-card-title text-xs sm:text-[13px] font-extrabold uppercase tracking-widest">
-                TỔNG TÍCH LŨY
-              </span>
-
-              <div className="flex items-center justify-center gap-2.5 sm:gap-3 my-auto py-1 sm:py-2">
-                <Zap className="metric-card-icon-zap w-7 h-7 sm:w-10 sm:h-10 shrink-0" />
-                <span className="metric-card-value text-3xl sm:text-5xl font-black tracking-tight leading-none">
-                  {(currentUser?.xp || 150).toLocaleString()}
-                </span>
-                <span className="metric-card-unit text-lg sm:text-2xl font-bold leading-none">
-                  XP
-                </span>
-              </div>
-
-              <div className="metric-card-pill w-full py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-xl flex items-center justify-center gap-1.5 text-[11px] sm:text-xs font-semibold">
-                <span>Tổng XP: {(currentUser?.xp || 0).toLocaleString()}</span>
-              </div>
-            </div>
-
-            {/* Dấu sao trang trí ✦ góc phải dưới như ảnh */}
-            <div className="pointer-events-none absolute -bottom-5 -right-3 text-slate-500/30 text-2xl hidden md:block select-none">
-              ✦
-            </div>
-          </div>
-
-          {/* Dãy nút bấm hành động căn giữa gọn gàng - Nguyên khối không viền */}
-          <div className="p-3 sm:p-3.5 rounded-2xl bg-[#070d1a] flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 border-0">
-            {/* Nút Học Tiếp Lượt Trước */}
-            {isFeatureEnabled("flashcards") && (
-              <Link
-                href="/flashcards?resume=true"
-                className="px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-[0.99] text-white font-extrabold text-xs shadow-lg shadow-emerald-950/40 transition-all flex items-center gap-2 border-0 min-h-[42px]"
-                title={lastLessonTitle ? `Học tiếp: ${lastLessonTitle}` : "Tiếp tục học từ vựng"}
-              >
-                <Play className="w-4 h-4 fill-white shrink-0" />
-                <span className="truncate max-w-[200px]">
-                  HỌC TIẾP{lastLessonTitle ? ` · ${lastLessonTitle.split(":")[0]}` : ""}
-                </span>
-              </Link>
-            )}
-
-            {/* Điểm danh */}
-            {hasCheckedInToday ? (
-              <button
-                disabled
-                className="px-4 sm:px-5 py-2.5 rounded-xl bg-emerald-500/20 text-emerald-300 font-bold text-xs flex items-center gap-2 cursor-not-allowed border-0 min-h-[42px]"
-              >
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                <span>ĐÃ ĐIỂM DANH (+1 💎)</span>
-              </button>
-            ) : (
-              <button
-                onClick={handleCheckin}
-                className="px-4 sm:px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-[0.99] text-white font-bold text-xs shadow-lg shadow-blue-900/40 transition-all cursor-pointer flex items-center gap-2 border-0 min-h-[42px]"
-              >
-                <Flame className="w-4 h-4 text-white fill-white" />
-                <span className="hidden sm:inline">ĐIỂM DANH NGAY · NHẬN 1 💎 HÔM NAY</span>
-                <span className="sm:hidden">ĐIỂM DANH (+1 💎)</span>
-              </button>
-            )}
-
-            {/* Từ vựng */}
-            {isFeatureEnabled("flashcards") && <Link
-              href="/flashcards"
-              className="px-4 sm:px-5 py-2.5 rounded-xl bg-[#132247] hover:bg-[#1a2f60] active:scale-[0.99] text-white font-bold text-xs transition-colors flex items-center gap-2 border-0 min-h-[42px]"
-            >
-              <Layers className="w-4 h-4 text-blue-400" />
-              <span>TỪ VỰNG</span>
-            </Link>}
-
-            {/* Chơi game · Ôn từ */}
-            {isFeatureEnabled("games") && <Link
-              href="/games"
-              className="px-3.5 sm:px-4 py-2.5 rounded-xl bg-[#111c38] hover:bg-[#182850] active:scale-[0.99] text-amber-300 font-bold text-xs transition-colors flex items-center gap-2 border-0 min-h-[42px]"
-            >
-              <Gamepad2 className="w-4 h-4 text-amber-400" />
-              <span>CHƠI GAME</span>
-            </Link>}
-
-            {/* Nhiệm vụ */}
-            {isFeatureEnabled("missions") && <Link
-              href="/missions"
-              className="px-3.5 sm:px-4 py-2.5 rounded-xl bg-[#111c38] hover:bg-[#182850] active:scale-[0.99] text-sky-300 font-bold text-xs transition-colors flex items-center gap-2 border-0 min-h-[42px]"
-            >
-              <Target className="w-4 h-4 text-sky-400" />
-              <span>NHIỆM VỤ ({dailyMissionCount}/3)</span>
-            </Link>}
-          </div>
-        </div>
-
-        {/* Heatmap Hoạt Động Ôn Tập Chuẩn Onigiri Anki Addon */}
-        <OnigiriHeatmap
-          data={heatmapData}
-          streak={currentUser?.streak || 0}
-        />
       </div>
     </AppShell>
   );
