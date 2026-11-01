@@ -14,6 +14,10 @@ export interface StudySessionInfo {
   studyMode?: "flip" | "typing";
   setStudyMode?: (mode: "flip" | "typing") => void;
   progressText?: string;
+  /** Chữ trên nút quay lại ở thanh trên (mặc định "Trở về"). */
+  backLabel?: string;
+  /** false: ẩn nút cài đặt học (nền, giao diện) trên thanh trên. */
+  showSettings?: boolean;
   progressPercent?: number;
   remainingNew?: number;
   remainingReview?: number;

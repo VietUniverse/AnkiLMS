@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { Headphones, Volume2, CheckCircle2, Play, RefreshCw, HelpCircle, Sparkles, Filter, ChevronLeft, ChevronRight, Eye, Mic, MicOff, RotateCcw, Keyboard, ArrowLeft, Star, PlayCircle, Lock, AlertTriangle, Repeat, Award } from "lucide-react";
 import { ApiClient } from "../lib/apiClient";
+import { useApp } from "../contexts/AppProvider";
 import { calculateKoreanSimilarity, normalizeKoreanText } from "../lib/koreanText";
 import { loadLessonProgress, saveLessonProgress } from "../lib/lessonProgress";
 import { loadYouTubeIframeApi } from "../lib/youtubeIframe";
@@ -64,6 +65,8 @@ const RAW_COURSE_SECTIONS: any[] = [{
 
 export const ShadowingModule: React.FC = () => {
   const [viewMode, setViewMode] = useState<"catalog" | "workspace">("catalog");
+  const { setActiveStudySession } = useApp();
+  const backToCatalogRef = useRef<() => void>(() => {});
   const [selectedUserLevel, setSelectedUserLevel] = useState<"all" | "beginner" | "experienced">("all");
   const [selectedHashtag, setSelectedHashtag] = useState<string>("#all");
   const [expandedSectionIds, setExpandedSectionIds] = useState<string[]>([]);
@@ -519,6 +522,16 @@ export const ShadowingModule: React.FC = () => {
     setSelectedTopik("all");
   };
 
+  backToCatalogRef.current = backToCatalog;
+
+  // Vào bài luyện nói: thanh bên và thanh dưới ẩn, thanh trên có nút Quay lại (qua cơ chế phiên học dùng chung).
+  const workspaceTitle = viewMode === "workspace" ? currentLesson?.title : undefined;
+  useEffect(() => {
+    if (!workspaceTitle) { setActiveStudySession(null); return; }
+    setActiveStudySession({ title: workspaceTitle, onExit: () => backToCatalogRef.current(), backLabel: "Quay lại", showSettings: false });
+    return () => setActiveStudySession(null);
+  }, [workspaceTitle, setActiveStudySession]);
+
   // Helper for Topik Level Badge styling
   const getTopikBadgeColor = (level: number) => {
     switch (level) {
@@ -749,14 +762,6 @@ export const ShadowingModule: React.FC = () => {
 
       {/* Top Header Bar with Back Button */}
       <div className="flex items-center justify-between bg-slate-900 border border-slate-800 p-3.5 rounded-2xl">
-        <button
-          onClick={backToCatalog}
-          className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-2 transition-all"
-          aria-label="Quay lại danh sách bài học"
-        >
-          <ArrowLeft className="w-4 h-4" aria-hidden="true" />
-          <span>Quay lại Danh Sách Bài Học (Catalog)</span>
-        </button>
 
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold text-slate-400">Bài đang luyện nói:</span>
