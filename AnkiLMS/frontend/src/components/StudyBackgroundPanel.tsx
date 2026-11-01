@@ -119,7 +119,7 @@ export function StudyBackgroundPanel() {
 
             {error && <p role="alert" className="text-xs text-rose-600">{error}</p>}
 
-            <button type="button" onClick={() => { saveStudyBackground({ ...DEFAULT_STUDY_BG }); setError(""); }} className="w-full rounded-xl py-2 text-xs font-bold text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800 cursor-pointer">
+            <button type="button" onClick={() => { saveStudyBackground({ ...DEFAULT_STUDY_BG }); setError(""); }} className="w-full rounded-xl py-2 text-xs font-bold text-stone-600 hover:bg-stone-100 dark:text-stone-300 dark:hover:bg-stone-800 cursor-pointer">
               Bỏ nền, về mặc định
             </button>
           </div>
