@@ -452,7 +452,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     const activeList = [...dueCards.slice(0, reviewLeft), ...newCards.slice(0, newLeft)];
     setDailyProgress(progress);
     if (newLeft === 0 && newCards.length > 0 && !options?.skipMorePrompt) {
-      setMoreAmount(String(Math.min(10, newCards.length)));
+      setMoreAmount(String(Math.min(5, newCards.length)));
       setMorePrompt({ deckId, title, cards, available: newCards.length, hasDue: dueCards.length > 0 });
       return;
     }
@@ -1522,7 +1522,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
               <span className="shrink-0 text-sm text-stone-500 dark:text-stone-400">từ</span>
             </div>
             <div className="flex gap-2">
-              {[5, 10, 20].filter((n) => n <= morePrompt.available).map((n) => (
+              {[10, 20, 30].filter((n) => n <= morePrompt.available).map((n) => (
                 <button key={n} type="button" onClick={() => setMoreAmount(String(n))} className="flex-1 cursor-pointer rounded-lg bg-stone-100 py-1.5 text-xs font-bold hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700">{n}</button>
               ))}
             </div>
