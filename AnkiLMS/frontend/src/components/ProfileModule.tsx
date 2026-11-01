@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Activity, BookOpen, CalendarDays, CheckCircle2, Clock3, Flame, Gem, LogOut, Mail, Mic2, NotebookPen, Play, Shield, Sparkles, Trophy, User, Zap } from "lucide-react";
+import { BookOpen, CalendarDays, CheckCircle2, Clock3, Flame, Gem, LogOut, Mail, Mic2, NotebookPen, Play, Shield, Sparkles, Trophy, User, Zap } from "lucide-react";
 import { ApiClient, StudyProfileSummary, UserProfile } from "../lib/apiClient";
 import { ACHIEVEMENTS_DATA } from "../data/achievementsData";
 import { getStudyRank } from "../lib/studyRanks";
+import { OnigiriHeatmap } from "./OnigiriHeatmap";
 
 interface ProfileModuleProps {
   currentUser: UserProfile | null;
@@ -41,6 +42,7 @@ const formatDuration = (seconds: number) => {
 
 export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpenAuth, onLogout }) => {
   const [stats, setStats] = useState<StudyProfileSummary | null>(null);
+  const [heatmapData, setHeatmapData] = useState<Awaited<ReturnType<typeof ApiClient.getHeatmapData>>>([]);
   const [claimedBadgeIds, setClaimedBadgeIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -48,25 +50,16 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
     let active = true;
     void Promise.all([
       ApiClient.getStudyProfileSummary(),
+      ApiClient.getHeatmapData(),
       fetch("/api/achievements", { credentials: "same-origin", cache: "no-store" }).then((response) => response.ok ? response.json() : null).catch(() => null),
-    ]).then(([summary, achievementData]) => {
+    ]).then(([summary, heatmap, achievementData]) => {
       if (!active) return;
       setStats(summary);
+      setHeatmapData(heatmap);
       setClaimedBadgeIds(new Set((achievementData?.achievements || []).filter((item: { claimed?: boolean }) => item.claimed).map((item: { id: string }) => item.id)));
     });
     return () => { active = false; };
   }, [currentUser?.id]);
-
-  const activityDays = useMemo(() => {
-    const byDay = new Map((stats?.days || []).map((day) => [day.day, day]));
-    const today = new Date();
-    return Array.from({ length: 28 }, (_, index) => {
-      const date = new Date(today);
-      date.setDate(today.getDate() - (27 - index));
-      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-      return { key, date, value: byDay.get(key) };
-    });
-  }, [stats]);
 
   const earnedBadges = ACHIEVEMENTS_DATA.filter((badge) => claimedBadgeIds.has(badge.id));
 
@@ -124,18 +117,9 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
         {statsCards.map(({ label, value, hint, icon: Icon, color, bg }) => <div key={label} className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 sm:p-5"><div className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl ${bg} ${color}`}><Icon className="h-5 w-5" /></div><p className="text-xl font-black text-white sm:text-2xl">{value}</p><p className="mt-1 text-xs font-bold text-slate-300">{label}</p><p className="mt-1 text-[11px] text-slate-500">{hint}</p></div>)}
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5 sm:p-6">
-          <div className="mb-5 flex items-center justify-between gap-3"><div><h2 className="flex items-center gap-2 text-lg font-black"><Activity className="h-5 w-5 text-emerald-300" />Hoạt động học tập</h2><p className="mt-1 text-xs text-slate-500">28 ngày gần nhất · mỗi ô là một ngày học</p></div><span className="rounded-full bg-slate-800 px-3 py-1 text-[11px] font-bold text-slate-300">{stats?.days.filter((d) => d.minutes > 0 || d.cards > 0).length || 0} ngày học</span></div>
-          <div className="grid grid-cols-7 gap-2 sm:grid-cols-14">
-            {activityDays.map(({ key, date, value }) => {
-              const intensity = !value || (!value.minutes && !value.cards) ? "bg-slate-800" : value.minutes >= 30 ? "bg-emerald-400" : value.minutes >= 10 ? "bg-emerald-500/70" : "bg-emerald-800";
-              return <div key={key} title={`${date.toLocaleDateString("vi-VN")}: ${value?.minutes || 0} phút, ${value?.cards || 0} câu`} className={`aspect-square rounded-md ${intensity}`} />;
-            })}
-          </div>
-          <div className="mt-4 flex items-center justify-between text-[10px] text-slate-500"><span>{activityDays[0]?.date.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" })}</span><span>Ít hơn <i className="mx-1 inline-block h-2.5 w-2.5 rounded-sm bg-slate-800" /> <i className="mx-1 inline-block h-2.5 w-2.5 rounded-sm bg-emerald-800" /><i className="mx-1 inline-block h-2.5 w-2.5 rounded-sm bg-emerald-500/70" /><i className="mx-1 inline-block h-2.5 w-2.5 rounded-sm bg-emerald-400" /> Nhiều hơn</span><span>{new Date().toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" })}</span></div>
-        </div>
+      <OnigiriHeatmap data={heatmapData} streak={currentUser.streak || 0} />
 
+      <section className="grid gap-6">
         <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5 sm:p-6">
           <div className="mb-5 flex items-center justify-between"><div><h2 className="flex items-center gap-2 text-lg font-black"><Trophy className="h-5 w-5 text-amber-300" />Thành tích</h2><p className="mt-1 text-xs text-slate-500">Mốc đã đạt theo cấp độ và chuỗi học</p></div><span className="rounded-full bg-amber-400/10 px-3 py-1 text-xs font-black text-amber-200">{earnedBadges.length} mốc</span></div>
           {earnedBadges.length ? <div className="grid grid-cols-2 gap-2">{earnedBadges.slice(0, 6).map((badge) => <div key={badge.id} className="flex items-center gap-2 rounded-xl border border-amber-300/10 bg-amber-300/5 p-3"><span className="text-xl">{badge.icon}</span><div className="min-w-0"><p className="truncate text-xs font-bold text-amber-100">{badge.name}</p><p className="text-[10px] text-slate-500">Đã đạt</p></div></div>)}</div> : <div className="rounded-xl border border-dashed border-slate-700 p-5 text-center text-xs text-slate-500">Học đều mỗi ngày để mở khóa mốc thành tích đầu tiên.</div>}
