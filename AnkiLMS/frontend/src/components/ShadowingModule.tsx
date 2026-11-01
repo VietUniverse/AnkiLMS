@@ -525,6 +525,29 @@ export const ShadowingModule: React.FC = () => {
   backToCatalogRef.current = backToCatalog;
 
   // Vào bài luyện nói: thanh bên và thanh dưới ẩn, thanh trên có nút Quay lại (qua cơ chế phiên học dùng chung).
+  // Phím tắt: ← câu trước, → câu tiếp, R phát lại câu, Space phát cả bài
+  const keysRef = useRef<Record<string, () => void>>({});
+  keysRef.current = {
+    ArrowLeft: handlePrevSub,
+    ArrowRight: handleNextSub,
+    r: () => currentSub && playSegment(currentSub),
+    " ": playFullLesson,
+  };
+  useEffect(() => {
+    if (viewMode !== "workspace") return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      const t = e.target instanceof Element ? e.target : null;
+      if (t?.closest("input,textarea,select,[contenteditable=true]")) return;
+      if (e.key === " " && t?.closest("button,summary,a")) return;
+      const fn = keysRef.current[e.key.length === 1 ? e.key.toLowerCase() : e.key];
+      if (!fn) return;
+      e.preventDefault();
+      fn();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [viewMode]);
   const workspaceTitle = viewMode === "workspace" ? currentLesson?.title : undefined;
   useEffect(() => {
     if (!workspaceTitle) { setActiveStudySession(null); return; }
@@ -804,16 +827,16 @@ export const ShadowingModule: React.FC = () => {
             {/* Header & Segment Prev/Next Navigation */}
             <div className="relative flex items-center justify-center gap-2 pb-3 border-b border-slate-800">
               <div className="flex items-center gap-2">
-                <button onClick={handlePrevSub} disabled={currentSubIndex === 0} className="h-10 w-10 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 flex items-center justify-center disabled:opacity-40 cursor-pointer" aria-label="Câu trước" title="Câu trước">
+                <button onClick={handlePrevSub} disabled={currentSubIndex === 0} className="h-10 w-10 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 flex items-center justify-center disabled:opacity-40 cursor-pointer" aria-label="Câu trước" title="Câu trước (←)">
                   <ChevronLeft className="w-5 h-5" aria-hidden="true" />
                 </button>
-                <button onClick={() => playSegment(currentSub)} className="h-10 w-10 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 flex items-center justify-center cursor-pointer" aria-label="Phát lại câu hiện tại" title="Phát lại câu">
+                <button onClick={() => playSegment(currentSub)} className="h-10 w-10 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 flex items-center justify-center cursor-pointer" aria-label="Phát lại câu hiện tại" title="Phát lại câu (R)">
                   <RotateCcw className="w-5 h-5" aria-hidden="true" />
                 </button>
-                <button onClick={playFullLesson} className="h-10 w-10 rounded-xl bg-rose-600 hover:bg-rose-500 text-white flex items-center justify-center cursor-pointer" aria-label="Phát toàn bộ bài học" title="Phát cả bài">
+                <button onClick={playFullLesson} className="h-10 w-10 rounded-xl bg-rose-600 hover:bg-rose-500 text-white flex items-center justify-center cursor-pointer" aria-label="Phát toàn bộ bài học" title="Phát cả bài (Space)">
                   <Play className="w-5 h-5 fill-white" aria-hidden="true" />
                 </button>
-                <button onClick={handleNextSub} className="h-10 w-10 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 flex items-center justify-center cursor-pointer" aria-label="Câu tiếp" title="Câu tiếp">
+                <button onClick={handleNextSub} className="h-10 w-10 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 flex items-center justify-center cursor-pointer" aria-label="Câu tiếp" title="Câu tiếp (→)">
                   <ChevronRight className="w-5 h-5" aria-hidden="true" />
                 </button>
               </div>
