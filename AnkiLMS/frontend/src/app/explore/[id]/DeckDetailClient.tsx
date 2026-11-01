@@ -412,7 +412,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
         </div>
 
         {/* Thanh hành động dính đáy trên điện thoại/tablet: bám theo bề rộng nội dung, nằm trên thanh điều hướng dưới */}
-        <div className="lg:hidden sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-30 mx-[4.25rem] sm:mx-auto sm:max-w-md">
+        <div className="lg:hidden sticky bottom-[calc(4.25rem+env(safe-area-inset-bottom))] z-30 mx-[4.25rem] sm:mx-auto sm:max-w-md">
           <div className="flex items-center gap-3 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white/95 dark:bg-stone-900/95 backdrop-blur px-3 py-2.5 shadow-lg">
             <div className="min-w-0 flex-1">
               <p className="text-sm font-black tabular-nums text-stone-900 dark:text-white">{deck.cards.length.toLocaleString("vi-VN")} thẻ</p>
