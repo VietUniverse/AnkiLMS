@@ -7,7 +7,6 @@ import { BottomNav } from "./BottomNav";
 import { Header } from "./Header";
 import { AnkiImporter } from "./AnkiImporter";
 import { AuthModal } from "./AuthModal";
-import { FloatingCommunityChat } from "./FloatingCommunityChat";
 import { useApp } from "../contexts/AppProvider";
 import { Sparkles } from "lucide-react";
 import { featureForPath } from "../lib/featureFlags";
@@ -112,7 +111,6 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       </div>
 
       <BottomNav onOpenMobileMenu={() => setIsMobileMenuOpen(true)} />
-      {pathname !== "/" && isFeatureEnabled("chat") && <FloatingCommunityChat />}
 
       {isFeatureEnabled("ankiImport") && <AnkiImporter
         isOpen={isImporterOpen}
