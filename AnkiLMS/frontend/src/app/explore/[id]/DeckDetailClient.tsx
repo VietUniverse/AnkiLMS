@@ -24,6 +24,12 @@ import {
   Globe2,
 } from "lucide-react";
 
+const HEADER_LEVEL: Record<string, string> = {
+  "Sơ cấp": "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+  "Trung cấp": "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+  "Cao cấp": "bg-rose-500/10 text-rose-600 dark:text-rose-400",
+};
+
 export default function DeckDetailClient({ id }: { id: string }) {
   const { userDecks, handleDeckImported, handleRemoveDeck } = useApp();
   const [courseDeck, setCourseDeck] = useState<CuratedDeckItem | null>(null);
@@ -224,42 +230,40 @@ export default function DeckDetailClient({ id }: { id: string }) {
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_20rem] gap-6 lg:gap-8 items-start">
           {/* Cột trái: giới thiệu, xem thử, nội dung */}
           <div className="space-y-6 min-w-0">
-            <header className="space-y-2">
+            <header className="space-y-3">
               <div className="flex items-center gap-3">
-                <div className="hidden sm:flex w-10 h-10 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 items-center justify-center shrink-0">
+                <div className="hidden sm:flex w-11 h-11 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 items-center justify-center shrink-0">
                   <DeckIcon name={deck.iconName} className="w-5 h-5" />
                 </div>
-                <h1 className="text-lg sm:text-2xl font-black text-stone-900 dark:text-white tracking-tight leading-snug">
+                <h1 className="text-xl sm:text-2xl font-black text-stone-900 dark:text-white tracking-tight leading-tight">
                   {deck.title}
                 </h1>
               </div>
-              <div className="flex items-center gap-x-2 gap-y-1 flex-wrap text-xs text-stone-500 dark:text-stone-400">
-                <span className={`font-bold px-2 py-0.5 rounded-full border ${deck.badgeColor}`}>{deck.categoryLabel}</span>
-                <span>{deck.level}</span>
-                <span>{deck.cards.length.toLocaleString("vi-VN")} thẻ</span>
-                <span className="inline-flex items-center gap-1 font-semibold text-amber-500">
-                  <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                  {deck.rating.toFixed(1)}
+
+              {/* Một hàng nhãn gọn: cấp độ, số thẻ, đánh giá (nếu đã có), quyền xem */}
+              <div className="flex items-center gap-1.5 flex-wrap text-xs font-semibold">
+                <span className={`rounded-full px-2.5 py-1 ${HEADER_LEVEL[deck.level] || "bg-stone-500/10 text-stone-600 dark:text-stone-300"}`}>{deck.level}</span>
+                {deck.categoryLabel && deck.categoryLabel !== deck.level && (
+                  <span className="rounded-full bg-stone-100 dark:bg-stone-800 px-2.5 py-1 text-stone-600 dark:text-stone-300">{deck.categoryLabel}</span>
+                )}
+                <span className="inline-flex items-center gap-1 rounded-full bg-stone-100 dark:bg-stone-800 px-2.5 py-1 text-stone-600 dark:text-stone-300">
+                  <Layers className="w-3 h-3" /> {deck.cards.length.toLocaleString("vi-VN")} thẻ
                 </span>
-                <span className="inline-flex items-center gap-1">
-                  <Globe2 className="w-3 h-3" /> {deck.visibility === "private" ? "Riêng tư" : "Công khai"}
-                </span>
-                {IS_DEMO_DECKS_ENABLED && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-500 border border-amber-500/30">Demo</span>
+                {deck.rating > 0 && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2.5 py-1 text-amber-600 dark:text-amber-400">
+                    <Star className="w-3 h-3 fill-current" /> {deck.rating.toFixed(1)}
+                  </span>
+                )}
+                {deck.visibility === "private" && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-stone-100 dark:bg-stone-800 px-2.5 py-1 text-stone-600 dark:text-stone-300">
+                    <Globe2 className="w-3 h-3" /> Riêng tư
+                  </span>
                 )}
               </div>
-              <p className="text-sm text-stone-600 dark:text-stone-300 leading-relaxed line-clamp-3 sm:line-clamp-none">
+
+              <p className="max-w-2xl text-sm text-stone-600 dark:text-stone-300 leading-relaxed line-clamp-3 sm:line-clamp-none">
                 {deck.detailedDescription || deck.description}
               </p>
-              {deck.tags.length > 0 && (
-                <div className="flex items-center gap-1.5 flex-nowrap overflow-x-auto sm:flex-wrap sm:overflow-visible -mx-1 px-1">
-                  {[...new Set(deck.tags)].map((t) => (
-                    <span key={t} className="shrink-0 text-[11px] text-stone-500 dark:text-stone-400 bg-stone-100 dark:bg-stone-800/80 px-2 py-0.5 rounded-md">
-                      #{t}
-                    </span>
-                  ))}
-                </div>
-              )}
             </header>
 
             {/* Xem thử thẻ */}
@@ -308,7 +312,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
                 )}
               </div>
 
-              <div className="flex items-center justify-center gap-1 overflow-x-auto">
+              <div className="flex flex-wrap items-center justify-center gap-1">
                 {previewCards.map((c, i) => (
                   <button
                     key={c.id}
@@ -317,7 +321,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
                       setRequestedPreviewCardId(null);
                       setIsPreviewFlipped(false);
                     }}
-                    className={`min-w-7 px-2 py-1 rounded-md text-xs font-bold transition cursor-pointer ${
+                    className={`min-w-6 px-1.5 sm:min-w-7 sm:px-2 py-1 rounded-md text-xs font-bold transition cursor-pointer ${
                       activePreviewIndex === i
                         ? "bg-sky-500 text-white"
                         : "text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800"
