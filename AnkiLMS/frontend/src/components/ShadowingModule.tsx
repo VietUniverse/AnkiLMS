@@ -758,17 +758,7 @@ export const ShadowingModule: React.FC = () => {
 
   // ================= VIEW 2: 3-COLUMN SHADOWING WORKSPACE =================
   return (
-    <div className="space-y-4 animate-fadeIn pb-24 w-full max-w-[1800px] mx-auto text-slate-100 px-2 sm:px-4">
-
-      {/* Top Header Bar with Back Button */}
-      <div className="flex items-center justify-between bg-slate-900 border border-slate-800 p-3.5 rounded-2xl">
-
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-slate-400">Bài đang luyện nói:</span>
-          <span className="text-xs font-black text-rose-400 font-noto">{currentLesson.title}</span>
-        </div>
-        <TranslationLanguageSetup language={translationLanguage} onChange={setTranslationLanguage} />
-      </div>
+    <div className="space-y-4 lg:space-y-0 lg:flex lg:flex-col lg:gap-3 lg:h-[calc(100dvh-5rem)] animate-fadeIn pb-24 lg:pb-0 w-full max-w-[1800px] mx-auto text-slate-100 px-2 sm:px-4">
 
       {/* YouTube Error Toast */}
       {ytError && (
@@ -787,18 +777,20 @@ export const ShadowingModule: React.FC = () => {
       )}
 
       {/* Main Spacious Dashboard Layout (3 Columns) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-4 lg:flex-1 lg:min-h-0 lg:items-stretch">
 
         {/* CENTER COLUMN: MAIN WORKSPACE (Col 4-9) */}
-        <main className="min-w-0 lg:col-span-8 space-y-5">
+        <main className="min-w-0 lg:col-span-8 space-y-5 lg:space-y-0 lg:flex lg:flex-col lg:gap-3 lg:min-h-0">
 
           {/* Top Video Player Card */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-lg">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 lg:space-y-0 lg:flex lg:flex-col lg:gap-3 lg:flex-1 lg:min-h-0 shadow-lg">
             <div className="flex items-center justify-between text-sm flex-wrap gap-2">
               <div className="flex items-center gap-3">
                 <h2 className="font-extrabold text-white text-base font-noto">{currentLesson.title}</h2>
                 <span className="px-3 py-1 rounded-full bg-sky-500/20 text-sky-300 font-bold text-xs">{currentLesson.topikName}</span>
               </div>
+              <div className="flex items-center gap-2">
+              <TranslationLanguageSetup language={translationLanguage} onChange={setTranslationLanguage} />
               <select
                 value={playbackSpeed}
                 onChange={(e) => setPlaybackSpeed(Number(e.target.value))}
@@ -808,17 +800,18 @@ export const ShadowingModule: React.FC = () => {
               >
                 {[0.5, 0.75, 1, 1.25, 1.5].map((s) => <option key={s} value={s}>{s}x</option>)}
               </select>
+              </div>
             </div>
 
             {/* Video Player */}
-            <div className={`relative w-full ${currentLesson.sourceType === "original" ? "min-h-40" : "pt-[56.25%]"} bg-black rounded-xl overflow-hidden border border-slate-800 shadow-md`}>
+            <div className={`relative w-full ${currentLesson.sourceType === "original" ? "min-h-40" : "pt-[56.25%] lg:pt-0 lg:flex-1 lg:min-h-0"} bg-black rounded-xl overflow-hidden border border-slate-800 shadow-md`}>
               {currentLesson.sourceType === "original" ? <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-indigo-950 to-slate-950 p-4 text-center"><span className="text-3xl">🎧</span><p className="text-sm font-bold text-white">Bài nghe tiếng Hàn được đọc bằng giọng Hàn trên thiết bị</p><p className="text-xs text-slate-300">{currentLesson.sourceLabel}</p><a href={currentLesson.sourceUrl} target="_blank" rel="noreferrer" className="text-xs font-bold text-rose-300 underline underline-offset-4">Mở nguồn tham khảo bên ngoài · không khớp lời luyện ↗</a></div> : <div id="yt-shadowing-player" className="absolute inset-0 h-full w-full"></div>}
             </div>
 
           </div>
 
           {/* Shadowing Speaking Practice Card */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-5 shadow-lg">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 lg:p-3 space-y-4 lg:space-y-2 shadow-lg">
 
             {/* Header & Segment Prev/Next Navigation */}
             <div className="flex items-center justify-between flex-wrap gap-2 pb-3 border-b border-slate-800">
@@ -843,24 +836,24 @@ export const ShadowingModule: React.FC = () => {
             </div>
 
             {/* Target Korean Text Display Box */}
-            <div className="p-6 bg-slate-950 rounded-2xl border border-slate-800 space-y-3 text-center">
-              <span className="text-2xl md:text-3xl font-black text-white font-noto leading-relaxed block tracking-wide">
+            <div className="p-4 lg:p-3 bg-slate-950 rounded-2xl border border-slate-800 space-y-2 text-center">
+              <span className="text-xl md:text-2xl font-black text-white font-noto leading-relaxed block tracking-wide">
                 {currentSub.text}
               </span>
               {(currentTranslation || generatedTranslation) && <p className="text-sm text-slate-400">{currentTranslation || generatedTranslation}</p>}
             </div>
 
             {/* Microphone Voice Recording Button */}
-            <div className="flex flex-col items-center justify-center space-y-3 py-2">
+            <div className="flex flex-col items-center justify-center space-y-1.5 lg:py-0 py-2">
               <button
                 onClick={handleToggleRecord}
-                className={`relative w-20 h-20 rounded-full flex items-center justify-center transition-all shadow-2xl ${
+                className={`relative w-14 h-14 rounded-full flex items-center justify-center transition-all shadow-2xl ${
                   isRecording
                     ? "bg-rose-600 text-white animate-pulse ring-8 ring-rose-500/30"
                     : "bg-gradient-to-tr from-rose-600 to-amber-500 hover:scale-105 text-white ring-4 ring-rose-500/20"
                 }`}
               >
-                {isRecording ? <MicOff className="w-9 h-9" /> : <Mic className="w-9 h-9" />}
+                {isRecording ? <MicOff className="w-7 h-7" /> : <Mic className="w-7 h-7" />}
               </button>
 
               <span className="text-xs font-bold text-slate-300">
@@ -891,7 +884,7 @@ export const ShadowingModule: React.FC = () => {
         </main>
 
         {/* RIGHT COLUMN: SUBTITLE TIMELINE LIST (BẢN PHÁT ÂM BÀI HỌC) (Col 10-12) */}
-        <aside className="min-w-0 lg:col-span-4 bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 max-h-[420px] lg:max-h-[820px] overflow-y-auto shadow-lg">
+        <aside className="min-w-0 lg:col-span-4 bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 max-h-[420px] lg:max-h-none lg:min-h-0 overflow-y-auto shadow-lg">
           <div className="flex items-center justify-between border-b border-slate-800 pb-3">
             <h3 className="text-xs font-black text-slate-200 uppercase tracking-wider">BẢN PHÁT ÂM BÀI HỌC</h3>
             <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xs">
