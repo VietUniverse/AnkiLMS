@@ -789,18 +789,6 @@ export const ShadowingModule: React.FC = () => {
                 <h2 className="font-extrabold text-white text-base font-noto">{currentLesson.title}</h2>
                 <span className="px-3 py-1 rounded-full bg-sky-500/20 text-sky-300 font-bold text-xs">{currentLesson.topikName}</span>
               </div>
-              <div className="flex items-center gap-2">
-              <TranslationLanguageSetup language={translationLanguage} onChange={setTranslationLanguage} />
-              <select
-                value={playbackSpeed}
-                onChange={(e) => setPlaybackSpeed(Number(e.target.value))}
-                aria-label="Tốc độ phát"
-                title="Tốc độ phát"
-                className="rounded-lg border border-slate-700 bg-slate-950 px-2 py-1 text-xs font-bold font-mono text-slate-200 cursor-pointer"
-              >
-                {[0.5, 0.75, 1, 1.25, 1.5].map((s) => <option key={s} value={s}>{s}x</option>)}
-              </select>
-              </div>
             </div>
 
             {/* Video Player */}
@@ -815,6 +803,14 @@ export const ShadowingModule: React.FC = () => {
 
             {/* Header & Segment Prev/Next Navigation */}
             <div className="flex items-center justify-center gap-2 pb-3 border-b border-slate-800">
+              <TranslationLanguageSetup up language={translationLanguage} onChange={setTranslationLanguage}>
+                  <p className="text-sm font-black text-white">Tốc độ phát</p>
+                  <div className="mt-2 mb-4 flex gap-1">
+                    {[0.5, 0.75, 1, 1.25, 1.5].map((s) => (
+                      <button key={s} type="button" onClick={() => setPlaybackSpeed(s)} aria-pressed={playbackSpeed === s} className={`flex-1 rounded-lg py-1.5 text-xs font-bold font-mono ${playbackSpeed === s ? "bg-rose-600 text-white" : "bg-slate-900 text-slate-400 hover:text-slate-200"}`}>{s}x</button>
+                    ))}
+                  </div>
+                </TranslationLanguageSetup>
               <div className="flex items-center gap-2">
                 <button onClick={handlePrevSub} disabled={currentSubIndex === 0} className="h-10 w-10 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 flex items-center justify-center disabled:opacity-40 cursor-pointer" aria-label="Câu trước" title="Câu trước">
                   <ChevronLeft className="w-5 h-5" aria-hidden="true" />
