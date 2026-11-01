@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useEffect, useRef, useCallback, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import DOMPurify from "dompurify";
 import { VOCABULARY_DATA } from "../data/koreanData";
@@ -975,6 +976,92 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     ? Math.round(((currentCardIndex + 1) / activeCardsList.length) * 100)
     : 0;
 
+  const studyActions = (
+    <>
+              {!isFlipped ? (
+                /* Trạng thái 1: Chưa lật -> Nút Hiện Đáp Án */
+                <button
+                  onClick={() => {
+                    revealAnswer();
+                    inputRef.current?.blur();
+                  }}
+                  className="srs-btn-dark w-full h-12 rounded-xl bg-stone-900 hover:bg-stone-800 dark:bg-white dark:hover:bg-stone-100 text-white dark:text-stone-900 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition shadow-xs cursor-pointer"
+                >
+                  <span className="font-extrabold text-white dark:text-stone-900">Hiện đáp án</span>
+                  <kbd className="hidden sm:inline font-mono text-[10px] text-white dark:text-stone-900 px-2 py-0.5 rounded border border-white/40 dark:border-stone-400 font-bold">
+                    Space / Enter
+                  </kbd>
+                </button>
+              ) : (
+                /* Trạng thái 2: Đã lật -> Thay thế ngay bằng Quên & Thuộc */
+                <div className="space-y-2 animate-reveal">
+                  <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                    <button
+                      onClick={() => handleResponse(false)}
+                      className="h-12 rounded-xl bg-stone-100 hover:bg-rose-50 dark:bg-stone-800 dark:hover:bg-rose-950/30 text-stone-700 dark:text-stone-300 hover:text-rose-600 dark:hover:text-rose-400 border border-stone-200 dark:border-stone-700/60 hover:border-rose-300 dark:hover:border-rose-900 font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition cursor-pointer"
+                    >
+                      <span className="w-2 h-2 rounded-full bg-rose-500" />
+                      <span>Quên</span>
+                      <kbd className="hidden sm:inline font-mono text-[10px] text-stone-500 dark:text-stone-400 ml-1">
+                        Q / 1 (←)
+                      </kbd>
+                    </button>
+
+                    <button
+                      onClick={() => handleResponse(true)}
+                      className="h-12 rounded-xl bg-stone-900 hover:bg-emerald-600 dark:bg-white dark:hover:bg-emerald-500 text-white dark:text-stone-900 dark:hover:text-stone-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition shadow-xs cursor-pointer"
+                    >
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 dark:bg-emerald-600" />
+                      <span>Thuộc</span>
+                      <kbd className="hidden sm:inline font-mono text-[10px] text-white/90 dark:text-stone-900/90 ml-1">
+                        T / 2 / Space (→)
+                      </kbd>
+                    </button>
+                  </div>
+
+                  {/* Nút mở rộng 4 mức FSRS chi tiết (Again/Hard/Good/Easy) nếu muốn */}
+                  <div className="text-center pt-1">
+                    <button
+                      onClick={() => setShowFsrsDetailed(!showFsrsDetailed)}
+                      className="text-[11px] text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 transition cursor-pointer"
+                    >
+                      {showFsrsDetailed ? "Ẩn mức đánh giá FSRS chi tiết" : "Hiện 4 mức đánh giá FSRS chi tiết"}
+                    </button>
+
+                    {showFsrsDetailed && (
+                      <div className="grid grid-cols-4 gap-2 mt-2 pt-2 border-t border-stone-200 dark:border-stone-800 animate-reveal">
+                        <button
+                          onClick={() => handleResponse(false, "again")}
+                          className="p-2 rounded-lg bg-rose-500/10 text-rose-500 text-xs font-bold hover:bg-rose-500/20 transition cursor-pointer"
+                        >
+                          1. Học lại
+                        </button>
+                        <button
+                          onClick={() => handleResponse(false, "hard")}
+                          className="p-2 rounded-lg bg-amber-500/10 text-amber-500 text-xs font-bold hover:bg-amber-500/20 transition cursor-pointer"
+                        >
+                          2. Khó
+                        </button>
+                        <button
+                          onClick={() => handleResponse(true, "good")}
+                          className="p-2 rounded-lg bg-blue-500/10 text-blue-500 text-xs font-bold hover:bg-blue-500/20 transition cursor-pointer"
+                        >
+                          3. Tốt
+                        </button>
+                        <button
+                          onClick={() => handleResponse(true, "easy")}
+                          className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500 text-xs font-bold hover:bg-emerald-500/20 transition cursor-pointer"
+                        >
+                          4. Dễ
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+    </>
+  );
+
   return (
     <div className="w-full min-h-[calc(100vh-6rem)] pb-12 transition-colors">
       {/* ====================================================================
@@ -1302,7 +1389,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                   </div>
 
                   {/* Bottom Footer Hint */}
-                  {isFlipped && <div className="w-full flex items-center justify-between pt-3 border-t border-stone-100 dark:border-stone-800/80 text-[11px]">
+                  {isFlipped && <div className="hidden sm:flex w-full items-center justify-between pt-3 border-t border-stone-100 dark:border-stone-800/80 text-[11px]">
                     <span className="flex items-center gap-1 font-medium text-stone-400">
                       {isFlipped ? (
                         <>
@@ -1422,89 +1509,17 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                 ======================================================== */}
               </div>
 
-              <div className="sticky bottom-3 z-20 pt-3 pb-1 mt-4">
-              {!isFlipped ? (
-                /* Trạng thái 1: Chưa lật -> Nút Hiện Đáp Án */
-                <button
-                  onClick={() => {
-                    revealAnswer();
-                    inputRef.current?.blur();
-                  }}
-                  className="srs-btn-dark w-full h-12 rounded-xl bg-stone-900 hover:bg-stone-800 dark:bg-white dark:hover:bg-stone-100 text-white dark:text-stone-900 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition shadow-xs cursor-pointer"
-                >
-                  <span className="font-extrabold text-white dark:text-stone-900">Hiện đáp án</span>
-                  <kbd className="hidden sm:inline font-mono text-[10px] text-white dark:text-stone-900 px-2 py-0.5 rounded border border-white/40 dark:border-stone-400 font-bold">
-                    Space / Enter
-                  </kbd>
-                </button>
-              ) : (
-                /* Trạng thái 2: Đã lật -> Thay thế ngay bằng Quên & Thuộc */
-                <div className="space-y-2 animate-reveal">
-                  <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                    <button
-                      onClick={() => handleResponse(false)}
-                      className="h-12 rounded-xl bg-stone-100 hover:bg-rose-50 dark:bg-stone-800 dark:hover:bg-rose-950/30 text-stone-700 dark:text-stone-300 hover:text-rose-600 dark:hover:text-rose-400 border border-stone-200 dark:border-stone-700/60 hover:border-rose-300 dark:hover:border-rose-900 font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition cursor-pointer"
-                    >
-                      <span className="w-2 h-2 rounded-full bg-rose-500" />
-                      <span>Quên</span>
-                      <kbd className="hidden sm:inline font-mono text-[10px] text-stone-500 dark:text-stone-400 ml-1">
-                        Q / 1 (←)
-                      </kbd>
-                    </button>
-
-                    <button
-                      onClick={() => handleResponse(true)}
-                      className="h-12 rounded-xl bg-stone-900 hover:bg-emerald-600 dark:bg-white dark:hover:bg-emerald-500 text-white dark:text-stone-900 dark:hover:text-stone-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition shadow-xs cursor-pointer"
-                    >
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 dark:bg-emerald-600" />
-                      <span>Thuộc</span>
-                      <kbd className="hidden sm:inline font-mono text-[10px] text-white/90 dark:text-stone-900/90 ml-1">
-                        T / 2 / Space (→)
-                      </kbd>
-                    </button>
-                  </div>
-
-                  {/* Nút mở rộng 4 mức FSRS chi tiết (Again/Hard/Good/Easy) nếu muốn */}
-                  <div className="text-center pt-1">
-                    <button
-                      onClick={() => setShowFsrsDetailed(!showFsrsDetailed)}
-                      className="text-[11px] text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 transition cursor-pointer"
-                    >
-                      {showFsrsDetailed ? "Ẩn mức đánh giá FSRS chi tiết" : "Hiện 4 mức đánh giá FSRS chi tiết"}
-                    </button>
-
-                    {showFsrsDetailed && (
-                      <div className="grid grid-cols-4 gap-2 mt-2 pt-2 border-t border-stone-200 dark:border-stone-800 animate-reveal">
-                        <button
-                          onClick={() => handleResponse(false, "again")}
-                          className="p-2 rounded-lg bg-rose-500/10 text-rose-500 text-xs font-bold hover:bg-rose-500/20 transition cursor-pointer"
-                        >
-                          1. Học lại
-                        </button>
-                        <button
-                          onClick={() => handleResponse(false, "hard")}
-                          className="p-2 rounded-lg bg-amber-500/10 text-amber-500 text-xs font-bold hover:bg-amber-500/20 transition cursor-pointer"
-                        >
-                          2. Khó
-                        </button>
-                        <button
-                          onClick={() => handleResponse(true, "good")}
-                          className="p-2 rounded-lg bg-blue-500/10 text-blue-500 text-xs font-bold hover:bg-blue-500/20 transition cursor-pointer"
-                        >
-                          3. Tốt
-                        </button>
-                        <button
-                          onClick={() => handleResponse(true, "easy")}
-                          className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500 text-xs font-bold hover:bg-emerald-500/20 transition cursor-pointer"
-                        >
-                          4. Dễ
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
+              <div className="hidden lg:block sticky bottom-3 z-20 pt-3 pb-1 mt-4">
+                {studyActions}
               </div>
+              {hydrated && createPortal(
+                <div className="lg:hidden fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 mx-auto max-w-xl">
+                  <div className="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white/95 dark:bg-stone-900/95 backdrop-blur p-1.5 shadow-lg">
+                    {studyActions}
+                  </div>
+                </div>,
+                document.body
+              )}
             </div>
           ) : null
         )}
