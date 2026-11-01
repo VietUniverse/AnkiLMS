@@ -30,6 +30,7 @@ import {
 import { ankiScheduleToFSRSState, calculateFSRS45, formatLocalDate, FSRSRating, FSRSState } from "../lib/fsrs45";
 import { ApiClient } from "../lib/apiClient";
 import { DailyLimitsPanel } from "./DailyLimitsPanel";
+import { useStudyBackground } from "../lib/studyBackground";
 import { DailyLimits, DEFAULT_LIMITS, loadLimits, loadProgress, recordCard, remaining, saveLimits } from "../lib/dailyLimits";
 import { speakKorean } from "../lib/koreanSpeech";
 import { inferTopikLevel, getCourseRank } from "../lib/studyRanks";
@@ -119,6 +120,12 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const isAdmin = currentUser?.role === "admin";
   // Cây bộ thẻ phụ thuộc người dùng và kho thẻ đọc từ localStorage: chỉ dựng sau khi hydrate để HTML tĩnh khớp bản client.
   const hydrated = useSyncExternalStore(() => () => {}, () => true, () => false);
+  const studyBg = useStudyBackground();
+  // Chế độ tối: nút "Hiện đáp án" màu xám như nút Trở về; nếu đang dùng nền gradient thì nút đi theo màu gradient đó.
+  const revealStyle = {
+    color: "#fff",
+    ...(studyBg.kind === "gradient" ? { "--reveal-bg": `linear-gradient(90deg, ${studyBg.from}, ${studyBg.to})` } : {}),
+  } as React.CSSProperties;
   // Bề rộng thanh bên (0 khi ẩn trên điện thoại) để canh thanh Quên/Thuộc vào giữa vùng nội dung.
   const [sidebarWidth, setSidebarWidth] = useState(0);
   useEffect(() => {
@@ -1007,8 +1014,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                     revealAnswer();
                     inputRef.current?.blur();
                   }}
-                  style={{ color: "#fff" }}
-                  className="w-full h-12 rounded-xl bg-sky-500 hover:bg-sky-600 dark:bg-indigo-500 dark:hover:bg-indigo-400 font-bold text-sm flex items-center justify-center gap-2 transition cursor-pointer"
+                  style={revealStyle}
+                  className="w-full h-12 rounded-xl bg-sky-500 hover:bg-sky-600 dark:bg-stone-800 dark:hover:bg-stone-700 dark:border dark:border-stone-700 dark:bg-[image:var(--reveal-bg)] dark:hover:brightness-110 font-bold text-sm flex items-center justify-center gap-2 transition cursor-pointer"
                 >
                   <span className="font-extrabold">Hiện đáp án</span>
                   <kbd className="hidden sm:inline font-mono text-[10px] px-2 py-0.5 rounded border border-white/50 font-bold">
