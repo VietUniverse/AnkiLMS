@@ -197,10 +197,10 @@ export default function DeckDetailClient({ id }: { id: string }) {
 
   return (
     <AppShell>
-      <div className="space-y-6 pb-24 animate-fadeIn">
+      <div className="space-y-5 sm:space-y-6 pb-44 lg:pb-24 animate-fadeIn">
         {/* Toast Thông Báo */}
         {toastMessage && (
-          <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-emerald-600 text-white shadow-xl shadow-emerald-900/30 font-medium text-xs animate-slideUp">
+          <div className="fixed bottom-40 left-3 right-3 lg:bottom-6 lg:left-auto lg:right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-emerald-600 text-white shadow-xl shadow-emerald-900/30 font-medium text-xs animate-slideUp">
             <Check className="w-4 h-4 shrink-0" />
             <span>{toastMessage}</span>
             <a
@@ -226,10 +226,10 @@ export default function DeckDetailClient({ id }: { id: string }) {
           <div className="space-y-6 min-w-0">
             <header className="space-y-2">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0">
+                <div className="hidden sm:flex w-10 h-10 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 items-center justify-center shrink-0">
                   <DeckIcon name={deck.iconName} className="w-5 h-5" />
                 </div>
-                <h1 className="text-xl sm:text-2xl font-black text-stone-900 dark:text-white tracking-tight leading-snug">
+                <h1 className="text-lg sm:text-2xl font-black text-stone-900 dark:text-white tracking-tight leading-snug">
                   {deck.title}
                 </h1>
               </div>
@@ -248,13 +248,13 @@ export default function DeckDetailClient({ id }: { id: string }) {
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-500 border border-amber-500/30">Demo</span>
                 )}
               </div>
-              <p className="text-sm text-stone-600 dark:text-stone-300 leading-relaxed">
+              <p className="text-sm text-stone-600 dark:text-stone-300 leading-relaxed line-clamp-3 sm:line-clamp-none">
                 {deck.detailedDescription || deck.description}
               </p>
               {deck.tags.length > 0 && (
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  {deck.tags.map((t) => (
-                    <span key={t} className="text-[11px] text-stone-500 dark:text-stone-400 bg-stone-100 dark:bg-stone-800/80 px-2 py-0.5 rounded-md">
+                <div className="flex items-center gap-1.5 flex-nowrap overflow-x-auto sm:flex-wrap sm:overflow-visible -mx-1 px-1">
+                  {[...new Set(deck.tags)].map((t) => (
+                    <span key={t} className="shrink-0 text-[11px] text-stone-500 dark:text-stone-400 bg-stone-100 dark:bg-stone-800/80 px-2 py-0.5 rounded-md">
                       #{t}
                     </span>
                   ))}
@@ -337,13 +337,13 @@ export default function DeckDetailClient({ id }: { id: string }) {
                 </h2>
                 <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 divide-y sm:divide-y-0 divide-stone-200/70 dark:divide-stone-800/70">
                   {curriculumSections.map(([section, info]) => (
-                    <li key={section} className="flex flex-col gap-0.5 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:border-b border-stone-200/70 dark:border-stone-800/70">
-                      <div className="min-w-0">
-                        <span className="text-sm font-semibold text-stone-800 dark:text-stone-200">{section}</span>
-                      </div>
-                      <span className="text-xs text-stone-500 dark:text-stone-400 sm:shrink-0 tabular-nums">
-                        {info.count.toLocaleString("vi-VN")} thẻ{info.childCount ? `, ${info.childCount} ${deck.id === "course-topic-vocabulary" ? "chủ đề" : "bài"}` : ""}
+                    <li key={section} className="flex items-baseline justify-between gap-3 py-2.5 sm:border-b border-stone-200/70 dark:border-stone-800/70">
+                      <span className="min-w-0 text-sm font-semibold text-stone-800 dark:text-stone-200">
+                        {section} <span className="font-normal text-stone-500 dark:text-stone-400 tabular-nums">({info.count.toLocaleString("vi-VN")})</span>
                       </span>
+                      {info.childCount > 0 && deck.id !== "course-topic-vocabulary" && (
+                        <span className="text-xs text-stone-500 dark:text-stone-400 shrink-0">{info.childCount} bài</span>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -360,7 +360,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
 
           {/* Cột phải: hành động + tác giả */}
           <aside className="space-y-4 lg:sticky lg:top-20">
-            <div className="card-duo p-5 bg-white dark:bg-stone-900/80 space-y-3">
+            <div className="hidden lg:block card-duo p-5 bg-white dark:bg-stone-900/80 space-y-3">
               <div>
                 <div className="text-2xl font-black text-stone-900 dark:text-white tabular-nums">
                   {deck.cards.length.toLocaleString("vi-VN")} <span className="text-sm font-bold text-stone-400">thẻ</span>
@@ -414,6 +414,30 @@ export default function DeckDetailClient({ id }: { id: string }) {
               </div>
             </div>
           </aside>
+        </div>
+
+        {/* Thanh hành động cố định trên điện thoại, nằm ngay trên thanh điều hướng dưới */}
+        <div className="lg:hidden fixed left-0 right-[4.75rem] bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-30 pl-3">
+          <div className="flex items-center gap-3 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white/95 dark:bg-stone-900/95 backdrop-blur px-3 py-2.5 shadow-lg">
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-black tabular-nums text-stone-900 dark:text-white">{deck.cards.length.toLocaleString("vi-VN")} thẻ</p>
+              <p className="text-[11px] text-stone-500 dark:text-stone-400">{isAdded ? "Đã có trong kho thẻ" : "Chưa thêm vào kho thẻ"}</p>
+            </div>
+            {isAdded ? (
+              <>
+                <button onClick={handleRemove} aria-label="Gỡ khỏi kho thẻ" title="Gỡ khỏi kho thẻ" className="h-10 w-10 rounded-xl text-rose-500 hover:bg-rose-500/10 flex items-center justify-center cursor-pointer">
+                  <Trash2 className="w-4 h-4" />
+                </button>
+                <a href="/flashcards?study=true" className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 px-4 py-2.5 text-sm font-black text-white transition">
+                  <BookOpen className="w-4 h-4" /> Học ngay
+                </a>
+              </>
+            ) : (
+              <button onClick={handleAdd} className="inline-flex items-center gap-2 rounded-xl bg-sky-500 hover:bg-sky-600 px-4 py-2.5 text-sm font-black text-white transition cursor-pointer">
+                <Plus className="w-4 h-4 stroke-[3]" /> Thêm
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </AppShell>
