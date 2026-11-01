@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, RotateCcw } from "lucide-react";
 import { AppShell } from "./AppShell";
-import { buildQuestions, evaluate, loadSavedResult, saveResult, shouldStopEarly, type TestQuestion, type TestResult } from "../lib/vocabTest";
+import { buildQuestions, evaluate, getUserResultKey, loadSavedResult, saveResult, shouldStopEarly, type TestQuestion, type TestResult } from "../lib/vocabTest";
 import type { VocabTestDef } from "../lib/vocabTests";
+import { useApp } from "../contexts/AppProvider";
 
 type Phase = "intro" | "loading" | "quiz" | "result" | "error";
 
@@ -13,13 +14,17 @@ const COLORS = { pass: "text-emerald-600 dark:text-emerald-400", almost: "text-a
 const card = "mx-auto max-w-xl rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/70 p-4 sm:p-8";
 
 export function VocabTest({ test }: { test: VocabTestDef }) {
+  const { currentUser } = useApp();
+  const resultKey = getUserResultKey(test.resultKey, currentUser?.id);
   const [phase, setPhase] = useState<Phase>("intro");
   const [questions, setQuestions] = useState<TestQuestion[]>([]);
   const [answers, setAnswers] = useState<number[]>([]);
   const [result, setResult] = useState<TestResult | null>(null);
   const [saved, setSaved] = useState<TestResult | null>(null);
+  const [historySync, setHistorySync] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const startedAt = useRef(0);
 
-  useEffect(() => { setSaved(loadSavedResult(test.resultKey)); }, [test.resultKey]);
+  useEffect(() => { setSaved(loadSavedResult(resultKey)); }, [resultKey]);
 
   const start = async () => {
     setPhase("loading");
@@ -30,6 +35,8 @@ export function VocabTest({ test }: { test: VocabTestDef }) {
       if (built.length === 0) throw new Error("empty");
       setQuestions(built);
       setAnswers([]);
+      startedAt.current = Date.now();
+      setHistorySync("idle");
       setPhase("quiz");
     } catch {
       setPhase("error");
@@ -43,10 +50,25 @@ export function VocabTest({ test }: { test: VocabTestDef }) {
       return;
     }
     const finished = evaluate(questions, next);
-    saveResult(test.resultKey, finished);
+    saveResult(resultKey, finished);
     setSaved(finished);
     setResult(finished);
     setPhase("result");
+    setHistorySync("saving");
+    const attemptId = typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `attempt-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const durationSeconds = Math.min(1800, Math.max(0, Math.round((Date.now() - startedAt.current) / 1000)));
+    void fetch("/api/placement-tests", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        attemptId, testSlug: test.slug, correct: finished.correct, wrong: finished.wrong,
+        skipped: finished.skipped, total: finished.total, durationSeconds,
+      }),
+    }).then((response) => {
+      if (!response.ok) throw new Error("sync-failed");
+      setHistorySync("saved");
+    }).catch(() => setHistorySync("error"));
   };
 
   const index = answers.length;
@@ -134,6 +156,9 @@ export function VocabTest({ test }: { test: VocabTestDef }) {
               <h1 className={`mt-2 text-xl font-black ${COLORS[shown.verdict]}`}>{verdicts[shown.verdict].title}</h1>
               <p className="mt-1 text-sm text-stone-600 dark:text-stone-300">{verdicts[shown.verdict].text}</p>
               <p className="mt-2 text-xs text-stone-500 dark:text-stone-400">Đúng {shown.correct}, sai {shown.wrong}, chưa biết {shown.skipped} (trên {shown.total} câu)</p>
+              {historySync === "saving" && <p className="mt-2 text-xs text-stone-500 dark:text-stone-400">Đang lưu lịch sử theo tài khoản…</p>}
+              {historySync === "saved" && <p className="mt-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400">Đã lưu kết quả vào lịch sử tài khoản.</p>}
+              {historySync === "error" && <p className="mt-2 text-xs font-semibold text-amber-600 dark:text-amber-300">Kết quả đang chỉ được lưu trên thiết bị này. Đăng nhập rồi thử làm lại để ghi vào lịch sử tài khoản.</p>}
             </div>
             {shown.reviewLessons.length > 0 && (
               <div>

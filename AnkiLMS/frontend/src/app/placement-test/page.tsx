@@ -4,14 +4,16 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, ClipboardCheck } from "lucide-react";
 import { AppShell } from "../../components/AppShell";
-import { loadSavedResult, type TestResult } from "../../lib/vocabTest";
+import { getUserResultKey, loadSavedResult, type TestResult } from "../../lib/vocabTest";
 import { VOCAB_TESTS } from "../../lib/vocabTests";
+import { useApp } from "../../contexts/AppProvider";
 
 export default function PlacementTestHub() {
+  const { currentUser } = useApp();
   const [saved, setSaved] = useState<Record<string, TestResult | null>>({});
   useEffect(() => {
-    setSaved(Object.fromEntries(VOCAB_TESTS.map((t) => [t.slug, loadSavedResult(t.resultKey)])));
-  }, []);
+    setSaved(Object.fromEntries(VOCAB_TESTS.map((t) => [t.slug, loadSavedResult(getUserResultKey(t.resultKey, currentUser?.id))])));
+  }, [currentUser?.id]);
 
   return (
     <AppShell>

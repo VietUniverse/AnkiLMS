@@ -178,6 +178,10 @@ export function shouldStopEarly(questions: TestQuestion[], answers: number[], to
   return r.percent / 100 >= EARLY_PASS || r.percent / 100 <= EARLY_FAIL;
 }
 
+export function getUserResultKey(resultKey: string, userId?: string | null): string {
+  return `${resultKey}:${userId || "guest"}`;
+}
+
 export function loadSavedResult(resultKey: string): TestResult | null {
   try {
     const raw = JSON.parse(localStorage.getItem(resultKey) || "null");

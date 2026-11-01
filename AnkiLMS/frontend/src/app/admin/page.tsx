@@ -4,7 +4,7 @@ import React, { FormEvent, useCallback, useEffect, useState } from "react";
 import { AppShell } from "../../components/AppShell";
 import { useApp } from "../../contexts/AppProvider";
 import { ApiClient } from "../../lib/apiClient";
-import { AlertCircle, BookOpen, Check, Loader2, MessageSquare, RefreshCw, Search, ShieldCheck, Trash2, Users, SlidersHorizontal, Power, Plus, Save, X, Pencil, Globe, LockKeyhole, Languages } from "lucide-react";
+import { AlertCircle, BookOpen, Check, ClipboardCheck, Loader2, MessageSquare, RefreshCw, Search, ShieldCheck, Trash2, Users, SlidersHorizontal, Power, Plus, Save, X, Pencil, Globe, LockKeyhole, Languages } from "lucide-react";
 import { DEFAULT_FEATURE_FLAGS, FEATURE_CATALOG, FeatureFlags, FeatureKey } from "../../lib/featureFlags";
 import topikLessonsData from "../../data/topik_lessons.json";
 import curatedKoreanPractice from "../../data/curated_korean_practice.json";
@@ -23,12 +23,27 @@ type DeckRow = { userId: string; deckId: string; cardCount: number; updatedAt: s
 type DeckWord = Pick<DictionaryEntry, "hangul" | "vietnamese" | "english" | "japanese" | "partOfSpeech" | "level" | "topik" | "topic">;
 type ContentDeck = { sharedId: string; deckId: string; title: string; description: string; visibility: "public" | "private"; cardCount: number; updatedAt: string };
 type ContentDeckWithCards = ContentDeck & { cards: Array<Record<string, unknown>> };
+type PlacementTestStats = {
+  summary: { attempts: number; participants: number; passed: number; correctAnswers: number; answeredQuestions: number; averageScore: number };
+  tests: Array<{ testSlug: string; attempts: number; participants: number; passed: number; correctAnswers: number; answeredQuestions: number; averageScore: number; bestScore: number }>;
+  accounts: Array<{
+    userId: string; name: string; email: string; attempts: number; passed: number; correctAnswers: number; answeredQuestions: number;
+    averageScore: number; bestScore: number; lastAttemptAt: string;
+    seoulAttempts: number; seoulPassed: number; seoulCorrect: number; seoulQuestions: number; seoulBest: number; seoulAverage: number;
+    ththAttempts: number; ththPassed: number; ththCorrect: number; ththQuestions: number; ththBest: number; ththAverage: number;
+  }>;
+  attempts: Array<{
+    id: string; testSlug: string; correct: number; wrong: number; skipped: number; total: number;
+    scorePercent: number; verdict: "pass" | "almost" | "fail"; durationSeconds: number; createdAt: string;
+    userId: string; name: string; email: string;
+  }>;
+};
 const BUILTIN_LESSONS: { id: string; title: string; level: string; lessonType: string; count: number }[] = [
   ...topikLessonsData.map((lesson: any) => ({ id: lesson.id, title: lesson.title, level: lesson.topikName, lessonType: "Video · Dictation + Shadowing", count: lesson.segments.length })),
   ...curatedKoreanPractice.map((lesson: any) => ({ id: lesson.id, title: lesson.title, level: lesson.topikName, lessonType: "Bài sáng tác · Dictation + Shadowing", count: lesson.segments.length })),
   ...KOREAN_COURSE.map((lesson) => ({ id: lesson.id, title: lesson.title, level: lesson.level, lessonType: "Khóa học tiếng Hàn", count: lesson.dialogue.length })),
 ];
-type Panel = "overview" | "students" | "decks" | "vocabularyManager" | "vocabularyDecks" | "lessons" | "classes" | "community" | "chat" | "feedback" | "features";
+type Panel = "overview" | "students" | "decks" | "vocabularyManager" | "vocabularyDecks" | "lessons" | "classes" | "community" | "chat" | "feedback" | "features" | "placementTests";
 
 async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const token = ApiClient.getToken();
@@ -45,6 +60,7 @@ async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
 const panelLabels: { id: Panel; label: string; icon: React.ReactNode }[] = [
   { id: "overview", label: "Tổng quan", icon: <ShieldCheck className="h-4 w-4" /> },
   { id: "students", label: "Tài khoản", icon: <Users className="h-4 w-4" /> },
+  { id: "placementTests", label: "Lịch sử bài test", icon: <ClipboardCheck className="h-4 w-4" /> },
   { id: "decks", label: "Bộ Anki", icon: <BookOpen className="h-4 w-4" /> },
   { id: "vocabularyManager", label: "Kho từ vựng", icon: <Search className="h-4 w-4" /> },
   { id: "vocabularyDecks", label: "Bộ từ Explore", icon: <BookOpen className="h-4 w-4" /> },
@@ -101,6 +117,8 @@ export default function AdminPage() {
   const [builderWords, setBuilderWords] = useState<DeckWord[]>([]);
   const [builderForm, setBuilderForm] = useState({ title: "", description: "", visibility: "public" as "public" | "private" });
   const [editingContentDeck, setEditingContentDeck] = useState("");
+  const [placementStats, setPlacementStats] = useState<PlacementTestStats | null>(null);
+  const [placementStatsLoading, setPlacementStatsLoading] = useState(false);
 
   const load = useCallback(async () => {
     if (!currentUser || currentUser.role !== "admin") return;
@@ -134,6 +152,17 @@ export default function AdminPage() {
       .then((data) => { if (!cancelled) setContentDecks(data.decks); })
       .catch((cause) => { if (!cancelled) setError(cause instanceof Error ? cause.message : "Không tải được bộ từ Explore."); })
       .finally(() => { if (!cancelled) setContentDecksLoading(false); });
+    return () => { cancelled = true; };
+  }, [panel, currentUser]);
+
+  useEffect(() => {
+    if (panel !== "placementTests" || currentUser?.role !== "admin") return;
+    let cancelled = false;
+    setPlacementStatsLoading(true);
+    adminFetch<PlacementTestStats>("/api/placement-tests")
+      .then((data) => { if (!cancelled) setPlacementStats(data); })
+      .catch((cause) => { if (!cancelled) setError(cause instanceof Error ? cause.message : "Không tải được lịch sử bài test."); })
+      .finally(() => { if (!cancelled) setPlacementStatsLoading(false); });
     return () => { cancelled = true; };
   }, [panel, currentUser]);
 
@@ -494,6 +523,95 @@ export default function AdminPage() {
                 </div>
               </section>
             </div>
+          )}
+
+          {panel === "placementTests" && (
+            <section className="space-y-4">
+              {placementStatsLoading && <div className="card-duo rounded-2xl p-6 text-center text-sm text-stone-500 dark:text-slate-400">Đang tải lịch sử bài test…</div>}
+              {!placementStatsLoading && placementStats && <>
+                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+                  {[
+                    ["Người đã làm", placementStats.summary.participants],
+                    ["Tổng lượt làm", placementStats.summary.attempts],
+                    ["Lượt pass", placementStats.summary.passed],
+                    ["Câu trả lời đúng", placementStats.summary.correctAnswers],
+                    ["Điểm trung bình", `${placementStats.summary.averageScore}%`],
+                  ].map(([label, value]) => <article key={label} className="card-duo rounded-2xl p-4">
+                    <p className="text-[11px] font-extrabold uppercase tracking-wider text-stone-500 dark:text-slate-400">{label}</p>
+                    <p className="mt-2 text-2xl font-black text-stone-900 dark:text-white">{value}</p>
+                  </article>)}
+                </div>
+                <div className="grid gap-3 lg:grid-cols-2">
+                  {[
+                    { slug: "seoul-1a", title: "Seoul 1A", description: "Đầu vào học tiếp 1B" },
+                    { slug: "thth-1", title: "Tiếng Hàn Tổng Hợp 1", description: "Đầu vào học tiếp quyển 2" },
+                  ].map((test) => {
+                    const stats = placementStats.tests.find((item) => item.testSlug === test.slug);
+                    return <article key={test.slug} className="card-duo rounded-2xl p-5">
+                      <h2 className="font-bold text-stone-900 dark:text-white">{test.title}</h2>
+                      <p className="mt-1 text-xs text-stone-500 dark:text-slate-400">{test.description}</p>
+                      <div className="mt-4 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
+                        <p><b>{stats?.participants || 0}</b><span className="block text-stone-500 dark:text-slate-400">người làm</span></p>
+                        <p><b>{stats?.attempts || 0}</b><span className="block text-stone-500 dark:text-slate-400">lượt làm</span></p>
+                        <p><b>{stats?.passed || 0}</b><span className="block text-stone-500 dark:text-slate-400">lượt pass</span></p>
+                        <p><b>{stats?.averageScore || 0}%</b><span className="block text-stone-500 dark:text-slate-400">điểm TB</span></p>
+                      </div>
+                    </article>;
+                  })}
+                </div>
+                <div className="card-duo overflow-hidden rounded-2xl">
+                  <div className="border-b border-stone-200 p-4 dark:border-slate-800">
+                    <h2 className="font-bold text-stone-900 dark:text-white">Kết quả theo tài khoản</h2>
+                    <p className="mt-1 text-xs text-stone-500 dark:text-slate-400">Số câu đúng, tổng câu đã làm, điểm trung bình/cao nhất và số lần pass của từng tài khoản.</p>
+                  </div>
+                  <div className="max-w-full overflow-x-auto">
+                    <table className="w-full min-w-[1050px] text-left text-xs">
+                      <thead className="bg-stone-50 text-[10px] font-extrabold uppercase tracking-wider text-stone-500 dark:bg-slate-900/40 dark:text-slate-400">
+                        <tr><th className="p-3">Tài khoản</th><th className="p-3">Tổng lượt</th><th className="p-3">Tổng đúng / câu</th><th className="p-3">Pass</th><th className="p-3">Điểm TB / cao nhất</th><th className="p-3">Seoul 1A</th><th className="p-3">Tổng Hợp 1</th><th className="p-3">Làm gần nhất</th></tr>
+                      </thead>
+                      <tbody className="divide-y divide-stone-200 dark:divide-slate-800">
+                        {placementStats.accounts.map((account) => <tr key={account.userId}>
+                          <td className="p-3"><b className="text-stone-900 dark:text-white">{account.name}</b><span className="mt-1 block text-stone-500 dark:text-slate-400">{account.email}</span></td>
+                          <td className="p-3">{account.attempts}</td>
+                          <td className="p-3">{account.correctAnswers} / {account.answeredQuestions}</td>
+                          <td className="p-3">{account.passed} / {account.attempts} ({account.attempts ? Math.round(account.passed / account.attempts * 100) : 0}%)</td>
+                          <td className="p-3">{account.averageScore}% / {account.bestScore}%</td>
+                          <td className="p-3">{account.seoulAttempts ? <>{account.seoulCorrect}/{account.seoulQuestions} đúng · pass {account.seoulPassed}/{account.seoulAttempts} ({Math.round(account.seoulPassed / account.seoulAttempts * 100)}%)<span className="mt-1 block text-stone-500 dark:text-slate-400">TB {account.seoulAverage}% · cao nhất {account.seoulBest}%</span></> : "Chưa làm"}</td>
+                          <td className="p-3">{account.ththAttempts ? <>{account.ththCorrect}/{account.ththQuestions} đúng · pass {account.ththPassed}/{account.ththAttempts} ({Math.round(account.ththPassed / account.ththAttempts * 100)}%)<span className="mt-1 block text-stone-500 dark:text-slate-400">TB {account.ththAverage}% · cao nhất {account.ththBest}%</span></> : "Chưa làm"}</td>
+                          <td className="p-3">{String(account.lastAttemptAt || "").slice(0, 16) || "—"}</td>
+                        </tr>)}
+                        {!placementStats.accounts.length && <tr><td colSpan={8} className="p-6 text-center text-stone-500 dark:text-slate-400">Chưa có tài khoản nào hoàn thành bài test.</td></tr>}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div className="card-duo overflow-hidden rounded-2xl">
+                  <div className="border-b border-stone-200 p-4 dark:border-slate-800">
+                    <h2 className="font-bold text-stone-900 dark:text-white">Lịch sử từng lượt làm</h2>
+                    <p className="mt-1 text-xs text-stone-500 dark:text-slate-400">1000 lượt gần nhất; thống kê theo tài khoản phía trên tính trên toàn bộ lịch sử.</p>
+                  </div>
+                  <div className="max-w-full overflow-x-auto">
+                    <table className="w-full min-w-[900px] text-left text-xs">
+                      <thead className="bg-stone-50 text-[10px] font-extrabold uppercase tracking-wider text-stone-500 dark:bg-slate-900/40 dark:text-slate-400">
+                        <tr><th className="p-3">Tài khoản</th><th className="p-3">Bài test</th><th className="p-3">Đúng / sai / bỏ qua</th><th className="p-3">Điểm</th><th className="p-3">Kết quả</th><th className="p-3">Thời lượng</th><th className="p-3">Thời gian</th></tr>
+                      </thead>
+                      <tbody className="divide-y divide-stone-200 dark:divide-slate-800">
+                        {placementStats.attempts.map((attempt) => <tr key={attempt.id}>
+                          <td className="p-3"><b className="text-stone-900 dark:text-white">{attempt.name}</b><span className="mt-1 block text-stone-500 dark:text-slate-400">{attempt.email}</span></td>
+                          <td className="p-3">{attempt.testSlug === "seoul-1a" ? "Seoul 1A" : "Tiếng Hàn Tổng Hợp 1"}</td>
+                          <td className="p-3">{attempt.correct} / {attempt.wrong} / {attempt.skipped} · {attempt.total} câu</td>
+                          <td className="p-3 font-bold">{attempt.scorePercent}%</td>
+                          <td className="p-3">{attempt.verdict === "pass" ? "Pass" : attempt.verdict === "almost" ? "Gần đạt" : "Chưa đạt"}</td>
+                          <td className="p-3">{Math.floor(attempt.durationSeconds / 60)}:{String(attempt.durationSeconds % 60).padStart(2, "0")}</td>
+                          <td className="p-3">{String(attempt.createdAt).slice(0, 16)}</td>
+                        </tr>)}
+                        {!placementStats.attempts.length && <tr><td colSpan={7} className="p-6 text-center text-stone-500 dark:text-slate-400">Chưa có lịch sử bài test.</td></tr>}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </>}
+            </section>
           )}
 
           {panel === "features" && (
