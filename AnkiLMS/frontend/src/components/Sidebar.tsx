@@ -58,7 +58,6 @@ const mainNav = [
   { href: "/explore", label: "Khám phá", icon: Layers, badge: "MỚI", feature: "explore" },
   { href: "/placement-test", label: "Kiểm tra đầu vào", icon: ClipboardCheck, feature: "placementTest" },
   { href: "/dictionary", label: "Tra từ điển", icon: Search, feature: "dictionary" },
-  { href: "/classes", label: "Lớp học", icon: Users, feature: "classes" },
   { href: "/dictation", label: "Luyện nghe chính tả", icon: Headphones, feature: "dictation" },
   { href: "/shadowing", label: "Shadowing", icon: Repeat, feature: "shadowing" },
   { href: "/listen", label: "Nghe thụ động", icon: ListMusic, badge: "MỚI", feature: "listen" },
@@ -72,6 +71,7 @@ const communityNav = [
 
 // LƯU Ý BACKEND: Các tính năng Beta đang thử nghiệm UX/UI, không đưa lên production
 const betaNav = [
+  { href: "/classes", label: "Lớp học", icon: Users, badge: "BETA", feature: "classes" },
   { href: "/hangul", label: "Bảng Hangeul", icon: BookOpen, badge: "BETA", feature: "hangul" },
   { href: "/topics", label: "Học theo chủ đề", icon: Compass, badge: "BETA", feature: "topics" },
   { href: "/lessons", label: "Lộ trình bài học", icon: BookOpen, badge: "BETA", feature: "lessons" },
