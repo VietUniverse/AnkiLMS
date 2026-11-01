@@ -1,6 +1,7 @@
 "use client";
 
 import { EggThemeToggle } from "./EggThemeToggle";
+import { InstallAppButton } from "./InstallAppButton";
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -233,6 +234,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <div className="flex justify-center py-1">
                 <EggThemeToggle />
               </div>
+              <InstallAppButton onDone={onCloseMobile} />
               {currentUser ? (
                 <div className="flex items-center justify-between p-2 rounded-xl bg-[#0b1329]">
                   <Link
@@ -415,6 +417,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
         )}
 
+        {!collapsed && <InstallAppButton />}
         <div className={`flex items-center ${collapsed ? "justify-center" : "justify-between"}`}>
           {!collapsed && <EggThemeToggle />}
           <button

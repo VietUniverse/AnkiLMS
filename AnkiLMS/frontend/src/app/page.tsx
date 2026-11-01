@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { AppShell } from "../components/AppShell";
 import { OnigiriHeatmap } from "../components/OnigiriHeatmap";
 import { StreakPanel } from "../components/StreakPanel";
+import { InstallAppButton } from "../components/InstallAppButton";
 import { useApp } from "../contexts/AppProvider";
 import { Flame, Zap, Layers, CheckCircle2, Gamepad2, Target, X, LogIn, Search, Volume2, Play, ClipboardCheck, ArrowRight } from "lucide-react";
 import { VOCABULARY_DATA } from "../data/koreanData";
@@ -26,6 +27,14 @@ export default function Home() {
   const [searchResults, setSearchResults] = React.useState<Array<{ korean: string; meaning: string; language: string; example?: string; translation?: string }>>([]);
   const [translationLanguage] = useTranslationLanguage();
   const [lastLessonTitle, setLastLessonTitle] = React.useState<string | null>(null);
+  const [installDismissed, setInstallDismissed] = React.useState(true);
+  React.useEffect(() => {
+    try { setInstallDismissed(localStorage.getItem("haechivn_install_dismissed") === "1"); } catch { setInstallDismissed(false); }
+  }, []);
+  const dismissInstall = () => {
+    setInstallDismissed(true);
+    try { localStorage.setItem("haechivn_install_dismissed", "1"); } catch { /* bỏ qua */ }
+  };
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
@@ -278,6 +287,14 @@ export default function Home() {
                 </button>
               )}
             </div>
+
+            {/* Gợi ý cài ứng dụng, chỉ hiện trên điện thoại và máy tính bảng; người dùng có thể để sau */}
+            {!installDismissed && (
+              <div className="md:hidden space-y-1.5">
+                <InstallAppButton variant="card" />
+                <button type="button" onClick={dismissInstall} className="mx-auto block cursor-pointer text-xs font-semibold text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200">Để sau</button>
+              </div>
+            )}
 
             {/* Cấp độ và XP */}
             <div className="rounded-2xl border border-stone-200 bg-white p-4 dark:border-stone-800 dark:bg-stone-900/70">
