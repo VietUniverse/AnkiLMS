@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import { AppShell } from "../../../components/AppShell";
 import { useApp } from "../../../contexts/AppProvider";
 import { CURATED_DECKS, curatedDeckToAnkiDeck, IS_DEMO_DECKS_ENABLED, sharedDeckToExploreDeck } from "../../../data/curatedDecks";
@@ -113,6 +114,8 @@ export default function DeckDetailClient({ id }: { id: string }) {
   const [requestedPreviewCardId, setRequestedPreviewCardId] = useState<number | null>(null);
   const [isPreviewFlipped, setIsPreviewFlipped] = useState(false);
   const [showAllSections, setShowAllSections] = useState(false);
+  // Thanh nổi vẽ thẳng vào <body> để không bị ảnh hưởng bởi transform của hiệu ứng fadeIn bên trong trang.
+  const canPortal = useSyncExternalStore(() => () => {}, () => true, () => false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -411,8 +414,9 @@ export default function DeckDetailClient({ id }: { id: string }) {
           )}
         </div>
 
-        {/* Thanh hành động dính đáy trên điện thoại/tablet: bám theo bề rộng nội dung, nằm trên thanh điều hướng dưới */}
-        <div className="lg:hidden sticky bottom-[calc(4.25rem+env(safe-area-inset-bottom))] z-30 mx-[4.25rem] sm:mx-auto sm:max-w-md">
+        {/* Thanh hành động nổi trên điện thoại/tablet, sát thanh điều hướng dưới (cao 64px); md trở lên dịch sang phải nửa bề rộng thanh bên để vẫn nằm giữa nội dung */}
+                {canPortal && createPortal(
+<div className="lg:hidden fixed z-30 bottom-[calc(4.25rem+env(safe-area-inset-bottom))] inset-x-[4.25rem] sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[min(28rem,calc(100vw-2rem))] md:left-[calc(50%+8rem)]">
           <div className="flex items-center gap-3 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white/95 dark:bg-stone-900/95 backdrop-blur px-3 py-2.5 shadow-lg">
             <div className="min-w-0 flex-1">
               <p className="text-sm font-black tabular-nums text-stone-900 dark:text-white">{deck.cards.length.toLocaleString("vi-VN")} thẻ</p>
@@ -433,7 +437,9 @@ export default function DeckDetailClient({ id }: { id: string }) {
               </button>
             )}
           </div>
-        </div>
+        </div>,
+          document.body
+        )}
       </div>
     </AppShell>
   );
