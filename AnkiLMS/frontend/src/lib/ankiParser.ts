@@ -23,6 +23,39 @@ export interface AnkiCard {
   reps: number;
   lapses: number;
   state: "new" | "learning" | "review";
+  /** Original Anki scheduling fields, preserved verbatim for round-trip fidelity. */
+  ankiSchedule?: AnkiScheduleMetadata;
+  /** Full review log imported from Anki's revlog table. */
+  reviewHistory?: AnkiReviewEvent[];
+}
+
+export interface AnkiScheduleMetadata {
+  cardType: number;
+  queue: number;
+  due: number;
+  interval: number;
+  factor: number;
+  reps: number;
+  lapses: number;
+  left: number;
+  originalDue?: number;
+  originalDeckId?: number;
+  data?: string;
+  /** Exact preset used by this card, including FSRS parameters and step settings. */
+  schedulerConfig?: Record<string, unknown>;
+  collectionCreatedAt?: number;
+  lastReview?: string;
+}
+
+export interface AnkiReviewEvent {
+  id: number;
+  reviewedAt: string;
+  rating: number;
+  interval: number;
+  previousInterval: number;
+  factor: number;
+  durationMs: number;
+  type: number;
 }
 
 export interface AnkiDeck {
@@ -41,6 +74,8 @@ export interface AnkiDeck {
     avatar?: string;
     bio?: string;
   };
+  schedulerPresets?: Record<string, Record<string, unknown>>;
+  schedulerMetadata?: { collectionCreatedAt?: number; schedulerVersion?: number; importedAt: string; collectionConfig?: Record<string, unknown>; fsrsEnabled?: boolean };
 }
 
 export interface AnkiMediaAsset {
@@ -112,22 +147,33 @@ export class AnkiParser {
       }
     }
 
-    // 3. Try SQLite WASM execution first; fallback to pure JS parser if WASM fails
+    // 3. Parse the SQLite collection. Do not fall back to scanning binary bytes:
+    // that cannot reliably recover card schedules or review history.
     try {
       const SQL = await this.getSqlEngine();
       const db: Database = new SQL.Database(dbBuffer);
 
       // Query Decks & Models
-      const colResult = db.exec("SELECT decks, models FROM col");
+      const colColumns = new Set((db.exec("PRAGMA table_info(col)")[0]?.values || []).map((row) => String(row[1])));
+      const selectCol = (name: string) => colColumns.has(name) ? name : "NULL";
+      const colResult = db.exec(`SELECT ${selectCol("decks")}, ${selectCol("models")}, ${selectCol("dconf")}, ${selectCol("conf")}, ${selectCol("crt")}, ${selectCol("ver")} FROM col`);
       let decksJson: Record<string, any> = {};
       let modelsJson: Record<string, any> = {};
+      let schedulerPresets: Record<string, Record<string, unknown>> = {};
+      let collectionConfig: Record<string, unknown> = {};
+      let collectionCreatedAt: number | undefined;
+      let schedulerVersion: number | undefined;
 
       if (colResult.length > 0 && colResult[0].values.length > 0) {
-        const [decksStr, modelsStr] = colResult[0].values[0];
+        const [decksStr, modelsStr, dconfStr, confStr, crtValue, versionValue] = colResult[0].values[0];
         try {
           decksJson = JSON.parse(decksStr as string);
           modelsJson = JSON.parse(modelsStr as string);
-        } catch (e) {}
+          if (typeof dconfStr === "string") schedulerPresets = JSON.parse(dconfStr);
+          if (typeof confStr === "string") collectionConfig = JSON.parse(confStr);
+          collectionCreatedAt = Number(crtValue) || undefined;
+          schedulerVersion = Number(versionValue) || undefined;
+        } catch (e) { throw new Error("Không đọc được cấu hình scheduler trong collection Anki."); }
       }
 
       // Query Notes
@@ -149,7 +195,29 @@ export class AnkiParser {
       }
 
       // Query Cards
-      const cardsResult = db.exec("SELECT id, nid, did, type, queue, due, ivl, reps, lapses FROM cards");
+      const cardColumns = new Set((db.exec("PRAGMA table_info(cards)")[0]?.values || []).map((row) => String(row[1])));
+      const optionalColumn = (name: string, fallback: string) => cardColumns.has(name) ? name : fallback;
+      const cardsResult = db.exec(`SELECT id, nid, did, type, queue, due, ivl, reps, lapses, ${optionalColumn("factor", "0")}, ${optionalColumn("left", "0")}, ${optionalColumn("odue", "0")}, ${optionalColumn("odid", "0")}, ${optionalColumn("data", "''")} FROM cards`);
+      const reviewHistoryByCard = new Map<number, AnkiReviewEvent[]>();
+      const tableNames = new Set((db.exec("SELECT name FROM sqlite_master WHERE type='table'")[0]?.values || []).map((row) => String(row[0])));
+      if (tableNames.has("revlog")) {
+        const revlogColumns = new Set((db.exec("PRAGMA table_info(revlog)")[0]?.values || []).map((row) => String(row[1])));
+        if (["id", "cid", "ease", "ivl", "lastIvl", "factor", "time", "type"].every((column) => revlogColumns.has(column))) {
+          const revlogResult = db.exec("SELECT id, cid, ease, ivl, lastIvl, factor, time, type FROM revlog ORDER BY id");
+          for (const row of revlogResult[0]?.values || []) {
+            const cardId = Number(row[1]);
+            const entry: AnkiReviewEvent = {
+              id: Number(row[0]),
+              reviewedAt: new Date(Number(row[0])).toISOString(),
+              rating: Number(row[2]), interval: Number(row[3]), previousInterval: Number(row[4]),
+              factor: Number(row[5]), durationMs: Number(row[6]), type: Number(row[7]),
+            };
+            const history = reviewHistoryByCard.get(cardId) || [];
+            history.push(entry);
+            reviewHistoryByCard.set(cardId, history);
+          }
+        }
+      }
       const deckMap: Map<string, AnkiCard[]> = new Map();
 
       if (cardsResult.length > 0) {
@@ -163,6 +231,11 @@ export class AnkiParser {
           const ivl = row[6] as number;
           const reps = row[7] as number;
           const lapses = row[8] as number;
+          const factor = Number(row[9]) || 0;
+          const left = Number(row[10]) || 0;
+          const originalDue = Number(row[11]) || 0;
+          const originalDeckId = Number(row[12]) || 0;
+          const cardData = String(row[13] || "");
 
           const note = notesMap.get(noteId);
           if (!note) continue;
@@ -190,6 +263,9 @@ export class AnkiParser {
           let state: "new" | "learning" | "review" = "new";
           if (queue === 1 || queue === 3) state = "learning";
           else if (queue === 2) state = "review";
+          const presetId = String(deckMeta.conf ?? 1);
+          const schedulerConfig = schedulerPresets[presetId] || schedulerPresets[String(deckMeta.conf)] || undefined;
+          const reviewHistory = reviewHistoryByCard.get(cardId) || [];
 
           const card: AnkiCard = {
             id: cardId,
@@ -212,6 +288,14 @@ export class AnkiParser {
             reps,
             lapses,
             state,
+            reviewHistory,
+            ankiSchedule: {
+              cardType: Number(type), queue: Number(queue), due: Number(due), interval: Number(ivl),
+              factor, reps: Number(reps), lapses: Number(lapses), left,
+              originalDue: originalDue || undefined, originalDeckId: originalDeckId || undefined,
+              data: cardData || undefined, schedulerConfig, collectionCreatedAt,
+              lastReview: reviewHistory[reviewHistory.length - 1]?.reviewedAt,
+            },
           };
 
           if (!deckMap.has(deckName)) {
@@ -231,99 +315,19 @@ export class AnkiParser {
           cardCount: cards.length,
           cards,
           mediaAssets,
+          schedulerPresets,
+          schedulerMetadata: { collectionCreatedAt, schedulerVersion, importedAt: new Date().toISOString(), collectionConfig, fsrsEnabled: Boolean(collectionConfig.fsrs) },
         });
       });
 
       if (resultDecks.length > 0) {
         return resultDecks;
       }
+      throw new Error("Không tìm thấy thẻ trong dữ liệu Anki này.");
     } catch (sqlErr) {
-      console.warn("SQLite WASM Execution notice, using pure JS binary parser:", sqlErr);
+      console.error("Could not parse Anki SQLite scheduling data", sqlErr);
+      throw sqlErr instanceof Error ? sqlErr : new Error("Không đọc được dữ liệu lịch ôn từ file Anki.");
     }
-
-    // 4. Pure JS Fallback Binary Parser
-    return this.fallbackParse(dbBuffer, mediaBlobMap, mediaAssets);
-  }
-
-  /**
-   * Pure JS Fallback parser that reads Anki note fields directly from SQLite binary buffer
-   */
-  private static fallbackParse(dbBuffer: Uint8Array, mediaBlobMap: Record<string, string>, mediaAssets: AnkiMediaAsset[] = []): AnkiDeck[] {
-    const decoder = new TextDecoder("utf-8", { fatal: false });
-    const fullText = decoder.decode(dbBuffer);
-    const rawChunks = fullText.split("\x1f");
-
-    const cards: AnkiCard[] = [];
-    let idCounter = 1;
-
-    for (let i = 0; i < rawChunks.length - 1; i++) {
-      const rawFront = rawChunks[i] || "";
-      const rawBack = rawChunks[i + 1] || rawChunks[i] || "";
-
-      const frontClean = cleanHtml(rawFront);
-      const backClean = cleanHtml(rawBack);
-
-      if (frontClean.length > 1 && frontClean.length < 500 && !frontClean.includes("CREATE TABLE")) {
-        const frontHtml = processCardHtml(rawFront, mediaBlobMap);
-        const backHtml = processCardHtml(rawBack, mediaBlobMap);
-        const koreanText = extractKoreanText([frontClean, backClean]) || frontClean;
-        const vietnameseMeaning = extractVietnameseText([frontClean, backClean]) || backClean;
-
-        cards.push({
-          id: idCounter++,
-          noteId: idCounter,
-          deckName: "Bộ Thẻ Anki Import",
-          frontHtml,
-          backHtml,
-          frontText: frontClean,
-          backText: backClean,
-          fields: [rawFront, rawBack],
-          tags: ["Anki Import"],
-          koreanText,
-          vietnameseMeaning,
-          audioUrls: extractAudioUrls(rawFront + " " + rawBack, mediaBlobMap),
-          imageUrls: extractImageUrls(rawFront + " " + rawBack, mediaBlobMap),
-          mediaRefs: extractMediaFilenames(rawFront + " " + rawBack),
-          dueDate: 0,
-          interval: 1,
-          reps: 0,
-          lapses: 0,
-          state: "new",
-        });
-
-        i++; // Skip paired field chunk
-      }
-    }
-
-    return [
-      {
-        id: "anki-imported-deck",
-        name: "Bộ Thẻ Anki Import",
-        cardCount: cards.length > 0 ? cards.length : 1,
-        cards: cards.length > 0 ? cards : [
-          {
-            id: 1,
-            noteId: 1,
-            deckName: "Bộ Thẻ Anki Import",
-            frontHtml: "Thẻ Anki Mẫu",
-            backHtml: "Dữ liệu Anki đã được nạp thành công",
-            frontText: "Thẻ Anki Mẫu",
-            backText: "Dữ liệu Anki đã được nạp thành công",
-            fields: ["Thẻ Anki Mẫu", "Dữ liệu Anki đã được nạp thành công"],
-            tags: ["Import"],
-            audioUrls: [],
-            imageUrls: [],
-            mediaRefs: [],
-            dueDate: 0,
-            interval: 1,
-            reps: 0,
-            lapses: 0,
-            state: "new",
-          }
-        ],
-        mediaAssets,
-      },
-    ];
   }
 }
 

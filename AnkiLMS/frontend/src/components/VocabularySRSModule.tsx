@@ -5,7 +5,7 @@ import Link from "next/link";
 import DOMPurify from "dompurify";
 import { VOCABULARY_DATA } from "../data/koreanData";
 import { THTH_CURRICULUM_DECKS } from "../data/ththCurriculum";
-import { AnkiDeck } from "../lib/ankiParser";
+import { AnkiDeck, AnkiReviewEvent, AnkiScheduleMetadata } from "../lib/ankiParser";
 import { useApp } from "../contexts/AppProvider";
 import {
   Volume2,
@@ -27,7 +27,7 @@ import {
   Compass,
   ArrowRight,
 } from "lucide-react";
-import { calculateFSRS45, formatLocalDate, FSRSRating, FSRSState } from "../lib/fsrs45";
+import { ankiScheduleToFSRSState, calculateFSRS45, formatLocalDate, FSRSRating, FSRSState } from "../lib/fsrs45";
 import { ApiClient } from "../lib/apiClient";
 import { DailyLimitsPanel } from "./DailyLimitsPanel";
 import { DailyLimits, DEFAULT_LIMITS, loadLimits, loadProgress, recordCard, remaining, saveLimits } from "../lib/dailyLimits";
@@ -64,6 +64,8 @@ export interface VocabularyCard {
   tag_3?: string;
   tag_4?: string;
   deckName?: string;
+  ankiSchedule?: AnkiScheduleMetadata;
+  reviewHistory?: AnkiReviewEvent[];
 }
 
 export interface DeckTreeNode {
@@ -330,6 +332,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
           tag_1: "Anki Custom",
           tag_2: c.deckName?.split("::").slice(1).join("::") || "",
           deckName: c.deckName || ud.name,
+          ankiSchedule: c.ankiSchedule,
+          reviewHistory: c.reviewHistory,
         });
         const cards = ud.cards.map(toVocabularyCard);
         type ImportTreeBranch = { title: string; path: string; entries: Array<{ card: AnkiDeck["cards"][number]; idx: number }>; children: Map<string, ImportTreeBranch> };
@@ -410,8 +414,11 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     const dueCards: VocabularyCard[] = [];
     const newCards: VocabularyCard[] = [];
     for (const c of cards) {
-      const state = cardStateMap[`${c.deckName || "deck"}_${c.id}`];
-      if (state && state.dueDate > todayStr && masteredWords.includes(c.word)) continue;
+      // Anki's suspended queue is intentional; keep it out of the review queue.
+      if (c.ankiSchedule?.queue === -1) continue;
+      const key = `${c.deckName || "deck"}_${c.id}`;
+      const state = cardStateMap[key] || (c.ankiSchedule ? ankiScheduleToFSRSState(c.ankiSchedule) : undefined);
+      if (state && state.state !== "new" && state.dueDate > todayStr) continue;
       (state && state.state !== "new" ? dueCards : newCards).push(c);
     }
     const activeList = [...dueCards.slice(0, reviewLeft), ...newCards.slice(0, newLeft)];
@@ -446,7 +453,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       localStorage.setItem("haechivn_last_lesson_id", deckId);
       localStorage.setItem("haechivn_last_lesson_title", title);
     }
-  }, [cardStateMap, masteredWords, dailyLimits, exitStudy, studyMode, setActiveStudySession]);
+  }, [cardStateMap, currentUser, dailyLimits, exitStudy, studyMode, setActiveStudySession]);
 
   // Recursive search for node by id
   const findNodeById = useCallback((nodes: DeckTreeNode[], id: string): DeckTreeNode | null => {
@@ -618,7 +625,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     // Ignore key repeats/double clicks on the same card and enforce a short recall window.
     // Official ts-fsrs scheduler; calculateFSRS45 remains as a compatibility adapter name.
     const rating: FSRSRating = customRating || (isMastered ? "good" : "again");
-    const curState = cardStateMap[activeKey] || {
+    const curState = cardStateMap[activeKey] || (currentCard.ankiSchedule ? ankiScheduleToFSRSState(currentCard.ankiSchedule) : undefined) || {
       interval: 1,
       reps: 0,
       lapses: 0,
@@ -643,6 +650,30 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       void ApiClient.saveCardState(activeDeckTitle, Number(currentCard.id) || 1, newState).catch(() => {});
     }
 
+    // Keep the imported Anki history intact and append future reviews to the
+    // card's local deck record so the user's review log remains portable.
+    const owningDeck = ownedDecks.find((deck) => deck.cards.some((card) =>
+      card.id === Number(currentCard.id) && card.deckName === currentCard.deckName
+    ));
+    if (owningDeck) {
+      const reviewTime = new Date();
+      const reviewEvent: AnkiReviewEvent = {
+        id: reviewTime.getTime(), reviewedAt: reviewTime.toISOString(),
+        rating: rating === "again" ? 1 : rating === "hard" ? 2 : rating === "good" ? 3 : 4,
+        interval: newState.interval, previousInterval: curState.interval || 0,
+        factor: Math.round(newState.easeFactor * 1000),
+        durationMs: Math.max(0, Date.now() - (answerShownAtRef.current || Date.now())), type: 1,
+      };
+      const updatedDecks = ownedDecks.map((deck) => deck.id !== owningDeck.id ? deck : {
+        ...deck,
+        cards: deck.cards.map((card) => card.id === Number(currentCard.id) && card.deckName === currentCard.deckName
+          ? { ...card, reviewHistory: [...(card.reviewHistory || []), reviewEvent] }
+          : card),
+      });
+      setUserDecks(updatedDecks);
+      void ApiClient.saveDecks(updatedDecks, currentUser?.id).catch(() => {});
+    }
+
     // Move to next card
     setIsFlipped(false);
     setTypedInput("");
@@ -653,7 +684,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       finishSrsActivity();
       setViewMode("dashboard");
     }
-  }, [currentCard, cardStateMap, currentUser, activeDeckTitle, currentCardIndex, activeCardsList.length, finishSrsActivity]);
+  }, [currentCard, cardStateMap, currentUser, activeDeckTitle, currentCardIndex, activeCardsList.length, finishSrsActivity, ownedDecks, setUserDecks]);
 
   // Give typing hint
   const handleGiveHint = () => {

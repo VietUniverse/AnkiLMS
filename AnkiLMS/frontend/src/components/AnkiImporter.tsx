@@ -18,6 +18,8 @@ export const AnkiImporter: React.FC<AnkiImporterProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successDecks, setSuccessDecks] = useState<AnkiDeck[] | null>(null);
+  const importedReviewCount = successDecks?.reduce((sum, deck) => sum + deck.cards.reduce((cardSum, card) => cardSum + (card.reviewHistory?.length || 0), 0), 0) || 0;
+  const importedPresetCount = successDecks?.reduce((sum, deck) => sum + Object.keys(deck.schedulerPresets || {}).length, 0) || 0;
 
   if (!isOpen) return null;
 
@@ -140,7 +142,7 @@ export const AnkiImporter: React.FC<AnkiImporterProps> = ({
               <div>
                 <h4 className="font-bold text-sm">Nhập bộ thẻ thành công!</h4>
                 <p className="text-xs text-emerald-300/80">
-                  Đã tải {successDecks.reduce((sum, d) => sum + d.cardCount, 0)} thẻ vào bộ nhớ cá nhân.
+                  Đã tải {successDecks.reduce((sum, d) => sum + d.cardCount, 0)} thẻ, {importedReviewCount.toLocaleString("vi-VN")} lượt ôn và {importedPresetCount} cấu hình scheduler vào bộ nhớ cá nhân.
                 </p>
               </div>
             </div>

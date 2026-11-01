@@ -1,6 +1,6 @@
 import type { AnkiCard, AnkiDeck } from "./ankiParser";
 
-const STUDY_STATE_FIELDS = ["dueDate", "interval", "reps", "lapses", "state"] as const;
+const STUDY_STATE_FIELDS = ["dueDate", "interval", "reps", "lapses", "state", "ankiSchedule", "reviewHistory"] as const;
 
 function sameCardIdentity(left: AnkiCard, right: AnkiCard): boolean {
   return left.id === right.id && left.noteId === right.noteId;

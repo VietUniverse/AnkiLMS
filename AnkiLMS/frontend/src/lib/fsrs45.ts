@@ -1,4 +1,5 @@
-import { createEmptyCard, fsrs, Rating, State } from "ts-fsrs";
+import { createEmptyCard, default_w, fsrs, Rating, State } from "ts-fsrs";
+import type { AnkiScheduleMetadata } from "./ankiParser";
 
 export type FSRSRating = "again" | "hard" | "good" | "easy";
 
@@ -15,6 +16,8 @@ export interface FSRSState {
   lastReview: string | null;
   dueAt?: string;
   fsrsVersion?: string;
+  /** Original Anki preset retained for subsequent scheduling after import. */
+  schedulerConfig?: Record<string, unknown>;
 }
 
 export const FSRS45_DEFAULTS = {
@@ -80,6 +83,101 @@ function toFsrsCard(current: Partial<FSRSState>, now: Date) {
   };
 }
 
+function presetNumber(config: Record<string, unknown> | undefined, keys: string[], fallback: number): number {
+  for (const key of keys) {
+    const value = Number(config?.[key]);
+    if (Number.isFinite(value) && value > 0) return value;
+  }
+  return fallback;
+}
+
+function presetSteps(config: Record<string, unknown> | undefined, key: "new" | "lapse"): string[] | undefined {
+  const section = config?.[key] as Record<string, unknown> | undefined;
+  const raw = section?.delays;
+  if (!Array.isArray(raw)) return undefined;
+  return raw.map((value) => {
+    const minutes = Math.max(1, Number(value) || 1);
+    if (minutes % 1440 === 0) return `${minutes / 1440}d`;
+    if (minutes % 60 === 0) return `${minutes / 60}h`;
+    return `${minutes}m`;
+  });
+}
+
+/** Convert Anki's collection-day / learning-second scheduler values to this app's date shape. */
+export function ankiScheduleToFSRSState(schedule: AnkiScheduleMetadata, now = new Date()): FSRSState {
+  const latestReviewDate = schedule.data ? parseFsrsData(schedule.data) : undefined;
+  const preset = schedule.schedulerConfig;
+  const nestedFsrs = (preset?.config as Record<string, unknown> | undefined) || (preset?.fsrs as Record<string, unknown> | undefined) || preset;
+  const presetConfig = (preset?.config as Record<string, unknown> | undefined) || preset;
+  const rawData = schedule.data ? safeJson(schedule.data) : undefined;
+  const stability = finitePositive(rawData?.s) || Math.max(0, schedule.interval);
+  const difficulty = finitePositive(rawData?.d) || 5;
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const collectionDay = schedule.collectionCreatedAt
+    ? Math.floor((Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) - Date.UTC(new Date(schedule.collectionCreatedAt).getFullYear(), new Date(schedule.collectionCreatedAt).getMonth(), new Date(schedule.collectionCreatedAt).getDate())) / 86_400_000)
+    : schedule.due;
+  const effectiveDue = schedule.queue < 0 ? schedule.originalDue || schedule.due : schedule.due;
+  let dueAt: Date;
+  if ((schedule.queue === 1 || schedule.queue < 0 && schedule.cardType === 1) && effectiveDue > 0) dueAt = new Date(effectiveDue * 1000);
+  else if (schedule.queue === 2 || schedule.queue === 3 || schedule.queue < 0 && schedule.cardType === 2) {
+    dueAt = new Date(today);
+    dueAt.setDate(dueAt.getDate() + Math.max(-36500, Math.min(36500, effectiveDue - collectionDay)));
+    dueAt.setHours(23, 59, 0, 0);
+  } else dueAt = today;
+  const history = (schedule as AnkiScheduleMetadata & { lastReview?: string }).lastReview;
+  const retention = Number(nestedFsrs?.desired_retention ?? nestedFsrs?.desiredRetention ?? nestedFsrs?.requestRetention ?? nestedFsrs?.request_retention ?? preset?.desiredRetention ?? preset?.request_retention);
+  const maxInterval = presetNumber(presetConfig, ["maximum_review_interval", "maximum_interval", "maxInterval"], presetNumber(presetConfig?.rev as Record<string, unknown> | undefined, ["maxIvl"], FSRS45_DEFAULTS.maxInterval));
+  const params = nestedFsrs?.fsrs_params_5 ?? nestedFsrs?.fsrs_params_4 ?? nestedFsrs?.fsrs_params_6 ?? nestedFsrs?.parameters ?? nestedFsrs?.params ?? nestedFsrs?.w;
+  const learningSteps = Array.isArray(presetConfig?.learn_steps)
+    ? presetConfig.learn_steps.map((step) => `${Math.max(1, Number(step) || 1)}m`)
+    : presetSteps(presetConfig, "new");
+  const relearningSteps = Array.isArray(presetConfig?.relearn_steps)
+    ? presetConfig.relearn_steps.map((step) => `${Math.max(1, Number(step) || 1)}m`)
+    : presetSteps(presetConfig, "lapse");
+  const schedulerConfig: Record<string, unknown> = {
+    ...(Number.isFinite(retention) && retention > 0 ? { desiredRetention: retention } : {}),
+    maximum_interval: maxInterval,
+    ...(Array.isArray(params) && params.length === default_w.length ? { w: params } : {}),
+    ...(learningSteps ? { learning_steps: learningSteps } : {}),
+    ...(relearningSteps ? { relearning_steps: relearningSteps } : {}),
+  };
+  return {
+    interval: schedule.queue === 1
+      ? Math.max(0, (effectiveDue * 1000 - now.getTime()) / 86_400_000)
+      : Math.max(0, Math.abs(schedule.interval)),
+    easeFactor: schedule.factor > 0 ? schedule.factor / 1000 : 2.5,
+    reps: Math.max(0, schedule.reps),
+    lapses: Math.max(0, schedule.lapses),
+    state: schedule.queue === 0 || schedule.cardType === 0 ? "new" : schedule.queue === 1 || schedule.queue === 3 || schedule.cardType === 1 ? "learning" : "review",
+    dueDate: formatLocalDate(dueAt),
+    dueAt: dueAt.toISOString(),
+    stability,
+    difficulty,
+    lastReview: history || latestReviewDate || null,
+    schedulerConfig,
+    fsrsVersion: FSRS45_DEFAULTS.version,
+  };
+}
+
+function safeJson(raw: string): Record<string, unknown> | undefined {
+  try { return JSON.parse(raw) as Record<string, unknown>; } catch { return undefined; }
+}
+
+function finitePositive(value: unknown): number | undefined {
+  const number = Number(value);
+  return Number.isFinite(number) && number > 0 ? number : undefined;
+}
+
+function parseFsrsData(raw: string): string | undefined {
+  const value = safeJson(raw);
+  const timestamp = Number(value?.lr ?? value?.lastReview ?? value?.last_review);
+  if (Number.isFinite(timestamp) && timestamp > 0) {
+    const date = new Date(timestamp < 10_000_000_000 ? timestamp * 1000 : timestamp);
+    if (!Number.isNaN(date.getTime())) return formatLocalDate(date);
+  }
+  return undefined;
+}
+
 /** Schedule the next review using the official ts-fsrs 5.4.2 scheduler. */
 export function calculateFSRS45(
   rating: FSRSRating,
@@ -88,14 +186,23 @@ export function calculateFSRS45(
   desiredRetention = FSRS45_DEFAULTS.desiredRetention,
 ): FSRSState {
   const retention = Math.min(0.99, Math.max(0.7, desiredRetention));
-  const activeScheduler = retention === FSRS45_DEFAULTS.desiredRetention
+  const importedConfig = current.schedulerConfig;
+  const desiredRetentionFromPreset = Number(importedConfig?.desiredRetention ?? importedConfig?.request_retention);
+  const effectiveRetention = Number.isFinite(desiredRetentionFromPreset) && desiredRetentionFromPreset > 0
+    ? Math.min(0.99, Math.max(0.7, desiredRetentionFromPreset))
+    : retention;
+  const schedulerOptions: Record<string, unknown> = {
+    request_retention: effectiveRetention,
+    maximum_interval: presetNumber(importedConfig, ["maximum_interval", "maxInterval"], FSRS45_DEFAULTS.maxInterval),
+    enable_fuzz: false,
+    enable_short_term: true,
+  };
+  if (Array.isArray(importedConfig?.w) && importedConfig.w.every((value) => Number.isFinite(Number(value)))) schedulerOptions.w = importedConfig.w;
+  if (Array.isArray(importedConfig?.learning_steps)) schedulerOptions.learning_steps = importedConfig.learning_steps;
+  if (Array.isArray(importedConfig?.relearning_steps)) schedulerOptions.relearning_steps = importedConfig.relearning_steps;
+  const activeScheduler = !importedConfig && effectiveRetention === FSRS45_DEFAULTS.desiredRetention
     ? scheduler
-    : fsrs({
-      request_retention: retention,
-      maximum_interval: FSRS45_DEFAULTS.maxInterval,
-      enable_fuzz: false,
-      enable_short_term: true,
-    });
+    : fsrs(schedulerOptions as Parameters<typeof fsrs>[0]);
   const { card } = activeScheduler.next(toFsrsCard(current, now), now, ratingMap[rating]);
   const interval = Math.max(0, card.scheduled_days);
 
@@ -111,5 +218,6 @@ export function calculateFSRS45(
     difficulty: Number(card.difficulty.toFixed(4)),
     lastReview: formatLocalDate(now),
     fsrsVersion: FSRS45_DEFAULTS.version,
+    ...(importedConfig ? { schedulerConfig: importedConfig } : {}),
   };
 }
