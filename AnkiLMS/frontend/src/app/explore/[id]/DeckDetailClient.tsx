@@ -300,7 +300,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
               </div>
               {isAdded ? (
                 <div className="space-y-1">
-                  <a href="/flashcards?study=true" className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-black bg-emerald-500 hover:bg-emerald-600 text-white transition">
+                  <a href={`/flashcards?study=true&from=${encodeURIComponent(`/explore/${id}`)}`} className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-black bg-emerald-500 hover:bg-emerald-600 text-white transition">
                     <BookOpen className="w-4 h-4" /> Học ngay
                   </a>
                   <button onClick={handleRemove} className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-xl text-xs font-semibold text-rose-500 hover:bg-rose-500/10 transition cursor-pointer">
@@ -423,7 +423,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
                 <button onClick={handleRemove} aria-label="Gỡ khỏi kho thẻ" title="Gỡ khỏi kho thẻ" className="h-11 w-11 shrink-0 rounded-xl text-rose-500 hover:bg-rose-500/10 flex items-center justify-center cursor-pointer">
                   <Trash2 className="w-4 h-4" />
                 </button>
-                <a href="/flashcards?study=true" style={{ color: "#fff" }} className="flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 px-4 text-sm font-black text-white transition">
+                <a href={`/flashcards?study=true&from=${encodeURIComponent(`/explore/${id}`)}`} style={{ color: "#fff" }} className="flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 px-4 text-sm font-black text-white transition">
                   <BookOpen className="w-4 h-4" /> Học ngay ({deck.cards.length.toLocaleString("vi-VN")} thẻ)
                 </a>
               </>

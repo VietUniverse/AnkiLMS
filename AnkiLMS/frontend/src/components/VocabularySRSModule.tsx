@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import DOMPurify from "dompurify";
 import { VOCABULARY_DATA } from "../data/koreanData";
 import { THTH_CURRICULUM_DECKS } from "../data/ththCurriculum";
@@ -121,6 +122,10 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   // Cây bộ thẻ phụ thuộc người dùng và kho thẻ đọc từ localStorage: chỉ dựng sau khi hydrate để HTML tĩnh khớp bản client.
   const hydrated = useSyncExternalStore(() => () => {}, () => true, () => false);
   const studyBg = useStudyBackground();
+  const router = useRouter();
+  // Trang đã mở màn học (Trang chủ, chi tiết bộ thẻ...): bấm Trở về thì quay lại đó thay vì ở lại danh sách Từ vựng.
+  const returnToRef = useRef<string | null>(null);
+  const autoResumedRef = useRef(false);
   // Chế độ tối: nút "Hiện đáp án" màu xám như nút Trở về; nếu đang dùng nền gradient thì nút đi theo màu gradient đó.
   const revealStyle = {
     color: "#fff",
@@ -417,7 +422,10 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     setIsFlipped(false);
     setTypedInput("");
     setActiveStudySession(null);
-  }, [finishSrsActivity, setActiveStudySession]);
+    const returnTo = returnToRef.current;
+    returnToRef.current = null;
+    if (returnTo) router.push(returnTo);
+  }, [finishSrsActivity, setActiveStudySession, router]);
 
   // Start study session (Filter only unlearned / review cards via FSRS state)
   const startStudy = useCallback((deckId: string, title: string, cards: VocabularyCard[]) => {
@@ -534,11 +542,17 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   // Auto-resume if query param ?resume=true or ?study=true is present
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (autoResumedRef.current) return; // chỉ tự vào học một lần, không bật lại sau khi bấm Trở về
     const params = new URLSearchParams(window.location.search);
-    if ((params.get("resume") === "true" || params.get("study") === "true") && viewMode === "dashboard") {
+    // Chờ cây bộ thẻ dựng xong rồi mới vào học; nếu vào sớm quá thì không có bài nào để mở.
+    if ((params.get("resume") === "true" || params.get("study") === "true") && deckTree.length > 0) {
+      autoResumedRef.current = true;
+      const from = params.get("from");
+      returnToRef.current = from && from.startsWith("/") && !from.startsWith("//") ? from : null;
+      window.history.replaceState(null, "", window.location.pathname);
       resumeLastLesson();
     }
-  }, [viewMode, resumeLastLesson]);
+  }, [resumeLastLesson, deckTree]);
 
   // Collect all container ids for toggle all
   const getAllContainerIds = useCallback((nodes: DeckTreeNode[]): string[] => {

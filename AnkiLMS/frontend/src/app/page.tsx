@@ -247,7 +247,7 @@ export default function Home() {
             <div className="grid gap-3 sm:grid-cols-2">
               {isFeatureEnabled("flashcards") && (
                 <Link
-                  href="/flashcards?resume=true"
+                  href="/flashcards?resume=true&from=%2F"
                   title={lastLessonTitle ? `Học tiếp: ${lastLessonTitle}` : "Tiếp tục học từ vựng"}
                   style={{ color: "#fff" }}
                   className="flex min-h-16 items-center gap-3 rounded-2xl bg-sky-500 px-5 py-3 shadow-sm transition hover:bg-sky-600 active:scale-[0.99]"
