@@ -203,49 +203,56 @@ export default function ExplorePage() {
     return groups;
   }, [sortedDecks, sort]);
 
-  const rowAction = "inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer self-start sm:self-auto sm:justify-self-end shrink-0";
+  const iconAction = "inline-flex h-8 w-8 items-center justify-center rounded-lg transition cursor-pointer shrink-0";
+  const LEVEL_PILL: Record<string, string> = {
+    "Sơ cấp": "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+    "Trung cấp": "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+    "Cao cấp": "bg-rose-500/10 text-rose-600 dark:text-rose-400",
+  };
 
   const renderDeckRow = (deck: CuratedDeckItem) => {
     const added = isDeckAdded(deck);
+    // Tên đã có cấp độ (Từ vựng Sơ cấp 1...) thì không cần nhãn cấp độ nữa.
+    const showLevel = !deck.title.toLowerCase().includes(deck.level.toLowerCase());
     return (
-      <li key={deck.id} className={`${ROW_GRID} flex flex-col items-stretch sm:flex-row sm:items-center gap-1.5 py-3`}>
-        <a href={deckHref(deck)} className="flex items-center gap-3 min-w-0 flex-1 group cursor-pointer">
+      <li key={deck.id} className={`${ROW_GRID} grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 px-2 -mx-2 py-2.5 sm:py-3 rounded-xl transition-colors hover:bg-stone-100 dark:hover:bg-stone-800/60`}>
+        <a href={deckHref(deck)} className="flex items-center gap-3 min-w-0 group cursor-pointer">
           <DeckIcon name={deck.iconName} className="w-5 h-5 shrink-0 text-stone-400 group-hover:text-sky-500 transition" />
-          <div className="min-w-0 flex-1">
-            <h3 className="text-sm font-semibold text-stone-900 dark:text-white line-clamp-2 sm:line-clamp-1 group-hover:text-sky-500 transition">
-              {deck.title}
-            </h3>
-            <p className="text-xs text-stone-400 sm:hidden">{deck.level}, {deckCardCount(deck)} thẻ</p>
-          </div>
+          <h3 className="min-w-0 text-sm font-semibold text-stone-900 dark:text-white line-clamp-2 sm:line-clamp-1 group-hover:text-sky-500 transition">
+            {deck.title}
+            <span className="sm:hidden font-normal text-stone-500 dark:text-stone-400"> ({deckCardCount(deck).toLocaleString("vi-VN")})</span>
+            {showLevel && <span className={`sm:hidden ml-1.5 align-middle rounded-full px-1.5 py-0.5 text-[10px] font-bold ${LEVEL_PILL[deck.level] || "bg-stone-500/10 text-stone-500"}`}>{deck.level}</span>}
+          </h3>
         </a>
         <span className="hidden sm:block text-xs text-stone-500 dark:text-stone-400 truncate">{deck.level}</span>
         <span className="hidden sm:block text-xs text-stone-500 dark:text-stone-400 tabular-nums text-right">{deckCardCount(deck)}</span>
 
         {added ? (
-          <div className="flex items-center justify-start sm:justify-end gap-1 shrink-0 pl-[22px] sm:pl-0">
-            <a href="/flashcards" className={`${rowAction} text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10`}>
-              <Check className="w-3.5 h-3.5" /> Học
+          <div className="flex items-center justify-end gap-0.5 shrink-0">
+            <a href="/flashcards" title="Học bộ thẻ này" aria-label="Học bộ thẻ này" className={`${iconAction} text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10`}>
+              <Check className="w-4 h-4" />
             </a>
             <button
               onClick={() => handleRemoveCurated(deck)}
               title="Gỡ bộ thẻ khỏi kho thẻ"
               aria-label="Gỡ bộ thẻ khỏi kho thẻ"
-              className="p-1.5 rounded-lg text-stone-400 hover:text-rose-500 hover:bg-rose-500/10 transition cursor-pointer shrink-0"
+              className={`${iconAction} text-stone-400 hover:text-rose-500 hover:bg-rose-500/10`}
             >
               <Trash2 className="w-4 h-4" />
             </button>
           </div>
         ) : deck.id.startsWith("shared-") ? (
-          <a href={deckHref(deck)} className={`${rowAction} ml-[22px] sm:ml-0 text-sky-600 dark:text-sky-400 hover:bg-sky-500/10`}>
-            <Eye className="w-3.5 h-3.5" /> Xem
+          <a href={deckHref(deck)} title="Xem bộ thẻ" aria-label="Xem bộ thẻ" className={`${iconAction} justify-self-end text-sky-600 dark:text-sky-400 hover:bg-sky-500/10`}>
+            <Eye className="w-4 h-4" />
           </a>
         ) : (
           <button
             onClick={() => handleAddDeck(deck)}
+            title="Thêm vào kho thẻ"
             aria-label={`Thêm ${deck.title} vào kho thẻ`}
-            className={`${rowAction} ml-[22px] sm:ml-0 text-sky-600 dark:text-sky-400 hover:bg-sky-500/10`}
+            className={`${iconAction} justify-self-end text-sky-600 dark:text-sky-400 hover:bg-sky-500/10`}
           >
-            <Plus className="w-3.5 h-3.5" /> Thêm
+            <Plus className="w-5 h-5" />
           </button>
         )}
       </li>
