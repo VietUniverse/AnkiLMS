@@ -799,6 +799,15 @@ export const ShadowingModule: React.FC = () => {
                 <h2 className="font-extrabold text-white text-base font-noto">{currentLesson.title}</h2>
                 <span className="px-3 py-1 rounded-full bg-sky-500/20 text-sky-300 font-bold text-xs">{currentLesson.topikName}</span>
               </div>
+              <select
+                value={playbackSpeed}
+                onChange={(e) => setPlaybackSpeed(Number(e.target.value))}
+                aria-label="Tốc độ phát"
+                title="Tốc độ phát"
+                className="rounded-lg border border-slate-700 bg-slate-950 px-2 py-1 text-xs font-bold font-mono text-slate-200 cursor-pointer"
+              >
+                {[0.5, 0.75, 1, 1.25, 1.5].map((s) => <option key={s} value={s}>{s}x</option>)}
+              </select>
             </div>
 
             {/* Video Player */}
@@ -806,45 +815,6 @@ export const ShadowingModule: React.FC = () => {
               {currentLesson.sourceType === "original" ? <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-indigo-950 to-slate-950 p-4 text-center"><span className="text-3xl">🎧</span><p className="text-sm font-bold text-white">Bài nghe tiếng Hàn được đọc bằng giọng Hàn trên thiết bị</p><p className="text-xs text-slate-300">{currentLesson.sourceLabel}</p><a href={currentLesson.sourceUrl} target="_blank" rel="noreferrer" className="text-xs font-bold text-rose-300 underline underline-offset-4">Mở nguồn tham khảo bên ngoài · không khớp lời luyện ↗</a></div> : <div id="yt-shadowing-player" className="absolute inset-0 h-full w-full"></div>}
             </div>
 
-            {/* Control Buttons & Speed bar */}
-            <div className="flex flex-nowrap items-center justify-between gap-2 pt-1">
-              <div className="flex shrink-0 items-center gap-2">
-                <button
-                  onClick={playFullLesson}
-                  className="h-9 w-9 sm:h-11 sm:w-11 rounded-xl bg-rose-600 hover:bg-rose-500 text-white flex items-center justify-center shadow-lg shadow-rose-900/40 transition-all cursor-pointer"
-                  aria-label="Phát toàn bộ bài học"
-                  title="Phát cả bài"
-                >
-                  <Play className="w-5 h-5 fill-white" aria-hidden="true" />
-                </button>
-
-                <button
-                  onClick={() => playSegment(currentSub)}
-                  className="h-9 w-9 sm:h-11 sm:w-11 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center transition-all cursor-pointer"
-                  aria-label="Phát lại câu hiện tại"
-                  title="Phát lại câu"
-                >
-                  <RotateCcw className="w-5 h-5" aria-hidden="true" />
-                </button>
-              </div>
-
-              {/* Speed Selector */}
-              <div className="flex min-w-0 items-center gap-0.5 sm:gap-1 bg-slate-950 p-1 sm:p-1.5 rounded-xl border border-slate-800">
-                {[0.5, 0.75, 1.0, 1.25, 1.5].map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => setPlaybackSpeed(Math.min(2, Math.max(0.5, s)))}
-                    className={`px-1 sm:px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-bold font-mono transition-all ${
-                      playbackSpeed === s
-                        ? "bg-rose-600 text-white"
-                        : "text-slate-400 hover:text-slate-200"
-                    }`}
-                  >
-                    {s}x
-                  </button>
-                ))}
-              </div>
-            </div>
           </div>
 
           {/* Shadowing Speaking Practice Card */}
@@ -857,11 +827,17 @@ export const ShadowingModule: React.FC = () => {
               </label>
 
               <div className="flex items-center gap-2">
-                <button onClick={handlePrevSub} disabled={currentSubIndex === 0} className="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs font-bold flex items-center gap-1 disabled:opacity-40" aria-label="Câu trước">
-                  <ChevronLeft className="w-4 h-4" aria-hidden="true" /> Câu trước
+                <button onClick={handlePrevSub} disabled={currentSubIndex === 0} className="h-10 w-10 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 flex items-center justify-center disabled:opacity-40 cursor-pointer" aria-label="Câu trước" title="Câu trước">
+                  <ChevronLeft className="w-5 h-5" aria-hidden="true" />
                 </button>
-                <button onClick={handleNextSub} className="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs font-bold flex items-center gap-1" aria-label="Câu tiếp">
-                  Câu tiếp <ChevronRight className="w-4 h-4" aria-hidden="true" />
+                <button onClick={() => playSegment(currentSub)} className="h-10 w-10 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 flex items-center justify-center cursor-pointer" aria-label="Phát lại câu hiện tại" title="Phát lại câu">
+                  <RotateCcw className="w-5 h-5" aria-hidden="true" />
+                </button>
+                <button onClick={playFullLesson} className="h-10 w-10 rounded-xl bg-rose-600 hover:bg-rose-500 text-white flex items-center justify-center shadow-lg shadow-rose-900/40 cursor-pointer" aria-label="Phát toàn bộ bài học" title="Phát cả bài">
+                  <Play className="w-5 h-5 fill-white" aria-hidden="true" />
+                </button>
+                <button onClick={handleNextSub} className="h-10 w-10 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 flex items-center justify-center cursor-pointer" aria-label="Câu tiếp" title="Câu tiếp">
+                  <ChevronRight className="w-5 h-5" aria-hidden="true" />
                 </button>
               </div>
             </div>
@@ -872,13 +848,6 @@ export const ShadowingModule: React.FC = () => {
                 {currentSub.text}
               </span>
               {(currentTranslation || generatedTranslation) && <p className="text-sm text-slate-400">{currentTranslation || generatedTranslation}</p>}
-              <button
-                onClick={() => playSegment(currentSub)}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 text-xs font-bold hover:bg-rose-500/30 transition-all"
-              >
-                <Volume2 className="w-4 h-4" />
-                <span>Nghe phát âm chuẩn người bản xứ</span>
-              </button>
             </div>
 
             {/* Microphone Voice Recording Button */}
@@ -917,16 +886,6 @@ export const ShadowingModule: React.FC = () => {
                 </div>
               </div>
             )}
-
-            {/* Navigation Next Button */}
-            <div className="pt-2">
-              <button
-                onClick={handleNextSub}
-                className="w-full py-3.5 px-4 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-sky-900/40 transition-all flex items-center justify-center gap-2"
-              >
-                <span>CHUYỂN SANG CÂU TIẾP theo &gt;</span>
-              </button>
-            </div>
 
           </div>
         </main>
