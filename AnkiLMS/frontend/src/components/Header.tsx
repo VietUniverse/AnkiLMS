@@ -17,7 +17,7 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onToggl
   const { activeStudySession } = useApp();
 
   return (
-    <header className="sticky top-0 z-30 bg-[#0b1329]/95 backdrop-blur-md border-b-2 border-[#19284d] px-3 sm:px-5 h-14 flex items-center justify-between gap-3 select-none transition-colors">
+    <header className={`sticky top-0 z-30 ${activeStudySession ? "bg-[#0b1329]" : "bg-[#0b1329]/95 backdrop-blur-md"} border-b-2 border-[#19284d] px-3 sm:px-5 h-14 flex items-center justify-between gap-3 select-none transition-colors`}>
       {/* Vùng bên trái: Nút Trở về (khi học thẻ) HOẶC Logo/Menu (khi ở trang khác) */}
       <div className="flex items-center gap-2.5 min-w-0">
         {activeStudySession ? (
