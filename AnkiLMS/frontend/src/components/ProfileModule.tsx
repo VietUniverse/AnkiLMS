@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { BookOpen, CalendarDays, CheckCircle2, Clock3, Flame, Gem, LogOut, Mail, Mic2, NotebookPen, Play, Shield, Sparkles, Trophy, User, Zap } from "lucide-react";
+import { BookOpen, CalendarDays, CheckCircle2, Clock3, Flame, Gem, Mail, Mic2, NotebookPen, Play, Trophy, User, Zap } from "lucide-react";
 import { ApiClient, StudyProfileSummary, UserProfile } from "../lib/apiClient";
 import { ACHIEVEMENTS_DATA } from "../data/achievementsData";
 import { getStudyRank } from "../lib/studyRanks";
@@ -40,7 +40,7 @@ const formatDuration = (seconds: number) => {
   return hours ? `${hours}h ${minutes}p` : `${minutes} phút`;
 };
 
-export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpenAuth, onLogout }) => {
+export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpenAuth }) => {
   const [stats, setStats] = useState<StudyProfileSummary | null>(null);
   const [heatmapData, setHeatmapData] = useState<Awaited<ReturnType<typeof ApiClient.getHeatmapData>>>([]);
   const [claimedBadgeIds, setClaimedBadgeIds] = useState<Set<string>>(new Set());
@@ -77,62 +77,128 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
   const summary = stats?.summary;
   const accuracy = summary?.cards_reviewed ? Math.round((summary.correct_count / summary.cards_reviewed) * 100) : 0;
   const statsCards = [
-    { label: "Chuỗi hiện tại", value: `${currentUser.streak || 0} ngày`, hint: `Kỷ lục: ${currentUser.longest_streak || currentUser.streak || 0} ngày`, icon: Flame, color: "text-orange-300", bg: "bg-orange-400/10" },
-    { label: "Tổng thời gian học", value: formatDuration(summary?.duration_seconds || 0), hint: `${summary?.session_count || 0} phiên học`, icon: Clock3, color: "text-sky-300", bg: "bg-sky-400/10" },
-    { label: "Câu đã luyện", value: (summary?.cards_reviewed || 0).toLocaleString("vi-VN"), hint: `${accuracy}% chính xác`, icon: CheckCircle2, color: "text-emerald-300", bg: "bg-emerald-400/10" },
-    { label: "Kim cương", value: (currentUser.gems || 0).toLocaleString("vi-VN"), hint: `${(currentUser.xp || 0).toLocaleString("vi-VN")} XP tích lũy`, icon: Gem, color: "text-violet-300", bg: "bg-violet-400/10" },
+    { label: "Chuỗi hiện tại", value: `${currentUser.streak || 0} ngày`, hint: `Kỷ lục: ${currentUser.longest_streak || currentUser.streak || 0} ngày`, icon: Flame, color: "text-orange-500", bg: "bg-orange-400/10" },
+    { label: "Tổng thời gian học", value: formatDuration(summary?.duration_seconds || 0), hint: `${summary?.session_count || 0} phiên học`, icon: Clock3, color: "text-sky-500", bg: "bg-sky-400/10" },
+    { label: "Câu đã luyện", value: (summary?.cards_reviewed || 0).toLocaleString("vi-VN"), hint: `${accuracy}% chính xác`, icon: CheckCircle2, color: "text-emerald-500", bg: "bg-emerald-400/10" },
+    { label: "Kim cương", value: (currentUser.gems || 0).toLocaleString("vi-VN"), hint: `${(currentUser.xp || 0).toLocaleString("vi-VN")} XP tích lũy`, icon: Gem, color: "text-violet-500", bg: "bg-violet-400/10" },
   ];
 
+  const card = "rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/70";
+  const rankLabel = getStudyRank(currentUser.level);
+  const roleLabel = currentUser.role === "admin" ? "Quản trị viên" : currentUser.role === "teacher" ? "Giáo viên" : "Học viên";
+
   return (
-    <div className="mx-auto max-w-6xl space-y-6 pb-24 text-slate-100 animate-fadeIn">
-      <section className="relative overflow-hidden rounded-[28px] border border-indigo-400/20 bg-gradient-to-br from-indigo-950 via-slate-900 to-fuchsia-950 bg-cover bg-center p-6 sm:p-8" style={currentUser.active_background && backgroundVisuals[currentUser.active_background] ? { backgroundImage: backgroundVisuals[currentUser.active_background] } : undefined}>
-        <div className="absolute -right-12 -top-20 h-64 w-64 rounded-full bg-fuchsia-500/10 blur-3xl" />
-        <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center">
-          <div className="relative mx-auto sm:mx-0">
-            <div className="rounded-[28px] bg-gradient-to-br from-amber-300 via-fuchsia-400 to-indigo-400 p-[3px] shadow-xl shadow-fuchsia-950/40" style={currentUser.active_frame && frameVisuals[currentUser.active_frame] ? { backgroundImage: frameVisuals[currentUser.active_frame], padding: "4px" } : undefined}>
-              {currentUser.avatar_url ? <img src={currentUser.avatar_url} alt={currentUser.name} className="h-24 w-24 rounded-[25px] object-cover bg-slate-950" /> : currentUser.role === "admin" ? <img src="/brand/haechivn-mark.webp" alt="HaechiVN admin" className="h-24 w-24 rounded-[25px] object-contain bg-slate-900" /> : <div className="flex h-24 w-24 items-center justify-center rounded-[25px] bg-slate-900 text-4xl font-black text-white">{currentUser.name.charAt(0).toUpperCase()}</div>}
-            </div>
-            <span title={getStudyRank(currentUser.level)} className="absolute -bottom-2 -right-2 rounded-full border-4 border-slate-900 bg-amber-400 px-2.5 py-1 text-xs font-black text-slate-950">{getStudyRank(currentUser.level)}</span>
+    <div className="mx-auto max-w-5xl space-y-5 pb-24 text-stone-900 dark:text-stone-100 animate-fadeIn">
+      {/* Hồ sơ */}
+      <section
+        className={`${card} relative overflow-hidden bg-cover bg-center p-5 sm:p-6`}
+        style={currentUser.active_background && backgroundVisuals[currentUser.active_background] ? { backgroundImage: backgroundVisuals[currentUser.active_background] } : undefined}
+      >
+        <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center">
+          <div
+            className="mx-auto shrink-0 rounded-2xl bg-gradient-to-br from-amber-300 via-fuchsia-400 to-indigo-400 p-[3px] sm:mx-0"
+            style={currentUser.active_frame && frameVisuals[currentUser.active_frame] ? { backgroundImage: frameVisuals[currentUser.active_frame], padding: "4px" } : undefined}
+          >
+            {currentUser.avatar_url ? (
+              <img src={currentUser.avatar_url} alt={currentUser.name} className="h-20 w-20 rounded-[13px] object-cover bg-stone-100 dark:bg-stone-950" />
+            ) : currentUser.role === "admin" ? (
+              <img src="/brand/haechivn-mark.webp" alt="HaechiVN admin" className="h-20 w-20 rounded-[13px] object-contain bg-stone-100 dark:bg-stone-900" />
+            ) : (
+              <div className="flex h-20 w-20 items-center justify-center rounded-[13px] bg-stone-100 dark:bg-stone-900 text-3xl font-black">{currentUser.name.charAt(0).toUpperCase()}</div>
+            )}
           </div>
+
           <div className="min-w-0 flex-1 text-center sm:text-left">
-            <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-indigo-200"><Sparkles className="h-3.5 w-3.5" /> Hồ sơ học tập</div>
-            <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl">{currentUser.name}</h1>
-            {currentUser.bio && <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-slate-200 sm:mx-0">{currentUser.bio}</p>}
-            <p className="mt-1 flex items-center justify-center gap-1.5 text-sm text-slate-300 sm:justify-start"><Mail className="h-4 w-4" />{currentUser.email}</p>
-            <div className="mt-4 flex flex-wrap justify-center gap-2 sm:justify-start">
-              <span className="rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-xs font-bold text-amber-200"><Zap className="mr-1 inline h-3.5 w-3.5" />{(currentUser.xp || 0).toLocaleString("vi-VN")} XP</span>
-              <span className="rounded-full border border-orange-300/20 bg-orange-300/10 px-3 py-1 text-xs font-bold text-orange-200"><Flame className="mr-1 inline h-3.5 w-3.5" />{currentUser.streak || 0} ngày liên tiếp</span>
-              {currentUser.active_badge && <span className="rounded-full border border-fuchsia-300/20 bg-fuchsia-300/10 px-3 py-1 text-xs font-bold text-fuchsia-100">🏅 {badgeNames[currentUser.active_badge] || "Huy hiệu Haechi"}</span>}
+            <h1 className="truncate text-2xl font-black tracking-tight">{currentUser.name}</h1>
+            <p className="mt-0.5 flex items-center justify-center gap-1.5 text-xs text-stone-500 dark:text-stone-400 sm:justify-start">
+              <Mail className="h-3.5 w-3.5 shrink-0" />
+              <span className="truncate">{currentUser.email}</span>
+              <span aria-hidden>·</span>
+              <span className="shrink-0">{roleLabel}</span>
+            </p>
+            {currentUser.bio && <p className="mt-2 max-w-xl text-sm leading-6 text-stone-600 dark:text-stone-300">{currentUser.bio}</p>}
+            <div className="mt-3 flex flex-wrap justify-center gap-1.5 text-xs font-bold sm:justify-start">
+              <span className="rounded-full bg-amber-500/10 px-2.5 py-1 text-amber-600 dark:text-amber-300">{rankLabel}</span>
+              <span className="rounded-full bg-sky-500/10 px-2.5 py-1 text-sky-600 dark:text-sky-300"><Zap className="mr-1 inline h-3.5 w-3.5" />{(currentUser.xp || 0).toLocaleString("vi-VN")} XP</span>
+              <span className="rounded-full bg-orange-500/10 px-2.5 py-1 text-orange-600 dark:text-orange-300"><Flame className="mr-1 inline h-3.5 w-3.5" />{currentUser.streak || 0} ngày</span>
+              {currentUser.active_badge && <span className="rounded-full bg-fuchsia-500/10 px-2.5 py-1 text-fuchsia-600 dark:text-fuchsia-300">🏅 {badgeNames[currentUser.active_badge] || "Huy hiệu Haechi"}</span>}
             </div>
           </div>
-          <div className="flex flex-wrap justify-center gap-2 sm:flex-col sm:items-stretch">
-            <Link href="/profile/settings" className="inline-flex items-center justify-center gap-2 rounded-xl border border-sky-300/20 bg-sky-300/10 px-4 py-2.5 text-xs font-bold text-sky-100 transition hover:bg-sky-300/20">Cài đặt hồ sơ</Link>
-            <Link href={`/member?id=${encodeURIComponent(currentUser.id)}`} className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-bold text-slate-100 transition hover:bg-white/10">Xem trang công khai</Link>
-            <button onClick={onLogout} className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-bold text-slate-200 transition hover:bg-rose-500/10 hover:text-rose-300"><LogOut className="h-4 w-4" />Đăng xuất</button>
+
+          <div className="flex justify-center gap-2 sm:flex-col">
+            <Link href="/profile/settings" className="rounded-xl bg-sky-500 px-4 py-2 text-center text-xs font-bold text-white transition hover:bg-sky-600">Cài đặt</Link>
+            <Link href={`/member?id=${encodeURIComponent(currentUser.id)}`} className="rounded-xl border border-stone-200 dark:border-stone-700 px-4 py-2 text-center text-xs font-bold transition hover:bg-stone-100 dark:hover:bg-stone-800">Trang công khai</Link>
           </div>
         </div>
       </section>
 
-      <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {statsCards.map(({ label, value, hint, icon: Icon, color, bg }) => <div key={label} className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 sm:p-5"><div className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl ${bg} ${color}`}><Icon className="h-5 w-5" /></div><p className="text-xl font-black text-white sm:text-2xl">{value}</p><p className="mt-1 text-xs font-bold text-slate-300">{label}</p><p className="mt-1 text-[11px] text-slate-500">{hint}</p></div>)}
+      {/* Số liệu */}
+      <section className={`${card} grid grid-cols-2 divide-x divide-y divide-stone-200 dark:divide-stone-800 lg:grid-cols-4 lg:divide-y-0 overflow-hidden`}>
+        {statsCards.map(({ label, value, hint, icon: Icon, color }) => (
+          <div key={label} className="p-4">
+            <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400"><Icon className={`h-3.5 w-3.5 ${color}`} />{label}</p>
+            <p className="mt-1.5 text-xl font-black tabular-nums">{value}</p>
+            <p className="text-[11px] text-stone-500 dark:text-stone-400">{hint}</p>
+          </div>
+        ))}
       </section>
 
       <OnigiriHeatmap data={heatmapData} streak={currentUser.streak || 0} />
 
-      <section className="grid gap-6">
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5 sm:p-6">
-          <div className="mb-5 flex items-center justify-between"><div><h2 className="flex items-center gap-2 text-lg font-black"><Trophy className="h-5 w-5 text-amber-300" />Thành tích</h2><p className="mt-1 text-xs text-slate-500">Mốc đã đạt theo cấp độ và chuỗi học</p></div><span className="rounded-full bg-amber-400/10 px-3 py-1 text-xs font-black text-amber-200">{earnedBadges.length} mốc</span></div>
-          {earnedBadges.length ? <div className="grid grid-cols-2 gap-2">{earnedBadges.slice(0, 6).map((badge) => <div key={badge.id} className="flex items-center gap-2 rounded-xl border border-amber-300/10 bg-amber-300/5 p-3"><span className="text-xl">{badge.icon}</span><div className="min-w-0"><p className="truncate text-xs font-bold text-amber-100">{badge.name}</p><p className="text-[10px] text-slate-500">Đã đạt</p></div></div>)}</div> : <div className="rounded-xl border border-dashed border-slate-700 p-5 text-center text-xs text-slate-500">Học đều mỗi ngày để mở khóa mốc thành tích đầu tiên.</div>}
-          <a href="/achievements" className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-indigo-300 hover:text-indigo-200">Xem tất cả thành tích <span>→</span></a>
-        </div>
-      </section>
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)]">
+        {/* Thành tích */}
+        <section className={`${card} p-5`}>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="flex items-center gap-2 text-sm font-black"><Trophy className="h-4 w-4 text-amber-500" />Thành tích <span className="font-normal text-stone-400">({earnedBadges.length})</span></h2>
+            <a href="/achievements" className="text-xs font-bold text-sky-600 dark:text-sky-400 hover:underline">Tất cả →</a>
+          </div>
+          {earnedBadges.length ? (
+            <div className="grid grid-cols-2 gap-2">
+              {earnedBadges.slice(0, 6).map((badge) => (
+                <div key={badge.id} className="flex items-center gap-2 rounded-xl bg-stone-50 dark:bg-stone-800/60 p-2.5">
+                  <span className="text-lg">{badge.icon}</span>
+                  <p className="min-w-0 truncate text-xs font-bold">{badge.name}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="rounded-xl border border-dashed border-stone-300 dark:border-stone-700 p-4 text-center text-xs text-stone-500 dark:text-stone-400">Học đều mỗi ngày để mở khóa mốc đầu tiên.</p>
+          )}
+          <a href="/rewards" className="mt-4 flex items-center justify-between rounded-xl border border-stone-200 dark:border-stone-700 px-3 py-2 text-xs font-bold hover:bg-stone-50 dark:hover:bg-stone-800 transition">
+            <span><Gem className="mr-1.5 inline h-4 w-4 text-violet-500" />Đổi kim cương</span><span>→</span>
+          </a>
+        </section>
 
-      <section className="rounded-2xl border border-slate-800 bg-slate-900 p-5 sm:p-6">
-        <div className="mb-4 flex items-center justify-between"><div><h2 className="flex items-center gap-2 text-lg font-black"><CalendarDays className="h-5 w-5 text-sky-300" />Phiên học gần đây</h2><p className="mt-1 text-xs text-slate-500">Hoạt động đã đồng bộ trên tài khoản</p></div><a href="/lessons" className="hidden rounded-xl bg-indigo-500/10 px-3 py-2 text-xs font-bold text-indigo-200 hover:bg-indigo-500/20 sm:inline-flex"><BookOpen className="mr-1.5 h-4 w-4" />Tiếp tục học</a></div>
-        {stats?.sessions.length ? <div className="divide-y divide-slate-800">{stats.sessions.slice(0, 8).map((session, index) => <div key={`${session.created_at}-${index}`} className="flex items-center gap-3 py-3"><div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-400/10 text-indigo-200">{session.module === "dictation" ? <NotebookPen className="h-5 w-5" /> : session.module === "shadowing" || session.module === "speaking" ? <Mic2 className="h-5 w-5" /> : <Play className="h-5 w-5" />}</div><div className="min-w-0 flex-1"><p className="text-sm font-bold text-white">{moduleLabels[session.module] || "Phiên học"}</p><p className="text-[11px] text-slate-500">{new Date(`${session.created_at.replace(" ", "T")}Z`).toLocaleString("vi-VN", { dateStyle: "medium", timeStyle: "short" })}</p></div><div className="text-right"><p className="text-xs font-bold text-slate-200">{session.cards_reviewed} câu</p><p className="text-[10px] text-slate-500">{formatDuration(session.duration_seconds)}</p></div></div>)}</div> : <div className="rounded-xl border border-dashed border-slate-700 p-8 text-center"><Clock3 className="mx-auto mb-2 h-7 w-7 text-slate-600" /><p className="text-sm font-bold text-slate-300">Chưa có phiên học được ghi nhận</p><p className="mt-1 text-xs text-slate-500">Bắt đầu luyện tập để xây dựng lịch sử học của bạn.</p><a href="/shadowing" className="mt-4 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-bold text-white"><Play className="h-4 w-4" />Bắt đầu học</a></div>}
-      </section>
-
-      <section className="flex flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-900 p-5 sm:flex-row sm:items-center sm:justify-between sm:px-6"><div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-800 text-slate-300"><Shield className="h-5 w-5" /></div><div><h3 className="text-sm font-black">Tài khoản HaechiVN</h3><p className="text-xs text-slate-500">Vai trò: {currentUser.role === "admin" ? "Quản trị viên" : currentUser.role === "teacher" ? "Giáo viên" : "Học viên"}</p></div></div><a href="/rewards" className="rounded-xl border border-slate-700 px-4 py-2 text-center text-xs font-bold text-slate-200 hover:border-indigo-400/50 hover:text-white"><Gem className="mr-1.5 inline h-4 w-4 text-violet-300" />Đổi kim cương</a></section>
+        {/* Phiên học */}
+        <section className={`${card} p-5`}>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="flex items-center gap-2 text-sm font-black"><CalendarDays className="h-4 w-4 text-sky-500" />Phiên học gần đây</h2>
+            <a href="/lessons" className="inline-flex items-center gap-1 text-xs font-bold text-sky-600 dark:text-sky-400 hover:underline"><BookOpen className="h-3.5 w-3.5" />Tiếp tục học</a>
+          </div>
+          {stats?.sessions.length ? (
+            <div className="divide-y divide-stone-200 dark:divide-stone-800">
+              {stats.sessions.slice(0, 8).map((session, index) => (
+                <div key={`${session.created_at}-${index}`} className="flex items-center gap-3 py-2.5">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-300">
+                    {session.module === "dictation" ? <NotebookPen className="h-4 w-4" /> : session.module === "shadowing" || session.module === "speaking" ? <Mic2 className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-bold">{moduleLabels[session.module] || "Phiên học"}</p>
+                    <p className="text-[11px] text-stone-500 dark:text-stone-400">{new Date(`${session.created_at.replace(" ", "T")}Z`).toLocaleString("vi-VN", { dateStyle: "medium", timeStyle: "short" })}</p>
+                  </div>
+                  <p className="text-right text-xs text-stone-500 dark:text-stone-400"><span className="font-bold text-stone-800 dark:text-stone-200">{session.cards_reviewed} câu</span><br />{formatDuration(session.duration_seconds)}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-xl border border-dashed border-stone-300 dark:border-stone-700 p-6 text-center">
+              <p className="text-sm font-bold">Chưa có phiên học nào</p>
+              <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">Bắt đầu luyện tập để xây dựng lịch sử học của bạn.</p>
+              <a href="/shadowing" className="mt-3 inline-flex items-center gap-2 rounded-xl bg-sky-500 px-4 py-2 text-xs font-bold text-white hover:bg-sky-600"><Play className="h-4 w-4" />Bắt đầu học</a>
+            </div>
+          )}
+        </section>
+      </div>
     </div>
   );
 };

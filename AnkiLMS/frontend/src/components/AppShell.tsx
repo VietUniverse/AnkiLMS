@@ -42,6 +42,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
     handleOpenAuth,
     handleLogout,
     handleDeckImported,
+    activeStudySession,
   } = useApp();
 
   useEffect(() => {
@@ -75,12 +76,15 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
 
       {/* Main Content View */}
       <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
-        <Header
-          currentUser={currentUser}
-          onOpenAuth={handleOpenAuth}
-          onLogout={handleLogout}
-          onToggleMobileMenu={() => setIsMobileMenuOpen((prev: boolean) => !prev)}
-        />
+        {/* Thanh trên chỉ hiện khi đang học thẻ (nút Trở về, chế độ học, tiến độ); còn lại dùng thanh bên. */}
+        {activeStudySession && (
+          <Header
+            currentUser={currentUser}
+            onOpenAuth={handleOpenAuth}
+            onLogout={handleLogout}
+            onToggleMobileMenu={() => setIsMobileMenuOpen((prev: boolean) => !prev)}
+          />
+        )}
 
         <main className="flex-1 min-w-0 overflow-x-hidden p-2.5 pb-[calc(6.5rem+env(safe-area-inset-bottom))] sm:p-4 sm:pb-28 lg:pb-4 w-full max-w-[1800px] mx-auto">
           {checkinMessage && (

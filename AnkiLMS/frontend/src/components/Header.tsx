@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
-import { ChevronDown, Flame, Zap, Gem, LogOut, User as UserIcon, Menu, ArrowLeft } from "lucide-react";
+import React from "react";
+import { User as UserIcon, Menu, ArrowLeft } from "lucide-react";
 import { UserProfile } from "../lib/apiClient";
-import { EggThemeToggle } from "./EggThemeToggle";
 import { useApp } from "../contexts/AppProvider";
 
 interface HeaderProps {
@@ -13,8 +12,7 @@ interface HeaderProps {
   onToggleMobileMenu?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onLogout, onToggleMobileMenu }) => {
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
+export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onToggleMobileMenu }) => {
   const { activeStudySession } = useApp();
 
   return (
@@ -46,9 +44,6 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onLogou
             </button>
             <span className="shrink-0 text-xs font-black tracking-tight text-white sm:hidden">
               Haechi<span className="text-sky-400">VN</span>
-            </span>
-            <span className="hidden sm:inline-block text-xs font-bold text-slate-400 dark:text-slate-500">
-              HaechiVN Tiếng Hàn &amp; Anki LMS
             </span>
           </div>
         )}
@@ -92,71 +87,7 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onLogou
 
       {/* Vùng bên phải: User Stats Badges & Theme */}
       <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-        <EggThemeToggle />
-        {currentUser ? (
-          <>
-            {/* Streak */}
-            <div className="flex items-center gap-1 px-1.5 py-1 sm:px-2.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-400 text-[11px] sm:text-xs font-black">
-              <Flame className="w-3.5 h-3.5 fill-amber-400 animate-pulse" />
-              <span>{currentUser.streak || 0}</span>
-            </div>
-
-            {/* XP */}
-            <div className="hidden items-center gap-1 px-2.5 py-1 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-400 text-xs font-black sm:flex">
-              <Zap className="w-3.5 h-3.5 fill-blue-400" />
-              <span>{currentUser.xp || 0} XP</span>
-            </div>
-
-            {/* Gem / Kim Cương */}
-            <div className="flex items-center gap-1 px-1.5 py-1 sm:px-2.5 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-[11px] sm:text-xs font-black cursor-pointer hover:bg-cyan-500/25 transition-all" title="Kim Cương 💎 (Dùng để mua vật phẩm & Streak Freeze)">
-              <Gem className="w-3.5 h-3.5 fill-cyan-400 text-cyan-400" />
-              <span className="hidden sm:inline">{(currentUser.gems || 0).toLocaleString()} 💎</span>
-            </div>
-
-            {/* User Profile Menu */}
-            <div className="relative">
-              <button
-                onClick={() => setShowProfileMenu(!showProfileMenu)}
-                className="flex items-center gap-2 pl-2 pr-1 py-1 rounded-full bg-[#132247] border border-[#1e3a70] text-xs font-bold text-white hover:border-blue-500 transition-colors"
-              >
-                {currentUser.avatar_url ? (
-                  <img
-                    src={currentUser.avatar_url}
-                    alt={currentUser.name}
-                    className="w-6 h-6 rounded-full object-cover"
-                  />
-                ) : currentUser.role === "admin" ? (
-                  <img src="/brand/haechivn-mark.webp" alt="HaechiVN admin" className="w-6 h-6 rounded-full object-contain" />
-                ) : (
-                  <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-[10px]">
-                    {currentUser.name.charAt(0).toUpperCase()}
-                  </div>
-                )}
-                <span className="hidden sm:inline max-w-[80px] truncate">{currentUser.name}</span>
-                <ChevronDown className="w-3 h-3 text-[#8b9bb4]" />
-              </button>
-
-              {showProfileMenu && (
-                <div className="absolute right-0 top-full mt-2 w-48 bg-[#0f1b38] border-2 border-slate-700 rounded-2xl shadow-2xl p-2 z-50 animate-fadeIn">
-                  <div className="px-3 py-2 border-b border-slate-800">
-                    <p className="text-xs font-black text-white truncate">{currentUser.name}</p>
-                    <p className="text-[10px] text-slate-400 truncate">{currentUser.email}</p>
-                  </div>
-                  <button
-                    onClick={() => {
-                      setShowProfileMenu(false);
-                      onLogout();
-                    }}
-                    className="w-full mt-1 px-3 py-2 rounded-xl text-left text-xs font-bold text-rose-400 hover:bg-rose-500/10 flex items-center gap-2 transition-colors"
-                  >
-                    <LogOut className="w-3.5 h-3.5" />
-                    <span>Đăng xuất</span>
-                  </button>
-                </div>
-              )}
-            </div>
-          </>
-        ) : (
+        {!currentUser && (
           <button
             onClick={() => onOpenAuth(false)}
             className="btn-duo btn-duo-primary px-4 py-1.5 text-xs flex items-center gap-1.5"

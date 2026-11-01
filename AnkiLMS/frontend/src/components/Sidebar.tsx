@@ -1,5 +1,6 @@
 "use client";
 
+import { EggThemeToggle } from "./EggThemeToggle";
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -90,6 +91,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onCloseMobile,
 }) => {
   const [collapsed, setCollapsed] = useState(false);
+  const [confirmLogout, setConfirmLogout] = useState(false);
   const pathname = usePathname();
   const { isFeatureEnabled } = useApp();
 
@@ -224,7 +226,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
 
             {/* Mobile Footer User info */}
-            <div className="p-3 border-t border-[#111c38]/70 bg-[#070d1a] shrink-0">
+            <div className="p-3 space-y-2 border-t border-[#111c38]/70 bg-[#070d1a] shrink-0">
+              <div className="flex justify-center py-1">
+                <EggThemeToggle />
+              </div>
               {currentUser ? (
                 <div className="flex items-center justify-between p-2 rounded-xl bg-[#0b1329]">
                   <Link
@@ -249,10 +254,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     </div>
                   </Link>
                   <button
-                    onClick={() => {
-                      onCloseMobile?.();
-                      onLogout();
-                    }}
+                    onClick={() => setConfirmLogout(true)}
                     className="p-1.5 text-slate-400 hover:text-rose-400 rounded-lg transition-colors cursor-pointer"
                     title="Đăng xuất"
                   >
@@ -368,7 +370,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Bottom Action Area: Login / User Profile */}
       <div className="p-3 space-y-2 border-t border-[#111c38]/70 bg-[#070d1a] shrink-0">
         {currentUser ? (
-          <div className={`flex items-center rounded-xl bg-[#0b1329] border-0 ${collapsed ? "flex-col gap-1 py-2" : "justify-between p-2"}`}>
+          <div className={`flex items-center rounded-xl bg-[#0b1329] border-0 ${collapsed ? "justify-center py-2" : "justify-between p-2"}`}>
             <Link
               href={isFeatureEnabled("profile") ? "/profile" : "/"}
               className="flex items-center gap-2 min-w-0 hover:opacity-85 transition-opacity"
@@ -391,13 +393,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </div>
               )}
             </Link>
-            <button
-              onClick={onLogout}
-              className="p-1.5 text-slate-400 hover:text-rose-400 rounded-lg transition-colors shrink-0 cursor-pointer border-0"
-              title="Đăng xuất"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
+            {!collapsed && (
+              <button
+                onClick={() => setConfirmLogout(true)}
+                className="p-1.5 text-slate-400 hover:text-rose-400 rounded-lg transition-colors shrink-0 cursor-pointer border-0"
+                title="Đăng xuất"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            )}
           </div>
         ) : (
           <button
@@ -408,15 +412,57 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
         )}
 
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="w-full flex items-center justify-center gap-2 py-1.5 text-xs font-semibold text-slate-500 hover:text-slate-300 transition-colors cursor-pointer border-0"
-        >
-          {collapsed ? <ChevronsRight className="w-4 h-4" /> : <ChevronsLeft className="w-4 h-4" />}
-          {!collapsed && <span>{collapsed ? "Mở rộng" : "Thu gọn"}</span>}
-        </button>
+        <div className={`flex items-center ${collapsed ? "justify-center" : "justify-between"}`}>
+          {!collapsed && <EggThemeToggle />}
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            title={collapsed ? "Mở rộng" : "Thu gọn"}
+            aria-label={collapsed ? "Mở rộng thanh bên" : "Thu gọn thanh bên"}
+            className="p-1.5 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-[#111c38] transition-colors cursor-pointer border-0"
+          >
+            {collapsed ? <ChevronsRight className="w-4 h-4" /> : <ChevronsLeft className="w-4 h-4" />}
+          </button>
+        </div>
       </div>
     </aside>
+    {confirmLogout && (
+      <div
+        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4"
+        onClick={() => setConfirmLogout(false)}
+      >
+        <div
+          role="alertdialog"
+          aria-modal="true"
+          aria-labelledby="logout-title"
+          className="w-full max-w-xs rounded-2xl border border-[#19284d] bg-[#0b1329] p-5 text-white shadow-2xl space-y-4"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="space-y-1">
+            <h2 id="logout-title" className="text-base font-black">Đăng xuất?</h2>
+            <p className="text-xs text-slate-400">Bạn có chắc chắn muốn đăng xuất khỏi tài khoản không?</p>
+          </div>
+          <div className="flex gap-2">
+            <button
+              autoFocus
+              onClick={() => setConfirmLogout(false)}
+              className="flex-1 py-2 rounded-xl text-xs font-bold bg-[#132247] hover:bg-[#1a2f5e] text-slate-200 transition-colors cursor-pointer border-0"
+            >
+              Huỷ
+            </button>
+            <button
+              onClick={() => {
+                setConfirmLogout(false);
+                onCloseMobile?.();
+                onLogout();
+              }}
+              className="flex-1 py-2 rounded-xl text-xs font-bold bg-rose-500 hover:bg-rose-600 text-white transition-colors cursor-pointer border-0"
+            >
+              Đăng xuất
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
     </>
   );
 };

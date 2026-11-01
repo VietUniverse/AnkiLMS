@@ -299,9 +299,6 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
                 HOẠT ĐỘNG ÔN TẬP
               </h3>
             </div>
-            <p className="text-xs text-slate-400">
-              Biểu đồ nhiệt chuyên cần & chu kỳ ôn tập Spaced Repetition
-            </p>
           </div>
         </div>
 
@@ -405,46 +402,19 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
       <div ref={yearScrollRef} className="relative z-10 bg-[#0a0d14] rounded-xl p-2.5 sm:p-4 overflow-x-auto scrollbar-thin border-0 touch-pan-x">
         {/* YEAR VIEW */}
         {view === "year" && (
-          <div className="inline-flex flex-col min-w-max mx-auto text-left">
-            {/* Months Header */}
-            <div className="flex gap-1 sm:gap-1.5 text-[10px] font-mono text-slate-400 h-4 mb-2 pl-7 sm:pl-8">
-              {yearGrid.weeks.map((_, wIdx) => {
-                const month = yearGrid.monthLabels.find((m) => m.weekIndex === wIdx);
-                return (
-                  <div key={wIdx} className="w-3.5 sm:w-4 shrink-0 relative overflow-visible">
-                    {month && (
-                      <span className="absolute left-0 top-0 whitespace-nowrap font-bold text-slate-400 uppercase tracking-tight text-[10px]">
-                        {month.label}
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-
+          <div className="flex flex-col w-full max-w-[1200px] mx-auto text-left">
             {/* 7 Rows × 53 Cols Grid */}
-            <div className="flex gap-1.5 sm:gap-2 items-center">
-              {/* Weekday Labels (T2, T4, T6) */}
-              <div className="flex flex-col gap-1 sm:gap-1.5 text-[9px] font-mono text-slate-500 select-none pr-1">
-                <span className="h-3.5 sm:h-4 flex items-center justify-end">T2</span>
-                <span className="h-3.5 sm:h-4 flex items-center justify-end opacity-0">T3</span>
-                <span className="h-3.5 sm:h-4 flex items-center justify-end">T4</span>
-                <span className="h-3.5 sm:h-4 flex items-center justify-end opacity-0">T5</span>
-                <span className="h-3.5 sm:h-4 flex items-center justify-end">T6</span>
-                <span className="h-3.5 sm:h-4 flex items-center justify-end opacity-0">T7</span>
-                <span className="h-3.5 sm:h-4 flex items-center justify-end opacity-0">CN</span>
-              </div>
-
+            <div className="flex gap-1.5 sm:gap-2 items-stretch">
               {/* 53 Columns */}
-              <div className="flex gap-1 sm:gap-1.5">
+              <div className="grid grid-flow-col auto-cols-fr gap-px sm:gap-[2px] flex-1 min-w-0">
                 {yearGrid.weeks.map((week, wIdx) => (
-                  <div key={wIdx} className="flex flex-col gap-1 sm:gap-1.5">
+                  <div key={wIdx} className="grid grid-cols-1 grid-rows-7 gap-px sm:gap-[2px] min-w-0">
                     {week.map((cell) => {
                       if (!cell.inYear) {
                         return (
                           <div
                             key={cell.dateStr}
-                            className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-[3px] opacity-0 pointer-events-none"
+                            className="aspect-square w-full rounded-[3px] opacity-0 pointer-events-none"
                           />
                         );
                       }
@@ -467,7 +437,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
                             });
                           }}
                           onMouseLeave={() => setHoveredCell(null)}
-                          className={`onigiri-day-cell onigiri-level-${cell.level} w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-[3px] cursor-pointer transition-transform duration-150 relative ${
+                          className={`onigiri-day-cell onigiri-level-${cell.level} aspect-square w-full rounded-[3px] cursor-pointer transition-transform duration-150 relative ${
                             cell.isToday ? "scale-110 shadow-md z-10" : ""
                           } ${cell.isFuture ? "opacity-20" : ""}`}
                         >
