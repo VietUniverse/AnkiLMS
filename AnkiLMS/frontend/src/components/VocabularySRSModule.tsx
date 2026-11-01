@@ -151,7 +151,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const masteredWordSet = useMemo(() => new Set(masteredWords), [masteredWords]);
   const reviewWordSet = useMemo(() => new Set(reviewList), [reviewList]);
   const [cardStateMap, setCardStateMap] = useState<Record<string, FSRSState>>({});
-  const [showFsrsDetailed, setShowFsrsDetailed] = useState<boolean>(false);
   const [dailyLimits, setDailyLimits] = useState<DailyLimits>(DEFAULT_LIMITS);
   const [dailyProgress, setDailyProgress] = useState(() => ({ newDone: 0, reviewDone: 0 }));
   const [limitNotice, setLimitNotice] = useState<string | null>(null);
@@ -1017,45 +1016,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                         T / 2 / Space (→)
                       </kbd>
                     </button>
-                  </div>
-
-                  {/* Nút mở rộng 4 mức FSRS chi tiết (Again/Hard/Good/Easy) nếu muốn */}
-                  <div className="text-center pt-1">
-                    <button
-                      onClick={() => setShowFsrsDetailed(!showFsrsDetailed)}
-                      className="text-[11px] text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 transition cursor-pointer"
-                    >
-                      {showFsrsDetailed ? "Ẩn mức đánh giá FSRS chi tiết" : "Hiện 4 mức đánh giá FSRS chi tiết"}
-                    </button>
-
-                    {showFsrsDetailed && (
-                      <div className="grid grid-cols-4 gap-2 mt-2 pt-2 border-t border-stone-200 dark:border-stone-800 animate-reveal">
-                        <button
-                          onClick={() => handleResponse(false, "again")}
-                          className="p-2 rounded-lg bg-rose-500/10 text-rose-500 text-xs font-bold hover:bg-rose-500/20 transition cursor-pointer"
-                        >
-                          1. Học lại
-                        </button>
-                        <button
-                          onClick={() => handleResponse(false, "hard")}
-                          className="p-2 rounded-lg bg-amber-500/10 text-amber-500 text-xs font-bold hover:bg-amber-500/20 transition cursor-pointer"
-                        >
-                          2. Khó
-                        </button>
-                        <button
-                          onClick={() => handleResponse(true, "good")}
-                          className="p-2 rounded-lg bg-blue-500/10 text-blue-500 text-xs font-bold hover:bg-blue-500/20 transition cursor-pointer"
-                        >
-                          3. Tốt
-                        </button>
-                        <button
-                          onClick={() => handleResponse(true, "easy")}
-                          className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500 text-xs font-bold hover:bg-emerald-500/20 transition cursor-pointer"
-                        >
-                          4. Dễ
-                        </button>
-                      </div>
-                    )}
                   </div>
                 </div>
               )}
