@@ -2,7 +2,7 @@
 
 import React from "react";
 import { usePathname } from "next/navigation";
-import { Home, Layers, Headphones, Repeat, Menu } from "lucide-react";
+import { Home, Compass, Layers, Search, Menu } from "lucide-react";
 import { useApp } from "../contexts/AppProvider";
 
 interface BottomNavProps {
@@ -11,9 +11,9 @@ interface BottomNavProps {
 
 const items = [
   { href: "/", label: "Trang chủ", icon: Home },
+  { href: "/explore", label: "Khám phá", icon: Compass, feature: "explore" },
   { href: "/flashcards", label: "Từ vựng", icon: Layers, feature: "flashcards" },
-  { href: "/dictation", label: "Nghe chép", icon: Headphones, feature: "dictation" },
-  { href: "/shadowing", label: "Shadowing", icon: Repeat, feature: "shadowing" },
+  { href: "/dictionary", label: "Từ điển", icon: Search, feature: "dictionary" },
 ] as const;
 
 export const BottomNav: React.FC<BottomNavProps> = ({ onOpenMobileMenu }) => {
