@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect, useRef, useCallback } from "react";
+import React, { useState, useMemo, useEffect, useRef, useCallback, useSyncExternalStore } from "react";
 import Link from "next/link";
 import DOMPurify from "dompurify";
 import { VOCABULARY_DATA } from "../data/koreanData";
@@ -115,6 +115,8 @@ const toSlug = (str: string): string => {
 export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDecks = [], initialViewMode = "dashboard", initialEmptyCards = false }) => {
   const { currentUser, setActiveStudySession, removedBuiltInDeckIds, userDecks: ownedDecks, setUserDecks, handleOpenAuth } = useApp();
   const isAdmin = currentUser?.role === "admin";
+  // Cây bộ thẻ phụ thuộc người dùng và kho thẻ đọc từ localStorage: chỉ dựng sau khi hydrate để HTML tĩnh khớp bản client.
+  const hydrated = useSyncExternalStore(() => () => {}, () => true, () => false);
   // Navigation View: "dashboard" (Lộ trình cây bài học) | "study" (Màn hình học)
   const [viewMode, setViewMode] = useState<"dashboard" | "study">(initialViewMode);
   const [studyMode, setStudyMode] = useState<"flip" | "typing">("flip");
@@ -214,6 +216,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   //     Level 3: Sub-deck (e.g. "1. Quốc gia (나라)")
   const deckTree = useMemo<DeckTreeNode[]>(() => {
     const rootNodes: DeckTreeNode[] = [];
+    if (!hydrated) return rootNodes;
 
     const booksMap = new Map<string, Map<string, { id: string; title: string; cards: VocabularyCard[] }[]>>();
 
@@ -369,7 +372,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     }
 
     return rootNodes;
-  }, [userDecks, isAdmin, removedBuiltInDeckIds]);
+  }, [hydrated, userDecks, isAdmin, removedBuiltInDeckIds]);
 
   // Calculate Anki Stats (% battery, new, review)
   const getDeckStats = useCallback((cards: VocabularyCard[]) => {
