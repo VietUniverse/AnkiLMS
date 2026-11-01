@@ -880,20 +880,20 @@ export const ShadowingModule: React.FC = () => {
               <div className="flex items-center gap-2">
                 <button
                   onClick={playFullLesson}
-                  className="py-2.5 px-5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-rose-900/40 transition-all"
+                  className="h-11 w-11 rounded-xl bg-rose-600 hover:bg-rose-500 text-white flex items-center justify-center shadow-lg shadow-rose-900/40 transition-all cursor-pointer"
                   aria-label="Phát toàn bộ bài học"
+                  title="Phát cả bài"
                 >
-                  <Play className="w-4 h-4 fill-white" aria-hidden="true" />
-                  <span>PHÁT CẢ BÀI (1-2p)</span>
+                  <Play className="w-5 h-5 fill-white" aria-hidden="true" />
                 </button>
 
                 <button
                   onClick={() => playSegment(currentSub)}
-                  className="py-2.5 px-5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs flex items-center gap-2 transition-all"
+                  className="h-11 w-11 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center transition-all cursor-pointer"
                   aria-label="Phát lại câu hiện tại"
+                  title="Phát lại câu"
                 >
-                  <RotateCcw className="w-4 h-4" aria-hidden="true" />
-                  <span>PHÁT LẠI CÂU</span>
+                  <RotateCcw className="w-5 h-5" aria-hidden="true" />
                 </button>
               </div>
 
