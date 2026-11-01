@@ -22,23 +22,10 @@ import {
 } from "lucide-react";
 
 // Điều hướng dùng <a> thay vì next/link vì app build static export.
-const CATEGORIES: { id: string; label: string }[] = [
-  { id: "all", label: "Tất cả chủ đề" },
-  { id: "food", label: "Quán ăn & Ẩm thực" },
-  { id: "conversation", label: "Giao tiếp đời sống" },
-  { id: "drama", label: "Phim ảnh & tiếng lóng" },
-  { id: "hanja", label: "Gốc từ Hán Hàn" },
-  { id: "travel", label: "Du lịch" },
-  { id: "work", label: "Công việc & EPS" },
-];
-
 // Sơ cấp 1–2, Trung cấp 3–4, Cao cấp 5–6
 const LEVEL_DECK_IDS = ["course-1100", "course-1200", "course-1300", "course-1400", "course-1500", "course-1600"];
 
 const COURSE_BOOK_IDS = ["course-2000", "course-2100", "course-2200", "course-2300", "course-2400", "course-2500", "course-3000", "course-3100", "course-3200", "course-3300"];
-
-const matchCategory = (deck: CuratedDeckItem, id: string) =>
-  id === "all" || deck.category === id;
 
 
 type SortKey = "name" | "level" | "cards";
@@ -49,8 +36,6 @@ const ROW_GRID = "sm:grid sm:grid-cols-[minmax(0,1fr)_6rem_4.5rem_6.5rem] items-
 
 export default function ExplorePage() {
   const { userDecks, handleDeckImported, handleRemoveDeck } = useApp();
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [selectedTopikLevel, setSelectedTopikLevel] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sort, setSort] = useState<{ key: SortKey; dir: "asc" | "desc" } | null>(null);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
@@ -102,18 +87,6 @@ export default function ExplorePage() {
     });
   }, [baseDecks, deckOverrides]);
 
-  const topikLevelsByDeck = useMemo(() => new Map(exploreDecks.map((deck) => {
-    const levels = new Set<string>();
-    const collect = (value?: string) => {
-      const match = value?.match(/\bTOPIK\s*([1-6])\b/i);
-      if (match) levels.add(match[1]);
-    };
-    collect(deck.categoryLabel);
-    deck.tags.forEach(collect);
-    deck.cards.forEach((card) => card.tags?.forEach(collect));
-    return [deck.id, levels] as const;
-  })), [exploreDecks]);
-
   const deckHref = (deck: CuratedDeckItem) => deck.id.startsWith("shared-")
     ? `/explore/shared?id=${encodeURIComponent(deck.id.slice("shared-".length))}`
     : `/explore/${deck.id}`;
@@ -146,29 +119,17 @@ export default function ExplorePage() {
     handleRemoveDeck(ankiDeck.id);
   };
 
-  // Chỉ hiện chủ đề có bộ thẻ; TOPIK được lọc riêng để không trộn hai loại bộ lọc.
-  const categories = useMemo(
-    () =>
-      CATEGORIES.map((cat) => ({
-        ...cat,
-        count: exploreDecks.filter((d) => matchCategory(d, cat.id)).length,
-      })).filter((cat) => cat.id === "all" || cat.count > 0),
-    [exploreDecks]
-  );
-
   const filteredDecks = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
     return exploreDecks.filter(
       (deck) =>
-        matchCategory(deck, selectedCategory) &&
-        (selectedTopikLevel === "all" || topikLevelsByDeck.get(deck.id)?.has(selectedTopikLevel)) &&
         (!q ||
           deck.title.toLowerCase().includes(q) ||
           deck.description.toLowerCase().includes(q) ||
           deck.author.name.toLowerCase().includes(q) ||
           deck.tags.some((t) => t.toLowerCase().includes(q)))
     );
-  }, [exploreDecks, selectedCategory, selectedTopikLevel, searchQuery, topikLevelsByDeck]);
+  }, [exploreDecks, searchQuery]);
 
   const sortedDecks = useMemo(() => {
     if (!sort) return filteredDecks;
@@ -203,7 +164,7 @@ export default function ExplorePage() {
     return groups;
   }, [sortedDecks, sort]);
 
-  const iconAction = "inline-flex h-8 w-8 items-center justify-center rounded-lg transition cursor-pointer shrink-0";
+  const iconAction = "relative z-10 inline-flex h-8 w-8 items-center justify-center rounded-lg transition cursor-pointer shrink-0";
   const LEVEL_PILL: Record<string, string> = {
     "Sơ cấp": "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
     "Trung cấp": "bg-amber-500/10 text-amber-600 dark:text-amber-400",
@@ -215,8 +176,8 @@ export default function ExplorePage() {
     // Tên đã có cấp độ (Từ vựng Sơ cấp 1...) thì không cần nhãn cấp độ nữa.
     const showLevel = !deck.title.toLowerCase().includes(deck.level.toLowerCase());
     return (
-      <li key={deck.id} className={`${ROW_GRID} grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 px-2 -mx-2 py-2.5 sm:py-3 rounded-xl transition-colors hover:bg-stone-100 dark:hover:bg-stone-800/60`}>
-        <a href={deckHref(deck)} className="flex items-center gap-3 min-w-0 group cursor-pointer">
+      <li key={deck.id} className={`${ROW_GRID} relative grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 px-2 -mx-2 py-2.5 sm:py-3 rounded-xl transition-colors hover:bg-stone-100 dark:hover:bg-stone-800/60`}>
+        <a href={deckHref(deck)} className="flex items-center gap-3 min-w-0 group cursor-pointer after:absolute after:inset-0 after:content-['']">
           <DeckIcon name={deck.iconName} className="w-5 h-5 shrink-0 text-stone-400 group-hover:text-sky-500 transition" />
           <h3 className="min-w-0 text-sm font-semibold text-stone-900 dark:text-white line-clamp-2 sm:line-clamp-1 group-hover:text-sky-500 transition">
             {deck.title}
@@ -228,7 +189,7 @@ export default function ExplorePage() {
         <span className="hidden sm:block text-xs text-stone-500 dark:text-stone-400 tabular-nums text-right">{deckCardCount(deck)}</span>
 
         {added ? (
-          <div className="flex items-center justify-end gap-0.5 shrink-0">
+          <div className="relative z-10 flex items-center justify-end gap-0.5 shrink-0">
             <a href="/flashcards" title="Học bộ thẻ này" aria-label="Học bộ thẻ này" className={`${iconAction} text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10`}>
               <Check className="w-4 h-4" />
             </a>
@@ -290,7 +251,7 @@ export default function ExplorePage() {
           </div>
         )}
 
-        {/* Một hàng duy nhất: tìm kiếm + danh mục */}
+        {/* Chỉ còn ô tìm kiếm */}
         <div className="flex flex-wrap items-center gap-2 pt-1">
           <div className="relative basis-full sm:basis-0 flex-1 min-w-0">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
@@ -303,29 +264,6 @@ export default function ExplorePage() {
               className="w-full h-10 text-sm pl-9 pr-3 rounded-xl bg-transparent border border-stone-200 dark:border-stone-800 text-stone-900 dark:text-stone-100 placeholder:text-stone-400 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition"
             />
           </div>
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            aria-label="Danh mục"
-            className="h-10 text-sm pl-3 pr-2 rounded-xl bg-transparent border border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 cursor-pointer flex-1 sm:flex-none sm:max-w-[220px] [color-scheme:light] dark:[color-scheme:dark]"
-          >
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id} className="bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100">
-                {cat.label} ({cat.count})
-              </option>
-            ))}
-          </select>
-          <select
-            value={selectedTopikLevel}
-            onChange={(e) => setSelectedTopikLevel(e.target.value)}
-            aria-label="Cấp độ TOPIK"
-            className="h-10 text-sm pl-3 pr-2 rounded-xl bg-transparent border border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 cursor-pointer flex-1 sm:flex-none sm:max-w-[140px] [color-scheme:light] dark:[color-scheme:dark]"
-          >
-            <option value="all" className="bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100">Mọi cấp</option>
-            {[1, 2, 3, 4, 5, 6].map((level) => (
-              <option key={level} value={String(level)} className="bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100">TOPIK {level}</option>
-            ))}
-          </select>
         </div>
 
         {exploreDecks.length === 0 ? (
@@ -343,13 +281,11 @@ export default function ExplorePage() {
             <p className="text-sm text-stone-500 dark:text-stone-400">Không tìm thấy bộ thẻ phù hợp.</p>
             <button
               onClick={() => {
-                setSelectedCategory("all");
-                setSelectedTopikLevel("all");
                 setSearchQuery("");
               }}
               className="text-sm font-semibold text-sky-500 hover:text-sky-600 cursor-pointer"
             >
-              Xóa bộ lọc
+              Xóa tìm kiếm
             </button>
           </div>
         ) : (
