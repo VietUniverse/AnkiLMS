@@ -814,11 +814,7 @@ export const ShadowingModule: React.FC = () => {
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 lg:p-3 space-y-4 lg:space-y-2 shadow-lg">
 
             {/* Header & Segment Prev/Next Navigation */}
-            <div className="flex items-center justify-between flex-wrap gap-2 pb-3 border-b border-slate-800">
-              <label className="block text-xs font-bold text-rose-400 uppercase tracking-wider">
-                CÂU MẪU NÓI NHẠI (CÂU #{currentSubIndex + 1} / {currentLesson.segments.length}):
-              </label>
-
+            <div className="flex items-center justify-center gap-2 pb-3 border-b border-slate-800">
               <div className="flex items-center gap-2">
                 <button onClick={handlePrevSub} disabled={currentSubIndex === 0} className="h-10 w-10 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 flex items-center justify-center disabled:opacity-40 cursor-pointer" aria-label="Câu trước" title="Câu trước">
                   <ChevronLeft className="w-5 h-5" aria-hidden="true" />
