@@ -110,7 +110,8 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
         </main>
       </div>
 
-      <BottomNav onOpenMobileMenu={() => setIsMobileMenuOpen(true)} />
+      {/* Đang học thẻ thì ẩn thanh điều hướng dưới để dành chỗ cho nút Quên/Thuộc */}
+      {!activeStudySession && <BottomNav onOpenMobileMenu={() => setIsMobileMenuOpen(true)} />}
 
       {isFeatureEnabled("ankiImport") && <AnkiImporter
         isOpen={isImporterOpen}
