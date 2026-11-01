@@ -1007,10 +1007,11 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                     revealAnswer();
                     inputRef.current?.blur();
                   }}
-                  className="srs-btn-dark w-full h-12 rounded-xl bg-stone-900 hover:bg-stone-800 dark:bg-white dark:hover:bg-stone-100 text-white dark:text-stone-900 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition shadow-xs cursor-pointer"
+                  style={{ color: "#fff" }}
+                  className="w-full h-12 rounded-xl bg-sky-500 hover:bg-sky-600 dark:bg-indigo-500 dark:hover:bg-indigo-400 font-bold text-sm flex items-center justify-center gap-2 transition cursor-pointer"
                 >
-                  <span className="font-extrabold text-white dark:text-stone-900">Hiện đáp án</span>
-                  <kbd className="hidden sm:inline font-mono text-[10px] text-white dark:text-stone-900 px-2 py-0.5 rounded border border-white/40 dark:border-stone-400 font-bold">
+                  <span className="font-extrabold">Hiện đáp án</span>
+                  <kbd className="hidden sm:inline font-mono text-[10px] px-2 py-0.5 rounded border border-white/50 font-bold">
                     Space / Enter
                   </kbd>
                 </button>
