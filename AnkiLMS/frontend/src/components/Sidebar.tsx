@@ -368,7 +368,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Bottom Action Area: Login / User Profile */}
       <div className="p-3 space-y-2 border-t border-[#111c38]/70 bg-[#070d1a] shrink-0">
         {currentUser ? (
-          <div className="flex items-center justify-between p-2 rounded-xl bg-[#0b1329] border-0">
+          <div className={`flex items-center rounded-xl bg-[#0b1329] border-0 ${collapsed ? "flex-col gap-1 py-2" : "justify-between p-2"}`}>
             <Link
               href={isFeatureEnabled("profile") ? "/profile" : "/"}
               className="flex items-center gap-2 min-w-0 hover:opacity-85 transition-opacity"
