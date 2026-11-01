@@ -517,16 +517,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     setExpandedDecks((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const toggleAllGroups = () => {
-    const allIds = getAllContainerIds(deckTree);
-    const anyOpen = allIds.some((id) => expandedDecks[id]);
-    const next: Record<string, boolean> = {};
-    allIds.forEach((id) => {
-      next[id] = !anyOpen;
-    });
-    setExpandedDecks(next);
-  };
-
   // Filter tree recursively for search query
   const filterTree = useCallback((nodes: DeckTreeNode[], q: string): DeckTreeNode[] => {
     return nodes
@@ -1017,18 +1007,12 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                   />
                 </div>
 
-                <button
-                  onClick={toggleAllGroups}
-                  className="px-3 py-2 rounded-xl text-xs font-semibold bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700 transition cursor-pointer"
-                >
-                  {deckTree.every((g) => expandedDecks[g.id]) ? "Thu gọn" : "Mở rộng"}
-                </button>
                 <Link
                   href="/explore"
                   className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-300 border border-sky-200 dark:border-sky-800/80 hover:bg-sky-100 dark:hover:bg-sky-900/60 transition w-fit"
                 >
                   <Compass className="w-4 h-4 text-sky-500" />
-                  Khám phá thêm bộ thẻ
+                  Khám phá
                   <ArrowRight className="w-3.5 h-3.5 ml-0.5" />
                 </Link>
               </div>
