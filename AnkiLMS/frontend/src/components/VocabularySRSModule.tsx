@@ -1214,7 +1214,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                         title="Hỏi trợ lý AI về từ này"
                       >
                         <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
-                        <span>Hỏi ChatGPT</span>
+                        <span>ChatGPT</span>
                       </a>
 
                       {/* Nút Loa Phát Âm */}
