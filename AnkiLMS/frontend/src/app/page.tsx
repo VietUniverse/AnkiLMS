@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { AppShell } from "../components/AppShell";
 import { OnigiriHeatmap } from "../components/OnigiriHeatmap";
 import { useApp } from "../contexts/AppProvider";
-import { Flame, Zap, Layers, Trophy, Calendar, CheckCircle2, Gamepad2, Target, X, LogIn, Search, Volume2, Play } from "lucide-react";
+import { Flame, Zap, Layers, Trophy, Calendar, CheckCircle2, Gamepad2, Target, X, LogIn, Search, Volume2, Play, ClipboardCheck, ArrowRight } from "lucide-react";
 import { VOCABULARY_DATA } from "../data/koreanData";
 import { SEJONG_TOPIC_VOCABULARY } from "../data/sejongTopicVocabulary";
 import { speakKorean } from "../lib/koreanSpeech";
@@ -20,6 +20,7 @@ export default function Home() {
   const { currentUser, heatmapData, handleCheckin, handleOpenAuth, isAuthReady, isFeatureEnabled } = useApp();
   const [dailyMissionCount, setDailyMissionCount] = React.useState(0);
   const [showWelcome, setShowWelcome] = React.useState(false);
+  const [showPlacementPrompt, setShowPlacementPrompt] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [searchResults, setSearchResults] = React.useState<Array<{ korean: string; meaning: string; language: string; example?: string; translation?: string }>>([]);
   const [translationLanguage] = useTranslationLanguage();
@@ -96,6 +97,26 @@ export default function Home() {
       if (!isHidden) setShowWelcome(true);
     }
   }, []);
+
+  React.useEffect(() => {
+    if (!currentUser?.id || !currentUser.created_at || !isFeatureEnabled("placementTest")) {
+      setShowPlacementPrompt(false);
+      return;
+    }
+    const createdAtText = currentUser.created_at.includes("T")
+      ? currentUser.created_at
+      : `${currentUser.created_at.replace(" ", "T")}Z`;
+    const createdAt = Date.parse(createdAtText);
+    const accountAge = Date.now() - createdAt;
+    const dismissed = localStorage.getItem(`haechivn_placement_prompt_dismissed_${currentUser.id}`);
+    const alreadyAssessed = Boolean(localStorage.getItem("haechivn_placement_result"));
+    setShowPlacementPrompt(Number.isFinite(createdAt) && accountAge >= 0 && accountAge <= 7 * 24 * 60 * 60 * 1000 && !dismissed && !alreadyAssessed);
+  }, [currentUser?.id, currentUser?.created_at, isFeatureEnabled]);
+
+  const dismissPlacementPrompt = () => {
+    if (currentUser?.id) localStorage.setItem(`haechivn_placement_prompt_dismissed_${currentUser.id}`, "true");
+    setShowPlacementPrompt(false);
+  };
 
   const handleDismissWelcome = (forever = false) => {
     setShowWelcome(false);
@@ -185,6 +206,28 @@ export default function Home() {
               <X className="w-5 h-5" />
             </button>
           </div>
+        )}
+
+        {showPlacementPrompt && (
+          <section className="relative overflow-hidden rounded-3xl border border-sky-300/25 bg-gradient-to-r from-sky-950 via-indigo-950 to-violet-950 p-5 text-white shadow-lg sm:p-7" aria-labelledby="placement-prompt-title">
+            <button type="button" onClick={dismissPlacementPrompt} aria-label="Để sau" title="Để sau" className="absolute right-3 top-3 rounded-lg p-2 text-slate-300 transition hover:bg-white/10 hover:text-white">
+              <X className="h-4 w-4" />
+            </button>
+            <div className="flex flex-col gap-5 pr-7 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sky-400/15 text-sky-200"><ClipboardCheck className="h-6 w-6" /></div>
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.18em] text-sky-200">Bắt đầu đúng trình độ</p>
+                  <h2 id="placement-prompt-title" className="mt-1 text-lg font-black sm:text-xl">Làm bài kiểm tra đầu vào tiếng Hàn</h2>
+                  <p className="mt-1 max-w-2xl text-xs leading-5 text-slate-200 sm:text-sm">Trả lời một bài đánh giá ngắn để xem mức TOPIK phù hợp và nhận gợi ý bộ thẻ, lộ trình học theo mục tiêu của bạn.</p>
+                </div>
+              </div>
+              <div className="flex shrink-0 flex-wrap gap-2 sm:pr-2">
+                <Link href="/placement-test" className="inline-flex items-center justify-center gap-2 rounded-xl bg-sky-500 px-4 py-3 text-xs font-black text-white transition hover:bg-sky-400">Kiểm tra trình độ <ArrowRight className="h-4 w-4" /></Link>
+                <button type="button" onClick={dismissPlacementPrompt} className="rounded-xl border border-white/15 px-4 py-3 text-xs font-bold text-slate-200 transition hover:bg-white/10">Để sau</button>
+              </div>
+            </div>
+          </section>
         )}
 
         {/* Khối Tra Từ Vựng - Căn giữa, ngay trên khối tiến độ */}

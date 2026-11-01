@@ -46,6 +46,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
           active_background: user.active_background,
           role: user.role,
           last_checkin_date: user.last_checkin_date,
+          created_at: user.created_at,
         },
       },
       200,

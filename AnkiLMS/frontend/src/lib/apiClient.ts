@@ -19,6 +19,7 @@ export interface UserProfile {
   last_checkin_date?: string;
   role?: "student" | "teacher" | "admin";
   translation_language?: "vi" | "en" | "ja";
+  created_at?: string;
 }
 
 export interface StudyProfileSummary {
