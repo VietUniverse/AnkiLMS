@@ -136,20 +136,18 @@ export default function DeckDetailClient({ id }: { id: string }) {
   }, [deckCards, requestedPreviewCardId]);
   const curriculumSections = useMemo(() => {
     if (!deck || (!deck.id.startsWith("curriculum-") && deck.id !== "course-topic-vocabulary")) return [];
-    const isTopicVocabularyDeck = deck.id === "course-topic-vocabulary";
-    const sections = new Map<string, { count: number; children: Set<string>; levels: Set<string>; topics: Set<string> }>();
+    const sections = new Map<string, { count: number; children: Set<string>; levels: Set<string> }>();
     for (const card of deck.cards) {
       const parts = card.deckName?.split("::").slice(1).map((part) => part.trim()).filter(Boolean) || [];
       const section = parts[0];
       if (!section) continue;
-      const item = sections.get(section) || { count: 0, children: new Set<string>(), levels: new Set<string>(), topics: new Set<string>() };
+      const item = sections.get(section) || { count: 0, children: new Set<string>(), levels: new Set<string>() };
       item.count += 1;
       if (parts[1]) item.children.add(parts[1]);
-      if (isTopicVocabularyDeck && parts[1]) item.topics.add(parts[1]);
       for (const tag of card.tags || []) if (/^TOPIK [1-6]$/.test(tag)) item.levels.add(tag);
       sections.set(section, item);
     }
-    return [...sections.entries()].map(([name, info]) => [name, { count: info.count, childCount: info.children.size, topics: [...info.topics].sort((a, b) => a.localeCompare(b, "ko", { numeric: true })) }] as const)
+    return [...sections.entries()].map(([name, info]) => [name, { count: info.count, childCount: info.children.size }] as const)
       .sort(([left], [right]) => left.localeCompare(right, "ko", { numeric: true }));
   }, [deck]);
   const currentPreviewCard = deckCards[activePreviewIndex] || deckCards[0];
@@ -238,14 +236,11 @@ export default function DeckDetailClient({ id }: { id: string }) {
               <div className="flex items-center gap-x-2 gap-y-1 flex-wrap text-xs text-stone-500 dark:text-stone-400">
                 <span className={`font-bold px-2 py-0.5 rounded-full border ${deck.badgeColor}`}>{deck.categoryLabel}</span>
                 <span>{deck.level}</span>
-                <span aria-hidden>·</span>
                 <span>{deck.cards.length.toLocaleString("vi-VN")} thẻ</span>
-                <span aria-hidden>·</span>
                 <span className="inline-flex items-center gap-1 font-semibold text-amber-500">
                   <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                   {deck.rating.toFixed(1)}
                 </span>
-                <span aria-hidden>·</span>
                 <span className="inline-flex items-center gap-1">
                   <Globe2 className="w-3 h-3" /> {deck.visibility === "private" ? "Riêng tư" : "Công khai"}
                 </span>
@@ -271,7 +266,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
             <section className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 p-4 sm:p-5 space-y-3">
               <div className="flex items-center justify-between">
                 <h2 className="text-[11px] font-extrabold uppercase tracking-wider text-stone-400">
-                  Xem thử · {activePreviewIndex + 1}/{previewCards.length}
+                  Xem thử {activePreviewIndex + 1}/{previewCards.length}
                 </h2>
                 <button
                   onClick={() => setIsPreviewFlipped(!isPreviewFlipped)}
@@ -338,25 +333,22 @@ export default function DeckDetailClient({ id }: { id: string }) {
             {curriculumSections.length > 0 ? (
               <section className="space-y-2">
                 <h2 className="text-sm font-bold text-stone-900 dark:text-white">
-                  {deck.id === "course-topic-vocabulary" ? "Subdeck theo cấp TOPIK" : "Nội dung"} <span className="font-normal text-stone-400">({curriculumSections.length})</span>
+                  {deck.id === "course-topic-vocabulary" ? "Chủ đề" : "Nội dung"} <span className="font-normal text-stone-400">({curriculumSections.length})</span>
                 </h2>
                 <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 divide-y sm:divide-y-0 divide-stone-200/70 dark:divide-stone-800/70">
                   {curriculumSections.map(([section, info]) => (
-                    <li key={section} className="flex items-center justify-between gap-3 py-2 sm:border-b border-stone-200/70 dark:border-stone-800/70">
+                    <li key={section} className="flex flex-col gap-0.5 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:border-b border-stone-200/70 dark:border-stone-800/70">
                       <div className="min-w-0">
-                        <span className="text-sm text-stone-800 dark:text-stone-200 truncate">{section}</span>
-                        {info.topics.length > 0 && <p className="mt-1 text-xs text-stone-500 dark:text-stone-400 line-clamp-2">{info.topics.join(" · ")}</p>}
+                        <span className="text-sm font-semibold text-stone-800 dark:text-stone-200">{section}</span>
                       </div>
-                      <span className="text-xs text-stone-400 shrink-0 tabular-nums">
-                        {info.count.toLocaleString("vi-VN")} thẻ{info.childCount ? ` · ${info.childCount} ${deck.id === "course-topic-vocabulary" ? "chủ đề" : "bài"}` : ""}
+                      <span className="text-xs text-stone-500 dark:text-stone-400 sm:shrink-0 tabular-nums">
+                        {info.count.toLocaleString("vi-VN")} thẻ{info.childCount ? `, ${info.childCount} ${deck.id === "course-topic-vocabulary" ? "chủ đề" : "bài"}` : ""}
                       </span>
                     </li>
                   ))}
                 </ul>
                 <p className="text-xs text-stone-400">
-                  {deck.id === "course-topic-vocabulary"
-                    ? `Một bộ riêng gồm ${deck.cards.length.toLocaleString("vi-VN")} từ; thêm vào Flashcards để chọn cấp TOPIK rồi chọn chủ đề.`
-                    : "Thêm vào Flashcards để chọn nội dung hoặc học toàn bộ."}
+                  Thêm vào Flashcards để chọn {deck.id === "course-topic-vocabulary" ? "chủ đề" : "nội dung"} hoặc học toàn bộ.
                 </p>
               </section>
             ) : (

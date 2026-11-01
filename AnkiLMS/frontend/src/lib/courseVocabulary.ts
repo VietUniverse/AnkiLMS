@@ -30,13 +30,10 @@ export function courseToExploreDeck(course: VocabularyCourse): CuratedDeckItem {
   const topik = course.topik.match(/\d+/)?.[0] || "1";
   const cards: AnkiCard[] = course.units.flatMap((unit) => unit.words.map(([id, korean, meaning, , hanja, pronunciation, wordTopik]) => {
     const topik = wordTopik || course.topik;
-    const subdeckPath = course.id === "topic-vocabulary"
-      ? `${topik}::${unit.title}`
-      : unit.title;
     return ({
     id,
     noteId: id,
-    deckName: `${course.title}::${subdeckPath}`,
+    deckName: `${course.title}::${unit.title}`,
     frontHtml: korean,
     backHtml: meaning,
     frontText: korean,
@@ -64,9 +61,9 @@ export function courseToExploreDeck(course: VocabularyCourse): CuratedDeckItem {
     category: "topik",
     categoryLabel: topicCollection ? "TOPIK 1–6" : course.topik,
     level,
-    description: `${course.topic} · ${course.level}`,
+    description: `${course.topic}, ${course.level}`,
     detailedDescription: topicCollection
-      ? `Một bộ từ vựng TOPIK theo chủ đề gồm ${cards.length.toLocaleString("vi-VN")} từ và cụm từ. Trong Flashcards, chọn subdeck TOPIK rồi chọn chủ đề để học.`
+      ? `Một bộ từ vựng TOPIK gồm ${cards.length.toLocaleString("vi-VN")} từ và cụm từ, chia subdeck theo chủ đề. Trong Flashcards, chọn chủ đề để học hoặc học toàn bộ.`
       : `Bộ từ vựng theo ${course.topik}, gồm ${cards.length.toLocaleString("vi-VN")} từ và cụm từ được chia theo bài học.`,
     iconName: "BookOpen",
     badgeColor: "bg-sky-500/10 text-sky-600 dark:text-sky-300 border-sky-500/30",
@@ -89,7 +86,7 @@ const curriculumConfig: Record<CurriculumKind, { title: string; topic: string; d
     description: "Từ vựng Sejong Korean được sắp theo quyển, bài học và cấp TOPIK.",
   },
   kiip: {
-    title: "KIIP · Tiếng Hàn hội nhập xã hội",
+    title: "KIIP, tiếng Hàn hội nhập xã hội",
     topic: "Giáo trình KIIP",
     description: "Từ vựng KIIP được sắp theo cấp học, bài học và cấp TOPIK.",
   },
@@ -113,7 +110,7 @@ export function curriculumToExploreDeck(courses: VocabularyCourse[], kind: Curri
 
   const cards = matchingCourses.flatMap((course) => {
     const volume = courseCurriculumNumber(course, kind);
-    const branch = kind === "sejong" ? `Quyển ${volume}` : `Cấp ${volume} · ${course.level}`;
+    const branch = kind === "sejong" ? `Quyển ${volume}` : `Cấp ${volume}, ${course.level}`;
     return courseToExploreDeck(course).cards.map((card) => ({
       ...card,
       deckName: `${config.title}::${branch}::${card.deckName?.split("::").slice(1).join("::") || "Bài học"}`,
@@ -182,7 +179,7 @@ export function loadSeoul1AExploreDeck(): Promise<CuratedDeckItem | null> {
         author: {
           name: "Seoul Korean Plus",
           avatar: "/brand/haechivn-mark.webp",
-          role: "Giáo trình · Quyển 1A",
+          role: "Giáo trình, quyển 1A",
           bio: "Bộ thẻ Seoul Korean Plus 1A được phân loại theo từng bài học.",
           verified: false,
         },
