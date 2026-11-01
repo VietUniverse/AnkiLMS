@@ -429,7 +429,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
               </>
             ) : (
               <button onClick={handleAdd} style={{ color: "#fff" }} className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-sky-500 hover:bg-sky-600 px-4 text-sm font-black text-white transition cursor-pointer">
-                <Plus className="w-4 h-4 stroke-[3]" /> Thêm vào kho thẻ ({deck.cards.length.toLocaleString("vi-VN")})
+                <Plus className="w-4 h-4 stroke-[3]" /> Thêm ({deck.cards.length.toLocaleString("vi-VN")})
               </button>
             )}
           </div>
