@@ -416,7 +416,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
 
         {/* Thanh hành động nổi trên điện thoại/tablet, sát thanh điều hướng dưới (cao 64px); md trở lên dịch sang phải nửa bề rộng thanh bên để vẫn nằm giữa nội dung */}
                 {canPortal && createPortal(
-<div className="lg:hidden fixed z-30 bottom-[calc(4.25rem+env(safe-area-inset-bottom))] inset-x-[4.25rem] sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[min(28rem,calc(100vw-2rem))] md:left-[calc(50%+8rem)]">
+<div className="lg:hidden fixed z-30 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] inset-x-[4.25rem] sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[min(28rem,calc(100vw-2rem))] md:left-[calc(50%+8rem)]">
           <div className="flex items-center gap-3 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white/95 dark:bg-stone-900/95 backdrop-blur px-3 py-2.5 shadow-lg">
             <div className="min-w-0 flex-1">
               <p className="text-sm font-black tabular-nums text-stone-900 dark:text-white">{deck.cards.length.toLocaleString("vi-VN")} thẻ</p>
