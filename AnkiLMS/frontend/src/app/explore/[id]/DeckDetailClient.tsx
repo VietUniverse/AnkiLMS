@@ -14,15 +14,12 @@ import {
   Check,
   Plus,
   BookOpen,
-  Sparkles,
   Volume2,
   Star,
   Download,
-  Clock,
   Layers,
   ShieldCheck,
   Trash2,
-  ChevronRight,
   RotateCcw,
   Globe2,
 } from "lucide-react";
@@ -215,145 +212,106 @@ export default function DeckDetailClient({ id }: { id: string }) {
           </div>
         )}
 
-        {/* Nút Quay Lại */}
-        <div className="flex items-center justify-between">
-          <a
-            href="/explore"
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-stone-500 dark:text-stone-400 hover:text-sky-600 dark:hover:text-sky-400 transition"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Quay lại Thư viện Khám phá
-          </a>
+        {/* Điều hướng */}
+        <a
+          href="/explore"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-stone-500 dark:text-stone-400 hover:text-sky-600 dark:hover:text-sky-400 transition"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Khám phá
+        </a>
 
-          <div className="flex items-center gap-2 text-xs text-stone-400">
-            <span>Khám phá</span>
-            <ChevronRight className="w-3.5 h-3.5" />
-            <span className="font-semibold text-stone-600 dark:text-stone-300">
-              {deck.categoryLabel}
-            </span>
-          </div>
-        </div>
-
-        {/* BỐ CỤC CHÍNH 2 CỘT TRÊN DESKTOP */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* CỘT TRÁI: TIÊU ĐỀ, PREVIEW HÌNH ẢNH / THẺ, NỘI DUNG CHI TIẾT (8 CỘT) */}
-          <div className="lg:col-span-8 space-y-6">
-            {/* Header Bộ Thẻ */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 flex-wrap">
-                <div className="w-12 h-12 rounded-2xl bg-sky-500/10 dark:bg-sky-500/20 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0 border border-sky-500/20">
-                  <DeckIcon name={deck.iconName} className="w-6 h-6" />
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_20rem] gap-6 lg:gap-8 items-start">
+          {/* Cột trái: giới thiệu, xem thử, nội dung */}
+          <div className="space-y-6 min-w-0">
+            <header className="space-y-2">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0">
+                  <DeckIcon name={deck.iconName} className="w-5 h-5" />
                 </div>
-                <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${deck.badgeColor}`}>
-                  {deck.categoryLabel}
+                <h1 className="text-xl sm:text-2xl font-black text-stone-900 dark:text-white tracking-tight leading-snug">
+                  {deck.title}
+                </h1>
+              </div>
+              <div className="flex items-center gap-x-2 gap-y-1 flex-wrap text-xs text-stone-500 dark:text-stone-400">
+                <span className={`font-bold px-2 py-0.5 rounded-full border ${deck.badgeColor}`}>{deck.categoryLabel}</span>
+                <span>{deck.level}</span>
+                <span aria-hidden>·</span>
+                <span>{deck.cards.length.toLocaleString("vi-VN")} thẻ</span>
+                <span aria-hidden>·</span>
+                <span className="inline-flex items-center gap-1 font-semibold text-amber-500">
+                  <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                  {deck.rating.toFixed(1)}
                 </span>
-                <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700">
-                  {deck.level}
-                </span>
-                <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-300">
-                  <Globe2 className="h-3 w-3" /> {deck.visibility === "private" ? "Riêng tư" : "Công khai"}
+                <span aria-hidden>·</span>
+                <span className="inline-flex items-center gap-1">
+                  <Globe2 className="w-3 h-3" /> {deck.visibility === "private" ? "Riêng tư" : "Công khai"}
                 </span>
                 {IS_DEMO_DECKS_ENABLED && (
-                  <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-500 border border-amber-500/30">
-                    Demo
-                  </span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-500 border border-amber-500/30">Demo</span>
                 )}
-                <div className="flex items-center gap-1 text-xs font-bold text-amber-500 ml-1">
-                  <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                  <span>{deck.rating.toFixed(1)}</span>
-                  <span className="text-stone-400 font-normal">({deck.downloads} học viên)</span>
-                </div>
               </div>
-
-              <h1 className="text-2xl sm:text-3xl font-black text-stone-900 dark:text-white tracking-tight leading-snug">
-                {deck.title}
-              </h1>
-
               <p className="text-sm text-stone-600 dark:text-stone-300 leading-relaxed">
                 {deck.detailedDescription || deck.description}
               </p>
-
-              {/* Tags */}
-              <div className="flex items-center gap-1.5 flex-wrap pt-1">
-                {deck.tags.map((t) => (
-                  <span
-                    key={t}
-                    className="text-xs font-mono text-stone-500 dark:text-stone-400 bg-stone-100 dark:bg-stone-800/80 px-2 py-0.5 rounded-md"
-                  >
-                    #{t}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* KHỐI HÌNH ẢNH & THẺ PREVIEW INTERACTIVE */}
-            <div className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-gradient-to-br from-stone-50 via-white to-sky-50/30 dark:from-stone-900/90 dark:via-stone-900/60 dark:to-slate-900/80 p-5 sm:p-6 shadow-sm space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-sky-500" />
-                  <span className="text-xs font-extrabold uppercase tracking-wider text-stone-500 dark:text-stone-400">
-                    Xem Thử Thẻ Flashcard (Mẫu {activePreviewIndex + 1}/{previewCards.length})
-                  </span>
+              {deck.tags.length > 0 && (
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {deck.tags.map((t) => (
+                    <span key={t} className="text-[11px] text-stone-500 dark:text-stone-400 bg-stone-100 dark:bg-stone-800/80 px-2 py-0.5 rounded-md">
+                      #{t}
+                    </span>
+                  ))}
                 </div>
+              )}
+            </header>
+
+            {/* Xem thử thẻ */}
+            <section className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 p-4 sm:p-5 space-y-3">
+              <div className="flex items-center justify-between">
+                <h2 className="text-[11px] font-extrabold uppercase tracking-wider text-stone-400">
+                  Xem thử · {activePreviewIndex + 1}/{previewCards.length}
+                </h2>
                 <button
                   onClick={() => setIsPreviewFlipped(!isPreviewFlipped)}
                   className="inline-flex items-center gap-1 text-xs font-bold text-sky-600 dark:text-sky-400 hover:underline cursor-pointer"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
-                  {isPreviewFlipped ? "Xem mặt trước" : "Lật xem đáp án"}
+                  {isPreviewFlipped ? "Mặt trước" : "Lật thẻ"}
                 </button>
               </div>
 
-              {/* Khối Thẻ Lật Xem Thử */}
               <div
                 onClick={() => setIsPreviewFlipped(!isPreviewFlipped)}
-                className="cursor-pointer min-h-[190px] rounded-xl border border-stone-200 dark:border-stone-700/70 bg-white dark:bg-stone-800/90 p-6 flex flex-col justify-between transition hover:border-sky-400 dark:hover:border-sky-500 shadow-xs"
+                className="relative cursor-pointer min-h-[140px] rounded-xl bg-stone-50 dark:bg-stone-800/70 px-6 py-8 flex flex-col items-center justify-center text-center gap-2 transition hover:bg-sky-50 dark:hover:bg-stone-800"
               >
-                <div>
-                  <div className="flex items-center justify-between text-xs text-stone-400 mb-2">
-                    <span className="font-mono text-[10px] uppercase font-bold tracking-wider">
-                      {isPreviewFlipped ? "Mặt sau (Giải nghĩa)" : "Mặt trước (Tiếng Hàn)"}
-                    </span>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        speakKorean(currentPreviewCard.koreanText || currentPreviewCard.frontText);
-                      }}
-                      title="Nghe phát âm tiếng Hàn"
-                      className="p-1.5 rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-400 hover:bg-sky-500/20 transition"
-                    >
-                      <Volume2 className="w-4 h-4" />
-                    </button>
-                  </div>
-
-                  <div className="text-center py-4 space-y-2">
-                    <div className="text-3xl font-black text-stone-900 dark:text-white font-noto tracking-tight">
-                      {currentPreviewCard.koreanText || currentPreviewCard.frontText}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    speakKorean(currentPreviewCard.koreanText || currentPreviewCard.frontText);
+                  }}
+                  title="Nghe phát âm tiếng Hàn"
+                  className="absolute top-3 right-3 p-1.5 rounded-lg text-sky-600 dark:text-sky-400 hover:bg-sky-500/10 transition cursor-pointer"
+                >
+                  <Volume2 className="w-4 h-4" />
+                </button>
+                <div className="text-3xl font-black text-stone-900 dark:text-white font-noto tracking-tight">
+                  {currentPreviewCard.koreanText || currentPreviewCard.frontText}
+                </div>
+                {isPreviewFlipped ? (
+                  <div className="animate-fadeIn space-y-1">
+                    <div className="text-base font-bold text-emerald-600 dark:text-emerald-400">
+                      {currentPreviewCard.vietnameseMeaning || currentPreviewCard.backText}
                     </div>
-                    {isPreviewFlipped && (
-                      <div className="pt-2 animate-fadeIn space-y-1">
-                        <div className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
-                          {currentPreviewCard.vietnameseMeaning || currentPreviewCard.backText}
-                        </div>
-                        {currentPreviewCard.exampleSentence && (
-                          <div className="text-xs text-stone-500 dark:text-stone-400 italic">
-                            {currentPreviewCard.exampleSentence}
-                          </div>
-                        )}
-                      </div>
+                    {currentPreviewCard.exampleSentence && (
+                      <div className="text-xs text-stone-500 dark:text-stone-400 italic">{currentPreviewCard.exampleSentence}</div>
                     )}
                   </div>
-                </div>
-
-                <div className="text-center text-[11px] text-stone-400">
-                  {isPreviewFlipped
-                    ? "Bấm vào thẻ để lật lại mặt trước"
-                    : "Bấm vào thẻ để xem nghĩa tiếng Việt & câu ví dụ"}
-                </div>
+                ) : (
+                  <div className="text-[11px] text-stone-400">Bấm để xem nghĩa</div>
+                )}
               </div>
 
-              {/* Selector chuyển các thẻ mẫu */}
-              <div className="flex items-center justify-center gap-1.5 pt-1 overflow-x-auto">
+              <div className="flex items-center justify-center gap-1 overflow-x-auto">
                 {previewCards.map((c, i) => (
                   <button
                     key={c.id}
@@ -362,78 +320,64 @@ export default function DeckDetailClient({ id }: { id: string }) {
                       setRequestedPreviewCardId(null);
                       setIsPreviewFlipped(false);
                     }}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition cursor-pointer ${
+                    className={`min-w-7 px-2 py-1 rounded-md text-xs font-bold transition cursor-pointer ${
                       activePreviewIndex === i
                         ? "bg-sky-500 text-white"
-                        : "bg-stone-200/60 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-300 dark:hover:bg-stone-700"
+                        : "text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800"
                     }`}
                   >
-                    #{i + 1}
+                    {i + 1}
                   </button>
                 ))}
               </div>
-            </div>
+            </section>
 
-            <div className="space-y-4">
-              {curriculumSections.length > 0 ? (
-                <>
-                  <div>
-                    <h2 className="text-lg font-bold text-stone-900 dark:text-white">
-                      {deck.id === "course-topic-vocabulary" ? "Chủ đề học" : "Nội dung theo giáo trình"} ({curriculumSections.length})
-                    </h2>
-                    <p className="text-xs text-stone-400">
-                      {deck.id === "course-topic-vocabulary"
-                        ? `Một bộ thẻ duy nhất gồm ${deck.cards.length.toLocaleString("vi-VN")} từ. Khi thêm vào Flashcard, mở bộ này để chọn một chủ đề hoặc học toàn bộ.`
-                        : `Một bộ giáo trình gồm ${deck.cards.length.toLocaleString("vi-VN")} từ. Khi thêm vào Flashcards, mở bộ cha để chọn quyển/cấp rồi chọn bài học.`}
-                    </p>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {curriculumSections.map(([section, info]) => (
-                      <div key={section} className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 px-4 py-3 flex items-center justify-between gap-3">
-                        <span className="font-semibold text-sm text-stone-800 dark:text-stone-200">{section}</span>
-                        <span className="text-xs text-sky-600 dark:text-sky-400 shrink-0">{info.count.toLocaleString("vi-VN")} thẻ{info.childCount ? ` · ${info.childCount} bài` : ""}</span>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 p-4">
-                  <h2 className="text-lg font-bold text-stone-900 dark:text-white">Bộ thẻ gồm {deck.cards.length.toLocaleString("vi-VN")} thẻ</h2>
-                  <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">Đây là bản xem thử. Thêm bộ thẻ vào Flashcard để xem và học toàn bộ nội dung.</p>
-                </div>
-              )}
-            </div>
+            {/* Nội dung bộ thẻ */}
+            {curriculumSections.length > 0 ? (
+              <section className="space-y-2">
+                <h2 className="text-sm font-bold text-stone-900 dark:text-white">
+                  {deck.id === "course-topic-vocabulary" ? "Chủ đề" : "Nội dung"} <span className="font-normal text-stone-400">({curriculumSections.length})</span>
+                </h2>
+                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 divide-y sm:divide-y-0 divide-stone-200/70 dark:divide-stone-800/70">
+                  {curriculumSections.map(([section, info]) => (
+                    <li key={section} className="flex items-center justify-between gap-3 py-2 sm:border-b border-stone-200/70 dark:border-stone-800/70">
+                      <span className="text-sm text-stone-800 dark:text-stone-200 truncate">{section}</span>
+                      <span className="text-xs text-stone-400 shrink-0 tabular-nums">
+                        {info.count.toLocaleString("vi-VN")}{info.childCount ? ` · ${info.childCount} bài` : ""}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-xs text-stone-400">Thêm vào Flashcard để chọn chủ đề hoặc học toàn bộ.</p>
+              </section>
+            ) : (
+              <p className="text-xs text-stone-500 dark:text-stone-400">
+                Đây là bản xem thử. Thêm bộ thẻ vào Flashcard để xem và học toàn bộ {deck.cards.length.toLocaleString("vi-VN")} thẻ.
+              </p>
+            )}
           </div>
 
-          {/* CỘT PHẢI: THÔNG TIN TÁC GIẢ & NÚT THÊM BỘ THẺ (4 CỘT - STICKY) */}
-          <div className="lg:col-span-4 space-y-5 lg:sticky lg:top-20">
-            {/* Hộp Hành Động Thêm Bộ Thẻ */}
-            <div className="card-duo p-6 border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/80 shadow-md space-y-4">
-              <div className="space-y-1">
-                <span className="text-xs font-extrabold uppercase tracking-wider text-sky-600 dark:text-sky-400">
-                  Học Tập Với FSRS SRS
-                </span>
-                <h3 className="text-xl font-black text-stone-900 dark:text-white">
-                  {deck.cards.length} Thẻ Từ Vựng
-                </h3>
-                <p className="text-xs text-stone-500 dark:text-stone-400">
-                  Sau khi thêm vào Kho thẻ, bạn có thể ôn tập hàng ngày với thuật toán lặp lại ngắt quãng hiện đại nhất.
-                </p>
+          {/* Cột phải: hành động + tác giả */}
+          <aside className="space-y-4 lg:sticky lg:top-20">
+            <div className="card-duo p-5 bg-white dark:bg-stone-900/80 space-y-3">
+              <div>
+                <div className="text-2xl font-black text-stone-900 dark:text-white tabular-nums">
+                  {deck.cards.length.toLocaleString("vi-VN")} <span className="text-sm font-bold text-stone-400">thẻ</span>
+                </div>
+                <p className="text-xs text-stone-500 dark:text-stone-400">Ôn tập hàng ngày với FSRS sau khi thêm vào kho thẻ.</p>
               </div>
-
-              {/* Nút Hành Động Chính */}
               {isAdded ? (
-                <div className="space-y-2">
+                <div className="space-y-1">
                   <a
                     href="/flashcards?study=true"
-                    className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-black bg-emerald-500 hover:bg-emerald-600 text-white shadow-md shadow-emerald-900/20 transition cursor-pointer"
+                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-black bg-emerald-500 hover:bg-emerald-600 text-white transition cursor-pointer"
                   >
                     <BookOpen className="w-4 h-4" />
-                    Đã có trong kho thẻ (Học ngay)
+                    Học ngay
                   </a>
                   <button
                     onClick={handleRemove}
-                    className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-semibold text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
+                    className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-xl text-xs font-semibold text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                     Gỡ khỏi kho thẻ
@@ -442,76 +386,33 @@ export default function DeckDetailClient({ id }: { id: string }) {
               ) : (
                 <button
                   onClick={handleAdd}
-                  className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl text-xs font-black bg-sky-500 hover:bg-sky-600 text-white shadow-md shadow-sky-900/30 transition cursor-pointer"
+                  className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-black bg-sky-500 hover:bg-sky-600 text-white transition cursor-pointer"
                 >
                   <Plus className="w-4 h-4 stroke-[3]" />
                   Thêm vào kho thẻ
                 </button>
               )}
-
-              {/* Quick Specs */}
-              <div className="pt-3 border-t border-stone-100 dark:border-stone-800/80 space-y-2.5 text-xs">
-                <div className="flex items-center justify-between text-stone-500 dark:text-stone-400">
-                  <span className="flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5" /> Thời gian ước tính
-                  </span>
-                  <span className="font-bold text-stone-700 dark:text-stone-200">
-                    ~{deck.estimatedMinutes} phút
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-stone-500 dark:text-stone-400">
-                  <span className="flex items-center gap-1.5">
-                    <Download className="w-3.5 h-3.5" /> Lượt thêm học
-                  </span>
-                  <span className="font-bold text-stone-700 dark:text-stone-200">
-                    {deck.downloads} lượt
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-stone-500 dark:text-stone-400">
-                  <span className="flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Đánh giá
-                  </span>
-                  <span className="font-bold text-amber-500">
-                    {deck.rating.toFixed(1)} / 5.0
-                  </span>
-                </div>
+              <div className="pt-2 border-t border-stone-100 dark:border-stone-800/80 flex items-center justify-between text-xs text-stone-500 dark:text-stone-400">
+                <span className="inline-flex items-center gap-1.5"><Download className="w-3.5 h-3.5" /> Lượt học</span>
+                <span className="font-bold text-stone-700 dark:text-stone-200">{deck.downloads}</span>
               </div>
             </div>
 
-            {/* HỘP THÔNG TIN TÁC GIẢ */}
-            <div className="card-duo p-5 border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/80 space-y-3.5">
-              <div className="text-[11px] font-extrabold uppercase tracking-wider text-stone-400">
-                Tác giả bộ thẻ
-              </div>
-
-              <div className="flex items-center gap-3">
-                <img
-                  src={deck.author.avatar}
-                  alt={deck.author.name}
-                  className="w-12 h-12 rounded-full object-cover border-2 border-sky-400/30 shadow-xs"
-                />
-                <div>
-                  <div className="flex items-center gap-1.5">
-                    <h4 className="font-bold text-sm text-stone-900 dark:text-white">
-                      {deck.author.name}
-                    </h4>
-                    {deck.author.verified && (
-                      <span title="Tác giả được xác minh bởi HaechiVN" aria-label="Tác giả được xác minh bởi HaechiVN">
-                        <ShieldCheck className="w-4 h-4 text-sky-500" />
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-[11px] text-stone-400 leading-tight">
-                    {deck.author.role}
-                  </p>
+            <div className="flex items-center gap-3 px-1">
+              <img src={deck.author.avatar} alt={deck.author.name} className="w-9 h-9 rounded-full object-cover shrink-0" />
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-bold text-sm text-stone-900 dark:text-white truncate">{deck.author.name}</span>
+                  {deck.author.verified && (
+                    <span title="Tác giả được xác minh bởi HaechiVN" aria-label="Tác giả được xác minh bởi HaechiVN">
+                      <ShieldCheck className="w-4 h-4 text-sky-500" />
+                    </span>
+                  )}
                 </div>
+                <p className="text-[11px] text-stone-400 truncate">{deck.author.role}</p>
               </div>
-
-              <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed border-t border-stone-100 dark:border-stone-800/80 pt-2.5">
-                {deck.author.bio}
-              </p>
             </div>
-          </div>
+          </aside>
         </div>
       </div>
     </AppShell>

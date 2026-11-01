@@ -9,6 +9,7 @@ import { courseVocabularyToExploreDecks, loadCourseVocabulary, loadSeoul1AExplor
 import type { TopikDeck } from "../../lib/courseVocabulary";
 import { ApiClient } from "../../lib/apiClient";
 import {
+  ChevronDown,
   Search,
   Check,
   Plus,
@@ -31,6 +32,11 @@ const CATEGORIES: { id: string; label: string }[] = [
   { id: "work", label: "Công việc & EPS" },
 ];
 
+// Sơ cấp 1–2, Trung cấp 3–4, Cao cấp 5–6
+const LEVEL_DECK_IDS = ["course-1100", "course-1200", "course-1300", "course-1400", "course-1500", "course-1600"];
+
+const COURSE_BOOK_IDS = ["course-2000", "course-2100", "course-2200", "course-2300", "course-2400", "course-2500", "course-3000", "course-3100", "course-3200", "course-3300"];
+
 const matchCategory = (deck: CuratedDeckItem, id: string) =>
   id === "all" || deck.category === id;
 
@@ -41,14 +47,13 @@ const deckCardCount = (d: CuratedDeckItem) => d.cardCount ?? d.cards.length;
 // Desktop: bảng 4 cột (tên | cấp độ | số thẻ | hành động). Mobile: danh sách một cột, cấp độ và số thẻ nằm dưới tên.
 const ROW_GRID = "sm:grid sm:grid-cols-[minmax(0,1fr)_6rem_4.5rem_6.5rem] items-center gap-3";
 
-const THEME_CATEGORIES = new Set(["food", "conversation", "drama", "hanja", "travel", "work"]);
-
 export default function ExplorePage() {
   const { userDecks, handleDeckImported, handleRemoveDeck } = useApp();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedTopikLevel, setSelectedTopikLevel] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sort, setSort] = useState<{ key: SortKey; dir: "asc" | "desc" } | null>(null);
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const [addedNotice, setAddedNotice] = useState<string | null>(null);
   const [courseDecks, setCourseDecks] = useState<TopikDeck[]>([]);
   const [seoul1ADeck, setSeoul1ADeck] = useState<CuratedDeckItem | null>(null);
@@ -181,16 +186,22 @@ export default function ExplorePage() {
     setSort((prev) => (prev?.key === key ? { key, dir: prev.dir === "asc" ? "desc" : "asc" } : { key, dir: "asc" }));
 
   const groupedDecks = useMemo(() => {
-    if (sort || selectedCategory !== "all" || selectedTopikLevel !== "all" || searchQuery.trim()) {
-      return null;
-    }
-    const themes = filteredDecks.filter((d) => THEME_CATEGORIES.has(d.category));
-    const coursesAndTopik = filteredDecks.filter((d) => !THEME_CATEGORIES.has(d.category));
+    const isLevel = (d: CuratedDeckItem) => LEVEL_DECK_IDS.includes(d.id);
+    const isCourse = (d: CuratedDeckItem) => d.id.startsWith("curriculum-") || d.id === "seoul-1a" || COURSE_BOOK_IDS.includes(d.id);
+    const isTopik = (d: CuratedDeckItem) => !isLevel(d) && !isCourse(d) && d.category === "topik" && d.id !== "course-topic-vocabulary";
+    // Mỗi bộ luôn nằm đúng mục; sắp xếp chỉ đổi thứ tự bên trong từng mục.
+    const levels = sortedDecks.filter(isLevel);
+    if (!sort) levels.sort((a, b) => LEVEL_DECK_IDS.indexOf(a.id) - LEVEL_DECK_IDS.indexOf(b.id));
+    const courses = sortedDecks.filter(isCourse);
+    const topik = sortedDecks.filter(isTopik);
+    const themes = sortedDecks.filter((d) => !isLevel(d) && !isCourse(d) && !isTopik(d));
     const groups: { label: string; decks: CuratedDeckItem[] }[] = [];
+    if (levels.length > 0) groups.push({ label: "Cấp độ", decks: levels });
+    if (courses.length > 0) groups.push({ label: "Giáo trình", decks: courses });
+    if (topik.length > 0) groups.push({ label: "TOPIK", decks: topik });
     if (themes.length > 0) groups.push({ label: "Chủ đề", decks: themes });
-    if (coursesAndTopik.length > 0) groups.push({ label: "Giáo trình & TOPIK", decks: coursesAndTopik });
     return groups;
-  }, [filteredDecks, sort, selectedCategory, selectedTopikLevel, searchQuery]);
+  }, [sortedDecks, sort]);
 
   const rowAction = "inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer self-start sm:self-auto sm:justify-self-end shrink-0";
 
@@ -352,12 +363,22 @@ export default function ExplorePage() {
           <div className="space-y-6">
             {groupedDecks.map((group) => (
               <div key={group.label} className="space-y-1">
-                <h2 className="text-[11px] uppercase tracking-wider text-stone-400 font-semibold px-0.5">
-                  {group.label}
+                <h2>
+                  <button
+                    type="button"
+                    aria-expanded={!collapsed[group.label]}
+                    onClick={() => setCollapsed((c) => ({ ...c, [group.label]: !c[group.label] }))}
+                    className="flex items-center gap-1 w-full text-left text-[11px] uppercase tracking-wider text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 font-semibold px-0.5 py-1 cursor-pointer"
+                  >
+                    <ChevronDown className={`w-3.5 h-3.5 transition-transform ${collapsed[group.label] ? "-rotate-90" : ""}`} />
+                    {group.label} <span className="font-normal">({group.decks.length})</span>
+                  </button>
                 </h2>
-                <ul className="divide-y divide-stone-200/70 dark:divide-stone-800/70">
-                  {group.decks.map((deck) => renderDeckRow(deck))}
-                </ul>
+                {!collapsed[group.label] && (
+                  <ul className="divide-y divide-stone-200/70 dark:divide-stone-800/70">
+                    {group.decks.map((deck) => renderDeckRow(deck))}
+                  </ul>
+                )}
               </div>
             ))}
           </div>

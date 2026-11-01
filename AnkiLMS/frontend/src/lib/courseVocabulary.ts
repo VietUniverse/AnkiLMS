@@ -144,12 +144,8 @@ export function curriculumToExploreDeck(courses: VocabularyCourse[], kind: Curri
 
 export function courseVocabularyToExploreDecks(data: CourseVocabularyData): CuratedDeckItem[] {
   const courses = data.decks.flatMap((group) => group.courses);
-  const curricula = [
-    curriculumToExploreDeck(courses, "sejong"),
-    curriculumToExploreDeck(courses, "kiip"),
-  ].filter((deck): deck is CuratedDeckItem => deck !== null);
-  const standalone = courses.filter((course) => !isCurriculumCourse(course)).map(courseToExploreDeck);
-  return [...standalone, ...curricula];
+  // Sejong và KIIP tách thành từng quyển/cấp, mỗi bộ một deck riêng.
+  return courses.map(courseToExploreDeck);
 }
 
 type Seoul1AData = {

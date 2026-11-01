@@ -87,7 +87,7 @@ for unit_number, (topic, words) in enumerate(sorted(by_topic.items()), 1):
     })
 topic_course = {
     "id": "topic-vocabulary",
-    "title": "Từ vựng TOPIK theo chủ đề",
+    "title": "TỪ VỰNG THEO CHỦ ĐỀ (TOPIK)",
     "level": "TOPIK 1–6",
     "topik": "TOPIK 1–6",
     "topic": "Từ vựng theo chủ đề",
