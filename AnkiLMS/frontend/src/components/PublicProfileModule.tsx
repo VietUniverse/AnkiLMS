@@ -6,6 +6,7 @@ import { Activity, ArrowLeft, Award, BookOpen, Clock3, Flame, LockKeyhole, Spark
 import { useApp } from "../contexts/AppProvider";
 import { getStudyRank } from "../lib/studyRanks";
 import { OnigiriHeatmap, type HeatmapItem } from "./OnigiriHeatmap";
+import { StreakPanel } from "./StreakPanel";
 
 type PublicProfile = {
   id: string; name: string; bio: string | null; avatar_url: string | null; profile_public: number;
@@ -79,6 +80,7 @@ export function PublicProfileModule({ profileId }: { profileId: string }) {
       { label: "Chuỗi tốt nhất", value: `${profile.longest_streak || profile.streak} ngày`, icon: Trophy, color: "text-amber-300" },
     ].map(({ label, value, icon: Icon, color }) => <div key={label} className="rounded-2xl border border-slate-800 bg-slate-900 p-4"><Icon className={`mb-3 h-5 w-5 ${color}`} /><p className="text-lg font-black text-white">{value}</p><p className="mt-1 text-[11px] font-semibold text-slate-400">{label}</p></div>)}</section>
 
+    <StreakPanel data={heatmap} streak={profile.streak} longestStreak={profile.longest_streak || profile.streak} publicView />
     <OnigiriHeatmap data={heatmap} streak={profile.streak} />
 
     <section className="rounded-2xl border border-slate-800 bg-slate-900 p-4 sm:p-6"><div className="mb-3 flex items-center gap-2"><Award className="h-5 w-5 text-amber-300" /><h2 className="font-black text-white">Phiên học gần đây</h2></div>{sessions.length ? <div className="divide-y divide-slate-800">{sessions.slice(0, 6).map((session, index) => <div key={`${session.created_at}-${index}`} className="flex items-center gap-3 py-3"><div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sky-400/10 text-sky-200"><BookOpen className="h-4 w-4" /></div><div className="min-w-0 flex-1"><p className="text-xs font-bold text-white">{session.module === "dictation" ? "Nghe chép" : session.module === "shadowing" ? "Shadowing" : session.module === "srs" ? "Ôn Anki" : "Luyện tiếng Hàn"}</p><p className="text-[10px] text-slate-400">{new Date(`${session.created_at.replace(" ", "T")}Z`).toLocaleDateString("vi-VN", { dateStyle: "medium" })}</p></div><span className="text-xs font-bold text-slate-300">{session.cards_reviewed} câu · {duration(session.duration_seconds)}</span></div>)}</div> : <p className="rounded-xl border border-dashed border-slate-700 p-6 text-center text-xs text-slate-400">Chưa có phiên học được ghi nhận.</p>}</section>

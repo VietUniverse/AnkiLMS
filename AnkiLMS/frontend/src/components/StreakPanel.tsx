@@ -42,7 +42,7 @@ function GoalRing({ done, goal }: { done: number; goal: number }) {
   );
 }
 
-export function StreakPanel({ data, streak, longestStreak }: { data: CheckinItem[]; streak: number; longestStreak: number }) {
+export function StreakPanel({ data, streak, longestStreak, publicView = false }: { data: CheckinItem[]; streak: number; longestStreak: number; publicView?: boolean }) {
   const [limits, setLimits] = useState<DailyLimits>(DEFAULT_LIMITS);
   const [progress, setProgress] = useState<DailyProgress>({ newDone: 0, reviewDone: 0 });
   const [showMonth, setShowMonth] = useState(false);
@@ -101,10 +101,10 @@ export function StreakPanel({ data, streak, longestStreak }: { data: CheckinItem
             </p>
           </div>
         </div>
-        <div className="flex flex-col items-center gap-1">
+        {!publicView && <div className="flex flex-col items-center gap-1">
           <GoalRing done={doneToday} goal={goal} />
           <span className="text-[11px] font-semibold text-stone-500 dark:text-stone-400">Từ mới hôm nay</span>
-        </div>
+        </div>}
       </div>
 
       {/* Dải 7 ngày */}
@@ -131,9 +131,9 @@ export function StreakPanel({ data, streak, longestStreak }: { data: CheckinItem
         ))}
       </div>
 
-      <p className={`text-center text-xs font-semibold ${learnedToday ? "text-emerald-600 dark:text-emerald-400" : "text-stone-500 dark:text-stone-400"}`}>
+      {!publicView && <p className={`text-center text-xs font-semibold ${learnedToday ? "text-emerald-600 dark:text-emerald-400" : "text-stone-500 dark:text-stone-400"}`}>
         {learnedToday ? "Hôm nay bạn đã học rồi, chuỗi được giữ." : "Hôm nay chưa học. Học một lượt để giữ chuỗi."}
-      </p>
+      </p>}
 
       {/* Lịch tháng */}
       <div className="border-t border-stone-100 dark:border-stone-800 pt-3">
