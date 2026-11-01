@@ -991,7 +991,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
               <div className="p-4 rounded-2xl bg-white dark:bg-[#141b2d] border border-stone-200/80 dark:border-stone-800/80 flex items-center justify-between gap-4 shadow-xs animate-reveal">
                 <div className="min-w-0">
                   <span className="inline-block text-[10px] font-mono tracking-wider text-emerald-700 dark:text-emerald-400 font-bold uppercase bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-200/50 dark:border-emerald-800/40">
-                    Học tiếp lượt trước
+                    Học tiếp
                   </span>
                   <h3 className="text-sm sm:text-base font-bold truncate mt-1 text-stone-900 dark:text-white">
                     {lastStudiedTitle}
