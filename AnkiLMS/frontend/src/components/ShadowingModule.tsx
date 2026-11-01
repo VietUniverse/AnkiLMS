@@ -802,15 +802,7 @@ export const ShadowingModule: React.FC = () => {
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 lg:p-3 space-y-4 lg:space-y-2 shadow-lg">
 
             {/* Header & Segment Prev/Next Navigation */}
-            <div className="flex items-center justify-center gap-2 pb-3 border-b border-slate-800">
-              <TranslationLanguageSetup up language={translationLanguage} onChange={setTranslationLanguage}>
-                  <p className="text-sm font-black text-white">Tốc độ phát</p>
-                  <div className="mt-2 mb-4 flex gap-1">
-                    {[0.5, 0.75, 1, 1.25, 1.5].map((s) => (
-                      <button key={s} type="button" onClick={() => setPlaybackSpeed(s)} aria-pressed={playbackSpeed === s} className={`flex-1 rounded-lg py-1.5 text-xs font-bold font-mono ${playbackSpeed === s ? "bg-rose-600 text-white" : "bg-slate-900 text-slate-400 hover:text-slate-200"}`}>{s}x</button>
-                    ))}
-                  </div>
-                </TranslationLanguageSetup>
+            <div className="relative flex items-center justify-center gap-2 pb-3 border-b border-slate-800">
               <div className="flex items-center gap-2">
                 <button onClick={handlePrevSub} disabled={currentSubIndex === 0} className="h-10 w-10 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 flex items-center justify-center disabled:opacity-40 cursor-pointer" aria-label="Câu trước" title="Câu trước">
                   <ChevronLeft className="w-5 h-5" aria-hidden="true" />
@@ -825,6 +817,16 @@ export const ShadowingModule: React.FC = () => {
                   <ChevronRight className="w-5 h-5" aria-hidden="true" />
                 </button>
               </div>
+              <div className="absolute right-0 top-0">
+              <TranslationLanguageSetup up iconOnly language={translationLanguage} onChange={setTranslationLanguage}>
+                  <p className="text-sm font-black text-white">Tốc độ phát</p>
+                  <div className="mt-2 mb-4 flex gap-1">
+                    {[0.5, 0.75, 1, 1.25, 1.5].map((s) => (
+                      <button key={s} type="button" onClick={() => setPlaybackSpeed(s)} aria-pressed={playbackSpeed === s} className={`flex-1 rounded-lg py-1.5 text-xs font-bold font-mono ${playbackSpeed === s ? "bg-rose-600 text-white" : "bg-slate-900 text-slate-400 hover:text-slate-200"}`}>{s}x</button>
+                    ))}
+                  </div>
+                </TranslationLanguageSetup>
+</div>
             </div>
 
             {/* Target Korean Text Display Box */}
