@@ -13,25 +13,23 @@ const toKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padSta
 // getDay(): CN = 0. Đổi sang T2 = 0 ... CN = 6.
 const mondayIndex = (d: Date) => (d.getDay() + 6) % 7;
 
+// Hình tròn đầy dần từ đáy lên theo số từ mới đã học (không dùng vòng viền mảnh).
 function GoalRing({ done, goal }: { done: number; goal: number }) {
-  const radius = 34;
-  const circumference = 2 * Math.PI * radius;
   const ratio = goal > 0 ? Math.min(1, done / goal) : done > 0 ? 1 : 0;
   const complete = ratio >= 1;
   return (
-    <div className="relative h-24 w-24 shrink-0">
-      <svg viewBox="0 0 80 80" className="h-full w-full -rotate-90" aria-hidden>
-        <circle cx="40" cy="40" r={radius} fill="none" strokeWidth="8" className="stroke-stone-200 dark:stroke-stone-800" />
-        <circle
-          cx="40" cy="40" r={radius} fill="none" strokeWidth="8" strokeLinecap="round"
-          className={`transition-all duration-700 ${complete ? "stroke-emerald-500" : "stroke-sky-500"}`}
-          strokeDasharray={circumference}
-          strokeDashoffset={circumference * (1 - ratio)}
-        />
-      </svg>
+    <div
+      className={`relative h-24 w-24 shrink-0 overflow-hidden rounded-full border-2 ${complete ? "border-emerald-500" : "border-sky-500/60"} bg-stone-100 dark:bg-stone-800`}
+      role="progressbar" aria-valuemin={0} aria-valuemax={goal || 100} aria-valuenow={done}
+      aria-label={`Từ mới hôm nay: ${done}${goal > 0 ? ` trên ${goal}` : ""}`}
+    >
+      <div
+        className={`absolute inset-x-0 bottom-0 transition-all duration-700 ${complete ? "bg-emerald-500" : "bg-sky-400/55 dark:bg-sky-500/50"}`}
+        style={{ height: `${ratio * 100}%` }}
+      />
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        {complete ? <Check className="h-7 w-7 text-emerald-500" strokeWidth={3} /> : <Target className="h-6 w-6 text-sky-500" />}
-        <span className="mt-0.5 text-[11px] font-black tabular-nums text-stone-700 dark:text-stone-200">{goal > 0 ? `${done}/${goal}` : done}</span>
+        {complete ? <Check className="h-7 w-7" style={{ color: "#fff" }} strokeWidth={3.5} /> : <Target className="h-5 w-5 text-sky-600 dark:text-sky-300" />}
+        <span className={`mt-0.5 text-sm font-black tabular-nums ${complete ? "" : "text-stone-800 dark:text-stone-100"}`} style={complete ? { color: "#fff" } : undefined}>{goal > 0 ? `${done}/${goal}` : done}</span>
       </div>
     </div>
   );
