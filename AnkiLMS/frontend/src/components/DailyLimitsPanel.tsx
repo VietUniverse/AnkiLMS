@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { Target } from "lucide-react";
+import React, { useState } from "react";
+import { Pencil, Target } from "lucide-react";
 import type { DailyLimits, DailyProgress } from "../lib/dailyLimits";
 
 interface Props {
@@ -10,42 +10,115 @@ interface Props {
   onChange: (limits: DailyLimits) => void;
 }
 
-const NEW_OPTIONS = [5, 10, 20, 30, 50];
-const REVIEW_OPTIONS = [50, 100, 200, 300];
+type Field = keyof DailyLimits;
 
-function Goal({ label, done, value, options, onChange }: { label: string; done: number; value: number; options: number[]; onChange: (v: number) => void }) {
-  const list = value === 0 || options.includes(value) ? options : [...options, value].sort((a, b) => a - b);
+const FIELD_LABEL: Record<Field, string> = { newPerDay: "Từ mới", reviewPerDay: "Ôn lại" };
+
+function GoalCard({ label, done, value, onOpen }: { label: string; done: number; value: number; onOpen: () => void }) {
   const pct = value === 0 ? 0 : Math.min(100, Math.round((done / value) * 100));
   return (
-    <label className="flex-1 min-w-36 space-y-1.5">
+    <button
+      type="button"
+      onClick={onOpen}
+      aria-label={`${label}: đã ${done}${value ? ` trên ${value}` : ""}. Bấm để đổi giới hạn`}
+      className="group flex-1 min-w-36 rounded-xl border border-stone-200 dark:border-stone-700 px-3 py-2.5 text-left space-y-1.5 transition hover:border-sky-400 hover:bg-sky-50 dark:hover:bg-stone-800 cursor-pointer"
+    >
       <span className="flex items-center justify-between text-xs text-stone-500 dark:text-stone-400">
         {label}
-        <span className="tabular-nums"><b className="text-stone-900 dark:text-white">{done}</b>{value === 0 ? "" : ` / ${value}`}</span>
+        <Pencil className="h-3 w-3 opacity-0 transition group-hover:opacity-100" />
+      </span>
+      <span className="block text-lg font-black tabular-nums text-stone-900 dark:text-white">
+        {done}
+        <span className="text-sm font-bold text-stone-400">{value === 0 ? " / không giới hạn" : ` / ${value}`}</span>
       </span>
       <span className="block h-1.5 rounded-full bg-stone-200 dark:bg-stone-800 overflow-hidden">
         <span className={`block h-full rounded-full transition-all ${pct >= 100 ? "bg-emerald-500" : "bg-sky-500"}`} style={{ width: `${pct}%` }} />
       </span>
-      <select
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        aria-label={`Giới hạn ${label.toLowerCase()} mỗi ngày`}
-        className="w-full rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 px-2 py-1.5 text-xs font-bold text-stone-900 dark:text-white cursor-pointer"
-      >
-        {list.map((n) => <option key={n} value={n}>{n} từ / ngày</option>)}
-        <option value={0}>Không giới hạn</option>
-      </select>
-    </label>
+    </button>
   );
 }
 
-export const DailyLimitsPanel: React.FC<Props> = ({ limits, progress, onChange }) => (
-  <section className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 p-4">
-    <h2 className="mb-3 flex items-center gap-2 text-sm font-bold text-stone-900 dark:text-white">
-      <Target className="w-4 h-4 text-sky-500" /> Mục tiêu hôm nay
-    </h2>
-    <div className="flex flex-wrap gap-4">
-      <Goal label="Từ mới" done={progress.newDone} value={limits.newPerDay} options={NEW_OPTIONS} onChange={(v) => onChange({ ...limits, newPerDay: v })} />
-      <Goal label="Ôn lại" done={progress.reviewDone} value={limits.reviewPerDay} options={REVIEW_OPTIONS} onChange={(v) => onChange({ ...limits, reviewPerDay: v })} />
-    </div>
-  </section>
-);
+export const DailyLimitsPanel: React.FC<Props> = ({ limits, progress, onChange }) => {
+  const [editing, setEditing] = useState<Field | null>(null);
+  const [draft, setDraft] = useState("");
+
+  const open = (field: Field) => {
+    setEditing(field);
+    setDraft(limits[field] > 0 ? String(limits[field]) : "");
+  };
+
+  const parsed = Number(draft);
+  const valid = draft === "" ? false : Number.isInteger(parsed) && parsed >= 1 && parsed <= 9999;
+
+  const save = (value: number) => {
+    if (!editing) return;
+    onChange({ ...limits, [editing]: value });
+    setEditing(null);
+  };
+
+  return (
+    <section className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 p-4">
+      <h2 className="mb-3 flex items-center gap-2 text-sm font-bold text-stone-900 dark:text-white">
+        <Target className="w-4 h-4 text-sky-500" /> Mục tiêu hôm nay
+      </h2>
+      <div className="flex flex-wrap gap-3">
+        <GoalCard label="Từ mới" done={progress.newDone} value={limits.newPerDay} onOpen={() => open("newPerDay")} />
+        <GoalCard label="Ôn lại" done={progress.reviewDone} value={limits.reviewPerDay} onOpen={() => open("reviewPerDay")} />
+      </div>
+
+      {editing && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4"
+          onClick={() => setEditing(null)}
+        >
+          <form
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="goal-title"
+            className="w-full max-w-xs rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-5 space-y-4 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+            onSubmit={(e) => { e.preventDefault(); if (valid) save(parsed); }}
+          >
+            <div>
+              <h3 id="goal-title" className="text-base font-black text-stone-900 dark:text-white">{FIELD_LABEL[editing]} mỗi ngày</h3>
+              <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">Nhập số từ bạn muốn học tối đa mỗi ngày.</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                autoFocus
+                type="number"
+                inputMode="numeric"
+                min={1}
+                max={9999}
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                placeholder="Ví dụ 20"
+                aria-label={`Số ${FIELD_LABEL[editing].toLowerCase()} mỗi ngày`}
+                className="w-full h-12 rounded-xl border border-stone-300 dark:border-stone-600 bg-transparent px-4 text-center text-xl font-black tabular-nums text-stone-900 dark:text-white focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+              />
+              <span className="text-sm text-stone-500 dark:text-stone-400 shrink-0">từ</span>
+            </div>
+            {draft !== "" && !valid && <p role="alert" className="text-xs text-rose-600">Nhập số nguyên từ 1 đến 9999.</p>}
+            <div className="space-y-2">
+              <button
+                type="submit"
+                disabled={!valid}
+                className="w-full rounded-xl bg-sky-500 hover:bg-sky-600 disabled:opacity-40 disabled:hover:bg-sky-500 py-2.5 text-sm font-black text-white transition cursor-pointer"
+              >
+                Lưu
+              </button>
+              <div className="flex gap-2">
+                <button type="button" onClick={() => setEditing(null)} className="flex-1 rounded-xl py-2 text-xs font-bold text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800 transition cursor-pointer">
+                  Hủy
+                </button>
+                <button type="button" onClick={() => save(0)} className="flex-1 rounded-xl py-2 text-xs font-bold text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800 transition cursor-pointer">
+                  Không giới hạn
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      )}
+    </section>
+  );
+};
