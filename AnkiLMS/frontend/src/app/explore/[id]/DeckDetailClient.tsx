@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useEffect, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
+import Link from "next/link";
 import { AppShell } from "../../../components/AppShell";
 import { useApp } from "../../../contexts/AppProvider";
 import { CURATED_DECKS, curatedDeckToAnkiDeck, IS_DEMO_DECKS_ENABLED, sharedDeckToExploreDeck } from "../../../data/curatedDecks";
@@ -138,6 +139,13 @@ export default function DeckDetailClient({ id }: { id: string }) {
       (ud) => ud.id === target.id || ud.name === target.name
     );
   }, [deck, userDecks]);
+
+  const studyHref = useMemo(() => {
+    if (!deck) return "/flashcards";
+    const ankiDeck = curatedDeckToAnkiDeck(deck);
+    const params = new URLSearchParams({ study: "true", deckId: `user-${ankiDeck.id}`, from: `/explore/${id}` });
+    return `/flashcards?${params.toString()}`;
+  }, [deck, id]);
 
   const deckCards = deck?.cards ?? [];
   const previewCards = useMemo(() => {
@@ -300,9 +308,9 @@ export default function DeckDetailClient({ id }: { id: string }) {
               </div>
               {isAdded ? (
                 <div className="space-y-1">
-                  <a href={`/flashcards?study=true&from=${encodeURIComponent(`/explore/${id}`)}`} className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-black bg-emerald-500 hover:bg-emerald-600 text-white transition">
+                  <Link href={studyHref} className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-black bg-emerald-500 hover:bg-emerald-600 text-white transition">
                     <BookOpen className="w-4 h-4" /> Học ngay
-                  </a>
+                  </Link>
                   <button onClick={handleRemove} className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-xl text-xs font-semibold text-rose-500 hover:bg-rose-500/10 transition cursor-pointer">
                     <Trash2 className="w-3.5 h-3.5" /> Gỡ khỏi kho thẻ
                   </button>
@@ -423,9 +431,9 @@ export default function DeckDetailClient({ id }: { id: string }) {
                 <button onClick={handleRemove} aria-label="Gỡ khỏi kho thẻ" title="Gỡ khỏi kho thẻ" className="h-11 w-11 shrink-0 rounded-xl text-rose-500 hover:bg-rose-500/10 flex items-center justify-center cursor-pointer">
                   <Trash2 className="w-4 h-4" />
                 </button>
-                <a href={`/flashcards?study=true&from=${encodeURIComponent(`/explore/${id}`)}`} style={{ color: "#fff" }} className="flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 px-4 text-sm font-black text-white transition">
+                <Link href={studyHref} style={{ color: "#fff" }} className="flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 px-4 text-sm font-black text-white transition">
                   <BookOpen className="w-4 h-4" /> Học ngay ({deck.cards.length.toLocaleString("vi-VN")} thẻ)
-                </a>
+                </Link>
               </>
             ) : (
               <button onClick={handleAdd} style={{ color: "#fff" }} className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-sky-500 hover:bg-sky-600 px-4 text-sm font-black text-white transition cursor-pointer">

@@ -117,7 +117,7 @@ const toSlug = (str: string): string => {
 };
 
 export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDecks = [], initialViewMode = "dashboard", initialEmptyCards = false }) => {
-  const { currentUser, setActiveStudySession, removedBuiltInDeckIds, userDecks: ownedDecks, setUserDecks, handleOpenAuth } = useApp();
+  const { currentUser, isAuthReady, setActiveStudySession, removedBuiltInDeckIds, userDecks: ownedDecks, setUserDecks, handleOpenAuth } = useApp();
   const isAdmin = currentUser?.role === "admin";
   // Cây bộ thẻ phụ thuộc người dùng và kho thẻ đọc từ localStorage: chỉ dựng sau khi hydrate để HTML tĩnh khớp bản client.
   const hydrated = useSyncExternalStore(() => () => {}, () => true, () => false);
@@ -164,8 +164,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const [modalImage, setModalImage] = useState<string | null>(null);
 
   // Resume banner state
-  const [lastStudiedDeckId, setLastStudiedDeckId] = useState<string | null>("thth-1-b1-1");
-  const [lastStudiedTitle, setLastStudiedTitle] = useState<string | null>("1. Quốc gia (나라)");
+  const [lastStudiedDeckId, setLastStudiedDeckId] = useState<string | null>(null);
+  const [lastStudiedTitle, setLastStudiedTitle] = useState<string | null>(null);
 
   // FSRS & Local Storage Card Memory
   const [masteredWords, setMasteredWords] = useState<string[]>([]);
@@ -502,13 +502,10 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
         return;
       }
     }
-
-    const firstBook = deckTree[0];
-    const firstLesson = firstBook?.children?.[0] || firstBook;
-    const target = firstLesson?.children?.[0] || firstLesson;
-    if (target) {
-      startStudy(target.id, target.title, target.cards);
-    }
+    // Never guess a lesson: if the saved lesson was removed or is unavailable,
+    // keep the learner on the deck list instead of starting an unrelated deck.
+    setViewMode("dashboard");
+    setActiveStudySession(null);
   }, [lastStudiedDeckId, deckTree, findNodeById, startStudy]);
 
   // Số thẻ còn lại trong lượt học: thẻ mới (chưa có lịch ôn) và thẻ ôn lại, tính từ thẻ đang học trở đi.
@@ -542,17 +539,21 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   // Auto-resume if query param ?resume=true or ?study=true is present
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (autoResumedRef.current) return; // chỉ tự vào học một lần, không bật lại sau khi bấm Trở về
+    if (autoResumedRef.current || !isAuthReady) return; // đợi tài khoản và bộ thẻ lưu trên máy nạp xong
     const params = new URLSearchParams(window.location.search);
     // Chờ cây bộ thẻ dựng xong rồi mới vào học; nếu vào sớm quá thì không có bài nào để mở.
     if ((params.get("resume") === "true" || params.get("study") === "true") && deckTree.length > 0) {
+      const requestedDeckId = params.get("deckId");
+      const requestedDeck = requestedDeckId ? findNodeById(deckTree, requestedDeckId) : null;
+      if (requestedDeckId && !requestedDeck) return; // bộ Explore có thể đang được khôi phục từ máy chủ
       autoResumedRef.current = true;
       const from = params.get("from");
       returnToRef.current = from && from.startsWith("/") && !from.startsWith("//") ? from : null;
       window.history.replaceState(null, "", window.location.pathname);
-      resumeLastLesson();
+      if (requestedDeck) startStudy(requestedDeck.id, requestedDeck.title, requestedDeck.cards);
+      else if (params.get("resume") === "true" || params.get("study") === "true") resumeLastLesson();
     }
-  }, [resumeLastLesson, deckTree]);
+  }, [isAuthReady, resumeLastLesson, startStudy, findNodeById, deckTree]);
 
   // Collect all container ids for toggle all
   const getAllContainerIds = useCallback((nodes: DeckTreeNode[]): string[] => {
