@@ -374,6 +374,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Bottom Action Area: Login / User Profile */}
       <div className="p-3 space-y-2 border-t border-[#111c38]/70 bg-[#070d1a] shrink-0">
+        {!collapsed && <InstallAppButton />}
         <div className={`flex items-center ${collapsed ? "justify-center" : "justify-between"}`}>
           {!collapsed && <EggThemeToggle />}
           <button
@@ -385,7 +386,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {collapsed ? <ChevronsRight className="w-4 h-4" /> : <ChevronsLeft className="w-4 h-4" />}
           </button>
         </div>
-        {!collapsed && <InstallAppButton />}
 
         {currentUser ? (
           <div className={`flex items-center rounded-xl bg-[#0b1329] border-0 ${collapsed ? "justify-center py-2" : "justify-between p-2"}`}>
