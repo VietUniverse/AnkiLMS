@@ -1302,7 +1302,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                   </div>
 
                   {/* Bottom Footer Hint */}
-                  <div className="w-full flex items-center justify-between pt-3 border-t border-stone-100 dark:border-stone-800/80 text-[11px]">
+                  {isFlipped && <div className="w-full flex items-center justify-between pt-3 border-t border-stone-100 dark:border-stone-800/80 text-[11px]">
                     <span className="flex items-center gap-1 font-medium text-stone-400">
                       {isFlipped ? (
                         <>
@@ -1319,11 +1319,9 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                           </kbd>{" "}
                           Nghe lại
                         </>
-                      ) : (
-                        <span>Thẻ nhận diện từ vựng</span>
-                      )}
+                      ) : null}
                     </span>
-                  </div>
+                  </div>}
                 </div>
               </div>
             )}

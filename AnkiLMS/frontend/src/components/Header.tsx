@@ -49,34 +49,9 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onToggl
         )}
       </div>
 
-      {/* Vùng Giữa (Khi học thẻ): Chuyển đổi Lật thẻ / Gõ từ & Tiến độ */}
-      {activeStudySession && activeStudySession.setStudyMode && (
+      {/* Vùng Giữa (Khi học thẻ): chỉ hiện tiến độ. Chế độ lật thẻ/gõ từ do hệ thống tự quyết định, không có công tắc. */}
+      {activeStudySession && (
         <div className="flex items-center gap-2 animate-reveal">
-          <div className="flex items-center bg-stone-100 dark:bg-stone-800/90 p-0.5 rounded-xl text-xs font-medium select-none border border-stone-200/80 dark:border-stone-700/80">
-            <button
-              type="button"
-              onClick={() => activeStudySession.setStudyMode?.("flip")}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
-                activeStudySession.studyMode === "flip"
-                  ? "bg-white dark:bg-stone-700 text-stone-900 dark:text-white shadow-xs"
-                  : "text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white"
-              }`}
-            >
-              Lật thẻ
-            </button>
-            <button
-              type="button"
-              onClick={() => activeStudySession.setStudyMode?.("typing")}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold transition cursor-pointer ${
-                activeStudySession.studyMode === "typing"
-                  ? "bg-white dark:bg-stone-700 text-stone-900 dark:text-white shadow-xs"
-                  : "text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white"
-              }`}
-            >
-              Gõ từ
-            </button>
-          </div>
-
           {activeStudySession.progressText && (
             <span className="hidden sm:inline-block text-xs font-mono font-bold text-stone-600 dark:text-stone-300 px-2 py-1 rounded-lg bg-stone-100/80 dark:bg-stone-800/80 border border-stone-200/60 dark:border-stone-700/60">
               {activeStudySession.progressText}
