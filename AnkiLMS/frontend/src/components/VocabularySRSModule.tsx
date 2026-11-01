@@ -881,11 +881,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
               >
                 <span>{node.title}</span>
                 {node.subtitle && <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[9px] font-bold text-sky-800 dark:bg-sky-950/60 dark:text-sky-300">{node.subtitle}</span>}
-                {hasChildren && (
-                  <span className="text-[10px] font-mono font-normal px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 text-stone-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                    Học cả mục ({stats.total})
-                  </span>
-                )}
               </h3>
               <p className="sm:hidden mt-0.5 text-[11px] text-stone-500 dark:text-stone-400">
                 <span className="font-bold text-sky-600 dark:text-sky-400">{stats.newCount}</span> mới, <span className="font-bold text-rose-500 dark:text-rose-400">{stats.reviewCount}</span> ôn, <span className={stats.percent > 0 ? "font-bold text-emerald-600 dark:text-emerald-400" : ""}>{stats.percent}%</span>
