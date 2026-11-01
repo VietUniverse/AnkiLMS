@@ -810,7 +810,7 @@ export const ShadowingModule: React.FC = () => {
                 <button onClick={() => playSegment(currentSub)} className="h-10 w-10 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 flex items-center justify-center cursor-pointer" aria-label="Phát lại câu hiện tại" title="Phát lại câu">
                   <RotateCcw className="w-5 h-5" aria-hidden="true" />
                 </button>
-                <button onClick={playFullLesson} className="h-10 w-10 rounded-xl bg-rose-600 hover:bg-rose-500 text-white flex items-center justify-center shadow-lg shadow-rose-900/40 cursor-pointer" aria-label="Phát toàn bộ bài học" title="Phát cả bài">
+                <button onClick={playFullLesson} className="h-10 w-10 rounded-xl bg-rose-600 hover:bg-rose-500 text-white flex items-center justify-center cursor-pointer" aria-label="Phát toàn bộ bài học" title="Phát cả bài">
                   <Play className="w-5 h-5 fill-white" aria-hidden="true" />
                 </button>
                 <button onClick={handleNextSub} className="h-10 w-10 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 flex items-center justify-center cursor-pointer" aria-label="Câu tiếp" title="Câu tiếp">
