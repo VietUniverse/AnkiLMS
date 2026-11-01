@@ -82,6 +82,14 @@ export const DailyLimitsPanel: React.FC<Props> = ({ limits, progress, onChange }
               <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">Nhập số từ bạn muốn học tối đa mỗi ngày.</p>
             </div>
             <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setDraft(String(Math.max(1, (Number(draft) || 0) - 5)))}
+                aria-label="Giảm 5 từ"
+                className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-stone-300 text-xl font-black hover:bg-stone-100 dark:border-stone-600 dark:hover:bg-stone-800"
+              >
+                −
+              </button>
               <input
                 autoFocus
                 type="number"
@@ -90,11 +98,19 @@ export const DailyLimitsPanel: React.FC<Props> = ({ limits, progress, onChange }
                 max={9999}
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
-                placeholder="Ví dụ 20"
+                placeholder="20"
                 aria-label={`Số ${FIELD_LABEL[editing].toLowerCase()} mỗi ngày`}
-                className="w-full h-12 rounded-xl border border-stone-300 dark:border-stone-600 bg-transparent px-4 text-center text-xl font-black tabular-nums text-stone-900 dark:text-white focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+                className="h-12 min-w-0 flex-1 rounded-xl border border-stone-300 bg-transparent px-2 text-center text-xl font-black tabular-nums [appearance:textfield] focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 dark:border-stone-600 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none text-stone-900 dark:text-white"
               />
-              <span className="text-sm text-stone-500 dark:text-stone-400 shrink-0">từ</span>
+              <button
+                type="button"
+                onClick={() => setDraft(String(Math.min(9999, (Number(draft) || 0) + 5)))}
+                aria-label="Tăng 5 từ"
+                className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-stone-300 text-xl font-black hover:bg-stone-100 dark:border-stone-600 dark:hover:bg-stone-800"
+              >
+                +
+              </button>
+              <span className="shrink-0 text-sm text-stone-500 dark:text-stone-400">từ</span>
             </div>
             {draft !== "" && !valid && <p role="alert" className="text-xs text-rose-600">Nhập số nguyên từ 1 đến 9999.</p>}
             <div className="space-y-2">
