@@ -53,7 +53,7 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onToggl
 
       {/* Thanh tiến độ dính đáy thanh trên khi học thẻ, là một phần của thanh */}
       {activeStudySession && activeStudySession.progressPercent !== undefined && (
-        <div className="absolute inset-x-0 bottom-0 h-1 bg-white/10" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={activeStudySession.progressPercent}>
+        <div className="absolute inset-x-0 top-0 h-1 bg-stone-300/40 dark:bg-white/10" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={activeStudySession.progressPercent}>
           <div className="h-full bg-emerald-500 transition-all duration-300" style={{ width: `${activeStudySession.progressPercent}%` }} />
         </div>
       )}
