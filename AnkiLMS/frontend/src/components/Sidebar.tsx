@@ -53,11 +53,11 @@ interface SidebarProps {
 
 const mainNav = [
   { href: "/", label: "Trang chủ", icon: Home },
-  { href: "/classes", label: "Lớp học", icon: Users, feature: "classes" },
+  { href: "/flashcards", label: "Từ vựng", icon: Brain, feature: "flashcards" },
   { href: "/explore", label: "Khám phá", icon: Layers, badge: "MỚI", feature: "explore" },
   { href: "/placement-test", label: "Kiểm tra đầu vào", icon: ClipboardCheck, feature: "placementTest" },
-  { href: "/flashcards", label: "Từ vựng", icon: Brain, feature: "flashcards" },
   { href: "/dictionary", label: "Tra từ điển", icon: Search, feature: "dictionary" },
+  { href: "/classes", label: "Lớp học", icon: Users, feature: "classes" },
   { href: "/dictation", label: "Luyện nghe chính tả", icon: Headphones, feature: "dictation" },
   { href: "/shadowing", label: "Shadowing", icon: Repeat, feature: "shadowing" },
   { href: "/listen", label: "Nghe thụ động", icon: ListMusic, badge: "MỚI", feature: "listen" },
