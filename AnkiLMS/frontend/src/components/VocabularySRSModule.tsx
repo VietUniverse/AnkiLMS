@@ -1016,7 +1016,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                 </button>
               ) : (
                 /* Trạng thái 2: Đã lật -> Thay thế ngay bằng Quên & Thuộc */
-                <div className="space-y-2 animate-reveal">
+                <div>
                   <div className="grid grid-cols-2 gap-3 sm:gap-4">
                     <button
                       onClick={() => handleResponse(false)}
@@ -1274,7 +1274,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
                         {/* PHẦN ĐÁP ÁN: MỞ RA TRƯỢT ÊM ÁI KHI BẤM "HIỆN ĐÁP ÁN" */}
                         {isFlipped && (
-                          <div className="space-y-3.5 pt-1 animate-reveal">
+                          <div className="space-y-3.5 pt-1 animate-fade-only">
                             <div>
                               <div
                                 className="text-2xl sm:text-3xl font-bold text-emerald-600 dark:text-emerald-400 tracking-tight"
@@ -1333,7 +1333,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                           />
                           {isFlipped && currentCard.example_translated && (
                             <p
-                              className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 mt-1 italic border-t border-stone-200/50 dark:border-stone-700/50 pt-1.5 animate-reveal"
+                              className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 mt-1 italic border-t border-stone-200/50 dark:border-stone-700/50 pt-1.5 animate-fade-only"
                               dangerouslySetInnerHTML={{ __html: cleanHtmlText(currentCard.example_translated) }}
                             />
                           )}

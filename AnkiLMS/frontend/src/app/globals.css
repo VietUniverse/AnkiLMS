@@ -1280,6 +1280,16 @@ html[data-theme="light"] body:not(:has(.login-page-root)) .metric-card-subtext {
   animation: revealSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Chỉ mờ dần, không trượt: dùng cho nội dung đáp án để thẻ không nhúc nhích khi lật. */
+@keyframes fadeOnly {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-only {
+  animation: fadeOnly 0.15s ease-out forwards;
+}
+
 .hint-display {
   display: flex;
   align-items: center;
