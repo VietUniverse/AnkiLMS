@@ -1508,6 +1508,14 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
               <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">Hôm nay bạn đã học đủ từ mới. Bộ này còn {morePrompt.available} từ mới.</p>
             </div>
             <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setMoreAmount(String(Math.max(1, (Number(moreAmount) || 0) - 5)))}
+                aria-label="Giảm 5 từ"
+                className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-stone-300 text-xl font-black hover:bg-stone-100 dark:border-stone-600 dark:hover:bg-stone-800"
+              >
+                −
+              </button>
               <input
                 autoFocus
                 type="number"
@@ -1517,9 +1525,16 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                 value={moreAmount}
                 onChange={(e) => setMoreAmount(e.target.value)}
                 aria-label="Số từ mới muốn học thêm"
-                className="h-12 w-full rounded-xl border border-stone-300 bg-transparent px-4 text-center text-xl font-black tabular-nums focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 dark:border-stone-600"
+                className="h-12 min-w-0 flex-1 rounded-xl border border-stone-300 bg-transparent px-2 text-center text-xl font-black tabular-nums [appearance:textfield] focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 dark:border-stone-600 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
               />
-              <span className="shrink-0 text-sm text-stone-500 dark:text-stone-400">từ</span>
+              <button
+                type="button"
+                onClick={() => setMoreAmount(String(Math.min(morePrompt.available, (Number(moreAmount) || 0) + 5)))}
+                aria-label="Tăng 5 từ"
+                className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-stone-300 text-xl font-black hover:bg-stone-100 dark:border-stone-600 dark:hover:bg-stone-800"
+              >
+                +
+              </button>
             </div>
             <div className="flex gap-2">
               {[10, 20, 30].filter((n) => n <= morePrompt.available).map((n) => (
