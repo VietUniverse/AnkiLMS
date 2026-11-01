@@ -55,7 +55,14 @@ function legacyStateToFsrs(state: FSRSState["state"] | undefined): State {
 
 function toFsrsCard(current: Partial<FSRSState>, now: Date) {
   const emptyCard = createEmptyCard(now);
-  const lastReview = current.lastReview ? new Date(current.lastReview) : undefined;
+  // lastReview thường là chuỗi ngày "YYYY-MM-DD". new Date() hiểu nó là 00:00 UTC, tức là có thể nằm SAU "bây giờ"
+  // ở múi giờ lệch về phía đông (ví dụ GMT+9 rạng sáng), làm ts-fsrs báo "Invalid delta_t -1". Đọc theo giờ địa phương và không cho vượt quá now.
+  const parsedReview = current.lastReview
+    ? /^\d{4}-\d{2}-\d{2}$/.test(current.lastReview)
+      ? new Date(Number(current.lastReview.slice(0, 4)), Number(current.lastReview.slice(5, 7)) - 1, Number(current.lastReview.slice(8, 10)))
+      : new Date(current.lastReview)
+    : undefined;
+  const lastReview = parsedReview && parsedReview.getTime() > now.getTime() ? new Date(now) : parsedReview;
   const due = current.dueAt
     ? new Date(current.dueAt)
     : current.dueDate
