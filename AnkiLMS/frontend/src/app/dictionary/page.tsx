@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { BookOpen, ExternalLink, Search, Volume2 } from "lucide-react";
+import { BookOpen, ExternalLink, Search, Volume2, X } from "lucide-react";
 import { AppShell } from "../../components/AppShell";
 import { useApp } from "../../contexts/AppProvider";
 import { CURATED_DECKS } from "../../data/curatedDecks";
@@ -27,6 +27,7 @@ export default function DictionaryPage() {
   const [naverEntry, setNaverEntry] = useState<NaverLookup | null>(null);
   const [naverLoading, setNaverLoading] = useState(false);
   const [naverError, setNaverError] = useState("");
+  const [showAllNaver, setShowAllNaver] = useState(false);
   const [level, setLevel] = useState<DictionaryLevel>("all");
   const [page, setPage] = useState(0);
   const levelFilters: Array<{ value: DictionaryLevel; label: string }> = [
@@ -88,6 +89,12 @@ export default function DictionaryPage() {
     return () => { controller.abort(); window.clearTimeout(timer); };
   }, [query]);
 
+  // Chủ đề có thể gồm nhiều nhãn nối bằng " · ": chỉ hiện 2 nhãn đầu, còn lại ghi "+N".
+  function topicLabel(topic: string) {
+    const parts = topic.split(" · ").map((part) => part.trim()).filter(Boolean);
+    return parts.length > 2 ? `${parts.slice(0, 2).join(", ")} +${parts.length - 2}` : parts.join(", ");
+  }
+
   function speak(word: string) {
     if (!("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
@@ -113,63 +120,75 @@ export default function DictionaryPage() {
       : `/explore?search=${encodeURIComponent(entry.hangul)}`;
   }
 
-  return <AppShell><main className="mx-auto max-w-5xl space-y-5 pb-12">
-    <section className="card-duo p-5 sm:p-8">
-      <p className="text-xs font-bold uppercase tracking-widest text-sky-300">Tra cứu từ điển đa ngôn ngữ</p>
-      <h1 className="mt-2 text-2xl font-black text-white sm:text-3xl">Từ điển Hàn · Việt · Anh</h1>
-      <p className="mt-2 text-sm text-slate-300">Gõ tiếng Việt, Hangul hoặc tiếng Anh trong cùng một ô. Hệ thống tự nhận biết ngôn ngữ và tìm nghĩa tương ứng.</p>
-      <label className="mt-5 flex items-center gap-3 rounded-2xl border border-sky-500/40 bg-[#091630] px-4 py-3">
-        <Search className="h-5 w-5 shrink-0 text-sky-300" />
-        <input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => { if (event.key === "Escape") setQuery(""); }} placeholder="Nhập tiếng Việt, Hangul hoặc English…" aria-label="Tìm bằng tiếng Việt, tiếng Hàn hoặc tiếng Anh" className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-slate-400" />
-      </label>
-      <div className="mt-4 flex flex-wrap gap-2" aria-label="Lọc theo cấp từ điển">
-        {levelFilters.map((item) => <button key={item.value} type="button" onClick={() => { setLevel(item.value); setPage(0); }} aria-pressed={level === item.value} className={`rounded-full border px-3 py-1.5 text-xs font-bold ${level === item.value ? "border-sky-400 bg-sky-500/20 text-sky-200" : "border-slate-700 text-slate-300 hover:border-sky-500/50"}`}>{item.label}</button>)}
-      </div>
-    </section>
+  const card = "rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/70";
+  const tag = "rounded-md px-1.5 py-0.5 text-[11px] font-bold";
+  const browsing = !query.trim() && level === "all";
+  const naverMeanings = naverEntry ? (showAllNaver ? naverEntry.meanings : naverEntry.meanings.slice(0, 2)) : [];
 
-    {!query.trim() && level === "all" ? <section className="card-duo p-8 text-center text-slate-300"><BookOpen className="mx-auto mb-3 h-8 w-8 text-sky-300" />Nhập tiếng Việt, Hangul hoặc English để tra cứu.</section>
-      : loading ? <section className="card-duo p-8 text-center text-slate-300">Đang tìm từ…</section>
-      : error ? <section className="card-duo p-8 text-center text-rose-300">{error}</section>
+  return <AppShell><main className="mx-auto max-w-3xl space-y-4 pb-20 text-stone-900 dark:text-stone-100">
+    <div className="space-y-3">
+      <h1 className="text-2xl font-black tracking-tight">Từ điển</h1>
+      <label className="flex h-12 items-center gap-3 rounded-2xl border border-stone-200 bg-white px-4 transition focus-within:border-sky-500 focus-within:ring-2 focus-within:ring-sky-500/20 dark:border-stone-700 dark:bg-stone-900">
+        <Search className="h-5 w-5 shrink-0 text-stone-400" />
+        <input value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => { if (event.key === "Escape") setQuery(""); }} placeholder="Gõ tiếng Việt, Hangul hoặc English" aria-label="Tìm bằng tiếng Việt, tiếng Hàn hoặc tiếng Anh" className="min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-stone-400" />
+        {query && <button type="button" onClick={() => setQuery("")} aria-label="Xóa từ khóa" className="shrink-0 rounded-lg p-1 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200"><X className="h-4 w-4" /></button>}
+      </label>
+      <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1" aria-label="Lọc theo cấp TOPIK">
+        {levelFilters.map((item) => <button key={item.value} type="button" onClick={() => { setLevel(item.value); setPage(0); }} aria-pressed={level === item.value} className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold transition cursor-pointer ${level === item.value ? "bg-sky-500 text-white" : "bg-stone-100 text-stone-600 hover:bg-stone-200 dark:bg-stone-800 dark:text-stone-300 dark:hover:bg-stone-700"}`} style={level === item.value ? { color: "#fff" } : undefined}>{item.label}</button>)}
+      </div>
+    </div>
+
+    {browsing ? <section className={`${card} px-6 py-12 text-center text-sm text-stone-500 dark:text-stone-400`}><BookOpen className="mx-auto mb-3 h-8 w-8 text-sky-500" />Tra từ bằng tiếng Việt, Hangul hoặc English.<br />Hoặc chọn một cấp TOPIK để duyệt danh sách.</section>
+      : loading ? <section className={`${card} p-8 text-center text-sm text-stone-500 dark:text-stone-400`}>Đang tìm từ…</section>
+      : error ? <section className={`${card} p-8 text-center text-sm text-rose-600`}>{error}</section>
       : <section className="space-y-3">
-        {naverLoading && <article className="card-duo p-4 text-sm text-slate-300">Đang tra cứu trực tiếp trên Naver…</article>}
-        {naverError && <article className="card-duo p-4 text-sm text-amber-300">{naverError}</article>}
-        {naverEntry && <article className="card-duo border border-emerald-500/30 p-4 sm:p-5">
-          <div className="flex flex-wrap items-center gap-2"><span className="rounded-full bg-emerald-500/15 px-2.5 py-1 text-[11px] font-black text-emerald-300">NAVER DICTIONARY · TRA CỨU TRỰC TIẾP</span>{naverEntry.topik && <span className="rounded-full bg-sky-500/15 px-2.5 py-1 text-[11px] font-bold text-sky-300">{naverEntry.topik}</span>}{naverEntry.importance > 0 && <span className="text-amber-300">{"★".repeat(naverEntry.importance)}</span>}</div>
-          <h2 className="mt-3 font-noto text-2xl font-black text-white">{naverEntry.hangul}{naverEntry.hanja && <span className="ml-2 text-base font-semibold text-slate-300">{naverEntry.hanja}</span>}</h2>
-          {naverEntry.meanings.map((meaning, index) => <div key={`${meaning.meaning}-${index}`} className="mt-3 border-t border-slate-700/70 pt-3">
-            <p className="text-sm font-bold text-emerald-200">{meaning.meaning}{meaning.partOfSpeech && <span className="ml-2 text-xs font-medium text-slate-300">{meaning.partOfSpeech}</span>}</p>
-            {meaning.english && <p className="mt-1 text-sm text-slate-200">{meaning.english}</p>}
-            {meaning.korean && <p className="mt-1 text-sm text-slate-300">{meaning.korean}</p>}
-            {meaning.example && <p className="mt-2 font-noto text-sm text-sky-200">예: {meaning.example}</p>}
+        {naverLoading && <p className="text-xs text-stone-500 dark:text-stone-400">Đang tra Naver…</p>}
+        {naverError && <p className="text-xs text-amber-600">{naverError}</p>}
+        {naverEntry && <article className={`${card} border-emerald-500/40 p-4 sm:p-5`}>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className={`${tag} bg-emerald-500/10 text-emerald-700 dark:text-emerald-300`}>Naver</span>
+            {naverEntry.topik && <span className={`${tag} bg-sky-500/10 text-sky-700 dark:text-sky-300`}>{naverEntry.topik}</span>}
+            {naverEntry.importance > 0 && <span className="text-xs text-amber-500">{"★".repeat(naverEntry.importance)}</span>}
+          </div>
+          <h2 className="mt-2 font-noto text-2xl font-black">{naverEntry.hangul}{naverEntry.hanja && <span className="ml-2 text-base font-semibold text-stone-500 dark:text-stone-400">{naverEntry.hanja}</span>}</h2>
+          {naverMeanings.map((meaning, index) => <div key={`${meaning.meaning}-${index}`} className="mt-3 border-t border-stone-100 pt-3 dark:border-stone-800">
+            <p className="text-sm font-bold text-emerald-700 dark:text-emerald-300">{meaning.meaning}{meaning.partOfSpeech && <span className="ml-2 text-xs font-medium text-stone-500 dark:text-stone-400">{meaning.partOfSpeech}</span>}</p>
+            {meaning.english && <p className="mt-1 text-sm text-stone-600 dark:text-stone-300">{meaning.english}</p>}
+            {meaning.example && <p className="mt-1.5 font-noto text-sm text-sky-700 dark:text-sky-300">{meaning.example}</p>}
           </div>)}
-          <a href={naverLookupUrl(naverEntry.hangul)} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-sky-300 hover:underline">Naver에서 원문 보기 <ExternalLink className="h-3.5 w-3.5" /></a>
+          <div className="mt-3 flex items-center justify-between">
+            {naverEntry.meanings.length > 2 ? <button type="button" onClick={() => setShowAllNaver(!showAllNaver)} className="text-xs font-bold text-sky-600 hover:underline dark:text-sky-400 cursor-pointer">{showAllNaver ? "Thu gọn" : `Xem thêm ${naverEntry.meanings.length - 2} nghĩa`}</button> : <span />}
+            <a href={naverLookupUrl(naverEntry.hangul)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs font-bold text-sky-600 hover:underline dark:text-sky-400">Mở Naver <ExternalLink className="h-3.5 w-3.5" /></a>
+          </div>
         </article>}
-        <p className="text-sm font-bold text-slate-300">{results.length ? `${query.trim() ? `Tìm thấy ${results.length} kết quả phù hợp` : `Danh sách ${level === "all" ? "tất cả cấp" : level} · trang ${page + 1}`}` : "Không tìm thấy nghĩa trong dữ liệu hiện có."}</p>
-        {results.map((entry, index) => <article key={`${entry.hangul}-${index}`} className="card-duo p-4 sm:p-5">
+
+        <p className="px-1 text-xs font-semibold text-stone-500 dark:text-stone-400">{results.length ? (query.trim() ? `${results.length} kết quả` : `${level === "all" ? "Tất cả cấp" : level}, trang ${page + 1}`) : "Không tìm thấy nghĩa trong dữ liệu hiện có."}</p>
+        {results.map((entry, index) => {
+          const href = studyHref(entry);
+          return <article key={`${entry.hangul}-${index}`} className={`${card} p-4`}>
           <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2"><h2 className="font-noto text-xl font-black text-white">{entry.hangul}</h2>
-                {entry.partOfSpeech && <span className="rounded-lg bg-sky-500/15 px-2 py-1 text-[11px] font-bold text-sky-300">{entry.partOfSpeech}</span>}
-                {entry.level && <span className="rounded-lg bg-violet-500/15 px-2 py-1 text-[11px] font-bold text-violet-300">{entry.level}</span>}
-                {entry.topik && <span className="rounded-lg bg-violet-500/15 px-2 py-1 text-[11px] font-bold text-violet-300">{entry.topik}</span>}
-                {entry.topic && <span className="rounded-lg bg-amber-500/15 px-2 py-1 text-[11px] font-bold text-amber-300">{entry.topic}</span>}
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                <h2 className="font-noto text-xl font-black">{entry.hangul}</h2>
+                {entry.hanja && <span className="text-sm text-stone-400">{entry.hanja}</span>}
+                {entry.partOfSpeech && <span className={`${tag} bg-sky-500/10 text-sky-700 dark:text-sky-300`}>{entry.partOfSpeech}</span>}
+                {(entry.topik || entry.level) && <span className={`${tag} bg-violet-500/10 text-violet-700 dark:text-violet-300`}>{entry.topik || entry.level}</span>}
+                {entry.topic && <span className={`${tag} bg-amber-500/10 text-amber-700 dark:text-amber-300`}>{topicLabel(entry.topic)}</span>}
               </div>
-              {entry.hanja && <p className="mt-1 text-xs text-slate-400">漢字 · {entry.hanja}</p>}
-              {entry.vietnamese ? <p className="mt-2 text-sm text-emerald-200"><strong>VI</strong> · {entry.vietnamese}</p> : <p className="mt-2 text-sm text-amber-300">Mục này chưa có nghĩa tiếng Việt.</p>}
-              {entry.english && <p className="mt-1 text-sm text-slate-200"><strong>EN</strong> · {entry.english}</p>}
-              {entry.japanese && <p className="mt-1 text-sm text-slate-200"><strong>JA</strong> · {entry.japanese}</p>}
-              {entry.source === "yomichan" && <p className="mt-2 text-sm text-slate-300">Có trong chỉ mục Hàn–Nhật. Mở từ điển nguồn để xem nghĩa.</p>}
-              {entry.source === "topic-pdf" && <p className="mt-2 text-xs text-slate-400">Từ đầu mục trong danh sách TOPIK theo chủ đề; nghĩa hiển thị khi có trong dữ liệu từ điển HaechiVN.</p>}
+              {entry.vietnamese ? <p className="mt-1.5 text-sm font-semibold text-emerald-700 dark:text-emerald-300">{entry.vietnamese}</p> : <p className="mt-1.5 text-sm text-amber-600">Chưa có nghĩa tiếng Việt.</p>}
+              {entry.english && <p className="mt-0.5 text-sm text-stone-600 dark:text-stone-300">{entry.english}</p>}
+              {entry.japanese && <p className="mt-0.5 text-xs text-stone-500 dark:text-stone-400">{entry.japanese}</p>}
             </div>
-            <button onClick={() => speak(entry.hangul)} aria-label={`Nghe ${entry.hangul}`} className="shrink-0 rounded-xl bg-sky-500/15 p-2 text-sky-300"><Volume2 className="h-5 w-5" /></button>
+            <div className="flex shrink-0 items-center gap-1">
+              <button onClick={() => speak(entry.hangul)} aria-label={`Nghe ${entry.hangul}`} title="Nghe phát âm" className="rounded-xl p-2 text-sky-600 hover:bg-sky-500/10 dark:text-sky-400 cursor-pointer"><Volume2 className="h-5 w-5" /></button>
+              <a href={naverLookupUrl(entry.hangul)} target="_blank" rel="noopener noreferrer" aria-label={`Tra ${entry.hangul} trên Naver`} title="Tra Naver" className="rounded-xl p-2 text-stone-400 hover:bg-stone-100 hover:text-stone-700 dark:hover:bg-stone-800 dark:hover:text-stone-200"><ExternalLink className="h-5 w-5" /></a>
+            </div>
           </div>
-          <div className="mt-4 flex flex-wrap gap-3 text-xs font-bold">
-            <a href={naverLookupUrl(entry.hangul)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sky-300 hover:underline">Tra Naver <ExternalLink className="h-3.5 w-3.5" /></a>
-            <Link href={studyHref(entry)} className="text-violet-300 hover:underline">{studyHref(entry) === "/flashcards" ? "Mở flashcard" : "Xem bộ thẻ & thêm vào học"}</Link>
-          </div>
-        </article>)}
-        {!results.length && <a href={naverLookupUrl(query.trim())} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-bold text-sky-300 hover:underline">Tra từ này trên Naver <ExternalLink className="h-4 w-4" /></a>}
-        {!query.trim() && level !== "all" && <div className="flex justify-center gap-3 pt-3"><button disabled={page === 0} onClick={() => setPage((current) => Math.max(0, current - 1))} className="rounded-xl border border-slate-700 px-4 py-2 text-xs font-bold text-slate-200 disabled:opacity-40">Trước</button><button disabled={results.length < 30} onClick={() => setPage((current) => current + 1)} className="rounded-xl border border-slate-700 px-4 py-2 text-xs font-bold text-slate-200 disabled:opacity-40">Tiếp</button></div>}
+          <Link href={href} className="mt-3 inline-flex items-center gap-1 text-xs font-bold text-violet-600 hover:underline dark:text-violet-300">{href === "/flashcards" ? "Mở flashcard" : "Xem bộ thẻ để học"}</Link>
+        </article>;
+        })}
+        {!results.length && <a href={naverLookupUrl(query.trim())} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-bold text-sky-600 hover:underline dark:text-sky-400">Tra từ này trên Naver <ExternalLink className="h-4 w-4" /></a>}
+        {!query.trim() && level !== "all" && <div className="flex justify-center gap-3 pt-2"><button disabled={page === 0} onClick={() => setPage((current) => Math.max(0, current - 1))} className="rounded-xl border border-stone-200 px-5 py-2.5 text-xs font-bold hover:bg-stone-100 disabled:opacity-40 dark:border-stone-700 dark:hover:bg-stone-800 cursor-pointer">Trước</button><button disabled={results.length < 30} onClick={() => setPage((current) => current + 1)} className="rounded-xl border border-stone-200 px-5 py-2.5 text-xs font-bold hover:bg-stone-100 disabled:opacity-40 dark:border-stone-700 dark:hover:bg-stone-800 cursor-pointer">Tiếp</button></div>}
       </section>}
   </main></AppShell>;
 }
