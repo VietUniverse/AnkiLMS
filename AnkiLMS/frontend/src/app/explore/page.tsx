@@ -215,7 +215,7 @@ export default function ExplorePage() {
             <h3 className="text-sm font-semibold text-stone-900 dark:text-white line-clamp-2 sm:line-clamp-1 group-hover:text-sky-500 transition">
               {deck.title}
             </h3>
-            <p className="text-xs text-stone-400 sm:hidden">{deck.level} · {deckCardCount(deck)} thẻ</p>
+            <p className="text-xs text-stone-400 sm:hidden">{deck.level}, {deckCardCount(deck)} thẻ</p>
           </div>
         </a>
         <span className="hidden sm:block text-xs text-stone-500 dark:text-stone-400 truncate">{deck.level}</span>

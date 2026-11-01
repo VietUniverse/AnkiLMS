@@ -113,7 +113,7 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
             <p className="mt-0.5 flex items-center justify-center gap-1.5 text-xs text-stone-500 dark:text-stone-400 sm:justify-start">
               <Mail className="h-3.5 w-3.5 shrink-0" />
               <span className="truncate">{currentUser.email}</span>
-              <span aria-hidden>·</span>
+              <span aria-hidden>|</span>
               <span className="shrink-0">{roleLabel}</span>
             </p>
             {currentUser.bio && <p className="mt-2 max-w-xl text-sm leading-6 text-stone-600 dark:text-stone-300">{currentUser.bio}</p>}
