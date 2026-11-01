@@ -374,6 +374,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Bottom Action Area: Login / User Profile */}
       <div className="p-3 space-y-2 border-t border-[#111c38]/70 bg-[#070d1a] shrink-0">
+        <div className={`flex items-center ${collapsed ? "justify-center" : "justify-between"}`}>
+          {!collapsed && <EggThemeToggle />}
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            title={collapsed ? "Mở rộng" : "Thu gọn"}
+            aria-label={collapsed ? "Mở rộng thanh bên" : "Thu gọn thanh bên"}
+            className="p-1.5 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-[#111c38] transition-colors cursor-pointer border-0"
+          >
+            {collapsed ? <ChevronsRight className="w-4 h-4" /> : <ChevronsLeft className="w-4 h-4" />}
+          </button>
+        </div>
+        {!collapsed && <InstallAppButton />}
+
         {currentUser ? (
           <div className={`flex items-center rounded-xl bg-[#0b1329] border-0 ${collapsed ? "justify-center py-2" : "justify-between p-2"}`}>
             <Link
@@ -416,19 +429,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {collapsed ? <User className="w-4 h-4 mx-auto" /> : "ĐĂNG NHẬP"}
           </button>
         )}
-
-        {!collapsed && <InstallAppButton />}
-        <div className={`flex items-center ${collapsed ? "justify-center" : "justify-between"}`}>
-          {!collapsed && <EggThemeToggle />}
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            title={collapsed ? "Mở rộng" : "Thu gọn"}
-            aria-label={collapsed ? "Mở rộng thanh bên" : "Thu gọn thanh bên"}
-            className="p-1.5 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-[#111c38] transition-colors cursor-pointer border-0"
-          >
-            {collapsed ? <ChevronsRight className="w-4 h-4" /> : <ChevronsLeft className="w-4 h-4" />}
-          </button>
-        </div>
       </div>
     </aside>
     {confirmLogout && (
