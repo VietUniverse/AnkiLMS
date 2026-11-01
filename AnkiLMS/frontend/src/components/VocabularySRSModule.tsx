@@ -120,6 +120,17 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const isAdmin = currentUser?.role === "admin";
   // Cây bộ thẻ phụ thuộc người dùng và kho thẻ đọc từ localStorage: chỉ dựng sau khi hydrate để HTML tĩnh khớp bản client.
   const hydrated = useSyncExternalStore(() => () => {}, () => true, () => false);
+  // Bề rộng thanh bên (0 khi ẩn trên điện thoại) để canh thanh Quên/Thuộc vào giữa vùng nội dung.
+  const [sidebarWidth, setSidebarWidth] = useState(0);
+  useEffect(() => {
+    const aside = document.querySelector("aside");
+    if (!aside) return;
+    const update = () => setSidebarWidth(aside.getBoundingClientRect().width);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(aside);
+    return () => observer.disconnect();
+  }, []);
   // Navigation View: "dashboard" (Lộ trình cây bài học) | "study" (Màn hình học)
   const [viewMode, setViewMode] = useState<"dashboard" | "study">(initialViewMode);
   const [studyMode, setStudyMode] = useState<"flip" | "typing">("flip");
@@ -1193,7 +1204,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
               </div>
             </div>
           ) : currentCard ? (
-            <div className="min-h-[calc(100vh-140px)] flex flex-col justify-between py-2 animate-reveal">
+            <div className="min-h-[calc(100vh-140px)] flex flex-col justify-between py-2 pb-28 animate-reveal">
               <div className="flex-1 flex flex-col">
 
             {/* CHẾ ĐỘ 1: THẺ NHẬN DIỆN PHẲNG REVEAL (2 CỘT DESKTOP) */}
@@ -1457,12 +1468,10 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                 ======================================================== */}
               </div>
 
-              <div className="hidden lg:block sticky bottom-3 z-20 pt-3 pb-1 mt-4">
-                {studyActions}
-              </div>
+              {/* Thanh hành động luôn cố định sát đáy màn hình ở mọi kích cỡ, không đổi vị trí khi thẻ lật hay nội dung dài ngắn khác nhau. */}
               {hydrated && createPortal(
-                <div className="lg:hidden fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 mx-auto max-w-xl">
-                  <div className="rounded-2xl border border-stone-200 dark:border-stone-700 bg-white/95 dark:bg-stone-900/95 backdrop-blur p-1.5 shadow-lg">
+                <div className="fixed right-0 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 px-3" style={{ left: sidebarWidth }}>
+                  <div className="mx-auto max-w-xl rounded-2xl border border-stone-200 dark:border-stone-700 bg-white/95 dark:bg-stone-900/95 backdrop-blur p-1.5 shadow-lg">
                     {studyActions}
                   </div>
                 </div>,
