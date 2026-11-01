@@ -1,18 +1,18 @@
 {
-  "name": "HaechiVN – Học Tiếng Hàn Duo Style",
+  "name": "HaechiVN - Học tiếng Hàn",
   "short_name": "HaechiVN",
-  "description": "Ứng dụng học tiếng Hàn phong cách HaechiVN, hỗ trợ đọc file Anki .apkg, Luyện nghe Dictation, Shadowing & TOPIK",
-  "start_url": "/",
+  "description": "Học tiếng Hàn với flashcard ôn tập ngắt quãng, từ điển, luyện nghe chính tả, shadowing và TOPIK.",
+  "id": "/",
+  "start_url": "/?source=pwa",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#4198D3",
   "orientation": "portrait",
+  "lang": "vi",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
   "icons": [
-    {
-      "src": "/brand/haechivn-mark.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }

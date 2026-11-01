@@ -16,12 +16,12 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   icons: {
     icon: "/brand/haechivn-mark.png?v=20261028",
-    apple: "/brand/haechivn-mark.png?v=20261028",
+    apple: "/icons/apple-touch-icon.png",
   },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "HaechiVN KR",
+    title: "HaechiVN",
   },
 };
 
@@ -43,7 +43,7 @@ export default function RootLayout({
       <head>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "WebSite", name: "HaechiVN", url: "https://lms.ankivn.com", inLanguage: "vi", description: "Nền tảng học tiếng Hàn với flashcard SRS, từ điển, dictation và shadowing." }) }} />
         <link rel="icon" type="image/png" href="/brand/haechivn-mark.png?v=20261028" />
-        <link rel="apple-touch-icon" href="/brand/haechivn-mark.png?v=20261028" />
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
         <script
           dangerouslySetInnerHTML={{
             __html: `try{var p=new URLSearchParams(window.location.search);var t=p.get('theme')||localStorage.getItem('haechivn_theme')||'light';document.documentElement.dataset.theme=t;if(t==='dark'){document.documentElement.classList.add('dark');}else{document.documentElement.classList.remove('dark');}}catch(e){}`,
