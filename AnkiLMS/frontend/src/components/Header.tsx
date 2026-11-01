@@ -4,6 +4,7 @@ import React from "react";
 import { User as UserIcon, Menu, ArrowLeft } from "lucide-react";
 import { UserProfile } from "../lib/apiClient";
 import { useApp } from "../contexts/AppProvider";
+import { StudyBackgroundPanel } from "./StudyBackgroundPanel";
 
 interface HeaderProps {
   currentUser: UserProfile | null;
@@ -63,6 +64,7 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onToggl
 
       {/* Vùng bên phải: User Stats Badges & Theme */}
       <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+        {activeStudySession && <StudyBackgroundPanel />}
         {!currentUser && (
           <button
             onClick={() => onOpenAuth(false)}

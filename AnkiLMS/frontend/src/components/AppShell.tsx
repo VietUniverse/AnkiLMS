@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { Sidebar } from "./Sidebar";
 import { BottomNav } from "./BottomNav";
 import { Header } from "./Header";
+import { backgroundLayerStyle, useStudyBackground } from "../lib/studyBackground";
 import { AnkiImporter } from "./AnkiImporter";
 import { AuthModal } from "./AuthModal";
 import { useApp } from "../contexts/AppProvider";
@@ -43,6 +44,8 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
     handleDeckImported,
     activeStudySession,
   } = useApp();
+  const studyBackground = useStudyBackground();
+  const studyBackgroundStyle = activeStudySession ? backgroundLayerStyle(studyBackground) : null;
 
   useEffect(() => {
     if (isAuthReady && !currentUser && pathname !== "/login") {
@@ -74,8 +77,11 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
         hideDesktop={!!activeStudySession}
       />
 
+      {/* Nền tùy chỉnh khi học thẻ (gradient hoặc ảnh), nằm dưới nội dung */}
+      {studyBackgroundStyle && <div aria-hidden className="pointer-events-none fixed inset-0 z-0 transition-opacity" style={studyBackgroundStyle} />}
+
       {/* Main Content View */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+      <div className={`${studyBackgroundStyle ? "relative z-10 " : ""}flex-1 flex flex-col min-w-0 overflow-y-auto`}>
         {/* Thanh trên chỉ hiện khi đang học thẻ (nút Trở về, chế độ học, tiến độ); còn lại dùng thanh bên. */}
         {activeStudySession && (
           <Header
