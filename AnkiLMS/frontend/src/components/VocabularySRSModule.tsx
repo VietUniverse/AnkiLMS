@@ -271,7 +271,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       rootNodes.push({
         id: bookId,
         title: bookTitle,
-        subtitle: rootBookNumber === 1 ? "Sơ cấp 1 · TOPIK 1–2" : "Sơ cấp 2 · TOPIK 2–3",
+        subtitle: rootBookNumber === 1 ? "Sơ cấp 1, TOPIK 1–2" : "Sơ cấp 2, TOPIK 2–3",
         cards: allBookCards,
         children: lessonNodes,
       });
@@ -359,7 +359,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
         return ({
         id: `user-${ud.id}`,
         title: ud.name,
-        subtitle: isTopicVocabularyDeck ? "TOPIK 1–6 · Chọn chủ đề để học" : detectedTopik ? `${getCourseRank(detectedTopik)} · TOPIK ${detectedTopik}` : "Chưa gán cấp độ",
+        subtitle: isTopicVocabularyDeck ? "TOPIK 1–6, chọn chủ đề để học" : detectedTopik ? `${getCourseRank(detectedTopik)}, TOPIK ${detectedTopik}` : "Chưa gán cấp độ",
         cards,
         children: subdeckChildren.length ? subdeckChildren : undefined,
       });
@@ -763,10 +763,10 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
     const indentClass =
       level === 0
-        ? "px-4 sm:px-5 h-14 bg-white dark:bg-stone-900/60"
+        ? "px-4 sm:px-5 min-h-14 py-2 sm:py-0 sm:h-14 bg-white dark:bg-stone-900/60"
         : level === 1
-        ? "pl-8 sm:pl-10 pr-4 sm:pr-5 h-12 bg-stone-50/50 dark:bg-stone-900/30"
-        : "pl-14 sm:pl-16 pr-4 sm:pr-5 h-11 bg-stone-50/80 dark:bg-stone-950/40";
+        ? "pl-8 sm:pl-10 pr-4 sm:pr-5 min-h-12 py-2 sm:py-0 sm:h-12 bg-stone-50/50 dark:bg-stone-900/30"
+        : "pl-14 sm:pl-16 pr-4 sm:pr-5 min-h-11 py-2 sm:py-0 sm:h-11 bg-stone-50/80 dark:bg-stone-950/40";
 
     return (
       <div key={node.id} className="deck-group divide-y divide-stone-100 dark:divide-stone-800/60">
@@ -810,23 +810,28 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
               </span>
             )}
 
-            <h3
-              className={`truncate flex items-center gap-2 ${
-                level === 0
-                  ? "text-sm sm:text-base font-bold text-stone-900 dark:text-white"
-                  : level === 1
-                  ? "text-xs sm:text-sm font-semibold text-stone-800 dark:text-stone-200"
-                  : "text-xs font-medium text-stone-600 dark:text-stone-400 group-hover:text-stone-900 dark:group-hover:text-white"
-              }`}
-            >
-              <span>{node.title}</span>
-              {node.subtitle && <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[9px] font-bold text-sky-800 dark:bg-sky-950/60 dark:text-sky-300">{node.subtitle}</span>}
-              {hasChildren && (
-                <span className="text-[10px] font-mono font-normal px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 text-stone-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                  Học cả mục ({stats.total})
-                </span>
-              )}
-            </h3>
+            <div className="min-w-0">
+              <h3
+                className={`truncate flex items-center gap-2 ${
+                  level === 0
+                    ? "text-sm sm:text-base font-bold text-stone-900 dark:text-white"
+                    : level === 1
+                    ? "text-xs sm:text-sm font-semibold text-stone-800 dark:text-stone-200"
+                    : "text-xs font-medium text-stone-600 dark:text-stone-400 group-hover:text-stone-900 dark:group-hover:text-white"
+                }`}
+              >
+                <span>{node.title}</span>
+                {node.subtitle && <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[9px] font-bold text-sky-800 dark:bg-sky-950/60 dark:text-sky-300">{node.subtitle}</span>}
+                {hasChildren && (
+                  <span className="text-[10px] font-mono font-normal px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 text-stone-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                    Học cả mục ({stats.total})
+                  </span>
+                )}
+              </h3>
+              <p className="sm:hidden mt-0.5 text-[11px] text-stone-500 dark:text-stone-400">
+                <span className="font-bold text-sky-600 dark:text-sky-400">{stats.newCount}</span> mới, <span className="font-bold text-rose-500 dark:text-rose-400">{stats.reviewCount}</span> ôn, <span className={stats.percent > 0 ? "font-bold text-emerald-600 dark:text-emerald-400" : ""}>{stats.percent}%</span>
+              </p>
+            </div>
           </div>
 
           {/* Cột 2, 3, 4: Mới | Ôn | % */}
@@ -864,14 +869,14 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                 {visibilityBusyDeckId === sourceUserDeck.id ? "Đang lưu…" : sourceUserDeck.visibility === "public" ? "Công khai" : "Riêng tư"}
               </button>
             )}
-            <div className="w-8 sm:w-10 text-center font-bold text-sky-600 dark:text-sky-400">
+            <div className="hidden sm:block w-10 text-center font-bold text-sky-600 dark:text-sky-400">
               {stats.newCount > 0 ? stats.newCount : <span className="text-stone-300 dark:text-stone-700 font-normal">0</span>}
             </div>
-            <div className="w-8 sm:w-10 text-center font-bold text-rose-500 dark:text-rose-400">
+            <div className="hidden sm:block w-10 text-center font-bold text-rose-500 dark:text-rose-400">
               {stats.reviewCount > 0 ? stats.reviewCount : <span className="text-stone-300 dark:text-stone-700 font-normal">0</span>}
             </div>
             <div
-              className={`w-10 sm:w-12 text-right font-bold ${
+              className={`hidden sm:block w-12 text-right font-bold ${
                 stats.percent > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-stone-400"
               }`}
             >
@@ -1038,7 +1043,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
             {/* BẢNG ANKI ĐỒNG NHẤT TOÀN TRANG (DECK TREE) */}
             <div className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 overflow-hidden shadow-xs">
               {/* Header 4 Cột Chuẩn */}
-              <div className="flex items-center justify-between px-4 sm:px-5 py-3 border-b border-stone-200 dark:border-stone-800 bg-stone-100/70 dark:bg-stone-800/50 text-[11px] font-mono tracking-wider uppercase text-stone-500 dark:text-stone-400 select-none">
+              <div className="hidden sm:flex items-center justify-between px-4 sm:px-5 py-3 border-b border-stone-200 dark:border-stone-800 bg-stone-100/70 dark:bg-stone-800/50 text-[11px] font-mono tracking-wider uppercase text-stone-500 dark:text-stone-400 select-none">
                 <span className="font-bold">Tên bộ thẻ / Bài học</span>
                 <div className="flex items-center gap-3 sm:gap-6 pr-1 sm:pr-2">
                   <span className="w-8 sm:w-10 text-center text-sky-600 dark:text-sky-400 font-bold" title="Thẻ mới chưa học">
