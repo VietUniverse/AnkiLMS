@@ -21,7 +21,6 @@ import {
   Zap,
   Play,
   Lightbulb,
-  Maximize2,
   Layers,
   BookOpen,
   CheckCircle2,
@@ -1258,10 +1257,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                             }}
                           />
                         </div>
-                        <span className="text-[10px] text-stone-400 mt-1.5 flex items-center gap-1 group-hover:text-sky-500 transition-colors">
-                          <Maximize2 className="w-3 h-3" />
-                          Phóng to ảnh
-                        </span>
                       </div>
                     )}
 
