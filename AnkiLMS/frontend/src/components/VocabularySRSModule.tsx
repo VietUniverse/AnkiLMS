@@ -1013,24 +1013,20 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                   <div className="grid grid-cols-2 gap-3 sm:gap-4">
                     <button
                       onClick={() => handleResponse(false)}
-                      className="h-12 rounded-xl bg-stone-100 hover:bg-rose-50 dark:bg-stone-800 dark:hover:bg-rose-950/30 text-stone-700 dark:text-stone-300 hover:text-rose-600 dark:hover:text-rose-400 border border-stone-200 dark:border-stone-700/60 hover:border-rose-300 dark:hover:border-rose-900 font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition cursor-pointer"
+                      style={{ color: "#fff" }}
+                      className="h-12 rounded-xl bg-rose-500 hover:bg-rose-600 font-bold text-sm flex items-center justify-center gap-2 transition cursor-pointer"
                     >
-                      <span className="w-2 h-2 rounded-full bg-rose-500" />
                       <span>Quên</span>
-                      <kbd className="hidden sm:inline font-mono text-[10px] text-stone-500 dark:text-stone-400 ml-1">
-                        Q / 1 (←)
-                      </kbd>
+                      <kbd className="hidden sm:inline font-mono text-[10px] opacity-80 ml-1">Q / 1 (←)</kbd>
                     </button>
 
                     <button
                       onClick={() => handleResponse(true)}
-                      className="h-12 rounded-xl bg-stone-900 hover:bg-emerald-600 dark:bg-white dark:hover:bg-emerald-500 text-white dark:text-stone-900 dark:hover:text-stone-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition shadow-xs cursor-pointer"
+                      style={{ color: "#fff" }}
+                      className="h-12 rounded-xl bg-emerald-500 hover:bg-emerald-600 font-bold text-sm flex items-center justify-center gap-2 transition cursor-pointer"
                     >
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 dark:bg-emerald-600" />
                       <span>Thuộc</span>
-                      <kbd className="hidden sm:inline font-mono text-[10px] text-white/90 dark:text-stone-900/90 ml-1">
-                        T / 2 / Space (→)
-                      </kbd>
+                      <kbd className="hidden sm:inline font-mono text-[10px] opacity-80 ml-1">T / 2 / Space (→)</kbd>
                     </button>
                   </div>
                 </div>
