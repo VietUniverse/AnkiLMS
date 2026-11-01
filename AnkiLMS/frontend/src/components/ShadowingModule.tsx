@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import { Headphones, Volume2, CheckCircle2, Play, RefreshCw, HelpCircle, Sparkles, Filter, ChevronLeft, ChevronRight, Eye, Mic, MicOff, RotateCcw, Keyboard, ArrowLeft, Star, PlayCircle, Lock, AlertTriangle, Repeat, Award } from "lucide-react";
+import { Headphones, Volume2, CheckCircle2, Play, RefreshCw, HelpCircle, Sparkles, Filter, ChevronLeft, ChevronRight, Eye, Mic, MicOff, RotateCcw, Pause, Keyboard, ArrowLeft, Star, PlayCircle, Lock, AlertTriangle, Repeat, Award } from "lucide-react";
 import { ApiClient } from "../lib/apiClient";
 import { useApp } from "../contexts/AppProvider";
 import { calculateKoreanSimilarity, normalizeKoreanText } from "../lib/koreanText";
@@ -303,6 +303,11 @@ export const ShadowingModule: React.FC = () => {
     return !!(playerRef.current && playerReadyRef.current && typeof playerRef.current.seekTo === "function");
   };
 
+  const pauseAll = () => {
+    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    pausePlayer();
+  };
+
   const pausePlayer = () => {
     if (isPlayerReady()) {
       try { playerRef.current.pauseVideo(); } catch (_e) { /* ignore */ }
@@ -525,12 +530,13 @@ export const ShadowingModule: React.FC = () => {
   backToCatalogRef.current = backToCatalog;
 
   // Vào bài luyện nói: thanh bên và thanh dưới ẩn, thanh trên có nút Quay lại (qua cơ chế phiên học dùng chung).
-  // Phím tắt: ← câu trước, → câu tiếp, R phát lại câu, Space phát cả bài
+  // Phím tắt: ← câu trước, → câu tiếp, R phát lại câu, P tạm dừng, Space phát cả bài
   const keysRef = useRef<Record<string, () => void>>({});
   keysRef.current = {
     ArrowLeft: handlePrevSub,
     ArrowRight: handleNextSub,
     r: () => currentSub && playSegment(currentSub),
+    p: pauseAll,
     " ": playFullLesson,
   };
   useEffect(() => {
@@ -832,6 +838,9 @@ export const ShadowingModule: React.FC = () => {
                 </button>
                 <button onClick={() => playSegment(currentSub)} className="h-10 w-10 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 flex items-center justify-center cursor-pointer" aria-label="Phát lại câu hiện tại" title="Phát lại câu (R)">
                   <RotateCcw className="w-5 h-5" aria-hidden="true" />
+                </button>
+                <button onClick={pauseAll} className="h-10 w-10 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 flex items-center justify-center cursor-pointer" aria-label="Tạm dừng" title="Tạm dừng (P)">
+                  <Pause className="w-5 h-5" aria-hidden="true" />
                 </button>
                 <button onClick={playFullLesson} className="h-10 w-10 rounded-xl bg-rose-600 hover:bg-rose-500 text-white flex items-center justify-center cursor-pointer" aria-label="Phát toàn bộ bài học" title="Phát cả bài (Space)">
                   <Play className="w-5 h-5 fill-white" aria-hidden="true" />
