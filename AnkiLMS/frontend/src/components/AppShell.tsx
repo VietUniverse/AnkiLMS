@@ -71,6 +71,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
         onLogout={handleLogout}
         isOpenMobile={isMobileMenuOpen}
         onCloseMobile={() => setIsMobileMenuOpen(false)}
+        hideDesktop={!!activeStudySession}
       />
 
       {/* Main Content View */}

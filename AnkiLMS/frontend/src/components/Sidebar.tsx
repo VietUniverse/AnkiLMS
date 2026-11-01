@@ -47,6 +47,8 @@ interface SidebarProps {
   onLogout: () => void;
   isOpenMobile?: boolean;
   onCloseMobile?: () => void;
+  /** Ẩn thanh bên trên máy tính (dùng khi đang học thẻ). */
+  hideDesktop?: boolean;
 }
 
 const mainNav = [
@@ -89,6 +91,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onLogout,
   isOpenMobile = false,
   onCloseMobile,
+  hideDesktop = false,
 }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [confirmLogout, setConfirmLogout] = useState(false);
@@ -279,7 +282,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Desktop Aside Sidebar */}
       <aside
-        className={`hidden md:flex flex-col border-r border-[#111c38]/70 bg-[#090f1e] text-white h-screen sticky top-0 justify-between z-30 select-none transition-all duration-300 ${
+        className={`${hideDesktop ? "hidden" : "hidden md:flex"} flex-col border-r border-[#111c38]/70 bg-[#090f1e] text-white h-screen sticky top-0 justify-between z-30 select-none transition-all duration-300 ${
           collapsed ? "w-16" : "w-64"
         }`}
       >
