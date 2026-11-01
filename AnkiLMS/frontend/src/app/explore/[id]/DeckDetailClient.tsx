@@ -22,6 +22,9 @@ import {
   Trash2,
   RotateCcw,
   Globe2,
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
 } from "lucide-react";
 
 const HEADER_LEVEL: Record<string, string> = {
@@ -109,6 +112,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
   const [activePreviewIndex, setActivePreviewIndex] = useState(0);
   const [requestedPreviewCardId, setRequestedPreviewCardId] = useState<number | null>(null);
   const [isPreviewFlipped, setIsPreviewFlipped] = useState(false);
+  const [showAllSections, setShowAllSections] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -201,223 +205,210 @@ export default function DeckDetailClient({ id }: { id: string }) {
     );
   }
 
+  const levelChip = HEADER_LEVEL[deck.level] || "bg-stone-500/10 text-stone-600 dark:text-stone-300";
+  const maxSection = Math.max(1, ...curriculumSections.map(([, info]) => info.count));
+  const visibleSections = showAllSections ? curriculumSections : curriculumSections.slice(0, 6);
+  const panel = "rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60";
+  const goPreview = (delta: number) => {
+    setActivePreviewIndex((i) => (i + delta + previewCards.length) % previewCards.length);
+    setRequestedPreviewCardId(null);
+    setIsPreviewFlipped(false);
+  };
+
+  const authorRow = (
+    <div className="flex items-center gap-3">
+      <img src={deck.author.avatar} alt={deck.author.name} className="w-9 h-9 rounded-full object-cover shrink-0" />
+      <div className="min-w-0">
+        <div className="flex items-center gap-1.5">
+          <span className="font-bold text-sm text-stone-900 dark:text-white truncate">{deck.author.name}</span>
+          {deck.author.verified && (
+            <span title="Tác giả được xác minh bởi HaechiVN" aria-label="Tác giả được xác minh bởi HaechiVN">
+              <ShieldCheck className="w-4 h-4 text-sky-500" />
+            </span>
+          )}
+        </div>
+        <p className="text-[11px] text-stone-400 truncate">{deck.author.role}</p>
+      </div>
+    </div>
+  );
+
   return (
     <AppShell>
-      <div className="space-y-5 sm:space-y-6 pb-44 lg:pb-24 animate-fadeIn">
-        {/* Toast Thông Báo */}
+      <div className="mx-auto max-w-6xl space-y-5 pb-44 lg:pb-12 animate-fadeIn">
         {toastMessage && (
           <div className="fixed bottom-40 left-3 right-3 lg:bottom-6 lg:left-auto lg:right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-emerald-600 text-white shadow-xl shadow-emerald-900/30 font-medium text-xs animate-slideUp">
             <Check className="w-4 h-4 shrink-0" />
             <span>{toastMessage}</span>
-            <a
-              href="/flashcards"
-              className="ml-2 underline font-bold hover:text-emerald-100"
-            >
-              Học ngay →
-            </a>
+            <a href="/flashcards" className="ml-2 underline font-bold hover:text-emerald-100">Học ngay →</a>
           </div>
         )}
 
-        {/* Điều hướng */}
-        <a
-          href="/explore"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-stone-500 dark:text-stone-400 hover:text-sky-600 dark:hover:text-sky-400 transition"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Khám phá
+        <a href="/explore" className="inline-flex items-center gap-1.5 text-xs font-semibold text-stone-500 dark:text-stone-400 hover:text-sky-600 dark:hover:text-sky-400 transition">
+          <ArrowLeft className="w-4 h-4" /> Khám phá
         </a>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_20rem] gap-6 lg:gap-8 items-start">
-          {/* Cột trái: giới thiệu, xem thử, nội dung */}
-          <div className="space-y-6 min-w-0">
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="hidden sm:flex w-11 h-11 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 items-center justify-center shrink-0">
-                  <DeckIcon name={deck.iconName} className="w-5 h-5" />
+        {/* Tầng 1: nhận diện bộ thẻ và hành động chính, thấy ngay không cần cuộn */}
+        <div className="rounded-3xl border border-sky-200/70 dark:border-sky-900/40 bg-gradient-to-br from-sky-50 via-white to-white dark:from-sky-950/30 dark:via-stone-900/60 dark:to-stone-900/60 p-5 sm:p-8">
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-center">
+            <div className="space-y-4 min-w-0">
+              <div className="flex items-start gap-4">
+                <div className="hidden sm:flex w-14 h-14 rounded-2xl bg-sky-500/10 text-sky-600 dark:text-sky-400 items-center justify-center shrink-0">
+                  <DeckIcon name={deck.iconName} className="w-7 h-7" />
                 </div>
-                <h1 className="text-xl sm:text-2xl font-black text-stone-900 dark:text-white tracking-tight leading-tight">
-                  {deck.title}
-                </h1>
-              </div>
-
-              {/* Một hàng nhãn gọn: cấp độ, số thẻ, đánh giá (nếu đã có), quyền xem */}
-              <div className="flex items-center gap-1.5 flex-wrap text-xs font-semibold">
-                <span className={`rounded-full px-2.5 py-1 ${HEADER_LEVEL[deck.level] || "bg-stone-500/10 text-stone-600 dark:text-stone-300"}`}>{deck.level}</span>
-                {deck.categoryLabel && deck.categoryLabel !== deck.level && (
-                  <span className="rounded-full bg-stone-100 dark:bg-stone-800 px-2.5 py-1 text-stone-600 dark:text-stone-300">{deck.categoryLabel}</span>
-                )}
-                <span className="inline-flex items-center gap-1 rounded-full bg-stone-100 dark:bg-stone-800 px-2.5 py-1 text-stone-600 dark:text-stone-300">
-                  <Layers className="w-3 h-3" /> {deck.cards.length.toLocaleString("vi-VN")} thẻ
-                </span>
-                {deck.rating > 0 && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2.5 py-1 text-amber-600 dark:text-amber-400">
-                    <Star className="w-3 h-3 fill-current" /> {deck.rating.toFixed(1)}
-                  </span>
-                )}
-                {deck.visibility === "private" && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-stone-100 dark:bg-stone-800 px-2.5 py-1 text-stone-600 dark:text-stone-300">
-                    <Globe2 className="w-3 h-3" /> Riêng tư
-                  </span>
-                )}
-              </div>
-
-              <p className="max-w-2xl text-sm text-stone-600 dark:text-stone-300 leading-relaxed line-clamp-3 sm:line-clamp-none">
-                {deck.detailedDescription || deck.description}
-              </p>
-            </div>
-
-            {/* Xem thử thẻ */}
-            <section className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 p-4 sm:p-5 space-y-3">
-              <div className="flex items-center justify-between">
-                <h2 className="text-[11px] font-extrabold uppercase tracking-wider text-stone-400">
-                  Xem thử {activePreviewIndex + 1}/{previewCards.length}
-                </h2>
-                <button
-                  onClick={() => setIsPreviewFlipped(!isPreviewFlipped)}
-                  className="inline-flex items-center gap-1 text-xs font-bold text-sky-600 dark:text-sky-400 hover:underline cursor-pointer"
-                >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                  {isPreviewFlipped ? "Mặt trước" : "Lật thẻ"}
-                </button>
-              </div>
-
-              <div
-                onClick={() => setIsPreviewFlipped(!isPreviewFlipped)}
-                className="relative cursor-pointer min-h-[140px] rounded-xl bg-stone-50 dark:bg-stone-800/70 px-6 py-8 flex flex-col items-center justify-center text-center gap-2 transition hover:bg-sky-50 dark:hover:bg-stone-800"
-              >
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    speakKorean(currentPreviewCard.koreanText || currentPreviewCard.frontText);
-                  }}
-                  title="Nghe phát âm tiếng Hàn"
-                  className="absolute top-3 right-3 p-1.5 rounded-lg text-sky-600 dark:text-sky-400 hover:bg-sky-500/10 transition cursor-pointer"
-                >
-                  <Volume2 className="w-4 h-4" />
-                </button>
-                <div className="text-3xl font-black text-stone-900 dark:text-white font-noto tracking-tight">
-                  {currentPreviewCard.koreanText || currentPreviewCard.frontText}
-                </div>
-                {isPreviewFlipped ? (
-                  <div className="animate-fadeIn space-y-1">
-                    <div className="text-base font-bold text-emerald-600 dark:text-emerald-400">
-                      {currentPreviewCard.vietnameseMeaning || currentPreviewCard.backText}
-                    </div>
-                    {currentPreviewCard.exampleSentence && (
-                      <div className="text-xs text-stone-500 dark:text-stone-400 italic">{currentPreviewCard.exampleSentence}</div>
+                <div className="min-w-0 space-y-3">
+                  <h1 className="text-2xl sm:text-4xl font-black text-stone-900 dark:text-white tracking-tight leading-tight">{deck.title}</h1>
+                  <div className="flex items-center gap-1.5 flex-wrap text-xs font-semibold">
+                    <span className={`rounded-full px-2.5 py-1 ${levelChip}`}>{deck.level}</span>
+                    {deck.categoryLabel && deck.categoryLabel !== deck.level && (
+                      <span className="rounded-full bg-stone-100 dark:bg-stone-800 px-2.5 py-1 text-stone-600 dark:text-stone-300">{deck.categoryLabel}</span>
+                    )}
+                    {deck.rating > 0 && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2.5 py-1 text-amber-600 dark:text-amber-400">
+                        <Star className="w-3 h-3 fill-current" /> {deck.rating.toFixed(1)}
+                      </span>
+                    )}
+                    {deck.visibility === "private" && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-stone-100 dark:bg-stone-800 px-2.5 py-1 text-stone-600 dark:text-stone-300">
+                        <Globe2 className="w-3 h-3" /> Riêng tư
+                      </span>
                     )}
                   </div>
-                ) : (
-                  <div className="text-[11px] text-stone-400">Bấm để xem nghĩa</div>
-                )}
-              </div>
-
-              <div className="flex flex-wrap items-center justify-center gap-1">
-                {previewCards.map((c, i) => (
-                  <button
-                    key={c.id}
-                    onClick={() => {
-                      setActivePreviewIndex(i);
-                      setRequestedPreviewCardId(null);
-                      setIsPreviewFlipped(false);
-                    }}
-                    className={`min-w-6 px-1.5 sm:min-w-7 sm:px-2 py-1 rounded-md text-xs font-bold transition cursor-pointer ${
-                      activePreviewIndex === i
-                        ? "bg-sky-500 text-white"
-                        : "text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800"
-                    }`}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
-              </div>
-            </section>
-
-            {/* Nội dung bộ thẻ */}
-            {curriculumSections.length > 0 ? (
-              <section className="space-y-2">
-                <h2 className="text-sm font-bold text-stone-900 dark:text-white">
-                  {deck.id === "course-topic-vocabulary" ? "Chủ đề" : "Nội dung"} <span className="font-normal text-stone-400">({curriculumSections.length})</span>
-                </h2>
-                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 divide-y sm:divide-y-0 divide-stone-200/70 dark:divide-stone-800/70">
-                  {curriculumSections.map(([section, info]) => (
-                    <li key={section} className="flex items-baseline justify-between gap-3 py-2.5 sm:border-b border-stone-200/70 dark:border-stone-800/70">
-                      <span className="min-w-0 text-sm font-semibold text-stone-800 dark:text-stone-200">
-                        {section} <span className="font-normal text-stone-500 dark:text-stone-400 tabular-nums">({info.count.toLocaleString("vi-VN")})</span>
-                      </span>
-                      {info.childCount > 0 && deck.id !== "course-topic-vocabulary" && (
-                        <span className="text-xs text-stone-500 dark:text-stone-400 shrink-0">{info.childCount} bài</span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-                <p className="text-xs text-stone-400">
-                  Thêm vào Flashcards để chọn {deck.id === "course-topic-vocabulary" ? "chủ đề" : "nội dung"} hoặc học toàn bộ.
-                </p>
-              </section>
-            ) : (
-              <p className="text-xs text-stone-500 dark:text-stone-400">
-                Đây là bản xem thử. Thêm bộ thẻ vào Flashcard để xem và học toàn bộ {deck.cards.length.toLocaleString("vi-VN")} thẻ.
-              </p>
-            )}
-          </div>
-
-          {/* Cột phải: hành động + tác giả */}
-          <div className="space-y-4 lg:sticky lg:top-20">
-            <div className="hidden lg:block card-duo p-5 bg-white dark:bg-stone-900/80 space-y-3">
-              <div>
-                <div className="text-2xl font-black text-stone-900 dark:text-white tabular-nums">
-                  {deck.cards.length.toLocaleString("vi-VN")} <span className="text-sm font-bold text-stone-400">thẻ</span>
                 </div>
-                <p className="text-xs text-stone-500 dark:text-stone-400">Ôn tập hàng ngày với FSRS sau khi thêm vào kho thẻ.</p>
+              </div>
+              <p className="max-w-2xl text-sm sm:text-base text-stone-600 dark:text-stone-300 leading-relaxed line-clamp-3 sm:line-clamp-none">
+                {deck.detailedDescription || deck.description}
+              </p>
+              <div className="lg:hidden">{authorRow}</div>
+            </div>
+
+            {/* Hộp hành động (máy tính). Trên điện thoại dùng thanh cố định ở dưới. */}
+            <div className="hidden lg:block rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-5 space-y-4 shadow-sm">
+              <div className="flex items-end justify-between">
+                <div>
+                  <p className="text-3xl font-black tabular-nums text-stone-900 dark:text-white">{deck.cards.length.toLocaleString("vi-VN")}</p>
+                  <p className="text-xs text-stone-500 dark:text-stone-400">thẻ từ vựng</p>
+                </div>
+                {curriculumSections.length > 0 && (
+                  <div className="text-right">
+                    <p className="text-xl font-black tabular-nums text-stone-900 dark:text-white">{curriculumSections.length}</p>
+                    <p className="text-xs text-stone-500 dark:text-stone-400">{deck.id === "course-topic-vocabulary" ? "chủ đề" : "mục"}</p>
+                  </div>
+                )}
               </div>
               {isAdded ? (
                 <div className="space-y-1">
-                  <a
-                    href="/flashcards?study=true"
-                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-black bg-emerald-500 hover:bg-emerald-600 text-white transition cursor-pointer"
-                  >
-                    <BookOpen className="w-4 h-4" />
-                    Học ngay
+                  <a href="/flashcards?study=true" className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-black bg-emerald-500 hover:bg-emerald-600 text-white transition">
+                    <BookOpen className="w-4 h-4" /> Học ngay
                   </a>
-                  <button
-                    onClick={handleRemove}
-                    className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-xl text-xs font-semibold text-rose-500 hover:bg-rose-500/10 transition cursor-pointer"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                    Gỡ khỏi kho thẻ
+                  <button onClick={handleRemove} className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-xl text-xs font-semibold text-rose-500 hover:bg-rose-500/10 transition cursor-pointer">
+                    <Trash2 className="w-3.5 h-3.5" /> Gỡ khỏi kho thẻ
                   </button>
                 </div>
               ) : (
-                <button
-                  onClick={handleAdd}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-black bg-sky-500 hover:bg-sky-600 text-white transition cursor-pointer"
-                >
-                  <Plus className="w-4 h-4 stroke-[3]" />
-                  Thêm vào kho thẻ
+                <button onClick={handleAdd} className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-black bg-sky-500 hover:bg-sky-600 text-white transition cursor-pointer">
+                  <Plus className="w-4 h-4 stroke-[3]" /> Thêm vào kho thẻ
                 </button>
               )}
-              <div className="pt-2 border-t border-stone-100 dark:border-stone-800/80 flex items-center justify-between text-xs text-stone-500 dark:text-stone-400">
-                <span className="inline-flex items-center gap-1.5"><Download className="w-3.5 h-3.5" /> Lượt học</span>
-                <span className="font-bold text-stone-700 dark:text-stone-200">{deck.downloads}</span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 px-1">
-              <img src={deck.author.avatar} alt={deck.author.name} className="w-9 h-9 rounded-full object-cover shrink-0" />
-              <div className="min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <span className="font-bold text-sm text-stone-900 dark:text-white truncate">{deck.author.name}</span>
-                  {deck.author.verified && (
-                    <span title="Tác giả được xác minh bởi HaechiVN" aria-label="Tác giả được xác minh bởi HaechiVN">
-                      <ShieldCheck className="w-4 h-4 text-sky-500" />
-                    </span>
-                  )}
+              <div className="pt-3 border-t border-stone-100 dark:border-stone-800 space-y-3">
+                {authorRow}
+                <div className="flex items-center justify-between text-xs text-stone-500 dark:text-stone-400">
+                  <span className="inline-flex items-center gap-1.5"><Download className="w-3.5 h-3.5" /> Lượt học</span>
+                  <span className="font-bold text-stone-700 dark:text-stone-200">{deck.downloads}</span>
                 </div>
-                <p className="text-[11px] text-stone-400 truncate">{deck.author.role}</p>
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Tầng 2: bằng chứng (xem thử thẻ) và cấu trúc (mục lục) cạnh nhau */}
+        <div className={`grid gap-5 items-start ${curriculumSections.length > 0 ? "lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]" : ""}`}>
+          <section className={`${panel} p-4 sm:p-5 space-y-4`}>
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-bold text-stone-900 dark:text-white">Xem thử</h2>
+              <button onClick={() => setIsPreviewFlipped(!isPreviewFlipped)} className="inline-flex items-center gap-1 text-xs font-bold text-sky-600 dark:text-sky-400 hover:underline cursor-pointer">
+                <RotateCcw className="w-3.5 h-3.5" /> {isPreviewFlipped ? "Mặt trước" : "Lật thẻ"}
+              </button>
+            </div>
+
+            <div
+              onClick={() => setIsPreviewFlipped(!isPreviewFlipped)}
+              className="relative cursor-pointer min-h-[200px] sm:min-h-[240px] rounded-2xl bg-stone-50 dark:bg-stone-800/70 px-6 py-10 flex flex-col items-center justify-center text-center gap-3 transition hover:bg-sky-50 dark:hover:bg-stone-800"
+            >
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  speakKorean(currentPreviewCard.koreanText || currentPreviewCard.frontText);
+                }}
+                title="Nghe phát âm tiếng Hàn"
+                className="absolute top-3 right-3 p-2 rounded-lg text-sky-600 dark:text-sky-400 hover:bg-sky-500/10 transition cursor-pointer"
+              >
+                <Volume2 className="w-4 h-4" />
+              </button>
+              <div className="text-4xl sm:text-5xl font-black text-stone-900 dark:text-white font-noto tracking-tight">
+                {currentPreviewCard.koreanText || currentPreviewCard.frontText}
+              </div>
+              {isPreviewFlipped ? (
+                <div className="animate-fadeIn space-y-1">
+                  <div className="text-lg font-bold text-emerald-600 dark:text-emerald-400">{currentPreviewCard.vietnameseMeaning || currentPreviewCard.backText}</div>
+                  {currentPreviewCard.exampleSentence && <div className="text-xs text-stone-500 dark:text-stone-400 italic">{currentPreviewCard.exampleSentence}</div>}
+                </div>
+              ) : (
+                <div className="text-xs text-stone-400">Bấm để xem nghĩa</div>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between gap-3">
+              <button onClick={() => goPreview(-1)} aria-label="Thẻ trước" className="h-10 w-10 rounded-xl border border-stone-200 dark:border-stone-700 flex items-center justify-center hover:bg-stone-100 dark:hover:bg-stone-800 transition cursor-pointer">
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <div className="flex-1 flex items-center justify-center gap-1.5" aria-label={`Thẻ ${activePreviewIndex + 1} trên ${previewCards.length}`}>
+                {previewCards.map((c, i) => (
+                  <button
+                    key={c.id}
+                    onClick={() => { setActivePreviewIndex(i); setRequestedPreviewCardId(null); setIsPreviewFlipped(false); }}
+                    aria-label={`Xem thẻ ${i + 1}`}
+                    className={`h-2 rounded-full transition-all cursor-pointer ${activePreviewIndex === i ? "w-6 bg-sky-500" : "w-2 bg-stone-300 dark:bg-stone-700 hover:bg-stone-400"}`}
+                  />
+                ))}
+              </div>
+              <button onClick={() => goPreview(1)} aria-label="Thẻ sau" className="h-10 w-10 rounded-xl border border-stone-200 dark:border-stone-700 flex items-center justify-center hover:bg-stone-100 dark:hover:bg-stone-800 transition cursor-pointer">
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+            {curriculumSections.length === 0 && (
+              <p className="text-xs text-stone-500 dark:text-stone-400 text-center">Đây là bản xem thử. Thêm bộ thẻ để xem và học toàn bộ {deck.cards.length.toLocaleString("vi-VN")} thẻ.</p>
+            )}
+          </section>
+
+          {curriculumSections.length > 0 && (
+            <section className={`${panel} p-4 sm:p-5 lg:sticky lg:top-4`}>
+              <div className="mb-3 flex items-baseline justify-between">
+                <h2 className="text-sm font-bold text-stone-900 dark:text-white">
+                  {deck.id === "course-topic-vocabulary" ? "Chủ đề" : "Mục lục"} <span className="font-normal text-stone-400">({curriculumSections.length})</span>
+                </h2>
+                <span className="text-xs text-stone-400">Số thẻ</span>
+              </div>
+              <ul className={`divide-y divide-stone-100 dark:divide-stone-800 ${showAllSections ? "max-h-[32rem] overflow-y-auto pr-1" : ""}`}>
+                {visibleSections.map(([section, info]) => (
+                  <li key={section} className="py-2.5 space-y-1.5">
+                    <div className="flex items-baseline justify-between gap-3">
+                      <span className="min-w-0 text-sm font-semibold text-stone-800 dark:text-stone-200">{section}</span>
+                      <span className="shrink-0 text-xs tabular-nums text-stone-500 dark:text-stone-400">{info.count.toLocaleString("vi-VN")}</span>
+                    </div>
+                    <div className="h-1 rounded-full bg-stone-100 dark:bg-stone-800 overflow-hidden">
+                      <div className="h-full rounded-full bg-sky-400/70" style={{ width: `${Math.max(4, Math.round((info.count / maxSection) * 100))}%` }} />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              {curriculumSections.length > 6 && (
+                <button onClick={() => setShowAllSections(!showAllSections)} className="mt-3 w-full inline-flex items-center justify-center gap-1.5 rounded-xl py-2 text-xs font-bold text-sky-600 dark:text-sky-400 hover:bg-sky-500/10 transition cursor-pointer">
+                  {showAllSections ? "Thu gọn" : `Xem tất cả ${curriculumSections.length}`}
+                  <ChevronDown className={`w-4 h-4 transition-transform ${showAllSections ? "rotate-180" : ""}`} />
+                </button>
+              )}
+            </section>
+          )}
         </div>
 
         {/* Thanh hành động cố định trên điện thoại, nằm ngay trên thanh điều hướng dưới */}
