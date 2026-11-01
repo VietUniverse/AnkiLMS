@@ -14,6 +14,7 @@ export interface StudySessionInfo {
   studyMode?: "flip" | "typing";
   setStudyMode?: (mode: "flip" | "typing") => void;
   progressText?: string;
+  progressPercent?: number;
   remainingNew?: number;
   remainingReview?: number;
 }

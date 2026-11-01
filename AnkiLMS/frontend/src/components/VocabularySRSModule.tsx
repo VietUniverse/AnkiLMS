@@ -507,6 +507,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
         studyMode,
         setStudyMode,
         progressText: activeCardsList.length > 0 ? `${currentCardIndex + 1} / ${activeCardsList.length}` : "Hoàn thành",
+        progressPercent: activeCardsList.length > 0 ? Math.round((currentCardIndex / activeCardsList.length) * 100) : 0,
         remainingNew: remainingCounts.newCount,
         remainingReview: remainingCounts.reviewCount,
       });
@@ -576,6 +577,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
         studyMode,
         setStudyMode,
         progressText: activeCardsList.length > 0 ? `${currentCardIndex + 1} / ${activeCardsList.length}` : "",
+        progressPercent: activeCardsList.length > 0 ? Math.round((currentCardIndex / activeCardsList.length) * 100) : 0,
         remainingNew: remainingCounts.newCount,
         remainingReview: remainingCounts.reviewCount,
       });
@@ -986,11 +988,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     return `https://chatgpt.com/?prompt=${encodeURIComponent(promptText)}`;
   }, [currentCard]);
 
-  // Progress percentage in current session
-  const sessionProgress = activeCardsList.length > 0
-    ? Math.round(((currentCardIndex + 1) / activeCardsList.length) * 100)
-    : 0;
-
   const studyActions = (
     <>
               {!isFlipped ? (
@@ -1198,27 +1195,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
           ) : currentCard ? (
             <div className="min-h-[calc(100vh-140px)] flex flex-col justify-between py-2 animate-reveal">
               <div className="flex-1 flex flex-col">
-                {/* Thanh tiến độ bài học xanh ngọc mảnh phía trên */}
-                <div className="flex items-center justify-between gap-3 mb-5">
-                  <div className="flex-1 h-1 bg-stone-200 dark:bg-stone-800 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-emerald-500 transition-all duration-300"
-                      style={{ width: `${sessionProgress}%` }}
-                    />
-                  </div>
-                  <button
-                    onClick={() => {
-                      setCurrentCardIndex(0);
-                      setIsFlipped(false);
-                      setTypedInput("");
-                    }}
-                    className="text-[11px] font-medium text-stone-400 hover:text-rose-500 transition flex items-center gap-1 cursor-pointer shrink-0"
-                    title="Học lại bài này từ đầu"
-                  >
-                    <RotateCcw className="w-3 h-3" />
-                    <span className="hidden sm:inline">Học lại</span>
-                  </button>
-                </div>
 
             {/* CHẾ ĐỘ 1: THẺ NHẬN DIỆN PHẲNG REVEAL (2 CỘT DESKTOP) */}
             {studyMode === "flip" && (

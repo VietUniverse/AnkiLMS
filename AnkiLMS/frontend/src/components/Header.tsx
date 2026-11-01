@@ -49,6 +49,13 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onToggl
         )}
       </div>
 
+      {/* Thanh tiến độ dính đáy thanh trên khi học thẻ, là một phần của thanh */}
+      {activeStudySession && activeStudySession.progressPercent !== undefined && (
+        <div className="absolute inset-x-0 bottom-0 h-1 bg-white/10" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={activeStudySession.progressPercent}>
+          <div className="h-full bg-emerald-500 transition-all duration-300" style={{ width: `${activeStudySession.progressPercent}%` }} />
+        </div>
+      )}
+
       {/* Giữa thanh khi học thẻ: số thẻ mới (xanh) và thẻ ôn (đỏ) còn lại, chỉ phân biệt bằng màu */}
       {activeStudySession && activeStudySession.remainingNew !== undefined && (
         <div className="pointer-events-none absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-4 text-xl font-black tabular-nums animate-reveal">
