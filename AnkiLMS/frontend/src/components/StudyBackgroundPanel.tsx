@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from "react";
 import { ImagePlus, Settings, Trash2, X } from "lucide-react";
-import { DEFAULT_STUDY_BG, fileToDataUrl, GRADIENT_PRESETS, saveStudyBackground, useStudyBackground } from "../lib/studyBackground";
+import { backgroundLayerStyle, DEFAULT_STUDY_BG, fileToDataUrl, GRADIENT_PRESETS, saveStudyBackground, useStudyBackground } from "../lib/studyBackground";
 
 const SAMPLE_IMAGE = "/images/login-bg.webp";
 
@@ -34,7 +34,7 @@ export function StudyBackgroundPanel() {
         aria-label="Cài đặt nền khi học"
         aria-expanded={open}
         title="Cài đặt nền"
-        className="flex h-9 w-9 items-center justify-center rounded-full text-slate-300 hover:bg-white/10 hover:text-white transition cursor-pointer"
+        className={`flex h-9 w-9 items-center justify-center rounded-full transition cursor-pointer ${backgroundLayerStyle(bg) ? "bg-white/85 text-stone-700 backdrop-blur hover:bg-white dark:bg-stone-900/75 dark:text-slate-200" : "text-slate-300 hover:bg-white/10 hover:text-white"}`}
       >
         <Settings className="h-5 w-5" />
       </button>

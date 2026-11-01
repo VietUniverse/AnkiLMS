@@ -5,6 +5,7 @@ import { User as UserIcon, Menu, ArrowLeft } from "lucide-react";
 import { UserProfile } from "../lib/apiClient";
 import { useApp } from "../contexts/AppProvider";
 import { StudyBackgroundPanel } from "./StudyBackgroundPanel";
+import { backgroundLayerStyle, useStudyBackground } from "../lib/studyBackground";
 
 interface HeaderProps {
   currentUser: UserProfile | null;
@@ -15,9 +16,12 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onToggleMobileMenu }) => {
   const { activeStudySession } = useApp();
+  // Đang học và có nền tùy chỉnh: thanh trên trong suốt để nền chạy liền xuống dưới thanh.
+  const studyBg = useStudyBackground();
+  const bgActive = !!activeStudySession && backgroundLayerStyle(studyBg) !== null;
 
   return (
-    <header className={`sticky top-0 z-30 ${activeStudySession ? "bg-[#0b1329]" : "bg-[#0b1329]/95 backdrop-blur-md"} border-b-2 border-[#19284d] px-3 sm:px-5 h-14 flex items-center justify-between gap-3 select-none transition-colors`}>
+    <header className={`sticky top-0 z-30 ${bgActive ? "!bg-transparent border-b-2 !border-transparent !shadow-none" : activeStudySession ? "bg-[#0b1329] border-b-2 border-[#19284d]" : "bg-[#0b1329]/95 backdrop-blur-md border-b-2 border-[#19284d]"} px-3 sm:px-5 h-14 flex items-center justify-between gap-3 select-none transition-colors`}>
       {/* Vùng bên trái: Nút Trở về (khi học thẻ) HOẶC Logo/Menu (khi ở trang khác) */}
       <div className="flex items-center gap-2.5 min-w-0">
         {activeStudySession ? (
@@ -56,7 +60,7 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onToggl
 
       {/* Giữa thanh khi học thẻ: số thẻ mới (xanh) và thẻ ôn (đỏ) còn lại, chỉ phân biệt bằng màu */}
       {activeStudySession && activeStudySession.remainingNew !== undefined && (
-        <div className="pointer-events-none absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-4 text-xl font-black tabular-nums animate-reveal">
+        <div className={`pointer-events-none absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-4 text-xl font-black tabular-nums animate-reveal ${bgActive ? "rounded-full bg-white/85 px-4 py-0.5 backdrop-blur dark:bg-stone-900/75" : ""}`}>
           <span className="text-sky-500" title="Từ mới còn lại" aria-label={`${activeStudySession.remainingNew} từ mới còn lại`}>{activeStudySession.remainingNew}</span>
           <span className="text-rose-500" title="Từ ôn còn lại" aria-label={`${activeStudySession.remainingReview} từ ôn còn lại`}>{activeStudySession.remainingReview}</span>
         </div>
