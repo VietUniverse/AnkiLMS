@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Activity, ArrowLeft, Award, BookOpen, Clock3, Flame, LockKeyhole, Sparkles, Trophy, Zap } from "lucide-react";
 import { useApp } from "../contexts/AppProvider";
 import { getStudyRank } from "../lib/studyRanks";
+import { OnigiriHeatmap, type HeatmapItem } from "./OnigiriHeatmap";
 
 type PublicProfile = {
   id: string; name: string; bio: string | null; avatar_url: string | null; profile_public: number;
@@ -54,12 +55,12 @@ export function PublicProfileModule({ profileId }: { profileId: string }) {
   if (error || !data) return <div className="mx-auto max-w-lg rounded-3xl border border-slate-800 bg-slate-900 p-8 text-center"><LockKeyhole className="mx-auto h-10 w-10 text-amber-300" /><h1 className="mt-3 text-lg font-black text-white">Hồ sơ không khả dụng</h1><p className="mt-2 text-sm text-slate-400">{error || "Hồ sơ này có thể đã bị xóa hoặc đặt ở chế độ riêng tư."}</p><Link href="/leaderboard" className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl bg-sky-600 px-4 text-xs font-bold text-white"><ArrowLeft className="h-4 w-4" />Quay lại bảng xếp hạng</Link></div>;
 
   const { profile, summary, days, sessions } = data;
-  const today = new Date();
-  const activeDays = Array.from({ length: 28 }, (_, index) => {
-    const date = new Date(today); date.setDate(today.getDate() - (27 - index));
-    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-    return { key, data: days.find((day) => day.day === key) };
-  });
+  const heatmap: HeatmapItem[] = days.map((day) => ({
+    checkin_date: day.day,
+    time_spent_minutes: day.minutes,
+    xp_earned: 0,
+    cards_reviewed: day.cards,
+  }));
   const isMine = currentUser?.id === profile.id;
 
   return <div className="mx-auto max-w-5xl space-y-5 pb-24 text-slate-100">
@@ -78,7 +79,7 @@ export function PublicProfileModule({ profileId }: { profileId: string }) {
       { label: "Chuỗi tốt nhất", value: `${profile.longest_streak || profile.streak} ngày`, icon: Trophy, color: "text-amber-300" },
     ].map(({ label, value, icon: Icon, color }) => <div key={label} className="rounded-2xl border border-slate-800 bg-slate-900 p-4"><Icon className={`mb-3 h-5 w-5 ${color}`} /><p className="text-lg font-black text-white">{value}</p><p className="mt-1 text-[11px] font-semibold text-slate-400">{label}</p></div>)}</section>
 
-    <section className="rounded-2xl border border-slate-800 bg-slate-900 p-4 sm:p-6"><div className="mb-4 flex items-center justify-between gap-2"><div><h2 className="flex items-center gap-2 font-black text-white"><Activity className="h-5 w-5 text-emerald-300" />Hoạt động học gần đây</h2><p className="mt-1 text-xs text-slate-400">28 ngày vừa qua</p></div><span className="text-[10px] font-bold text-slate-400">{days.filter((day) => day.minutes || day.cards).length} ngày hoạt động</span></div><div className="grid grid-cols-7 gap-1.5 sm:grid-cols-14 sm:gap-2">{activeDays.map(({ key, data: day }) => <div key={key} title={`${key}: ${day?.minutes || 0} phút`} className={`aspect-square rounded-md ${!day || (!day.minutes && !day.cards) ? "bg-slate-800" : day.minutes >= 30 ? "bg-emerald-400" : day.minutes >= 10 ? "bg-emerald-500/70" : "bg-emerald-800"}`} />)}</div></section>
+    <OnigiriHeatmap data={heatmap} streak={profile.streak} />
 
     <section className="rounded-2xl border border-slate-800 bg-slate-900 p-4 sm:p-6"><div className="mb-3 flex items-center gap-2"><Award className="h-5 w-5 text-amber-300" /><h2 className="font-black text-white">Phiên học gần đây</h2></div>{sessions.length ? <div className="divide-y divide-slate-800">{sessions.slice(0, 6).map((session, index) => <div key={`${session.created_at}-${index}`} className="flex items-center gap-3 py-3"><div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sky-400/10 text-sky-200"><BookOpen className="h-4 w-4" /></div><div className="min-w-0 flex-1"><p className="text-xs font-bold text-white">{session.module === "dictation" ? "Nghe chép" : session.module === "shadowing" ? "Shadowing" : session.module === "srs" ? "Ôn Anki" : "Luyện tiếng Hàn"}</p><p className="text-[10px] text-slate-400">{new Date(`${session.created_at.replace(" ", "T")}Z`).toLocaleDateString("vi-VN", { dateStyle: "medium" })}</p></div><span className="text-xs font-bold text-slate-300">{session.cards_reviewed} câu · {duration(session.duration_seconds)}</span></div>)}</div> : <p className="rounded-xl border border-dashed border-slate-700 p-6 text-center text-xs text-slate-400">Chưa có phiên học được ghi nhận.</p>}</section>
   </div>;
