@@ -177,7 +177,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const [dailyProgress, setDailyProgress] = useState(() => ({ newDone: 0, reviewDone: 0, extraNew: 0 }));
   const [limitNotice, setLimitNotice] = useState<string | null>(null);
   // Đã chạm giới hạn từ mới mà người học bấm vào một bộ: hỏi muốn học thêm bao nhiêu từ mới.
-  const [morePrompt, setMorePrompt] = useState<{ deckId: string; title: string; cards: VocabularyCard[]; available: number; hasDue: boolean } | null>(null);
+  const [morePrompt, setMorePrompt] = useState<{ deckId: string; title: string; cards: VocabularyCard[]; available: number } | null>(null);
   const [moreAmount, setMoreAmount] = useState("10");
 
   useEffect(() => {
@@ -453,7 +453,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     setDailyProgress(progress);
     if (newLeft === 0 && newCards.length > 0 && !options?.skipMorePrompt) {
       setMoreAmount(String(Math.min(5, newCards.length)));
-      setMorePrompt({ deckId, title, cards, available: newCards.length, hasDue: dueCards.length > 0 });
+      setMorePrompt({ deckId, title, cards, available: newCards.length });
       return;
     }
     if (activeList.length === 0 && dueCards.length + newCards.length > 0) {
@@ -1501,6 +1501,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
             aria-labelledby="more-new-title"
             className="w-full max-w-xs space-y-4 rounded-2xl border border-stone-200 bg-white p-5 text-stone-900 shadow-2xl dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100"
             onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => { if (e.key === "Escape") { setMorePrompt(null); if (viewMode === "study") exitStudy(); } }}
             onSubmit={(e) => { e.preventDefault(); confirmMore(); }}
           >
             <div>
@@ -1543,18 +1544,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
             </div>
             <div className="space-y-2">
               <button type="submit" disabled={!moreValid} style={{ color: "#fff" }} className="w-full cursor-pointer rounded-xl bg-sky-500 py-2.5 text-sm font-black transition hover:bg-sky-600 disabled:opacity-40">Học thêm</button>
-              <div className="flex gap-2">
-                {morePrompt.hasDue && (
-                  <button
-                    type="button"
-                    onClick={() => { const p = morePrompt; setMorePrompt(null); startStudy(p.deckId, p.title, p.cards, { skipMorePrompt: true }); }}
-                    className="flex-1 cursor-pointer rounded-xl py-2 text-xs font-bold text-stone-600 hover:bg-stone-100 dark:text-stone-300 dark:hover:bg-stone-800"
-                  >
-                    Chỉ ôn lại
-                  </button>
-                )}
-                <button type="button" onClick={() => { setMorePrompt(null); if (viewMode === "study") exitStudy(); }} className="flex-1 cursor-pointer rounded-xl py-2 text-xs font-bold text-stone-600 hover:bg-stone-100 dark:text-stone-300 dark:hover:bg-stone-800">Để mai</button>
-              </div>
             </div>
           </form>
         </div>,
