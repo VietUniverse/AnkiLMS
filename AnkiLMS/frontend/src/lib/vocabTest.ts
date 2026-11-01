@@ -1,3 +1,5 @@
+import { useSyncExternalStore } from "react";
+
 // Bài kiểm tra vốn từ theo giáo trình (Seoul 1A, Tiếng Hàn Tổng Hợp 1...).
 // Câu hỏi chia theo kích thước từng bài, làm 2 giai đoạn (nửa đầu rồi nửa sau) và dừng sớm khi kết quả đã rõ.
 // Chấm điểm: đúng +1, sai −1/3, "Chưa biết" 0 → đoán mò không có lợi, người trung thực không bị thiệt.
@@ -193,6 +195,55 @@ export function loadSavedResult(resultKey: string): TestResult | null {
 
 export function saveResult(resultKey: string, result: TestResult) {
   try { localStorage.setItem(resultKey, JSON.stringify(result)); } catch { /* bỏ qua nếu bộ nhớ bị chặn */ }
+}
+
+// ---- Lịch sử các lần làm bài (lưu trên thiết bị này) ----
+export type HistoryEntry = TestResult & { testSlug: string; testName: string };
+const HISTORY_KEY = "haechivn_test_history";
+const HISTORY_EVENT = "haechivn-test-history";
+const HISTORY_LIMIT = 50;
+
+const historyKey = (userId?: string | null) => getUserResultKey(HISTORY_KEY, userId);
+
+const readHistoryRaw = (userId?: string | null): string => {
+  try { return localStorage.getItem(historyKey(userId)) || ""; } catch { return ""; }
+};
+
+const parseHistory = (raw: string): HistoryEntry[] => {
+  if (!raw) return [];
+  try {
+    const list = JSON.parse(raw);
+    return Array.isArray(list) ? list.filter((e) => e && typeof e.percent === "number" && typeof e.assessedAt === "string") as HistoryEntry[] : [];
+  } catch {
+    return [];
+  }
+};
+
+const subscribeHistory = (callback: () => void) => {
+  window.addEventListener(HISTORY_EVENT, callback);
+  window.addEventListener("storage", callback);
+  return () => { window.removeEventListener(HISTORY_EVENT, callback); window.removeEventListener("storage", callback); };
+};
+
+/** Danh sách lịch sử, mới nhất trước. */
+export function useTestHistory(userId?: string | null): HistoryEntry[] {
+  const raw = useSyncExternalStore(subscribeHistory, () => readHistoryRaw(userId), () => "");
+  return parseHistory(raw);
+}
+
+export function appendHistory(entry: HistoryEntry, userId?: string | null) {
+  try {
+    const next = [entry, ...parseHistory(readHistoryRaw(userId))].slice(0, HISTORY_LIMIT);
+    localStorage.setItem(historyKey(userId), JSON.stringify(next));
+    window.dispatchEvent(new Event(HISTORY_EVENT));
+  } catch { /* bộ nhớ bị chặn hoặc đầy: bỏ qua */ }
+}
+
+export function clearHistory(userId?: string | null) {
+  try {
+    localStorage.removeItem(historyKey(userId));
+    window.dispatchEvent(new Event(HISTORY_EVENT));
+  } catch { /* bỏ qua */ }
 }
 
 // "03. 가게" -> "Bài 3: 가게"

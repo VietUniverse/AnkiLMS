@@ -7,6 +7,7 @@ import { AppShell } from "../../components/AppShell";
 import { getUserResultKey, loadSavedResult, type TestResult } from "../../lib/vocabTest";
 import { VOCAB_TESTS } from "../../lib/vocabTests";
 import { useApp } from "../../contexts/AppProvider";
+import { TestHistory } from "../../components/TestHistory";
 
 export default function PlacementTestHub() {
   const { currentUser } = useApp();
@@ -40,6 +41,7 @@ export default function PlacementTestHub() {
             </Link>
           );
         })}
+        <TestHistory />
       </div>
     </AppShell>
   );

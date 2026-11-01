@@ -8,6 +8,7 @@ import { ACHIEVEMENTS_DATA } from "../data/achievementsData";
 import { getStudyRank } from "../lib/studyRanks";
 import { OnigiriHeatmap } from "./OnigiriHeatmap";
 import { StreakPanel } from "./StreakPanel";
+import { TestHistory } from "./TestHistory";
 
 interface ProfileModuleProps {
   currentUser: UserProfile | null;
@@ -150,6 +151,8 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
       <div className="hidden md:block">
         <OnigiriHeatmap data={heatmapData} streak={currentUser.streak || 0} />
       </div>
+
+      <TestHistory limit={5} showMoreLink />
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)]">
         {/* Thành tích */}

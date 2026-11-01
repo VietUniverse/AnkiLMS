@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, RotateCcw } from "lucide-react";
 import { AppShell } from "./AppShell";
-import { buildQuestions, evaluate, getUserResultKey, loadSavedResult, saveResult, shouldStopEarly, type TestQuestion, type TestResult } from "../lib/vocabTest";
+import { appendHistory, buildQuestions, evaluate, getUserResultKey, loadSavedResult, saveResult, shouldStopEarly, type TestQuestion, type TestResult } from "../lib/vocabTest";
 import type { VocabTestDef } from "../lib/vocabTests";
 import { useApp } from "../contexts/AppProvider";
 
@@ -51,6 +51,7 @@ export function VocabTest({ test }: { test: VocabTestDef }) {
     }
     const finished = evaluate(questions, next);
     saveResult(resultKey, finished);
+    appendHistory({ ...finished, testSlug: test.slug, testName: test.shortName }, currentUser?.id);
     setSaved(finished);
     setResult(finished);
     setPhase("result");
