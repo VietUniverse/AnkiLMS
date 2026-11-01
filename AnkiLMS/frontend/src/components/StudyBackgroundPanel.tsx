@@ -4,6 +4,8 @@ import React, { useRef, useState } from "react";
 import { ImagePlus, Settings, Trash2, X } from "lucide-react";
 import { DEFAULT_STUDY_BG, fileToDataUrl, GRADIENT_PRESETS, saveStudyBackground, useStudyBackground } from "../lib/studyBackground";
 
+const SAMPLE_IMAGE = "/images/login-bg.webp";
+
 export function StudyBackgroundPanel() {
   const bg = useStudyBackground();
   const [open, setOpen] = useState(false);
@@ -74,6 +76,17 @@ export function StudyBackgroundPanel() {
             <div>
               <p className="mb-2 text-xs font-bold text-stone-500 dark:text-stone-400">Ảnh nền</p>
               <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => { void pickImage(e.target.files?.[0]); e.target.value = ""; }} />
+              <button
+                type="button"
+                onClick={() => update({ kind: "image", image: SAMPLE_IMAGE })}
+                aria-pressed={bg.kind === "image" && bg.image === SAMPLE_IMAGE}
+                title="Ảnh mẫu (nền trang đăng nhập)"
+                aria-label="Dùng ảnh mẫu"
+                className={`mb-2 flex h-16 w-full items-end overflow-hidden rounded-xl border-2 bg-cover bg-center p-2 text-left text-xs font-bold text-white transition cursor-pointer ${bg.kind === "image" && bg.image === SAMPLE_IMAGE ? "border-sky-500" : "border-transparent hover:border-stone-300"}`}
+                style={{ backgroundImage: `linear-gradient(to top, rgba(0,0,0,.55), transparent), url(${SAMPLE_IMAGE})`, color: "#fff" }}
+              >
+                Ảnh mẫu
+              </button>
               <div className="flex gap-2">
                 <button type="button" onClick={() => fileRef.current?.click()} className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-stone-200 py-2 text-xs font-bold hover:bg-stone-100 dark:border-stone-700 dark:hover:bg-stone-800 cursor-pointer">
                   <ImagePlus className="h-4 w-4" /> {bg.image ? "Đổi ảnh" : "Chọn ảnh"}
