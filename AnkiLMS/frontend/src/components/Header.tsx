@@ -19,6 +19,19 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onToggl
   // Đang học và có nền tùy chỉnh: thanh trên trong suốt để nền chạy liền xuống dưới thanh.
   const studyBg = useStudyBackground();
   const bgActive = !!activeStudySession && backgroundLayerStyle(studyBg) !== null;
+  // Màu thanh tiến độ theo độ sáng của nền: nền gradient sáng thì thanh đậm, nền tối hoặc rực thì thanh trắng.
+  const progressTone = (() => {
+    const lum = (hex: string) => {
+      const m = /^#?([0-9a-f]{6})$/i.exec(hex.trim());
+      if (!m) return 0.4;
+      const [r, g, b] = [0, 2, 4].map((i) => parseInt(m[1].slice(i, i + 2), 16) / 255);
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    };
+    const light = studyBg.kind === "gradient" ? (lum(studyBg.from) + lum(studyBg.to)) / 2 > 0.6 : false;
+    return light
+      ? { fill: "rgba(20, 32, 46, 0.85)", track: "rgba(20, 32, 46, 0.18)", glow: "none" }
+      : { fill: "rgba(255, 255, 255, 0.95)", track: "rgba(0, 0, 0, 0.22)", glow: "0 0 8px rgba(255, 255, 255, 0.55)" };
+  })();
 
   return (
     <header className={`sticky top-0 z-30 ${bgActive ? "!bg-transparent border-b-2 !border-transparent !shadow-none" : activeStudySession ? "bg-[#0b1329] border-b-2 border-[#19284d]" : "bg-[#0b1329]/95 backdrop-blur-md border-b-2 border-[#19284d]"} px-3 sm:px-5 h-14 flex items-center justify-between gap-3 select-none transition-colors`}>
@@ -53,8 +66,15 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onToggl
 
       {/* Thanh tiến độ dính đáy thanh trên khi học thẻ, là một phần của thanh */}
       {activeStudySession && activeStudySession.progressPercent !== undefined && (
-        <div className="absolute inset-x-0 top-0 h-1 bg-stone-300/40 dark:bg-white/10" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={activeStudySession.progressPercent}>
-          <div className="h-full bg-emerald-500 transition-all duration-300" style={{ width: `${activeStudySession.progressPercent}%` }} />
+        <div
+          className={`absolute inset-x-0 top-0 h-1.5 ${bgActive ? "" : "bg-stone-300/40 dark:bg-white/10"}`}
+          style={bgActive ? { background: progressTone.track } : undefined}
+          role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={activeStudySession.progressPercent}
+        >
+          <div
+            className={`h-full rounded-r-full transition-all duration-300 ${bgActive ? "" : "bg-emerald-500"}`}
+            style={{ width: `${activeStudySession.progressPercent}%`, ...(bgActive ? { background: progressTone.fill, boxShadow: progressTone.glow } : {}) }}
+          />
         </div>
       )}
 
