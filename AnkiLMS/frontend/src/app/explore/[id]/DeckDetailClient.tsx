@@ -417,23 +417,19 @@ export default function DeckDetailClient({ id }: { id: string }) {
         {/* Thanh hành động nổi trên điện thoại/tablet, sát thanh điều hướng dưới (cao 64px); md trở lên dịch sang phải nửa bề rộng thanh bên để vẫn nằm giữa nội dung */}
                 {canPortal && createPortal(
 <div className="lg:hidden fixed z-30 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] inset-x-[4.25rem] sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[min(28rem,calc(100vw-2rem))] md:left-[calc(50%+8rem)]">
-          <div className="flex items-center gap-3 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white/95 dark:bg-stone-900/95 backdrop-blur px-3 py-2.5 shadow-lg">
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-black tabular-nums text-stone-900 dark:text-white">{deck.cards.length.toLocaleString("vi-VN")} thẻ</p>
-              <p className="hidden sm:block text-[11px] text-stone-500 dark:text-stone-400">{isAdded ? "Đã có trong kho thẻ" : "Chưa thêm vào kho thẻ"}</p>
-            </div>
+          <div className="flex items-center gap-2 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white/95 dark:bg-stone-900/95 backdrop-blur p-1.5 shadow-lg">
             {isAdded ? (
               <>
-                <button onClick={handleRemove} aria-label="Gỡ khỏi kho thẻ" title="Gỡ khỏi kho thẻ" className="h-10 w-10 rounded-xl text-rose-500 hover:bg-rose-500/10 flex items-center justify-center cursor-pointer">
+                <button onClick={handleRemove} aria-label="Gỡ khỏi kho thẻ" title="Gỡ khỏi kho thẻ" className="h-11 w-11 shrink-0 rounded-xl text-rose-500 hover:bg-rose-500/10 flex items-center justify-center cursor-pointer">
                   <Trash2 className="w-4 h-4" />
                 </button>
-                <a href="/flashcards?study=true" className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 px-4 py-2.5 text-sm font-black text-white transition">
-                  <BookOpen className="w-4 h-4" /> Học ngay
+                <a href="/flashcards?study=true" style={{ color: "#fff" }} className="flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 px-4 text-sm font-black text-white transition">
+                  <BookOpen className="w-4 h-4" /> Học ngay ({deck.cards.length.toLocaleString("vi-VN")} thẻ)
                 </a>
               </>
             ) : (
-              <button onClick={handleAdd} className="inline-flex items-center gap-2 rounded-xl bg-sky-500 hover:bg-sky-600 px-4 py-2.5 text-sm font-black text-white transition cursor-pointer">
-                <Plus className="w-4 h-4 stroke-[3]" /> Thêm
+              <button onClick={handleAdd} style={{ color: "#fff" }} className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-sky-500 hover:bg-sky-600 px-4 text-sm font-black text-white transition cursor-pointer">
+                <Plus className="w-4 h-4 stroke-[3]" /> Thêm vào kho thẻ ({deck.cards.length.toLocaleString("vi-VN")})
               </button>
             )}
           </div>
