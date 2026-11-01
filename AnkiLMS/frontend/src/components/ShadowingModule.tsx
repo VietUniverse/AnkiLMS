@@ -789,81 +789,8 @@ export const ShadowingModule: React.FC = () => {
       {/* Main Spacious Dashboard Layout (3 Columns) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
 
-        {/* LEFT COLUMN: LESSONS MENU & TOPIK FILTER (Col 1-3) */}
-        <aside className="order-2 lg:order-1 lg:col-span-3 bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-4 max-h-[420px] lg:max-h-[820px] overflow-y-auto shadow-lg">
-          <div className="border-b border-slate-800 pb-3">
-            <h3 className="text-sm font-black text-white flex items-center gap-2">
-              <Repeat className="w-4 h-4 text-rose-400" aria-hidden="true" />
-              <span>BÀI HỌC SHADOWING</span>
-            </h3>
-            <p className="text-xs text-slate-400 mt-0.5">{filteredLessons.length} Bài luyện nói theo mẫu</p>
-          </div>
-
-          {/* TOPIK Filter List */}
-          <div className="space-y-2">
-            <span className="text-xs font-bold text-sky-400 uppercase tracking-wider block">🎯 CẤP ĐỘ TOPIK:</span>
-            <div className="grid grid-cols-2 gap-1.5">
-              {["all", "1", "2", "3", "4", "5", "6"].map((lvl) => (
-                <button
-                  key={lvl}
-                  onClick={() => {
-                    setSelectedTopik(lvl);
-                    setCurrentSubIndex(0);
-                    const nextLesson = allLessons.find((lesson: any) => lvl === "all" || lesson.topikLevel === Number(lvl));
-                    if (nextLesson) {
-                      setSelectedLessonId(nextLesson.id);
-                      setCompletedSubIds(loadLessonProgress("shadowing", nextLesson.id));
-                    }
-                    setSpokenText(null);
-                    setSpeakingScore(null);
-                    setCompletedSubIds([]);
-                  }}
-                  className={`px-3 py-2 rounded-xl text-xs font-bold text-left transition-all ${
-                    selectedTopik === lvl
-                      ? "bg-rose-600 text-white shadow-md shadow-rose-900/40"
-                      : "bg-slate-950 text-slate-400 hover:bg-slate-800 hover:text-white"
-                  }`}
-                >
-                  {lvl === "all" ? `Tất Cả (${allLessons.length} Bài)` : `TOPIK ${lvl}`}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Lessons Cards List */}
-          <div className="space-y-2 pt-2 border-t border-slate-800">
-            <span className="text-xs font-bold text-sky-400 uppercase tracking-wider block">🎬 DANH SÁCH BÀI HỌC:</span>
-            {filteredLessons.length === 0 && (
-              <p className="text-xs text-slate-500 italic p-3">Không có bài học nào cho cấp độ này.</p>
-            )}
-            {filteredLessons.map((l: any) => {
-              const isSelected = l.id === selectedLessonId;
-              return (
-                <button
-                  key={`lesson-${l.id}`}
-                  onClick={() => openLessonWorkspace(l)}
-                  className={`w-full text-left p-3.5 rounded-xl border transition-all space-y-1.5 ${
-                    isSelected
-                      ? "bg-rose-600/20 border-rose-500 text-white font-bold shadow-md shadow-rose-900/30"
-                      : "bg-slate-950/60 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-white"
-                  }`}
-                >
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-rose-400 font-extrabold font-mono">BÀI #{l.lessonNum}</span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 font-bold text-[11px]">{l.topikName}</span>
-                  </div>
-                  <h4 className="text-xs font-bold text-slate-200 line-clamp-1">{l.title}</h4>
-                  <div className="flex items-center justify-between text-[11px] text-slate-500 font-mono">
-                    <span>⏱️ {Math.round(l.durationSec)}s đoạn luyện{l.sourceDurationSec ? ` / ${Math.floor(l.sourceDurationSec / 60)}:${String(l.sourceDurationSec % 60).padStart(2, "0")} video` : ""} • {l.segmentCount} câu</span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </aside>
-
         {/* CENTER COLUMN: MAIN WORKSPACE (Col 4-9) */}
-        <main className="order-1 min-w-0 lg:order-2 lg:col-span-6 space-y-5">
+        <main className="min-w-0 lg:col-span-8 space-y-5">
 
           {/* Top Video Player Card */}
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-lg">
@@ -872,7 +799,6 @@ export const ShadowingModule: React.FC = () => {
                 <h2 className="font-extrabold text-white text-base font-noto">{currentLesson.title}</h2>
                 <span className="px-3 py-1 rounded-full bg-sky-500/20 text-sky-300 font-bold text-xs">{currentLesson.topikName}</span>
               </div>
-              <span className="text-xs text-slate-400 font-mono">⏱️ Đoạn script {Math.round(currentLesson.durationSec)} giây{currentLesson.sourceDurationSec ? ` · video gốc ${Math.floor(currentLesson.sourceDurationSec / 60)}:${String(currentLesson.sourceDurationSec % 60).padStart(2, "0")}` : ""} ({currentLesson.segments.length} câu)</span>
             </div>
 
             {/* Video Player */}
@@ -1006,7 +932,7 @@ export const ShadowingModule: React.FC = () => {
         </main>
 
         {/* RIGHT COLUMN: SUBTITLE TIMELINE LIST (BẢN PHÁT ÂM BÀI HỌC) (Col 10-12) */}
-        <aside className="order-3 min-w-0 lg:col-span-3 bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 max-h-[420px] lg:max-h-[820px] overflow-y-auto shadow-lg">
+        <aside className="min-w-0 lg:col-span-4 bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 max-h-[420px] lg:max-h-[820px] overflow-y-auto shadow-lg">
           <div className="flex items-center justify-between border-b border-slate-800 pb-3">
             <h3 className="text-xs font-black text-slate-200 uppercase tracking-wider">BẢN PHÁT ÂM BÀI HỌC</h3>
             <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-xs">
