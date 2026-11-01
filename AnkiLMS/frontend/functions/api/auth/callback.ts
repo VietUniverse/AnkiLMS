@@ -7,9 +7,10 @@ function siteOrigin(request: Request, env: Env): string {
   return url.origin;
 }
 
-function redirect(siteUrl: string, error?: string, cookie?: string): Response {
+function redirect(siteUrl: string, error?: string, cookie?: string, handoff?: string): Response {
   const target = new URL("/", siteUrl);
   if (error) target.searchParams.set("auth_error", error);
+  if (handoff) target.hash = new URLSearchParams({ oauth_handoff: handoff }).toString();
   const headers = new Headers({
     Location: target.toString(),
     "Cache-Control": "no-store",
@@ -97,7 +98,12 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     if (!user) return redirect(siteUrl, "oauth_account_failed");
 
     const session = await createSession(env, user);
-    return redirect(siteUrl, undefined, sessionCookie(request, session));
+    // Mobile browsers can return from Google's account chooser without retaining
+    // the callback cookie. Hand the browser a short-lived, one-use ticket so it
+    // can exchange the session through a same-origin POST as a fallback.
+    const handoff = Array.from(crypto.getRandomValues(new Uint8Array(32)), (byte) => byte.toString(16).padStart(2, "0")).join("");
+    await env.SESSIONS.put(`oauth_handoff:${handoff}`, session, { expirationTtl: 120 });
+    return redirect(siteUrl, undefined, sessionCookie(request, session), handoff);
   } catch {
     return redirect(siteUrl, "oauth_failed");
   }

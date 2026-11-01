@@ -75,6 +75,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const authToken = params.get("auth_token");
     const authError = params.get("auth_error");
     const referralCode = params.get("ref");
+    const fragmentParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    const oauthHandoff = fragmentParams.get("oauth_handoff");
 
     if (referralCode && referralCode.length <= 80) {
       localStorage.setItem("haechivn_referral_code", referralCode);
@@ -82,7 +84,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     if (authToken) {
       localStorage.setItem("haechivn_auth_token", authToken);
-      window.history.replaceState({}, document.title, window.location.pathname);
+      const cleanUrl = new URL(window.location.href);
+      cleanUrl.searchParams.delete("auth_token");
+      window.history.replaceState({}, document.title, `${cleanUrl.pathname}${cleanUrl.search}${cleanUrl.hash}`);
+    }
+
+    // OAuth callback uses a one-time ticket in the URL fragment: fragments are
+    // never sent to servers or referrers. Exchange it before loading user data,
+    // and keep the resulting bearer only in local storage as cookie fallback.
+    if (oauthHandoff) {
+      window.history.replaceState({}, document.title, `${window.location.pathname}${window.location.search}`);
     }
 
     if (authError) {
@@ -157,7 +168,31 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setIsAuthReady(true);
       }
     }
-    loadInitialData();
+    async function bootstrap() {
+      if (oauthHandoff) {
+        try {
+          const response = await fetch("/api/auth/handoff", {
+            method: "POST",
+            credentials: "same-origin",
+            headers: { "Content-Type": "application/json" },
+            cache: "no-store",
+            body: JSON.stringify({ ticket: oauthHandoff }),
+          });
+          const payload = await response.json() as { token?: string; error?: string };
+          if (response.ok && payload.token) {
+            localStorage.setItem("haechivn_auth_token", payload.token);
+          } else {
+            setTimeout(() => setAuthErrorMessage(payload.error || "Không hoàn tất được đăng nhập Google. Vui lòng thử lại."), 0);
+            setTimeout(() => setAuthErrorMessage(null), 8000);
+          }
+        } catch {
+          setTimeout(() => setAuthErrorMessage("Không thể hoàn tất đăng nhập Google. Hãy kiểm tra kết nối rồi thử lại."), 0);
+          setTimeout(() => setAuthErrorMessage(null), 8000);
+        }
+      }
+      await loadInitialData();
+    }
+    void bootstrap();
 
     const handleUserUpdate = (event: Event) => {
       const updatedUser = (event as CustomEvent<UserProfile>).detail;
