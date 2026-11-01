@@ -7,6 +7,7 @@ import { ApiClient, StudyProfileSummary, UserProfile } from "../lib/apiClient";
 import { ACHIEVEMENTS_DATA } from "../data/achievementsData";
 import { getStudyRank } from "../lib/studyRanks";
 import { OnigiriHeatmap } from "./OnigiriHeatmap";
+import { StreakPanel } from "./StreakPanel";
 
 interface ProfileModuleProps {
   currentUser: UserProfile | null;
@@ -143,7 +144,12 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
         ))}
       </section>
 
-      <OnigiriHeatmap data={heatmapData} streak={currentUser.streak || 0} />
+      <StreakPanel data={heatmapData} streak={currentUser.streak || 0} longestStreak={currentUser.longest_streak || 0} />
+
+      {/* Heatmap cả năm chỉ hiện từ màn tablet trở lên; điện thoại dùng dải 7 ngày và lịch tháng ở trên. */}
+      <div className="hidden md:block">
+        <OnigiriHeatmap data={heatmapData} streak={currentUser.streak || 0} />
+      </div>
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)]">
         {/* Thành tích */}
