@@ -21,6 +21,14 @@ const emit = (next: Partial<State>) => {
   listeners.forEach((listener) => listener());
 };
 
+const INSTALLED_KEY = "haechivn_app_installed";
+const readInstalledFlag = () => {
+  try { return localStorage.getItem(INSTALLED_KEY) === "1"; } catch { return false; }
+};
+const markInstalled = () => {
+  try { localStorage.setItem(INSTALLED_KEY, "1"); } catch { /* bỏ qua */ }
+};
+
 const isStandalone = () =>
   window.matchMedia?.("(display-mode: standalone)").matches ||
   window.matchMedia?.("(display-mode: window-controls-overlay)").matches ||
@@ -30,17 +38,25 @@ let started = false;
 function start() {
   if (started || typeof window === "undefined") return;
   started = true;
-  state = { ...state, installed: isStandalone() };
+  // Đã cài nếu đang chạy như ứng dụng, hoặc đã từng cài trên trình duyệt này (nhớ lại để mở bằng tab thường vẫn ẩn nút).
+  if (isStandalone()) markInstalled();
+  state = { ...state, installed: isStandalone() || readInstalledFlag() };
+  // Chrome (Android, và máy tính bản mới) cho biết ứng dụng web đã cài hay chưa.
+  const nav = navigator as Navigator & { getInstalledRelatedApps?: () => Promise<unknown[]> };
+  void nav.getInstalledRelatedApps?.().then((apps) => {
+    if (apps.length > 0) { markInstalled(); emit({ installed: true, canPrompt: false }); }
+  }).catch(() => { /* không hỗ trợ: bỏ qua */ });
   window.addEventListener("beforeinstallprompt", (event) => {
     event.preventDefault(); // tự hiện nút của mình thay vì thanh nhỏ mặc định
     deferred = event as PromptEvent;
     emit({ canPrompt: true });
   });
   window.addEventListener("appinstalled", () => {
+    markInstalled();
     deferred = null;
     emit({ installed: true, canPrompt: false });
   });
-  window.matchMedia?.("(display-mode: standalone)").addEventListener?.("change", () => emit({ installed: isStandalone() }));
+  window.matchMedia?.("(display-mode: standalone)").addEventListener?.("change", () => { if (isStandalone()) markInstalled(); emit({ installed: isStandalone() || readInstalledFlag() }); });
   if ("serviceWorker" in navigator && process.env.NODE_ENV === "production") {
     void navigator.serviceWorker.register("/sw.js").catch(() => { /* không đăng ký được thì chỉ mất khả năng cài trên vài trình duyệt cũ */ });
   }
