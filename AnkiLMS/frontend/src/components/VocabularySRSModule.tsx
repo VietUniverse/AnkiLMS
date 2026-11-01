@@ -486,6 +486,18 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     }
   }, [lastStudiedDeckId, deckTree, findNodeById, startStudy]);
 
+  // Số thẻ còn lại trong lượt học: thẻ mới (chưa có lịch ôn) và thẻ ôn lại, tính từ thẻ đang học trở đi.
+  const remainingCounts = useMemo(() => {
+    let newCount = 0;
+    let reviewCount = 0;
+    for (const card of activeCardsList.slice(currentCardIndex)) {
+      const state = cardStateMap[`${card.deckName || "deck"}_${card.id}`];
+      if (state && state.state !== "new") reviewCount += 1;
+      else newCount += 1;
+    }
+    return { newCount, reviewCount };
+  }, [activeCardsList, currentCardIndex, cardStateMap]);
+
   // Sync study session with App context for Navbar controls
   useEffect(() => {
     if (viewMode === "study") {
@@ -495,9 +507,11 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
         studyMode,
         setStudyMode,
         progressText: activeCardsList.length > 0 ? `${currentCardIndex + 1} / ${activeCardsList.length}` : "Hoàn thành",
+        remainingNew: remainingCounts.newCount,
+        remainingReview: remainingCounts.reviewCount,
       });
     }
-  }, [viewMode, activeDeckTitle, exitStudy, studyMode, setStudyMode, currentCardIndex, activeCardsList.length, setActiveStudySession]);
+  }, [viewMode, activeDeckTitle, exitStudy, studyMode, setStudyMode, currentCardIndex, activeCardsList.length, remainingCounts, setActiveStudySession]);
 
   // Auto-resume if query param ?resume=true or ?study=true is present
   useEffect(() => {
@@ -562,6 +576,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
         studyMode,
         setStudyMode,
         progressText: activeCardsList.length > 0 ? `${currentCardIndex + 1} / ${activeCardsList.length}` : "",
+        remainingNew: remainingCounts.newCount,
+        remainingReview: remainingCounts.reviewCount,
       });
     } else {
       setActiveStudySession(null);
@@ -569,7 +585,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     return () => {
       setActiveStudySession(null);
     };
-  }, [viewMode, activeDeckTitle, exitStudy, studyMode, setStudyMode, currentCardIndex, activeCardsList.length, setActiveStudySession]);
+  }, [viewMode, activeDeckTitle, exitStudy, studyMode, setStudyMode, currentCardIndex, activeCardsList.length, remainingCounts, setActiveStudySession]);
 
   const currentCard = activeCardsList[currentCardIndex] || activeCardsList[0];
 

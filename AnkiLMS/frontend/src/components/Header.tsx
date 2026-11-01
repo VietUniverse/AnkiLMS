@@ -49,14 +49,11 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onToggl
         )}
       </div>
 
-      {/* Vùng Giữa (Khi học thẻ): chỉ hiện tiến độ. Chế độ lật thẻ/gõ từ do hệ thống tự quyết định, không có công tắc. */}
-      {activeStudySession && (
-        <div className="flex items-center gap-2 animate-reveal">
-          {activeStudySession.progressText && (
-            <span className="hidden sm:inline-block text-xs font-mono font-bold text-stone-600 dark:text-stone-300 px-2 py-1 rounded-lg bg-stone-100/80 dark:bg-stone-800/80 border border-stone-200/60 dark:border-stone-700/60">
-              {activeStudySession.progressText}
-            </span>
-          )}
+      {/* Giữa thanh khi học thẻ: số thẻ mới (xanh) và thẻ ôn (đỏ) còn lại, chỉ phân biệt bằng màu */}
+      {activeStudySession && activeStudySession.remainingNew !== undefined && (
+        <div className="pointer-events-none absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-4 text-xl font-black tabular-nums animate-reveal">
+          <span className="text-sky-500" title="Từ mới còn lại" aria-label={`${activeStudySession.remainingNew} từ mới còn lại`}>{activeStudySession.remainingNew}</span>
+          <span className="text-rose-500" title="Từ ôn còn lại" aria-label={`${activeStudySession.remainingReview} từ ôn còn lại`}>{activeStudySession.remainingReview}</span>
         </div>
       )}
 
