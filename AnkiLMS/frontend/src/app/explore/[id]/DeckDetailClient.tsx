@@ -136,18 +136,20 @@ export default function DeckDetailClient({ id }: { id: string }) {
   }, [deckCards, requestedPreviewCardId]);
   const curriculumSections = useMemo(() => {
     if (!deck || (!deck.id.startsWith("curriculum-") && deck.id !== "course-topic-vocabulary")) return [];
-    const sections = new Map<string, { count: number; children: Set<string>; levels: Set<string> }>();
+    const isTopicVocabularyDeck = deck.id === "course-topic-vocabulary";
+    const sections = new Map<string, { count: number; children: Set<string>; levels: Set<string>; topics: Set<string> }>();
     for (const card of deck.cards) {
       const parts = card.deckName?.split("::").slice(1).map((part) => part.trim()).filter(Boolean) || [];
       const section = parts[0];
       if (!section) continue;
-      const item = sections.get(section) || { count: 0, children: new Set<string>(), levels: new Set<string>() };
+      const item = sections.get(section) || { count: 0, children: new Set<string>(), levels: new Set<string>(), topics: new Set<string>() };
       item.count += 1;
       if (parts[1]) item.children.add(parts[1]);
+      if (isTopicVocabularyDeck && parts[1]) item.topics.add(parts[1]);
       for (const tag of card.tags || []) if (/^TOPIK [1-6]$/.test(tag)) item.levels.add(tag);
       sections.set(section, item);
     }
-    return [...sections.entries()].map(([name, info]) => [name, { count: info.count, childCount: info.children.size }] as const)
+    return [...sections.entries()].map(([name, info]) => [name, { count: info.count, childCount: info.children.size, topics: [...info.topics].sort((a, b) => a.localeCompare(b, "ko", { numeric: true })) }] as const)
       .sort(([left], [right]) => left.localeCompare(right, "ko", { numeric: true }));
   }, [deck]);
   const currentPreviewCard = deckCards[activePreviewIndex] || deckCards[0];
@@ -336,19 +338,26 @@ export default function DeckDetailClient({ id }: { id: string }) {
             {curriculumSections.length > 0 ? (
               <section className="space-y-2">
                 <h2 className="text-sm font-bold text-stone-900 dark:text-white">
-                  {deck.id === "course-topic-vocabulary" ? "Chủ đề" : "Nội dung"} <span className="font-normal text-stone-400">({curriculumSections.length})</span>
+                  {deck.id === "course-topic-vocabulary" ? "Subdeck theo cấp TOPIK" : "Nội dung"} <span className="font-normal text-stone-400">({curriculumSections.length})</span>
                 </h2>
                 <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 divide-y sm:divide-y-0 divide-stone-200/70 dark:divide-stone-800/70">
                   {curriculumSections.map(([section, info]) => (
                     <li key={section} className="flex items-center justify-between gap-3 py-2 sm:border-b border-stone-200/70 dark:border-stone-800/70">
-                      <span className="text-sm text-stone-800 dark:text-stone-200 truncate">{section}</span>
+                      <div className="min-w-0">
+                        <span className="text-sm text-stone-800 dark:text-stone-200 truncate">{section}</span>
+                        {info.topics.length > 0 && <p className="mt-1 text-xs text-stone-500 dark:text-stone-400 line-clamp-2">{info.topics.join(" · ")}</p>}
+                      </div>
                       <span className="text-xs text-stone-400 shrink-0 tabular-nums">
-                        {info.count.toLocaleString("vi-VN")}{info.childCount ? ` · ${info.childCount} bài` : ""}
+                        {info.count.toLocaleString("vi-VN")} thẻ{info.childCount ? ` · ${info.childCount} ${deck.id === "course-topic-vocabulary" ? "chủ đề" : "bài"}` : ""}
                       </span>
                     </li>
                   ))}
                 </ul>
-                <p className="text-xs text-stone-400">Thêm vào Flashcard để chọn chủ đề hoặc học toàn bộ.</p>
+                <p className="text-xs text-stone-400">
+                  {deck.id === "course-topic-vocabulary"
+                    ? `Một bộ riêng gồm ${deck.cards.length.toLocaleString("vi-VN")} từ; thêm vào Flashcards để chọn cấp TOPIK rồi chọn chủ đề.`
+                    : "Thêm vào Flashcards để chọn nội dung hoặc học toàn bộ."}
+                </p>
               </section>
             ) : (
               <p className="text-xs text-stone-500 dark:text-stone-400">

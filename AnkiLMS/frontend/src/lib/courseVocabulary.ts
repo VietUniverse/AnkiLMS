@@ -30,10 +30,13 @@ export function courseToExploreDeck(course: VocabularyCourse): CuratedDeckItem {
   const topik = course.topik.match(/\d+/)?.[0] || "1";
   const cards: AnkiCard[] = course.units.flatMap((unit) => unit.words.map(([id, korean, meaning, , hanja, pronunciation, wordTopik]) => {
     const topik = wordTopik || course.topik;
+    const subdeckPath = course.id === "topic-vocabulary"
+      ? `${topik}::${unit.title}`
+      : unit.title;
     return ({
     id,
     noteId: id,
-    deckName: `${course.title}::${unit.title}`,
+    deckName: `${course.title}::${subdeckPath}`,
     frontHtml: korean,
     backHtml: meaning,
     frontText: korean,
@@ -63,7 +66,7 @@ export function courseToExploreDeck(course: VocabularyCourse): CuratedDeckItem {
     level,
     description: `${course.topic} · ${course.level}`,
     detailedDescription: topicCollection
-      ? `Một bộ duy nhất gồm ${cards.length.toLocaleString("vi-VN")} từ và cụm từ, được chia thành các chủ đề để người học tự chọn.`
+      ? `Một bộ từ vựng TOPIK theo chủ đề gồm ${cards.length.toLocaleString("vi-VN")} từ và cụm từ. Trong Flashcards, chọn subdeck TOPIK rồi chọn chủ đề để học.`
       : `Bộ từ vựng theo ${course.topik}, gồm ${cards.length.toLocaleString("vi-VN")} từ và cụm từ được chia theo bài học.`,
     iconName: "BookOpen",
     badgeColor: "bg-sky-500/10 text-sky-600 dark:text-sky-300 border-sky-500/30",
