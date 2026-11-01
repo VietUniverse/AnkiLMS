@@ -14,26 +14,30 @@ type Field = keyof DailyLimits;
 
 const FIELD_LABEL: Record<Field, string> = { newPerDay: "Từ mới", reviewPerDay: "Ôn lại" };
 
-function GoalCard({ label, done, value, onOpen }: { label: string; done: number; value: number; onOpen: () => void }) {
+function GoalBar({ done, value, onOpen }: { done: number; value: number; onOpen: () => void }) {
   const pct = value === 0 ? 0 : Math.min(100, Math.round((done / value) * 100));
+  const complete = value > 0 && done >= value;
   return (
     <button
       type="button"
       onClick={onOpen}
-      aria-label={`${label}: đã ${done}${value ? ` trên ${value}` : ""}. Bấm để đổi giới hạn`}
-      className="group block w-full rounded-xl border border-stone-200 dark:border-stone-700 px-3 py-2.5 text-left space-y-1.5 transition hover:border-sky-400 hover:bg-sky-50 dark:hover:bg-stone-800 cursor-pointer"
+      aria-label={`Mục tiêu từ mới hôm nay: đã ${done}${value ? ` trên ${value}` : ", không giới hạn"}. Bấm để đổi`}
+      className="group flex w-full items-center gap-3 rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 px-4 py-3 text-left transition hover:border-sky-400 cursor-pointer"
     >
-      <span className="flex items-center justify-between text-xs text-stone-500 dark:text-stone-400">
-        {label}
-        <Pencil className="h-3 w-3 opacity-0 transition group-hover:opacity-100" />
+      <Target className={`h-5 w-5 shrink-0 ${complete ? "text-emerald-500" : "text-sky-500"}`} />
+      <span className="min-w-0 flex-1 space-y-1.5">
+        <span className="flex items-baseline justify-between gap-2">
+          <span className="text-sm font-bold text-stone-900 dark:text-white">Từ mới hôm nay</span>
+          <span className="text-sm font-black tabular-nums text-stone-900 dark:text-white">
+            {done}
+            <span className="font-bold text-stone-400">{value === 0 ? " / không giới hạn" : ` / ${value}`}</span>
+          </span>
+        </span>
+        <span className="block h-1.5 rounded-full bg-stone-200 dark:bg-stone-800 overflow-hidden">
+          <span className={`block h-full rounded-full transition-all ${complete ? "bg-emerald-500" : "bg-sky-500"}`} style={{ width: `${pct}%` }} />
+        </span>
       </span>
-      <span className="block text-lg font-black tabular-nums text-stone-900 dark:text-white">
-        {done}
-        <span className="text-sm font-bold text-stone-400">{value === 0 ? " / không giới hạn" : ` / ${value}`}</span>
-      </span>
-      <span className="block h-1.5 rounded-full bg-stone-200 dark:bg-stone-800 overflow-hidden">
-        <span className={`block h-full rounded-full transition-all ${pct >= 100 ? "bg-emerald-500" : "bg-sky-500"}`} style={{ width: `${pct}%` }} />
-      </span>
+      <Pencil className="h-3.5 w-3.5 shrink-0 text-stone-300 transition group-hover:text-sky-500" />
     </button>
   );
 }
@@ -57,12 +61,8 @@ export const DailyLimitsPanel: React.FC<Props> = ({ limits, progress, onChange }
   };
 
   return (
-    <section className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 p-4">
-      <h2 className="mb-3 flex items-center gap-2 text-sm font-bold text-stone-900 dark:text-white">
-        <Target className="w-4 h-4 text-sky-500" /> Mục tiêu hôm nay
-      </h2>
-      <GoalCard label="Từ mới" done={progress.newDone} value={limits.newPerDay} onOpen={() => open("newPerDay")} />
-      <p className="mt-2 text-xs text-stone-500 dark:text-stone-400">Từ đến hạn ôn lại không giới hạn: có bao nhiêu, ôn hết bấy nhiêu.</p>
+    <section>
+      <GoalBar done={progress.newDone} value={limits.newPerDay} onOpen={() => open("newPerDay")} />
 
       {editing && (
         <div
