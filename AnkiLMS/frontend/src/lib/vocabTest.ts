@@ -1,7 +1,7 @@
-// Kiểm tra vốn từ 서울대 한국어 플러스 1A (đủ để học 1B chưa?).
-// 60 câu chia theo kích thước từng bài (bài 01–08), làm 2 giai đoạn 30 + 30 và dừng sớm khi kết quả đã rõ.
+// Bài kiểm tra vốn từ theo giáo trình (Seoul 1A, Tiếng Hàn Tổng Hợp 1...).
+// Câu hỏi chia theo kích thước từng bài, làm 2 giai đoạn (nửa đầu rồi nửa sau) và dừng sớm khi kết quả đã rõ.
 // Chấm điểm: đúng +1, sai −1/3, "Chưa biết" 0 → đoán mò không có lợi, người trung thực không bị thiệt.
-export type Seoul1ACard = { koreanText: string; vietnameseMeaning: string; tags?: string[] };
+export type TestCard = { koreanText: string; vietnameseMeaning: string; tags?: string[] };
 // ko-vi: thấy từ Hàn, chọn nghĩa Việt (nhận biết). vi-ko: thấy nghĩa Việt, chọn từ Hàn (nhớ chủ động).
 export type TestQuestion = { direction: "ko-vi" | "vi-ko"; prompt: string; answer: string; options: string[]; lesson: string };
 export type TestResult = {
@@ -15,16 +15,19 @@ export type TestResult = {
   assessedAt: string;
 };
 
-export const TOTAL_QUESTIONS = 60;
-export const STAGE_ONE = 30;
+export type TestConfig = {
+  total: number;
+  minPerLesson: number;
+  maxPerLesson: number;
+  minLesson: number;
+  maxLesson: number;
+};
+export const DEFAULT_CONFIG: TestConfig = { total: 60, minPerLesson: 5, maxPerLesson: 12, minLesson: 1, maxLesson: 8 };
 export const EARLY_PASS = 0.93;
 export const EARLY_FAIL = 0.55;
 export const PASS_RATIO = 0.8;
 export const ALMOST_RATIO = 0.7;
-const MIN_PER_LESSON = 5;
-const MAX_PER_LESSON = 12;
 const ACTIVE_RATIO = 0.2; // ~12/60 câu Việt→Hàn
-export const RESULT_KEY = "haechivn_seoul1a_result";
 
 const BRANDS = new Set(["스타벅스", "에디야커피", "메가커피", "컴포즈커피", "이디야", "맥도날드", "롯데리아"]);
 
@@ -37,12 +40,12 @@ const shuffle = <T,>(items: T[]): T[] => {
   return a;
 };
 
-const lessonOf = (card: Seoul1ACard) => card.tags?.[2] || "";
+const lessonOf = (card: TestCard) => card.tags?.[2] || "";
 const lessonNo = (lesson: string) => Number(lesson.match(/^(\d+)\./)?.[1] ?? -1);
 const isPredicate = (ko: string) => ko.endsWith("다");
 
 // Từ đơn, nghĩa ngắn và rõ; bỏ từ vay mượn dễ đoán, tên riêng, thương hiệu, câu hỏi/ngữ pháp.
-const isTestable = (card: Seoul1ACard) => {
+const isTestable = (card: TestCard) => {
   const ko = card.koreanText?.trim();
   const vi = card.vietnameseMeaning?.trim();
   if (!ko || !vi) return false;
@@ -54,14 +57,14 @@ const isTestable = (card: Seoul1ACard) => {
 };
 
 // Phân số câu theo kích thước pool, mỗi bài tối thiểu 5, tối đa 12, tổng đúng total.
-function allocate(sizes: number[], total: number): number[] {
+function allocate(sizes: number[], total: number, minPer: number, maxPer: number): number[] {
   const sum = sizes.reduce((a, b) => a + b, 0) || 1;
-  const quota = sizes.map((s) => Math.min(s, Math.max(MIN_PER_LESSON, Math.min(MAX_PER_LESSON, Math.round((s / sum) * total)))));
-  const cap = (i: number) => Math.min(sizes[i], MAX_PER_LESSON);
+  const quota = sizes.map((s) => Math.min(s, Math.max(minPer, Math.min(maxPer, Math.round((s / sum) * total)))));
+  const cap = (i: number) => Math.min(sizes[i], maxPer);
   let diff = total - quota.reduce((a, b) => a + b, 0);
   for (let guard = 0; diff !== 0 && guard < 500; guard++) {
     const order = sizes.map((_, i) => i).sort((a, b) => (diff > 0 ? sizes[b] - sizes[a] : sizes[a] - sizes[b]));
-    const i = order.find((k) => (diff > 0 ? quota[k] < cap(k) : quota[k] > Math.min(sizes[k], MIN_PER_LESSON)));
+    const i = order.find((k) => (diff > 0 ? quota[k] < cap(k) : quota[k] > Math.min(sizes[k], minPer)));
     if (i === undefined) break;
     quota[i] += diff > 0 ? 1 : -1;
     diff += diff > 0 ? -1 : 1;
@@ -69,22 +72,22 @@ function allocate(sizes: number[], total: number): number[] {
   return quota;
 }
 
-export function buildQuestions(cards: Seoul1ACard[]): TestQuestion[] {
+export function buildQuestions(cards: TestCard[], config: TestConfig = DEFAULT_CONFIG): TestQuestion[] {
   // Từ Hàn xuất hiện ở nhiều thẻ thì bỏ (khó gắn đúng một bài, nghĩa có thể mơ hồ).
   const counts = new Map<string, number>();
   for (const c of cards) counts.set(c.koreanText?.trim(), (counts.get(c.koreanText?.trim()) || 0) + 1);
-  const pool = cards.filter((c) => isTestable(c) && counts.get(c.koreanText.trim()) === 1 && lessonNo(lessonOf(c)) >= 1 && lessonNo(lessonOf(c)) <= 8);
+  const pool = cards.filter((c) => isTestable(c) && counts.get(c.koreanText.trim()) === 1 && lessonNo(lessonOf(c)) >= config.minLesson && lessonNo(lessonOf(c)) <= config.maxLesson);
   const lessons = [...new Set(pool.map(lessonOf))].sort();
   const byLesson = new Map(lessons.map((l) => [l, pool.filter((c) => lessonOf(c) === l)]));
-  const quota = allocate(lessons.map((l) => byLesson.get(l)!.length), TOTAL_QUESTIONS);
+  const quota = allocate(lessons.map((l) => byLesson.get(l)!.length), config.total, config.minPerLesson, config.maxPerLesson);
 
   // Meaning xuất hiện ở nhiều thẻ thì không dùng cho câu Việt→Hàn (có nhiều đáp án đúng).
   const meaningCounts = new Map<string, number>();
   for (const c of cards) meaningCounts.set(c.vietnameseMeaning?.trim().toLowerCase(), (meaningCounts.get(c.vietnameseMeaning?.trim().toLowerCase()) || 0) + 1);
 
   // Chọn 3 đáp án nhiễu cùng từ loại, ưu tiên cùng bài rồi bài kề, độ dài gần nhau, không là chuỗi con của nhau.
-  const distractorsFor = (card: Seoul1ACard, lesson: string, direction: TestQuestion["direction"]): string[] => {
-    const text = (c: Seoul1ACard) => (direction === "ko-vi" ? c.vietnameseMeaning.trim() : c.koreanText.trim());
+  const distractorsFor = (card: TestCard, lesson: string, direction: TestQuestion["direction"]): string[] => {
+    const text = (c: TestCard) => (direction === "ko-vi" ? c.vietnameseMeaning.trim() : c.koreanText.trim());
     const answer = text(card);
     const pred = isPredicate(card.koreanText.trim());
     const idx = lessons.indexOf(lesson);
@@ -132,13 +135,14 @@ export function buildQuestions(cards: Seoul1ACard[]): TestQuestion[] {
     return made;
   });
   // Giai đoạn 1 đúng STAGE_ONE câu, lấy luân phiên giữa các bài để phủ đều.
+  const stageOne = Math.round(config.total / 2);
   const first: TestQuestion[] = [];
   const second: TestQuestion[] = [];
   const cursors = perLesson.map(() => 0);
-  for (let round = 0; first.length < STAGE_ONE; round++) {
+  for (let round = 0; first.length < stageOne; round++) {
     let took = false;
     perLesson.forEach((made, i) => {
-      if (first.length < STAGE_ONE && cursors[i] < made.length) { first.push(made[cursors[i]++]); took = true; }
+      if (first.length < stageOne && cursors[i] < made.length) { first.push(made[cursors[i]++]); took = true; }
     });
     if (!took) break;
   }
@@ -168,27 +172,27 @@ export function evaluate(questions: TestQuestion[], answers: number[]): TestResu
 }
 
 /** Sau giai đoạn 1: dừng sớm khi kết quả đã rõ (rất tốt hoặc rất yếu). */
-export function shouldStopEarly(questions: TestQuestion[], answers: number[]): boolean {
-  if (answers.length !== STAGE_ONE) return false;
+export function shouldStopEarly(questions: TestQuestion[], answers: number[], total: number): boolean {
+  if (answers.length !== Math.round(total / 2)) return false;
   const r = evaluate(questions, answers);
   return r.percent / 100 >= EARLY_PASS || r.percent / 100 <= EARLY_FAIL;
 }
 
-export function loadSavedResult(): TestResult | null {
+export function loadSavedResult(resultKey: string): TestResult | null {
   try {
-    const raw = JSON.parse(localStorage.getItem(RESULT_KEY) || "null");
+    const raw = JSON.parse(localStorage.getItem(resultKey) || "null");
     return raw && typeof raw.percent === "number" && typeof raw.total === "number" ? raw as TestResult : null;
   } catch {
     return null;
   }
 }
 
-export function saveResult(result: TestResult) {
-  try { localStorage.setItem(RESULT_KEY, JSON.stringify(result)); } catch { /* bỏ qua nếu bộ nhớ bị chặn */ }
+export function saveResult(resultKey: string, result: TestResult) {
+  try { localStorage.setItem(resultKey, JSON.stringify(result)); } catch { /* bỏ qua nếu bộ nhớ bị chặn */ }
 }
 
-// "03. 가게" -> "Bài 3 · 가게"
+// "03. 가게" -> "Bài 3: 가게"
 export const lessonLabel = (lesson: string) => {
   const m = lesson.match(/^0?(\d+)\.\s*(.+)$/);
-  return m ? `Bài ${m[1]} · ${m[2]}` : lesson;
+  return m ? `Bài ${m[1]}: ${m[2]}` : lesson;
 };
