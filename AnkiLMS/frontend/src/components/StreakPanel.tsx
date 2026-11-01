@@ -28,8 +28,15 @@ function GoalRing({ done, goal }: { done: number; goal: number }) {
         style={{ height: `${ratio * 100}%` }}
       />
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        {complete ? <Check className="h-7 w-7" style={{ color: "#fff" }} strokeWidth={3.5} /> : <Target className="h-5 w-5 text-sky-600 dark:text-sky-300" />}
-        <span className={`mt-0.5 text-sm font-black tabular-nums ${complete ? "" : "text-stone-800 dark:text-stone-100"}`} style={complete ? { color: "#fff" } : undefined}>{goal > 0 ? `${done}/${goal}` : done}</span>
+        {complete ? (
+          // Đủ mục tiêu: chỉ hiện số đã học, hình tròn đã đầy màu.
+          <span className="text-3xl font-black tabular-nums" style={{ color: "#fff" }}>{done}</span>
+        ) : (
+          <>
+            <Target className="h-5 w-5 text-sky-600 dark:text-sky-300" />
+            <span className="mt-0.5 text-sm font-black tabular-nums text-stone-800 dark:text-stone-100">{goal > 0 ? `${done}/${goal}` : done}</span>
+          </>
+        )}
       </div>
     </div>
   );
