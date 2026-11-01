@@ -1,4 +1,4 @@
-import { Env, UserRow, createSession, sessionCookie, clearOauthStateCookie } from "../_utils";
+import { Env, UserRow, createSession, sessionCookie } from "../_utils";
 
 function siteOrigin(request: Request, env: Env): string {
   const value = env.SITE_URL || new URL(request.url).origin;
@@ -7,15 +7,7 @@ function siteOrigin(request: Request, env: Env): string {
   return url.origin;
 }
 
-function readStateCookie(request: Request): string | null {
-  return (request.headers.get("Cookie") || "")
-    .split(";")
-    .map((part) => part.trim())
-    .find((part) => part.startsWith("haechivn_oauth_state="))
-    ?.slice("haechivn_oauth_state=".length) || null;
-}
-
-function redirect(request: Request, siteUrl: string, error?: string, cookie?: string): Response {
+function redirect(siteUrl: string, error?: string, cookie?: string): Response {
   const target = new URL("/", siteUrl);
   if (error) target.searchParams.set("auth_error", error);
   const headers = new Headers({
@@ -26,7 +18,6 @@ function redirect(request: Request, siteUrl: string, error?: string, cookie?: st
     "Referrer-Policy": "strict-origin-when-cross-origin",
     "Strict-Transport-Security": "max-age=31536000",
   });
-  headers.append("Set-Cookie", clearOauthStateCookie(request));
   if (cookie) headers.append("Set-Cookie", cookie);
   return new Response(null, {
     status: 302,
@@ -42,12 +33,16 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     const url = new URL(request.url);
     const code = url.searchParams.get("code");
     const state = url.searchParams.get("state");
-    if (!code || !state || !env.SESSIONS) return redirect(request, siteUrl, "oauth_invalid_request");
+    if (!code || !state || !env.SESSIONS) return redirect(siteUrl, "oauth_invalid_request");
 
     const stateKey = `oauth_state:${state}`;
     const validState = await env.SESSIONS.get(stateKey);
     await env.SESSIONS.delete(stateKey);
-    if (!validState || readStateCookie(request) !== state) return redirect(request, siteUrl, "oauth_state_expired");
+    // OAuth state is high-entropy, stored once in KV with a short TTL, then
+    // consumed before exchanging the authorization code. Avoid a separate
+    // cross-domain state cookie: privacy-focused mobile browsers may suppress
+    // cookies set before redirecting to Google even though the OAuth state is valid.
+    if (!validState) return redirect(siteUrl, "oauth_state_expired");
     let translationLanguage = "vi";
     try {
       const stateData = JSON.parse(validState) as { translationLanguage?: string };
@@ -56,7 +51,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
     const clientId = env.GOOGLE_CLIENT_ID;
     const clientSecret = env.GOOGLE_CLIENT_SECRET;
-    if (!clientId || !clientSecret) return redirect(request, siteUrl, "oauth_not_configured");
+    if (!clientId || !clientSecret) return redirect(siteUrl, "oauth_not_configured");
 
     const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
@@ -69,14 +64,14 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
         grant_type: "authorization_code",
       }),
     });
-    if (!tokenResponse.ok) return redirect(request, siteUrl, "oauth_token_failed");
+    if (!tokenResponse.ok) return redirect(siteUrl, "oauth_token_failed");
     const tokenData = (await tokenResponse.json()) as { access_token?: string };
-    if (!tokenData.access_token) return redirect(request, siteUrl, "oauth_token_failed");
+    if (!tokenData.access_token) return redirect(siteUrl, "oauth_token_failed");
 
     const profileResponse = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
       headers: { Authorization: `Bearer ${tokenData.access_token}` },
     });
-    if (!profileResponse.ok) return redirect(request, siteUrl, "oauth_profile_failed");
+    if (!profileResponse.ok) return redirect(siteUrl, "oauth_profile_failed");
     const profile = (await profileResponse.json()) as {
       id?: string;
       email?: string;
@@ -84,7 +79,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       picture?: string;
       verified_email?: boolean;
     };
-    if (!profile.email || !profile.verified_email) return redirect(request, siteUrl, "oauth_email_unverified");
+    if (!profile.email || !profile.verified_email) return redirect(siteUrl, "oauth_email_unverified");
 
     const email = profile.email.trim().toLowerCase();
     let user = await env.DB.prepare("SELECT * FROM users WHERE email = ?").bind(email).first<UserRow>();
@@ -99,11 +94,11 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       await env.DB.prepare("UPDATE users SET avatar_url = ? WHERE id = ?").bind(profile.picture, user.id).run();
       user.avatar_url = profile.picture;
     }
-    if (!user) return redirect(request, siteUrl, "oauth_account_failed");
+    if (!user) return redirect(siteUrl, "oauth_account_failed");
 
     const session = await createSession(env, user);
-    return redirect(request, siteUrl, undefined, sessionCookie(request, session));
+    return redirect(siteUrl, undefined, sessionCookie(request, session));
   } catch {
-    return redirect(request, siteUrl, "oauth_failed");
+    return redirect(siteUrl, "oauth_failed");
   }
 };

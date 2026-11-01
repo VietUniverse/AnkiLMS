@@ -140,15 +140,6 @@ export function clearSessionCookie(request: Request): string {
   return sessionCookie(request, "", 0);
 }
 
-export function oauthStateCookie(request: Request, state: string): string {
-  const secure = new URL(request.url).protocol === "https:" ? "; Secure" : "";
-  return `haechivn_oauth_state=${state}; Path=/api/auth/callback; Max-Age=600; HttpOnly; SameSite=Lax${secure}`;
-}
-
-export function clearOauthStateCookie(request: Request): string {
-  return oauthStateCookie(request, "");
-}
-
 export async function createSession(env: Env, user: Pick<UserRow, "id" | "email" | "name">): Promise<string> {
   const token = `hcv_${toHex(crypto.getRandomValues(new Uint8Array(32)))}`;
   await env.SESSIONS.put(token, JSON.stringify({ userId: user.id }), { expirationTtl: SESSION_TTL_SECONDS });

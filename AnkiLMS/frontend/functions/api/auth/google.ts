@@ -1,4 +1,4 @@
-import { Env, errorResponse, oauthStateCookie } from "../_utils";
+import { Env, errorResponse } from "../_utils";
 
 function configuredSiteUrl(request: Request, env: Env): string {
   const configured = env.SITE_URL || new URL(request.url).origin;
@@ -33,7 +33,6 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       status: 302,
       headers: {
         Location: authorizationUrl.toString(),
-        "Set-Cookie": oauthStateCookie(request, state),
         "Cache-Control": "no-store",
         "X-Content-Type-Options": "nosniff",
         "Referrer-Policy": "no-referrer",
