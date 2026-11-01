@@ -230,7 +230,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_20rem] gap-6 lg:gap-8 items-start">
           {/* Cột trái: giới thiệu, xem thử, nội dung */}
           <div className="space-y-6 min-w-0">
-            <header className="space-y-3">
+            <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <div className="hidden sm:flex w-11 h-11 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 items-center justify-center shrink-0">
                   <DeckIcon name={deck.iconName} className="w-5 h-5" />
@@ -264,7 +264,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
               <p className="max-w-2xl text-sm text-stone-600 dark:text-stone-300 leading-relaxed line-clamp-3 sm:line-clamp-none">
                 {deck.detailedDescription || deck.description}
               </p>
-            </header>
+            </div>
 
             {/* Xem thử thẻ */}
             <section className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 p-4 sm:p-5 space-y-3">
@@ -363,7 +363,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
           </div>
 
           {/* Cột phải: hành động + tác giả */}
-          <aside className="space-y-4 lg:sticky lg:top-20">
+          <div className="space-y-4 lg:sticky lg:top-20">
             <div className="hidden lg:block card-duo p-5 bg-white dark:bg-stone-900/80 space-y-3">
               <div>
                 <div className="text-2xl font-black text-stone-900 dark:text-white tabular-nums">
@@ -417,7 +417,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
                 <p className="text-[11px] text-stone-400 truncate">{deck.author.role}</p>
               </div>
             </div>
-          </aside>
+          </div>
         </div>
 
         {/* Thanh hành động cố định trên điện thoại, nằm ngay trên thanh điều hướng dưới */}
