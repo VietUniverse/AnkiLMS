@@ -2,6 +2,7 @@
 
 import React, { useRef, useState } from "react";
 import { ImagePlus, Settings, Trash2, X } from "lucide-react";
+import { EggThemeToggle } from "./EggThemeToggle";
 import { backgroundLayerStyle, DEFAULT_STUDY_BG, fileToDataUrl, GRADIENT_PRESETS, saveStudyBackground, useStudyBackground } from "../lib/studyBackground";
 
 const SAMPLE_IMAGE = "/images/login-bg.webp";
@@ -31,9 +32,9 @@ export function StudyBackgroundPanel() {
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        aria-label="Cài đặt nền khi học"
+        aria-label="Cài đặt học"
         aria-expanded={open}
-        title="Cài đặt nền"
+        title="Cài đặt học"
         className={`flex h-9 w-9 items-center justify-center rounded-full transition cursor-pointer ${backgroundLayerStyle(bg) ? "bg-white/85 text-stone-700 backdrop-blur hover:bg-white dark:bg-stone-900/75 dark:text-slate-200" : "text-slate-300 hover:bg-white/10 hover:text-white"}`}
       >
         <Settings className="h-5 w-5" />
@@ -42,10 +43,15 @@ export function StudyBackgroundPanel() {
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} aria-hidden />
-          <div role="dialog" aria-label="Nền khi học" className="absolute right-0 top-full z-50 mt-2 w-72 space-y-4 rounded-2xl border border-stone-200 bg-white p-4 text-stone-900 shadow-2xl dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100">
+          <div role="dialog" aria-label="Cài đặt học" className="absolute right-0 top-full z-50 mt-2 w-72 space-y-4 rounded-2xl border border-stone-200 bg-white p-4 text-stone-900 shadow-2xl dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-black">Nền khi học</h2>
+              <h2 className="text-sm font-black">Cài đặt học</h2>
               <button type="button" onClick={() => setOpen(false)} aria-label="Đóng" className="rounded-lg p-1 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 cursor-pointer"><X className="h-4 w-4" /></button>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-bold text-stone-500 dark:text-stone-400">Giao diện sáng / tối</p>
+              <EggThemeToggle />
             </div>
 
             <div>
