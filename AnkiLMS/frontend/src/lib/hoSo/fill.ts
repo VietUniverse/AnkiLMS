@@ -6,18 +6,15 @@ export type Day = (typeof DAYS)[number];
 export type XacNhanData = {
   name: string; arc: string; major: string; term: string; phone: string; email: string;
   company: string; bizNo: string; industry: string; address: string;
-  employer: string; employerPhone: string; period: string; wage: string;
-  // giờ làm từng ngày, dạng "18:00-22:00"; để trống nếu không làm
+  employer: string; employerPhone: string; periodFrom: string; periodTo: string; wage: string; // periodFrom/To dạng YYYY-MM-DD, wage chỉ gồm chữ số
+  // số giờ làm mỗi ngày (có thể lẻ, ví dụ 4.5); để trống nếu không làm
   mon: string; tue: string; wed: string; thu: string; fri: string; sat: string; sun: string;
-  year: string; month: string; day: string; office: string; univ: string; iequas: "" | "yes" | "no";
+  year: string; month: string; day: string; office: string;
 };
 
-// "18:00-22:00" -> số giờ (trừ giờ nghỉ nếu có dạng "18:00-22:00 (nghỉ 0.5)" thì không hỗ trợ), null nếu không đọc được
 export function hoursOf(v: string): number | null {
-  const m = v.trim().match(/^(\d{1,2})(?::(\d{2}))?\s*[-~–]\s*(\d{1,2})(?::(\d{2}))?$/);
-  if (!m) return null;
-  const a = +m[1] * 60 + +(m[2] || 0), b = +m[3] * 60 + +(m[4] || 0);
-  return b > a ? (b - a) / 60 : null;
+  const n = Number(v.trim().replace(",", "."));
+  return v.trim() && Number.isFinite(n) && n > 0 && n <= 24 ? n : null;
 }
 export function totals(d: Pick<XacNhanData, Day>) {
   const sum = (ks: Day[]) => ks.reduce((t, k) => t + (hoursOf(d[k]) ?? 0), 0);
@@ -44,7 +41,6 @@ const C = {
   wage: { x0: 403.1, x1: 522, y0: 338.8, y1: 374.9 },
   weekdayTotal: { x0: 316, x1: 341, y0: 380.3, y1: 390.3 },
   weekendTotal: { x0: 460, x1: 480, y0: 380.3, y1: 390.3 },
-  univ: { x0: 195, x1: 323, y0: 681, y1: 696 },
 } satisfies Record<string, Cell>;
 const DAY_X: Record<Day, [number, number]> = { mon: [216, 255], tue: [255, 293], wed: [293, 332], thu: [332, 370], fri: [370, 408], sat: [409, 458], sun: [458, 508] };
 
@@ -123,15 +119,17 @@ export async function xacNhan(d: XacNhanData): Promise<Uint8Array> {
   put(page, font, rgb, d.address, C.address, 10);
   put(page, font, rgb, d.employer, C.employer);
   put(page, font, rgb, d.employerPhone, C.employerPhone);
-  put(page, font, rgb, d.period, C.period);
-  put(page, font, rgb, d.wage, C.wage);
+  const dot = (iso: string) => iso.replace(/-/g, ".");
+  put(page, font, rgb, d.periodFrom && d.periodTo ? `${dot(d.periodFrom)} ~ ${dot(d.periodTo)}` : "", C.period);
+  const wage = d.wage.replace(/\D/g, "");
+  put(page, font, rgb, wage ? `${Number(wage).toLocaleString("en-US")}원` : "", C.wage);
   // Bảng giờ làm: mỗi ngày một ô, và tổng giờ ngày thường, cuối tuần
   const t = totals(d);
   put(page, font, rgb, t.weekday, C.weekdayTotal, 9, "center", 0, 0);
   put(page, font, rgb, t.weekend, C.weekendTotal, 9, "center", 0, 0);
   for (const k of DAYS) {
-    const v = d[k].trim().replace(/\s*[-~–]\s*/, "~");
-    put(page, font, rgb, v.replace("~", "\n~"), { x0: DAY_X[k][0], x1: DAY_X[k][1], y0: 411.5, y1: 438 }, 8, "center", 2);
+    const h = hoursOf(d[k]);
+    put(page, font, rgb, h ? String(h) : "", { x0: DAY_X[k][0], x1: DAY_X[k][1], y0: 411.5, y1: 438 }, 11, "center", 2);
   }
 
   // Ngày ký: hai chữ số cuối của năm, tháng, ngày vào chỗ "20 . . ."
@@ -145,13 +143,5 @@ export async function xacNhan(d: XacNhanData): Promise<Uint8Array> {
     page.drawRectangle({ x: 100, y: H - 664, width: 366, height: 26, color: white });
     put(page, font, rgb, `${d.office.trim()}장 귀하`, { x0: 100, x1: 466, y0: 638, y1: 664 }, 12, "center");
   }
-  // Phần của trường: chỉ điền sẵn nếu có dữ liệu, còn lại để trống cho nhân viên ký
-  if (d.univ.trim()) {
-    page.drawRectangle({ x: 230, y: H - 695, width: 60, height: 14, color: white });
-    put(page, font, rgb, d.univ, C.univ, 10.5, "center", 6, 1);
-  }
-  if (d.iequas === "yes") cross(page, rgb, 238.5, 706, 9);
-  if (d.iequas === "no") cross(page, rgb, 292, 706, 9);
-
   return doc.save();
 }

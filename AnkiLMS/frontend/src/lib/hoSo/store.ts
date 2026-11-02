@@ -8,7 +8,7 @@ const EVT = "haechivn_ho_so_changed";
 const today = () => { const d = new Date(); return { year: String(d.getFullYear()), month: String(d.getMonth() + 1).padStart(2, "0"), day: String(d.getDate()).padStart(2, "0") }; };
 export const emptyXacNhan = (): XacNhanData => ({
   name: "", arc: "", major: "", term: "", phone: "", email: "", company: "", bizNo: "", industry: "", address: "",
-  employer: "", employerPhone: "", period: "", wage: "", mon: "", tue: "", wed: "", thu: "", fri: "", sat: "", sun: "", ...today(), office: "", univ: "", iequas: "",
+  employer: "", employerPhone: "", periodFrom: "", periodTo: "", wage: "", mon: "", tue: "", wed: "", thu: "", fri: "", sat: "", sun: "", ...today(), office: "",
 });
 
 let cacheRaw: string | null | undefined;

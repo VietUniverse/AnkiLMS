@@ -7,36 +7,50 @@ import { DAYS, hoursOf, totals, xacNhan, type XacNhanData } from "../../../lib/h
 import { clearXacNhan, emptyXacNhan, saveXacNhan, useXacNhanData } from "../../../lib/hoSo/store";
 
 type Key = keyof XacNhanData;
-type F = { key: Key; label: string; hint: string; ko?: boolean; required?: boolean; half?: boolean };
+type Kind = "phone" | "arc" | "biz" | "money" | "date" | "hours";
+type F = { key: Key; label: string; hint: string; ko?: boolean; required?: boolean; half?: boolean; kind?: Kind };
+
+// Gõ số liền nhau, hệ thống tự thêm dấu gạch và dấu phẩy
+const digits = (v: string) => v.replace(/\D/g, "");
+const format: Partial<Record<Kind, (v: string) => string>> = {
+  phone: (v) => {
+    const d = digits(v).slice(0, 11), a = d.startsWith("02") ? 2 : 3;
+    if (d.length <= a) return d;
+    const rest = d.slice(a), mid = a === 3 ? (d.length === 10 ? 3 : 4) : (d.length === 10 ? 4 : 3);
+    return rest.length <= mid ? `${d.slice(0, a)}-${rest}` : `${d.slice(0, a)}-${rest.slice(0, mid)}-${rest.slice(mid)}`;
+  },
+  arc: (v) => { const d = digits(v).slice(0, 13); return d.length > 6 ? `${d.slice(0, 6)}-${d.slice(6)}` : d; },
+  biz: (v) => { const d = digits(v).slice(0, 10); return d.length > 5 ? `${d.slice(0, 3)}-${d.slice(3, 5)}-${d.slice(5)}` : d.length > 3 ? `${d.slice(0, 3)}-${d.slice(3)}` : d; },
+  money: (v) => { const d = digits(v).slice(0, 7); return d ? Number(d).toLocaleString("en-US") : ""; },
+  hours: (v) => v.replace(/[^\d.,]/g, "").slice(0, 4),
+};
 
 const groups: { title: string; note?: string; fields: F[] }[] = [
   { title: "Thông tin của bạn (대상자)", fields: [
     { key: "name", label: "Họ tên", hint: "IN HOA như hộ chiếu, ví dụ NGUYEN VAN A", required: true },
-    { key: "arc", label: "Số thẻ ARC (외국인등록번호)", hint: "13 chữ số, ví dụ 000000-0000000", required: true },
+    { key: "arc", label: "Số thẻ ARC (외국인등록번호)", hint: "Gõ 13 chữ số liền nhau", required: true, kind: "arc" },
     { key: "major", label: "Khoa / ngành (학과, tiếng Hàn)", hint: "Ví dụ 경영학과", ko: true, required: true },
     { key: "term", label: "Số học kỳ đã hoàn thành (이수학기)", hint: "Chỉ điền số, ví dụ 3", required: true },
-    { key: "phone", label: "Điện thoại ở Hàn", hint: "010-0000-0000", required: true },
+    { key: "phone", label: "Điện thoại ở Hàn", hint: "Gõ số liền nhau, ví dụ 01012345678", required: true, kind: "phone" },
     { key: "email", label: "Email", hint: "ten@gmail.com", required: true },
   ] },
   { title: "Nơi làm việc dự kiến (취업예정근무처)", note: "Hỏi chủ quán, lấy theo giấy đăng ký kinh doanh. Tên quán, địa chỉ, ngành nghề, tên chủ nhập tiếng Hàn.", fields: [
     { key: "company", label: "Tên quán / công ty (업체명)", hint: "Ví dụ 홍길동 식당", ko: true, required: true },
-    { key: "bizNo", label: "Mã số kinh doanh (사업자등록번호)", hint: "000-00-00000", required: true },
+    { key: "bizNo", label: "Mã số kinh doanh (사업자등록번호)", hint: "Gõ 10 chữ số liền nhau", required: true, kind: "biz" },
     { key: "industry", label: "Loại hình (업종)", hint: "Ví dụ 음식점업", ko: true, required: true },
     { key: "address", label: "Địa chỉ (주소)", hint: "Ví dụ 강원특별자치도 춘천시 ○○로 12", ko: true, required: true },
     { key: "employer", label: "Tên chủ (고용주)", hint: "Ví dụ 홍길동", ko: true, required: true },
-    { key: "employerPhone", label: "Điện thoại chủ quán", hint: "033-000-0000", required: true },
-    { key: "period", label: "Thời gian làm (취업기간)", hint: "Ví dụ 2026.11.10 ~ 2027.11.09", required: true },
-    { key: "wage", label: "Lương giờ (급여)", hint: "Ví dụ 10,320원", required: true },
+    { key: "employerPhone", label: "Điện thoại chủ quán", hint: "Gõ số liền nhau, ví dụ 0331234567", required: true, kind: "phone" },
+    { key: "periodFrom", label: "Làm từ ngày (취업기간)", hint: "", required: true, kind: "date", half: true },
+    { key: "periodTo", label: "Đến ngày", hint: "", required: true, kind: "date", half: true },
+    { key: "wage", label: "Lương giờ (won/giờ, 급여)", hint: "Chỉ điền số, ví dụ 10320", required: true, kind: "money" },
   ] },
-  { title: "Giờ làm trong tuần (근무시간)", note: "Mỗi ngày nhập dạng 18:00-22:00, ngày nghỉ để trống. Tổng giờ tự tính.", fields: [
-    ...([["mon", "Thứ 2 (월)"], ["tue", "Thứ 3 (화)"], ["wed", "Thứ 4 (수)"], ["thu", "Thứ 5 (목)"], ["fri", "Thứ 6 (금)"], ["sat", "Thứ 7 (토)"], ["sun", "Chủ nhật (일)"]] as const).map(([key, label]) => ({ key, label, hint: "18:00-22:00" })),
+  { title: "Giờ làm trong tuần (근무시간)", note: "Ghi số giờ làm mỗi ngày (ví dụ 4 hoặc 4.5). Ngày nghỉ để trống. Tổng giờ tự tính.", fields: [
+    ...([["mon", "Thứ 2 (월)"], ["tue", "Thứ 3 (화)"], ["wed", "Thứ 4 (수)"], ["thu", "Thứ 5 (목)"], ["fri", "Thứ 6 (금)"], ["sat", "Thứ 7 (토)"], ["sun", "Chủ nhật (일)"]] as const).map(([key, label]) => ({ key, label, hint: "Số giờ, ví dụ 4", kind: "hours" as Kind, half: true })),
   ] },
   { title: "Ngày ký và nơi nộp", fields: [
     { key: "year", label: "Năm", hint: "2026", half: true }, { key: "month", label: "Tháng", hint: "11", half: true }, { key: "day", label: "Ngày", hint: "05", half: true },
     { key: "office", label: "Sở xuất nhập cảnh (출입국·외국인사무소)", hint: "Ví dụ 춘천출입국·외국인사무소 (không điền thì để nguyên ○○)", ko: true },
-  ] },
-  { title: "Phần của trường (tùy chọn)", note: "Phòng quốc tế thường tự điền và ký phần này. Chỉ điền sẵn nếu trường cho phép.", fields: [
-    { key: "univ", label: "Tên trường (소속)", hint: "Ví dụ 강원대학교", ko: true },
   ] },
 ];
 
@@ -61,7 +75,8 @@ export default function XacNhanPage() {
     if (form.phone && !phoneOk(form.phone)) p.phone = "Số điện thoại chưa đúng dạng 010-0000-0000";
     if (form.employerPhone && !phoneOk(form.employerPhone)) p.employerPhone = "Số điện thoại chưa đúng dạng 033-000-0000";
     if (form.email && !/^\S+@\S+\.\S+$/.test(form.email)) p.email = "Email chưa đúng";
-    for (const k of DAYS) if (form[k].trim() && hoursOf(form[k]) === null) p[k] = "Nhập dạng 18:00-22:00";
+    for (const k of DAYS) if (form[k].trim() && hoursOf(form[k]) === null) p[k] = "Nhập số giờ từ 0 đến 24";
+    if (form.periodFrom && form.periodTo && form.periodTo < form.periodFrom) p.periodTo = "Ngày kết thúc phải sau ngày bắt đầu";
     for (const g of groups) for (const f of g.fields) if (f.ko && stray(form[f.key])) p[f.key] = "Ô này chỉ nhận chữ Hàn và chữ Latin, không dùng tiếng Việt có dấu";
     return p;
   }, [form]);
@@ -107,12 +122,11 @@ export default function XacNhanPage() {
             <div className="mt-4 grid grid-cols-3 gap-4 sm:grid-cols-2">
               {g.fields.map((f) => <label key={f.key} className={`block text-xs font-bold text-slate-300 ${f.half ? "col-span-1" : "col-span-3 sm:col-span-2"}`}>
                 {f.label}{f.required && <span className="ml-1 text-amber-300">*</span>}
-                <input value={form[f.key]} onChange={(e) => set(f.key, e.target.value)} placeholder={f.hint} inputMode={["term", "year", "month", "day"].includes(f.key) ? "numeric" : undefined}
+                <input type={f.kind === "date" ? "date" : "text"} value={form[f.key]} onChange={(e) => set(f.key, (f.kind && format[f.kind]) ? format[f.kind]!(e.target.value) : e.target.value)} placeholder={f.hint} inputMode={f.kind && f.kind !== "date" ? (f.kind === "hours" ? "decimal" : "numeric") : ["term", "year", "month", "day"].includes(f.key) ? "numeric" : undefined}
                   className="mt-2 block w-full rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-3 text-sm font-normal text-white placeholder:text-slate-500 focus:border-cyan-400 focus:outline-none" />
                 {problems[f.key] && <span className="mt-1 block text-[11px] font-semibold text-rose-300">{problems[f.key]}</span>}
               </label>)}
-              {g.title.startsWith("Phần của trường") && <div className="col-span-3 text-xs font-bold text-slate-300 sm:col-span-2">Trường có chứng nhận IEQAS (인증대학)?
-                <div className="mt-2 flex gap-2">{([["", "Để trống"], ["yes", "해당"], ["no", "비해당"]] as const).map(([v, l]) => <button key={v} type="button" onClick={() => setForm((c) => ({ ...c, iequas: v }))} aria-pressed={form.iequas === v} className={`rounded-lg border px-3 py-2 text-xs font-bold ${form.iequas === v ? "border-cyan-400 bg-cyan-500/10 text-white" : "border-slate-700 text-slate-400"}`}>{l}</button>)}</div></div>}
+
             </div>
           </section>)}
           {(tot.weekday || tot.weekend) && <p className="rounded-xl border border-slate-800 bg-slate-950/40 p-3 text-xs leading-5 text-slate-300">Tổng giờ: ngày thường <b className="text-white">{tot.weekday || 0}</b> giờ, cuối tuần <b className="text-white">{tot.weekend || 0}</b> giờ.{Number(tot.weekday) > 15 && " Ngày thường đang trên 15 giờ/tuần: mức tối đa còn tùy cấp TOPIK và bậc học (có thể tới 20 hoặc 30 giờ). Quy định có thể đổi, hãy xác nhận với phòng quốc tế của trường hoặc 1345."}</p>}
