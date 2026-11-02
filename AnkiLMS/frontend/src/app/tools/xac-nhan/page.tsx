@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AppShell } from "../../../components/AppShell";
 import { AlertTriangle, ArrowLeft, Download, Printer, Trash2 } from "lucide-react";
-import { xacNhan, type XacNhanData } from "../../../lib/hoSo/fill";
+import { DAYS, hoursOf, totals, xacNhan, type XacNhanData } from "../../../lib/hoSo/fill";
 import { clearXacNhan, emptyXacNhan, saveXacNhan, useXacNhanData } from "../../../lib/hoSo/store";
 
 type Key = keyof XacNhanData;
@@ -27,8 +27,9 @@ const groups: { title: string; note?: string; fields: F[] }[] = [
     { key: "employerPhone", label: "Điện thoại chủ quán", hint: "033-000-0000", required: true },
     { key: "period", label: "Thời gian làm (취업기간)", hint: "Ví dụ 2026.11.10 ~ 2027.11.09", required: true },
     { key: "wage", label: "Lương giờ (급여)", hint: "Ví dụ 10,320원", required: true },
-    { key: "weekday", label: "Giờ làm ngày thường (평일)", hint: "Ví dụ 18:00 ~ 22:00", required: true },
-    { key: "weekend", label: "Giờ làm cuối tuần (토·일)", hint: "Không làm thì để trống" },
+  ] },
+  { title: "Giờ làm trong tuần (근무시간)", note: "Mỗi ngày nhập dạng 18:00-22:00, ngày nghỉ để trống. Tổng giờ tự tính.", fields: [
+    ...([["mon", "Thứ 2 (월)"], ["tue", "Thứ 3 (화)"], ["wed", "Thứ 4 (수)"], ["thu", "Thứ 5 (목)"], ["fri", "Thứ 6 (금)"], ["sat", "Thứ 7 (토)"], ["sun", "Chủ nhật (일)"]] as const).map(([key, label]) => ({ key, label, hint: "18:00-22:00" })),
   ] },
   { title: "Ngày ký và nơi nộp", fields: [
     { key: "year", label: "Năm", hint: "2026", half: true }, { key: "month", label: "Tháng", hint: "11", half: true }, { key: "day", label: "Ngày", hint: "05", half: true },
@@ -60,9 +61,11 @@ export default function XacNhanPage() {
     if (form.phone && !phoneOk(form.phone)) p.phone = "Số điện thoại chưa đúng dạng 010-0000-0000";
     if (form.employerPhone && !phoneOk(form.employerPhone)) p.employerPhone = "Số điện thoại chưa đúng dạng 033-000-0000";
     if (form.email && !/^\S+@\S+\.\S+$/.test(form.email)) p.email = "Email chưa đúng";
+    for (const k of DAYS) if (form[k].trim() && hoursOf(form[k]) === null) p[k] = "Nhập dạng 18:00-22:00";
     for (const g of groups) for (const f of g.fields) if (f.ko && stray(form[f.key])) p[f.key] = "Ô này chỉ nhận chữ Hàn và chữ Latin, không dùng tiếng Việt có dấu";
     return p;
   }, [form]);
+  const tot = useMemo(() => totals(form), [form]);
   const missing = groups.flatMap((g) => g.fields).filter((f) => f.required && !form[f.key].trim()).length;
 
   const set = (k: Key, v: string) => setForm((c) => ({ ...c, [k]: v }));
@@ -112,6 +115,7 @@ export default function XacNhanPage() {
                 <div className="mt-2 flex gap-2">{([["", "Để trống"], ["yes", "해당"], ["no", "비해당"]] as const).map(([v, l]) => <button key={v} type="button" onClick={() => setForm((c) => ({ ...c, iequas: v }))} aria-pressed={form.iequas === v} className={`rounded-lg border px-3 py-2 text-xs font-bold ${form.iequas === v ? "border-cyan-400 bg-cyan-500/10 text-white" : "border-slate-700 text-slate-400"}`}>{l}</button>)}</div></div>}
             </div>
           </section>)}
+          {(tot.weekday || tot.weekend) && <p className="rounded-xl border border-slate-800 bg-slate-950/40 p-3 text-xs leading-5 text-slate-300">Tổng giờ: ngày thường <b className="text-white">{tot.weekday || 0}</b> giờ, cuối tuần <b className="text-white">{tot.weekend || 0}</b> giờ.{Number(tot.weekday) > 15 && " Ngày thường đang trên 15 giờ/tuần: mức tối đa còn tùy cấp TOPIK và bậc học (có thể tới 20 hoặc 30 giờ). Quy định có thể đổi, hãy xác nhận với phòng quốc tế của trường hoặc 1345."}</p>}
           <p className="px-1 text-[11px] leading-5 text-slate-500">Mọi thông tin chỉ nằm trên máy của bạn (bộ nhớ trình duyệt), không gửi lên máy chủ HaechiVN. Bản nháp được lưu để lần sau không phải nhập lại.</p>
           <button type="button" onClick={() => { clearXacNhan(); setForm(emptyXacNhan()); }} className="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white"><Trash2 className="h-3.5 w-3.5" />Xóa dữ liệu đã lưu</button>
         </div>

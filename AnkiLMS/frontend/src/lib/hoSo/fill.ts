@@ -1,34 +1,52 @@
 // Điền chồng chữ lên mẫu PDF gốc. Chạy hoàn toàn trên trình duyệt, không gửi dữ liệu đi đâu.
 import type { PDFFont, PDFPage } from "pdf-lib";
 
+export const DAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
+export type Day = (typeof DAYS)[number];
 export type XacNhanData = {
   name: string; arc: string; major: string; term: string; phone: string; email: string;
   company: string; bizNo: string; industry: string; address: string;
-  employer: string; employerPhone: string; period: string; wage: string; weekday: string; weekend: string;
+  employer: string; employerPhone: string; period: string; wage: string;
+  // giờ làm từng ngày, dạng "18:00-22:00"; để trống nếu không làm
+  mon: string; tue: string; wed: string; thu: string; fri: string; sat: string; sun: string;
   year: string; month: string; day: string; office: string; univ: string; iequas: "" | "yes" | "no";
 };
 
-// Ô trong tọa độ điểm PDF, gốc trên-trái (đo trên mẫu CKU_시간제취업확인서_20250306.pdf)
+// "18:00-22:00" -> số giờ (trừ giờ nghỉ nếu có dạng "18:00-22:00 (nghỉ 0.5)" thì không hỗ trợ), null nếu không đọc được
+export function hoursOf(v: string): number | null {
+  const m = v.trim().match(/^(\d{1,2})(?::(\d{2}))?\s*[-~–]\s*(\d{1,2})(?::(\d{2}))?$/);
+  if (!m) return null;
+  const a = +m[1] * 60 + +(m[2] || 0), b = +m[3] * 60 + +(m[4] || 0);
+  return b > a ? (b - a) / 60 : null;
+}
+export function totals(d: Pick<XacNhanData, Day>) {
+  const sum = (ks: Day[]) => ks.reduce((t, k) => t + (hoursOf(d[k]) ?? 0), 0);
+  const fmt = (n: number) => (n ? String(Math.round(n * 10) / 10) : "");
+  return { weekday: fmt(sum(["mon", "tue", "wed", "thu", "fri"])), weekend: fmt(sum(["sat", "sun"])) };
+}
+
+// Ô trong tọa độ điểm PDF, gốc trên-trái (đo trên mẫu 시간제취업확인서_bản_trống.pdf)
 type Cell = { x0: number; x1: number; y0: number; y1: number };
 const C = {
-  name: { x0: 190.5, x1: 339.3, y0: 114.5, y1: 147.7 },
-  arc: { x0: 400.6, x1: 535.4, y0: 114.5, y1: 147.7 },
-  major: { x0: 190.5, x1: 339.3, y0: 147.7, y1: 181.2 },
-  term: { x0: 400.6, x1: 535.4, y0: 147.7, y1: 181.2 },
-  phone: { x0: 190.5, x1: 339.3, y0: 181.2, y1: 208 },
-  email: { x0: 400.6, x1: 535.4, y0: 181.2, y1: 208 },
-  company: { x0: 190.5, x1: 535.4, y0: 208, y1: 235.5 },
-  bizNo: { x0: 190.5, x1: 359.2, y0: 235.5, y1: 269.1 },
-  industry: { x0: 417.6, x1: 535.4, y0: 235.5, y1: 269.1 },
-  address: { x0: 190.5, x1: 535.4, y0: 269.1, y1: 296.4 },
-  employer: { x0: 190.5, x1: 272, y0: 296.4, y1: 330 },
-  employerPhone: { x0: 417.6, x1: 535.4, y0: 296.4, y1: 330 },
-  period: { x0: 190.5, x1: 359.2, y0: 330, y1: 397.1 },
-  wage: { x0: 417.6, x1: 535.4, y0: 330, y1: 397.1 },
-  weekday: { x0: 250, x1: 382, y0: 397.1, y1: 423.7 },
-  weekend: { x0: 448, x1: 535.4, y0: 397.1, y1: 423.7 },
-  univ: { x0: 207.4, x1: 339.3, y0: 643.5, y1: 660.4 },
+  name: { x0: 176, x1: 325, y0: 139.7, y1: 170.8 },
+  arc: { x0: 386, x1: 522, y0: 139.7, y1: 170.8 },
+  major: { x0: 176, x1: 325, y0: 170.8, y1: 201.6 },
+  term: { x0: 386, x1: 522, y0: 170.8, y1: 201.6 },
+  phone: { x0: 176, x1: 325, y0: 201.6, y1: 225.8 },
+  email: { x0: 386, x1: 522, y0: 201.6, y1: 225.8 },
+  company: { x0: 176, x1: 522, y0: 226, y1: 250.2 },
+  bizNo: { x0: 176, x1: 344.7, y0: 250.2, y1: 282.4 },
+  industry: { x0: 403.1, x1: 522, y0: 250.2, y1: 282.4 },
+  address: { x0: 176, x1: 522, y0: 282.4, y1: 306.8 },
+  employer: { x0: 176, x1: 276, y0: 306.8, y1: 338.8 },
+  employerPhone: { x0: 403.1, x1: 522, y0: 306.8, y1: 338.8 },
+  period: { x0: 176, x1: 344.7, y0: 338.8, y1: 374.9 },
+  wage: { x0: 403.1, x1: 522, y0: 338.8, y1: 374.9 },
+  weekdayTotal: { x0: 316, x1: 341, y0: 380.3, y1: 390.3 },
+  weekendTotal: { x0: 460, x1: 480, y0: 380.3, y1: 390.3 },
+  univ: { x0: 195, x1: 323, y0: 681, y1: 696 },
 } satisfies Record<string, Cell>;
+const DAY_X: Record<Day, [number, number]> = { mon: [216, 255], tue: [255, 293], wed: [293, 332], thu: [332, 370], fri: [370, 408], sat: [409, 458], sun: [458, 508] };
 
 const BLUE = [0.05, 0.2, 0.8] as const;
 
@@ -51,11 +69,11 @@ function wrapLines(font: PDFFont, text: string, size: number, maxW: number) {
 }
 
 // Chữ vừa ô: co cỡ chữ tới 5pt, hết cỡ thì tách dòng.
-function put(page: PDFPage, font: PDFFont, rgb: (r: number, g: number, b: number) => ReturnType<typeof import("pdf-lib").rgb>, text: string, cell: Cell, size = 10.5, align: "left" | "center" = "left", pad = 6) {
+function put(page: PDFPage, font: PDFFont, rgb: (r: number, g: number, b: number) => ReturnType<typeof import("pdf-lib").rgb>, text: string, cell: Cell, size = 10.5, align: "left" | "center" = "left", pad = 6, vpad = 4) {
   text = (text || "").trim();
   if (!text) return;
   const H = page.getHeight();
-  const maxW = cell.x1 - cell.x0 - pad, maxH = cell.y1 - cell.y0 - 4;
+  const maxW = cell.x1 - cell.x0 - pad, maxH = cell.y1 - cell.y0 - vpad;
   let s = size, lines = wrapLines(font, text, s, maxW);
   const fits = () => lines.length * s * 1.25 <= maxH;
   while (s > 5 && (!fits() || (lines.length === 1 && font.widthOfTextAtSize(lines[0], s) > maxW))) {
@@ -104,27 +122,33 @@ export async function xacNhan(d: XacNhanData): Promise<Uint8Array> {
   put(page, font, rgb, d.employerPhone, C.employerPhone);
   put(page, font, rgb, d.period, C.period);
   put(page, font, rgb, d.wage, C.wage);
-  put(page, font, rgb, d.weekday, C.weekday, 9.5);
-  put(page, font, rgb, d.weekend, C.weekend, 9.5);
+  // Bảng giờ làm: mỗi ngày một ô, và tổng giờ ngày thường, cuối tuần
+  const t = totals(d);
+  put(page, font, rgb, t.weekday, C.weekdayTotal, 9, "center", 0, 0);
+  put(page, font, rgb, t.weekend, C.weekendTotal, 9, "center", 0, 0);
+  for (const k of DAYS) {
+    const v = d[k].trim().replace(/\s*[-~–]\s*/, "~");
+    put(page, font, rgb, v.replace("~", "\n~"), { x0: DAY_X[k][0], x1: DAY_X[k][1], y0: 411.5, y1: 438 }, 8, "center", 2);
+  }
 
-  // Ngày ký: điền hai chữ số cuối của năm, tháng, ngày vào chỗ "20 . . ."
-  const dateCell = (x0: number, x1: number): Cell => ({ x0, x1, y0: 503, y1: 519 });
-  put(page, font, rgb, d.year.slice(-2), dateCell(283, 296), 9, "center", 0);
-  put(page, font, rgb, d.month, dateCell(298, 311), 9, "center", 0);
-  put(page, font, rgb, d.day, dateCell(313, 326), 9, "center", 0);
+  // Ngày ký: hai chữ số cuối của năm, tháng, ngày vào chỗ "20 . . ."
+  const dateCell = (x0: number, x1: number): Cell => ({ x0, x1, y0: 500, y1: 516 });
+  put(page, font, rgb, d.year.slice(-2), dateCell(269.5, 281), 9, "center", 0);
+  put(page, font, rgb, d.month, dateCell(284.5, 296), 9, "center", 0);
+  put(page, font, rgb, d.day, dateCell(299.5, 310.5), 9, "center", 0);
 
-  // Dòng gửi: thay "○○" bằng tên sở xuất nhập cảnh nếu người dùng điền
+  // Dòng gửi: thay "○ ○ ...출입국·외국인청(사무소·출장소)장 귀하" bằng tên sở nếu người dùng điền
   if (d.office.trim()) {
-    page.drawRectangle({ x: 172, y: H - 619, width: 252, height: 24, color: white });
-    put(page, font, rgb, `${d.office.trim()}장 귀하`, { x0: 172, x1: 424, y0: 598, y1: 619 }, 11, "center");
+    page.drawRectangle({ x: 100, y: H - 664, width: 366, height: 26, color: white });
+    put(page, font, rgb, `${d.office.trim()}장 귀하`, { x0: 100, x1: 466, y0: 638, y1: 664 }, 12, "center");
   }
-  // Phần trường điền: chỉ điền sẵn nếu có dữ liệu, còn lại để trống cho nhân viên ký
+  // Phần của trường: chỉ điền sẵn nếu có dữ liệu, còn lại để trống cho nhân viên ký
   if (d.univ.trim()) {
-    page.drawRectangle({ x: 270, y: H - 659, width: 60, height: 14, color: white });
-    put(page, font, rgb, d.univ, C.univ, 10.5, "center");
+    page.drawRectangle({ x: 230, y: H - 695, width: 60, height: 14, color: white });
+    put(page, font, rgb, d.univ, C.univ, 10.5, "center", 6, 1);
   }
-  if (d.iequas === "yes") cross(page, rgb, 252.5, 671.5, 10);
-  if (d.iequas === "no") cross(page, rgb, 306.5, 671.5, 10);
+  if (d.iequas === "yes") cross(page, rgb, 238.5, 706, 9);
+  if (d.iequas === "no") cross(page, rgb, 292, 706, 9);
 
   return doc.save();
 }
