@@ -10,6 +10,8 @@ export type XacNhanData = {
   // số giờ làm mỗi ngày (có thể lẻ, ví dụ 4.5); để trống nếu không làm
   mon: string; tue: string; wed: string; thu: string; fri: string; sat: string; sun: string;
   year: string; month: string; day: string; office: string;
+  // chỉ dùng cho hợp đồng
+  addrKr: string; job: string; startTime: string; endTime: string; breakMin: string;
 };
 
 export function hoursOf(v: string): number | null {
@@ -65,7 +67,7 @@ function wrapLines(font: PDFFont, text: string, size: number, maxW: number) {
 }
 
 // Chữ vừa ô: co cỡ chữ tới 5pt, hết cỡ thì tách dòng.
-function put(page: PDFPage, font: PDFFont, rgb: (r: number, g: number, b: number) => ReturnType<typeof import("pdf-lib").rgb>, text: string, cell: Cell, size = 10.5, align: "left" | "center" = "left", pad = 6, vpad = 4) {
+function put(page: PDFPage, font: PDFFont, rgb: (r: number, g: number, b: number) => ReturnType<typeof import("pdf-lib").rgb>, text: string, cell: Cell, size = 10.5, align: "left" | "center" = "left", pad = 6, vpad = 4, color: readonly [number, number, number] = BLUE) {
   text = (text || "").trim();
   if (!text) return;
   const H = page.getHeight();
@@ -80,7 +82,7 @@ function put(page: PDFPage, font: PDFFont, rgb: (r: number, g: number, b: number
   lines.forEach((l, i) => {
     const w = font.widthOfTextAtSize(l, s);
     const x = align === "center" ? (cell.x0 + cell.x1) / 2 - w / 2 : cell.x0 + (pad ? 3 : 0);
-    page.drawText(l, { x, y: H - (top + i * lh + s * 0.95), size: s, font, color: rgb(...BLUE) });
+    page.drawText(l, { x, y: H - (top + i * lh + s * 0.95), size: s, font, color: rgb(...color) });
   });
 }
 
@@ -140,5 +142,87 @@ export async function xacNhan(d: XacNhanData): Promise<Uint8Array> {
     page.drawRectangle({ x: 100, y: H - 664, width: 366, height: 26, color: white });
     put(page, font, rgb, `${d.office.trim()}장 귀하`, { x0: 100, x1: 466, y0: 638, y1: 664 }, 12, "center");
   }
+  return doc.save();
+}
+
+
+// ---- 표준근로계약서 (시간제근로자용): dựng bằng code theo mẫu của Bộ Lao động ----
+const BLACK = [0, 0, 0] as const;
+const KO_DAY: Record<Day, string> = { mon: "월", tue: "화", wed: "수", thu: "목", fri: "금", sat: "토", sun: "일" };
+const ymd = (iso: string) => { const [y, m, d] = iso.split("-"); return y ? `${y}년 ${Number(m)}월 ${Number(d)}일` : ""; };
+
+export async function hopDong(d: XacNhanData): Promise<Uint8Array> {
+  const { PDFDocument, rgb } = await import("pdf-lib");
+  const fontkit = (await import("@pdf-lib/fontkit")).default;
+  const fontBytes = await load("/forms/NotoSansKR-subset.ttf");
+  const doc = await PDFDocument.create();
+  doc.registerFontkit(fontkit);
+  const font = await doc.embedFont(fontBytes, { subset: false });
+  const page = doc.addPage([595, 842]);
+  const H = 842;
+  const line = rgb(0, 0, 0);
+  const box = (c: Cell, w = 0.8) => page.drawRectangle({ x: c.x0, y: H - c.y1, width: c.x1 - c.x0, height: c.y1 - c.y0, borderColor: line, borderWidth: w });
+  const label = (t: string, c: Cell, size = 10.5) => { box(c); put(page, font, rgb, t, c, size, "center", 4, 4, BLACK); };
+  const val = (t: string, c: Cell, size = 10.5) => { box(c); put(page, font, rgb, t, c, size, "left", 8, 6); };
+  const center = (t: string, y: number, size: number, bold = false) => {
+    const w = font.widthOfTextAtSize(t, size);
+    for (const dx of bold ? [0, 0.45] : [0]) page.drawText(t, { x: 297.5 - w / 2 + dx, y: H - y, size, font, color: line });
+  };
+  const text = (t: string, x: number, y: number, size = 10.5, color: readonly [number, number, number] = BLACK) => page.drawText(t, { x, y: H - y, size, font, color: rgb(...color) });
+
+  center("표 준 근 로 계 약 서", 78, 22, true);
+  center("(시간제근로자용)", 100, 12);
+  text("1. 당사자", 56, 130, 11.5);
+
+  const L = 56, R = 539, row = 32;
+  let y = 138;
+  const r = (n: number): [number, number] => [y + row * n, y + row * (n + 1)];
+  // 사용자 (3 dòng) + 근로자 (2 dòng)
+  const cell = (x0: number, x1: number, n: number, span = 1): Cell => ({ x0, x1, y0: r(n)[0], y1: r(n + span - 1)[1] });
+  label("사용자", cell(L, 96, 0, 3));
+  label("성 명", cell(96, 156, 0)); val(d.employer, cell(156, 290, 0));
+  label("주민(외국인)\n등록번호", cell(290, 372, 0), 9); val("", cell(372, R, 0));
+  label("사업체 명칭", cell(96, 156, 1), 9.5); val(d.company, cell(156, R, 1));
+  label("사업장\n소재지", cell(96, 156, 2), 9.5); val(d.address, cell(156, R, 2));
+  label("근로자", cell(L, 96, 3, 2));
+  label("성 명", cell(96, 156, 3)); val(d.name, cell(156, 290, 3));
+  label("외국인등록번호", cell(290, 372, 3), 9); val(d.arc, cell(372, R, 3));
+  label("주 소", cell(96, 156, 4)); val(d.addrKr, cell(156, 372, 4), 10);
+  label("전 화", cell(372, 410, 4)); val(d.phone, cell(410, R, 4));
+
+  // 2 ~ 5
+  y = 138 + row * 5 + 14;
+  const sec = (t: string, n: number, v: string, rows = 1) => { const c = cell(L, 180, n, rows); label(t, c, 10.5); val(v, cell(180, R, n, rows)); };
+  sec("2. 근로계약기간", 0, d.periodFrom && d.periodTo ? `${ymd(d.periodFrom)} ~ ${ymd(d.periodTo)}` : "");
+  sec("3. 업무의 내용", 1, d.job);
+  sec("4. 근 로 장 소", 2, [d.company, d.address].filter(Boolean).join(", "));
+  // 5. 근로조건
+  const days = DAYS.filter((k) => hoursOf(d[k]) !== null);
+  const t = totals(d);
+  const weekTotal = (Number(t.weekday) || 0) + (Number(t.weekend) || 0);
+  const brk = d.breakMin.trim() ? `, 휴게시간 ${d.breakMin.trim()}분` : "";
+  const time = d.startTime && d.endTime ? `${d.startTime} ~ ${d.endTime}${brk}` : "";
+  const hourText = [time, days.length ? `${days.map((k) => `${KO_DAY[k]} ${hoursOf(d[k])}시간`).join(", ")} (주 ${Math.round(weekTotal * 10) / 10}시간)` : ""].filter(Boolean).join("\n");
+  const y5 = r(3)[0], h1 = 44, h2 = 32;
+  const rows5: [number, number][] = [[y5, y5 + h1], [y5 + h1, y5 + h1 + h2], [y5 + h1 + h2, y5 + h1 + 2 * h2]];
+  label("5. 근로조건", { x0: L, x1: 120, y0: y5, y1: rows5[2][1] }, 10.5);
+  label("가. 근로시간", { x0: 120, x1: 180, y0: rows5[0][0], y1: rows5[0][1] }, 9); val(hourText, { x0: 180, x1: R, y0: rows5[0][0], y1: rows5[0][1] }, 10);
+  label("나. 근로요일", { x0: 120, x1: 180, y0: rows5[1][0], y1: rows5[1][1] }, 9); val(days.length ? `매주 ${days.map((k) => KO_DAY[k]).join(", ")}요일 (주 ${days.length}일)` : "", { x0: 180, x1: R, y0: rows5[1][0], y1: rows5[1][1] });
+  const wage = d.wage.replace(/\D/g, "");
+  label("다. 임금\n(제수당포함)", { x0: 120, x1: 180, y0: rows5[2][0], y1: rows5[2][1] }, 8.5);
+  val(wage ? `${Number(wage).toLocaleString("en-US")}` : "", { x0: 180, x1: 400, y0: rows5[2][0], y1: rows5[2][1] });
+  label("원 / 시간", { x0: 400, x1: R, y0: rows5[2][0], y1: rows5[2][1] }, 10.5);
+
+  const yTail = rows5[2][1] + 56;
+  text("이 계약에 정함이 없는 근로조건은 취업규칙, 근로기준법 기타 노동관계법령에 따른다.", 56, yTail, 10.5);
+  text("위와 같이 근로계약을 체결함.", 56, yTail + 34, 10.5);
+  center(`${d.year || "    "}년 ${d.month ? Number(d.month) : "   "}월 ${d.day ? Number(d.day) : "   "}일`, yTail + 80, 11.5);
+  const sign = (who: string, name: string, yy: number) => {
+    text(who, 300, yy, 11);
+    put(page, font, rgb, name, { x0: 350, x1: 470, y0: yy - 14, y1: yy + 6 }, 11, "left", 0, 0);
+    text("(인)", 480, yy, 10.5);
+  };
+  sign("사용자", d.employer, yTail + 130);
+  sign("근로자", d.name, yTail + 164);
   return doc.save();
 }

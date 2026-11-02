@@ -5,7 +5,7 @@ import { AlertTriangle, BriefcaseBusiness, FileText } from "lucide-react";
 
 const forms = [
   { href: "/tools/tong-hop", ko: "통합신청서", vi: "Đơn tổng hợp gửi 출입국 (별지 제34호서식)", ready: false },
-  { href: "/tools/hop-dong", ko: "표준근로계약서", vi: "Hợp đồng lao động (mẫu của Bộ Lao động)", ready: false },
+  { href: "/tools/hop-dong", ko: "표준근로계약서", vi: "Hợp đồng lao động (mẫu của Bộ Lao động)", ready: true },
   { href: "/tools/xac-nhan", ko: "시간제취업확인서", vi: "Giấy xác nhận làm thêm (chủ quán và trường ký)", ready: true },
 ];
 
