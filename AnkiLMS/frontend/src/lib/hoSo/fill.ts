@@ -104,9 +104,6 @@ export async function xacNhan(d: XacNhanData): Promise<Uint8Array> {
   const H = page.getHeight();
   const white = rgb(1, 1, 1);
 
-  // Bỏ băng "붙임 4-1 ... 대학 작성" (nhãn đính kèm nội bộ của trường đăng mẫu, không thuộc mẫu gốc)
-  page.drawRectangle({ x: 38, y: H - 92, width: 490, height: 40, color: white });
-
   put(page, font, rgb, d.name, C.name);
   put(page, font, rgb, d.arc, C.arc);
   put(page, font, rgb, d.major, C.major);
