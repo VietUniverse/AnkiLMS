@@ -64,6 +64,11 @@ export default function StudentPermitToolsPage() {
         <div className="mt-5 rounded-xl border border-amber-400/30 bg-amber-500/10 p-3.5 text-xs leading-5 text-amber-100"><AlertTriangle className="mr-2 inline h-4 w-4 align-[-3px] text-amber-300" />Đây là công cụ chuẩn bị thông tin, không phải đơn chính thức và không gửi hồ sơ thay bạn. Điều kiện, biểu mẫu và giấy tờ có thể thay đổi theo tư cách lưu trú và trường; hãy xác nhận với phòng quốc tế của trường và HiKorea trước khi bắt đầu làm việc.</div>
       </header>
 
+      <a href="/tools/xac-nhan" className="card-duo flex items-center justify-between gap-3 p-5 hover:border-cyan-400">
+        <span><span className="block text-xs font-bold uppercase tracking-widest text-cyan-300">Điền mẫu chính thức</span><span className="mt-1 block text-base font-black text-white">시간제취업확인서 · Giấy xác nhận làm thêm</span><span className="mt-1 block text-xs text-slate-400">Điền vào đúng mẫu gốc của 출입국, xem trước, in hoặc tải PDF.</span></span>
+        <FileText className="h-6 w-6 shrink-0 text-cyan-300" />
+      </a>
+
       <section className="grid gap-5 lg:grid-cols-[minmax(0,1.5fr)_minmax(280px,0.8fr)]">
         <div className="space-y-5">
           {fieldGroups.map((group) => <section key={group.title} className="card-duo p-5 sm:p-6">

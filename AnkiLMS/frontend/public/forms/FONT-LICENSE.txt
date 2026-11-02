@@ -1,0 +1,1 @@
+Noto Sans CJK KR (c) Adobe / Google, SIL Open Font License 1.1 (https://openfontlicense.org). File NotoSansKR-subset.ttf is a subset (Hangul + Latin) converted to TrueType by scripts/tao_font_ho_so.py.
