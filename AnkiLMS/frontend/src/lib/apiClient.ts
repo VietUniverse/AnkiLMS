@@ -25,7 +25,7 @@ export interface UserProfile {
 export interface StudyProfileSummary {
   summary: { session_count: number; cards_reviewed: number; correct_count: number; duration_seconds: number };
   days: Array<{ day: string; minutes: number; cards: number }>;
-  sessions: Array<{ module: string; cards_reviewed: number; correct_count: number; duration_seconds: number; created_at: string }>;
+  sessions: Array<{ module: string; cards_reviewed: number; correct_count: number; duration_seconds: number | null; created_at: string }>;
 }
 
 export interface DailyMissionsSummary {

@@ -14,7 +14,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     const rows = await env.DB.prepare(
       `WITH session_days AS (
          SELECT date(created_at, '+7 hours') AS day,
-                SUM(duration_seconds) AS duration_seconds,
+                SUM(CASE WHEN module = 'srs' AND duration_seconds >= 14400 THEN 0 ELSE duration_seconds END) AS duration_seconds,
                 SUM(cards_reviewed) AS cards_reviewed,
                 SUM(xp_earned) AS session_xp
          FROM study_sessions

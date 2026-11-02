@@ -12,6 +12,7 @@ import { useApp } from "../contexts/AppProvider";
 import { Sparkles } from "lucide-react";
 import { featureForPath } from "../lib/featureFlags";
 import { BrandLoadingMascot } from "./BrandLoadingMascot";
+import { PWAInstallPrompt } from "./PWAInstallPrompt";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -119,6 +120,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
 
       {/* Đang học thẻ thì ẩn thanh điều hướng dưới để dành chỗ cho nút Quên/Thuộc */}
       {!activeStudySession && <BottomNav onOpenMobileMenu={() => setIsMobileMenuOpen(true)} />}
+      {!activeStudySession && <PWAInstallPrompt />}
 
       {isFeatureEnabled("ankiImport") && <AnkiImporter
         isOpen={isImporterOpen}

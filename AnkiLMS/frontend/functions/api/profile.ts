@@ -16,13 +16,14 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     const [summary, days, sessions] = await Promise.all([
       env.DB.prepare(
         `SELECT COUNT(*) AS session_count, COALESCE(SUM(cards_reviewed), 0) AS cards_reviewed,
-                COALESCE(SUM(correct_count), 0) AS correct_count, COALESCE(SUM(duration_seconds), 0) AS duration_seconds
+                COALESCE(SUM(correct_count), 0) AS correct_count,
+                COALESCE(SUM(CASE WHEN module = 'srs' AND duration_seconds >= 14400 THEN 0 ELSE duration_seconds END), 0) AS duration_seconds
          FROM study_sessions WHERE user_id = ?`,
       ).bind(userId).first(),
       env.DB.prepare(
         `WITH session_days AS (
            SELECT date(created_at, '+7 hours') AS day,
-                  SUM(duration_seconds) AS duration_seconds,
+                  SUM(CASE WHEN module = 'srs' AND duration_seconds >= 14400 THEN 0 ELSE duration_seconds END) AS duration_seconds,
                   SUM(cards_reviewed) AS cards_reviewed,
                   SUM(xp_earned) AS session_xp
            FROM study_sessions
@@ -43,7 +44,9 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
          ORDER BY active_days.day ASC`,
       ).bind(userId, userId, userId).all(),
       env.DB.prepare(
-        `SELECT module, cards_reviewed, correct_count, duration_seconds, created_at
+        `SELECT module, cards_reviewed, correct_count,
+                CASE WHEN module = 'srs' AND duration_seconds >= 14400 THEN NULL ELSE duration_seconds END AS duration_seconds,
+                created_at
          FROM study_sessions WHERE user_id = ? ORDER BY created_at DESC LIMIT 8`,
       ).bind(userId).all(),
     ]);

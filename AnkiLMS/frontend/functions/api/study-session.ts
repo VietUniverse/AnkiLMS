@@ -15,7 +15,8 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     const [totals, days, sessions] = await Promise.all([
       env.DB.prepare(
         `SELECT COUNT(*) AS session_count, COALESCE(SUM(cards_reviewed), 0) AS cards_reviewed,
-          COALESCE(SUM(correct_count), 0) AS correct_count, COALESCE(SUM(duration_seconds), 0) AS duration_seconds
+          COALESCE(SUM(correct_count), 0) AS correct_count,
+          COALESCE(SUM(CASE WHEN module = 'srs' AND duration_seconds >= 14400 THEN 0 ELSE duration_seconds END), 0) AS duration_seconds
          FROM study_sessions WHERE user_id = ?`,
       ).bind(user.id).first<{ session_count: number; cards_reviewed: number; correct_count: number; duration_seconds: number }>(),
       env.DB.prepare(
@@ -23,9 +24,11 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
          FROM checkins WHERE user_id = ? AND checkin_date >= date('now', '-90 days') ORDER BY checkin_date ASC`,
       ).bind(user.id).all<{ day: string; minutes: number; cards: number }>(),
       env.DB.prepare(
-        `SELECT module, cards_reviewed, correct_count, duration_seconds, created_at
+        `SELECT module, cards_reviewed, correct_count,
+          CASE WHEN module = 'srs' AND duration_seconds >= 14400 THEN NULL ELSE duration_seconds END AS duration_seconds,
+          created_at
          FROM study_sessions WHERE user_id = ? ORDER BY created_at DESC LIMIT 20`,
-      ).bind(user.id).all<{ module: string; cards_reviewed: number; correct_count: number; duration_seconds: number; created_at: string }>(),
+      ).bind(user.id).all<{ module: string; cards_reviewed: number; correct_count: number; duration_seconds: number | null; created_at: string }>(),
     ]);
     return jsonResponse({ summary: totals, days: days.results || [], sessions: sessions.results || [] });
   } catch {
@@ -53,7 +56,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (!body.module || !MODULES.has(body.module)) return errorResponse("Phân hệ học không hợp lệ.");
     if (!Number.isInteger(cardsReviewed) || cardsReviewed < 1 || cardsReviewed > 500) return errorResponse("Số thẻ đã học không hợp lệ.");
     if (!Number.isInteger(correctCount) || correctCount < 0 || correctCount > cardsReviewed) return errorResponse("Kết quả trả lời không hợp lệ.");
-    if (!Number.isInteger(durationSeconds) || durationSeconds < 10 || durationSeconds > 14_400) return errorResponse("Phiên học cần ít nhất 10 giây hoạt động.");
+    const maxDurationSeconds = body.module === "srs" ? Math.min(1_800, cardsReviewed * 300) : 14_400;
+    if (!Number.isInteger(durationSeconds) || durationSeconds < 10 || durationSeconds > maxDurationSeconds) {
+      return errorResponse("Thời lượng phiên học không hợp lệ. Phiên Anki được giới hạn theo số thẻ đã ôn.");
+    }
 
     const now = new Date();
     const todayStr = new Date(now.getTime() + 7 * 60 * 60 * 1000).toISOString().slice(0, 10);
