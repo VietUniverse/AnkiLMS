@@ -75,6 +75,8 @@ export const ShadowingModule: React.FC = () => {
   const [selectedLessonId, setSelectedLessonId] = useState<string>("lesson_1");
   const [currentSubIndex, setCurrentSubIndex] = useState<number>(0);
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1.0);
+  const [loopOne, setLoopOne] = useState(false);
+  const [autoPause, setAutoPause] = useState(false);
   const [translationLanguage, setTranslationLanguage] = useTranslationLanguage();
 
   // Voice Recognition States
@@ -239,6 +241,30 @@ export const ShadowingModule: React.FC = () => {
             isSeekingRef.current = false;
           }
         } else {
+          const segs = currentLesson?.segments || [];
+          // Lặp một câu / tự dừng cuối câu (chỉ khi vừa chạm cuối câu, không bắt khi người dùng tua xa)
+          if (currentSub && currentTime >= currentSub.end && currentTime < currentSub.end + 1) {
+            if (loopOne) {
+              seekTargetStartRef.current = currentSub.start;
+              seekTargetEndRef.current = currentSub.end;
+              isSeekingRef.current = true;
+              seekTimeRef.current = Date.now();
+              playerRef.current.seekTo(currentSub.start, true);
+              return;
+            }
+            if (autoPause) {
+              pausePlayer();
+              seekTargetStartRef.current = null;
+              seekTargetEndRef.current = null;
+              return;
+            }
+          }
+          // Đang phát cả bài thì thanh phân đoạn và câu hiện tại chạy theo video
+          if (!loopOne && seekTargetEndRef.current === currentLesson?.endSec) {
+            let idx = -1;
+            for (let i = 0; i < segs.length; i++) if (segs[i].start <= currentTime + 0.05) idx = i;
+            if (idx >= 0 && idx !== currentSubIndex) setCurrentSubIndex(idx);
+          }
           if (currentTime >= targetEnd) {
             pausePlayer();
             seekTargetStartRef.current = null;
@@ -251,7 +277,7 @@ export const ShadowingModule: React.FC = () => {
     }, 50);
 
     return () => clearInterval(interval);
-  }, [viewMode, currentSub, currentLesson]);
+  }, [viewMode, currentSub, currentLesson, currentSubIndex, loopOne, autoPause]);
 
   const initYTPlayer = (videoId: string, startSec: number = 0) => {
     if (playerRef.current && typeof playerRef.current.destroy === "function") {
@@ -369,13 +395,14 @@ export const ShadowingModule: React.FC = () => {
     }
 
     try {
-      seekTargetStartRef.current = currentLesson.startSec;
+      const from = currentSub ? currentSub.start : currentLesson.startSec;
+      seekTargetStartRef.current = from;
       seekTargetEndRef.current = currentLesson.endSec;
       isSeekingRef.current = true;
       seekTimeRef.current = Date.now();
 
       playerRef.current.setPlaybackRate(playbackSpeed);
-      playerRef.current.seekTo(currentLesson.startSec, true);
+      playerRef.current.seekTo(from, true);
       playerRef.current.playVideo();
     } catch (e) {
       console.error("playFullLesson error:", e);
@@ -537,6 +564,7 @@ export const ShadowingModule: React.FC = () => {
     ArrowRight: handleNextSub,
     r: () => currentSub && playSegment(currentSub),
     p: pauseAll,
+    l: () => setLoopOne((v) => !v),
     " ": playFullLesson,
   };
   useEffect(() => {
@@ -824,7 +852,22 @@ export const ShadowingModule: React.FC = () => {
             <div className={`relative w-full ${currentLesson.sourceType === "original" ? "min-h-40" : "pt-[56.25%] lg:pt-0 lg:flex-1 lg:min-h-0"} bg-black rounded-xl overflow-hidden border border-slate-800 shadow-md`}>
               {currentLesson.sourceType === "original" ? <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-indigo-950 to-slate-950 p-4 text-center"><span className="text-3xl">🎧</span><p className="text-sm font-bold text-white">Bài nghe tiếng Hàn được đọc bằng giọng Hàn trên thiết bị</p><p className="text-xs text-slate-300">{currentLesson.sourceLabel}</p><a href={currentLesson.sourceUrl} target="_blank" rel="noreferrer" className="text-xs font-bold text-rose-300 underline underline-offset-4">Mở nguồn tham khảo bên ngoài · không khớp lời luyện ↗</a></div> : <div className="absolute inset-0 lg:inset-y-0 lg:left-1/2 lg:right-auto lg:aspect-video lg:h-full lg:max-w-full lg:-translate-x-1/2"><div id="yt-shadowing-player" className="absolute inset-0 h-full w-full"></div></div>}
             </div>
-
+            {currentLesson.sourceType !== "original" && (
+              <div className="flex h-3 items-center gap-0.5 lg:flex-none" role="group" aria-label="Các câu trong bài">
+                {currentLesson.segments.map((seg: any, i: number) => (
+                  <button
+                    key={seg.id ?? i}
+                    type="button"
+                    onClick={() => handleSelectSub(i)}
+                    title={`Câu ${i + 1}`}
+                    aria-label={`Câu ${i + 1}`}
+                    aria-current={i === currentSubIndex}
+                    style={{ flexGrow: Math.max(0.3, seg.end - seg.start), flexBasis: 0 }}
+                    className={`rounded-full transition-all cursor-pointer ${i === currentSubIndex ? "h-3 bg-rose-500" : i < currentSubIndex ? "h-1.5 bg-sky-400/70 hover:h-2.5" : "h-1.5 bg-slate-600/60 hover:h-2.5"}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Shadowing Speaking Practice Card */}
@@ -851,6 +894,15 @@ export const ShadowingModule: React.FC = () => {
               </div>
               <div className="absolute right-0 top-0">
               <TranslationLanguageSetup up iconOnly language={translationLanguage} onChange={setTranslationLanguage}>
+                                    <p className="text-sm font-black text-white">Luyện nói</p>
+                  <div className="mt-2 mb-4 space-y-1.5">
+                    {([{ label: "Lặp lại câu hiện tại (L)", on: loopOne, set: setLoopOne }, { label: "Tự dừng cuối mỗi câu", on: autoPause, set: setAutoPause }] as const).map((o) => (
+                      <button key={o.label} type="button" onClick={() => o.set(!o.on)} aria-pressed={o.on} className={`flex w-full items-center justify-between rounded-lg border px-3 py-2 text-xs font-bold ${o.on ? "border-sky-500/60 bg-sky-500/10 text-white" : "border-slate-800 bg-slate-950/30 text-slate-400 hover:border-slate-600"}`}>
+                        <span>{o.label}</span>
+                        <span className={`h-4 w-7 rounded-full p-0.5 transition ${o.on ? "bg-sky-500" : "bg-slate-700"}`}><span className={`block h-3 w-3 rounded-full bg-white transition ${o.on ? "translate-x-3" : ""}`} /></span>
+                      </button>
+                    ))}
+                  </div>
                   <p className="text-sm font-black text-white">Tốc độ phát</p>
                   <div className="mt-2 mb-4 flex gap-1">
                     {[0.5, 0.75, 1, 1.25, 1.5].map((s) => (
