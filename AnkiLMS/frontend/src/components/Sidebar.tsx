@@ -39,6 +39,7 @@ import {
   Menu,
   Users,
   ClipboardCheck,
+  BriefcaseBusiness,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -57,6 +58,7 @@ const mainNav = [
   { href: "/flashcards", label: "Từ vựng", icon: Brain, feature: "flashcards" },
   { href: "/explore", label: "Khám phá", icon: Layers, badge: "MỚI", feature: "explore" },
   { href: "/placement-test", label: "Kiểm tra đầu vào", icon: ClipboardCheck, feature: "placementTest" },
+  { href: "/tools", label: "Công cụ du học", icon: BriefcaseBusiness },
   { href: "/dictionary", label: "Tra từ điển", icon: Search, feature: "dictionary" },
   { href: "/dictation", label: "Luyện nghe chính tả", icon: Headphones, feature: "dictation" },
   { href: "/shadowing", label: "Shadowing", icon: Repeat, feature: "shadowing" },
