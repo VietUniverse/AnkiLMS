@@ -873,10 +873,9 @@ export const ShadowingModule: React.FC = () => {
                           title={`Câu ${i + 1}`}
                           aria-label={`Câu ${i + 1}`}
                           aria-current={cur}
-                          style={{ flexGrow: zoomed ? 1 : Math.max(0.3, seg.end - seg.start), flexBasis: 0 }}
-                          className={`rounded-md text-[10px] font-bold leading-none text-white transition-all cursor-pointer ${zoomed ? "h-6" : cur ? "h-4" : "h-2.5 hover:h-3.5"} ${cur ? "bg-rose-500" : i < currentSubIndex ? "bg-sky-500/70" : "bg-slate-600/60"}`}
+                          style={{ flexGrow: Math.max(0.3, seg.end - seg.start), flexBasis: 0 }}
+                          className={`rounded-md transition-all cursor-pointer ${zoomed ? "h-6" : cur ? "h-4" : "h-2.5 hover:h-3.5"} ${cur ? "bg-rose-500" : i < currentSubIndex ? "bg-sky-500/70" : "bg-slate-600/60"}`}
                         >
-                          {zoomed && i + 1}
                         </button>
                       );
                     })}
