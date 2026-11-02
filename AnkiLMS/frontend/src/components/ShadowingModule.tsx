@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import { Headphones, Volume2, CheckCircle2, Play, RefreshCw, HelpCircle, Sparkles, Filter, ChevronLeft, ChevronRight, Eye, Mic, MicOff, RotateCcw, Pause, Keyboard, ArrowLeft, Star, PlayCircle, Lock, AlertTriangle, Repeat, Award } from "lucide-react";
+import { Headphones, Volume2, CheckCircle2, Play, RefreshCw, HelpCircle, Sparkles, Filter, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Eye, Mic, MicOff, RotateCcw, Pause, Keyboard, ArrowLeft, Star, PlayCircle, Lock, AlertTriangle, Repeat, Award } from "lucide-react";
 import { ApiClient } from "../lib/apiClient";
 import { useApp } from "../contexts/AppProvider";
 import { calculateKoreanSimilarity, normalizeKoreanText } from "../lib/koreanText";
@@ -76,6 +76,7 @@ export const ShadowingModule: React.FC = () => {
   const [currentSubIndex, setCurrentSubIndex] = useState<number>(0);
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1.0);
   const [loopOne, setLoopOne] = useState(false);
+  const [barZoom, setBarZoom] = useState(0); // 0 = cả bài, 1 = 12 câu, 2 = 6 câu
   const [autoPause, setAutoPause] = useState(false);
   const [translationLanguage, setTranslationLanguage] = useTranslationLanguage();
 
@@ -852,22 +853,39 @@ export const ShadowingModule: React.FC = () => {
             <div className={`relative w-full ${currentLesson.sourceType === "original" ? "min-h-40" : "pt-[56.25%] lg:pt-0 lg:flex-1 lg:min-h-0"} bg-black rounded-xl overflow-hidden border border-slate-800 shadow-md`}>
               {currentLesson.sourceType === "original" ? <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-indigo-950 to-slate-950 p-4 text-center"><span className="text-3xl">🎧</span><p className="text-sm font-bold text-white">Bài nghe tiếng Hàn được đọc bằng giọng Hàn trên thiết bị</p><p className="text-xs text-slate-300">{currentLesson.sourceLabel}</p><a href={currentLesson.sourceUrl} target="_blank" rel="noreferrer" className="text-xs font-bold text-rose-300 underline underline-offset-4">Mở nguồn tham khảo bên ngoài · không khớp lời luyện ↗</a></div> : <div className="absolute inset-0 lg:inset-y-0 lg:left-1/2 lg:right-auto lg:aspect-video lg:h-full lg:max-w-full lg:-translate-x-1/2"><div id="yt-shadowing-player" className="absolute inset-0 h-full w-full"></div></div>}
             </div>
-            {currentLesson.sourceType !== "original" && (
-              <div className="flex h-3 items-center gap-0.5 lg:flex-none" role="group" aria-label="Các câu trong bài">
-                {currentLesson.segments.map((seg: any, i: number) => (
-                  <button
-                    key={seg.id ?? i}
-                    type="button"
-                    onClick={() => handleSelectSub(i)}
-                    title={`Câu ${i + 1}`}
-                    aria-label={`Câu ${i + 1}`}
-                    aria-current={i === currentSubIndex}
-                    style={{ flexGrow: Math.max(0.3, seg.end - seg.start), flexBasis: 0 }}
-                    className={`rounded-full transition-all cursor-pointer ${i === currentSubIndex ? "h-3 bg-rose-500" : i < currentSubIndex ? "h-1.5 bg-sky-400/70 hover:h-2.5" : "h-1.5 bg-slate-600/60 hover:h-2.5"}`}
-                  />
-                ))}
-              </div>
-            )}
+            {currentLesson.sourceType !== "original" && (() => {
+              const all = currentLesson.segments as any[];
+              const size = barZoom === 0 ? all.length : Math.min(all.length, barZoom === 1 ? 12 : 6);
+              const first = Math.max(0, Math.min(currentSubIndex - Math.floor(size / 2), all.length - size));
+              const zoomed = barZoom > 0;
+              const zoomBtn = "h-7 w-7 shrink-0 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 disabled:opacity-40 flex items-center justify-center cursor-pointer";
+              return (
+                <div className="flex items-center gap-2 lg:flex-none">
+                  <div className="flex min-w-0 flex-1 items-center gap-0.5" role="group" aria-label="Các câu trong bài">
+                    {all.slice(first, first + size).map((seg: any, k: number) => {
+                      const i = first + k;
+                      const cur = i === currentSubIndex;
+                      return (
+                        <button
+                          key={seg.id ?? i}
+                          type="button"
+                          onClick={() => handleSelectSub(i)}
+                          title={`Câu ${i + 1}`}
+                          aria-label={`Câu ${i + 1}`}
+                          aria-current={cur}
+                          style={{ flexGrow: zoomed ? 1 : Math.max(0.3, seg.end - seg.start), flexBasis: 0 }}
+                          className={`rounded-md text-[10px] font-bold leading-none text-white transition-all cursor-pointer ${zoomed ? "h-6" : cur ? "h-4" : "h-2.5 hover:h-3.5"} ${cur ? "bg-rose-500" : i < currentSubIndex ? "bg-sky-500/70" : "bg-slate-600/60"}`}
+                        >
+                          {zoomed && i + 1}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <button type="button" className={zoomBtn} onClick={() => setBarZoom((z) => Math.min(2, z + 1))} disabled={barZoom === 2} aria-label="Phóng to thanh câu" title="Phóng to"><ZoomIn className="h-4 w-4" aria-hidden="true" /></button>
+                  <button type="button" className={zoomBtn} onClick={() => setBarZoom((z) => Math.max(0, z - 1))} disabled={barZoom === 0} aria-label="Thu nhỏ thanh câu" title="Thu nhỏ"><ZoomOut className="h-4 w-4" aria-hidden="true" /></button>
+                </div>
+              );
+            })()}
           </div>
 
           {/* Shadowing Speaking Practice Card */}
