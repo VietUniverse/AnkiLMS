@@ -22,7 +22,8 @@ async function getMetrics(env: Env, userId: string) {
   const [user, sessions] = await Promise.all([
     env.DB.prepare("SELECT streak, longest_streak, level FROM users WHERE id = ?").bind(userId).first<{ streak: number; longest_streak: number; level: number }>(),
     env.DB.prepare(
-      `SELECT COUNT(*) AS sessions, COALESCE(SUM(duration_seconds), 0) AS seconds,
+      `SELECT COUNT(*) AS sessions,
+       COALESCE(SUM(CASE WHEN module = 'srs' AND duration_seconds >= 14400 THEN 0 ELSE duration_seconds END), 0) AS seconds,
        COALESCE(SUM(cards_reviewed), 0) AS cards, COALESCE(SUM(correct_count), 0) AS correct,
        SUM(CASE WHEN module = 'dictation' THEN 1 ELSE 0 END) AS dictation,
        SUM(CASE WHEN module = 'shadowing' THEN 1 ELSE 0 END) AS shadowing,

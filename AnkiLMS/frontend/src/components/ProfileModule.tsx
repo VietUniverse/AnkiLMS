@@ -195,7 +195,7 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
                     <p className="text-sm font-bold">{moduleLabels[session.module] || "Phiên học"}</p>
                     <p className="text-[11px] text-stone-500 dark:text-stone-400">{new Date(`${session.created_at.replace(" ", "T")}Z`).toLocaleString("vi-VN", { dateStyle: "medium", timeStyle: "short" })}</p>
                   </div>
-                  <p className="text-right text-xs text-stone-500 dark:text-stone-400"><span className="font-bold text-stone-800 dark:text-stone-200">{session.cards_reviewed} câu</span><br />{formatDuration(session.duration_seconds)}</p>
+                  <p className="text-right text-xs text-stone-500 dark:text-stone-400"><span className="font-bold text-stone-800 dark:text-stone-200">{session.cards_reviewed} câu</span><br />{session.duration_seconds == null ? "Thời lượng chưa xác định" : formatDuration(session.duration_seconds)}</p>
                 </div>
               ))}
             </div>

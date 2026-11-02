@@ -194,7 +194,48 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const inputRef = useRef<HTMLInputElement>(null);
   const answerShownAtRef = useRef(0);
   const lastRatedCardRef = useRef<string | null>(null);
-  const srsActivityRef = useRef({ reviewed: 0, correct: 0, startedAt: 0, submitted: false });
+  const srsActivityRef = useRef({ reviewed: 0, correct: 0, activeSeconds: 0, lastTickAt: 0, lastInteractionAt: 0, submitted: false });
+
+  const tickSrsActivity = useCallback(() => {
+    const activity = srsActivityRef.current;
+    const now = Date.now();
+    const elapsedMs = now - activity.lastTickAt;
+    // Discard long timer gaps (backgrounded mobile tabs) and time after 2 min idle.
+    if (
+      elapsedMs > 0 && elapsedMs <= 15_000 &&
+      typeof document !== "undefined" && document.visibilityState === "visible" &&
+      now - activity.lastInteractionAt <= 120_000
+    ) {
+      activity.activeSeconds += elapsedMs / 1000;
+    }
+    activity.lastTickAt = now;
+  }, []);
+
+  useEffect(() => {
+    if (viewMode !== "study" || typeof window === "undefined") return;
+    const markActivity = () => {
+      tickSrsActivity();
+      srsActivityRef.current.lastInteractionAt = Date.now();
+    };
+    const handleVisibility = () => {
+      tickSrsActivity();
+      const now = Date.now();
+      srsActivityRef.current.lastTickAt = now;
+      if (document.visibilityState === "visible") srsActivityRef.current.lastInteractionAt = now;
+    };
+    const timer = window.setInterval(tickSrsActivity, 5_000);
+    window.addEventListener("pointerdown", markActivity, { passive: true });
+    window.addEventListener("keydown", markActivity);
+    window.addEventListener("touchstart", markActivity, { passive: true });
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener("pointerdown", markActivity);
+      window.removeEventListener("keydown", markActivity);
+      window.removeEventListener("touchstart", markActivity);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, [viewMode, tickSrsActivity]);
 
   const revealAnswer = useCallback(() => {
     if (!isFlipped) answerShownAtRef.current = Date.now();
@@ -205,9 +246,11 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     const activity = srsActivityRef.current;
     if (!currentUser || activity.submitted || activity.reviewed < 1) return;
     activity.submitted = true;
-    const durationSeconds = Math.min(14_400, Math.max(1, Math.round((Date.now() - activity.startedAt) / 1000)));
+    tickSrsActivity();
+    const durationSeconds = Math.min(1_800, Math.round(activity.activeSeconds));
+    if (durationSeconds < 10) return;
     void ApiClient.recordStudySession("srs", activity.reviewed, activity.correct, 1, durationSeconds).catch(() => {});
-  }, [currentUser]);
+  }, [currentUser, tickSrsActivity]);
 
   useEffect(() => {
     answerShownAtRef.current = 0;
@@ -403,20 +446,28 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     return rootNodes;
   }, [hydrated, userDecks, isAdmin, removedBuiltInDeckIds]);
 
-  // Calculate Anki Stats (% battery, new, review)
+  // Đếm trạng thái theo cùng nguồn FSRS dùng khi mở lượt học, không dùng danh sách legacy theo tên từ.
   const getDeckStats = useCallback((cards: VocabularyCard[]) => {
-    const total = cards.length;
+    const today = formatLocalDate(new Date());
+    const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1);
+    const total = playableCards.length;
     if (total === 0) return { total: 0, mastered: 0, percent: 0, newCount: 0, reviewCount: 0 };
-
-    const mastered = cards.filter((c) => masteredWordSet.has(c.word)).length;
+    let mastered = 0;
+    let newCount = 0;
+    let reviewCount = 0;
+    for (const card of playableCards) {
+      const key = `${card.deckName || "deck"}_${card.id}`;
+      const state = cardStateMap[key] || (card.ankiSchedule ? ankiScheduleToFSRSState(card.ankiSchedule) : undefined);
+      if (!state || state.state === "new") {
+        newCount += 1;
+        continue;
+      }
+      mastered += 1;
+      if (state.dueDate <= today) reviewCount += 1;
+    }
     const percent = Math.min(100, Math.round((mastered / total) * 100));
-    const unlearned = total - mastered;
-    const reviewed = cards.filter((c) => reviewWordSet.has(c.word)).length;
-    const reviewCount = Math.min(reviewed, unlearned);
-    const newCount = Math.max(0, unlearned - reviewCount);
-
     return { total, mastered, percent, newCount, reviewCount };
-  }, [masteredWordSet, reviewWordSet]);
+  }, [cardStateMap]);
 
   // Exit study session
   const exitStudy = useCallback(() => {
@@ -470,7 +521,15 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     setViewMode("study");
     answerShownAtRef.current = 0;
     lastRatedCardRef.current = null;
-    srsActivityRef.current = { reviewed: 0, correct: 0, startedAt: Date.now(), submitted: false };
+    const activityStartedAt = Date.now();
+    srsActivityRef.current = {
+      reviewed: 0,
+      correct: 0,
+      activeSeconds: 0,
+      lastTickAt: activityStartedAt,
+      lastInteractionAt: activityStartedAt,
+      submitted: false,
+    };
 
     setActiveStudySession({
       title,
