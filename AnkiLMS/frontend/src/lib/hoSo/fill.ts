@@ -146,10 +146,10 @@ export async function xacNhan(d: XacNhanData): Promise<Uint8Array> {
 }
 
 
-// ---- 표준근로계약서 (시간제근로자용): dựng bằng code theo mẫu của Bộ Lao động ----
+// ---- 단시간근로자 표준근로계약서: dựng lại theo mẫu PDF của người dùng (khổ Letter, chữ 12pt, toạ độ đo từ mẫu) ----
 const BLACK = [0, 0, 0] as const;
-const KO_DAY: Record<Day, string> = { mon: "월", tue: "화", wed: "수", thu: "목", fri: "금", sat: "토", sun: "일" };
-const ymd = (iso: string) => { const [y, m, d] = iso.split("-"); return y ? `${y}년 ${Number(m)}월 ${Number(d)}일` : ""; };
+const ymd = (iso: string) => { const [y, m, d] = iso.split("-"); return y ? [y, String(Number(m)), String(Number(d))] : ["", "", ""]; };
+const hm = (t: string) => { const [h, m] = t.split(":"); return h ? [String(Number(h)), String(Number(m ?? 0)).padStart(2, "0")] : ["", ""]; };
 
 export async function hopDong(d: XacNhanData): Promise<Uint8Array> {
   const { PDFDocument, rgb } = await import("pdf-lib");
@@ -158,71 +158,55 @@ export async function hopDong(d: XacNhanData): Promise<Uint8Array> {
   const doc = await PDFDocument.create();
   doc.registerFontkit(fontkit);
   const font = await doc.embedFont(fontBytes, { subset: false });
-  const page = doc.addPage([595, 842]);
-  const H = 842;
-  const line = rgb(0, 0, 0);
-  const box = (c: Cell, w = 0.8) => page.drawRectangle({ x: c.x0, y: H - c.y1, width: c.x1 - c.x0, height: c.y1 - c.y0, borderColor: line, borderWidth: w });
-  const label = (t: string, c: Cell, size = 10.5) => { box(c); put(page, font, rgb, t, c, size, "center", 4, 4, BLACK); };
-  const val = (t: string, c: Cell, size = 10.5) => { box(c); put(page, font, rgb, t, c, size, "left", 8, 6); };
-  const center = (t: string, y: number, size: number, bold = false) => {
-    const w = font.widthOfTextAtSize(t, size);
-    for (const dx of bold ? [0, 0.45] : [0]) page.drawText(t, { x: 297.5 - w / 2 + dx, y: H - y, size, font, color: line });
+  const page = doc.addPage([612, 792]);
+  const H = 792, S = 12;
+  // Một dòng gồm các đoạn chữ đen; [giá trị] là chữ xanh điền vào chỗ trống (trống thì chừa khoảng trắng).
+  type P = string | [string, number];
+  const line = (top: number, x: number, parts: P[]) => {
+    for (const p of parts) {
+      const t = typeof p === "string" ? p : p[0] || " ".repeat(p[1]), color: readonly [number, number, number] = typeof p === "string" ? BLACK : BLUE;
+      page.drawText(t, { x, y: H - (top + 10.9), size: S, font, color: rgb(...color) });
+      x += font.widthOfTextAtSize(t, S);
+    }
   };
-  const text = (t: string, x: number, y: number, size = 10.5, color: readonly [number, number, number] = BLACK) => page.drawText(t, { x, y: H - y, size, font, color: rgb(...color) });
+  const v = (t: string, blank = 6): P => [t.trim(), blank];
+  const ul = (t: string, n: number): P => [t.trim() || "_".repeat(n), n];
 
-  center("표 준 근 로 계 약 서", 78, 22, true);
-  center("(시간제근로자용)", 100, 12);
-  text("1. 당사자", 56, 130, 11.5);
+  page.drawRectangle({ x: 72, y: H - 99.06, width: 468.5, height: 27.06, borderColor: rgb(0, 0, 0), borderWidth: 0.5 });
+  const title = "단시간근로자 표준근로계약서", tw = font.widthOfTextAtSize(title, 18);
+  for (const dx of [0, 0.45]) page.drawText(title, { x: 306.25 - tw / 2 + dx, y: H - 91, size: 18, font, color: rgb(0, 0, 0) });
 
-  const L = 56, R = 539, row = 32;
-  let y = 138;
-  const r = (n: number): [number, number] => [y + row * n, y + row * (n + 1)];
-  // 사용자 (3 dòng) + 근로자 (2 dòng)
-  const cell = (x0: number, x1: number, n: number, span = 1): Cell => ({ x0, x1, y0: r(n)[0], y1: r(n + span - 1)[1] });
-  label("사용자", cell(L, 96, 0, 3));
-  label("성 명", cell(96, 156, 0)); val(d.employer, cell(156, 290, 0));
-  label("주민(외국인)\n등록번호", cell(290, 372, 0), 9); val("", cell(372, R, 0));
-  label("사업체 명칭", cell(96, 156, 1), 9.5); val(d.company, cell(156, R, 1));
-  label("사업장\n소재지", cell(96, 156, 2), 9.5); val(d.address, cell(156, R, 2));
-  label("근로자", cell(L, 96, 3, 2));
-  label("성 명", cell(96, 156, 3)); val(d.name, cell(156, 290, 3));
-  label("외국인등록번호", cell(290, 372, 3), 9); val(d.arc, cell(372, R, 3));
-  label("주 소", cell(96, 156, 4)); val(d.addrKr, cell(156, 372, 4), 10);
-  label("전 화", cell(372, 410, 4)); val(d.phone, cell(410, R, 4));
-
-  // 2 ~ 5
-  y = 138 + row * 5 + 14;
-  const sec = (t: string, n: number, v: string, rows = 1) => { const c = cell(L, 180, n, rows); label(t, c, 10.5); val(v, cell(180, R, n, rows)); };
-  sec("2. 근로계약기간", 0, d.periodFrom && d.periodTo ? `${ymd(d.periodFrom)} ~ ${ymd(d.periodTo)}` : "");
-  sec("3. 업무의 내용", 1, d.job);
-  sec("4. 근 로 장 소", 2, [d.company, d.address].filter(Boolean).join(", "));
-  // 5. 근로조건
-  const days = DAYS.filter((k) => hoursOf(d[k]) !== null);
-  const t = totals(d);
-  const weekTotal = (Number(t.weekday) || 0) + (Number(t.weekend) || 0);
-  const brk = d.breakMin.trim() ? `, 휴게시간 ${d.breakMin.trim()}분` : "";
-  const time = d.startTime && d.endTime ? `${d.startTime} ~ ${d.endTime}${brk}` : "";
-  const hourText = [time, days.length ? `${days.map((k) => `${KO_DAY[k]} ${hoursOf(d[k])}시간`).join(", ")} (주 ${Math.round(weekTotal * 10) / 10}시간)` : ""].filter(Boolean).join("\n");
-  const y5 = r(3)[0], h1 = 44, h2 = 32;
-  const rows5: [number, number][] = [[y5, y5 + h1], [y5 + h1, y5 + h1 + h2], [y5 + h1 + h2, y5 + h1 + 2 * h2]];
-  label("5. 근로조건", { x0: L, x1: 120, y0: y5, y1: rows5[2][1] }, 10.5);
-  label("가. 근로시간", { x0: 120, x1: 180, y0: rows5[0][0], y1: rows5[0][1] }, 9); val(hourText, { x0: 180, x1: R, y0: rows5[0][0], y1: rows5[0][1] }, 10);
-  label("나. 근로요일", { x0: 120, x1: 180, y0: rows5[1][0], y1: rows5[1][1] }, 9); val(days.length ? `매주 ${days.map((k) => KO_DAY[k]).join(", ")}요일 (주 ${days.length}일)` : "", { x0: 180, x1: R, y0: rows5[1][0], y1: rows5[1][1] });
+  const [fy, fm, fd] = ymd(d.periodFrom), [ty, tm, td] = ymd(d.periodTo);
+  const [sh, smin] = hm(d.startTime), [eh, emin] = hm(d.endTime);
+  const days = DAYS.filter((k) => hoursOf(d[k]) !== null).length;
   const wage = d.wage.replace(/\D/g, "");
-  label("다. 임금\n(제수당포함)", { x0: 120, x1: 180, y0: rows5[2][0], y1: rows5[2][1] }, 8.5);
-  val(wage ? `${Number(wage).toLocaleString("en-US")}` : "", { x0: 180, x1: 400, y0: rows5[2][0], y1: rows5[2][1] });
-  label("원 / 시간", { x0: 400, x1: R, y0: rows5[2][0], y1: rows5[2][1] }, 10.5);
-
-  const yTail = rows5[2][1] + 56;
-  text("이 계약에 정함이 없는 근로조건은 취업규칙, 근로기준법 기타 노동관계법령에 따른다.", 56, yTail, 10.5);
-  text("위와 같이 근로계약을 체결함.", 56, yTail + 34, 10.5);
-  center(`${d.year || "    "}년 ${d.month ? Number(d.month) : "   "}월 ${d.day ? Number(d.day) : "   "}일`, yTail + 80, 11.5);
-  const sign = (who: string, name: string, yy: number) => {
-    text(who, 300, yy, 11);
-    put(page, font, rgb, name, { x0: 350, x1: 470, y0: yy - 14, y1: yy + 6 }, 11, "left", 0, 0);
-    text("(인)", 480, yy, 10.5);
-  };
-  sign("사용자", d.employer, yTail + 130);
-  sign("근로자", d.name, yTail + 164);
+  line(126.3, 72, [ul(d.company, 18), " (이하 “사업주”라 함)과(와) ", v(d.name), " (이하 “근로자”라 함)"]);
+  line(146.3, 72, ["은 다음과 같이 근로계약을 체결한다."]);
+  line(166.3, 72, ["1. 근로계약기간 :  ", v(fy), "년 ", v(fm, 2), "월 ", v(fd, 2), "일부터  ", v(ty), "년 ", v(tm, 2), "월 ", v(td, 2), "일까지"]);
+  line(185.2, 72, ["※ 근로계약기간을 정하지 않는 경우에는 “근로개시일”만 기재"]);
+  line(206.2, 72, ["2. 근 무 장 소 : ", v([d.company, d.address].filter(Boolean).join(", "), 1)]);
+  line(226.2, 72, ["3. 업무의 내용 : ", v(d.job, 1)]);
+  line(246.2, 72, ["4. 소정근로시간 : ", v(sh, 2), "시 ", v(smin, 2), "분부터 ", v(eh, 2), "시 ", v(emin, 2), "분까지 (휴게시간 :   시   분~   시   분)"]);
+  line(266.2, 72, ["5. 근무일/휴일 : 매주 ", v(days ? String(days) : "", 2), "일(또는 매일단위)근무, 주휴일 매주   요일"]);
+  line(286.2, 72, ["6. 임 금"]);
+  line(306.1, 78.67, ["- 시간(일, 월)급 : ", v(wage ? Number(wage).toLocaleString("en-US") : "", 9), "원(해당사항에 ○표)"]);
+  line(326.1, 78.67, ["- 상여금 : 있음 (   )       원, 없음 (   )"]);
+  line(346.1, 78.67, ["- 기타급여(제수당 등) : 있음 :        원(내역별 기재), 없음 (   ),"]);
+  line(366.1, 78.67, ["- 초과근로에 대한 가산임금률:     %"]);
+  line(386.1, 78.67, ["- 임금지급일 : 매월(매주 또는 매일)    일(휴일의 경우는 전일 지급)"]);
+  line(406.0, 78.67, ["- 지급방법 : 근로자에게 직접지급(   ), 근로자 명의 예금통장에 입금(   )"]);
+  line(426.0, 72, ["7. 연차유급휴가 : 통상근로자의 근로시간에 비례하여 연차유급휴가 부여"]);
+  line(446.0, 72, ["8. 근로계약서 교부"]);
+  line(466.0, 78.67, ["- “사업주”는 근로계약을 체결함과 동시에 본 계약서를 사본하여 “근로자”의 교부요구와 관계"]);
+  line(486.0, 72, ["없이 “근로자”에게 교부함(근로기준법 제17조 이행)"]);
+  line(506.0, 72, ["9. 기 타"]);
+  line(525.9, 78.67, ["- 이 계약에 정함이 없는 사항은 근로기준법령에 의함"]);
+  line(545.9, 88.67, ["  ", v(d.year, 4), "년  ", v(d.month ? String(Number(d.month)) : "", 2), "월  ", v(d.day ? String(Number(d.day)) : "", 2), "일"]);
+  line(565.9, 72, ["(사업주) 사업체명 : ", ul(d.company, 20), " (전화 : ", ul(d.employerPhone, 14), ")"]);
+  line(585.9, 102, ["주 소 : ", ul(d.address, 36)]);
+  line(605.9, 102, ["대 표 자 : ", ul(d.employer, 20), " (서명)"]);
+  line(625.9, 72, ["(근로자) 주 소 : ", v(d.addrKr, 1)]);
+  line(645.8, 102, ["연 락 처 : ", v(d.phone, 1)]);
+  line(665.8, 102, ["성 명 : ", v(d.name, 1), " (서명)"]);
   return doc.save();
 }

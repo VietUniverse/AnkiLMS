@@ -9,7 +9,7 @@ src, out = sys.argv[1], sys.argv[2]
 for f in TTCollection(src).fonts:
     if "KR" in f["name"].getDebugName(1): font = f; break
 else: sys.exit("không thấy bản KR")
-uni = list(range(0x20, 0x7F)) + list(range(0xAC00, 0xD7A4)) + list(range(0x1100, 0x1200)) + list(range(0x3130, 0x3190)) + [0x00B7, 0x2013, 0x2014, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2026, 0x00D7, 0x25CB, 0x2713]
+uni = list(range(0x20, 0x7F)) + list(range(0xAC00, 0xD7A4)) + list(range(0x1100, 0x1200)) + list(range(0x3130, 0x3190)) + [0x00B7, 0x2013, 0x2014, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2026, 0x00D7, 0x25CB, 0x2713, 0x203B]
 opts = subset.Options(); opts.layout_features = ["kern"]; opts.notdef_outline = True; opts.hinting = False; opts.name_IDs = ["*"]
 s = subset.Subsetter(opts); s.populate(unicodes=uni); s.subset(font)
 # CFF -> glyf
