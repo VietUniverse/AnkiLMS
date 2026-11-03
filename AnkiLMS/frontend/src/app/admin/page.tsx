@@ -41,11 +41,10 @@ type BuiltinLesson = { id: string; title: string; level: string; lessonType: str
 type Panel = "overview" | "students" | "decks" | "vocabularyManager" | "vocabularyDecks" | "lessons" | "classes" | "community" | "chat" | "feedback" | "features" | "placementTests";
 
 async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const token = ApiClient.getToken();
   const response = await fetch(path, {
     ...init,
     credentials: "same-origin",
-    headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}), ...init?.headers },
+    headers: { "Content-Type": "application/json", ...init?.headers },
   });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(data.error || "Không thể hoàn tất thao tác quản trị.");

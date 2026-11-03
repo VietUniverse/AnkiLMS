@@ -103,7 +103,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     // can exchange the session through a same-origin POST as a fallback.
     const handoff = Array.from(crypto.getRandomValues(new Uint8Array(32)), (byte) => byte.toString(16).padStart(2, "0")).join("");
     await env.SESSIONS.put(`oauth_handoff:${handoff}`, session, { expirationTtl: 120 });
-    return redirect(siteUrl, undefined, sessionCookie(request, session), handoff);
+    return redirect(siteUrl, undefined, sessionCookie(session), handoff);
   } catch {
     return redirect(siteUrl, "oauth_failed");
   }

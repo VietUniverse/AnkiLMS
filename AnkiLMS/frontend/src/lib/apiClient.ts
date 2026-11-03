@@ -54,6 +54,11 @@ const DECK_STORE_NAME = "app-data";
 let deckDbPromise: Promise<IDBDatabase> | null = null;
 let deckSaveQueue: Promise<void> = Promise.resolve();
 
+function localAuthFallbackAllowed(): boolean {
+  if (typeof window === "undefined") return false;
+  return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.hostname === "[::1]";
+}
+
 function openDeckDatabase(): Promise<IDBDatabase> {
   if (typeof indexedDB === "undefined") return Promise.reject(new Error("IndexedDB is unavailable"));
   deckDbPromise ??= new Promise((resolve, reject) => {
@@ -66,11 +71,6 @@ function openDeckDatabase(): Promise<IDBDatabase> {
 }
 
 export class ApiClient {
-  public static getToken(): string | null {
-    if (typeof window === "undefined") return null;
-    return localStorage.getItem(LOCAL_STORAGE_TOKEN_KEY);
-  }
-
   public static setSession(user: UserProfile) {
     if (typeof window === "undefined") return;
     // New sessions are stored in the server's HttpOnly cookie.
@@ -91,66 +91,35 @@ export class ApiClient {
   }
 
   public static async fetchMe(): Promise<UserProfile | null> {
-    const token = this.getToken();
     const localUser = this.getCurrentUser();
-    // Nếu chưa có token thì trả về user cục bộ ngay lập tức (không chờ gọi API 404)
-    if (!token) {
-      return localUser;
-    }
-
     const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
-    const timer = controller ? setTimeout(() => controller.abort(), 800) : null;
+    const timer = controller ? setTimeout(() => controller.abort(), 5_000) : null;
 
     try {
       const res = await fetch("/api/auth/me", {
         credentials: "same-origin",
-        headers: { Authorization: `Bearer ${token}` },
         signal: controller?.signal,
       });
       if (timer) clearTimeout(timer);
       if (res.status === 401) {
-        localStorage.removeItem(LOCAL_STORAGE_TOKEN_KEY);
         localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
         return null;
       }
-      if (!res.ok) {
-        return localUser;
-      }
+      if (!res.ok) return localUser ? { ...localUser, role: "student" } : null;
       const data = await res.json();
       if (data.user) {
         localStorage.setItem(LOCAL_STORAGE_USER_KEY, JSON.stringify(data.user));
         return data.user;
       }
     } catch (e) {
-      // Bỏ qua lỗi mạng / offline / timeout
+      // Keep offline learning usable, but never trust a cached role for access control.
     } finally {
       if (timer) clearTimeout(timer);
     }
-    return localUser;
+    return localUser ? { ...localUser, role: "student" } : null;
   }
 
   public static async login(email: string, password: string): Promise<UserProfile> {
-    // Tài khoản thử nghiệm cục bộ
-    if (email.toLowerCase() === "admin@example.com" || email.toLowerCase() === "admin@haechivn.local") {
-      if (password !== "adminadmin123") {
-        throw new Error("Mật khẩu không chính xác cho tài khoản admin");
-      }
-      const adminUser: UserProfile = {
-        id: "admin_test_user",
-        email: "admin@example.com",
-        name: "Admin Haechi",
-        streak: 15,
-        longest_streak: 30,
-        xp: 2500,
-        gems: 2,
-        level: 9,
-        role: "admin",
-      };
-      this.setSession(adminUser);
-      if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent("haechivn:user-updated", { detail: adminUser }));
-      return adminUser;
-    }
-
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
@@ -159,21 +128,8 @@ export class ApiClient {
         body: JSON.stringify({ email, password }),
       });
       if (res.status === 404) {
-        // Fallback cho môi trường local development không có Cloudflare Functions
-        const localUser: UserProfile = {
-          id: "local_" + Date.now(),
-          email,
-          name: email.split("@")[0],
-          streak: 1,
-          longest_streak: 1,
-          xp: 150,
-          gems: 2,
-          level: 1,
-          role: "student",
-        };
-        this.setSession(localUser);
-        if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent("haechivn:user-updated", { detail: localUser }));
-        return localUser;
+        if (!localAuthFallbackAllowed()) throw new Error("Dịch vụ đăng nhập không khả dụng.");
+        throw new TypeError("Local auth endpoint fetch unavailable");
       }
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -183,7 +139,8 @@ export class ApiClient {
       return data.user;
     } catch (err: any) {
       if (err.message && !err.message.includes("fetch")) throw err;
-      // Offline fallback
+      if (!localAuthFallbackAllowed()) throw new Error("Không thể kết nối dịch vụ đăng nhập. Vui lòng thử lại.");
+      // Local-only fallback. Never create a client-side session on production.
       const localUser: UserProfile = {
         id: "local_" + Date.now(),
         email,
@@ -211,21 +168,8 @@ export class ApiClient {
         body: JSON.stringify({ email, name, password, referralCode, translationLanguage }),
       });
       if (res.status === 404) {
-        const localUser: UserProfile = {
-          id: "local_" + Date.now(),
-          email,
-          name: name || email.split("@")[0],
-          streak: 1,
-          longest_streak: 1,
-          xp: 100,
-          gems: 2,
-          level: 1,
-          role: "student",
-          translation_language: translationLanguage,
-        };
-        this.setSession(localUser);
-        if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent("haechivn:user-updated", { detail: localUser }));
-        return localUser;
+        if (!localAuthFallbackAllowed()) throw new Error("Dịch vụ đăng ký không khả dụng.");
+        throw new TypeError("Local auth endpoint fetch unavailable");
       }
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -235,6 +179,7 @@ export class ApiClient {
       return data.user;
     } catch (err: any) {
       if (err.message && !err.message.includes("fetch")) throw err;
+      if (!localAuthFallbackAllowed()) throw new Error("Không thể kết nối dịch vụ đăng ký. Vui lòng thử lại.");
       const localUser: UserProfile = {
         id: "local_" + Date.now(),
         email,
@@ -275,12 +220,11 @@ export class ApiClient {
   }
 
   public static async logout(): Promise<void> {
-    const token = this.getToken();
+    localStorage.removeItem(LOCAL_STORAGE_TOKEN_KEY);
     try {
       await fetch("/api/auth/logout", {
         method: "POST",
         credentials: "same-origin",
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
     } catch {
       // The local session is still cleared below if the service is unreachable.
@@ -290,11 +234,9 @@ export class ApiClient {
   }
 
   public static async checkin(): Promise<{ alreadyCheckedIn: boolean; message: string; user?: UserProfile }> {
-    const token = this.getToken();
     const res = await fetch("/api/checkin", {
       method: "POST",
       credentials: "same-origin",
-      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || "Không thể điểm danh. Vui lòng thử lại.");
@@ -319,11 +261,9 @@ export class ApiClient {
   }
 
   public static async getHeatmapData(): Promise<{ checkin_date: string; time_spent_minutes: number; xp_earned: number }[]> {
-    const token = this.getToken();
     try {
       const res = await fetch("/api/heatmap", {
         credentials: "same-origin",
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
       if (!res.ok) return [];
       const data = await res.json();
@@ -334,8 +274,7 @@ export class ApiClient {
   }
 
   public static async getCardStates(): Promise<Record<string, { interval: number; easeFactor: number; reps: number; lapses: number; state: "new" | "learning" | "review"; dueDate: string; dueAt?: string; stability: number; difficulty: number; lastReview: string | null }>> {
-    const token = this.getToken();
-    const res = await fetch("/api/card-states", { credentials: "same-origin", headers: token ? { Authorization: `Bearer ${token}` } : undefined });
+    const res = await fetch("/api/card-states", { credentials: "same-origin" });
     if (!res.ok) throw new Error("Không tải được tiến độ ôn tập.");
     const data = await res.json();
     return Object.fromEntries((data.cardStates || []).map((item: any) => [
@@ -345,28 +284,25 @@ export class ApiClient {
   }
 
   public static async saveCardState(deckId: string, cardId: number, state: { interval: number; easeFactor: number; reps: number; lapses: number; state: string; dueDate: string; dueAt?: string; stability: number; difficulty: number; lastReview: string | null }): Promise<void> {
-    const token = this.getToken();
     const res = await fetch("/api/card-states", {
       method: "POST", credentials: "same-origin",
-      headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ deckId, cardId, interval: state.interval, easeFactor: state.easeFactor, reps: state.reps, lapses: state.lapses, state: state.state, dueDate: state.dueDate, dueAt: state.dueAt, stability: state.stability, difficulty: state.difficulty, lastReview: state.lastReview }),
     });
     if (!res.ok) throw new Error("Không lưu được tiến độ ôn tập.");
   }
 
   public static async getClasses(): Promise<any[]> {
-    const token = this.getToken();
-    const res = await fetch("/api/classes", { credentials: "same-origin", headers: token ? { Authorization: `Bearer ${token}` } : undefined });
+    const res = await fetch("/api/classes", { credentials: "same-origin" });
     if (!res.ok) throw new Error("Không tải được lớp học.");
     const data = await res.json();
     return data.classes || [];
   }
 
   public static async classAction(payload: Record<string, unknown>): Promise<any[]> {
-    const token = this.getToken();
     const res = await fetch("/api/classes", {
       method: "POST", credentials: "same-origin",
-      headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
     const data = await res.json().catch(() => ({}));
@@ -379,10 +315,9 @@ export class ApiClient {
     reviewedCards: number; correctCards: number; lastStudiedAt: string | null; completed: boolean;
     deckCards: { id: number; korean: string; meaning: string; example?: string; pronunciation?: string; mediaHtml?: string }[];
   }> {
-    const token = this.getToken();
     const res = await fetch("/api/classes", {
       method: "POST", credentials: "same-origin",
-      headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "get_assignment", classId, assignmentId }),
     });
     const data = await res.json().catch(() => ({}));
@@ -391,10 +326,9 @@ export class ApiClient {
   }
 
   public static async recordClassAssignmentReview(classId: string, assignmentId: string, cardId: number, correct: boolean): Promise<{ reviewedCards: number; totalCards: number; correctCards: number; lastStudiedAt: string | null; completed: boolean }> {
-    const token = this.getToken();
     const res = await fetch("/api/classes", {
       method: "POST", credentials: "same-origin",
-      headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "review_card", classId, assignmentId, cardId, correct }),
     });
     const data = await res.json().catch(() => ({}));
@@ -403,11 +337,10 @@ export class ApiClient {
   }
 
   public static async uploadClassAssignmentMedia(classId: string, assignmentId: string, assetId: string, blob: Blob, contentType: string): Promise<void> {
-    const token = this.getToken();
     const params = new URLSearchParams({ classId, assignmentId, assetId });
     const res = await fetch(`/api/classes?${params.toString()}`, {
       method: "PUT", credentials: "same-origin",
-      headers: { "Content-Type": contentType, ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+      headers: { "Content-Type": contentType },
       body: blob,
     });
     const data = await res.json().catch(() => ({}));
@@ -415,14 +348,12 @@ export class ApiClient {
   }
 
   public static async recordStudySession(moduleName: string, cardsReviewed: number, correctCount: number, xpEarned: number, durationSeconds: number) {
-    const token = this.getToken();
     try {
       const res = await fetch("/api/study-session", {
         method: "POST",
         credentials: "same-origin",
         headers: {
           "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({
           module: moduleName,
@@ -456,11 +387,9 @@ export class ApiClient {
 
   public static async getDailyMissions(): Promise<DailyMissionsSummary | null> {
     try {
-      const token = this.getToken();
       const res = await fetch("/api/daily-missions", {
         credentials: "same-origin",
         cache: "no-store",
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       });
       if (!res.ok) return null;
       return await res.json() as DailyMissionsSummary;

@@ -9,7 +9,8 @@ export interface Env {
   SITE_URL?: string;
 }
 
-const SESSION_COOKIE = "haechivn_session";
+const SESSION_COOKIE = "__Host-haechivn_session";
+const LEGACY_SESSION_COOKIE = "haechivn_session";
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 30;
 
 export interface UserRow {
@@ -123,21 +124,20 @@ export function getSessionToken(request: Request): string | null {
   } catch {
     return null;
   }
-
-  // Accept existing browser sessions while users transition to the HttpOnly cookie.
-  const authHeader = request.headers.get("Authorization");
-  if (!authHeader?.startsWith("Bearer ")) return null;
-  const bearer = authHeader.slice(7).trim();
-  return bearer.length > 0 && bearer.length <= 256 ? bearer : null;
+  return null;
 }
 
-export function sessionCookie(request: Request, token: string, maxAge = SESSION_TTL_SECONDS): string {
-  const secure = new URL(request.url).protocol === "https:" ? "; Secure" : "";
-  return `${SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; Max-Age=${maxAge}; HttpOnly; SameSite=Lax${secure}`;
+export function sessionCookie(token: string, maxAge = SESSION_TTL_SECONDS): string {
+  // __Host cookies must be Secure, host-only, and scoped to the root path.
+  return `${SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Lax`;
 }
 
-export function clearSessionCookie(request: Request): string {
-  return sessionCookie(request, "", 0);
+export function clearSessionCookie(): string {
+  return sessionCookie("", 0);
+}
+
+export function clearLegacySessionCookie(): string {
+  return `${LEGACY_SESSION_COOKIE}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax`;
 }
 
 export async function createSession(env: Env, user: Pick<UserRow, "id" | "email" | "name">): Promise<string> {

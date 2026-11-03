@@ -3,14 +3,27 @@ import { rateKey, recordAttempt } from "./_rateLimit";
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
-  if (!isSameOriginRequest(request)) return errorResponse("Yêu cầu không hợp lệ.", 403);
+  const origin = request.headers.get("Origin");
+  const contentType = request.headers.get("Content-Type")?.split(";", 1)[0].trim().toLowerCase();
+  if (contentType !== "application/json") return errorResponse("Chỉ chấp nhận nội dung JSON.", 415);
+  if (!origin || origin !== new URL(request.url).origin || !isSameOriginRequest(request) || request.headers.get("Sec-Fetch-Site") === "cross-site") {
+    return errorResponse("Yêu cầu không hợp lệ.", 403);
+  }
   if (Number(request.headers.get("Content-Length") || 0) > 8_192) return errorResponse("Nội dung gửi lên quá lớn.", 413);
+
+  let body: { email?: string; password?: string; name?: string; referralCode?: string; translationLanguage?: string };
+  try {
+    const parsed: unknown = await request.json();
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return errorResponse("Yêu cầu không hợp lệ.", 400);
+    body = parsed as typeof body;
+  } catch {
+    return errorResponse("Yêu cầu không hợp lệ.", 400);
+  }
 
   try {
     const clientIp = request.headers.get("CF-Connecting-IP") || "unknown";
     const ipAttempts = await recordAttempt(env, `register-ip:${await rateKey(clientIp)}`, 3600);
     if (ipAttempts > 10) return jsonResponse({ error: "Đã tạo quá nhiều yêu cầu. Vui lòng thử lại sau." }, 429, { "Retry-After": "3600" });
-    const body = (await request.json()) as { email?: string; password?: string; name?: string; referralCode?: string; translationLanguage?: string };
     const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
     if (email) {
       const accountAttempts = await recordAttempt(env, `register-account:${await rateKey(email)}`, 3600);
@@ -67,7 +80,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         },
       },
       201,
-      { "Set-Cookie": sessionCookie(request, token) },
+      { "Set-Cookie": sessionCookie(token) },
     );
   } catch {
     return errorResponse("Không thể tạo tài khoản lúc này. Vui lòng thử lại.", 500);

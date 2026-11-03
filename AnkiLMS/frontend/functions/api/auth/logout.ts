@@ -1,4 +1,4 @@
-import { Env, jsonResponse, clearSessionCookie, getSessionToken, isSameOriginRequest, errorResponse } from "../_utils";
+import { Env, jsonResponse, clearSessionCookie, clearLegacySessionCookie, getSessionToken, isSameOriginRequest, errorResponse } from "../_utils";
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
@@ -9,5 +9,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   } catch {
     // Clear the browser cookie even if the session store is temporarily unavailable.
   }
-  return jsonResponse({ success: true, message: "Đã đăng xuất" }, 200, { "Set-Cookie": clearSessionCookie(request) });
+  const response = jsonResponse({ success: true, message: "Đã đăng xuất" }, 200, { "Set-Cookie": clearSessionCookie() });
+  response.headers.append("Set-Cookie", clearLegacySessionCookie());
+  return response;
 };

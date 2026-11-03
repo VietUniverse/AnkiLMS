@@ -1,4 +1,4 @@
-import { Env, errorResponse, isSameOriginRequest, jsonResponse } from "../_utils";
+import { Env, errorResponse, isSameOriginRequest, jsonResponse, sessionCookie } from "../_utils";
 
 export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   if (!isSameOriginRequest(request)) return errorResponse("Yêu cầu không hợp lệ.", 403);
@@ -21,7 +21,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
 
   // Consume first; the ticket is short lived and must not be reusable.
   await env.SESSIONS.delete(key);
-  return jsonResponse({ token });
+  return jsonResponse({ success: true }, 200, { "Set-Cookie": sessionCookie(token) });
 };
 
 export const onRequestOptions: PagesFunction<Env> = async () => jsonResponse({}, 200);

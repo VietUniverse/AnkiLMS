@@ -79,7 +79,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const authToken = params.get("auth_token");
     const authError = params.get("auth_error");
     const referralCode = params.get("ref");
     const fragmentParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
@@ -89,16 +88,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       localStorage.setItem("haechivn_referral_code", referralCode);
     }
 
-    if (authToken) {
-      localStorage.setItem("haechivn_auth_token", authToken);
-      const cleanUrl = new URL(window.location.href);
-      cleanUrl.searchParams.delete("auth_token");
-      window.history.replaceState({}, document.title, `${cleanUrl.pathname}${cleanUrl.search}${cleanUrl.hash}`);
-    }
+    // Remove legacy JS-readable bearer credentials from older client versions.
+    localStorage.removeItem("haechivn_auth_token");
 
     // OAuth callback uses a one-time ticket in the URL fragment: fragments are
-    // never sent to servers or referrers. Exchange it before loading user data,
-    // and keep the resulting bearer only in local storage as cookie fallback.
+    // never sent to servers or referrers. Exchange it for an HttpOnly cookie
+    // before loading user data; the session token never enters JavaScript.
     if (oauthHandoff) {
       window.history.replaceState({}, document.title, `${window.location.pathname}${window.location.search}`);
     }
@@ -185,10 +180,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             cache: "no-store",
             body: JSON.stringify({ ticket: oauthHandoff }),
           });
-          const payload = await response.json() as { token?: string; error?: string };
-          if (response.ok && payload.token) {
-            localStorage.setItem("haechivn_auth_token", payload.token);
-          } else {
+          const payload = await response.json() as { error?: string };
+          if (!response.ok) {
             setTimeout(() => setAuthErrorMessage(payload.error || "Không hoàn tất được đăng nhập Google. Vui lòng thử lại."), 0);
             setTimeout(() => setAuthErrorMessage(null), 8000);
           }

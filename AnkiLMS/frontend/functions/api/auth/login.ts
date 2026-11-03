@@ -79,7 +79,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         },
       },
       200,
-      { "Set-Cookie": sessionCookie(request, token) },
+      { "Set-Cookie": sessionCookie(token) },
     );
   } catch (error) {
     console.error("Authentication login failed", { stage, error: error instanceof Error ? error.message : "unknown" });
