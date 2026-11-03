@@ -2,10 +2,11 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { TOPIK_QUESTION_BANK, TopikQuestion } from "../data/topikQuestionBank";
+import { TOPIK_I_FILL_BLANK_EXAMS } from "../data/topikFillBlankExams";
 import { ArrowLeft, ArrowRight, BookOpen, Check, CheckCircle2, Clock3, ExternalLink, Headphones, ListChecks, RotateCcw, Volume2, XCircle } from "lucide-react";
 import { ApiClient } from "../lib/apiClient";
 
-type ExamSet = { id: string; title: string; subtitle: string; section: string; icon: React.ElementType; duration: number; questions: TopikQuestion[] };
+type ExamSet = { id: string; title: string; subtitle: string; section: string; icon: React.ElementType; duration: number; questions: TopikQuestion[]; instruction?: string };
 
 const QUESTION_GROUPS: Omit<ExamSet, "questions">[] = [
   { id: "mini", title: "Bộ luyện tổng hợp", subtitle: "Đọc · nghe · từ vựng và ngữ pháp", section: "all", icon: BookOpen, duration: 15 },
@@ -36,6 +37,12 @@ export const TopikExamModule: React.FC = () => {
     ...set,
     questions: set.section === "all" ? TOPIK_QUESTION_BANK : TOPIK_QUESTION_BANK.filter((question) => question.section === set.section),
   })).filter((set) => set.questions.length > 0), []);
+
+  const fillBlankSets = useMemo<ExamSet[]>(() => TOPIK_I_FILL_BLANK_EXAMS.map((set) => ({
+    ...set,
+    section: "grammar",
+    icon: ListChecks,
+  })), []);
 
   const handleSubmit = useCallback(() => {
     if (submittedRef.current || !activeSet) return;
@@ -113,6 +120,13 @@ export const TopikExamModule: React.FC = () => {
             return <button key={set.id} onClick={() => startSet(set)} className="group rounded-2xl border border-slate-700/80 bg-slate-900/70 p-4 text-left transition hover:border-sky-400/40 hover:bg-slate-900 sm:p-5"><span className="flex items-center justify-between"><span className="rounded-xl bg-sky-400/10 p-2.5 text-sky-300"><Icon className="h-5 w-5" /></span><span className="text-[11px] font-bold text-slate-500">{stat}</span></span><span className="mt-4 block text-base font-black text-white">{set.title}</span><span className="mt-1 block text-xs text-slate-400">{set.subtitle}</span><span className="mt-4 inline-flex items-center gap-1 text-xs font-black text-sky-300">Bắt đầu <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></span></button>;
           })}
         </div>
+        <div className="mb-3 mt-8 flex flex-wrap items-end justify-between gap-3">
+          <div><h2 className="text-lg font-black text-white">10 đề luyện theo nhóm câu</h2><p className="mt-1 text-xs text-slate-400">Mỗi đề gồm 5 câu cùng dạng · làm nhanh trong khoảng 5 phút</p></div>
+          <span className="rounded-full border border-emerald-400/20 bg-emerald-400/[0.06] px-3 py-1.5 text-[10px] font-bold text-emerald-200">HaechiVN biên soạn · không phải đề chính thức</span>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {fillBlankSets.map((set, index) => { const Icon = set.icon; return <button key={set.id} onClick={() => startSet(set)} className="group rounded-2xl border border-emerald-400/15 bg-slate-900/70 p-4 text-left transition hover:border-emerald-300/45 hover:bg-slate-900 sm:p-5"><span className="flex items-center justify-between gap-2"><span className="rounded-xl bg-emerald-400/10 p-2.5 text-emerald-300"><Icon className="h-5 w-5" /></span><span className="rounded-full border border-emerald-400/20 px-2.5 py-1 text-[10px] font-black text-emerald-200">CÂU 1–5 · ĐIỀN KHUYẾT</span></span><span className="mt-4 block text-base font-black text-white">{set.title}</span><span className="mt-1 block min-h-8 text-xs text-slate-400">{set.subtitle}</span><span className="mt-3 flex items-center justify-between text-[11px] font-bold text-slate-500"><span>5 câu · {set.duration} phút</span><span>Đề {String(index + 1).padStart(2, "0")}</span></span><span className="mt-4 inline-flex items-center gap-1 text-xs font-black text-emerald-300">Làm đề <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></span></button>; })}
+        </div>
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
           {[{ label: "Nghe", count: listeningCount }, { label: "Đọc", count: readingCount }, { label: "Từ vựng & ngữ pháp", count: grammarCount }].map((item) => <div key={item.label} className="rounded-xl border border-slate-800 bg-slate-950/35 px-4 py-3"><span className="text-sm font-bold text-slate-200">{item.label}</span><span className="float-right text-xs text-slate-500">{item.count} câu hiện có</span></div>)}
         </div>
@@ -140,6 +154,7 @@ export const TopikExamModule: React.FC = () => {
       <div className="flex items-center justify-between gap-3"><div><p className="text-xs font-bold text-sky-300">Câu {currentIndex + 1} / {activeSet.questions.length}</p><div className="mt-2 h-1.5 w-40 overflow-hidden rounded-full bg-slate-800"><div className="h-full rounded-full bg-sky-400 transition-all" style={{ width: `${(currentIndex + 1) / activeSet.questions.length * 100}%` }} /></div></div><button onClick={() => setShowQuestionMap((value) => !value)} className="inline-flex items-center gap-2 rounded-lg border border-slate-700 px-3 py-2 text-[11px] font-bold text-slate-300"><ListChecks className="h-4 w-4" />{Object.keys(selectedAnswers).length}/{activeSet.questions.length}</button></div>
       {showQuestionMap && <div className="mt-3 grid grid-cols-8 gap-2">{activeSet.questions.map((question, index) => <button key={question.id} onClick={() => { setCurrentIndex(index); setShowQuestionMap(false); }} className={`h-9 rounded-lg border text-xs font-bold ${index === currentIndex ? "border-sky-400 bg-sky-400/15 text-sky-200" : selectedAnswers[question.id] !== undefined ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-200" : "border-slate-700 text-slate-400"}`}>{index + 1}</button>)}</div>}
       {currentQ && <div className="mt-5 border-t border-slate-800 pt-5">
+        {activeSet.instruction && <div className="mb-4 rounded-xl border border-emerald-400/20 bg-emerald-400/[0.05] px-4 py-3"><p className="text-[10px] font-black uppercase tracking-wider text-emerald-300">Nhóm câu 1–5 · Điền vào chỗ trống</p><p className="mt-1 text-xs text-slate-300">{activeSet.instruction}</p></div>}
         {currentQ.passage && currentQ.section !== "listening" && <div className="mb-4 whitespace-pre-line rounded-xl border border-slate-800 bg-slate-950/70 p-4 font-noto text-sm leading-7 text-slate-200"><p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">Đoạn đọc</p>{currentQ.passage}</div>}
         {currentQ.section === "listening" && currentQ.passage && <div className="mb-4 flex items-center justify-between gap-3 rounded-xl border border-sky-400/20 bg-sky-400/[0.04] p-4"><div><p className="text-xs font-bold text-white">Nghe hội thoại</p><p className="mt-1 text-[10px] text-slate-400">Giọng đọc tiếng Hàn trên thiết bị</p></div><button onClick={playListeningPassage} className="inline-flex items-center gap-2 rounded-lg bg-sky-400/15 px-3 py-2 text-xs font-bold text-sky-200"><Volume2 className="h-4 w-4" />Phát</button></div>}
         <h2 className="font-noto text-base font-black leading-7 text-white">{currentQ.question}</h2>
