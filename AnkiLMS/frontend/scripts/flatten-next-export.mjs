@@ -1,4 +1,4 @@
-import { copyFileSync, existsSync, readdirSync, rmSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 
 // Next's static export stores RSC payloads in nested __next.* folders, while
@@ -26,5 +26,12 @@ visit(root);
 // Keep the source files for static route generation, but never publish them.
 for (const name of ["dictionary-ko-multi.json", "dictionary-topic-vocab.json", "course-vocabulary.json", "seoul-1a.json", "thth-1.json", "nikl-ko-en-vi.json", "yomichan-headwords.json"]) {
   rmSync(join(root, "data", name), { force: true });
+}
+// Cloudflare Pages may retain immutable assets from older deployments at the
+// production hostname. Overwrite known data-bearing chunks with inert files.
+const legacyChunkDir = join(root, "_next", "static", "chunks");
+mkdirSync(legacyChunkDir, { recursive: true });
+for (const name of ["3ogbh3c8esv8y.js", "17ne4q1-qmzhr.js"]) {
+  writeFileSync(join(legacyChunkDir, name), "/* retired legacy data chunk */\n", "utf8");
 }
 console.log(`Prepared ${copied} Cloudflare RSC routes`);
