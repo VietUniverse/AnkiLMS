@@ -163,10 +163,15 @@ export async function hopDong(d: XacNhanData): Promise<Uint8Array> {
   // Một dòng gồm các đoạn chữ đen; [giá trị] là chữ xanh điền vào chỗ trống (trống thì chừa khoảng trắng).
   type P = string | [string, number];
   const line = (top: number, x: number, parts: P[]) => {
-    for (const p of parts) {
-      const t = typeof p === "string" ? p : p[0] || " ".repeat(p[1]), color: readonly [number, number, number] = typeof p === "string" ? BLACK : BLUE;
-      page.drawText(t, { x, y: H - (top + 10.9), size: S, font, color: rgb(...color) });
-      x += font.widthOfTextAtSize(t, S);
+    const resolved = parts.map((p) => ({
+      text: typeof p === "string" ? p : p[0] || " ".repeat(p[1]),
+      color: (typeof p === "string" ? BLACK : BLUE) as readonly [number, number, number],
+    }));
+    const width = resolved.reduce((sum, p) => sum + font.widthOfTextAtSize(p.text, S), 0);
+    const size = Math.min(S, S * (page.getWidth() - 72 - x) / Math.max(width, 1));
+    for (const p of resolved) {
+      page.drawText(p.text, { x, y: H - (top + 10.9), size, font, color: rgb(...p.color) });
+      x += font.widthOfTextAtSize(p.text, size);
     }
   };
   const v = (t: string, blank = 6): P => [t.trim(), blank];
@@ -179,6 +184,14 @@ export async function hopDong(d: XacNhanData): Promise<Uint8Array> {
   const [fy, fm, fd] = ymd(d.periodFrom), [ty, tm, td] = ymd(d.periodTo);
   const [sh, smin] = hm(d.startTime), [eh, emin] = hm(d.endTime);
   const days = DAYS.filter((k) => hoursOf(d[k]) !== null).length;
+  const dayNames: Record<Day, string> = { mon: "월", tue: "화", wed: "수", thu: "목", fri: "금", sat: "토", sun: "일" };
+  const weeklyHours = DAYS.flatMap((k) => {
+    const hours = hoursOf(d[k]);
+    return hours === null ? [] : [`${dayNames[k]} ${hours}시간`];
+  }).join(" · ");
+  const breakMinutes = Number(d.breakMin);
+  const breakText = d.breakMin.trim() && Number.isFinite(breakMinutes) && breakMinutes >= 0
+    ? `휴게시간 : ${breakMinutes}분` : "휴게시간 :   시   분~   시   분";
   const wage = d.wage.replace(/\D/g, "");
   line(126.3, 72, [ul(d.company, 18), " (이하 “사업주”라 함)과(와) ", v(d.name), " (이하 “근로자”라 함)"]);
   line(146.3, 72, ["은 다음과 같이 근로계약을 체결한다."]);
@@ -186,8 +199,8 @@ export async function hopDong(d: XacNhanData): Promise<Uint8Array> {
   line(185.2, 72, ["※ 근로계약기간을 정하지 않는 경우에는 “근로개시일”만 기재"]);
   line(206.2, 72, ["2. 근 무 장 소 : ", v([d.company, d.address].filter(Boolean).join(", "), 1)]);
   line(226.2, 72, ["3. 업무의 내용 : ", v(d.job, 1)]);
-  line(246.2, 72, ["4. 소정근로시간 : ", v(sh, 2), "시 ", v(smin, 2), "분부터 ", v(eh, 2), "시 ", v(emin, 2), "분까지 (휴게시간 :   시   분~   시   분)"]);
-  line(266.2, 72, ["5. 근무일/휴일 : 매주 ", v(days ? String(days) : "", 2), "일(또는 매일단위)근무, 주휴일 매주   요일"]);
+  line(246.2, 72, ["4. 소정근로시간 : ", v(sh, 2), "시 ", v(smin, 2), "분부터 ", v(eh, 2), "시 ", v(emin, 2), "분까지 (", breakText, ")"]);
+  line(266.2, 72, ["5. 근무일/휴일 : 매주 ", v(days ? String(days) : "", 2), "일 근무 (", weeklyHours || "    ", "), 주휴일 매주   요일"]);
   line(286.2, 72, ["6. 임 금"]);
   line(306.1, 78.67, ["- 시간(일, 월)급 : ", v(wage ? Number(wage).toLocaleString("en-US") : "", 9), "원(해당사항에 ○표)"]);
   line(326.1, 78.67, ["- 상여금 : 있음 (   )       원, 없음 (   )"]);
@@ -208,5 +221,6 @@ export async function hopDong(d: XacNhanData): Promise<Uint8Array> {
   line(625.9, 72, ["(근로자) 주 소 : ", v(d.addrKr, 1)]);
   line(645.8, 102, ["연 락 처 : ", v(d.phone, 1)]);
   line(665.8, 102, ["성 명 : ", v(d.name, 1), " (서명)"]);
+  line(685.8, 102, ["외국인등록번호 : ", v(d.arc, 1)]);
   return doc.save();
 }

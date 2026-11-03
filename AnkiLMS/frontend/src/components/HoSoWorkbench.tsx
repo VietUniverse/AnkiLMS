@@ -11,7 +11,7 @@ const arcOk = (v: string) => v.replace(/\D/g, "").length === 13;
 const phoneOk = (v: string) => /^0\d{1,2}-?\d{3,4}-?\d{4}$/.test(v.trim());
 const stray = (v: string) => /[^ -~ᄀ-ᇿ㄰-㆏가-힣·~]/.test(v);
 
-export function HoSoWorkbench({ title, subtitle, intro, filename, show, required, generate, extraNote }: { title: string; subtitle: string; intro: string; filename: string; show: Key[]; required: Key[]; generate: (d: XacNhanData) => Promise<Uint8Array>; extraNote?: string }) {
+export function HoSoWorkbench({ title, subtitle, intro, filename, paperSize, show, required, generate, extraNote }: { title: string; subtitle: string; intro: string; filename: string; paperSize: "A4" | "Letter"; show: Key[]; required: Key[]; generate: (d: XacNhanData) => Promise<Uint8Array>; extraNote?: string }) {
   const saved = useXacNhanData();
   const [form, setForm] = useState<XacNhanData>(emptyXacNhan);
   const [loaded, setLoaded] = useState(false);
@@ -31,13 +31,15 @@ export function HoSoWorkbench({ title, subtitle, intro, filename, show, required
     if (form.email && !/^\S+@\S+\.\S+$/.test(form.email)) p.email = "Email chưa đúng";
     for (const k of DAYS) if (form[k].trim() && hoursOf(form[k]) === null) p[k] = "Nhập số giờ từ 0 đến 24";
     if (form.periodFrom && form.periodTo && form.periodTo < form.periodFrom) p.periodTo = "Ngày kết thúc phải sau ngày bắt đầu";
+    if (form.startTime && form.endTime && form.endTime <= form.startTime) p.endTime = "Giờ tan ca phải sau giờ vào ca";
+    if (form.breakMin && (Number(form.breakMin) < 0 || Number(form.breakMin) > 180)) p.breakMin = "Thời gian nghỉ phải từ 0 đến 180 phút";
     for (const g of shown) for (const f of g.fields) if (f.ko && stray(form[f.key])) p[f.key] = "Ô này chỉ nhận chữ Hàn và chữ Latin, không dùng tiếng Việt có dấu";
     return p;
   }, [form, shown]);
   const tot = useMemo(() => totals(form), [form]);
   const missing = required.filter((k) => !form[k].trim()).length;
 
-  const set = (k: Key, v: string) => setForm((c) => ({ ...c, [k]: v }));
+  const set = (k: Key, v: string) => { setBusy(true); setForm((c) => ({ ...c, [k]: v })); };
   useEffect(() => { if (loaded) saveXacNhan(form); }, [form, loaded]);
 
   // Cập nhật xem trước sau khi ngừng gõ một chút
@@ -86,19 +88,19 @@ export function HoSoWorkbench({ title, subtitle, intro, filename, show, required
           {show.includes("mon") && (tot.weekday || tot.weekend) && <p className="rounded-xl border border-slate-800 bg-slate-950/40 p-3 text-xs leading-5 text-slate-300">Tổng giờ: ngày thường <b className="text-white">{tot.weekday || 0}</b> giờ, cuối tuần <b className="text-white">{tot.weekend || 0}</b> giờ.{Number(tot.weekday) > 15 && " Ngày thường đang trên 15 giờ/tuần: mức tối đa còn tùy cấp TOPIK và bậc học (có thể tới 20 hoặc 30 giờ). Quy định có thể đổi, hãy xác nhận với phòng quốc tế của trường hoặc 1345."}</p>}
           {extraNote && <p className="px-1 text-[11px] leading-5 text-slate-500">{extraNote}</p>}
           <p className="px-1 text-[11px] leading-5 text-slate-500">Mọi thông tin chỉ nằm trên máy của bạn (bộ nhớ trình duyệt), không gửi lên máy chủ HaechiVN. Bản nháp được lưu để lần sau không phải nhập lại.</p>
-          <button type="button" onClick={() => { clearXacNhan(); setForm(emptyXacNhan()); }} className="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white"><Trash2 className="h-3.5 w-3.5" />Xóa dữ liệu đã lưu</button>
+          <button type="button" onClick={() => { clearXacNhan(); setBusy(true); setForm(emptyXacNhan()); }} className="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white"><Trash2 className="h-3.5 w-3.5" />Xóa dữ liệu đã lưu</button>
         </div>
 
         <aside className="lg:sticky lg:top-4 lg:self-start">
           <div className="card-duo p-4">
             <div className="flex flex-wrap items-center gap-2">
-              <button type="button" onClick={print} disabled={!url} className="btn-duo btn-duo-primary flex items-center gap-2 px-4 py-2.5 text-xs disabled:opacity-50"><Printer className="h-4 w-4" />In</button>
-              <a href={url || undefined} download={filename} aria-disabled={!url} className="flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-xs font-bold text-slate-200 hover:border-cyan-400"><Download className="h-4 w-4" />Tải PDF</a>
+              <button type="button" onClick={print} disabled={!url || busy} className="btn-duo btn-duo-primary flex items-center gap-2 px-4 py-2.5 text-xs disabled:opacity-50"><Printer className="h-4 w-4" />In</button>
+              <a href={!busy ? url || undefined : undefined} download={filename} aria-disabled={!url || busy} className="flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-xs font-bold text-slate-200 hover:border-cyan-400 aria-disabled:opacity-50"><Download className="h-4 w-4" />Tải PDF</a>
               <span className="text-[11px] text-slate-400">{busy ? "Đang cập nhật..." : missing ? `Còn ${missing} ô bắt buộc chưa điền` : "Đã đủ thông tin"}</span>
             </div>
             {error && <p className="mt-2 text-xs font-semibold text-rose-300">{error}</p>}
             <iframe ref={frame} src={url ? `${url}#toolbar=0&navpanes=0&view=FitH` : undefined} title={`Xem trước ${title}`} className="mt-3 h-[70vh] w-full rounded-lg border border-slate-800 bg-white" />
-            <p className="mt-2 text-[11px] leading-5 text-slate-500">{url && <a href={url} target="_blank" rel="noreferrer" className="mr-2 font-bold text-cyan-500 underline">Mở PDF ở tab mới</a>}In khổ A4, tỉ lệ 100% (không chọn "vừa trang"). Chữ xanh là phần bạn điền, in đen trắng vẫn rõ.</p>
+            <p className="mt-2 text-[11px] leading-5 text-slate-500">{url && !busy && <a href={url} target="_blank" rel="noreferrer" className="mr-2 font-bold text-cyan-500 underline">Mở PDF ở tab mới</a>}In khổ {paperSize}, tỉ lệ 100% (không chọn "vừa trang"). Chữ xanh là phần bạn điền, in đen trắng vẫn rõ.</p>
           </div>
         </aside>
       </div>

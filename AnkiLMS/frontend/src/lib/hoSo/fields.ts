@@ -1,7 +1,7 @@
 import type { XacNhanData } from "./fill";
 
 export type Key = keyof XacNhanData;
-export type Kind = "phone" | "arc" | "biz" | "money" | "date" | "time" | "hours";
+export type Kind = "phone" | "arc" | "biz" | "money" | "date" | "time" | "hours" | "minutes";
 export type F = { key: Key; label: string; hint: string; ko?: boolean; required?: boolean; half?: boolean; kind?: Kind };
 
 // Gõ số liền nhau, hệ thống tự thêm dấu gạch và dấu phẩy
@@ -17,6 +17,7 @@ export const format: Partial<Record<Kind, (v: string) => string>> = {
   biz: (v) => { const d = digits(v).slice(0, 10); return d.length > 5 ? `${d.slice(0, 3)}-${d.slice(3, 5)}-${d.slice(5)}` : d.length > 3 ? `${d.slice(0, 3)}-${d.slice(3)}` : d; },
   money: (v) => { const d = digits(v).slice(0, 7); return d ? Number(d).toLocaleString("en-US") : ""; },
   hours: (v) => v.replace(/[^\d.,]/g, "").slice(0, 4),
+  minutes: (v) => digits(v).slice(0, 3),
 };
 
 export const groups: { title: string; note?: string; fields: F[] }[] = [
@@ -44,7 +45,7 @@ export const groups: { title: string; note?: string; fields: F[] }[] = [
   { title: "Giờ vào ca (cho hợp đồng)", note: "Không bắt buộc. Nếu điền, hợp đồng ghi giờ vào ca và giờ tan ca cụ thể.", fields: [
     { key: "startTime", label: "Giờ vào ca", hint: "", kind: "time", half: true },
     { key: "endTime", label: "Giờ tan ca", hint: "", kind: "time", half: true },
-    { key: "breakMin", label: "Nghỉ giữa ca (phút)", hint: "Ví dụ 30", kind: "hours" as Kind, half: true },
+    { key: "breakMin", label: "Nghỉ giữa ca (phút)", hint: "Ví dụ 30", kind: "minutes", half: true },
   ] },
   { title: "Giờ làm trong tuần (근무시간)", note: "Ghi số giờ làm mỗi ngày (ví dụ 4 hoặc 4.5). Ngày nghỉ để trống. Tổng giờ tự tính.", fields: [
     ...([["mon", "Thứ 2 (월)"], ["tue", "Thứ 3 (화)"], ["wed", "Thứ 4 (수)"], ["thu", "Thứ 5 (목)"], ["fri", "Thứ 6 (금)"], ["sat", "Thứ 7 (토)"], ["sun", "Chủ nhật (일)"]] as const).map(([key, label]) => ({ key, label, hint: "Số giờ, ví dụ 4", kind: "hours" as Kind, half: true })),

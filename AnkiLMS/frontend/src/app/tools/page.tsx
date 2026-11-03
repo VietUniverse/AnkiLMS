@@ -18,7 +18,7 @@ export default function ToolsPage() {
           <div>
             <p className="text-xs font-bold uppercase tracking-widest text-cyan-300">Công cụ du học · Hàn Quốc</p>
             <h1 className="mt-1 text-2xl font-black text-white">Hồ sơ xin phép làm thêm (D-2)</h1>
-            <p className="mt-2 text-sm leading-6 text-slate-300">Ba giấy cần điền, mỗi giấy một trang. Bạn nhập thông tin, hệ thống điền vào đúng mẫu gốc để in hoặc tải PDF.</p>
+            <p className="mt-2 text-sm leading-6 text-slate-300">Hai mẫu đang dùng được, mỗi giấy một trang. Bạn nhập thông tin, hệ thống điền vào PDF để in hoặc tải về.</p>
           </div>
         </div>
         <div className="mt-5 flex gap-2 rounded-xl border border-amber-400/30 bg-amber-500/10 p-3.5 text-xs leading-5 text-amber-900 dark:text-amber-100"><AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-300" /><span>Công cụ không phải tư vấn pháp lý. Mẫu giấy có thể được cập nhật, hãy xác nhận với phòng quốc tế của trường hoặc 1345. Thông tin chỉ nằm trên máy của bạn, không gửi lên máy chủ.</span></div>
