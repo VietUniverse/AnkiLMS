@@ -5,7 +5,6 @@ import { AppShell } from "../../components/AppShell";
 import { useApp } from "../../contexts/AppProvider";
 import { ApiClient } from "../../lib/apiClient";
 import { AudioLines, Mic, MicOff, RefreshCw, Volume2 } from "lucide-react";
-import NIKL_KOREAN_VI from "../../data/niklKoreanViVocabulary.json";
 import { loadVietnameseVocabulary } from "../../lib/dictionarySearch";
 
 const PROMPTS = [
@@ -18,8 +17,6 @@ const PROMPTS = [
   { korean: "지하철역이 어디에 있는지 아세요?", vietnamese: "Bạn có biết ga tàu điện ngầm ở đâu không?" },
   { korean: "매일 조금씩 연습하면 실력이 늘 거예요.", vietnamese: "Luyện tập mỗi ngày một chút thì trình độ sẽ tiến bộ." },
 ];
-
-const SPEAKING_WORDS = NIKL_KOREAN_VI.map((item) => ({ korean: item.hangul, vietnamese: item.vietnamese, kind: "word" as const }));
 
 type RecognitionAlternative = { transcript: string };
 type RecognitionEvent = { results: ArrayLike<ArrayLike<RecognitionAlternative>> };
@@ -54,7 +51,7 @@ function similarity(target: string, actual: string): number {
 
 export default function SpeakingPracticePage() {
   const { currentUser } = useApp();
-  const [speakingWords, setSpeakingWords] = useState(SPEAKING_WORDS);
+  const [speakingWords, setSpeakingWords] = useState<Array<{ korean: string; vietnamese: string; kind: "word" }>>([]);
   useEffect(() => {
     void loadVietnameseVocabulary().then((items) => {
       setSpeakingWords(items.map((item) => ({ korean: item.hangul, vietnamese: item.vietnamese, kind: "word" as const })));

@@ -10,7 +10,6 @@ import { InstallAppButton } from "../components/InstallAppButton";
 import { useApp } from "../contexts/AppProvider";
 import { Flame, Zap, Layers, CheckCircle2, Gamepad2, Target, X, LogIn, Search, Volume2, Play, ClipboardCheck, ArrowRight } from "lucide-react";
 import { VOCABULARY_DATA } from "../data/koreanData";
-import { SEJONG_TOPIC_VOCABULARY } from "../data/sejongTopicVocabulary";
 import { speakKorean } from "../lib/koreanSpeech";
 import { ApiClient } from "../lib/apiClient";
 import { detectDictionarySearchLanguage, matchesDictionarySearchText, searchLearningDictionary } from "../lib/dictionarySearch";
@@ -50,12 +49,6 @@ export default function Home() {
         meaning: item.vietnamese,
         example: item.exampleSentence,
         translation: item.exampleTranslation,
-      })),
-      ...SEJONG_TOPIC_VOCABULARY.map((item) => ({
-        korean: item.korean,
-        meaning: item.meaning,
-        example: item.example,
-        translation: item.translation,
       })),
     ];
     const unique = new Map<string, { korean: string; meaning: string; example?: string; translation?: string }>();

@@ -6,11 +6,10 @@ import { useApp } from "../../contexts/AppProvider";
 import { ApiClient } from "../../lib/apiClient";
 import { AlertCircle, BookOpen, Check, ClipboardCheck, Loader2, MessageSquare, RefreshCw, Search, ShieldCheck, Trash2, Users, SlidersHorizontal, Power, Plus, Save, X, Pencil, Globe, LockKeyhole, Languages } from "lucide-react";
 import { DEFAULT_FEATURE_FLAGS, FEATURE_CATALOG, FeatureFlags, FeatureKey } from "../../lib/featureFlags";
-import topikLessonsData from "../../data/topik_lessons.json";
-import curatedKoreanPractice from "../../data/curated_korean_practice.json";
 import { ExploreDeckManager } from "../../components/admin/ExploreDeckManager";
 import { KOREAN_COURSE } from "../../data/koreanCourse";
 import { browseLearningDictionary, countLearningDictionaryEntries, DictionaryEntry, DictionaryLevel, detectDictionarySearchLanguage, refreshLearningDictionaryCache, searchLearningDictionary } from "../../lib/dictionarySearch";
+import { loadPrivateLearningContent } from "../../lib/privateLearningContent";
 
 type Overview = { users: number; students: number; teachers: number; classes: number; posts: number; pendingFeedback: number };
 type UserRow = { id: string; email: string; name: string; role: "student" | "teacher" | "admin"; xp: number; gems: number; streak: number; created_at: string; decks: number; studySessions: number; lastStudied: string | null };
@@ -38,11 +37,7 @@ type PlacementTestStats = {
     userId: string; name: string; email: string;
   }>;
 };
-const BUILTIN_LESSONS: { id: string; title: string; level: string; lessonType: string; count: number }[] = [
-  ...topikLessonsData.map((lesson: any) => ({ id: lesson.id, title: lesson.title, level: lesson.topikName, lessonType: "Video · Dictation + Shadowing", count: lesson.segments.length })),
-  ...curatedKoreanPractice.map((lesson: any) => ({ id: lesson.id, title: lesson.title, level: lesson.topikName, lessonType: "Bài sáng tác · Dictation + Shadowing", count: lesson.segments.length })),
-  ...KOREAN_COURSE.map((lesson) => ({ id: lesson.id, title: lesson.title, level: lesson.level, lessonType: "Khóa học tiếng Hàn", count: lesson.dialogue.length })),
-];
+type BuiltinLesson = { id: string; title: string; level: string; lessonType: string; count: number };
 type Panel = "overview" | "students" | "decks" | "vocabularyManager" | "vocabularyDecks" | "lessons" | "classes" | "community" | "chat" | "feedback" | "features" | "placementTests";
 
 async function adminFetch<T>(path: string, init?: RequestInit): Promise<T> {
@@ -87,6 +82,7 @@ export default function AdminPage() {
   const [feedback, setFeedback] = useState<FeedbackRow[]>([]);
   const [posts, setPosts] = useState<PostRow[]>([]);
   const [lessons, setLessons] = useState<LessonRow[]>([]);
+  const [builtinLessons, setBuiltinLessons] = useState<BuiltinLesson[]>(() => KOREAN_COURSE.map((lesson) => ({ id: lesson.id, title: lesson.title, level: lesson.level, lessonType: "Khóa học tiếng Hàn", count: lesson.dialogue.length })));
   const [hiddenLessonIds, setHiddenLessonIds] = useState<string[]>([]);
   const [classes, setClasses] = useState<ClassRow[]>([]);
   const [messages, setMessages] = useState<ChatRow[]>([]);
@@ -143,6 +139,20 @@ export default function AdminPage() {
   }, [currentUser, search]);
 
   useEffect(() => { void load(); }, [load]);
+
+  useEffect(() => {
+    if (currentUser?.role !== "admin") return;
+    let active = true;
+    loadPrivateLearningContent().then((content) => {
+      if (!active || !content) return;
+      setBuiltinLessons([
+        ...content.topikLessons.map((lesson: any) => ({ id: lesson.id, title: lesson.title, level: lesson.topikName, lessonType: "Video · Dictation + Shadowing", count: lesson.segments?.length || 0 })),
+        ...content.curatedPractice.map((lesson: any) => ({ id: lesson.id, title: lesson.title, level: lesson.topikName, lessonType: "Bài sáng tác · Dictation + Shadowing", count: lesson.segments?.length || 0 })),
+        ...KOREAN_COURSE.map((lesson) => ({ id: lesson.id, title: lesson.title, level: lesson.level, lessonType: "Khóa học tiếng Hàn", count: lesson.dialogue.length })),
+      ]);
+    });
+    return () => { active = false; };
+  }, [currentUser]);
 
   useEffect(() => {
     if (panel !== "vocabularyDecks" || currentUser?.role !== "admin") return;
@@ -417,7 +427,7 @@ export default function AdminPage() {
           {panelLabels.map((item) => {
             const count = item.id === "students" ? (overview?.students ?? 0)
               : item.id === "decks" ? decks.length
-              : item.id === "lessons" ? lessons.length + BUILTIN_LESSONS.length
+              : item.id === "lessons" ? lessons.length + builtinLessons.length
               : item.id === "classes" ? classes.length
               : item.id === "community" ? posts.length
               : item.id === "chat" ? messages.length
@@ -1289,10 +1299,10 @@ export default function AdminPage() {
                     <div className="flex flex-wrap items-center gap-2">
                       <h2 className="text-base font-bold text-stone-900 dark:text-white">Kho bài học có sẵn</h2>
                       <span className="rounded-full bg-stone-100 dark:bg-slate-800 px-2.5 py-1 text-[10px] font-bold text-stone-600 dark:text-slate-300">
-                        {BUILTIN_LESSONS.length} bài
+                        {builtinLessons.length} bài
                       </span>
                       <span className="rounded-full bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-300">
-                        {BUILTIN_LESSONS.length - hiddenLessonIds.length} đang hiện
+                        {builtinLessons.length - hiddenLessonIds.length} đang hiện
                       </span>
                     </div>
                     <p className="mt-1 text-xs text-stone-500 dark:text-slate-400">
@@ -1329,7 +1339,7 @@ export default function AdminPage() {
                       className={selectCls}
                     >
                       <option value="all">Mọi cấp độ</option>
-                      {Array.from(new Set(BUILTIN_LESSONS.map((lesson) => lesson.level))).map((level) => (
+                      {Array.from(new Set(builtinLessons.map((lesson) => lesson.level))).map((level) => (
                         <option key={level} value={level}>
                           {level}
                         </option>
@@ -1348,7 +1358,7 @@ export default function AdminPage() {
                   <div className="divide-y divide-stone-200 dark:divide-slate-800">
                     {(() => {
                       const normalizedQuery = builtInQuery.trim().toLocaleLowerCase("vi");
-                      const filtered = BUILTIN_LESSONS.filter((lesson) => {
+                      const filtered = builtinLessons.filter((lesson) => {
                         const hidden = hiddenLessonIds.includes(lesson.id);
                         const searchMatches =
                           !normalizedQuery || lesson.title.toLocaleLowerCase("vi").includes(normalizedQuery);
@@ -1568,6 +1578,7 @@ export default function AdminPage() {
     </main>
   </AppShell>;
 }
+
 
 
 

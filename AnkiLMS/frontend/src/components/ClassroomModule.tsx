@@ -32,7 +32,6 @@ import {
 } from "lucide-react";
 import { ApiClient, UserProfile } from "../lib/apiClient";
 import { useApp } from "../contexts/AppProvider";
-import { THTH_CURRICULUM_DECKS } from "../data/ththCurriculum";
 import { AnkiDeck, AnkiParser } from "../lib/ankiParser";
 import { loadCourseVocabulary, TopikDeck } from "../lib/courseVocabulary";
 
@@ -108,7 +107,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser })
   // Assign Deck Modal
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [assignTitle, setAssignTitle] = useState("");
-  const [assignDeckId, setAssignDeckId] = useState(`builtin:${THTH_CURRICULUM_DECKS[0]?.id || ""}`);
+  const [assignDeckId, setAssignDeckId] = useState("");
   const [assignBookFilter, setAssignBookFilter] = useState("1");
   const [assignTopicFilter, setAssignTopicFilter] = useState("all");
   const [uploadedAssignmentDecks, setUploadedAssignmentDecks] = useState<AnkiDeck[]>([]);
@@ -143,12 +142,6 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser })
         mediaRefs: [] as string[],
       })),
     })))),
-    ...THTH_CURRICULUM_DECKS.map((deck) => ({ id: `builtin:${deck.id}`, name: deck.name.replaceAll("::", " · "), book: deck.book, topic: deck.topic, difficulty: deck.difficulty, mediaAssets: [], cards: deck.cards.map((card) => ({
-      id: Number(card.id), korean: String(card.word || "").replace(/<[^>]*>/g, "").trim(),
-      meaning: String(card.meaning || "").replace(/<[^>]*>/g, "").trim(),
-      example: String(card.example || "").replace(/<[^>]*>/g, "").trim(),
-      mediaRefs: [] as string[],
-    })) })),
     ...userDecks.map((deck) => ({ id: `anki:${deck.id}`, name: `Anki · ${deck.name}`, book: 0, topic: "Bộ Anki đã nhập", difficulty: "Anki cá nhân", mediaAssets: deck.mediaAssets || [], cards: deck.cards.map((card) => ({
       id: Number(card.id), korean: (card.koreanText || card.frontText || "").replace(/<[^>]*>/g, "").trim(),
       meaning: (card.vietnameseMeaning || card.backText || "").replace(/<[^>]*>/g, "").trim(),

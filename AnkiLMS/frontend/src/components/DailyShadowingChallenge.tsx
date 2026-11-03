@@ -1,23 +1,14 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Mic, MicOff, RotateCcw, Volume2 } from "lucide-react";
-import curatedPractice from "../data/curated_korean_practice.json";
-import { SEJONG_TOPIC_VOCABULARY } from "../data/sejongTopicVocabulary";
 import { calculateKoreanSimilarity } from "../lib/koreanText";
 import { speakKorean, stopKoreanSpeech } from "../lib/koreanSpeech";
 import { ApiClient } from "../lib/apiClient";
+import { loadPrivateLearningContent } from "../lib/privateLearningContent";
 
 type Prompt = { korean: string; translation: string; source: string };
 type Props = { date: string; userId?: string; completed: boolean; onComplete: () => void };
-
-const prompts: Prompt[] = [
-  ...(curatedPractice as Array<{ title: string; segments: Array<{ text: string; translation?: string }> }>).flatMap((lesson) => lesson.segments
-    .filter((line) => line.text && line.translation)
-    .map((line) => ({ korean: line.text, translation: line.translation!, source: lesson.title }))),
-  ...SEJONG_TOPIC_VOCABULARY.filter((item) => item.example && item.translation)
-    .map((item) => ({ korean: item.example, translation: item.translation, source: `${item.topic} · ${item.level}` })),
-];
 
 function hash(value: string) {
   let result = 2166136261;
@@ -26,13 +17,27 @@ function hash(value: string) {
 }
 
 export function DailyShadowingChallenge({ date, userId, completed, onComplete }: Props) {
-  const prompt = useMemo(() => prompts[hash(`${date}:${userId || "guest"}`) % prompts.length], [date, userId]);
+  const [prompts, setPrompts] = useState<Prompt[]>([]);
+  useEffect(() => {
+    let cancelled = false;
+    void loadPrivateLearningContent().then((content) => {
+      if (!content || cancelled) return;
+      const rows: Prompt[] = [
+        ...content.curatedPractice.flatMap((lesson: any) => (lesson.segments || []).filter((line: any) => line.text && line.translation).map((line: any) => ({ korean: line.text, translation: line.translation, source: lesson.title }))),
+        ...content.topicVocabulary.filter((item: any) => item.example && item.translation).map((item: any) => ({ korean: item.example, translation: item.translation, source: `${item.topic} · ${item.level}` })),
+      ];
+      setPrompts(rows);
+    });
+    return () => { cancelled = true; };
+  }, []);
+  const prompt = useMemo(() => prompts.length ? prompts[hash(`${date}:${userId || "guest"}`) % prompts.length] : null, [date, userId, prompts]);
   const [recording, setRecording] = useState(false);
   const [heard, setHeard] = useState("");
   const [score, setScore] = useState<number | null>(null);
   const [error, setError] = useState("");
 
   const startRecording = () => {
+    if (!prompt) return;
     const SpeechRecognition = (window as Window & { SpeechRecognition?: new () => any; webkitSpeechRecognition?: new () => any }).SpeechRecognition
       || (window as Window & { webkitSpeechRecognition?: new () => any }).webkitSpeechRecognition;
     if (!SpeechRecognition) {
@@ -71,6 +76,7 @@ export function DailyShadowingChallenge({ date, userId, completed, onComplete }:
     }
   };
 
+  if (!prompt) return <div className="mt-4 rounded-xl border border-slate-700 bg-slate-950/40 p-4 text-sm text-slate-400">Đang tải câu luyện hôm nay…</div>;
   return <div className="mt-4 rounded-xl border border-slate-700 bg-slate-950/40 p-4">
     <div className="flex flex-wrap items-center justify-between gap-2">
       <span className="text-[10px] font-bold uppercase tracking-wider text-sky-300">Câu luyện hôm nay · {prompt.source}</span>

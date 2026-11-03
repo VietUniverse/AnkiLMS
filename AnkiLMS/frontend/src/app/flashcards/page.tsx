@@ -10,10 +10,9 @@ function FlashcardsContent() {
   const { userDecks } = useApp();
   const searchParams = useSearchParams();
   const mode = searchParams.get("mode");
-  const isCompleted = searchParams.get("completed") === "true";
   const initialViewMode = mode === "study" || searchParams.get("study") === "true" || searchParams.get("resume") === "true" ? "study" : "dashboard";
 
-  return <VocabularySRSModule userDecks={userDecks} initialViewMode={initialViewMode} initialEmptyCards={isCompleted} />;
+  return <VocabularySRSModule userDecks={userDecks} initialViewMode={initialViewMode} />;
 }
 
 export default function FlashcardsPage() {

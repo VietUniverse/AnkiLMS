@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import DOMPurify from "dompurify";
 import { VOCABULARY_DATA } from "../data/koreanData";
-import { THTH_CURRICULUM_DECKS } from "../data/ththCurriculum";
+import { loadAdminThthCurriculum } from "../lib/privateLearningContent";
 import { AnkiDeck, AnkiReviewEvent, AnkiScheduleMetadata } from "../lib/ankiParser";
 import { useApp } from "../contexts/AppProvider";
 import {
@@ -42,7 +42,6 @@ import { HandwritingPractice } from "./HandwritingPractice";
 interface VocabularySRSModuleProps {
   userDecks?: AnkiDeck[];
   initialViewMode?: "dashboard" | "study";
-  initialEmptyCards?: boolean;
 }
 
 export interface VocabularyCard {
@@ -117,9 +116,10 @@ const toSlug = (str: string): string => {
     .replace(/^-+|-+$/g, "");
 };
 
-export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDecks = [], initialViewMode = "dashboard", initialEmptyCards = false }) => {
+export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDecks = [], initialViewMode = "dashboard" }) => {
   const { currentUser, isAuthReady, setActiveStudySession, removedBuiltInDeckIds, userDecks: ownedDecks, setUserDecks, handleOpenAuth } = useApp();
   const isAdmin = currentUser?.role === "admin";
+  const [adminThthDecks, setAdminThthDecks] = useState<any[]>([]);
   // Cây bộ thẻ phụ thuộc người dùng và kho thẻ đọc từ localStorage: chỉ dựng sau khi hydrate để HTML tĩnh khớp bản client.
   const hydrated = useSyncExternalStore(() => () => {}, () => true, () => false);
   const studyBg = useStudyBackground();
@@ -149,9 +149,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
   // Selected Deck and Lesson
   const [activeDeckTitle, setActiveDeckTitle] = useState<string>("1. Quốc gia (나라)");
-  const [activeCardsList, setActiveCardsList] = useState<VocabularyCard[]>(
-    initialEmptyCards ? [] : ((THTH_CURRICULUM_DECKS[0]?.cards as VocabularyCard[]) || [])
-  );
+  const [activeCardsList, setActiveCardsList] = useState<VocabularyCard[]>([]);
   const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
   const [isFlipped, setIsFlipped] = useState<boolean>(false);
   const [typedInput, setTypedInput] = useState<string>("");
@@ -185,6 +183,14 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     setDailyLimits(loadLimits());
     setDailyProgress(loadProgress());
   }, []);
+
+  useEffect(() => {
+    let active = true;
+    if (isAdmin) {
+      void loadAdminThthCurriculum().then((decks) => { if (active) setAdminThthDecks(decks || []); });
+    } else setAdminThthDecks([]);
+    return () => { active = false; };
+  }, [isAdmin, currentUser?.id]);
 
   const updateLimits = useCallback((next: DailyLimits) => {
     setDailyLimits(next);
@@ -291,7 +297,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
     const booksMap = new Map<string, Map<string, { id: string; title: string; cards: VocabularyCard[] }[]>>();
 
-    if (isAdmin) THTH_CURRICULUM_DECKS.forEach((d) => {
+    if (isAdmin) adminThthDecks.forEach((d) => {
       const parts = d.name.split("::");
       // e.g. ["Tiếng Hàn Tổng Hợp", "Quyển 01", "Bài 01", "1. Quốc gia (나라)"]
       const rawBook = parts[1]?.trim() || "Quyển 01";
@@ -445,7 +451,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     }
 
     return rootNodes;
-  }, [hydrated, userDecks, isAdmin, removedBuiltInDeckIds]);
+  }, [hydrated, userDecks, isAdmin, adminThthDecks, removedBuiltInDeckIds]);
 
   // Đếm trạng thái theo cùng nguồn FSRS dùng khi mở lượt học, không dùng danh sách legacy theo tên từ.
   const getDeckStats = useCallback((cards: VocabularyCard[]) => {

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type WheelEvent } from "react";
 import Link from "next/link";
-import lessonsData from "../data/topik_lessons.json";
+import { loadPrivateLearningContent } from "../lib/privateLearningContent";
 import { ApiClient } from "../lib/apiClient";
 import { loadYouTubeIframeApi } from "../lib/youtubeIframe";
 import { ArrowDown, ArrowUp, Captions, Check, ChevronDown, ChevronUp, Clock3, Headphones, ListVideo, Pause, Play, Settings2, Volume2, VolumeX } from "lucide-react";
@@ -22,10 +22,10 @@ type Player = {
   getPlayerState: () => number;
 };
 
-const playlist = lessonsData as Lesson[];
 const playerApiOrigin = "https://www.youtube.com";
 
 export function PassiveListeningModule() {
+  const [playlist, setPlaylist] = useState<Lesson[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [rate, setRate] = useState(1);
@@ -44,6 +44,14 @@ export function PassiveListeningModule() {
   const wheelLockRef = useRef(false);
   const recordedRef = useRef<Set<string>>(new Set());
   const completedRef = useRef<Set<string>>(new Set());
+
+  useEffect(() => {
+    let cancelled = false;
+    void loadPrivateLearningContent().then((content) => {
+      if (!cancelled && content) setPlaylist(content.topikLessons as Lesson[]);
+    });
+    return () => { cancelled = true; };
+  }, []);
 
   const current = playlist[activeIndex] || playlist[0];
   const currentRef = useRef(current);

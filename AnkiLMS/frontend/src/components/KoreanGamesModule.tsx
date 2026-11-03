@@ -5,11 +5,10 @@ import Link from "next/link";
 import { useApp } from "../contexts/AppProvider";
 import { ApiClient } from "../lib/apiClient";
 import { VOCABULARY_DATA } from "../data/koreanData";
-import NIKL_KOREAN_VI from "../data/niklKoreanViVocabulary.json";
 import { loadVietnameseVocabulary } from "../lib/dictionarySearch";
 import { ArrowRight, Check, Clock3, Gamepad2, RotateCcw, Volume2 } from "lucide-react";
 import { KoreanVocabularyShooter } from "./KoreanVocabularyShooter";
-import { THTH_CURRICULUM_DECKS } from "../data/ththCurriculum";
+import { loadAdminThthCurriculum } from "../lib/privateLearningContent";
 import { FSRSState } from "../lib/fsrs45";
 import { TopikDeck, loadCourseVocabulary } from "../lib/courseVocabulary";
 
@@ -28,6 +27,7 @@ function shuffle<T,>(items: T[]): T[] {
 export function KoreanGamesModule() {
   const { userDecks, currentUser } = useApp();
   const [fsrsStates, setFsrsStates] = useState<Record<string, FSRSState>>({});
+  const [adminThthDecks, setAdminThthDecks] = useState<any[]>([]);
   const [courseDecks, setCourseDecks] = useState<TopikDeck[]>([]);
   useEffect(() => {
     let active = true;
@@ -35,14 +35,19 @@ export function KoreanGamesModule() {
     return () => { active = false; };
   }, []);
   useEffect(() => {
+    let active = true;
+    if (currentUser?.role === "admin") {
+      void loadAdminThthCurriculum().then((decks) => { if (active) setAdminThthDecks(decks || []); });
+    } else setAdminThthDecks([]);
+    return () => { active = false; };
+  }, [currentUser?.id, currentUser?.role]);
+  useEffect(() => {
     try {
       const key = currentUser ? `haechivn_srs_state_${currentUser.id}` : "haechivn_srs_state_guest";
       setFsrsStates(JSON.parse(localStorage.getItem(key) || "{}"));
     } catch { setFsrsStates({}); }
   }, [currentUser, userDecks]);
-  const [dictionaryWords, setDictionaryWords] = useState<Word[]>(() =>
-    NIKL_KOREAN_VI.map((item) => ({ korean: item.hangul, meaning: item.vietnamese })),
-  );
+  const [dictionaryWords, setDictionaryWords] = useState<Word[]>([]);
   useEffect(() => {
     void loadVietnameseVocabulary().then((items) => {
       setDictionaryWords(items.map((item) => ({ korean: item.hangul, meaning: item.vietnamese.split(/[;；]/)[0].trim() })));
@@ -64,7 +69,7 @@ export function KoreanGamesModule() {
   }, [userDecks, dictionaryWords]);
   const masteredWords = useMemo(() => {
     const candidates: Array<{ korean: string; meaning: string; key: string }> = [];
-    THTH_CURRICULUM_DECKS.forEach((deck) => deck.cards.forEach((card) => candidates.push({ korean: card.word, meaning: card.meaning, key: `${deck.name}_${card.id}` })));
+    adminThthDecks.forEach((deck) => deck.cards.forEach((card: any) => candidates.push({ korean: card.word, meaning: card.meaning, key: `${deck.name}_${card.id}` })));
     courseDecks.forEach((group) => group.courses.forEach((course) => course.units.forEach((unit) => {
       const deckName = `${group.id} · ${course.id} · ${unit.number}`;
       unit.words.forEach(([id, korean, meaning]) => candidates.push({ korean, meaning, key: `${deckName}_${id}` }));
@@ -80,7 +85,7 @@ export function KoreanGamesModule() {
       }
     });
     return [...unique.values()];
-  }, [userDecks, fsrsStates, courseDecks]);
+  }, [userDecks, fsrsStates, courseDecks, adminThthDecks]);
 
   const [mode, setMode] = useState<Mode | null>(null);
   const [shooterInitialMode, setShooterInitialMode] = useState<"random" | "fsrs">("random");

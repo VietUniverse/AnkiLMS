@@ -8,191 +8,17 @@ import { loadLessonProgress, saveLessonProgress } from "../lib/lessonProgress";
 import { loadYouTubeIframeApi } from "../lib/youtubeIframe";
 import { KOREAN_LESSON_TOPICS, matchesLessonTopic } from "../lib/lessonTopics";
 
-// Import TOPIK lessons dataset
-import topikLessonsData from "../data/topik_lessons.json";
-import scriptFolderData from "../data/script_folder_lessons.json";
 import { SCRIPT_LESSON_GROUPS, getScriptLessonGroupId } from "../data/scriptLessonGroups";
-import { KOREAN_WORD_GLOSSARY } from "../data/koreanWordGlossary";
+import { loadPrivateLearningContent, type PrivateLearningContent } from "../lib/privateLearningContent";
 import { TranslationLanguageSetup } from "./TranslationLanguageSetup";
 import { useTranslationLanguage } from "../lib/translationPreference";
 
 const DEFAULT_VIDEO_ID = "TLgAJgYqIZk";
-const VIDEO_DICTATION_SOURCES = [
-  {
-    videoId: "R6XM76T4tCk", title: "주간 넷플릭스 · 10월 3주 차", topikLevel: 5, durationSec: 229,
-    segments: [
-      { start: 0, end: 2, text: "주간 넷플릭스 10월 3주 차. 이번", translation: "Netflix tuần này, tuần thứ ba của tháng 10. Tuần này,", translationEn: "Netflix Weekly, the third week of October. This week," },
-      { start: 2, end: 4, text: "주 넷플릭스 신작, 주사위로 떠나는", translation: "các tác phẩm mới của Netflix: chuyến du lịch ngẫu nhiên bằng xúc xắc", translationEn: "Netflix's new releases: a random trip guided by dice" },
-      { start: 4, end: 6, text: "랜덤 세계 여행. 이번엔 여행 필름", translation: "vòng quanh thế giới. Lần này, chuyến đi gặp lễ hội phim du lịch", translationEn: "around the world. This time, it meets a travel film" },
-      { start: 6, end: 8, text: "페스티벌과 만났습니다. 지구마불 세계", translation: "festival. Chương trình Du lịch Địa Cầu bằng Xúc Xắc", translationEn: "festival. World Dice Tour" },
-      { start: 8, end: 11, text: "여행 시즌 4 힘차게 출발합니다. 전 세계를", translation: "mùa 4 chính thức khởi hành đầy khí thế. Chuyến đi vòng quanh thế giới", translationEn: "season 4 sets off with energy. The world-spanning" },
-      { start: 11, end: 13, text: "누볐던 곽빠원의 보드 게임", translation: "trong trò chơi bàn cờ của Kwak, Pani và Wonji", translationEn: "board-game journey of Kwak, Pani and Wonji" },
-      { start: 13, end: 15, text: "여행이 이번 시즌 한층 더", translation: "đã trở nên đa dạng hơn trong mùa này", translationEn: "has become even more varied this season" },
-      { start: 15, end: 18, text: "버라이어티해졌는데요.", translation: "và đầy màu sắc hơn.", translationEn: "and more entertaining." },
-      { start: 18, end: 23, text: "기차를 잘못 타가지고 진짜 열받는다. 되는 일이 없어.", translation: "Tôi lên nhầm tàu nên tức điên lên. Chẳng việc gì suôn sẻ cả.", translationEn: "I got on the wrong train, and I'm really annoyed. Nothing is going right." },
-      { start: 23, end: 32, text: "액션, 스릴러, SF 판타지, 어드벤처, 코미디, 드라마까지 지구를 무대로 한 다양한 장르의 영화 같은 여정이 펼쳐집니다.", translation: "Từ hành động, giật gân, khoa học viễn tưởng, phiêu lưu, hài đến chính kịch, một hành trình điện ảnh thuộc nhiều thể loại sẽ mở ra trên sân khấu là Trái Đất.", translationEn: "From action and thrillers to sci-fi fantasy, adventure, comedy and drama, a cinematic journey across genres unfolds on Earth." },
-      { start: 32, end: 37, text: "여기에 더해 이 매력 넘치는 여행 파트너들이 활약한 지난 시즌들도 모두 넷플릭스에서 만나 보실 수 있습니다.", translation: "Ngoài ra, bạn có thể xem trên Netflix cả những mùa trước với các bạn đồng hành du lịch đầy sức hút này.", translationEn: "You can also watch previous seasons featuring these captivating travel partners on Netflix." },
-      { start: 37, end: 40, text: "보자고, 먹어보자고, 까보자고.", translation: "Đi xem nào, ăn thử nào, mở ra xem nào.", translationEn: "Let's see it, taste it, and find out." },
-      { start: 40, end: 53, text: "새롭게 단장한 보드판으로 떠나는 지구 한 바퀴. 더 다이내믹해진 글로벌 테마파크, 지구마불 세계여행 시즌 4, 10월 17일 개장합니다.", translation: "Một vòng quanh Trái Đất với bàn cờ được làm mới. Công viên chủ đề toàn cầu năng động hơn: Du lịch Địa Cầu bằng Xúc Xắc mùa 4 khởi hành ngày 17 tháng 10.", translationEn: "A trip around Earth on a newly redesigned game board. World Dice Tour season 4, now a more dynamic global theme park, launches October 17." },
-      { start: 53, end: 68, text: "다음 신작. 1971년 전 세계를 충격에 빠뜨렸던 심리 실험이 넷플릭스 리얼리티로 다시 태어났습니다. 스탠퍼드 감옥 실험 리부트입니다.", translation: "Tác phẩm mới tiếp theo. Thí nghiệm tâm lý từng gây chấn động thế giới năm 1971 được tái hiện thành chương trình thực tế của Netflix: Stanford Prison Experiment: Reboot.", translationEn: "The next new release. The psychological experiment that shocked the world in 1971 is reborn as a Netflix reality series: The Stanford Prison Experiment: Reboot." },
-      { start: 68, end: 81, text: "2주간 실제 교도소에서 진행되는 이 실험은 30명의 지원자에게 교도관과 수감자 역할을 임의로 배정해 진행되는데요.", translation: "Thí nghiệm diễn ra trong hai tuần tại một nhà tù thật, với 30 tình nguyện viên được phân ngẫu nhiên vào vai cai ngục và tù nhân.", translationEn: "Conducted for two weeks in a real prison, the experiment randomly assigns 30 volunteers to act as guards or inmates." },
-      { start: 81, end: 94, text: "그저 역할을 나눴을 뿐이지만 거대한 위계 질서 속에서 참가자들은 걷잡을 수 없이 변해가고 극한의 통제가 만든 거대한 권력 앞에서 숨겨진 인간의 내면이 서서히 드러나기 시작합니다.", translation: "Dù ban đầu chỉ được chia vai, những người tham gia dần biến đổi không thể kiểm soát trong một trật tự thứ bậc khổng lồ; trước quyền lực được tạo ra bởi sự kiểm soát cực độ, nội tâm ẩn giấu của con người dần lộ diện.", translationEn: "Though they are only assigned roles, participants change uncontrollably within a vast hierarchy, and human nature slowly emerges under the immense power created by extreme control." },
-      { start: 94, end: 107, text: "인간은 주어진 환경에 순응하며 권력에 굴복할 것인가? 그 질문에 대한 답을 10월 21일 스탠퍼드 감옥 실험 리부트에서 찾아보세요.", translation: "Con người sẽ thích nghi với hoàn cảnh và khuất phục trước quyền lực chứ? Hãy tìm câu trả lời trong Stanford Prison Experiment: Reboot, ngày 21 tháng 10.", translationEn: "Will people adapt to their circumstances and submit to power? Find the answer in The Stanford Prison Experiment: Reboot on October 21." },
-      { start: 107, end: 117, text: "다음 신작. 하루아침에 세상에서 완전히 지워진 대배우가 인생 되찾기에 나섰습니다. 넷플릭스 코미디 시리즈", translation: "Tác phẩm mới tiếp theo. Một ngôi sao lớn bỗng bị xóa sổ hoàn toàn khỏi thế giới và bắt đầu tìm lại cuộc đời mình. Loạt phim hài Netflix", translationEn: "The next new release. A major star is suddenly erased from the world and sets out to reclaim his life. The Netflix comedy series" },
-      { start: 117, end: 125, text: "누가 내 얘기 안 했어?", translation: "Có ai nhắc đến tôi không?", translationEn: "Did Someone Forget About Me?" },
-      { start: 125, end: 138, text: "이름만 대면 누구나 아는 일본 대표 배우 타카세가와 겐. 영국 런던에서 리어왕 무대에 올라 명연기로 관객들의 찬사를 받았는데요. 하지만 일본에 돌아온 순간", translation: "Ken Takasegawa, một diễn viên hàng đầu Nhật Bản mà ai cũng biết tên. Anh được khán giả tán thưởng nhờ diễn xuất xuất sắc trong vở Vua Lear ở London, Anh. Nhưng ngay khi trở về Nhật Bản,", translationEn: "Ken Takasegawa, a leading Japanese actor known by everyone. He earned acclaim for his performance in King Lear in London, but the moment he returned to Japan," },
-      { start: 138, end: 153, text: "과거의 영광도 무대 위 스포트라이트도 한여름 밤의 꿈처럼 사라져 버렸죠. 하루아침에 인생이 리셋되고 밑바닥부터 다시 시작하게 된 겐.", translation: "Vinh quang xưa và ánh đèn sân khấu đều tan biến như giấc mơ giữa đêm hè. Chỉ sau một đêm, cuộc đời Ken bị đặt lại từ đầu và anh phải bắt đầu lại từ đáy.", translationEn: "His past glory and the spotlight vanished like a midsummer night's dream. Overnight, Ken's life was reset, and he had to start again from the bottom." },
-      { start: 153, end: 162, text: "무엇 하나 쉬운 게 없지만 그간 잊고 지냈던 주변인들과의 소중한 일상을 차근차근 만들어 갑니다.", translation: "Dù chẳng có gì dễ dàng, anh từng bước xây dựng lại những khoảnh khắc quý giá với những người xung quanh mà mình đã lãng quên.", translationEn: "Though nothing is easy, he slowly rebuilds a precious everyday life with the people around him whom he had neglected." },
-      { start: 162, end: 173, text: "다음 신작. 열성팬에서 레전드 힙합 클랜의 일원이 된 남자. 그의 발자취를 쫓아 화제의 앨범 제작 과정을 되짚어 봅니다. 다큐멘터리 더 디사이플: 우 탱 클랜의 제자입니다.", translation: "Tác phẩm mới tiếp theo. Từ một người hâm mộ cuồng nhiệt, anh trở thành thành viên của nhóm hip-hop huyền thoại. Phim lần theo hành trình của anh và nhìn lại quá trình tạo nên album gây tiếng vang. Đây là phim tài liệu The Disciple: Đệ tử của Wu-Tang Clan.", translationEn: "The next new release. A devoted fan becomes part of a legendary hip-hop clan. This documentary follows his journey and revisits the making of a talked-about album: The Disciple: The Wu-Tang Clan's Disciple." },
-      { start: 173, end: 185, text: "아웃사이더였던 실버링즈는 전설적인 힙합 그룹 우 탱 클랜의 열성 팬이었습니다. 실버링즈는 그들의 무대에 올라 직접 랩을 선보이며 자신의 운명을 바꿀 기회를 얻는데요.", translation: "Silver Rings, 한때 외부인이었던 그는 전설적인 힙합 그룹 Wu-Tang Clan의 열성 팬이었습니다. 그들의 무대에 올라 직접 랩을 선보이며 운명을 바꿀 기회를 얻습니다.", translationEn: "Silver Rings, once an outsider, was a devoted fan of legendary hip-hop group Wu-Tang Clan. He gets a chance to change his fate by taking their stage and performing a rap." },
-      { start: 185, end: 197, text: "당당하게 실력을 증명한 실버링즈는 우상이었던 우 탱 클랜의 제자로 인정받습니다. 그는 힙합의 저항 정신과 음악의 예술적 가치를 담은 앨범 '원스 어폰 어 타임 인 샤오린'을 제작하는데요.", translation: "Sau khi tự tin chứng minh năng lực, Silver Rings được Wu-Tang Clan, nhóm nhạc anh ngưỡng mộ, công nhận là đệ tử. Anh thực hiện album 'Once Upon a Time in Shaolin', chứa đựng tinh thần phản kháng của hip-hop và giá trị nghệ thuật của âm nhạc.", translationEn: "After proving his ability, Silver Rings is recognized as a disciple by his idols, Wu-Tang Clan. He creates Once Upon a Time in Shaolin, an album embodying hip-hop's rebellious spirit and music's artistic value." },
-      { start: 197, end: 211, text: "하지만 딱 한 장만 발매된 그 앨범은 수공의 은상자에 담겨 경매에 올라 큰 논란을 일으켰죠. 그의 재능으로 탄생한 문제적 앨범과 그 음악이 남긴 숙제들, 더 디사이플: 우 탱 클랜의 제자에서 만나보세요.", translation: "Nhưng album chỉ phát hành duy nhất một bản ấy được đặt trong chiếc hộp bạc thủ công và đem bán đấu giá, gây ra tranh cãi lớn. Hãy khám phá album gây tranh luận ra đời từ tài năng của anh và những câu hỏi âm nhạc ấy để lại trong The Disciple: Đệ tử của Wu-Tang Clan.", translationEn: "But the album, released as a single copy, was placed in a handmade silver box and auctioned, causing controversy. Discover the contentious album born of his talent and the questions it left behind in The Disciple: The Wu-Tang Clan's Disciple." },
-      { start: 211, end: 215, text: "넷플릭스를 즐기는 가장 영리한 방법, 주간 넷플릭스였습니다.", translation: "Cách thông minh nhất để tận hưởng Netflix. Vừa rồi là Netflix tuần này.", translationEn: "The smartest way to enjoy Netflix. That was Netflix Weekly." },
-      { start: 215, end: 219, text: "다음 주에는 마음까지 충전해질 작품들과 함께 돌아올게요.", translation: "Tuần sau, chúng tôi sẽ trở lại với những tác phẩm giúp nạp đầy năng lượng cho cả trái tim.", translationEn: "Next week, we'll be back with titles that recharge your heart, too." },
-    ],
-  },
-  {
-    videoId: "t_EGBys58lo", title: "종이의 집: 공동경제구역 · Money Heist Korea", topikLevel: 4, durationSec: 168,
-    segments: [
-      { start: 26, end: 29, text: "여기 지키라, 내래 처리한다.", translation: "Cứ canh ở đây, để tôi xử lý.", translationEn: "Keep watch here. I'll take care of it." },
-      { start: 29, end: 31, text: "예.", translation: "Vâng.", translationEn: "Yes, sir." },
-      { start: 75, end: 77, text: "어, 동지…", translation: "Ơ, đồng chí…", translationEn: "Oh, comrade…" },
-      { start: 78, end: 80, text: "내래 기계 가르쳤네?", translation: "Anh dạy tôi dùng máy rồi à?", translationEn: "Did you teach me how to use the machine?" },
-      { start: 78, end: 83, text: "배때기에 기름기가 꼈는지 움직임이 영 둔해졌구만.", translation: "Chắc bụng tích mỡ rồi hay sao mà cử động chậm chạp hẳn đi.", translationEn: "Maybe you've gotten fat around the belly; your movements have slowed right down." },
-      { start: 83, end: 85, text: "무혁 동지.", translation: "Đồng chí Mu-hyeok.", translationEn: "Comrade Mu-hyeok." },
-      { start: 85, end: 88, text: "살려주시오.", translation: "Xin hãy tha mạng cho tôi.", translationEn: "Please spare my life." },
-      { start: 88, end: 92, text: "마지막으로 남길 말이 고작 기건가?", translation: "Lời cuối cùng anh muốn để lại chỉ có vậy thôi sao?", translationEn: "Is that all you have to say as your last words?" },
-      { start: 96, end: 99, text: "분단 시대는 이제 끝났소.", translation: "Thời kỳ chia cắt giờ đã kết thúc.", translationEn: "The era of division is over now." },
-      { start: 104, end: 105, text: "다시 말해 보라.", translation: "Nói lại xem.", translationEn: "Say that again." },
-      { start: 105, end: 109, text: "윗선에서 이미 이야기가 끝났다고 들었소.", translation: "Tôi nghe nói cấp trên đã quyết định xong chuyện này rồi.", translationEn: "I heard the higher-ups have already settled the matter." },
-      { start: 109, end: 113, text: "우리 같은 이 종자들은 기냥 쓰다 버려지는 거야.", translation: "Những kẻ như chúng ta chỉ bị dùng xong rồi vứt bỏ thôi.", translationEn: "People like us are just used and thrown away." },
-      { start: 122, end: 124, text: "옛정을 생각해서리.", translation: "Nghĩ đến tình nghĩa xưa.", translationEn: "For old times' sake." },
-      { start: 124, end: 126, text: "고통 없이 보내 주려고 했는데.", translation: "Tôi đã định cho anh ra đi không đau đớn.", translationEn: "I was going to let you go without pain." },
-    ],
-  },
-  {
-    videoId: "yW6_97U-tlI", title: "스텝스 · 공식 예고편", topikLevel: 4, durationSec: 156,
-    segments: [
-      { start: 0.43, end: 1.93, text: "여러분, 안녕하세요?", translation: "Xin chào mọi người.", translationEn: "Hello, everyone." },
-      { start: 4.23, end: 6.63, text: "제가 주인공인 세계에 떨어진 느낌이야!", translation: "Cảm giác như mình rơi vào thế giới mà mình là nhân vật chính vậy!", translationEn: "It feels like I fell into a world where I'm the main character!" },
-      { start: 8.53, end: 11.43, text: "네가 바라는 건 내가 다 이뤄줄 거야!", translation: "Điều em mong muốn, anh sẽ biến tất cả thành hiện thực!", translationEn: "I'll make everything you wish for come true!" },
-      { start: 17.03, end: 19.23, text: "그러니까 진짜 이야기를 알아야지.", translation: "Vì vậy phải biết câu chuyện thật sự chứ.", translationEn: "That's why you need to know the real story." },
-      { start: 24.13, end: 29.51, text: "이거 놔!", translation: "Buông tôi ra!", translationEn: "Let go of me!" },
-      { start: 35.81, end: 38.81, text: "이 난장판을 바로잡을 방법은 딱 하나야.", translation: "Chỉ có một cách duy nhất để sửa chữa mớ hỗn độn này.", translationEn: "There's only one way to fix this mess." },
-      { start: 77.72, end: 80.42, text: "그런 이름은 없어. 난 신데렐라야.", translation: "Không có cái tên đó. Tôi là Cinderella.", translationEn: "There's no such name. I'm Cinderella." },
-    ],
-  },
-  {
-    videoId: "yft3IXFn8IY", title: "나를 충전해줘 · 드라마 클립", topikLevel: 4, durationSec: 243,
-    segments: [
-      { start: 1, end: 3, text: "진짜 재미있는 걸 보면", translation: "Khi xem thứ gì đó thật sự thú vị,", translationEn: "When I watch something really fun," },
-      { start: 3, end: 7, text: "이 세상에서 나만 싹 도려내서 데려가요.", translation: "cứ như chỉ có tôi bị tách khỏi thế giới này rồi đưa đi vậy.", translationEn: "it feels like I'm the only one cut out of this world and taken away." },
-      { start: 7, end: 10, text: "그게 얼마나 대단한 건지 알아요?", translation: "Anh biết điều đó tuyệt vời đến mức nào không?", translationEn: "Do you know how amazing that is?" },
-      { start: 11, end: 13, text: "그러니까", translation: "Vì vậy,", translationEn: "So," },
-      { start: 13, end: 18, text: "나도 뭐 충전율 테스트든 충전이든 하라는 거 다 할 테니까", translation: "tôi sẽ làm mọi thứ được yêu cầu, dù là kiểm tra tỷ lệ sạc hay sạc pin,", translationEn: "I'll do whatever you ask, whether it's testing the charge rate or charging," },
-      { start: 19, end: 21, text: "내 로맨스에.", translation: "trong chuyện tình cảm của tôi.", translationEn: "for my romance." },
-      { start: 22, end: 24, text: "물론입니다, 계약했으니까.", translation: "Tất nhiên rồi, vì chúng ta đã ký hợp đồng mà.", translationEn: "Of course. We have a contract." },
-      { start: 27, end: 30, text: "오늘 버킷리스트도 하나 해치우죠.", translation: "Hôm nay cũng hoàn thành một điều trong danh sách mong muốn nhé.", translationEn: "Let's check one item off the bucket list today, too." },
-      { start: 37, end: 41, text: "아직 안 됐어요? 한 10분 지난 거 같은데.", translation: "Vẫn chưa xong sao? Hình như khoảng 10 phút rồi.", translationEn: "Is it still not done? I think about ten minutes have passed." },
-      { start: 54, end: 57, text: "10분에 1프로 충전 맞습니다.", translation: "Đúng là sạc được 1% trong 10 phút.", translationEn: "That's right, it charges by one percent every ten minutes." },
-      { start: 57, end: 60, text: "그럼 다음.", translation: "Vậy tiếp theo.", translationEn: "Then, next." },
-      { start: 62, end: 66, text: "어때요? 몇 퍼 깎였어요?", translation: "Thế nào? Tụt bao nhiêu phần trăm rồi?", translationEn: "How is it? How many percent did it drop?" },
-      { start: 66, end: 70, text: "나보배 씨가 차고 안에 있을 때는", translation: "Khi cô Na Bo-bae ở trong gara,", translationEn: "When Ms. Na Bo-bae is in the garage," },
-      { start: 70, end: 73, text: "내 방이랑 차고까지만 충전되는 거 같아요.", translation: "có vẻ như chỉ sạc được trong phòng tôi và gara.", translationEn: "it seems to charge only in my room and the garage." },
-      { start: 73, end: 77, text: "방전은 15분에 1프로씩 떨어지는 거 같고요.", translation: "Còn pin hao đi khoảng 1% mỗi 15 phút.", translationEn: "And it seems to discharge by about one percent every 15 minutes." },
-      { start: 77, end: 81, text: "거리가 가까우면", translation: "Nếu khoảng cách gần,", translationEn: "If the distance is short," },
-      { start: 81, end: 85, text: "7분, 8분 안에도 충전이 되는 거 같아요.", translation: "thì có vẻ cũng sạc được trong vòng 7 đến 8 phút.", translationEn: "it seems to charge in seven or eight minutes." },
-      { start: 87, end: 91, text: "이게 막 그렇게 정확하지는 않네요?", translation: "Cái này có vẻ không chính xác lắm nhỉ?", translationEn: "This isn't all that accurate, is it?" },
-      { start: 91, end: 95, text: "뭐, 컨디션이나 심박수에 따라 달라지는 거 같기는 한데", translation: "Có vẻ kết quả thay đổi tùy thể trạng hay nhịp tim,", translationEn: "It seems to vary depending on condition or heart rate," },
-      { start: 99, end: 103, text: "스킨십 강도에 따른 테스트도", translation: "nhưng chúng ta cũng nên kiểm tra theo mức độ tiếp xúc thân mật", translationEn: "but we should also test different levels of physical contact" },
-      { start: 103, end: 107, text: "진행을 해 봐야…", translation: "…để thử xem sao.", translationEn: "…and see how it goes." },
-      { start: 107, end: 112, text: "확실히 알 수 있을 것 같기는 한데…", translation: "Có lẽ lúc đó mới biết chắc được…", translationEn: "I think that's the only way we'll know for sure…" },
-      { start: 112, end: 115, text: "아…", translation: "À…", translationEn: "Ah…" },
-      { start: 115, end: 118, text: "네, 스킨십 강도, 그렇죠.", translation: "Vâng, mức độ tiếp xúc thân mật, đúng vậy.", translationEn: "Right, the level of physical contact." },
-      { start: 118, end: 120, text: "해야죠.", translation: "Phải thử chứ.", translationEn: "We should do that." },
-      { start: 120, end: 123, text: "손잡기?", translation: "Nắm tay à?", translationEn: "Holding hands?" },
-      { start: 126, end: 128, text: "네.", translation: "Vâng.", translationEn: "Yes." },
-      { start: 128, end: 132, text: "손잡기는 5프로가 오르네요.", translation: "Nắm tay thì tăng 5% nhỉ.", translationEn: "Holding hands raises it by five percent." },
-      { start: 132, end: 135, text: "그럼 다음은…", translation: "Vậy tiếp theo là…", translationEn: "Then next…" },
-      { start: 135, end: 138, text: "포옹으로 가죠!", translation: "Chuyển sang ôm nhé!", translationEn: "Let's move on to a hug!" },
-      { start: 138, end: 141, text: "네? 뭐.", translation: "Hả? Gì cơ?", translationEn: "Huh? What?" },
-      { start: 163, end: 166, text: "이, 이거 왜 삑삑거려요?", translation: "C-cái này sao cứ kêu bíp bíp vậy?", translationEn: "W-why is this thing beeping?" },
-      { start: 166, end: 169, text: "심박수 100?", translation: "Nhịp tim 100 sao?", translationEn: "Heart rate 100?" },
-      { start: 169, end: 172, text: "아, 아니에요!", translation: "À, không phải đâu!", translationEn: "Oh, no!" },
-      { start: 172, end: 175, text: "그, 이게…", translation: "Chuyện là, cái này…", translationEn: "Well, this…" },
-      { start: 175, end: 180, text: "갑자기 급하게 충전이 돼서 그런 거 같은데.", translation: "Có lẽ vì đột nhiên được sạc nhanh quá.", translationEn: "I think it suddenly charged too quickly." },
-      { start: 180, end: 184, text: "아, 포옹은 10프로…", translation: "À, ôm thì được 10%…", translationEn: "Oh, a hug gives ten percent…" },
-      { start: 190, end: 193, text: "그러면", translation: "Vậy thì", translationEn: "Then," },
-      { start: 192, end: 195, text: "다음은", translation: "tiếp theo là", translationEn: "next is" },
-      { start: 194, end: 197, text: "키스…", translation: "hôn…", translationEn: "a kiss…" },
-      { start: 197, end: 200, text: "인 건가?", translation: "sao?", translationEn: "is it?" },
-      { start: 213, end: 217, text: "굳이 키스는", translation: "Còn chuyện hôn thì không nhất thiết…", translationEn: "As for kissing, we don't have to…" },
-      { start: 217, end: 221, text: "뭐, 지금 할 필요 없을 거 같은데.", translation: "Chắc không cần làm ngay bây giờ đâu.", translationEn: "I don't think we need to do that now." },
-      { start: 221, end: 223, text: "그, 그렇죠? 응. 예.", translation: "Đ-đúng vậy nhỉ? Ừ. Vâng.", translationEn: "R-right? Yeah. Yes." },
-      { start: 223, end: 227, text: "뭐, 나, 나도 별로 궁금하지는 않았어요.", translation: "Tôi cũng không tò mò lắm đâu.", translationEn: "I wasn't really curious either." },
-      { start: 227, end: 230, text: "마, 마음의 준비를 조금, 조금 하기는 했는데.", translation: "T-tôi cũng có chuẩn bị tâm lý một chút…", translationEn: "I did prepare myself a little, though…" },
-      { start: 230, end: 234, text: "뭐, 뭐 안 하면 안 해도 되고.", translation: "M-mà không làm cũng được.", translationEn: "I mean, we don't have to if we don't want to." },
-    ],
-  },
-];
-const VIDEO_DICTATION_LESSONS = VIDEO_DICTATION_SOURCES.map((source, index) => ({
-  id: `video-dictation-${source.videoId}`,
-  collectionId: "video-dictation",
-  lessonNum: index + 1,
-  title: source.title,
-  sourceTitle: source.title,
-  sourceLabel: "Video YouTube gốc · lời chép theo mốc thời gian",
-  sourceType: "video",
-  videoId: source.videoId,
-  sourceUrl: `https://www.youtube.com/watch?v=${source.videoId}`,
-  topikLevel: source.topikLevel,
-  topikName: `TOPIK ${source.topikLevel}`,
-  durationSec: source.durationSec,
-  scriptDurationSec: Math.round(source.segments.reduce((total, segment) => total + Math.max(0, segment.end - segment.start), 0)),
-  startSec: source.segments[0]?.start || 0,
-  endSec: 86400,
-  segmentCount: source.segments.length,
-  freeDictation: false,
-  segments: source.segments.map((segment, lineIndex) => ({ id: lineIndex + 1, ...segment })),
-}));
-const SCRIPT_FOLDER_LESSONS: any[] = scriptFolderData.map((lesson: any, index: number) => ({
-  ...lesson,
-  lessonNum: index + 1,
-  sourceLabel: lesson.sourceLabel || "Video YouTube gốc · script và timeline từ thư mục Script",
-  sourceType: "video",
-  freeDictation: lesson.freeDictation === true,
-  scriptDurationSec: Math.round(lesson.segments.reduce((total: number, segment: any) => total + Math.max(0, segment.end - segment.start), 0)),
-}));
-// Keep the public catalog focused on the four reviewed personal-script lessons.
-// Other built-in and admin-managed lessons are hidden from this module for now.
-const ALL_LESSONS: any[] = SCRIPT_FOLDER_LESSONS;
-
 // Validate YouTube video ID format
 const isValidVideoId = (id: string): boolean => /^[A-Za-z0-9_-]{11}$/.test(id);
 
-// Course Section Catalog Data
-const RAW_COURSE_SECTIONS: any[] = [{
-  id: "sec_talk-to-me-in-korean",
-  title: "Hội thoại tiếng Hàn có phụ đề · Talk To Me In Korean",
-  videoId: "TLgAJgYqIZk",
-  lessons: topikLessonsData.filter((lesson: any) => lesson.videoId === "TLgAJgYqIZk"),
-}, {
-  id: "sec_ttmik-restaurant",
-  title: "Gọi món & ăn uống · Talk To Me In Korean",
-  videoId: "5n7HFxyE4ZI",
-  lessons: topikLessonsData.filter((lesson: any) => lesson.videoId === "5n7HFxyE4ZI"),
-}, {
-  id: "sec-video-dictation", title: "Dictation bằng video gốc · script theo từng câu", collectionId: "video-dictation", lessons: []
-}, ...SCRIPT_LESSON_GROUPS.map((group) => ({
-  id: `sec-script-${group.id}`,
-  title: group.title,
-  description: group.description,
-  icon: group.icon,
-  catalogGroupId: group.id,
-  lessons: [],
-}))];
-
 export const DictationModule: React.FC = () => {
+  const [privateContent, setPrivateContent] = useState<PrivateLearningContent | null>(null);
   const [viewMode, setViewMode] = useState<"catalog" | "workspace">("catalog");
   const [selectedUserLevel, setSelectedUserLevel] = useState<"all" | "beginner" | "experienced">("all");
   const [selectedHashtag, setSelectedHashtag] = useState<string>("#all");
@@ -220,7 +46,24 @@ export const DictationModule: React.FC = () => {
   const [sessionStartTime, setSessionStartTime] = useState<number>(Date.now());
   const [managedLessons, setManagedLessons] = useState<any[]>([]);
   const [hiddenLessonIds, setHiddenLessonIds] = useState<string[]>([]);
-  const allLessons = useMemo(() => [...ALL_LESSONS, ...managedLessons.filter((lesson: any) => lesson.collectionId === "script-folder" && isValidVideoId(String(lesson.videoId || "")) && lesson.sourceType !== "original")].filter((lesson: any) => !hiddenLessonIds.includes(lesson.id)), [managedLessons, hiddenLessonIds]);
+  useEffect(() => { let cancelled = false; void loadPrivateLearningContent().then((content) => { if (!cancelled) setPrivateContent(content); }); return () => { cancelled = true; }; }, []);
+  const scriptFolderLessons = useMemo(() => (privateContent?.scriptFolderLessons || []).map((lesson: any, index: number) => ({
+    ...lesson,
+    lessonNum: index + 1,
+    sourceLabel: lesson.sourceLabel || "Video YouTube gốc · script và timeline từ thư mục Script",
+    sourceType: "video",
+    freeDictation: lesson.freeDictation === true,
+    scriptDurationSec: Math.round((lesson.segments || []).reduce((total: number, segment: any) => total + Math.max(0, segment.end - segment.start), 0)),
+  })), [privateContent]);
+  const allLessons = useMemo(() => [...scriptFolderLessons, ...managedLessons.filter((lesson: any) => lesson.collectionId === "script-folder" && isValidVideoId(String(lesson.videoId || "")) && lesson.sourceType !== "original")].filter((lesson: any) => !hiddenLessonIds.includes(lesson.id)), [scriptFolderLessons, managedLessons, hiddenLessonIds]);
+  const rawCourseSections = useMemo<any[]>(() => [{
+    id: "sec-talk-to-me-in-korean", title: "Hội thoại tiếng Hàn có phụ đề · Talk To Me In Korean", videoId: "TLgAJgYqIZk",
+    lessons: (privateContent?.topikLessons || []).filter((lesson: any) => lesson.videoId === "TLgAJgYqIZk"),
+  }, {
+    id: "sec-ttmik-restaurant", title: "Gọi món & ăn uống · Talk To Me In Korean", videoId: "5n7HFxyE4ZI",
+    lessons: (privateContent?.topikLessons || []).filter((lesson: any) => lesson.videoId === "5n7HFxyE4ZI"),
+  }, { id: "sec-video-dictation", title: "Dictation bằng video gốc · script theo từng câu", collectionId: "video-dictation", lessons: [] },
+  ...SCRIPT_LESSON_GROUPS.map((group) => ({ id: `sec-script-${group.id}`, title: group.title, description: group.description, icon: group.icon, catalogGroupId: group.id, lessons: [] }))], [privateContent]);
 
   useEffect(() => {
     let cancelled = false;
@@ -291,7 +134,7 @@ export const DictationModule: React.FC = () => {
 
   // Filter Course Sections by selected level
   const filteredCourseSections = useMemo(() => {
-    return RAW_COURSE_SECTIONS.map((section) => ({
+    return rawCourseSections.map((section) => ({
       ...section,
       lessons: filteredLessons.filter((lesson: any) => section.catalogGroupId
         ? getScriptLessonGroupId(lesson) === section.catalogGroupId
@@ -300,7 +143,7 @@ export const DictationModule: React.FC = () => {
         ? getScriptLessonGroupId(lesson) === section.catalogGroupId
         : section.collectionId ? lesson.collectionId === section.collectionId : lesson.videoId === section.videoId).length,
     })).filter((section) => section.lessons.length > 0);
-  }, [filteredLessons]);
+  }, [filteredLessons, rawCourseSections]);
 
   // Safe access to current lesson and segment by selectedLessonId
   const currentLesson = useMemo(() => {
@@ -374,7 +217,7 @@ export const DictationModule: React.FC = () => {
     const revealedWords = [...new Set(revealedWordIndices.map((index) => targetWords[index]).filter(Boolean))];
     const missingWords = revealedWords.filter((word) => {
       const wordKey = cleanText(word);
-      return !KOREAN_WORD_GLOSSARY[wordKey]?.[translationLanguage]
+      return !privateContent?.wordGlossary[wordKey]?.[translationLanguage]
         && !generatedWordGlosses[`${translationLanguage}:${wordKey}`];
     });
     if (!missingWords.length) return;
@@ -416,7 +259,7 @@ export const DictationModule: React.FC = () => {
     }));
 
     return () => { cancelled = true; };
-  }, [revealedWordIndices, targetWords, translationLanguage]);
+  }, [revealedWordIndices, targetWords, translationLanguage, privateContent, generatedWordGlosses]);
 
   // YouTube API Init
   useEffect(() => {
@@ -1289,7 +1132,7 @@ export const DictationModule: React.FC = () => {
                 {targetWords.map((word, wIdx) => {
                   const isRevealed = revealedWordIndices.includes(wIdx);
                   const wordKey = cleanText(word);
-                  const wordGloss = KOREAN_WORD_GLOSSARY[wordKey]?.[translationLanguage]
+                  const wordGloss = privateContent?.wordGlossary[wordKey]?.[translationLanguage]
                     || generatedWordGlosses[`${translationLanguage}:${wordKey}`];
                   return (
                     <button

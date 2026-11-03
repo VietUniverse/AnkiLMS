@@ -1,14 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { VOCABULARY_DATA } from "../data/koreanData";
-import { SEJONG_TOPIC_VOCABULARY, TOPIK_LEVEL_GUIDE } from "../data/sejongTopicVocabulary";
+import { TOPIK_LEVEL_GUIDE } from "../data/sejongTopicVocabulary";
 import { BookOpen, Check, ChevronLeft, ChevronRight, Compass, Headphones, Layers, Search, Sparkles, Volume2 } from "lucide-react";
 import { useApp } from "../contexts/AppProvider";
 import { KoreanPractice, KoreanPracticePrompt } from "./KoreanPractice";
 import { speakKorean, stopKoreanSpeech } from "../lib/koreanSpeech";
 import { inferTopikLevel } from "../lib/studyRanks";
+import { loadPrivateLearningContent } from "../lib/privateLearningContent";
 
 type TopicItem = { korean: string; meaning: string; topic: string; level: string; example: string; translation: string; source: "HaechiVN" | "Anki" };
 const LEVEL_FILTERS = ["Tất cả", ...TOPIK_LEVEL_GUIDE.map((item) => item.level), "Anki"];
@@ -20,13 +21,22 @@ export function KoreanTopicsModule() {
   const [query, setQuery] = useState("");
   const [visibleCount, setVisibleCount] = useState(12);
   const [practicePrompt, setPracticePrompt] = useState<KoreanPracticePrompt[] | null>(null);
+  const [topicVocabulary, setTopicVocabulary] = useState<any[]>([]);
+
+  useEffect(() => {
+    let active = true;
+    loadPrivateLearningContent().then((content) => {
+      if (active && content) setTopicVocabulary(content.topicVocabulary || []);
+    });
+    return () => { active = false; };
+  }, []);
 
   const allItems = useMemo(() => {
     const legacy = VOCABULARY_DATA.map((item, index) => ({
       korean: item.hangul, meaning: item.vietnamese, topic: item.topic,
       level: index < 6 ? "TOPIK 1" : "TOPIK 2", example: item.exampleSentence, translation: item.exampleTranslation, source: "HaechiVN" as const,
     }));
-    const original = SEJONG_TOPIC_VOCABULARY.map((item) => ({ ...item, example: item.example, translation: item.translation, source: "HaechiVN" as const }));
+    const original = topicVocabulary.map((item) => ({ ...item, example: item.example, translation: item.translation, source: "HaechiVN" as const }));
     const imported = userDecks.flatMap((deck) => deck.cards.map((card) => ({
       korean: (card.koreanText || card.frontText || "").replace(/<[^>]*>/g, " ").trim(),
       meaning: (card.vietnameseMeaning || card.backText || "").replace(/<[^>]*>/g, " ").trim(),
@@ -42,7 +52,7 @@ export function KoreanTopicsModule() {
       if (!unique.has(key) || item.source === "HaechiVN") unique.set(key, item);
     });
     return [...unique.values()];
-  }, [userDecks]);
+  }, [userDecks, topicVocabulary]);
 
   const topics = useMemo(() => ["Tất cả chủ đề", ...new Set(allItems.filter((item) => item.source !== "Anki").map((item) => item.topic)), ...new Set(userDecks.map((deck) => deck.name))], [allItems, userDecks]);
   const filteredItems = useMemo(() => {

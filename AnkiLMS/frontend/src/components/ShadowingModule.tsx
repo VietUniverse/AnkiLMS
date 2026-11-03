@@ -10,9 +10,8 @@ import { loadYouTubeIframeApi } from "../lib/youtubeIframe";
 import { KOREAN_LESSON_TOPICS, matchesLessonTopic } from "../lib/lessonTopics";
 
 // Import TOPIK lessons dataset
-import topikLessonsData from "../data/topik_lessons.json";
-import scriptFolderData from "../data/script_folder_lessons.json";
 import { SCRIPT_LESSON_GROUPS, getScriptLessonGroupId } from "../data/scriptLessonGroups";
+import { loadPrivateLearningContent, type PrivateLearningContent } from "../lib/privateLearningContent";
 import { TranslationLanguageSetup } from "./TranslationLanguageSetup";
 import { useTranslationLanguage } from "../lib/translationPreference";
 
@@ -24,46 +23,11 @@ const containsKoreanSpeechText = (lesson: any): boolean => {
   return koreanLines / segments.length >= 0.8;
 };
 
-// Shadowing needs a real embedded video and Korean speech to imitate.
-const ALL_LESSONS: any[] = [...scriptFolderData].filter(
-  (lesson: any) => /^[A-Za-z0-9_-]{11}$/.test(String(lesson.videoId || "")) && containsKoreanSpeechText(lesson),
-).map((lesson: any) => ({
-  ...lesson,
-  // TTMIK captions sometimes overlap. Stop a phrase at the next cue's start so
-  // replaying one line does not continue into the following line.
-  segments: lesson.segments.map((segment: any, index: number) => {
-    const nextStart = lesson.segments[index + 1]?.start;
-    return nextStart !== undefined && segment.end > nextStart
-      ? { ...segment, end: Math.max(segment.start + 0.6, nextStart) }
-      : segment;
-  }),
-  sourceDurationSec: lesson.videoId === "5n7HFxyE4ZI" ? 1027 : undefined,
-}));
-
 // Validate YouTube video ID format
 const isValidVideoId = (id: string): boolean => /^[A-Za-z0-9_-]{11}$/.test(id);
 
-// Course Section Catalog Data
-const RAW_COURSE_SECTIONS: any[] = [{
-  id: "sec_talk-to-me-in-korean",
-  title: "Hội thoại tiếng Hàn có phụ đề · Talk To Me In Korean",
-  videoId: "TLgAJgYqIZk",
-  lessons: topikLessonsData.filter((lesson: any) => lesson.videoId === "TLgAJgYqIZk"),
-}, {
-  id: "sec_ttmik-restaurant",
-  title: "Gọi món & ăn uống · Talk To Me In Korean",
-  videoId: "5n7HFxyE4ZI",
-  lessons: topikLessonsData.filter((lesson: any) => lesson.videoId === "5n7HFxyE4ZI"),
-}, ...SCRIPT_LESSON_GROUPS.map((group) => ({
-  id: `sec-script-${group.id}`,
-  title: group.title,
-  description: group.description,
-  icon: group.icon,
-  catalogGroupId: group.id,
-  lessons: scriptFolderData,
-}))];
-
 export const ShadowingModule: React.FC = () => {
+  const [privateContent, setPrivateContent] = useState<PrivateLearningContent | null>(null);
   const [viewMode, setViewMode] = useState<"catalog" | "workspace">("catalog");
   const { setActiveStudySession } = useApp();
   const backToCatalogRef = useRef<() => void>(() => {});
@@ -90,11 +54,25 @@ export const ShadowingModule: React.FC = () => {
   const [sessionStartTime, setSessionStartTime] = useState<number>(Date.now());
   const [managedLessons, setManagedLessons] = useState<any[]>([]);
   const [hiddenLessonIds, setHiddenLessonIds] = useState<string[]>([]);
-  const allLessons = useMemo(() => [...ALL_LESSONS, ...managedLessons.filter((lesson: any) => lesson.collectionId === "script-folder")].filter(
+  useEffect(() => { let cancelled = false; void loadPrivateLearningContent().then((content) => { if (!cancelled) setPrivateContent(content); }); return () => { cancelled = true; }; }, []);
+  const scriptLessons = useMemo(() => (privateContent?.scriptFolderLessons || []).filter(
+    (lesson: any) => isValidVideoId(String(lesson.videoId || "")) && containsKoreanSpeechText(lesson),
+  ).map((lesson: any) => ({ ...lesson, segments: lesson.segments.map((segment: any, index: number) => {
+    const nextStart = lesson.segments[index + 1]?.start;
+    return nextStart !== undefined && segment.end > nextStart ? { ...segment, end: Math.max(segment.start + 0.6, nextStart) } : segment;
+  }), sourceDurationSec: lesson.videoId === "5n7HFxyE4ZI" ? 1027 : undefined })), [privateContent]);
+  const allLessons = useMemo(() => [...scriptLessons, ...managedLessons.filter((lesson: any) => lesson.collectionId === "script-folder")].filter(
     (lesson: any) => !hiddenLessonIds.includes(lesson.id)
       && /^[A-Za-z0-9_-]{11}$/.test(String(lesson.videoId || ""))
       && containsKoreanSpeechText(lesson),
-  ), [managedLessons, hiddenLessonIds]);
+  ), [scriptLessons, managedLessons, hiddenLessonIds]);
+  const rawCourseSections = useMemo<any[]>(() => [{
+    id: "sec_talk-to-me-in-korean", title: "Hội thoại tiếng Hàn có phụ đề · Talk To Me In Korean", videoId: "TLgAJgYqIZk",
+    lessons: (privateContent?.topikLessons || []).filter((lesson: any) => lesson.videoId === "TLgAJgYqIZk"),
+  }, {
+    id: "sec_ttmik-restaurant", title: "Gọi món & ăn uống · Talk To Me In Korean", videoId: "5n7HFxyE4ZI",
+    lessons: (privateContent?.topikLessons || []).filter((lesson: any) => lesson.videoId === "5n7HFxyE4ZI"),
+  }, ...SCRIPT_LESSON_GROUPS.map((group) => ({ id: `sec-script-${group.id}`, title: group.title, description: group.description, icon: group.icon, catalogGroupId: group.id, lessons: scriptLessons }))], [privateContent, scriptLessons]);
 
   useEffect(() => {
     let cancelled = false;
@@ -145,7 +123,7 @@ export const ShadowingModule: React.FC = () => {
 
   // Filter Course Sections by selected level
   const filteredCourseSections = useMemo(() => {
-    return RAW_COURSE_SECTIONS.map((section) => ({
+    return rawCourseSections.map((section) => ({
       ...section,
       lessons: filteredLessons.filter((lesson: any) => section.catalogGroupId
         ? getScriptLessonGroupId(lesson) === section.catalogGroupId
@@ -154,7 +132,7 @@ export const ShadowingModule: React.FC = () => {
         ? getScriptLessonGroupId(lesson) === section.catalogGroupId
         : section.collectionId ? lesson.collectionId === section.collectionId : lesson.videoId === section.videoId).length,
     })).filter((section) => section.lessons.length > 0);
-  }, [filteredLessons]);
+  }, [filteredLessons, rawCourseSections]);
 
   // Safe access to current lesson and segment by selectedLessonId
   const currentLesson = useMemo(() => {
