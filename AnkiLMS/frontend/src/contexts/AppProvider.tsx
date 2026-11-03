@@ -213,6 +213,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // while each learner's review schedule and removed cards are retained.
   const [publishedDecks, setPublishedDecks] = useState<AnkiDeck[] | null>(null);
   useEffect(() => {
+    if (!isAuthReady || !currentUser) return;
     let active = true;
     void Promise.all([loadCourseVocabulary(), loadSeoul1AExploreDeck()]).then(([courseData, seoul1ADeck]) => {
       if (!active) return;
@@ -224,7 +225,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setPublishedDecks(decks);
     });
     return () => { active = false; };
-  }, []);
+  }, [isAuthReady, currentUser?.id]);
 
   useEffect(() => {
     if (!publishedDecks || !isAuthReady || !currentUser) return;

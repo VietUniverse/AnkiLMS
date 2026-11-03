@@ -27,7 +27,7 @@ export const SEOUL_1A_TEST: VocabTestDef = {
   title: "Bạn đủ vốn từ để học 1B chưa?",
   sourceName: "서울대 한국어 플러스 1A (bài 1–8)",
   minutes: 7,
-  dataUrl: "/data/seoul-1a.json",
+  dataUrl: "/api/learning-data?name=seoul-1a.json",
   toCards: (json) => (json as { cards: TestCard[] }).cards,
   config: { total: 60, minPerLesson: 5, maxPerLesson: 12, minLesson: 1, maxLesson: 8 },
   lessonLabel: (lesson) => {
@@ -51,7 +51,7 @@ export const THTH_1_TEST: VocabTestDef = {
   title: "Bạn đã pass Tiếng Hàn Tổng Hợp 1 chưa?",
   sourceName: "Tiếng Hàn Tổng Hợp quyển 1 (bài 1–15)",
   minutes: 9,
-  dataUrl: "/data/thth-1.json",
+  dataUrl: "/api/learning-data?name=thth-1.json",
   toCards: (json) => (json as [number, string, string][]).map(([lesson, korean, vietnamese]) => ({
     koreanText: korean,
     vietnameseMeaning: vietnamese,

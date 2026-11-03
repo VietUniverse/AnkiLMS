@@ -27,8 +27,8 @@ const indexedEntriesPromises: Partial<Record<SearchLanguage, Promise<DictionaryI
 
 async function loadEntries(): Promise<PackedEntry[]> {
   entriesPromise ??= Promise.all([
-    fetch("/data/dictionary-ko-multi.json"),
-    fetch("/data/dictionary-topic-vocab.json").catch(() => null),
+    fetch("/api/learning-data?name=dictionary-ko-multi.json", { credentials: "same-origin" }),
+    fetch("/api/learning-data?name=dictionary-topic-vocab.json", { credentials: "same-origin" }).catch(() => null),
     loadCourseVocabulary(),
   ])
     .then(async ([baseResponse, topicResponse, courseData]) => {

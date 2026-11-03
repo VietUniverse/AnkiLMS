@@ -46,17 +46,18 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   const sharedId = url.searchParams.get("id");
   try {
     if (sharedId) {
+      const viewer = await authenticateRequest(request, env);
+      if (!viewer) return errorResponse("Đăng nhập để xem nội dung bộ thẻ.", 401);
       if (sharedId.length > 80) return errorResponse("Mã bộ thẻ không hợp lệ.", 400);
       const row = await env.DB.prepare(`${deckSelect} WHERE d.shared_id = ?`).bind(sharedId).first<SharedDeckRow>();
       if (!row) return errorResponse("Không tìm thấy bộ thẻ.", 404);
-      const viewer = await authenticateRequest(request, env);
-      if (row.visibility !== "public" && viewer?.id !== row.userId) return errorResponse("Không tìm thấy bộ thẻ.", 404);
+      if (row.visibility !== "public" && viewer.id !== row.userId) return errorResponse("Không tìm thấy bộ thẻ.", 404);
 
       const object = await env.MEDIA.get(row.cardsKey);
       if (!object) return errorResponse("Dữ liệu bộ thẻ chưa sẵn sàng.", 503);
       const cards = await object.json<unknown[]>();
       return jsonResponse({ deck: toRecord(row, cards) }, 200, {
-        "Cache-Control": row.visibility === "public" ? "public, max-age=60, s-maxage=60" : "private, no-store",
+        "Cache-Control": "private, no-store",
       });
     }
 

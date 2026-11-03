@@ -1,12 +1,13 @@
-import { Env, jsonResponse, errorResponse } from "./_utils";
+import { Env, jsonResponse, errorResponse, authenticateRequest } from "./_utils";
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   try {
-    const { env } = context;
+    const { env, request } = context;
+    if (!await authenticateRequest(request, env)) return errorResponse("Đăng nhập để xem bảng xếp hạng.", 401);
 
     // Fetch top 20 users by XP
     const topUsers = await env.DB.prepare(
-      `SELECT id, name, avatar_url, xp, streak, level, gems, created_at
+      `SELECT id, name, avatar_url, xp, streak, level
        FROM users
        ORDER BY xp DESC
        LIMIT 20`

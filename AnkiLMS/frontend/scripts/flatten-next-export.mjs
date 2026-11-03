@@ -1,4 +1,4 @@
-import { copyFileSync, existsSync, readdirSync } from "node:fs";
+import { copyFileSync, existsSync, readdirSync, rmSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 
 // Next's static export stores RSC payloads in nested __next.* folders, while
@@ -22,4 +22,9 @@ function visit(dir) {
 
 if (!existsSync(root)) throw new Error("Missing Next export directory: out");
 visit(root);
+// These files are uploaded to private R2 and served only by an authenticated API.
+// Keep the source files for static route generation, but never publish them.
+for (const name of ["dictionary-ko-multi.json", "dictionary-topic-vocab.json", "course-vocabulary.json", "seoul-1a.json", "thth-1.json", "nikl-ko-en-vi.json", "yomichan-headwords.json"]) {
+  rmSync(join(root, "data", name), { force: true });
+}
 console.log(`Prepared ${copied} Cloudflare RSC routes`);

@@ -35,7 +35,7 @@ const deckCardCount = (d: CuratedDeckItem) => d.cardCount ?? d.cards.length;
 const ROW_GRID = "sm:grid sm:grid-cols-[minmax(0,1fr)_6rem_4.5rem_6.5rem] items-center gap-3";
 
 export default function ExplorePage() {
-  const { userDecks, handleDeckImported, handleRemoveDeck } = useApp();
+  const { userDecks, handleDeckImported, handleRemoveDeck, currentUser } = useApp();
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sort, setSort] = useState<{ key: SortKey; dir: "asc" | "desc" } | null>(null);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
@@ -51,7 +51,7 @@ export default function ExplorePage() {
       if (mounted) setCourseDecks(data?.decks || []);
     });
     return () => { mounted = false; };
-  }, []);
+  }, [currentUser?.id]);
 
   useEffect(() => {
     let mounted = true;
@@ -59,7 +59,7 @@ export default function ExplorePage() {
       if (mounted) setSeoul1ADeck(deck);
     });
     return () => { mounted = false; };
-  }, []);
+  }, [currentUser?.id]);
 
   useEffect(() => {
     let mounted = true;

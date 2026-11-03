@@ -159,7 +159,7 @@ type Seoul1AData = {
 let seoul1ADeckPromise: Promise<CuratedDeckItem | null> | null = null;
 
 export function loadSeoul1AExploreDeck(): Promise<CuratedDeckItem | null> {
-  seoul1ADeckPromise ??= fetch("/data/seoul-1a.json")
+  seoul1ADeckPromise ??= fetch("/api/learning-data?name=seoul-1a.json", { credentials: "same-origin" })
     .then(async (response) => {
       if (!response.ok) return null;
       const data = await response.json() as Seoul1AData;
@@ -189,19 +189,21 @@ export function loadSeoul1AExploreDeck(): Promise<CuratedDeckItem | null> {
         estimatedMinutes: Math.max(1, Math.ceil(data.cards.length / 20)),
       } satisfies CuratedDeckItem;
     })
-    .catch(() => null);
+    .then((deck) => { if (!deck) seoul1ADeckPromise = null; return deck; })
+    .catch(() => { seoul1ADeckPromise = null; return null; });
   return seoul1ADeckPromise;
 }
 
 let dataPromise: Promise<CourseVocabularyData | null> | null = null;
 
 export function loadCourseVocabulary(): Promise<CourseVocabularyData | null> {
-  dataPromise ??= fetch("/data/course-vocabulary.json")
+  dataPromise ??= fetch("/api/learning-data?name=course-vocabulary.json", { credentials: "same-origin" })
     .then(async (response) => {
       if (!response.ok) return null;
       return await response.json() as CourseVocabularyData;
     })
-    .catch(() => null);
+    .then((data) => { if (!data) dataPromise = null; return data; })
+    .catch(() => { dataPromise = null; return null; });
   return dataPromise;
 }
 
