@@ -3,7 +3,8 @@
   "compatibility_date": "2026-10-17",
   "pages_build_output_dir": "out",
   "vars": {
-    "SITE_URL": "https://lms.ankivn.com"
+    "SITE_URL": "https://lms.ankivn.com",
+    "EMAIL_FROM": "HaechiVN <noreply@ankivn.com>"
   },
   "d1_databases": [
     {

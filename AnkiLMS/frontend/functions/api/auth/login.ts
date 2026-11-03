@@ -43,6 +43,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     stage = "lookup";
     const user = await env.DB.prepare("SELECT * FROM users WHERE email = ?").bind(email).first<UserRow>();
     if (!user?.password_hash) return errorResponse(INVALID_CREDENTIALS, 401);
+    if (user.email_verified === 0) return errorResponse("Email chưa được xác minh. Hãy mở email HaechiVN để kích hoạt tài khoản.", 403);
 
     stage = "password";
     const result = await verifyPassword(password, user.password_hash);

@@ -106,6 +106,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         oauth_token_failed: "Google không xác nhận được đăng nhập. Vui lòng thử lại.",
         oauth_profile_failed: "Không lấy được hồ sơ Google. Vui lòng thử lại.",
         oauth_email_unverified: "Tài khoản Google cần có email đã xác minh.",
+        policies_required: "Hãy chọn đồng ý Điều khoản và Chính sách trước khi tạo tài khoản bằng Google.",
         oauth_account_failed: "Không thể tạo tài khoản. Vui lòng thử lại.",
         oauth_failed: "Đăng nhập Google gặp lỗi. Vui lòng thử lại.",
       };

@@ -22,6 +22,12 @@ export interface UserProfile {
   created_at?: string;
 }
 
+export interface RegistrationResult {
+  user?: UserProfile;
+  verificationRequired: boolean;
+  message?: string;
+}
+
 export interface StudyProfileSummary {
   summary: { session_count: number; cards_reviewed: number; correct_count: number; duration_seconds: number };
   days: Array<{ day: string; minutes: number; cards: number }>;
@@ -158,14 +164,14 @@ export class ApiClient {
     }
   }
 
-  public static async register(email: string, name: string, password: string, translationLanguage: "vi" | "en" | "ja" = "vi"): Promise<UserProfile> {
+  public static async register(email: string, name: string, password: string, translationLanguage: "vi" | "en" | "ja" = "vi", acceptPolicies = false): Promise<RegistrationResult> {
     const referralCode = typeof window !== "undefined" ? localStorage.getItem("haechivn_referral_code") || new URLSearchParams(window.location.search).get("ref") || undefined : undefined;
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, name, password, referralCode, translationLanguage }),
+        body: JSON.stringify({ email, name, password, referralCode, translationLanguage, acceptPolicies }),
       });
       if (res.status === 404) {
         if (!localAuthFallbackAllowed()) throw new Error("Dịch vụ đăng ký không khả dụng.");
@@ -175,8 +181,8 @@ export class ApiClient {
       if (!res.ok) {
         throw new Error(data.error || "Đăng ký thất bại");
       }
-      this.setSession(data.user);
-      return data.user;
+      if (data.user) this.setSession(data.user);
+      return { user: data.user, verificationRequired: data.verificationRequired === true, message: data.message };
     } catch (err: any) {
       if (err.message && !err.message.includes("fetch")) throw err;
       if (!localAuthFallbackAllowed()) throw new Error("Không thể kết nối dịch vụ đăng ký. Vui lòng thử lại.");
@@ -194,7 +200,7 @@ export class ApiClient {
       };
       this.setSession(localUser);
       if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent("haechivn:user-updated", { detail: localUser }));
-      return localUser;
+      return { user: localUser, verificationRequired: false };
     }
   }
 
@@ -215,8 +221,8 @@ export class ApiClient {
     return guestUser;
   }
 
-  public static loginWithGoogle(translationLanguage: "vi" | "en" | "ja" = "vi") {
-    window.location.href = `/api/auth/google?translationLanguage=${translationLanguage}`;
+  public static loginWithGoogle(translationLanguage: "vi" | "en" | "ja" = "vi", acceptPolicies = false) {
+    window.location.href = `/api/auth/google?translationLanguage=${translationLanguage}&acceptPolicies=${acceptPolicies ? "1" : "0"}`;
   }
 
   public static async logout(): Promise<void> {

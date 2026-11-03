@@ -16,7 +16,11 @@ CREATE TABLE IF NOT EXISTS users (
     gems INTEGER DEFAULT 2,
     level INTEGER DEFAULT 1,
     last_checkin_date TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    email_verified INTEGER NOT NULL DEFAULT 1 CHECK (email_verified IN (0, 1)),
+    terms_accepted_version TEXT,
+    privacy_accepted_version TEXT,
+    policies_accepted_at TEXT
 );
 
 -- 2. Daily Checkins / Heatmap Table

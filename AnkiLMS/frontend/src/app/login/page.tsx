@@ -6,6 +6,7 @@ import { UserPlus, LogIn } from "lucide-react";
 import { ApiClient, UserProfile } from "../../lib/apiClient";
 import { useApp } from "../../contexts/AppProvider";
 import { TranslationLanguage } from "../../lib/translationPreference";
+import { PolicyAcceptance } from "../../components/PolicyAcceptance";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -18,6 +19,9 @@ export default function LoginPage() {
   const [translationLanguage, setTranslationLanguage] = useState<TranslationLanguage>("vi");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [acceptedPolicies, setAcceptedPolicies] = useState(false);
+  const [verificationNotice, setVerificationNotice] = useState<"success" | "invalid" | null>(null);
 
   // Luôn khóa dark theme khi ở trang login để giữ chuẩn style Anime Dark Glass
   useEffect(() => {
@@ -26,6 +30,11 @@ export default function LoginPage() {
     return () => {
       document.documentElement.dataset.theme = prevTheme || "light";
     };
+  }, []);
+
+  useEffect(() => {
+    const status = new URLSearchParams(window.location.search).get("email_verified");
+    if (status === "success" || status === "invalid") setVerificationNotice(status);
   }, []);
 
   // Nếu người dùng đã đăng nhập, tự động chuyển về trang chủ
@@ -50,7 +59,15 @@ export default function LoginPage() {
       const email = account.includes("@") ? account.trim() : `${account.trim()}@haechivn.local`;
 
       if (isRegister) {
-        user = await ApiClient.register(email, name.trim() || account.trim(), password, translationLanguage);
+        if (!acceptedPolicies) throw new Error("Bạn cần đồng ý các điều khoản và chính sách trước khi tạo tài khoản.");
+        const registration = await ApiClient.register(email, name.trim() || account.trim(), password, translationLanguage, acceptedPolicies);
+        if (!registration.user) {
+          setSuccess(registration.message || "Hãy kiểm tra email để xác minh tài khoản.");
+          setIsRegister(false);
+          setPassword("");
+          return;
+        }
+        user = registration.user;
       } else {
         user = await ApiClient.login(email, password);
       }
@@ -149,6 +166,9 @@ export default function LoginPage() {
                 {error}
               </div>
             )}
+            {success && <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3.5 text-center text-xs font-semibold text-emerald-300">{success}</div>}
+            {verificationNotice === "success" && <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3.5 text-center text-xs font-semibold text-emerald-300">Email đã được xác minh. Bạn có thể đăng nhập.</div>}
+            {verificationNotice === "invalid" && <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 text-center text-xs font-semibold text-amber-300">Liên kết xác minh không hợp lệ hoặc đã hết hạn. Hãy đăng ký lại để nhận liên kết mới.</div>}
 
             {/* Form 2 dòng input nguyên khối không viền */}
             <form onSubmit={handleSubmit} className="space-y-3.5">
@@ -167,14 +187,16 @@ export default function LoginPage() {
 
               {isRegister && <label className="block space-y-1.5"><span className="text-xs font-bold text-slate-300">Bạn muốn học tiếng Hàn bằng ngôn ngữ nào?</span><select value={translationLanguage} onChange={(event) => setTranslationLanguage(event.target.value as TranslationLanguage)} className="w-full rounded-xl px-4 py-3.5 text-xs text-white outline-none focus:ring-2 focus:ring-blue-500" style={{ backgroundColor: "#132247" }}><option value="vi">Hàn – Việt</option><option value="en">Hàn – Anh</option><option value="ja">Hàn – Nhật</option></select></label>}
 
+              {isRegister && <PolicyAcceptance checked={acceptedPolicies} onChange={setAcceptedPolicies} />}
+
               {/* Dòng 1: Tài khoản */}
               <div>
                 <input
-                  type="text"
+                  type={isRegister ? "email" : "text"}
                   required
                   value={account}
                   onChange={(e) => setAccount(e.target.value)}
-                  placeholder="Tài khoản hoặc email"
+                  placeholder={isRegister ? "Email để nhận liên kết xác minh" : "Tài khoản hoặc email"}
                   style={{ backgroundColor: "#132247", color: "#ffffff" }}
                   className="w-full px-4 py-3.5 rounded-xl text-white text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-inner border-0"
                 />
@@ -227,7 +249,7 @@ export default function LoginPage() {
             {/* Vào học bằng tài khoản Google - nguyên khối không viền */}
             <button
               type="button"
-              onClick={() => ApiClient.loginWithGoogle(translationLanguage)}
+              onClick={() => ApiClient.loginWithGoogle(translationLanguage, acceptedPolicies)}
               className="w-full py-3 rounded-xl bg-[#132247] hover:bg-[#1a2f60] text-slate-200 font-bold text-xs flex items-center justify-center gap-3 transition-colors cursor-pointer"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24">

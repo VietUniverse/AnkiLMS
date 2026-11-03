@@ -7,6 +7,8 @@ export interface Env {
   CLOVA_VOICE_CLIENT_ID?: string;
   CLOVA_VOICE_CLIENT_SECRET?: string;
   SITE_URL?: string;
+  RESEND_API_KEY?: string;
+  EMAIL_FROM?: string;
 }
 
 const SESSION_COOKIE = "__Host-haechivn_session";
@@ -33,6 +35,7 @@ export interface UserRow {
   role: "student" | "teacher" | "admin";
   last_checkin_date: string | null;
   created_at: string;
+  email_verified?: number;
 }
 
 export function jsonResponse(data: unknown, status = 200, headers: Record<string, string> = {}) {

@@ -45,9 +45,11 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     // cookies set before redirecting to Google even though the OAuth state is valid.
     if (!validState) return redirect(siteUrl, "oauth_state_expired");
     let translationLanguage = "vi";
+    let acceptPolicies = false;
     try {
-      const stateData = JSON.parse(validState) as { translationLanguage?: string };
+      const stateData = JSON.parse(validState) as { translationLanguage?: string; acceptPolicies?: boolean };
       if (["vi", "en", "ja"].includes(stateData.translationLanguage || "")) translationLanguage = stateData.translationLanguage!;
+      acceptPolicies = stateData.acceptPolicies === true;
     } catch { /* Older OAuth states default to Vietnamese. */ }
 
     const clientId = env.GOOGLE_CLIENT_ID;
@@ -85,15 +87,23 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     const email = profile.email.trim().toLowerCase();
     let user = await env.DB.prepare("SELECT * FROM users WHERE email = ?").bind(email).first<UserRow>();
     if (!user) {
+      if (!acceptPolicies) return redirect(siteUrl, "policies_required");
       const userId = `usr_${crypto.randomUUID()}`;
       await env.DB.prepare(
-      `INSERT INTO users (id, email, password_hash, name, avatar_url, translation_language, streak, longest_streak, xp, gems, level)
-         VALUES (?, ?, '', ?, ?, ?, 0, 0, 0, 2, 1)`
-      ).bind(userId, email, (profile.name || email.split("@")[0]).slice(0, 48), profile.picture || null, translationLanguage).run();
+      `INSERT INTO users (id, email, password_hash, name, avatar_url, translation_language, streak, longest_streak, xp, gems, level,
+        email_verified, terms_accepted_version, privacy_accepted_version, policies_accepted_at)
+         VALUES (?, ?, '', ?, ?, ?, 0, 0, 0, 2, 1, 1, '2026-11-03-v1', '2026-11-03-v1', ?)`
+      ).bind(userId, email, (profile.name || email.split("@")[0]).slice(0, 48), profile.picture || null, translationLanguage, new Date().toISOString()).run();
       user = await env.DB.prepare("SELECT * FROM users WHERE id = ?").bind(userId).first<UserRow>();
-    } else if (profile.picture && !user.avatar_url) {
-      await env.DB.prepare("UPDATE users SET avatar_url = ? WHERE id = ?").bind(profile.picture, user.id).run();
-      user.avatar_url = profile.picture;
+    } else {
+      if (user.email_verified === 0) {
+        await env.DB.prepare("UPDATE users SET email_verified = 1 WHERE id = ?").bind(user.id).run();
+        user.email_verified = 1;
+      }
+      if (profile.picture && !user.avatar_url) {
+        await env.DB.prepare("UPDATE users SET avatar_url = ? WHERE id = ?").bind(profile.picture, user.id).run();
+        user.avatar_url = profile.picture;
+      }
     }
     if (!user) return redirect(siteUrl, "oauth_account_failed");
 

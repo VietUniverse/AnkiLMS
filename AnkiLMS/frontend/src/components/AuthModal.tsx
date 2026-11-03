@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { X, User, Mail, Lock, UserPlus, LogIn, Sparkles } from "lucide-react";
 import { ApiClient, UserProfile } from "../lib/apiClient";
 import { TranslationLanguage } from "../lib/translationPreference";
+import { PolicyAcceptance } from "./PolicyAcceptance";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -25,10 +26,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [translationLanguage, setTranslationLanguage] = useState<TranslationLanguage>("vi");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [acceptedPolicies, setAcceptedPolicies] = useState(false);
 
   useEffect(() => {
     setIsRegister(initialRegisterMode);
     setError(null);
+    setSuccess(null);
   }, [initialRegisterMode, isOpen]);
 
   if (!isOpen) return null;
@@ -46,7 +50,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     try {
       let user: UserProfile;
       if (isRegister) {
-        user = await ApiClient.register(email, name || email.split("@")[0], password, translationLanguage);
+        if (!acceptedPolicies) throw new Error("Bạn cần đồng ý các điều khoản và chính sách trước khi tạo tài khoản.");
+        const registration = await ApiClient.register(email, name || email.split("@")[0], password, translationLanguage, acceptedPolicies);
+        if (!registration.user) {
+          setSuccess(registration.message || "Hãy kiểm tra email để xác minh tài khoản.");
+          setIsRegister(false);
+          setPassword("");
+          return;
+        }
+        user = registration.user;
       } else {
         user = await ApiClient.login(email, password);
       }
@@ -60,7 +72,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   };
 
   const handleGoogleLogin = () => {
-    ApiClient.loginWithGoogle(translationLanguage);
+    ApiClient.loginWithGoogle(translationLanguage, acceptedPolicies);
   };
 
   return (
@@ -114,6 +126,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           <span>Đăng nhập nhanh bằng Google</span>
         </button>
 
+        {success && <div className="mb-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs font-semibold text-emerald-300">{success}</div>}
+
         <div className="relative my-4 text-center">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-slate-800"></div>
@@ -142,6 +156,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           )}
 
           {isRegister && <label className="block"><span className="mb-1 block text-xs font-bold text-slate-400">Ngôn ngữ dịch khi học</span><select value={translationLanguage} onChange={(event) => setTranslationLanguage(event.target.value as TranslationLanguage)} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-xs text-white outline-none focus:border-blue-500"><option value="vi">Hàn – Việt</option><option value="en">Hàn – Anh</option><option value="ja">Hàn – Nhật</option></select></label>}
+
+          {isRegister && <PolicyAcceptance checked={acceptedPolicies} onChange={setAcceptedPolicies} />}
 
           <div>
             <label className="block text-xs font-bold text-slate-400 mb-1">Địa chỉ Email:</label>
