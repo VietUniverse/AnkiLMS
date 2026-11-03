@@ -11,7 +11,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   try {
     const clientIp = request.headers.get("CF-Connecting-IP") || "unknown";
     const attempts = await recordAttempt(env, `csp-ip:${await rateKey(clientIp)}`, 60);
-    if (attempts > 30) return jsonResponse({ error: "Đã nhận quá nhiều báo cáo CSP." }, 429, { "Retry-After": "60" });
+    if (attempts > 10) return jsonResponse({ error: "Đã nhận quá nhiều báo cáo CSP." }, 429, { "Retry-After": "60" });
   } catch {
     // Fail closed: do not accept unbounded reports if the limiter is unavailable.
     return new Response(null, { status: 503, headers: { "Cache-Control": "no-store" } });

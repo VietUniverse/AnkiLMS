@@ -15,9 +15,19 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
   if (Number(request.headers.get("Content-Length") || 0) > 8_192) return errorResponse("Nội dung gửi lên quá lớn.", 413);
 
+  let body: { email?: string; password?: string };
+  try {
+    const parsed: unknown = await request.json();
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      return errorResponse("Yêu cầu không hợp lệ.", 400);
+    }
+    body = parsed as { email?: string; password?: string };
+  } catch {
+    return errorResponse("Yêu cầu không hợp lệ.", 400);
+  }
+
   let stage = "request";
   try {
-    const body = (await request.json()) as { email?: string; password?: string };
     const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
     const password = typeof body.password === "string" ? body.password : "";
     if (!email || !password || email.length > 254 || password.length > 128) return errorResponse(INVALID_CREDENTIALS, 401);
