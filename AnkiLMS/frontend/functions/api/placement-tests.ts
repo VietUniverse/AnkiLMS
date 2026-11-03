@@ -50,7 +50,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
 };
 
 export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
-  if (!await authenticateAdminRequest(request, env)) return errorResponse("Chỉ quản trị viên mới được xem thống kê bài kiểm tra.", 403);
+  if (!await authenticateAdminRequest(request, env)) return errorResponse("Không tìm thấy.", 404);
   try {
     const [summary, tests, accounts, attempts] = await Promise.all([
       env.DB.prepare(

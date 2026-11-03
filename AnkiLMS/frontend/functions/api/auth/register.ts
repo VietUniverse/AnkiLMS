@@ -1,4 +1,5 @@
 import { Env, jsonResponse, errorResponse, hashPassword, UserRow, createSession, sessionCookie, isSameOriginRequest } from "../_utils";
+import { rateKey, recordAttempt } from "./_rateLimit";
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
@@ -6,8 +7,15 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (Number(request.headers.get("Content-Length") || 0) > 8_192) return errorResponse("Nội dung gửi lên quá lớn.", 413);
 
   try {
+    const clientIp = request.headers.get("CF-Connecting-IP") || "unknown";
+    const ipAttempts = await recordAttempt(env, `register-ip:${await rateKey(clientIp)}`, 3600);
+    if (ipAttempts > 10) return jsonResponse({ error: "Đã tạo quá nhiều yêu cầu. Vui lòng thử lại sau." }, 429, { "Retry-After": "3600" });
     const body = (await request.json()) as { email?: string; password?: string; name?: string; referralCode?: string; translationLanguage?: string };
     const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+    if (email) {
+      const accountAttempts = await recordAttempt(env, `register-account:${await rateKey(email)}`, 3600);
+      if (accountAttempts > 3) return jsonResponse({ error: "Đã tạo quá nhiều yêu cầu. Vui lòng thử lại sau." }, 429, { "Retry-After": "3600" });
+    }
     const password = typeof body.password === "string" ? body.password : "";
     const name = typeof body.name === "string" ? body.name.trim() : email.split("@")[0];
 
@@ -22,7 +30,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const referrer = referralCode.length <= 80 && referralCode ? await env.DB.prepare("SELECT id FROM users WHERE id = ?").bind(referralCode).first<{ id: string }>() : null;
 
     const existing = await env.DB.prepare("SELECT id FROM users WHERE email = ?").bind(email).first();
-    if (existing) return errorResponse("Email này đã được đăng ký tài khoản!", 409);
+    if (existing) return errorResponse("Không thể tạo tài khoản với thông tin này.", 400);
 
     const userId = `usr_${crypto.randomUUID()}`;
     const passHash = await hashPassword(password);
