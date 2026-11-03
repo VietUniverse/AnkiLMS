@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type WheelEvent } from "react";
 import Link from "next/link";
-import { loadPrivateLearningContent } from "../lib/privateLearningContent";
+import { fetchPrivateLearningContent } from "../lib/privateLearningContent";
 import { ApiClient } from "../lib/apiClient";
 import { loadYouTubeIframeApi } from "../lib/youtubeIframe";
 import { ArrowDown, ArrowUp, Captions, Check, ChevronDown, ChevronUp, Clock3, Headphones, ListVideo, Pause, Play, Settings2, Volume2, VolumeX } from "lucide-react";
@@ -27,32 +27,73 @@ const formatDuration = (seconds: number) => `${Math.floor(seconds / 60)}:${Strin
 
 export function PassiveListeningModule() {
   const [playlist, setPlaylist] = useState<Lesson[]>([]);
+  const playlistRef = useRef<Lesson[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [rate, setRate] = useState(1);
-  const [muted, setMuted] = useState(false);
+  const [muted, setMuted] = useState(true);
   const [captionsOn, setCaptionsOn] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [completed, setCompleted] = useState<string[]>([]);
   const [showPlaylist, setShowPlaylist] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [playerError, setPlayerError] = useState("");
+  const [contentLoading, setContentLoading] = useState(true);
+  const [contentError, setContentError] = useState("");
   const playerRef = useRef<Player | null>(null);
   const playerHostRef = useRef<HTMLDivElement>(null);
   const activeIndexRef = useRef(0);
-  const autoPlayRef = useRef(false);
+  const autoPlayRef = useRef(true);
   const touchStartRef = useRef<number | null>(null);
   const wheelLockRef = useRef(false);
   const recordedRef = useRef<Set<string>>(new Set());
   const completedRef = useRef<Set<string>>(new Set());
 
-  useEffect(() => {
-    let cancelled = false;
-    void loadPrivateLearningContent().then((content) => {
-      if (!cancelled && content) setPlaylist(content.topikLessons as Lesson[]);
-    });
-    return () => { cancelled = true; };
+  const loadPlaylist = useCallback(async () => {
+    setContentLoading(true);
+    setContentError("");
+    const result = await fetchPrivateLearningContent();
+    if (result.ok) {
+      const sourceLessons = Array.isArray(result.content.topikLessons) ? result.content.topikLessons as Lesson[] : [];
+      const ttmikVideos = [
+        { videoId: "TLgAJgYqIZk", id: "ttmik_conversation_full", title: "Hội thoại tiếng Hàn · Talk To Me In Korean", sourceTitle: "Talk To Me In Korean", topikLevel: 1 },
+        { videoId: "5n7HFxyE4ZI", id: "ttmik_restaurant_full", title: "Gọi món & ăn uống · Talk To Me In Korean", sourceTitle: "Talk To Me In Korean", topikLevel: 3 },
+      ];
+      const ttmikIds = new Set(ttmikVideos.map((video) => video.videoId));
+      const lessons: Lesson[] = sourceLessons.filter((lesson) => !ttmikIds.has(lesson.videoId));
+      for (const video of ttmikVideos) {
+        const chapters = sourceLessons.filter((lesson) => lesson.videoId === video.videoId);
+        if (!chapters.length) continue;
+        const segments = chapters.flatMap((chapter) => chapter.segments || [])
+          .sort((a, b) => a.start - b.start)
+          .map((segment, index) => ({ ...segment, id: index + 1 }));
+        const endSec = Math.max(...chapters.map((chapter) => chapter.endSec));
+        lessons.push({
+          id: video.id,
+          lessonNum: 0,
+          title: video.title,
+          sourceTitle: video.sourceTitle,
+          topikLevel: video.topikLevel,
+          startSec: 0,
+          endSec,
+          durationSec: endSec,
+          videoId: video.videoId,
+          segments,
+        });
+      }
+      lessons.sort((a, b) => a.topikLevel - b.topikLevel || a.title.localeCompare(b.title));
+      playlistRef.current = lessons;
+      setPlaylist(lessons);
+      if (!lessons.length) setContentError("Kho dữ liệu chưa có bài nghe. Hãy thử tải lại sau.");
+    } else if (result.status === 401 || result.status === 403) {
+      setContentError("Phiên đăng nhập đã hết hạn hoặc không có quyền tải danh sách nghe. Hãy đăng nhập lại rồi thử tải lại.");
+    } else {
+      setContentError(result.status ? `Không tải được danh sách nghe (HTTP ${result.status}).` : "Không kết nối được máy chủ để tải danh sách nghe.");
+    }
+    setContentLoading(false);
   }, []);
+
+  useEffect(() => { void loadPlaylist(); }, [loadPlaylist]);
 
   const current = playlist[activeIndex] || playlist[0];
   const currentRef = useRef(current);
@@ -63,8 +104,9 @@ export function PassiveListeningModule() {
   const progress = current ? Math.min(100, Math.max(0, ((currentTime - current.startSec) / Math.max(1, current.durationSec)) * 100)) : 0;
 
   const changeLesson = useCallback((index: number, autoplay = true) => {
-    const bounded = Math.max(0, Math.min(playlist.length - 1, index));
-    const lesson = playlist[bounded];
+    const lessons = playlistRef.current;
+    const bounded = Math.max(0, Math.min(lessons.length - 1, index));
+    const lesson = lessons[bounded];
     if (!lesson) return;
     activeIndexRef.current = bounded;
     autoPlayRef.current = autoplay;
@@ -102,12 +144,11 @@ export function PassiveListeningModule() {
       const PlayerCtor = api.Player as unknown as new (element: HTMLElement, options: Record<string, unknown>) => Player;
       playerRef.current = new PlayerCtor(host, {
         width: "100%", height: "100%", videoId: current.videoId,
-        playerVars: { autoplay: autoPlayRef.current ? 1 : 0, start: Math.floor(current.startSec), end: Math.ceil(current.endSec), playsinline: 1, controls: 0, rel: 0, fs: 0, disablekb: 1, origin: window.location.origin },
+        playerVars: { autoplay: autoPlayRef.current ? 1 : 0, mute: 1, start: Math.floor(current.startSec), end: Math.ceil(current.endSec), playsinline: 1, controls: 0, rel: 0, fs: 0, disablekb: 1, origin: window.location.origin },
         events: {
           onReady: (event: { target: Player }) => {
             event.target.setPlaybackRate(rate);
-            if (muted) event.target.mute();
-            else event.target.unMute();
+            event.target.mute();
             if (autoPlayRef.current) event.target.playVideo();
           },
           onStateChange: (event: { data: number }) => {
@@ -181,7 +222,12 @@ export function PassiveListeningModule() {
     if (next) playerRef.current?.mute(); else playerRef.current?.unMute();
   };
 
-  if (!current) return <div className="p-10 text-center text-slate-300">Chưa có video trong danh sách phát.</div>;
+  if (!current) return <div className="mx-auto mt-12 max-w-lg rounded-2xl border border-white/10 bg-slate-900 p-6 text-center text-slate-200">
+    <Headphones className="mx-auto mb-3 h-8 w-8 text-cyan-300" />
+    <h1 className="text-lg font-black text-white">{contentLoading ? "Đang tải danh sách nghe…" : "Không tải được danh sách nghe"}</h1>
+    {contentError && <p className="mt-2 text-sm text-slate-300">{contentError}</p>}
+    {!contentLoading && <div className="mt-4 flex justify-center gap-2"><button onClick={() => void loadPlaylist()} className="rounded-xl bg-cyan-400 px-4 py-2 text-sm font-bold text-slate-950">Thử lại</button>{contentError.includes("đăng nhập") && <Link href="/login" className="rounded-xl border border-white/15 px-4 py-2 text-sm font-bold text-white">Đăng nhập</Link>}</div>}
+  </div>;
 
   return (
     <div className="mx-auto w-full max-w-[1500px] animate-fadeIn">
@@ -190,14 +236,15 @@ export function PassiveListeningModule() {
         <div className="flex items-center gap-2"><span className="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-[11px] font-bold text-slate-300">{activeIndex + 1} / {playlist.length} video</span><button onClick={() => setShowPlaylist((value) => !value)} className="flex items-center gap-2 rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs font-bold text-slate-200 hover:bg-slate-800"><ListVideo className="h-4 w-4" />Danh sách</button></div>
       </header>
 
-      <div className="relative h-[min(76dvh,820px)] min-h-[470px] overflow-hidden rounded-[28px] border border-white/10 bg-black shadow-2xl shadow-black/40 sm:h-[min(78dvh,860px)]" onWheel={handleWheel} onTouchStart={(event) => { touchStartRef.current = event.touches[0]?.clientY ?? null; }} onTouchEnd={(event) => {
-        if (touchStartRef.current === null) return;
-        const delta = touchStartRef.current - (event.changedTouches[0]?.clientY ?? touchStartRef.current);
-        if (Math.abs(delta) > 55) changeLesson(activeIndexRef.current + (delta > 0 ? 1 : -1), true);
-        touchStartRef.current = null;
-      }}>
+      <div className="relative h-[min(76dvh,820px)] min-h-[470px] overflow-hidden rounded-[28px] border border-white/10 bg-black shadow-2xl shadow-black/40 sm:h-[min(78dvh,860px)]" onWheel={handleWheel}>
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#243041_0%,_#090b11_72%)]" />
         <div ref={playerHostRef} className="absolute inset-0 flex items-center justify-center [&>div]:h-full [&>div]:w-full [&_iframe]:h-full [&_iframe]:w-full" />
+        <div className="absolute inset-0 z-[1] touch-none" onTouchStart={(event) => { touchStartRef.current = event.touches[0]?.clientY ?? null; }} onTouchEnd={(event) => {
+          if (touchStartRef.current === null) return;
+          const delta = touchStartRef.current - (event.changedTouches[0]?.clientY ?? touchStartRef.current);
+          if (Math.abs(delta) > 55) changeLesson(activeIndexRef.current + (delta > 0 ? 1 : -1), true);
+          touchStartRef.current = null;
+        }} onClick={togglePlay} aria-label="Phát hoặc tạm dừng video" />
         {playerError && <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/80 p-8 text-center"><div><p className="mb-4 text-sm font-bold text-rose-200">{playerError}</p><a href={`https://www.youtube.com/watch?v=${current.videoId}`} target="_blank" rel="noreferrer" className="rounded-xl bg-white px-4 py-2 text-xs font-black text-slate-950">Mở trên YouTube ↗</a></div></div>}
 
         <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/70 to-transparent" />

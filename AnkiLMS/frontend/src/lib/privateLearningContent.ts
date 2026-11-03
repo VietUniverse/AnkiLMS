@@ -7,8 +7,26 @@ export type PrivateLearningContent = {
   curatedPractice: any[];
 };
 
+export type PrivateLearningContentResult =
+  | { ok: true; content: PrivateLearningContent }
+  | { ok: false; status: number };
+
 let contentPromise: Promise<PrivateLearningContent | null> | null = null;
 let ththPromise: Promise<any[] | null> | null = null;
+
+export async function fetchPrivateLearningContent(): Promise<PrivateLearningContentResult> {
+  try {
+    const response = await fetch("/api/learning-data?name=dictation-learning-content.json", {
+      credentials: "same-origin",
+      cache: "no-store",
+    });
+    if (!response.ok) return { ok: false, status: response.status };
+    const content = await response.json() as PrivateLearningContent;
+    return { ok: true, content };
+  } catch {
+    return { ok: false, status: 0 };
+  }
+}
 
 export function loadPrivateLearningContent(): Promise<PrivateLearningContent | null> {
   contentPromise ??= fetch("/api/learning-data?name=dictation-learning-content.json", { credentials: "same-origin" })
