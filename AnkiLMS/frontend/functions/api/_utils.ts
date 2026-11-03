@@ -43,7 +43,7 @@ export function jsonResponse(data: unknown, status = 200, headers: Record<string
       "X-Content-Type-Options": "nosniff",
       "X-Frame-Options": "DENY",
       "Referrer-Policy": "strict-origin-when-cross-origin",
-      "Strict-Transport-Security": "max-age=31536000",
+      "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
       ...headers,
     },
   });

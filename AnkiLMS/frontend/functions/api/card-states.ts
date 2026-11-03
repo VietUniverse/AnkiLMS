@@ -5,9 +5,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     const { request, env } = context;
     const user = await authenticateRequest(request, env);
 
-    if (!user) {
-      return jsonResponse({ cardStates: [] });
-    }
+    if (!user) return errorResponse("Chưa đăng nhập.", 401);
 
     const url = new URL(request.url);
     const deckId = url.searchParams.get("deckId");

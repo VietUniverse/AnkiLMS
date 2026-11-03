@@ -5,9 +5,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     const { request, env } = context;
     const user = await authenticateRequest(request, env);
 
-    if (!user) {
-      return jsonResponse({ checkins: [] });
-    }
+    if (!user) return errorResponse("Chưa đăng nhập.", 401);
 
     // Check-ins mark attendance only. Actual study time and card counts must
     // come from recorded study sessions, never from attendance defaults.
