@@ -68,7 +68,7 @@ export function HandwritingPractice({ word, revealed }: { word: string; revealed
       ref={canvasRef}
       aria-label="Bảng tập viết tiếng Hàn"
       className="h-56 w-full rounded-2xl border border-stone-300 bg-white touch-none dark:border-stone-700 dark:bg-stone-950"
-      onPointerDown={(event) => { drawingRef.current = true; event.currentTarget.setPointerCapture(event.pointerId); setStrokes((old) => [...old, [point(event)]]); }}
+      onPointerDown={(event) => { const next = point(event); drawingRef.current = true; event.currentTarget.setPointerCapture(event.pointerId); setStrokes((old) => [...old, [next]]); }}
       onPointerMove={(event) => { if (!drawingRef.current) return; const next = point(event); setStrokes((old) => { const copy = [...old]; copy[copy.length - 1] = [...copy[copy.length - 1], next]; return copy; }); }}
       onPointerUp={() => { drawingRef.current = false; }}
       onPointerCancel={() => { drawingRef.current = false; }}
