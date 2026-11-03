@@ -47,6 +47,15 @@ export function formatLocalDate(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
+/** Learning steps can be due later today; compare their exact time, not only the calendar day. */
+export function isFSRSCardDue(state: FSRSState, now = new Date()): boolean {
+  if (state.state === "learning" && state.dueAt) {
+    const dueAt = new Date(state.dueAt).getTime();
+    if (Number.isFinite(dueAt)) return dueAt <= now.getTime();
+  }
+  return state.dueDate <= formatLocalDate(now);
+}
+
 function legacyStateToFsrs(state: FSRSState["state"] | undefined): State {
   if (state === "review") return State.Review;
   if (state === "learning") return State.Learning;

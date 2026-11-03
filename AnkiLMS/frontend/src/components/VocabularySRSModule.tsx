@@ -28,7 +28,7 @@ import {
   Compass,
   ArrowRight,
 } from "lucide-react";
-import { ankiScheduleToFSRSState, calculateFSRS45, formatLocalDate, FSRSRating, FSRSState } from "../lib/fsrs45";
+import { ankiScheduleToFSRSState, calculateFSRS45, formatLocalDate, isFSRSCardDue, FSRSRating, FSRSState } from "../lib/fsrs45";
 import { ApiClient } from "../lib/apiClient";
 import { DailyLimitsPanel } from "./DailyLimitsPanel";
 import { useStudyBackground } from "../lib/studyBackground";
@@ -448,7 +448,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
   // Đếm trạng thái theo cùng nguồn FSRS dùng khi mở lượt học, không dùng danh sách legacy theo tên từ.
   const getDeckStats = useCallback((cards: VocabularyCard[]) => {
-    const today = formatLocalDate(new Date());
+    const now = new Date();
     const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1);
     const total = playableCards.length;
     if (total === 0) return { total: 0, mastered: 0, percent: 0, newCount: 0, reviewCount: 0 };
@@ -463,9 +463,11 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
         continue;
       }
       mastered += 1;
-      if (state.dueDate <= today) reviewCount += 1;
+      if (isFSRSCardDue(state, now)) reviewCount += 1;
     }
-    const percent = Math.min(100, Math.round((mastered / total) * 100));
+    // This column is today's queue completion, not lifetime familiarity.
+    const pending = newCount + reviewCount;
+    const percent = pending === 0 ? 100 : Math.min(99, Math.round(((total - pending) / total) * 100));
     return { total, mastered, percent, newCount, reviewCount };
   }, [cardStateMap]);
 
@@ -486,7 +488,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     if (!cards || cards.length === 0) return;
 
     // Lọc thẻ: chỉ lấy thẻ mới hoặc đến hạn, rồi áp giới hạn mỗi ngày (ôn lại trước, từ mới sau).
-    const todayStr = formatLocalDate(new Date());
+    const now = new Date();
     const progress = loadProgress();
     const newLeft = remaining(effectiveNewLimit(dailyLimits, progress), progress.newDone);
     const reviewLeft = remaining(dailyLimits.reviewPerDay, progress.reviewDone);
@@ -497,7 +499,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       if (c.ankiSchedule?.queue === -1) continue;
       const key = `${c.deckName || "deck"}_${c.id}`;
       const state = cardStateMap[key] || (c.ankiSchedule ? ankiScheduleToFSRSState(c.ankiSchedule) : undefined);
-      if (state && state.state !== "new" && state.dueDate > todayStr) continue;
+      if (state && state.state !== "new" && !isFSRSCardDue(state, now)) continue;
       (state && state.state !== "new" ? dueCards : newCards).push(c);
     }
     const activeList = [...dueCards.slice(0, reviewLeft), ...newCards.slice(0, newLeft)];
@@ -507,8 +509,10 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       setMorePrompt({ deckId, title, cards, available: newCards.length });
       return;
     }
-    if (activeList.length === 0 && dueCards.length + newCards.length > 0) {
-      setLimitNotice("Bạn đã đạt giới hạn học hôm nay. Phần còn lại sẽ chuyển sang ngày mai, hoặc tăng giới hạn ở mục tiêu hôm nay.");
+    if (activeList.length === 0) {
+      setLimitNotice(dueCards.length + newCards.length > 0
+        ? "Bạn đã đạt giới hạn học hôm nay. Phần còn lại sẽ chuyển sang ngày mai, hoặc tăng giới hạn ở mục tiêu hôm nay."
+        : "Bộ thẻ này đã hết thẻ cần học hôm nay. FSRS sẽ đưa thẻ trở lại khi đến hạn ôn.");
       return;
     }
     setLimitNotice(null);
@@ -914,7 +918,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
         <div
           onClick={() => startStudy(node.id, node.title, node.cards)}
           className={`group relative overflow-hidden flex items-center justify-between cursor-pointer hover:bg-stone-100/70 dark:hover:bg-stone-800/50 transition-colors ${indentClass}`}
-          title={`Bấm để học ${node.cards.length} từ trong ${node.title}`}
+          title={stats.newCount + stats.reviewCount === 0 ? "Không có thẻ đến hạn hôm nay" : `Bấm để học ${node.cards.length} từ trong ${node.title}`}
         >
           {/* Vạch pin tiến độ xanh ngọc */}
           <div
@@ -1274,26 +1278,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                     className="w-full sm:w-auto px-6 py-3 rounded-xl bg-stone-900 text-white dark:bg-emerald-500 dark:text-stone-950 font-bold text-xs sm:text-sm hover:opacity-90 transition cursor-pointer shadow-xs"
                   >
                     Trở về danh sách bộ thẻ
-                  </button>
-                  <button
-                    onClick={() => {
-                      const found = findNodeById(deckTree, lastStudiedDeckId || "");
-                      const all = found?.cards || [];
-                      if (all.length > 0) {
-                        setActiveCardsList(all);
-                        setCurrentCardIndex(0);
-                        setActiveStudySession({
-                          title: activeDeckTitle,
-                          onExit: exitStudy,
-                          studyMode,
-                          setStudyMode,
-                          progressText: `1 / ${all.length}`,
-                        });
-                      }
-                    }}
-                    className="w-full sm:w-auto px-5 py-3 rounded-xl border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 font-semibold text-xs sm:text-sm hover:bg-stone-100 dark:hover:bg-stone-800 transition cursor-pointer"
-                  >
-                    Ôn lại tự do
                   </button>
                 </div>
               </div>

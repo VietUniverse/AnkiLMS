@@ -44,12 +44,26 @@ export function PublicProfileModule({ profileId }: { profileId: string }) {
   useEffect(() => {
     if (!profileId) { setError("Không tìm thấy mã hồ sơ."); setLoading(false); return; }
     let active = true;
-    void fetch(`/api/profile?id=${encodeURIComponent(profileId)}`, { credentials: "same-origin", cache: "no-store" }).then(async (response) => {
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error || "Không xem được hồ sơ này.");
-      if (active) setData(result as ProfileData);
-    }).catch((cause) => { if (active) setError(cause instanceof Error ? cause.message : "Không tải được hồ sơ."); }).finally(() => { if (active) setLoading(false); });
-    return () => { active = false; };
+    const controller = new AbortController();
+    void (async () => {
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        const response = await fetch(`/api/profile?id=${encodeURIComponent(profileId)}`, {
+          credentials: "same-origin", cache: "no-store", headers: { Accept: "application/json" }, signal: controller.signal,
+        });
+        const contentType = response.headers.get("content-type") || "";
+        if (!contentType.includes("application/json")) {
+          if (attempt === 0) continue;
+          throw new Error("Máy chủ tạm thời không trả dữ liệu hồ sơ. Vui lòng tải lại trang.");
+        }
+        const result = await response.json() as ProfileData & { error?: string };
+        if (!response.ok) throw new Error(result.error || "Không xem được hồ sơ này.");
+        if (active) { setData(result); setError(""); }
+        return;
+      }
+    })().catch((cause) => {
+      if (active) setError(cause instanceof Error ? cause.message : "Không tải được hồ sơ.");
+    }).finally(() => { if (active) setLoading(false); });
+    return () => { active = false; controller.abort(); };
   }, [profileId]);
 
   if (loading) return <div className="mx-auto max-w-4xl animate-pulse rounded-3xl border border-slate-800 bg-slate-900 p-8 text-sm text-slate-400">Đang tải hồ sơ học viên…</div>;
