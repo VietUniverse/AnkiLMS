@@ -36,6 +36,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   let body: { email?: string; password?: string; name?: string; referralCode?: string; translationLanguage?: string; acceptPolicies?: boolean };
   let pendingUserId: string | null = null;
+  let stage = "rate-limit";
   try {
     const parsed: unknown = await request.json();
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return errorResponse("Yêu cầu không hợp lệ.", 400);
@@ -66,14 +67,18 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (!env.RESEND_API_KEY || !env.EMAIL_FROM || !env.SESSIONS) return errorResponse("Xác minh email chưa được cấu hình. Vui lòng thử lại sau.", 503);
 
     const referralCode = typeof body.referralCode === "string" ? body.referralCode.trim() : "";
+    stage = "referral-lookup";
     const referrer = referralCode.length <= 80 && referralCode ? await env.DB.prepare("SELECT id FROM users WHERE id = ?").bind(referralCode).first<{ id: string }>() : null;
 
+    stage = "existing-account-lookup";
     const existing = await env.DB.prepare("SELECT id, email_verified FROM users WHERE email = ?").bind(email).first<{ id: string; email_verified: number }>();
     if (existing?.email_verified !== 0 && existing) return errorResponse("Không thể tạo tài khoản với thông tin này.", 400);
     if (existing) await env.DB.prepare("DELETE FROM users WHERE id = ? AND email_verified = 0").bind(existing.id).run();
 
     const userId = `usr_${crypto.randomUUID()}`;
+    stage = "password-hash";
     const passHash = await hashPassword(password);
+    stage = "account-insert";
     await env.DB.prepare(
       `INSERT INTO users (id, email, password_hash, name, translation_language, streak, longest_streak, xp, gems, level, referred_by,
         email_verified, terms_accepted_version, privacy_accepted_version, policies_accepted_at)
@@ -82,12 +87,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     pendingUserId = userId;
 
     const rawToken = Array.from(crypto.getRandomValues(new Uint8Array(32)), (byte) => byte.toString(16).padStart(2, "0")).join("");
+    stage = "verification-token-store";
     const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(rawToken));
     const tokenHash = Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
     await env.SESSIONS.put(`email_verify:${tokenHash}`, userId, { expirationTtl: 86_400 });
     const siteUrl = new URL(env.SITE_URL || new URL(request.url).origin);
     const verificationLink = new URL(`/api/auth/verify-email?token=${rawToken}`, siteUrl).toString();
     try {
+      stage = "verification-email";
       await sendVerificationEmail(env, email, name, verificationLink);
     } catch (error) {
       await env.SESSIONS.delete(`email_verify:${tokenHash}`);
@@ -98,8 +105,13 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     }
     pendingUserId = null;
     return jsonResponse({ verificationRequired: true, message: "Đã gửi email xác minh. Hãy mở hộp thư và bấm liên kết để kích hoạt tài khoản." }, 202);
-  } catch {
+  } catch (error) {
     if (pendingUserId) await env.DB.prepare("DELETE FROM users WHERE id = ? AND email_verified = 0").bind(pendingUserId).run().catch(() => undefined);
+    const message = error instanceof Error ? error.message : "unknown";
+    console.error("Registration failed", { stage, error: message.slice(0, 240) });
+    if (/daily row read limit|exceeded D1's free tier/i.test(message)) {
+      return errorResponse("Hệ thống đăng ký đang tạm quá hạn mức dữ liệu hôm nay. Vui lòng thử lại sau khi hạn mức Cloudflare được làm mới.", 503);
+    }
     return errorResponse("Không thể tạo tài khoản lúc này. Vui lòng thử lại.", 500);
   }
 };

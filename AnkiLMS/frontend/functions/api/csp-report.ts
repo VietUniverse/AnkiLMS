@@ -13,8 +13,9 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     const attempts = await recordAttempt(env, `csp-ip:${await rateKey(clientIp)}`, 60);
     if (attempts > 10) return jsonResponse({ error: "Đã nhận quá nhiều báo cáo CSP." }, 429, { "Retry-After": "60" });
   } catch {
-    // Fail closed: do not accept unbounded reports if the limiter is unavailable.
-    return new Response(null, { status: 503, headers: { "Cache-Control": "no-store" } });
+    // Do not process or persist reports without the limiter. Returning 204
+    // avoids browser retry noise when D1 is temporarily unavailable or over quota.
+    return new Response(null, { status: 204, headers: { "Cache-Control": "no-store" } });
   }
 
   if (Number(request.headers.get("Content-Length") || 0) > 4096) return errorResponse("Nội dung gửi lên quá lớn.", 413);

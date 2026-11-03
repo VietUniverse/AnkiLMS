@@ -15,7 +15,11 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const nonce = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(24))));
   const policy = [
     "default-src 'self'",
-    `script-src 'nonce-${nonce}' 'strict-dynamic'`,
+    // Static Next.js exports create same-origin chunk scripts at runtime. Keep
+    // nonce protection for inline scripts while allowing those local chunks;
+    // strict-dynamic makes browsers ignore 'self' and can block them when a
+    // cached bootstrap carries a different nonce.
+    `script-src 'self' 'nonce-${nonce}'`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: https://img.youtube.com https://i.ytimg.com https://*.googleusercontent.com",
     "font-src 'self' data:",
