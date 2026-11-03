@@ -447,7 +447,74 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       });
       });
 
-      rootNodes.push(...userNodes);
+      // Older Anki imports were saved as one user deck per full subdeck name
+      // (for example "Tiếng Hàn Tổng Hợp::Quyển 01::Bài 01"). Present them as
+      // one curriculum tree instead of flooding the top-level deck list.
+      const ththRoots = userNodes.filter((node) => node.title === "Tiếng Hàn Tổng Hợp" || node.title.startsWith("Tiếng Hàn Tổng Hợp::"));
+      const otherUserRoots = userNodes.filter((node) => !ththRoots.includes(node));
+
+      if (ththRoots.length > 0) {
+        type ThthBranch = {
+          title: string;
+          path: string;
+          cards: VocabularyCard[];
+          children: Map<string, ThthBranch>;
+          source?: DeckTreeNode;
+        };
+        const ththRoot: ThthBranch = {
+          title: "Tiếng Hàn Tổng Hợp",
+          path: "",
+          cards: [],
+          children: new Map(),
+        };
+
+        for (const source of ththRoots) {
+          const parts = source.title === "Tiếng Hàn Tổng Hợp"
+            ? []
+            : source.title.slice("Tiếng Hàn Tổng Hợp::".length).split("::").filter(Boolean);
+          let branch = ththRoot;
+          const pathParts: string[] = [];
+          branch.cards.push(...source.cards);
+          for (const part of parts) {
+            pathParts.push(part);
+            let child = branch.children.get(part);
+            if (!child) {
+              child = { title: part, path: pathParts.join("::"), cards: [], children: new Map() };
+              branch.children.set(part, child);
+            }
+            branch = child;
+            branch.cards.push(...source.cards);
+          }
+          branch.source = source;
+        }
+
+        const buildThthChildren = (branch: ThthBranch): DeckTreeNode[] => [...branch.children.values()]
+          .sort((a, b) => a.title.localeCompare(b.title, "ko", { numeric: true }))
+          .map((child) => {
+            const children = [...(child.source?.children || []), ...buildThthChildren(child)];
+            return {
+              id: child.source?.id || `user-thth-${toSlug(child.path)}`,
+              title: child.title,
+              subtitle: child.source?.subtitle,
+              cards: child.cards,
+              children: children.length > 0 ? children : undefined,
+            };
+          });
+
+        const ththSource = ththRoots.find((node) => node.title === "Tiếng Hàn Tổng Hợp");
+        rootNodes.push({
+          id: ththSource?.id || "user-thth-root",
+          title: "Tiếng Hàn Tổng Hợp",
+          subtitle: "Giáo trình · chọn quyển và bài để học",
+          cards: ththRoot.cards,
+          children: [
+            ...(ththSource?.children || []),
+            ...buildThthChildren(ththRoot),
+          ],
+        });
+      }
+
+      rootNodes.push(...otherUserRoots);
     }
 
     return rootNodes;
