@@ -32,6 +32,7 @@ export function PassiveListeningModule() {
   const [playing, setPlaying] = useState(false);
   const [rate, setRate] = useState(1);
   const [muted, setMuted] = useState(true);
+  const mutedRef = useRef(true);
   const [captionsOn, setCaptionsOn] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [completed, setCompleted] = useState<string[]>([]);
@@ -114,7 +115,16 @@ export function PassiveListeningModule() {
     setCurrentTime(lesson.startSec);
     setPlayerError("");
     if (playerRef.current) {
+      if (mutedRef.current) playerRef.current.mute();
+      else playerRef.current.unMute();
       playerRef.current.loadVideoById({ videoId: lesson.videoId, startSeconds: lesson.startSec, endSeconds: lesson.endSec });
+      // YouTube may reapply the autoplay mute while loading a new video.
+      window.setTimeout(() => {
+        const player = playerRef.current;
+        if (!player) return;
+        if (mutedRef.current) player.mute();
+        else player.unMute();
+      }, 150);
       if (autoplay) playerRef.current.playVideo();
       else playerRef.current.pauseVideo();
     }
@@ -148,11 +158,16 @@ export function PassiveListeningModule() {
         events: {
           onReady: (event: { target: Player }) => {
             event.target.setPlaybackRate(rate);
-            event.target.mute();
+            if (mutedRef.current) event.target.mute();
+            else event.target.unMute();
             if (autoPlayRef.current) event.target.playVideo();
           },
           onStateChange: (event: { data: number }) => {
-            if (event.data === 1) setPlaying(true);
+            if (event.data === 1) {
+              setPlaying(true);
+              if (mutedRef.current) playerRef.current?.mute();
+              else playerRef.current?.unMute();
+            }
             if (event.data === 2 || event.data === 0) setPlaying(false);
             if (event.data === 0) {
               markCompleted(currentRef.current);
@@ -218,6 +233,7 @@ export function PassiveListeningModule() {
 
   const toggleMute = () => {
     const next = !muted;
+    mutedRef.current = next;
     setMuted(next);
     if (next) playerRef.current?.mute(); else playerRef.current?.unMute();
   };
@@ -232,7 +248,7 @@ export function PassiveListeningModule() {
   return (
     <div className="mx-auto w-full max-w-[1500px] animate-fadeIn">
       <header className="mb-3 flex flex-wrap items-center justify-between gap-3 px-1">
-        <div><p className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.22em] text-cyan-300"><Headphones className="h-4 w-4" /> HaechiVN · Nghe thụ động</p><h1 className="mt-1 text-xl font-black text-white sm:text-2xl">Lướt để nghe tiếng Hàn</h1></div>
+        <div><p className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.22em] text-cyan-300"><Headphones className="h-4 w-4" /> HaechiVN · Nghe thụ động</p><h1 className="mt-1 text-xl font-black text-white sm:text-2xl">Lướt để nghe tiếng Hàn</h1><p className="mt-1 max-w-2xl text-xs text-slate-300">Video tự phát khi mở hoặc chuyển bài. Nếu video bắt đầu im lặng, chạm nút loa để bật tiếng; lựa chọn âm thanh sẽ được giữ cho video tiếp theo.</p></div>
         <div className="flex items-center gap-2"><span className="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-[11px] font-bold text-slate-300">{activeIndex + 1} / {playlist.length} video</span><button onClick={() => setShowPlaylist((value) => !value)} className="flex items-center gap-2 rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs font-bold text-slate-200 hover:bg-slate-800"><ListVideo className="h-4 w-4" />Danh sách</button></div>
       </header>
 
