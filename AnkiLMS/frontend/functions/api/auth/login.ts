@@ -5,7 +5,14 @@ const INVALID_CREDENTIALS = "Email hoặc mật khẩu không chính xác.";
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
-  if (!isSameOriginRequest(request)) return errorResponse("Yêu cầu không hợp lệ.", 403);
+  const origin = request.headers.get("Origin");
+  const contentType = request.headers.get("Content-Type")?.split(";", 1)[0].trim().toLowerCase();
+  if (contentType !== "application/json") return errorResponse("Chỉ chấp nhận nội dung JSON.", 415);
+  // A browser form can submit text/plain cross-site without a CORS preflight.
+  // Only accept JSON from this exact origin, and reject cross-site fetches.
+  if (!origin || origin !== new URL(request.url).origin || !isSameOriginRequest(request) || request.headers.get("Sec-Fetch-Site") === "cross-site") {
+    return errorResponse("Yêu cầu không hợp lệ.", 403);
+  }
   if (Number(request.headers.get("Content-Length") || 0) > 8_192) return errorResponse("Nội dung gửi lên quá lớn.", 413);
 
   let stage = "request";
