@@ -82,6 +82,16 @@ export function PassiveListeningModule() {
           segments,
         });
       }
+      const passiveVideos = Array.isArray(result.content.passiveListeningVideos)
+        ? result.content.passiveListeningVideos as Lesson[]
+        : [];
+      const knownIds = new Set(lessons.map((lesson) => lesson.id));
+      for (const lesson of passiveVideos) {
+        if (lesson?.id && lesson.videoId && !knownIds.has(lesson.id)) {
+          lessons.push(lesson);
+          knownIds.add(lesson.id);
+        }
+      }
       lessons.sort((a, b) => a.topikLevel - b.topikLevel || a.title.localeCompare(b.title));
       playlistRef.current = lessons;
       setPlaylist(lessons);

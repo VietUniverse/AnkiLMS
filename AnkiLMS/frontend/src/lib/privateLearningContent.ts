@@ -1,5 +1,6 @@
 export type PrivateLearningContent = {
   topikLessons: any[];
+  passiveListeningVideos?: any[];
   scriptFolderLessons: any[];
   videoDictationSources: any[];
   wordGlossary: Record<string, { vi: string; en: string; ja?: string }>;
