@@ -11,8 +11,8 @@ import { syncManagedDecks } from "../lib/deckSync";
 export interface StudySessionInfo {
   title: string;
   onExit: () => void;
-  studyMode?: "flip" | "typing";
-  setStudyMode?: (mode: "flip" | "typing") => void;
+  studyMode?: "flip" | "typing" | "handwriting";
+  setStudyMode?: (mode: "flip" | "typing" | "handwriting") => void;
   progressText?: string;
   /** Chữ trên nút quay lại ở thanh trên (mặc định "Trở về"). */
   backLabel?: string;

@@ -37,6 +37,7 @@ import { speakKorean } from "../lib/koreanSpeech";
 import { inferTopikLevel, getCourseRank } from "../lib/studyRanks";
 import { LockKeyhole, Globe2 } from "lucide-react";
 import { VocabularySizeTest } from "./VocabularySizeTest";
+import { HandwritingPractice } from "./HandwritingPractice";
 
 interface VocabularySRSModuleProps {
   userDecks?: AnkiDeck[];
@@ -144,7 +145,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   }, []);
   // Navigation View: "dashboard" (Lộ trình cây bài học) | "study" (Màn hình học)
   const [viewMode, setViewMode] = useState<"dashboard" | "study">(initialViewMode);
-  const [studyMode, setStudyMode] = useState<"flip" | "typing">("flip");
+  const [studyMode, setStudyMode] = useState<"flip" | "typing" | "handwriting">("flip");
 
   // Selected Deck and Lesson
   const [activeDeckTitle, setActiveDeckTitle] = useState<string>("1. Quốc gia (나라)");
@@ -711,6 +712,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   // Handle Response (Quên: false | Thuộc: true)
   const handleResponse = useCallback((isMastered: boolean, customRating?: FSRSRating) => {
     if (!currentCard) return;
+    if (studyMode === "typing" && isMastered && typedInput.trim().normalize("NFC") !== cleanTextOnly(currentCard.word).normalize("NFC")) return;
     const wordKey = currentCard.word;
     const activeKey = `${currentCard.deckName || "deck"}_${currentCard.id}`;
     if (lastRatedCardRef.current === activeKey || Date.now() - answerShownAtRef.current < 450) return;
@@ -805,7 +807,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       finishSrsActivity();
       setViewMode("dashboard");
     }
-  }, [currentCard, cardStateMap, currentUser, activeDeckTitle, currentCardIndex, activeCardsList.length, finishSrsActivity, ownedDecks, setUserDecks]);
+  }, [currentCard, cardStateMap, currentUser, activeDeckTitle, currentCardIndex, activeCardsList.length, finishSrsActivity, ownedDecks, setUserDecks, studyMode, typedInput]);
 
   // Give typing hint
   const handleGiveHint = () => {
@@ -1118,8 +1120,9 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
                     <button
                       onClick={() => handleResponse(true)}
+                      disabled={studyMode === "typing" && typedInput.trim().normalize("NFC") !== cleanTextOnly(currentCard?.word).normalize("NFC")}
                       style={{ color: "#fff" }}
-                      className="h-12 rounded-xl bg-emerald-500 hover:bg-emerald-600 font-bold text-sm flex items-center justify-center gap-2 transition cursor-pointer"
+                      className="h-12 rounded-xl bg-emerald-500 hover:bg-emerald-600 font-bold text-sm flex items-center justify-center gap-2 transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                       <span>Thuộc</span>
                       <kbd className="hidden sm:inline font-mono text-[10px] opacity-80 ml-1">T / 2 / Space (→)</kbd>
@@ -1285,6 +1288,14 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
           ) : currentCard ? (
             <div className="min-h-[calc(100vh-140px)] flex flex-col justify-between py-2 pb-28 animate-reveal">
               <div className="flex-1 flex flex-col">
+
+            <div className="mb-4 grid grid-cols-3 gap-2 rounded-2xl border border-stone-200 bg-white p-1.5 dark:border-stone-800 dark:bg-[#141b2d]" aria-label="Chế độ học thẻ">
+              {([
+                ["flip", "Nhìn chữ đoán nghĩa"],
+                ["typing", "Nhìn nghĩa gõ chữ"],
+                ["handwriting", "Tập viết tay"],
+              ] as const).map(([mode, label]) => <button key={mode} type="button" aria-pressed={studyMode === mode} onClick={() => { setStudyMode(mode); setIsFlipped(false); setTypedInput(""); }} className={`rounded-xl px-2 py-2.5 text-[11px] font-bold sm:text-xs ${studyMode === mode ? "bg-sky-600 text-white" : "text-stone-600 hover:bg-stone-100 dark:text-stone-300 dark:hover:bg-stone-800"}`}>{label}</button>)}
+            </div>
 
             {/* CHẾ ĐỘ 1: THẺ NHẬN DIỆN PHẲNG REVEAL (2 CỘT DESKTOP) */}
             {studyMode === "flip" && (
@@ -1511,11 +1522,21 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                           <span>Gợi ý 1 ký tự</span>
                         </button>
                       </div>
+                      {isFlipped && <div role="status" className={`rounded-xl p-3 text-sm font-bold ${typedInput.trim().normalize("NFC") === cleanTextOnly(currentCard.word).normalize("NFC") ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300" : "bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300"}`}>
+                        {typedInput.trim().normalize("NFC") === cleanTextOnly(currentCard.word).normalize("NFC") ? "Đúng rồi" : "Chưa đúng"} · {cleanTextOnly(currentCard.word)}
+                      </div>}
                     </div>
                   </div>
                 </div>
               </div>
             )}
+
+            {studyMode === "handwriting" && <div className="mb-5 space-y-4 rounded-[24px] border border-stone-200 bg-white p-5 shadow-xs dark:border-stone-800 dark:bg-[#141b2d] sm:p-8">
+              <div><span className="pos-chip">{currentCard.pos || "Từ vựng"}</span><div className="mt-3 text-xl font-bold text-stone-900 dark:text-stone-100" dangerouslySetInnerHTML={{ __html: cleanHtmlText(currentCard.meaning) }} /></div>
+              <p className="text-xs text-stone-500 dark:text-stone-400">Viết từ tiếng Hàn bằng ngón tay hoặc chuột. Bấm hiện nét mẫu nếu cần, rồi tự đối chiếu trước khi chọn Quên hoặc Thuộc.</p>
+              <HandwritingPractice word={cleanTextOnly(currentCard.word)} revealed={isFlipped} />
+              {isFlipped && <div className="rounded-xl bg-emerald-50 p-3 text-center text-2xl font-bold text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">{cleanTextOnly(currentCard.word)}</div>}
+            </div>}
 
             {/* ========================================================
                 NÚT HÀNH ĐỘNG DƯỚI THẺ (SHOW ANSWER vs GRADE BUTTONS)
