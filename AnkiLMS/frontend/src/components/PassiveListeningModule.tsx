@@ -39,6 +39,7 @@ export function PassiveListeningModule() {
   const [showPlaylist, setShowPlaylist] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [playerError, setPlayerError] = useState("");
+  const [listenNotice, setListenNotice] = useState("");
   const [contentLoading, setContentLoading] = useState(true);
   const [contentError, setContentError] = useState("");
   const playerRef = useRef<Player | null>(null);
@@ -49,6 +50,8 @@ export function PassiveListeningModule() {
   const wheelLockRef = useRef(false);
   const recordedRef = useRef<Set<string>>(new Set());
   const completedRef = useRef<Set<string>>(new Set());
+  const listeningRef = useRef(new Map<string, { mediaSeconds: number; activeSeconds: number }>());
+  const playbackSampleRef = useRef<{ lessonId: string; mediaTime: number; wallTime: number } | null>(null);
 
   const loadPlaylist = useCallback(async () => {
     setContentLoading(true);
@@ -121,6 +124,8 @@ export function PassiveListeningModule() {
     if (!lesson) return;
     activeIndexRef.current = bounded;
     autoPlayRef.current = autoplay;
+    playbackSampleRef.current = null;
+    setListenNotice("");
     setActiveIndex(bounded);
     setCurrentTime(lesson.startSec);
     setPlayerError("");
@@ -143,13 +148,28 @@ export function PassiveListeningModule() {
   }, []);
 
   const markCompleted = useCallback((lesson: Lesson) => {
-    if (completedRef.current.has(lesson.id)) return;
+    if (completedRef.current.has(lesson.id)) return true;
+    const listened = listeningRef.current.get(lesson.id);
+    const watchedRatio = (listened?.mediaSeconds || 0) / Math.max(1, lesson.durationSec);
+    if (watchedRatio < 0.8) {
+      setListenNotice("Hãy nghe ít nhất 80% video để ghi nhận bài học và thời gian học.");
+      return false;
+    }
+    const activeSeconds = Math.floor(listened?.activeSeconds || 0);
+    if (activeSeconds < 10) {
+      setListenNotice("Chưa đủ thời gian nghe để ghi nhận phiên học.");
+      return false;
+    }
     completedRef.current.add(lesson.id);
     setCompleted(Array.from(completedRef.current));
+    setListenNotice("");
     if (!recordedRef.current.has(lesson.id)) {
       recordedRef.current.add(lesson.id);
-      void ApiClient.recordStudySession("passive_listening", 1, 1, 0, Math.max(1, Math.round(lesson.durationSec)));
+      // Record time actually spent listening; the source video's advertised
+      // duration is not evidence that the learner played through it.
+      void ApiClient.recordStudySession("passive_listening", 1, 1, 0, Math.min(14_400, activeSeconds));
     }
+    return true;
   }, []);
 
   useEffect(() => {
@@ -175,10 +195,18 @@ export function PassiveListeningModule() {
           onStateChange: (event: { data: number }) => {
             if (event.data === 1) {
               setPlaying(true);
+              playbackSampleRef.current = {
+                lessonId: currentRef.current.id,
+                mediaTime: playerRef.current?.getCurrentTime() || 0,
+                wallTime: performance.now(),
+              };
               if (mutedRef.current) playerRef.current?.mute();
               else playerRef.current?.unMute();
             }
-            if (event.data === 2 || event.data === 0) setPlaying(false);
+            if (event.data === 2 || event.data === 0) {
+              setPlaying(false);
+              playbackSampleRef.current = null;
+            }
             if (event.data === 0) {
               markCompleted(currentRef.current);
               changeLesson(activeIndexRef.current + 1, true);
@@ -193,6 +221,21 @@ export function PassiveListeningModule() {
         const time = player.getCurrentTime();
         setCurrentTime(time);
         const lesson = currentRef.current;
+        const now = performance.now();
+        const previousSample = playbackSampleRef.current;
+        if (previousSample?.lessonId === lesson.id) {
+          const elapsed = (now - previousSample.wallTime) / 1000;
+          const mediaDelta = time - previousSample.mediaTime;
+          // Ignore seeking, stalled playback, and background-tab timer jumps.
+          if (elapsed > 0 && elapsed <= 2.5 && mediaDelta > 0 && mediaDelta <= 5) {
+            const prior = listeningRef.current.get(lesson.id) || { mediaSeconds: 0, activeSeconds: 0 };
+            listeningRef.current.set(lesson.id, {
+              mediaSeconds: prior.mediaSeconds + mediaDelta,
+              activeSeconds: prior.activeSeconds + elapsed,
+            });
+          }
+        }
+        playbackSampleRef.current = { lessonId: lesson.id, mediaTime: time, wallTime: now };
         if (time >= lesson.endSec - 0.25) {
           markCompleted(lesson);
           changeLesson(activeIndexRef.current + 1, true);
@@ -297,6 +340,7 @@ export function PassiveListeningModule() {
         </div>
 
         <div className="absolute bottom-2 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 text-[10px] font-bold text-white/65"><ArrowUp className="h-3 w-3" /> Vuốt lên để xem bài tiếp theo <ArrowDown className="h-3 w-3" /></div>
+        {listenNotice && <div className="absolute bottom-10 left-1/2 z-20 -translate-x-1/2 rounded-xl bg-slate-950/90 px-3 py-2 text-center text-xs font-bold text-amber-200 shadow-lg">{listenNotice}</div>}
 
         {showPlaylist && <div className="absolute inset-0 z-30 bg-black/65 backdrop-blur-sm" onClick={() => setShowPlaylist(false)}><aside className="absolute bottom-0 right-0 top-0 flex w-full max-w-sm flex-col border-l border-white/10 bg-slate-950/95 p-4" onClick={(event) => event.stopPropagation()}><div className="mb-4 flex items-center justify-between"><div><p className="text-[10px] font-black uppercase tracking-widest text-cyan-300">Danh sách phát</p><h3 className="mt-1 text-lg font-black text-white">Video luyện nghe</h3></div><button onClick={() => setShowPlaylist(false)} className="rounded-lg bg-white/10 p-2 text-white" aria-label="Đóng danh sách"><ChevronDown className="h-5 w-5" /></button></div><div className="flex-1 space-y-2 overflow-y-auto">{playlist.map((lesson, index) => <button key={lesson.id} onClick={() => changeLesson(index, true)} className={`w-full rounded-xl border p-3 text-left ${index === activeIndex ? "border-cyan-300/50 bg-cyan-300/10" : "border-white/5 bg-white/[0.03] hover:bg-white/[0.07]"}`}><div className="flex items-center justify-between gap-2"><p className="line-clamp-1 text-xs font-bold text-white">{lesson.title.replace(/^Bài \d+:\s*/, "")}</p>{completed.includes(lesson.id) && <Check className="h-4 w-4 shrink-0 text-emerald-300" />}</div><p className="mt-1 text-[10px] text-slate-500">TOPIK {lesson.topikLevel} · {formatDuration(lesson.durationSec)}{lesson.segments?.length ? ` · ${lesson.segments.length} câu` : " · Nghe trọn video"}</p></button>)}</div><Link href="/dictation" className="mt-3 rounded-xl bg-cyan-400/10 px-3 py-3 text-center text-xs font-bold text-cyan-200">Luyện nghe chép chính tả →</Link></aside></div>}
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getLunarDate, formatLunarCellText } from "@/lib/lunarCalendar";
@@ -618,12 +619,17 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
       </div>
 
       {/* --- Floating Tooltip --- */}
-      {hoveredCell && (
+      {hoveredCell && typeof document !== "undefined" && createPortal(
         <div
           className="fixed pointer-events-none z-50 transform -translate-x-1/2 -translate-y-full mb-2 bg-[#0c1017] text-white rounded-lg px-3 py-2 shadow-2xl text-xs space-y-0.5 animate-fadeIn border-0"
           style={{
-            left: hoveredCell.x,
-            top: hoveredCell.y - 8,
+            left: (() => {
+              const viewportWidth = window.innerWidth;
+              const halfTooltipWidth = Math.min(160, Math.max(0, (viewportWidth - 24) / 2));
+              return Math.max(12 + halfTooltipWidth, Math.min(viewportWidth - 12 - halfTooltipWidth, hoveredCell.x));
+            })(),
+            top: Math.max(hoveredCell.y - 8, 140),
+            width: "min(320px, calc(100vw - 24px))",
           }}
         >
           <p className="font-bold text-sky-400 flex items-center gap-1.5 flex-wrap">
@@ -644,7 +650,8 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
           ) : (
             <p className="text-slate-400 italic">Chưa có hoạt động học</p>
           )}
-        </div>
+        </div>,
+        document.body,
       )}
     </div>
   );
