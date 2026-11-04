@@ -51,7 +51,7 @@ export default function ExplorePage() {
       if (mounted) setCourseDecks(data?.decks || []);
     });
     return () => { mounted = false; };
-  }, [currentUser?.id]);
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -59,7 +59,7 @@ export default function ExplorePage() {
       if (mounted) setSeoul1ADeck(deck);
     });
     return () => { mounted = false; };
-  }, [currentUser?.id]);
+  }, []);
 
   useEffect(() => {
     let mounted = true;

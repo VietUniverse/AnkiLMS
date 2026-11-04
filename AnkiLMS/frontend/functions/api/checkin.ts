@@ -1,4 +1,4 @@
-import { Env, UserRow, jsonResponse, errorResponse, authenticateRequest, isSameOriginRequest } from "./_utils";
+import { Env, UserRow, jsonResponse, errorResponse, authenticateRequest, isSameOriginRequest, refreshUserStreak } from "./_utils";
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   try {
@@ -21,34 +21,18 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       .first();
 
     if (existing) {
+      const streakState = await refreshUserStreak(env, user.id);
       return jsonResponse({
         alreadyCheckedIn: true,
         message: "Bạn đã điểm danh hôm nay rồi!",
         user: {
-          streak: user.streak,
+          ...streakState,
           xp: user.xp,
           gems: user.gems,
         },
       });
     }
 
-    // Calculate streak continuity
-    let newStreak = 1;
-    if (user.last_checkin_date) {
-      const lastDate = new Date(user.last_checkin_date);
-      const todayDate = new Date(todayStr);
-      const diffDays = Math.round((todayDate.getTime() - lastDate.getTime()) / (1000 * 3600 * 24));
-
-      if (diffDays === 1) {
-        newStreak = user.streak + 1;
-      } else if (diffDays === 0) {
-        newStreak = user.streak;
-      } else {
-        newStreak = 1;
-      }
-    }
-
-    const newLongestStreak = Math.max(user.longest_streak || 1, newStreak);
     const rewardXp = 1;
     const newXp = user.xp + rewardXp;
     const newGems = user.gems + 1;
@@ -63,9 +47,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     const updateUser = env.DB.prepare(
       `UPDATE users
-       SET streak = ?, longest_streak = ?, xp = ?, gems = ?, level = ?, last_checkin_date = ?
+       SET xp = ?, gems = ?, level = ?, last_checkin_date = ?
        WHERE id = ?`
-    ).bind(newStreak, newLongestStreak, newXp, newGems, newLevel, todayStr, user.id);
+    ).bind(newXp, newGems, newLevel, todayStr, user.id);
 
     try {
       await env.DB.batch([insertCheckin, updateUser]);
@@ -75,15 +59,18 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         .bind(user.id, todayStr)
         .first();
       if (duplicate) {
+        const streakState = await refreshUserStreak(env, user.id);
         const latestUser = await env.DB.prepare("SELECT streak, xp, gems FROM users WHERE id = ?").bind(user.id).first<UserRow>();
         return jsonResponse({
           alreadyCheckedIn: true,
           message: "Bạn đã điểm danh hôm nay rồi!",
-          user: { streak: latestUser?.streak ?? user.streak, xp: latestUser?.xp ?? user.xp, gems: latestUser?.gems ?? user.gems },
+          user: { ...streakState, xp: latestUser?.xp ?? user.xp, gems: latestUser?.gems ?? user.gems },
         });
       }
       throw new Error("checkin_transaction_failed");
     }
+
+    const streakState = await refreshUserStreak(env, user.id);
 
     return jsonResponse({
       alreadyCheckedIn: false,
@@ -92,8 +79,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       rewardGems: 1,
       user: {
         id: user.id,
-        streak: newStreak,
-        longest_streak: newLongestStreak,
+        ...streakState,
         xp: newXp,
         gems: newGems,
         level: newLevel,

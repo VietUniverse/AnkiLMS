@@ -1,4 +1,4 @@
-import { Env, jsonResponse, errorResponse, authenticateRequest, isSameOriginRequest } from "./_utils";
+import { Env, jsonResponse, errorResponse, authenticateRequest, isSameOriginRequest, refreshUserStreak } from "./_utils";
 
 const MODULES = new Set(["srs", "dictation", "shadowing", "passive_listening", "topik", "hangeul", "speaking", "game_quiz", "game_spell", "game_match", "game_korean_shooter"]);
 const MODULE_TO_MISSION: Record<string, "vocabulary" | "shadowing" | "dictation"> = {
@@ -108,6 +108,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       : null;
 
     await env.DB.batch([insertSession, updateUser, updateCheckin, ...(missionClaim ? [missionClaim] : []), ...(missionReward ? [missionReward] : [])]);
+    const streakState = await refreshUserStreak(env, user.id);
     const missionAward = missionClaimId
       ? await env.DB.prepare("SELECT mission_id FROM daily_mission_claims WHERE id = ? AND user_id = ?").bind(missionClaimId, user.id).first<{ mission_id: string }>()
       : null;
@@ -118,7 +119,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       xpEarned,
       gemsEarned: gemsEarned + (missionAward ? DAILY_MISSION_GEM_REWARD : 0),
       dailyMission: missionAward ? { id: missionAward.mission_id, gemsAwarded: DAILY_MISSION_GEM_REWARD } : null,
-      user: { id: user.id, ...updatedUser },
+      user: { id: user.id, ...updatedUser, ...streakState },
     });
   } catch {
     return errorResponse("Không thể lưu phiên học lúc này. Tiến độ sẽ được thử đồng bộ lại.", 500);

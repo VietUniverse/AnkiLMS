@@ -1,4 +1,4 @@
-import { Env, jsonResponse, errorResponse, authenticateRequest } from "../_utils";
+import { Env, jsonResponse, errorResponse, authenticateRequest, refreshUserStreak } from "../_utils";
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   try {
@@ -9,6 +9,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       return errorResponse("Chưa đăng nhập hoặc phiên hết hạn.", 401);
     }
 
+    const streakState = await refreshUserStreak(env, user.id);
+
     return jsonResponse({
       user: {
         id: user.id,
@@ -18,8 +20,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
         bio: user.bio || null,
         profile_public: user.profile_public ?? 1,
         translation_language: user.translation_language || "vi",
-        streak: user.streak,
-        longest_streak: user.longest_streak,
+        ...streakState,
         xp: user.xp,
         gems: user.gems,
         level: user.level,

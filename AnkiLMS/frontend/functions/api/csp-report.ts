@@ -1,5 +1,5 @@
 import type { Env } from "./_utils";
-import { errorResponse, jsonResponse } from "./_utils";
+import { errorResponse } from "./_utils";
 import { rateKey, recordAttempt } from "./auth/_rateLimit";
 
 export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
@@ -11,7 +11,10 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   try {
     const clientIp = request.headers.get("CF-Connecting-IP") || "unknown";
     const attempts = await recordAttempt(env, `csp-ip:${await rateKey(clientIp)}`, 60);
-    if (attempts > 10) return jsonResponse({ error: "Đã nhận quá nhiều báo cáo CSP." }, 429, { "Retry-After": "60" });
+    // CSP reports are fire-and-forget browser telemetry. Do not return 429:
+    // browsers surface that response as a page error, which creates noise
+    // without helping the user. The per-IP limiter still prevents D1 writes.
+    if (attempts > 10) return new Response(null, { status: 204, headers: { "Cache-Control": "no-store" } });
   } catch {
     // Do not process or persist reports without the limiter. Returning 204
     // avoids browser retry noise when D1 is temporarily unavailable or over quota.

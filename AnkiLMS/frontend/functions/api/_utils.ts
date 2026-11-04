@@ -38,6 +38,59 @@ export interface UserRow {
   email_verified?: number;
 }
 
+/**
+ * Keep the displayed streak consistent with the activity calendar: a day
+ * counts when the user either checks in or records a real study session.
+ * All dates are evaluated in HaechiVN's Vietnam timezone (UTC+7).
+ */
+export async function refreshUserStreak(env: Env, userId: string): Promise<{ streak: number; longest_streak: number }> {
+  const rows = await env.DB.prepare(
+    `SELECT day FROM (
+       SELECT checkin_date AS day FROM checkins WHERE user_id = ?
+       UNION
+       SELECT date(created_at, '+7 hours') AS day FROM study_sessions
+       WHERE user_id = ? AND cards_reviewed > 0
+     ) WHERE day IS NOT NULL ORDER BY day DESC`,
+  ).bind(userId, userId).all<{ day: string }>();
+
+  const dates = [...new Set((rows.results || [])
+    .map((row) => row.day)
+    .filter((day) => /^\d{4}-\d{2}-\d{2}$/.test(day)))].sort();
+  const dateSet = new Set(dates);
+  const today = new Date(Date.now() + 7 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  const shiftDate = (day: string, offset: number) => {
+    const [year, month, date] = day.split("-").map(Number);
+    return new Date(Date.UTC(year, month - 1, date + offset)).toISOString().slice(0, 10);
+  };
+
+  // The current streak remains active through the rest of today, or until
+  // yesterday if the user has not studied yet today.
+  let streak = 0;
+  let cursor: string | null = dateSet.has(today) ? today : shiftDate(today, -1);
+  if (cursor && !dateSet.has(cursor)) cursor = null;
+  while (cursor && dateSet.has(cursor)) {
+    streak += 1;
+    cursor = shiftDate(cursor, -1);
+  }
+
+  let longest = 0;
+  let run = 0;
+  let previousOrdinal: number | null = null;
+  for (const day of dates) {
+    const ordinal = Date.parse(`${day}T00:00:00Z`);
+    run = previousOrdinal !== null && ordinal - previousOrdinal === 86_400_000 ? run + 1 : 1;
+    longest = Math.max(longest, run);
+    previousOrdinal = ordinal;
+  }
+
+  await env.DB.prepare(
+    "UPDATE users SET streak = ?, longest_streak = ? WHERE id = ?",
+  ).bind(streak, longest, userId).run();
+  const saved = await env.DB.prepare("SELECT streak, longest_streak FROM users WHERE id = ?")
+    .bind(userId).first<{ streak: number; longest_streak: number }>();
+  return { streak: saved?.streak ?? streak, longest_streak: saved?.longest_streak ?? longest };
+}
+
 export function jsonResponse(data: unknown, status = 200, headers: Record<string, string> = {}) {
   return new Response(JSON.stringify(data), {
     status,
