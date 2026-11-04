@@ -426,14 +426,16 @@ export class ApiClient {
     }
   }
 
-  public static async getMySharedDecks(): Promise<SharedDeckRecord[]> {
+  public static async getMySharedDecks(): Promise<SharedDeckRecord[] | null> {
     try {
       const response = await fetch("/api/shared-decks?mine=1", { credentials: "same-origin", cache: "no-store" });
-      if (!response.ok) return [];
+      // A failed request is not an empty library. In particular, treating a
+      // 429 as [] makes the client try to re-upload every local deck at once.
+      if (!response.ok) return null;
       const payload = await response.json() as { decks?: SharedDeckRecord[] };
-      return payload.decks || [];
+      return Array.isArray(payload.decks) ? payload.decks : null;
     } catch {
-      return [];
+      return null;
     }
   }
 
@@ -451,8 +453,15 @@ export class ApiClient {
         cards: deck.cards,
       }),
     });
-    const payload = await response.json() as { sharedId?: string; error?: string };
-    if (!response.ok || !payload.sharedId) throw new Error(payload.error || "Không lưu được bộ thẻ chia sẻ.");
+    const payload = await response.json().catch(() => null) as { sharedId?: string; error?: string } | null;
+    if (!response.ok) {
+      const error = new Error(payload?.error || `Không lưu được bộ thẻ chia sẻ (HTTP ${response.status}).`) as Error & { status?: number; retryAfterMs?: number };
+      error.status = response.status;
+      const retryAfter = Number(response.headers.get("Retry-After"));
+      if (Number.isFinite(retryAfter) && retryAfter > 0) error.retryAfterMs = retryAfter * 1000;
+      throw error;
+    }
+    if (!payload?.sharedId) throw new Error("Máy chủ trả về phản hồi lưu bộ thẻ không hợp lệ.");
     return payload.sharedId;
   }
 

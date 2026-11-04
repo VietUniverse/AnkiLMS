@@ -76,6 +76,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [featureFlagsLoaded, setFeatureFlagsLoaded] = useState(false);
   const [activeStudySession, setActiveStudySession] = useState<StudySessionInfo | null>(null);
   const syncingDeckIds = useRef(new Set<string>());
+  const nextSharedDeckBackupAt = useRef(0);
+  const [sharedDeckSyncTick, setSharedDeckSyncTick] = useState(0);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -234,12 +236,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     if (!isAuthReady || !currentUser) return;
     let active = true;
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
     const userId = currentUser.id;
     const localDecks = userDecks.filter((deck) => !deck.id.startsWith("curated-"));
 
     void (async () => {
       const remoteRecords = await ApiClient.getMySharedDecks();
       if (!active) return;
+      // A 429/network failure is not an empty remote library. Never upload or
+      // restore anything until the inventory request succeeds.
+      if (!remoteRecords) {
+        retryTimer = setTimeout(() => setSharedDeckSyncTick((tick) => tick + 1), 60_000);
+        return;
+      }
       const localIds = new Set(localDecks.map((deck) => deck.id));
       const localSharedIds = new Set(localDecks.map((deck) => deck.sharedId).filter((id): id is string => !!id));
       const remoteDeckIds = new Set(remoteRecords.map((record) => record.deckId));
@@ -266,22 +275,39 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
 
       const localMissingRemotely = localDecks.filter((deck) => !remoteDeckIds.has(deck.id) && !syncingDeckIds.current.has(deck.id));
-      localMissingRemotely.forEach((deck) => syncingDeckIds.current.add(deck.id));
-      const uploaded = await Promise.all(localMissingRemotely.map(async (deck) => {
-        try {
-          const sharedId = await ApiClient.saveSharedDeck({ ...deck, visibility: deck.visibility || "private" });
-          return { id: deck.id, sharedId };
-        } catch (error) {
-          console.error("Could not back up study deck to server", error);
-          return null;
-        } finally {
-          syncingDeckIds.current.delete(deck.id);
+      const uploaded: { id: string; sharedId: string }[] = [];
+      if (localMissingRemotely.length) {
+        const waitMs = Math.max(0, nextSharedDeckBackupAt.current - Date.now());
+        if (waitMs > 0) {
+          retryTimer = setTimeout(() => setSharedDeckSyncTick((tick) => tick + 1), waitMs);
+        } else {
+          // Keep automatic backups gentle: one deck per request, with a
+          // cooldown so state updates cannot trigger a burst of POSTs.
+          const deck = localMissingRemotely[0];
+          syncingDeckIds.current.add(deck.id);
+          nextSharedDeckBackupAt.current = Date.now() + 15_000;
+          try {
+            const sharedId = await ApiClient.saveSharedDeck({ ...deck, visibility: deck.visibility || "private" });
+            uploaded.push({ id: deck.id, sharedId });
+          } catch (error) {
+            const status = (error as Error & { status?: number }).status;
+            const retryAfterMs = (error as Error & { retryAfterMs?: number }).retryAfterMs || 0;
+            const backoffMs = status === 429 ? Math.max(60_000, retryAfterMs) : 30_000;
+            nextSharedDeckBackupAt.current = Date.now() + backoffMs;
+            if (status !== 429) console.error("Could not back up study deck to server", error);
+          } finally {
+            syncingDeckIds.current.delete(deck.id);
+          }
+          if (localMissingRemotely.length > 1) {
+            const remainingMs = Math.max(0, nextSharedDeckBackupAt.current - Date.now());
+            retryTimer = setTimeout(() => setSharedDeckSyncTick((tick) => tick + 1), remainingMs);
+          }
         }
-      }));
+      }
       if (!active) return;
 
       const sharedIdsByDeckId = new Map(remoteRecords.map((record) => [record.deckId, record.sharedId]));
-      uploaded.forEach((item) => { if (item) sharedIdsByDeckId.set(item.id, item.sharedId); });
+      uploaded.forEach((item) => sharedIdsByDeckId.set(item.id, item.sharedId));
       if (restored.length || localDecks.some((deck) => sharedIdsByDeckId.has(deck.id) && deck.sharedId !== sharedIdsByDeckId.get(deck.id))) {
         setUserDecks((previous) => {
           const next = previous.map((deck) => sharedIdsByDeckId.has(deck.id)
@@ -295,8 +321,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
     })().catch((error) => console.error("Could not synchronize decks with server", error));
 
-    return () => { active = false; };
-  }, [currentUser?.id, isAuthReady, userDecks]);
+    return () => {
+      active = false;
+      if (retryTimer) clearTimeout(retryTimer);
+    };
+  }, [currentUser?.id, isAuthReady, sharedDeckSyncTick, userDecks]);
 
   const handleOpenAuth = useCallback((register?: boolean) => {
     setAuthRegisterMode(!!register);
