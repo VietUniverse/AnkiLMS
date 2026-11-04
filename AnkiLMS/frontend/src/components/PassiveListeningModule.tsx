@@ -43,6 +43,7 @@ export function PassiveListeningModule() {
   const [contentLoading, setContentLoading] = useState(true);
   const [contentError, setContentError] = useState("");
   const playerRef = useRef<Player | null>(null);
+  const playerReadyRef = useRef(false);
   const playerHostRef = useRef<HTMLDivElement>(null);
   const activeIndexRef = useRef(0);
   const autoPlayRef = useRef(true);
@@ -129,7 +130,7 @@ export function PassiveListeningModule() {
     setActiveIndex(bounded);
     setCurrentTime(lesson.startSec);
     setPlayerError("");
-    if (playerRef.current) {
+    if (playerRef.current && playerReadyRef.current) {
       if (mutedRef.current) playerRef.current.mute();
       else playerRef.current.unMute();
       playerRef.current.loadVideoById({ videoId: lesson.videoId, startSeconds: lesson.startSec, endSeconds: lesson.endSec });
@@ -176,6 +177,7 @@ export function PassiveListeningModule() {
     if (!playerHostRef.current || !current) return;
     let cancelled = false;
     let monitor: number | undefined;
+    playerReadyRef.current = false;
     void loadYouTubeIframeApi().then((api) => {
       if (cancelled || !playerHostRef.current) return;
       const host = document.createElement("div");
@@ -187,6 +189,7 @@ export function PassiveListeningModule() {
         playerVars: { autoplay: autoPlayRef.current ? 1 : 0, mute: 1, start: Math.floor(current.startSec), end: Math.ceil(current.endSec), playsinline: 1, controls: 0, rel: 0, fs: 0, disablekb: 1, origin: window.location.origin },
         events: {
           onReady: (event: { target: Player }) => {
+            playerReadyRef.current = true;
             event.target.setPlaybackRate(rate);
             if (mutedRef.current) event.target.mute();
             else event.target.unMute();
@@ -217,7 +220,10 @@ export function PassiveListeningModule() {
       });
       monitor = window.setInterval(() => {
         const player = playerRef.current;
-        if (!player || player.getPlayerState() !== 1) return;
+        // The iframe API can expose the Player instance before its methods are
+        // attached. Do not poll it until onReady has fired and methods exist.
+        if (!playerReadyRef.current || !player || typeof player.getPlayerState !== "function" || typeof player.getCurrentTime !== "function") return;
+        if (player.getPlayerState() !== 1) return;
         const time = player.getCurrentTime();
         setCurrentTime(time);
         const lesson = currentRef.current;
@@ -245,6 +251,7 @@ export function PassiveListeningModule() {
 
     return () => {
       cancelled = true;
+      playerReadyRef.current = false;
       if (monitor) window.clearInterval(monitor);
       playerRef.current?.destroy();
       playerRef.current = null;
@@ -253,14 +260,14 @@ export function PassiveListeningModule() {
 
   useEffect(() => {
     const player = playerRef.current;
-    if (!player) return;
+    if (!player || !playerReadyRef.current) return;
     player.setPlaybackRate(rate);
     if (muted) player.mute();
     else player.unMute();
   }, [muted, rate]);
 
   const togglePlay = () => {
-    if (!playerRef.current) { autoPlayRef.current = true; setPlaying(true); return; }
+    if (!playerRef.current || !playerReadyRef.current) { autoPlayRef.current = true; setPlaying(true); return; }
     if (playing) playerRef.current.pauseVideo();
     else { autoPlayRef.current = true; playerRef.current.playVideo(); }
   };
@@ -288,7 +295,9 @@ export function PassiveListeningModule() {
     const next = !muted;
     mutedRef.current = next;
     setMuted(next);
-    if (next) playerRef.current?.mute(); else playerRef.current?.unMute();
+    if (playerReadyRef.current) {
+      if (next) playerRef.current?.mute(); else playerRef.current?.unMute();
+    }
   };
 
   if (!current) return <div className="mx-auto mt-12 max-w-lg rounded-2xl border border-white/10 bg-slate-900 p-6 text-center text-slate-200">
