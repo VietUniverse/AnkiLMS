@@ -1,0 +1,165 @@
+{
+  "source": "topik/youtube_cau53/graph/concepts/mau-hang-chot.md",
+  "notes": [
+    {
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::8. Thân bài: Mẫu hạng chót (그쳤다)::01 — Mục thấp nhất: 가장 적었다 · 가장 낮게 · 최하위",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "fields": {
+        "ID": "C53-CHOT-01",
+        "Nguồn": "Mẫu hạng chót (그쳤다) · 가장 적었다",
+        "Đề": "Viết 1 câu: đọc biểu đồ từ lớn xuống nhỏ, mục cuối kết bằng <b style=\"color:#d9480f\">가장 적었다</b>.",
+        "DữLiệu": "",
+        "Ảnh": "<div class=\"c53-fig\"><svg viewBox=\"0 0 460 260\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"지역별 수출 비중\" font-family=\"inherit\" fill=\"currentColor\"><text x=\"230.0\" y=\"24\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">지역별 수출 비중</text><text x=\"14\" y=\"38\" font-size=\"12\">(단위: %)</text><path d=\"M60 45 V205 H425\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.3\"/><text x=\"55\" y=\"209.0\" text-anchor=\"end\" font-size=\"12\">0</text><text x=\"55\" y=\"171.5\" text-anchor=\"end\" font-size=\"12\">20</text><line x1=\"65\" y1=\"167.5\" x2=\"420\" y2=\"167.5\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"134.0\" text-anchor=\"end\" font-size=\"12\">40</text><line x1=\"65\" y1=\"130.0\" x2=\"420\" y2=\"130.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"96.5\" text-anchor=\"end\" font-size=\"12\">60</text><line x1=\"65\" y1=\"92.5\" x2=\"420\" y2=\"92.5\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"59.0\" text-anchor=\"end\" font-size=\"12\">80</text><line x1=\"65\" y1=\"55.0\" x2=\"420\" y2=\"55.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><rect x=\"86.5625\" y=\"73.75\" width=\"43.125\" height=\"131.25\" rx=\"3\" fill=\"#8c8c8c\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"108.125\" y=\"65.75\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">70%</text><text x=\"108.125\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">아시아</text><rect x=\"172.8125\" y=\"182.5\" width=\"43.125\" height=\"22.5\" rx=\"3\" fill=\"#6a737d\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"194.375\" y=\"174.5\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">12%</text><text x=\"194.375\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">미주</text><rect x=\"259.0625\" y=\"186.25\" width=\"43.125\" height=\"18.75\" rx=\"3\" fill=\"#4a5568\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"280.625\" y=\"178.25\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">10%</text><text x=\"280.625\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">아프리카</text><rect x=\"345.3125\" y=\"190.0\" width=\"43.125\" height=\"15.0\" rx=\"3\" fill=\"#8c8c8c\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"366.875\" y=\"182.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">8%</text><text x=\"366.875\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">유럽</text></svg></div>",
+        "BàiMẫu": "지역별 수출 현황을 보면 아시아가 70%로 가장 많았고 미주는 12%, 아프리카는 10%, 유럽이 8%로 가장 적었다.",
+        "GhiChú": "<b style=\"color:#1971c2\">Khung:</b> <b style=\"color:#d9480f\">[A]가 N%로 가장 많았고 [B]는 M%, [C]는 K%, [D]가 L%로 가장 적었다</b><br><b style=\"color:#1971c2\">Vì sao dùng 급증:</b> đọc biểu đồ theo thứ tự, mục cuối đúng là nhỏ nhất<br><b style=\"color:#1971c2\">Đọc số liệu:</b> 70 &gt; 12 &gt; 10 &gt; 8: 유럽 nhỏ nhất<br><b style=\"color:#1971c2\">Ngữ pháp:</b> <b>가장 많았고 … 가장 적었다</b> đối ứng đầu cuối; mục giữa chỉ nêu số<br><b style=\"color:#1971c2\">Bẫy:</b> chỉ dùng <b>가장 적었다</b> cho đúng mục nhỏ nhất"
+      },
+      "tags": [
+        "cau53",
+        "mau-hang-chot",
+        "than-bai",
+        "cracking-topik-writing",
+        "luyen-viet"
+      ]
+    },
+    {
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::8. Thân bài: Mẫu hạng chót (그쳤다)::01 — Mục thấp nhất: 가장 적었다 · 가장 낮게 · 최하위",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "fields": {
+        "ID": "C53-CHOT-02",
+        "Nguồn": "Mẫu hạng chót (그쳤다) · 마지막으로 가장 낮게",
+        "Đề": "Viết 1 câu: hạng 1, hạng 2, rồi mục cuối bằng <b style=\"color:#d9480f\">마지막으로 … 가장 낮게 나타났다</b>.",
+        "DữLiệu": "",
+        "Ảnh": "<div class=\"c53-fig\"><svg viewBox=\"0 0 460 260\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"직장인 스트레스 원인\" font-family=\"inherit\" fill=\"currentColor\"><text x=\"230.0\" y=\"24\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">직장인 스트레스 원인</text><text x=\"14\" y=\"38\" font-size=\"12\">(단위: %)</text><path d=\"M60 45 V205 H425\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.3\"/><text x=\"55\" y=\"209.0\" text-anchor=\"end\" font-size=\"12\">0</text><text x=\"55\" y=\"171.5\" text-anchor=\"end\" font-size=\"12\">10</text><line x1=\"65\" y1=\"167.5\" x2=\"420\" y2=\"167.5\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"134.0\" text-anchor=\"end\" font-size=\"12\">20</text><line x1=\"65\" y1=\"130.0\" x2=\"420\" y2=\"130.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"96.5\" text-anchor=\"end\" font-size=\"12\">30</text><line x1=\"65\" y1=\"92.5\" x2=\"420\" y2=\"92.5\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"59.0\" text-anchor=\"end\" font-size=\"12\">40</text><line x1=\"65\" y1=\"55.0\" x2=\"420\" y2=\"55.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><rect x=\"86.5625\" y=\"62.5\" width=\"43.125\" height=\"142.5\" rx=\"3\" fill=\"#8c8c8c\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"108.125\" y=\"54.5\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">38%</text><text x=\"108.125\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">업무 과다</text><rect x=\"172.8125\" y=\"92.5\" width=\"43.125\" height=\"112.5\" rx=\"3\" fill=\"#6a737d\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"194.375\" y=\"84.5\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">30%</text><text x=\"194.375\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">인간관계</text><rect x=\"259.0625\" y=\"141.25\" width=\"43.125\" height=\"63.75\" rx=\"3\" fill=\"#4a5568\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"280.625\" y=\"133.25\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">17%</text><text x=\"280.625\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">급여</text><rect x=\"345.3125\" y=\"148.75\" width=\"43.125\" height=\"56.25\" rx=\"3\" fill=\"#8c8c8c\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"366.875\" y=\"140.75\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">15%</text><text x=\"366.875\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">통근</text></svg></div>",
+        "BàiMẫu": "직장인 스트레스 원인으로는 업무 과다가 38%로 가장 높게 나타났고, 인간관계가 30%, 급여가 17%로 그 뒤를 이었으며, 마지막으로 통근이 15%로 가장 낮게 나타났다.",
+        "GhiChú": "<b style=\"color:#1971c2\">Khung:</b> <b style=\"color:#d9480f\">… 마지막으로 [Mục]이/가 [N]%로 가장 낮게 나타났다</b><br><b style=\"color:#1971c2\">Vì sao dùng 급증:</b> kết khối xếp hạng bằng mục thấp nhất<br><b style=\"color:#1971c2\">Đọc số liệu:</b> 38 &gt; 30 &gt; 17 &gt; 15: 통근 thấp nhất<br><b style=\"color:#1971c2\">Ngữ pháp:</b> <b>마지막으로</b> báo mục cuối; <b>그 뒤를 이었으며</b> nối vế trước<br><b style=\"color:#1971c2\">Bẫy:</b> đừng dùng <b>가장 낮게</b> cho mục giữa"
+      },
+      "tags": [
+        "cau53",
+        "mau-hang-chot",
+        "than-bai",
+        "cracking-topik-writing",
+        "luyen-viet"
+      ]
+    },
+    {
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::8. Thân bài: Mẫu hạng chót (그쳤다)::01 — Mục thấp nhất: 가장 적었다 · 가장 낮게 · 최하위",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "fields": {
+        "ID": "C53-CHOT-03",
+        "Nguồn": "Mẫu hạng chót (그쳤다) · 최하위",
+        "Đề": "Viết 1 câu: nêu điểm của Hàn Quốc và nhấn vị trí cuối bằng <b style=\"color:#d9480f\">에 그쳐 … 최하위</b>.",
+        "DữLiệu": "",
+        "Ảnh": "<div class=\"c53-fig\"><svg viewBox=\"0 0 460 260\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"국가별 행복 지수\" font-family=\"inherit\" fill=\"currentColor\"><text x=\"230.0\" y=\"24\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">국가별 행복 지수</text><text x=\"14\" y=\"38\" font-size=\"12\">(단위: 점)</text><path d=\"M60 45 V205 H425\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.3\"/><text x=\"55\" y=\"209.0\" text-anchor=\"end\" font-size=\"12\">0</text><text x=\"55\" y=\"171.5\" text-anchor=\"end\" font-size=\"12\">20</text><line x1=\"65\" y1=\"167.5\" x2=\"420\" y2=\"167.5\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"134.0\" text-anchor=\"end\" font-size=\"12\">40</text><line x1=\"65\" y1=\"130.0\" x2=\"420\" y2=\"130.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"96.5\" text-anchor=\"end\" font-size=\"12\">60</text><line x1=\"65\" y1=\"92.5\" x2=\"420\" y2=\"92.5\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"59.0\" text-anchor=\"end\" font-size=\"12\">80</text><line x1=\"65\" y1=\"55.0\" x2=\"420\" y2=\"55.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><rect x=\"99.5\" y=\"64.0\" width=\"46\" height=\"141.0\" rx=\"3\" fill=\"#8c8c8c\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"122.5\" y=\"56.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">75.2점</text><text x=\"122.5\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">덴마크</text><rect x=\"214.5\" y=\"81.25\" width=\"46\" height=\"123.75\" rx=\"3\" fill=\"#6a737d\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"237.5\" y=\"73.25\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">66점</text><text x=\"237.5\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">일본</text><rect x=\"329.5\" y=\"91.93750000000001\" width=\"46\" height=\"113.06249999999999\" rx=\"3\" fill=\"#4a5568\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"352.5\" y=\"83.93750000000001\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">60.3점</text><text x=\"352.5\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">한국</text></svg></div>",
+        "BàiMẫu": "한국은 60.3점에 그쳐 최하위로 나타났다.",
+        "GhiChú": "<b style=\"color:#1971c2\">Khung:</b> <b style=\"color:#d9480f\">[Nước]은/는 N점에 그쳐 최하위로 나타났다</b><br><b style=\"color:#1971c2\">Vì sao dùng 급증:</b> Hàn Quốc thấp nhất trong các nước được so sánh<br><b style=\"color:#1971c2\">Đọc số liệu:</b> 75.2 &gt; 66 &gt; <b>60.3</b><br><b style=\"color:#1971c2\">Ngữ pháp:</b> <b>-에 그쳐</b> nối nghĩa 'dừng ở' với kết quả; <b>최하위로 나타났다</b><br><b style=\"color:#1971c2\">Bẫy:</b> đừng dùng <b>최하위</b> khi chỉ so sánh hai nước; nên nói <b>가장 낮게</b>"
+      },
+      "tags": [
+        "cau53",
+        "mau-hang-chot",
+        "than-bai",
+        "cracking-topik-writing",
+        "luyen-viet"
+      ]
+    },
+    {
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::8. Thân bài: Mẫu hạng chót (그쳤다)::02 — Nhấn mức thấp: 에 불과했다 · 에 그쳐",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "fields": {
+        "ID": "C53-CHOT-04",
+        "Nguồn": "Mẫu hạng chót (그쳤다) · 에 불과했다 (기타)",
+        "Đề": "Viết 1 câu: xếp hạng bốn mục, mục cuối nhấn bằng <b style=\"color:#d9480f\">에 불과했다</b>.",
+        "DữLiệu": "",
+        "Ảnh": "<div class=\"c53-fig\"><svg viewBox=\"0 0 460 260\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"희망하는 복지 서비스\" font-family=\"inherit\" fill=\"currentColor\"><text x=\"230.0\" y=\"24\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">희망하는 복지 서비스</text><text x=\"14\" y=\"38\" font-size=\"12\">(단위: %)</text><path d=\"M60 45 V205 H425\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.3\"/><text x=\"55\" y=\"209.0\" text-anchor=\"end\" font-size=\"12\">0</text><text x=\"55\" y=\"159.0\" text-anchor=\"end\" font-size=\"12\">20</text><line x1=\"65\" y1=\"155.0\" x2=\"420\" y2=\"155.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"109.0\" text-anchor=\"end\" font-size=\"12\">40</text><line x1=\"65\" y1=\"105.0\" x2=\"420\" y2=\"105.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"59.0\" text-anchor=\"end\" font-size=\"12\">60</text><line x1=\"65\" y1=\"55.0\" x2=\"420\" y2=\"55.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><rect x=\"86.5625\" y=\"89.99999999999999\" width=\"43.125\" height=\"115.00000000000001\" rx=\"3\" fill=\"#8c8c8c\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"108.125\" y=\"81.99999999999999\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">46%</text><text x=\"108.125\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">건강검진</text><rect x=\"172.8125\" y=\"135.0\" width=\"43.125\" height=\"70.0\" rx=\"3\" fill=\"#6a737d\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"194.375\" y=\"127.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">28%</text><text x=\"194.375\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">간병</text><rect x=\"259.0625\" y=\"170.0\" width=\"43.125\" height=\"35.0\" rx=\"3\" fill=\"#4a5568\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"280.625\" y=\"162.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">14%</text><text x=\"280.625\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">취업 및 알선</text><rect x=\"345.3125\" y=\"175.0\" width=\"43.125\" height=\"30.0\" rx=\"3\" fill=\"#8c8c8c\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"366.875\" y=\"167.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">12%</text><text x=\"366.875\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">기타</text></svg></div>",
+        "BàiMẫu": "건강검진이 46%로 가장 높게 나타났고 그 뒤를 이어서 간병이 28%, 취업 및 알선이 14% 순으로 나타났고 기타는 12%에 불과했다.",
+        "GhiChú": "<b style=\"color:#1971c2\">Khung:</b> <b style=\"color:#d9480f\">[A]가 N%로 가장 높게 나타났고 그 뒤를 이어서 [B]가 M%, [C]가 K% 순으로 나타났고 [D]는 L%에 불과했다</b><br><b style=\"color:#1971c2\">Vì sao dùng 급증:</b> mục cuối thấp rõ rệt so với hạng 1<br><b style=\"color:#1971c2\">Đọc số liệu:</b> 46 &gt; 28 &gt; 14 &gt; 12<br><b style=\"color:#1971c2\">Ngữ pháp:</b> <b>순으로 나타났고</b> gom hạng giữa; <b>기타는 12%에 불과했다</b> kết câu<br><b style=\"color:#1971c2\">Bẫy:</b> <b>불과했다</b> hợp với mục cuối thấp rõ so với đầu bảng"
+      },
+      "tags": [
+        "cau53",
+        "mau-hang-chot",
+        "than-bai",
+        "cracking-topik-writing",
+        "luyen-viet"
+      ]
+    },
+    {
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::8. Thân bài: Mẫu hạng chót (그쳤다)::02 — Nhấn mức thấp: 에 불과했다 · 에 그쳐",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "fields": {
+        "ID": "C53-CHOT-05",
+        "Nguồn": "Mẫu hạng chót (그쳤다) · 에 그쳐 3위로",
+        "Đề": "Viết 1 câu: nhóm học sinh, mục cuối gộp mức thấp và thứ hạng bằng <b style=\"color:#d9480f\">에 그쳐 3위로 나타났다</b>.",
+        "DữLiệu": "",
+        "Ảnh": "<div class=\"c53-fig\"><svg viewBox=\"0 0 460 260\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"학생의 글쓰기 향상 방법\" font-family=\"inherit\" fill=\"currentColor\"><text x=\"230.0\" y=\"24\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">학생의 글쓰기 향상 방법</text><text x=\"14\" y=\"38\" font-size=\"12\">(단위: %)</text><path d=\"M60 45 V205 H425\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.3\"/><text x=\"55\" y=\"209.0\" text-anchor=\"end\" font-size=\"12\">0</text><text x=\"55\" y=\"159.0\" text-anchor=\"end\" font-size=\"12\">20</text><line x1=\"65\" y1=\"155.0\" x2=\"420\" y2=\"155.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"109.0\" text-anchor=\"end\" font-size=\"12\">40</text><line x1=\"65\" y1=\"105.0\" x2=\"420\" y2=\"105.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"59.0\" text-anchor=\"end\" font-size=\"12\">60</text><line x1=\"65\" y1=\"55.0\" x2=\"420\" y2=\"55.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><rect x=\"99.5\" y=\"105.0\" width=\"46\" height=\"100.0\" rx=\"3\" fill=\"#8c8c8c\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"122.5\" y=\"97.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">40%</text><text x=\"122.5\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">책 읽기</text><rect x=\"214.5\" y=\"117.5\" width=\"46\" height=\"87.5\" rx=\"3\" fill=\"#6a737d\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"237.5\" y=\"109.5\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">35%</text><text x=\"237.5\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">따라 쓰기</text><rect x=\"329.5\" y=\"142.5\" width=\"46\" height=\"62.5\" rx=\"3\" fill=\"#4a5568\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"352.5\" y=\"134.5\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">25%</text><text x=\"352.5\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">다양한 주제</text></svg></div>",
+        "BàiMẫu": "학생의 경우 책을 많이 읽어야 한다가 40%로 가장 높게 나타났고, 좋은 글을 따라 써야 한다가 35%로 그 뒤를 이었으며, 다양한 주제로 연습하기는 25%에 그쳐 3위로 나타났다.",
+        "GhiChú": "<b style=\"color:#1971c2\">Khung:</b> <b style=\"color:#d9480f\">… [Mục]은/는 [N]%에 그쳐 3위로 나타났다</b><br><b style=\"color:#1971c2\">Vì sao dùng 급증:</b> đề chỉ có ba mục, hạng 3 chính là hạng chót<br><b style=\"color:#1971c2\">Đọc số liệu:</b> 40 &gt; 35 &gt; <b>25</b><br><b style=\"color:#1971c2\">Ngữ pháp:</b> <b>에 그쳐</b> + <b>3위로 나타났다</b> gộp mức thấp và thứ hạng<br><b style=\"color:#1971c2\">Bẫy:</b> ba mục thì hạng 3 là hạng chót, không viết thêm <b>세 번째를 차지하였다</b>"
+      },
+      "tags": [
+        "cau53",
+        "mau-hang-chot",
+        "than-bai",
+        "cracking-topik-writing",
+        "luyen-viet"
+      ]
+    },
+    {
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::8. Thân bài: Mẫu hạng chót (그쳤다)::02 — Nhấn mức thấp: 에 불과했다 · 에 그쳐",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "fields": {
+        "ID": "C53-CHOT-06",
+        "Nguồn": "Mẫu hạng chót (그쳤다) · 에 불과했다 (수영)",
+        "Đề": "Viết 1 câu: nêu hạng 1, hạng 2–3 bằng dấu phẩy, kết <b style=\"color:#d9480f\">에 불과했다</b>.",
+        "DữLiệu": "",
+        "Ảnh": "<div class=\"c53-fig\"><svg viewBox=\"0 0 460 260\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"생활체육 참여 종목\" font-family=\"inherit\" fill=\"currentColor\"><text x=\"230.0\" y=\"24\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">생활체육 참여 종목</text><text x=\"14\" y=\"38\" font-size=\"12\">(단위: %)</text><path d=\"M60 45 V205 H425\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.3\"/><text x=\"55\" y=\"209.0\" text-anchor=\"end\" font-size=\"12\">0</text><text x=\"55\" y=\"159.0\" text-anchor=\"end\" font-size=\"12\">20</text><line x1=\"65\" y1=\"155.0\" x2=\"420\" y2=\"155.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"109.0\" text-anchor=\"end\" font-size=\"12\">40</text><line x1=\"65\" y1=\"105.0\" x2=\"420\" y2=\"105.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"59.0\" text-anchor=\"end\" font-size=\"12\">60</text><line x1=\"65\" y1=\"55.0\" x2=\"420\" y2=\"55.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><rect x=\"86.5625\" y=\"77.5\" width=\"43.125\" height=\"127.5\" rx=\"3\" fill=\"#8c8c8c\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"108.125\" y=\"69.5\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">51%</text><text x=\"108.125\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">걷기</text><rect x=\"172.8125\" y=\"142.5\" width=\"43.125\" height=\"62.5\" rx=\"3\" fill=\"#6a737d\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"194.375\" y=\"134.5\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">25%</text><text x=\"194.375\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">등산</text><rect x=\"259.0625\" y=\"165.0\" width=\"43.125\" height=\"40.0\" rx=\"3\" fill=\"#4a5568\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"280.625\" y=\"157.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">16%</text><text x=\"280.625\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">보디빌딩</text><rect x=\"345.3125\" y=\"185.0\" width=\"43.125\" height=\"20.0\" rx=\"3\" fill=\"#8c8c8c\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"366.875\" y=\"177.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">8%</text><text x=\"366.875\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">수영</text></svg></div>",
+        "BàiMẫu": "걷기가 51%를 차지했고, 등산이 25%, 보디빌딩은 16%로 나타났고, 수영은 8%에 불과했다.",
+        "GhiChú": "<b style=\"color:#1971c2\">Khung:</b> <b style=\"color:#d9480f\">[A]가 N%를 차지했고, [B]가 M%, [C]는 K%로 나타났고, [D]는 L%에 불과했다</b><br><b style=\"color:#1971c2\">Vì sao dùng 급증:</b> bốn mục, mục cuối chỉ 8%<br><b style=\"color:#1971c2\">Đọc số liệu:</b> 51 &gt; 25 &gt; 16 &gt; 8<br><b style=\"color:#1971c2\">Ngữ pháp:</b> <b>를 차지했고</b> mở hạng 1; <b>로 나타났고</b> gộp giữa; <b>에 불과했다</b> kết<br><b style=\"color:#1971c2\">Bẫy:</b> mỗi vế dùng một động từ khác nhau để khỏi lặp"
+      },
+      "tags": [
+        "cau53",
+        "mau-hang-chot",
+        "than-bai",
+        "cracking-topik-writing",
+        "luyen-viet"
+      ]
+    },
+    {
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::8. Thân bài: Mẫu hạng chót (그쳤다)::03 — Tương phản: 정작 · 불과하였으나",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "fields": {
+        "ID": "C53-CHOT-07",
+        "Nguồn": "Mẫu hạng chót (그쳤다) · 정작",
+        "Đề": "Viết 1 câu: ba nhóm cao, nhóm cuối đối lập bằng <b style=\"color:#d9480f\">나타났지만 정작 … 에 불과했다</b>.",
+        "DữLiệu": "",
+        "Ảnh": "<div class=\"c53-fig\"><svg viewBox=\"0 0 460 260\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"연령별 노후 준비 비율\" font-family=\"inherit\" fill=\"currentColor\"><text x=\"230.0\" y=\"24\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">연령별 노후 준비 비율</text><text x=\"14\" y=\"38\" font-size=\"12\">(단위: %)</text><path d=\"M60 45 V205 H425\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.3\"/><text x=\"55\" y=\"209.0\" text-anchor=\"end\" font-size=\"12\">0</text><text x=\"55\" y=\"171.5\" text-anchor=\"end\" font-size=\"12\">20</text><line x1=\"65\" y1=\"167.5\" x2=\"420\" y2=\"167.5\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"134.0\" text-anchor=\"end\" font-size=\"12\">40</text><line x1=\"65\" y1=\"130.0\" x2=\"420\" y2=\"130.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"96.5\" text-anchor=\"end\" font-size=\"12\">60</text><line x1=\"65\" y1=\"92.5\" x2=\"420\" y2=\"92.5\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"59.0\" text-anchor=\"end\" font-size=\"12\">80</text><line x1=\"65\" y1=\"55.0\" x2=\"420\" y2=\"55.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><rect x=\"86.5625\" y=\"60.25\" width=\"43.125\" height=\"144.75\" rx=\"3\" fill=\"#8c8c8c\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"108.125\" y=\"52.25\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">77.2%</text><text x=\"108.125\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">30대</text><rect x=\"172.8125\" y=\"81.625\" width=\"43.125\" height=\"123.375\" rx=\"3\" fill=\"#6a737d\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"194.375\" y=\"73.625\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">65.8%</text><text x=\"194.375\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">40대</text><rect x=\"259.0625\" y=\"110.5\" width=\"43.125\" height=\"94.5\" rx=\"3\" fill=\"#4a5568\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"280.625\" y=\"102.5\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">50.4%</text><text x=\"280.625\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">50대</text><rect x=\"345.3125\" y=\"139.0\" width=\"43.125\" height=\"66.0\" rx=\"3\" fill=\"#8c8c8c\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"366.875\" y=\"131.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">35.2%</text><text x=\"366.875\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">60대</text></svg></div>",
+        "BàiMẫu": "연령별 노후 준비 비율을 살펴보면 30대는 77.2%를 차지하고 있고 40대는 65.8%, 50대는 50.4%로 나타났지만 정작 60대는 35.2%에 불과했다.",
+        "GhiChú": "<b style=\"color:#1971c2\">Khung:</b> <b style=\"color:#d9480f\">… 나타났지만 정작 [Nhóm]은/는 [N]%에 불과했다</b><br><b style=\"color:#1971c2\">Vì sao dùng 급증:</b> nhóm cần chuẩn bị nhất lại chuẩn bị ít nhất<br><b style=\"color:#1971c2\">Đọc số liệu:</b> 77.2 &gt; 65.8 &gt; 50.4 &gt; <b>35.2</b> (giảm dần theo tuổi tăng)<br><b style=\"color:#1971c2\">Ngữ pháp:</b> <b>-지만</b> chuyển ý; <b>정작</b> nhấn tương phản với kỳ vọng<br><b style=\"color:#1971c2\">Bẫy:</b> đừng bỏ <b>정작</b> khi đề có ý ngược kỳ vọng"
+      },
+      "tags": [
+        "cau53",
+        "mau-hang-chot",
+        "than-bai",
+        "cracking-topik-writing",
+        "luyen-viet"
+      ]
+    },
+    {
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::8. Thân bài: Mẫu hạng chót (그쳤다)::03 — Tương phản: 정작 · 불과하였으나",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "fields": {
+        "ID": "C53-CHOT-08",
+        "Nguồn": "Mẫu hạng chót (그쳤다) · 에 불과하였으나",
+        "Đề": "Viết 1 câu: mốc đầu thấp, mốc sau tăng, nối bằng <b style=\"color:#d9480f\">에 불과하였으나</b>.",
+        "DữLiệu": "",
+        "Ảnh": "<div class=\"c53-fig\"><svg viewBox=\"0 0 460 260\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"전기 자전거 이용자 수\" font-family=\"inherit\" fill=\"currentColor\"><text x=\"230.0\" y=\"24\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">전기 자전거 이용자 수</text><text x=\"14\" y=\"38\" font-size=\"12\">(단위: 만 명)</text><path d=\"M60 45 V205 H425\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.3\"/><text x=\"55\" y=\"209.0\" text-anchor=\"end\" font-size=\"12\">0</text><text x=\"55\" y=\"171.5\" text-anchor=\"end\" font-size=\"12\">5</text><line x1=\"65\" y1=\"167.5\" x2=\"420\" y2=\"167.5\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"134.0\" text-anchor=\"end\" font-size=\"12\">10</text><line x1=\"65\" y1=\"130.0\" x2=\"420\" y2=\"130.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"96.5\" text-anchor=\"end\" font-size=\"12\">15</text><line x1=\"65\" y1=\"92.5\" x2=\"420\" y2=\"92.5\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"59.0\" text-anchor=\"end\" font-size=\"12\">20</text><line x1=\"65\" y1=\"55.0\" x2=\"420\" y2=\"55.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><rect x=\"128.25\" y=\"145.0\" width=\"46\" height=\"60.0\" rx=\"3\" fill=\"#8c8c8c\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"151.25\" y=\"137.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">8만</text><text x=\"151.25\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">2012년</text><rect x=\"300.75\" y=\"85.0\" width=\"46\" height=\"120.0\" rx=\"3\" fill=\"#6a737d\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"323.75\" y=\"77.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">16만</text><text x=\"323.75\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">2016년</text></svg></div>",
+        "BàiMẫu": "전기 자전거 이용자 수는 2012년에는 8만 명에 불과하였으나 2016년에는 16만 명으로 증가하였다.",
+        "GhiChú": "<b style=\"color:#1971c2\">Khung:</b> <b style=\"color:#d9480f\">[năm 1]에는 [N]에 불과하였으나 [năm 2]에는 [M]으로 증가하였다</b><br><b style=\"color:#1971c2\">Vì sao dùng 급증:</b> nhấn mốc đầu rất thấp rồi tăng<br><b style=\"color:#1971c2\">Đọc số liệu:</b> 8 → 16: gấp đôi<br><b style=\"color:#1971c2\">Ngữ pháp:</b> <b>불과하였으나</b> nối hai mốc đối lập; mốc sau <b>(으)로</b><br><b style=\"color:#1971c2\">Bẫy:</b> hai mốc cùng ý tăng thì không cần <b>불과</b>; chỉ dùng khi muốn nhấn mốc đầu thấp"
+      },
+      "tags": [
+        "cau53",
+        "mau-hang-chot",
+        "than-bai",
+        "cracking-topik-writing",
+        "luyen-viet"
+      ]
+    }
+  ]
+}

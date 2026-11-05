@@ -1,0 +1,991 @@
+{
+  "source_document": "topik/youtube_cau53/graph/concepts/cau-mo-co-quan-chu-de.md",
+  "created_at": "2026-10-29",
+  "total_notes": 42,
+  "summary": {
+    "cloze_notes_count": 7,
+    "writing_notes_count": 5,
+    "cloze_notes": 19,
+    "writing_notes": 23
+  },
+  "notes": [
+    {
+      "noteId": 1793275274171,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::1. Mở bài: Cơ quan + Đối tượng + Chủ đề",
+      "modelName": "(AnkiVN) Cloze",
+      "tags": [
+        "cau53",
+        "cracking-topik-writing",
+        "mo-bai",
+        "phan-biet-khai-niem"
+      ],
+      "cards": [
+        1793275274171,
+        1793275274172
+      ],
+      "fields": {
+        "Text": "<b>Câu 53 · Phân biệt Chủ đề (주제) vs Tiêu đề biểu đồ con (소제목)</b><br>Khi viết câu mở bài, bắt buộc phải lấy {{c1::주제 (chủ đề lớn của cả đề)}} đưa vào câu mở bài.<br>Tuyệt đối không được lấy nhầm {{c2::소제목 (tiêu đề của biểu đồ 1)}} vì sẽ làm thu hẹp phạm vi và sai lệch logic toàn bài.",
+        "Back": "Ví dụ: Chủ đề lớn là '인주시의 자전거 이용자 변화', còn biểu đồ 1 có tiêu đề là '연도별 이용자 수'. Nếu lấy '연도별 이용자 수' mở bài sẽ bị coi là lạc chủ đề.",
+        "Đề": "Câu 53 · Mở bài · Phân biệt Chủ đề & Tiêu đề biểu đồ",
+        "Audio": "",
+        "Link": "topik/youtube_cau53/graph/concepts/cau-mo-co-quan-chu-de.md"
+      }
+    },
+    {
+      "noteId": 1793275274535,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::1. Mở bài: Cơ quan + Đối tượng + Chủ đề",
+      "modelName": "(AnkiVN) Cloze",
+      "tags": [
+        "cau53",
+        "cracking-topik-writing",
+        "mo-bai",
+        "phan-biet-khai-niem"
+      ],
+      "cards": [
+        1793275274536,
+        1793275274535,
+        1793279003745
+      ],
+      "fields": {
+        "Text": "<b>Câu 53 · Phân biệt 조사 vs 설문조사</b><br>1. Chỉ dùng <b>설문조사</b> khi đề bài có dấu hiệu: {{c1::hỏi – đáp / thăm dò ý kiến người trả lời}} (như <i>물어봤다, 응답했다</i>, bảng tỷ lệ tán thành/phản đối).<br>2. Dùng <b>조사</b> khi: {{c2::số liệu thống kê vĩ mô}}, {{c3::đo lường khách quan}} (như biến đổi dân số, kim ngạch xuất khẩu, lượng điện) hoặc khi đề ghi chung chung.",
+        "Back": "Căn cứ theo giáo viên Hanijemi (kỳ 52) và Tiếng Hàn Thu Huế: Không dùng '설문조사' bừa bãi cho mọi đề vì biểu đồ thống kê đo lường không phải là khảo sát bằng phiếu hỏi.",
+        "Đề": "Câu 53 · Mở bài · Phân biệt 조사 & 설문조사",
+        "Audio": "",
+        "Link": "topik/youtube_cau53/graph/concepts/cau-mo-co-quan-chu-de.md"
+      }
+    },
+    {
+      "noteId": 1793275274782,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::1. Mở bài: Cơ quan + Đối tượng + Chủ đề",
+      "modelName": "(AnkiVN) Cloze",
+      "tags": [
+        "cau53",
+        "cracking-topik-writing",
+        "mo-bai",
+        "tro-tu"
+      ],
+      "cards": [
+        1793275274782,
+        1793275274784,
+        1793275274785,
+        1793275274783
+      ],
+      "fields": {
+        "Text": "<b>Câu 53 · 3 Thành tố câu mở bài & Trợ từ bắt buộc</b><br>1. Cơ quan điều tra (조사기관): gắn trợ từ {{c1::에서}} (hoặc <i>이/가</i> nếu làm chủ ngữ).<br>2. Đối tượng khảo sát (조사대상): gắn cụm {{c2::을/를 대상으로}}.<br>3. Chủ đề khảo sát (조사주제): gắn cụm {{c3::에 대해(서) / 에 대한 조사}}.<br>Trật tự chuẩn: <b>{{c4::Cơ quan}} → {{c4::Đối tượng}} → {{c4::Chủ đề}}</b>.",
+        "Back": "Lưu ý cấm kỵ: Cơ quan không gắn '에' hay '에게'. Đối tượng bắt buộc phải chọn '을' (có patchim) hoặc '를' (không patchim) trước '대상으로'.",
+        "Đề": "Câu 53 · Mở bài · 3 Thành tố & Trợ từ",
+        "Audio": "",
+        "Link": "topik/youtube_cau53/graph/concepts/cau-mo-co-quan-chu-de.md"
+      }
+    },
+    {
+      "noteId": 1793275275072,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::1. Mở bài: Cơ quan + Đối tượng + Chủ đề",
+      "modelName": "(AnkiVN) Cloze",
+      "tags": [
+        "cau53",
+        "cracking-topik-writing",
+        "mo-bai",
+        "quy-tac"
+      ],
+      "cards": [
+        1793275275074,
+        1793275275072,
+        1793275275073
+      ],
+      "fields": {
+        "Text": "<b>Câu 53 · Xử lý khi đề thi KHUYẾT ĐỐI TƯỢNG điều tra</b><br>Khi đề bài không cho đối tượng khảo sát:<br>• Quy tắc xử lý: {{c1::Lược bỏ hoàn toàn cụm '~을/를 대상으로'}}, tuyệt đối {{c2::không tự bịa thêm đối tượng}}.<br>• Mẫu câu áp dụng: <span style=\"color: #007aff; font-weight: 600;\">[Cơ quan]</span>에서 <span style=\"color: #007aff; font-weight: 600;\">[Chủ đề]</span>{{c3::에 대해 조사한 결과}}...",
+        "Back": "Quy tắc vàng của Câu 53 là 'Không bịa, không bình luận'. Nếu đề không cho đối tượng mà tự bịa '시민들을 대상으로' sẽ bị trừ điểm số liệu/nội dung.",
+        "Đề": "Câu 53 · Mở bài · Xử lý đề khuyết đối tượng",
+        "Audio": "",
+        "Link": "topik/youtube_cau53/graph/concepts/cau-mo-khong-doi-tuong.md"
+      }
+    },
+    {
+      "noteId": 1793275275214,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::1. Mở bài: Cơ quan + Đối tượng + Chủ đề",
+      "modelName": "(AnkiVN) Cloze",
+      "tags": [
+        "cau53",
+        "cracking-topik-writing",
+        "mo-bai",
+        "quy-tac"
+      ],
+      "cards": [
+        1793275275216,
+        1793275275214,
+        1793275275215
+      ],
+      "fields": {
+        "Text": "<b>Câu 53 · Xử lý khi đề KHUYẾT CẢ CƠ QUAN LẪN ĐỐI TƯỢNG</b><br>Khi đề bài chỉ cho biểu đồ kèm chủ đề mà không có xuất xứ (như kỳ thi 64):<br>• Mẫu 1: <span style=\"color: #007aff; font-weight: 600;\">[Chủ đề]</span>{{c1::에 대해 살펴보면}}<br>• Mẫu 2: <span style=\"color: #007aff; font-weight: 600;\">[Chủ đề]</span>{{c2::에 대한 조사 결과에 따르면}}<br>• Cảnh báo: Tuyệt đối {{c3::không tự sáng tác tên cơ quan khảo sát}} (như '한국연구소에서').",
+        "Back": "Đề thi kỳ 64 chỉ có '온라인 쇼핑 시장의 변화'. Đáp án chuẩn dẫn thẳng vào chủ đề: '온라인 쇼핑 시장의 변화에 대해 조사한 결과...'.",
+        "Đề": "Câu 53 · Mở bài · Xử lý đề khuyết cơ quan & đối tượng",
+        "Audio": "",
+        "Link": "topik/youtube_cau53/graph/concepts/cau-mo-co-quan-chu-de.md"
+      }
+    },
+    {
+      "noteId": 1793275275340,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::1. Mở bài: Cơ quan + Đối tượng + Chủ đề",
+      "modelName": "(AnkiVN) Cloze",
+      "tags": [
+        "cau53",
+        "cracking-topik-writing",
+        "mo-bai",
+        "quy-tac-o-ly"
+      ],
+      "cards": [
+        1793275275341,
+        1793275275342,
+        1793275275344,
+        1793275275343,
+        1793275275340
+      ],
+      "fields": {
+        "Text": "<b>Câu 53 · Quy tắc 원고지 cho câu mở bài</b><br>1. Bài viết Câu 53 được trình bày thành {{c1::1 đoạn văn duy nhất}} (200–300 chữ).<br>2. {{c2::Không viết tiêu đề}} bài viết lên giấy thi.<br>3. Chỉ có chữ cái đầu tiên của {{c3::câu mở bài}} là được {{c4::lùi đúng 1 ô đầu dòng}}, toàn bộ các câu phía sau viết liền không xuống dòng.<br>4. Dung lượng câu mở bài lý tưởng: {{c5::35–45 chữ}} (1 câu duy nhất).",
+        "Back": "Lùi đầu dòng giữa bài hoặc chia thành 2-3 đoạn khi đề không yêu cầu có thể bị trừ điểm hình thức triển khai (전개 구조).",
+        "Đề": "Câu 53 · Mở bài · Quy tắc giấy ô ly 원고지",
+        "Audio": "",
+        "Link": "topik/youtube_cau53/graph/concepts/quy-tac-o-ly.md"
+      }
+    },
+    {
+      "noteId": 1793275275472,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::1. Mở bài: Cơ quan + Đối tượng + Chủ đề",
+      "modelName": "(AnkiVN) Cloze",
+      "tags": [
+        "cau53",
+        "cracking-topik-writing",
+        "mau-cau",
+        "mo-bai"
+      ],
+      "cards": [
+        1793275275473,
+        1793275275472,
+        1793275275474,
+        1793275275475
+      ],
+      "fields": {
+        "Text": "<b>Câu 53 · 3 Mẫu câu mở bài kinh điển</b><br>1. Dẫn trích kết quả: <span style=\"color: #007aff; font-weight: 600;\">[Cơ quan]</span>에서 <span style=\"color: #007aff; font-weight: 600;\">[Đối tượng]</span>을/를 대상으로 <span style=\"color: #007aff; font-weight: 600;\">[Chủ đề]</span>에 대해 {{c1::조사한 결과에 따르면}}, [biểu đồ 1]...<br>2. Câu trần thuật độc lập: <span style=\"color: #007aff; font-weight: 600;\">[Cơ quan]</span>에서 <span style=\"color: #007aff; font-weight: 600;\">[Đối tượng]</span>을/를 대상으로 <span style=\"color: #007aff; font-weight: 600;\">[Chủ đề]</span>에 대해 {{c2::조사를 실시하였다}}. {{c3::그 결과 / 조사 결과}}, ...<br>3. Tích hợp xu hướng khái quát: ...조사를 실시한 결과, {{c4::[xu hướng tổng thể] 것으로 나타났다}}.",
+        "Back": "Mẫu 1 là mẫu an toàn nhất vì nối mượt mà từ mở bài sang thân bài mà không lo bị ngắt câu hay thiếu chữ nối.",
+        "Đề": "Câu 53 · Mở bài · 3 Mẫu câu mở bài chuẩn mực",
+        "Audio": "",
+        "Link": "topik/youtube_cau53/graph/concepts/cau-mo-co-quan-chu-de.md"
+      }
+    },
+    {
+      "noteId": 1793275275589,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::Luyện viết 원고지::0. Luyện câu mở bài",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "tags": [
+        "cau53",
+        "cracking-topik-writing",
+        "luyen-viet",
+        "mo-bai"
+      ],
+      "cards": [
+        1793275275589
+      ],
+      "fields": {
+        "ID": "C53-MO-01",
+        "Nguồn": "TOPIK II · Luyện viết câu mở bài 01",
+        "Đề": "다음을 참고하여 글의 도입부(첫 문장)를 원고지에 쓰십시오. (조사한 결과에 따르면 형식)",
+        "DữLiệu": "<b>[조사 개요]</b><br>• <b>조사기관:</b> 인주시 사회연구소<br>• <b>조사대상:</b> 성인 남녀 3000명<br>• <b>조사주제:</b> 결혼관",
+        "Ảnh": "",
+        "BàiMẫu": "인주시 사회연구소에서 성인 남녀 3000명을 대상으로 결혼관에 대해 조사한 결과에 따르면",
+        "GhiChú": "Mở bài chuẩn 3 thành tố: Cơ quan (에서) + Đối tượng (을/를 대상으로) + Chủ đề (에 대해 조사한 결과에 따르면). Chú ý lùi 1 ô đầu dòng khi gõ trên 원고지."
+      }
+    },
+    {
+      "noteId": 1793275275717,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::Luyện viết 원고지::0. Luyện câu mở bài",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "tags": [
+        "cau53",
+        "cracking-topik-writing",
+        "luyen-viet",
+        "mo-bai"
+      ],
+      "cards": [
+        1793275275717
+      ],
+      "fields": {
+        "ID": "C53-MO-02",
+        "Nguồn": "TOPIK II · Luyện viết câu mở bài 02 (Kỳ 52)",
+        "Đề": "다음을 참고하여 설문조사 형식을 살려 글의 도입부 문장을 쓰십시오. (조사를 실시하였다 형식)",
+        "DữLiệu": "<b>[조사 개요 · 52회 기출]</b><br>• <b>조사기관:</b> 결혼문화연구소<br>• <b>조사대상:</b> 20대 이상 성인 남녀 3000명<br>• <b>조사주제:</b> 아이를 꼭 낳아야 하는가",
+        "Ảnh": "",
+        "BàiMẫu": "결혼문화연구소에서 20대 이상 성인 남녀 3000명을 대상으로 아이를 꼭 낳아야 하는지에 대해 설문조사를 실시하였다.",
+        "GhiChú": "Vì đề thi hỏi ý kiến thăm dò (아이를 꼭 낳아야 하는가) nên dùng '설문조사' và biến đổi câu hỏi thành '아이를 꼭 낳아야 하는지에 대해'. Kết thúc câu bằng '설문조사를 실시하였다.'"
+      }
+    },
+    {
+      "noteId": 1793275275832,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::Luyện viết 원고지::0. Luyện câu mở bài",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "tags": [
+        "cau53",
+        "cracking-topik-writing",
+        "luyen-viet",
+        "mo-bai"
+      ],
+      "cards": [
+        1793275275832
+      ],
+      "fields": {
+        "ID": "C53-MO-03",
+        "Nguồn": "TOPIK II · Luyện viết câu mở bài 03 (Khuyết đối tượng)",
+        "Đề": "다음을 참고하여 조사대상이 없는 경우의 도입부 문장을 쓰십시오. (단, 대상을 임의로 추가하지 말 것)",
+        "DữLiệu": "<b>[조사 개요]</b><br>• <b>조사기관:</b> 농림축산식품부<br>• <b>조사주제:</b> 한국의 연간 커피 소비량 변화",
+        "Ảnh": "",
+        "BàiMẫu": "농림축산식품부에서 한국의 연간 커피 소비량 변화에 대해 조사한 결과에 따르면",
+        "GhiChú": "Khi đề khuyết đối tượng điều tra: Lược bỏ cụm '을/를 대상으로', nối thẳng cơ quan với chủ đề. Tuyệt đối không tự bịa đối tượng."
+      }
+    },
+    {
+      "noteId": 1793275275959,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::Luyện viết 원고지::0. Luyện câu mở bài",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "tags": [
+        "cau53",
+        "cracking-topik-writing",
+        "luyen-viet",
+        "mo-bai"
+      ],
+      "cards": [
+        1793275275959
+      ],
+      "fields": {
+        "ID": "C53-MO-04",
+        "Nguồn": "TOPIK II · Luyện viết câu mở bài 04 (Khuyết cơ quan & đối tượng · Kỳ 64)",
+        "Đề": "조사기관과 조사대상이 제시되지 않은 다음 자료를 보고 글의 도입부 문장을 쓰십시오.",
+        "DữLiệu": "<b>[조사 개요 · 64회 기출]</b><br>• <b>조사주제:</b> 온라인 쇼핑 시장의 변화",
+        "Ảnh": "",
+        "BàiMẫu": "온라인 쇼핑 시장의 변화에 대해 조사한 결과에 따르면",
+        "GhiChú": "Khi đề bài không cho cả cơ quan và đối tượng: Bắt đầu thẳng bằng '[Chủ đề]에 대해 조사한 결과에 따르면' (hoặc '온라인 쇼핑 시장의 변화를 살펴보면'). Không tự bịa cơ quan."
+      }
+    },
+    {
+      "noteId": 1793275276078,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::Luyện viết 원고지::0. Luyện câu mở bài",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "tags": [
+        "cau53",
+        "cracking-topik-writing",
+        "luyen-viet",
+        "mo-bai"
+      ],
+      "cards": [
+        1793275276078
+      ],
+      "fields": {
+        "ID": "C53-MO-05",
+        "Nguồn": "TOPIK II · Luyện viết câu mở bài 05 (Tích hợp nhận định xu hướng)",
+        "Đề": "다음을 참고하여 조사 결과의 전반적인 추세를 포함한 도입부 문장을 쓰십시오. (~것으로 나타났다 형식)",
+        "DữLiệu": "<b>[조사 개요]</b><br>• <b>조사기관:</b> 통계청<br>• <b>조사대상:</b> 전국 성인 남녀<br>• <b>조사주제:</b> 여가 활동 참여율<br>• <b>핵심 추세:</b> 꾸준히 증가함",
+        "Ảnh": "",
+        "BàiMẫu": "통계청에서 전국 성인 남녀를 대상으로 여가 활동 참여율에 대해 조사한 결과 꾸준히 증가한 것으로 나타났다.",
+        "GhiChú": "Mẫu mở bài tích hợp nhận định tổng thể: '조사한 결과 [xu hướng động từ] + (으)ㄴ/는 것으로 나타났다.' Giúp câu mở bài có chiều sâu ngữ pháp."
+      }
+    },
+    {
+      "noteId": 1793276972436,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::1. Mở bài: Cơ quan + Đối tượng + Chủ đề",
+      "modelName": "(AnkiVN) Cloze",
+      "tags": [
+        "cau53",
+        "dan-so",
+        "nhan-khau",
+        "mo-bai",
+        "tu-vung-chuan"
+      ],
+      "cards": [
+        1793276972437,
+        1793276972436,
+        1793276972438
+      ],
+      "fields": {
+        "Text": "<b>Đặc trưng đề tài Dân số (인구 현황 / 인구 구조 변화)</b><br>Dân số là số liệu thống kê vĩ mô (do <i>통계청</i> công bố), không phải phỏng vấn người dân.<br>Do đó: <br>1. Phải dùng từ {{c1::조사 (khảo sát/điều tra thống kê)}}, tuyệt đối cấm dùng {{c2::설문조사 (khảo sát ý kiến)}}.<br>2. Đề thường <b>khuyết đối tượng</b>, thí sinh {{c3::không được tự bịa '~을/를 대상으로'}} vào bài.",
+        "Back": "Khung chuẩn: 통계청에서 인구 구조 변화에 대해 조사한 결과... (hoặc 통계청 자료에 따르면...)",
+        "Đề": "Câu 53 · Dân số · Phân loại tính chất đề & Cấm bịa đối tượng",
+        "Audio": "",
+        "Link": "topik/youtube_cau53/graph/concepts/cau-mo-co-quan-chu-de.md"
+      }
+    },
+    {
+      "noteId": 1793276972691,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::1. Mở bài: Cơ quan + Đối tượng + Chủ đề",
+      "modelName": "(AnkiVN) Cloze",
+      "tags": [
+        "cau53",
+        "dan-so",
+        "dong-tu-chuan",
+        "luong-tu"
+      ],
+      "cards": [
+        1793276972691,
+        1793276972692
+      ],
+      "fields": {
+        "Text": "<b>Quy tắc dùng động từ & đơn vị cho Dân số (인구)</b><br>1. Số lượng người (đơn vị: <i>명, 만 명</i>) là đại lượng đếm được, biến động phải dùng động từ {{c1::증가하다 / 감소하다 (hoặc 늘어나다 / 줄어들다)}}.<br>2. Tuyệt đối <b>không</b> dùng cặp từ {{c2::상승하다 / 하락하다}} (vì chỉ dùng cho giá cả, tỷ lệ, điểm số).",
+        "Back": "Ví dụ chuẩn 원고지: 1인 가구 수는 2010년 15만 명에서 2020년 30만 명으로 약 2배 증가하였다.",
+        "Đề": "Câu 53 · Dân số · Động từ miêu tả số người & Lượng từ",
+        "Audio": "",
+        "Link": "topik/youtube_cau53/graph/concepts/dang-so-sanh.md"
+      }
+    },
+    {
+      "noteId": 1793276972804,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::1. Mở bài: Cơ quan + Đối tượng + Chủ đề",
+      "modelName": "(AnkiVN) Cloze",
+      "tags": [
+        "cau53",
+        "dan-so",
+        "nguyen-nhan",
+        "ngu-phap"
+      ],
+      "cards": [
+        1793276972804,
+        1793276972805
+      ],
+      "fields": {
+        "Text": "<b>Chuyển cụm danh từ sang vị ngữ trong bài Dân số</b><br>Khi đề bài ghi cụm danh từ nguyên nhân dạng tóm tắt: <i>고령 인구 증가</i> hoặc <i>청년층 독립</i>.<br>Khi viết vào câu giải thích nguyên nhân (이러한 원인은...), bắt buộc phải đổi sang dạng vị ngữ: <br>{{c1::고령 인구가 증가하였기 때문이다 (hoặc 고령 인구의 증가로 인해)}}.<br>Tuyệt đối không chép nguyên văn danh từ cụt {{c2::*고령 인구 증가 때문이다 (thiếu trợ từ/đuôi vị ngữ)}}.",
+        "Back": "Cấu trúc chuẩn: 이러한 변화의 원인은 청년층의 독립과 고령 인구가 증가하였기 때문이다.",
+        "Đề": "Câu 53 · Dân số · Chuyển cụm danh từ thành vị ngữ giải thích nguyên nhân",
+        "Audio": "",
+        "Link": "topik/youtube_cau53/graph/concepts/bieu-dat-nguyen-nhan.md"
+      }
+    },
+    {
+      "noteId": 1793276972924,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::1. Mở bài: Cơ quan + Đối tượng + Chủ đề",
+      "modelName": "(AnkiVN) Cloze",
+      "tags": [
+        "cau53",
+        "xuat-khau",
+        "kinh-te",
+        "mo-bai"
+      ],
+      "cards": [
+        1793276972924,
+        1793276972925
+      ],
+      "fields": {
+        "Text": "<b>Đặc trưng đề tài Kim ngạch xuất khẩu (수출액 / 수출 현황)</b><br>1. Cơ quan công bố thường là <i>관세청 (Tổng cục Hải quan)</i> hoặc <i>산업통상자원부</i>.<br>2. Đây là số liệu mậu dịch vĩ mô, phải dùng dạng mở bài {{c1::[Cơ quan]에서 [Chủ đề]에 대해 조사한 결과 (hoặc [Cơ quan]의 자료에 따르면)}}.<br>3. Cấm dùng {{c2::설문조사}} vì hàng hóa xuất khẩu không thể điền phiếu khảo sát.",
+        "Back": "Ví dụ chuẩn: 관세청에서 주방용 전자제품 수출 현황에 대해 조사한 결과...",
+        "Đề": "Câu 53 · Kim ngạch xuất khẩu · Cơ quan công bố & Dạng mở bài",
+        "Audio": "",
+        "Link": "topik/youtube_cau53/graph/concepts/cau-mo-co-quan-chu-de.md"
+      }
+    },
+    {
+      "noteId": 1793276973031,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::1. Mở bài: Cơ quan + Đối tượng + Chủ đề",
+      "modelName": "(AnkiVN) Cloze",
+      "tags": [
+        "cau53",
+        "xuat-khau",
+        "dong-tu-chuan",
+        "so-lieu"
+      ],
+      "cards": [
+        1793276973033,
+        1793276973031,
+        1793276973035,
+        1793276973034
+      ],
+      "fields": {
+        "Text": "<b>Đơn vị & Động từ miêu tả Kim ngạch xuất khẩu (수출액)</b><br>1. Đơn vị tiền tệ thường là {{c1::달러 / 억 달러}}.<br>2. Vì xuất khẩu là giá trị bằng tiền (금액), có thể dùng cả {{c2::증가하다 / 감소하다}} lẫn {{c3::상승하다 / 하락하다}}.<br>3. Khi số liệu tăng vọt đạt đến một mốc kỷ lục, dùng mẫu câu {{c4::~에 달하다 / 이르다}} (ví dụ: <i>9800만 달러에 달했다</i>).",
+        "Back": "Lưu ý tăng đột biến dùng '급증하다', giảm sốc dùng '급감하다 / 급락하다'.",
+        "Đề": "Câu 53 · Kim ngạch xuất khẩu · Đơn vị tiền tệ & Biểu đạt biến động/Chạm mốc",
+        "Audio": "",
+        "Link": "topik/youtube_cau53/graph/concepts/dang-bien-doi.md"
+      }
+    },
+    {
+      "noteId": 1793276973127,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::1. Mở bài: Cơ quan + Đối tượng + Chủ đề",
+      "modelName": "(AnkiVN) Cloze",
+      "tags": [
+        "cau53",
+        "xuat-khau",
+        "chuyen-khoi",
+        "thu-hang"
+      ],
+      "cards": [
+        1793276973127
+      ],
+      "fields": {
+        "Text": "<b>Câu dẫn chuyển sang biểu đồ phụ theo 품목별 / 지역별</b><br>Khi đề bài có biểu đồ phụ chia theo mặt hàng (품목별) hoặc khu vực (지역별/국가별):<br>Khung câu dẫn chuyển khối chuẩn mực là:<br>{{c1::[품목별 / 지역별] 수출 현황을 살펴보면}}<br>Tiếp theo nêu thứ hạng: <i>[Hạng 1]이 [X]%로 가장 높게 나타났으며, [Hạng 2]가 그 뒤를 이었다.</i>",
+        "Back": "Mẫu: 품목별 수출액을 살펴보면 반도체가 15억 달러로 가장 많았고, 자동차가 뒤를 이었다.",
+        "Đề": "Câu 53 · Kim ngạch xuất khẩu · Câu dẫn chuyển khối theo mặt hàng / thị trường",
+        "Audio": "",
+        "Link": "topik/youtube_cau53/graph/concepts/cau-dan-chuyen-khoi.md"
+      }
+    },
+    {
+      "noteId": 1793276973250,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::1. Mở bài: Cơ quan + Đối tượng + Chủ đề",
+      "modelName": "(AnkiVN) Cloze",
+      "tags": [
+        "cau53",
+        "dien-nang",
+        "nang-luong",
+        "mo-bai"
+      ],
+      "cards": [
+        1793276973250,
+        1793276973252,
+        1793276973251
+      ],
+      "fields": {
+        "Text": "<b>Đặc trưng đề tài Lượng điện / Năng lượng (전력 소비량 / 발전량)</b><br>1. Cơ quan công bố thường gặp là {{c1::한국전력공사 (Tổng công ty Điện lực Hàn Quốc - KEPCO)}} hoặc <i>에너지관리공단</i>.<br>2. Đây là số liệu đo lường kỹ thuật thực tế, mở bài dùng {{c2::조사한 결과 (hoặc 발표 자료에 따르면)}}.<br>3. Tuyệt đối không dùng {{c3::설문조사 / 조사를 실시하였다}} vì máy móc, đồng hồ điện không phải là đối tượng phỏng vấn ý kiến.",
+        "Back": "Mẫu: 한국전력공사에서 계절별 전력 소비량 변화에 대해 조사한 결과...",
+        "Đề": "Câu 53 · Lượng điện · Cơ quan chuyên trách & Dạng số liệu kỹ thuật",
+        "Audio": "",
+        "Link": "topik/youtube_cau53/graph/concepts/cau-mo-co-quan-chu-de.md"
+      }
+    },
+    {
+      "noteId": 1793276973331,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::1. Mở bài: Cơ quan + Đối tượng + Chủ đề",
+      "modelName": "(AnkiVN) Cloze",
+      "tags": [
+        "cau53",
+        "dien-nang",
+        "don-vi-do",
+        "dong-tu-chuan"
+      ],
+      "cards": [
+        1793276973332,
+        1793276973334,
+        1793276973333,
+        1793276973335
+      ],
+      "fields": {
+        "Text": "<b>Đơn vị & Động từ miêu tả Lượng điện (전력량)</b><br>1. Đơn vị tiêu thụ điện năng thường là {{c1::kWh (킬로와트시)}} hoặc công suất đỉnh {{c2::만 kW / MW}}.<br>2. Miêu tả lượng điện tiêu thụ dùng động từ {{c3::증가하다 / 감소하다 (hoặc 늘어나다 / 줄어들다)}}; mùa cao điểm (nắng nóng dùng máy lạnh) thường dùng {{c4::급증하다}}.<br>3. Không dùng <i>상승/하락</i> trực tiếp cho 'lượng' điện (chỉ dùng nếu nói về 'tỷ lệ tiêu thụ - 소비율').",
+        "Back": "Ví dụ: 폭염으로 인해 8월 전력 소비량이 전년 대비 15% 급증한 것으로 나타났다.",
+        "Đề": "Câu 53 · Lượng điện · Đơn vị đo lường & Động từ miêu tả biến động",
+        "Audio": "",
+        "Link": "topik/youtube_cau53/graph/concepts/dang-bien-doi.md"
+      }
+    },
+    {
+      "noteId": 1793276973439,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::1. Mở bài: Cơ quan + Đối tượng + Chủ đề",
+      "modelName": "(AnkiVN) Cloze",
+      "tags": [
+        "cau53",
+        "dien-nang",
+        "dinh-diem",
+        "so-sanh"
+      ],
+      "cards": [
+        1793276973439,
+        1793276973440
+      ],
+      "fields": {
+        "Text": "<b>Biểu đạt mốc tiêu thụ đỉnh điểm & so sánh theo mùa</b><br>Khi dữ liệu điện năng đạt mức cao nhất vào mùa hè (tháng 8) hoặc mùa đông (tháng 1):<br>Dùng cụm vị ngữ chuẩn mực:<br>{{c1::[8월에] [X kWh]로 최고치를 기록하였다 (hoặc 가장 높게 나타났다)}}.<br>Để so sánh hai mùa đối lập, dùng liên từ chuyển tiếp {{c2::반면에 / 이에 반해 (ngược lại)}}.",
+        "Back": "Mẫu: 8월 전력 소비량은 냉방 기기 사용으로 역대 최고치를 기록한 반면에, 봄철에는 비교적 낮은 수준을 유지하였다.",
+        "Đề": "Câu 53 · Lượng điện · Biểu đạt mốc kỷ lục & So sánh theo mùa",
+        "Audio": "",
+        "Link": "topik/youtube_cau53/graph/concepts/dang-so-sanh.md"
+      }
+    },
+    {
+      "noteId": 1793277091897,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::1. Mở bài: Cơ quan + Đối tượng + Chủ đề",
+      "modelName": "(AnkiVN) Cloze",
+      "tags": [
+        "cau53",
+        "van-phong",
+        "loi-dien-dat",
+        "khao-sat"
+      ],
+      "cards": [
+        1793277091897,
+        1793277091898,
+        1793277091899
+      ],
+      "fields": {
+        "Text": "<b>Lỗi dùng khẩu ngữ '물어봤다' trong Câu 53</b><br>Trong bài viết báo cáo Câu 53, tuyệt đối <b>không</b> viết khẩu ngữ {{c1::물어봤다 (hoặc 물어보았다)}} khi nói về việc khảo sát ý kiến.<br>Thay vào đó, phải dùng văn phong học thuật chuẩn mực:<br>1. Dùng động từ: {{c2::질문하였다 (hoặc 의견을 물었다)}}.<br>2. Hoặc dùng cấu trúc khảo sát chuẩn: {{c3::~에 대해 설문조사를 실시하였다}}.",
+        "Back": "Lưu ý phong cách TOPIK II: Đuôi kết thúc trang trọng dùng -았다/었다/였다 (viết đầy đủ '질문하였다', không viết tắt '질문했다' hay dùng văn nói '물어봤다').",
+        "Đề": "Câu 53 · Lỗi diễn đạt · Khẩu ngữ '물어봤다' vs Văn viết học thuật",
+        "Audio": "",
+        "Link": "topik/youtube_cau53/graph/concepts/cau-mo-co-quan-chu-de.md"
+      }
+    },
+    {
+      "noteId": 1793277092465,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::1. Mở bài: Cơ quan + Đối tượng + Chủ đề",
+      "modelName": "(AnkiVN) Cloze",
+      "tags": [
+        "cau53",
+        "khao-sat",
+        "ong-dap",
+        "ngu-phap-chuan"
+      ],
+      "cards": [
+        1793277092465,
+        1793277092467,
+        1793277092466
+      ],
+      "fields": {
+        "Text": "<b>Cách dùng động từ '응답하였다' trong Câu 53</b><br>1. Về hình thức bài thi: Viết chuẩn đuôi báo cáo là {{c1::응답하였다 (không viết rút gọn '응답했다')}}.<br>2. Mẫu câu trích dẫn ý kiến: <i>[Nội dung]</i>{{c2::(이)라고 응답한 비율이 [X]%로 가장 높았다}}.<br>3. Điều kiện áp dụng: Chỉ dùng '응답하였다' khi đề có {{c3::đối tượng con người trả lời khảo sát (설문조사)}}; tuyệt đối không dùng cho số liệu đo lường kỹ thuật hay thống kê vĩ mô.",
+        "Back": "Ví dụ chuẩn: '결혼을 해야 한다'고 응답한 비율이 45%로 가장 높게 나타났다.",
+        "Đề": "Câu 53 · Báo cáo khảo sát · Cách dùng '응답하였다' và phạm vi áp dụng",
+        "Audio": "",
+        "Link": "topik/youtube_cau53/graph/concepts/cau-mo-co-quan-chu-de.md"
+      }
+    },
+    {
+      "noteId": 1793277092806,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::1. Mở bài: Cơ quan + Đối tượng + Chủ đề",
+      "modelName": "(AnkiVN) Cloze",
+      "tags": [
+        "cau53",
+        "so-sanh",
+        "chan-seong-ban-dae",
+        "ty-le"
+      ],
+      "cards": [
+        1793277092808,
+        1793277092807,
+        1793277092806
+      ],
+      "fields": {
+        "Text": "<b>Cấu trúc so sánh tỷ lệ Tán thành (찬성) vs Phản đối (반대)</b><br>Khi đề cho bảng/biểu đồ ý kiến hai chiều đối lập:<br>1. Cấu trúc so sánh hơn kém chuẩn mực:<br><span style=\"color: #007aff; font-weight: 600;\">[Chủ đề]</span>에 대해 {{c1::찬성한다는 의견이 [X]%로 반대([Y]%)보다 훨씬 높게(많게) 나타났다}}.<br>2. Hoặc nêu tỷ số gấp n lần:<br>찬성이 [X]%, 반대가 [Y]%로 나타나 찬성하는 비율이 반대보다 {{c2::약 [N]배 더 높았다}}.<br>3. Trợ từ đi với 찬성/반대 luôn là {{c3::~에 찬성하다 / ~에 반대하다}} (hoặc danh từ <i>찬성 의견 / 반대 의견</i>).",
+        "Back": "Mẫu câu: 원격 수업 확대에 대해 찬성한다는 응답이 68%로 반대(32%)보다 2배 이상 높게 나타났다.",
+        "Đề": "Câu 53 · Dạng biểu đồ · Biểu đạt tỷ lệ Tán thành vs Phản đối (찬성/반대)",
+        "Audio": "",
+        "Link": "topik/youtube_cau53/graph/concepts/dang-so-sanh.md"
+      }
+    },
+    {
+      "noteId": 1793277299123,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::Luyện viết 원고지::0. Luyện câu mở bài",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "tags": [
+        "cau53",
+        "luyen-viet",
+        "mo-bai",
+        "sulmun-josa"
+      ],
+      "cards": [
+        1793277299123
+      ],
+      "fields": {
+        "ID": "C53-MO-06",
+        "Nguồn": "Luyện viết câu mở bài TOPIK II Câu 53",
+        "Đề": "다음을 참고하여 설문조사 형식으로 글의 도입부 문장을 쓰십시오.",
+        "DữLiệu": "<b>[조사 개요]</b><br>• <b>조사기관:</b> 교육연구소<br>• <b>조사대상:</b> 중고등학생 1500명<br>• <b>조사주제:</b> 원격 수업에 대한 만족도",
+        "Ảnh": "",
+        "BàiMẫu": "교육연구소에서 중고등학생 1500명을 대상으로 원격 수업에 대한 만족도에 대해 설문조사를 실시하였다.",
+        "GhiChú": "<b>Điểm mấu chốt:</b><br>1. Có đối tượng người điền phiếu (중고등학생 1500명) nên dùng <b>설문조사</b>.<br>2. Trợ từ: 교육연구소<b>에서</b>, 대상<b>을/를 대상으로</b>, 만족도<b>에 대해</b>.<br>3. Số 1500 viết liền trên 원고지 (2 ô ly: [15] [00])."
+      }
+    },
+    {
+      "noteId": 1793277299660,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::Luyện viết 원고지::0. Luyện câu mở bài",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "tags": [
+        "cau53",
+        "luyen-viet",
+        "mo-bai",
+        "sulmun-josa"
+      ],
+      "cards": [
+        1793277299660
+      ],
+      "fields": {
+        "ID": "C53-MO-07",
+        "Nguồn": "Luyện viết câu mở bài TOPIK II Câu 53",
+        "Đề": "다음을 참고하여 직장인 대상 설문조사 도입부 문장을 쓰십시오.",
+        "DữLiệu": "<b>[조사 개요]</b><br>• <b>조사기관:</b> 한국직업능력개발원<br>• <b>조사대상:</b> 직장인 2000명<br>• <b>조사주제:</b> 일과 삶의 균형에 대한 인식",
+        "Ảnh": "",
+        "BàiMẫu": "한국직업능력개발원에서 직장인 2000명을 대상으로 일과 삶의 균형에 대한 인식에 대해 설문조사를 실시하였다.",
+        "GhiChú": "<b>Điểm mấu chốt:</b><br>1. Chủ đề khảo sát ý kiến con người: dùng <b>설문조사를 실시하였다</b>.<br>2. Số 2000 chiếm 2 ô ly 원고지 ([20] [00])."
+      }
+    },
+    {
+      "noteId": 1793277299738,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::Luyện viết 원고지::0. Luyện câu mở bài",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "tags": [
+        "cau53",
+        "luyen-viet",
+        "mo-bai",
+        "sulmun-josa"
+      ],
+      "cards": [
+        1793277299738
+      ],
+      "fields": {
+        "ID": "C53-MO-08",
+        "Nguồn": "Luyện viết câu mở bài TOPIK II Câu 53",
+        "Đề": "다음을 참고하여 소비자 대상 설문조사 도입부 문장을 쓰십시오.",
+        "DữLiệu": "<b>[조사 개요]</b><br>• <b>조사기관:</b> 소비자보호원<br>• <b>조사대상:</b> 20~30대 소비자 1000명<br>• <b>조사주제:</b> 중고 거래 이용 실태",
+        "Ảnh": "",
+        "BàiMẫu": "소비자보호원에서 20~30대 소비자 1000명을 대상으로 중고 거래 이용 실태에 대해 설문조사를 실시하였다.",
+        "GhiChú": "<b>Điểm mấu chốt:</b><br>1. Có đối tượng trả lời: dùng <b>~을 대상으로 ... 설문조사를 실시하였다</b>.<br>2. 20~30대 và 1000 viết chuẩn theo quy tắc số trên ô ly."
+      }
+    },
+    {
+      "noteId": 1793277300044,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::Luyện viết 원고지::0. Luyện câu mở bài",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "tags": [
+        "cau53",
+        "luyen-viet",
+        "mo-bai",
+        "josa-vi-mo"
+      ],
+      "cards": [
+        1793277300044
+      ],
+      "fields": {
+        "ID": "C53-MO-09",
+        "Nguồn": "Luyện viết câu mở bài TOPIK II Câu 53",
+        "Đề": "다음을 참고하여 통계청 인구 자료의 도입부 문장을 쓰십시오. (조사한 결과에 따르면 형식)",
+        "DữLiệu": "<b>[조사 개요 · 인구 통계]</b><br>• <b>조사기관:</b> 통계청<br>• <b>조사주제:</b> 고령 인구 비율 변화",
+        "Ảnh": "",
+        "BàiMẫu": "통계청에서 고령 인구 비율 변화에 대해 조사한 결과에 따르면",
+        "GhiChú": "<b>Điểm mấu chốt:</b><br>1. Thống kê dân số vĩ mô: <b>chỉ dùng 조사한 결과에 따르면</b>, tuyệt đối không dùng 설문조사.<br>2. Đề không cho đối tượng: cấm tự bịa ~을/를 대상으로."
+      }
+    },
+    {
+      "noteId": 1793277300190,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::Luyện viết 원고지::0. Luyện câu mở bài",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "tags": [
+        "cau53",
+        "luyen-viet",
+        "mo-bai",
+        "josa-vi-mo"
+      ],
+      "cards": [
+        1793277300190
+      ],
+      "fields": {
+        "ID": "C53-MO-10",
+        "Nguồn": "Luyện viết câu mở bài TOPIK II Câu 53",
+        "Đề": "다음을 참고하여 관세청 수출 자료의 도입부 문장을 쓰십시오. (조사한 결과에 따르면 형식)",
+        "DữLiệu": "<b>[조사 개요 · 무역 통계]</b><br>• <b>조사기관:</b> 관세청<br>• <b>조사주제:</b> 국내 화장품 수출액 변화",
+        "Ảnh": "",
+        "BàiMẫu": "관세청에서 국내 화장품 수출액 변화에 대해 조사한 결과에 따르면",
+        "GhiChú": "<b>Điểm mấu chốt:</b><br>1. Kim ngạch xuất khẩu là dữ liệu kinh tế: dùng <b>조사한 결과에 따르면</b>.<br>2. Không có người điền phiếu nên không có 대상 và không dùng 설문조사."
+      }
+    },
+    {
+      "noteId": 1793277300313,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::Luyện viết 원고지::0. Luyện câu mở bài",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "tags": [
+        "cau53",
+        "luyen-viet",
+        "mo-bai",
+        "josa-do-luong"
+      ],
+      "cards": [
+        1793277300313
+      ],
+      "fields": {
+        "ID": "C53-MO-11",
+        "Nguồn": "Luyện viết câu mở bài TOPIK II Câu 53",
+        "Đề": "다음을 참고하여 한국전력공사 전력 자료의 도입부 문장을 쓰십시오. (조사한 결과에 따르면 형식)",
+        "DữLiệu": "<b>[조사 개요 · 측정 통계]</b><br>• <b>조사기관:</b> 한국전력공사<br>• <b>조사주제:</b> 계절별 전력 소비량 현황",
+        "Ảnh": "",
+        "BàiMẫu": "한국전력공사에서 계절별 전력 소비량 현황에 대해 조사한 결과에 따르면",
+        "GhiChú": "<b>Điểm mấu chốt:</b><br>1. Dữ liệu đo đạc lượng điện: dùng <b>조사한 결과에 따르면</b>.<br>2. Không có đối tượng phỏng vấn nên bỏ khuyết thành phần đối tượng."
+      }
+    },
+    {
+      "noteId": 1793277491526,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::Luyện viết 원고지::0. Luyện câu mở bài",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "tags": [
+        "cau53",
+        "luyen-viet",
+        "mo-bai",
+        "de-that",
+        "35hoe"
+      ],
+      "cards": [
+        1793277491526
+      ],
+      "fields": {
+        "ID": "C53-MO-12",
+        "Nguồn": "TOPIK II 35회 기출",
+        "Đề": "다음을 참고하여 글의 도입부 문장을 쓰십시오. (설문조사를 실시하였다 형식)",
+        "DữLiệu": "<b>[조사 개요 · 35회 기출]</b><br>• <b>조사대상:</b> 30대와 60대 성인 남녀 500명<br>• <b>조사주제:</b> 필요하다고 생각하는 공공시설",
+        "Ảnh": "",
+        "BàiMẫu": "30대와 60대 성인 남녀 500명을 대상으로 필요하다고 생각하는 공공시설에 대해 설문조사를 실시하였다.",
+        "GhiChú": "<b>Điểm mấu chốt:</b><br>1. Có đối tượng phỏng vấn ý kiến nên dùng <b>설문조사를 실시하였다</b>.<br>2. Số 500 chiếm 2 ô ly 원고지 ([50] [0])."
+      }
+    },
+    {
+      "noteId": 1793277492051,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::Luyện viết 원고지::0. Luyện câu mở bài",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "tags": [
+        "cau53",
+        "luyen-viet",
+        "mo-bai",
+        "de-that",
+        "36hoe"
+      ],
+      "cards": [
+        1793277492051
+      ],
+      "fields": {
+        "ID": "C53-MO-13",
+        "Nguồn": "TOPIK II 36회 기출",
+        "Đề": "다음을 참고하여 글의 도입부 문장을 쓰십시오. (조사한 결과에 따르면 형식)",
+        "DữLiệu": "<b>[조사 개요 · 36회 기출]</b><br>• <b>조사주제:</b> 1인 가구 증가 현황",
+        "Ảnh": "",
+        "BàiMẫu": "최근 한국 사회에서 1인 가구 증가 현황에 대해 조사한 결과에 따르면",
+        "GhiChú": "<b>Điểm mấu chốt:</b><br>1. Đề không cho cơ quan và đối tượng, mở bài bằng chủ đề <b>1인 가구 증가 현황에 대해 조사한 결과에 따르면</b>.<br>2. Tuyệt đối không tự bịa đối tượng khảo sát."
+      }
+    },
+    {
+      "noteId": 1793277492421,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::Luyện viết 원고지::0. Luyện câu mở bài",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "tags": [
+        "cau53",
+        "luyen-viet",
+        "mo-bai",
+        "de-that",
+        "41hoe"
+      ],
+      "cards": [
+        1793277492421
+      ],
+      "fields": {
+        "ID": "C53-MO-14",
+        "Nguồn": "TOPIK II 41회 기출",
+        "Đề": "다음을 참고하여 글의 도입부 문장을 쓰십시오. (설문조사를 실시하였다 형식)",
+        "DữLiệu": "<b>[조사 개요 · 41회 기출]</b><br>• <b>조사대상:</b> 교사와 학생 각각 300명<br>• <b>조사주제:</b> 글쓰기 능력을 향상시키는 방법",
+        "Ảnh": "",
+        "BàiMẫu": "교사와 학생 각각 300명을 대상으로 글쓰기 능력을 향상시키는 방법에 대해 설문조사를 실시하였다.",
+        "GhiChú": "<b>Điểm mấu chốt:</b><br>1. Đối tượng chia làm 2 nhóm đều nhau: <b>교사와 학생 각각 300명을 대상으로</b>.<br>2. Phỏng vấn ý kiến dùng <b>설문조사를 실시하였다</b>."
+      }
+    },
+    {
+      "noteId": 1793277492562,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::Luyện viết 원고지::0. Luyện câu mở bài",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "tags": [
+        "cau53",
+        "luyen-viet",
+        "mo-bai",
+        "de-that",
+        "47hoe"
+      ],
+      "cards": [
+        1793277492562
+      ],
+      "fields": {
+        "ID": "C53-MO-15",
+        "Nguồn": "TOPIK II 47회 기출",
+        "Đề": "다음을 참고하여 글의 도입부 문장을 쓰십시오. (조사한 결과에 따르면 형식)",
+        "DữLiệu": "<b>[조사 개요 · 47회 기출]</b><br>• <b>조사주제:</b> 국내 외국인 유학생 현황",
+        "Ảnh": "",
+        "BàiMẫu": "국내 외국인 유학생 현황에 대해 조사한 결과에 따르면",
+        "GhiChú": "<b>Điểm mấu chốt:</b><br>1. Đề khuyết cả cơ quan và đối tượng, chỉ dẫn vào bằng chủ đề <b>국내 외국인 유학생 현황에 대해 조사한 결과에 따르면</b>.<br>2. Không dùng 설문조사."
+      }
+    },
+    {
+      "noteId": 1793277492696,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::Luyện viết 원고지::0. Luyện câu mở bài",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "tags": [
+        "cau53",
+        "luyen-viet",
+        "mo-bai",
+        "de-that",
+        "60hoe"
+      ],
+      "cards": [
+        1793277492696
+      ],
+      "fields": {
+        "ID": "C53-MO-16",
+        "Nguồn": "TOPIK II 60회 기출",
+        "Đề": "다음을 참고하여 글의 도입부 문장을 쓰십시오. (조사한 결과에 따르면 형식)",
+        "DữLiệu": "<b>[조사 개요 · 60회 기출]</b><br>• <b>조사주제:</b> 인주시의 자전거 이용자 변화",
+        "Ảnh": "",
+        "BàiMẫu": "인주시의 자전거 이용자 변화에 대해 조사한 결과에 따르면",
+        "GhiChú": "<b>Điểm mấu chốt:</b><br>1. Phải lấy đúng chủ đề lớn của cả đề <b>인주시의 자전거 이용자 변화</b>, không lấy nhầm tiêu đề biểu đồ con (연도별 이용자 수)."
+      }
+    },
+    {
+      "noteId": 1793277492840,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::Luyện viết 원고지::0. Luyện câu mở bài",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "tags": [
+        "cau53",
+        "luyen-viet",
+        "mo-bai",
+        "de-that",
+        "83hoe"
+      ],
+      "cards": [
+        1793277492840
+      ],
+      "fields": {
+        "ID": "C53-MO-17",
+        "Nguồn": "TOPIK II 83회 기출",
+        "Đề": "다음을 참고하여 글의 도입부 문장을 쓰십시오. (조사한 결과에 따르면 형식)",
+        "DữLiệu": "<b>[조사 개요 · 83회 기출]</b><br>• <b>조사기관:</b> 인주시 사회연구소<br>• <b>조사주제:</b> 인주시의 가구 수 변화",
+        "Ảnh": "",
+        "BàiMẫu": "인주시 사회연구소에서 인주시의 가구 수 변화에 대해 조사한 결과에 따르면",
+        "GhiChú": "<b>Điểm mấu chốt:</b><br>1. Dẫn từ cơ quan vào chủ đề: <b>인주시 사회연구소에서 인주시의 가구 수 변화에 대해 조사한 결과에 따르면</b>.<br>2. Cấm tự bịa đối tượng."
+      }
+    },
+    {
+      "noteId": 1793277492981,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::Luyện viết 원고지::0. Luyện câu mở bài",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "tags": [
+        "cau53",
+        "luyen-viet",
+        "mo-bai",
+        "de-that",
+        "91hoe"
+      ],
+      "cards": [
+        1793277492981
+      ],
+      "fields": {
+        "ID": "C53-MO-18",
+        "Nguồn": "TOPIK II 91회 기출",
+        "Đề": "다음을 참고하여 글의 도입부 문장을 쓰십시오. (조사한 결과에 따르면 형식)",
+        "DữLiệu": "<b>[조사 개요 · 91회 기출]</b><br>• <b>조사기관:</b> 산업경제연구소<br>• <b>조사주제:</b> 편의점과 대형 마트 매출액 변화",
+        "Ảnh": "",
+        "BàiMẫu": "산업경제연구소에서 편의점과 대형 마트 매출액 변화에 대해 조사한 결과에 따르면",
+        "GhiChú": "<b>Điểm mấu chốt:</b><br>1. Dữ liệu doanh thu mậu dịch của 산업경제연구소: dùng <b>조사한 결과에 따르면</b>, tuyệt đối không dùng 설문조사."
+      }
+    },
+    {
+      "noteId": 1793277493146,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::Luyện viết 원고지::0. Luyện câu mở bài",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "tags": [
+        "cau53",
+        "luyen-viet",
+        "mo-bai",
+        "de-that",
+        "96hoe"
+      ],
+      "cards": [
+        1793277493146
+      ],
+      "fields": {
+        "ID": "C53-MO-19",
+        "Nguồn": "TOPIK II 96회 기출",
+        "Đề": "다음을 참고하여 글의 도입부 문장을 쓰십시오. (조사한 결과에 따르면 형식)",
+        "DữLiệu": "<b>[조사 개요 · 96회 기출]</b><br>• <b>조사기관:</b> 한국스포츠연구소<br>• <b>조사주제:</b> 인주시 마라톤 대회 참가자 수의 변화",
+        "BàiMẫu": "한국스포츠연구소에서 인주시 마라톤 대회 참가자 수의 변화에 대해 조사한 결과에 따르면",
+        "Ảnh": "",
+        "GhiChú": "<b>Điểm mấu chốt:</b><br>1. Cơ quan <b>한국스포츠연구소에서</b> nối với chủ đề <b>인주시 마라톤 대회 참가자 수의 변화에 대해 조사한 결과에 따르면</b>."
+      }
+    },
+    {
+      "noteId": 1793277493344,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::Luyện viết 원고지::0. Luyện câu mở bài",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "tags": [
+        "cau53",
+        "luyen-viet",
+        "mo-bai",
+        "de-that",
+        "102hoe"
+      ],
+      "cards": [
+        1793277493344
+      ],
+      "fields": {
+        "ID": "C53-MO-20",
+        "Nguồn": "TOPIK II 102회 기출",
+        "Đề": "다음을 참고하여 글의 도입부 문장을 쓰십시오. (조사한 결과에 따르면 형식)",
+        "DữLiệu": "<b>[조사 개요 · 102회 기출]</b><br>• <b>조사기관:</b> 한국관광공사<br>• <b>조사주제:</b> 한국 캠핑 인구의 변화",
+        "Ảnh": "",
+        "BàiMẫu": "한국관광공사에서 한국 캠핑 인구의 변화에 대해 조사한 결과에 따르면",
+        "GhiChú": "<b>Điểm mấu chốt:</b><br>1. Số liệu nhân khẩu học/du lịch của 한국관광공사, khuyết đối tượng: dùng <b>조사한 결과에 따르면</b>."
+      }
+    },
+    {
+      "noteId": 1793277493558,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::Luyện viết 원고지::0. Luyện câu mở bài",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "tags": [
+        "cau53",
+        "luyen-viet",
+        "mo-bai",
+        "sach-cracking",
+        "chuong16"
+      ],
+      "cards": [
+        1793277493559
+      ],
+      "fields": {
+        "ID": "C53-MO-21",
+        "Nguồn": "Cracking the TOPIK II Writing · Chương 16",
+        "Đề": "다음을 참고하여 글의 도입부 문장을 쓰십시오. (자료에 따르면 형식)",
+        "DữLiệu": "<b>[조사 개요 · Cracking TOPIK Chương 16]</b><br>• <b>조사기관/자료:</b> 기상청<br>• <b>조사주제:</b> 한국의 여름 기간 변화",
+        "Ảnh": "",
+        "BàiMẫu": "기상청 자료에 따르면 한국의 여름 기간 변화에 대해 조사한 결과",
+        "GhiChú": "<b>Điểm mấu chốt:</b><br>1. Dữ liệu đo đạc khí hậu: dùng <b>기상청 자료에 따르면 ... 조사한 결과</b>, cấm dùng 설문조사."
+      }
+    },
+    {
+      "noteId": 1793277493693,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::Luyện viết 원고지::0. Luyện câu mở bài",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "tags": [
+        "cau53",
+        "luyen-viet",
+        "mo-bai",
+        "sach-cracking",
+        "chuong17"
+      ],
+      "cards": [
+        1793277493693
+      ],
+      "fields": {
+        "ID": "C53-MO-22",
+        "Nguồn": "Cracking the TOPIK II Writing · Chương 17",
+        "Đề": "다음을 참고하여 글의 도입부 문장을 쓰십시오. (설문조사를 실시하였다 형식)",
+        "DữLiệu": "<b>[조사 개요 · Cracking TOPIK Chương 17]</b><br>• <b>조사대상:</b> 남자와 여자 각각 200명<br>• <b>조사주제:</b> 하고 싶은 여가 활동",
+        "Ảnh": "",
+        "BàiMẫu": "남자와 여자 각각 200명을 대상으로 하고 싶은 여가 활동에 대해 설문조사를 실시하였다.",
+        "GhiChú": "<b>Điểm mấu chốt:</b><br>1. Đối tượng phỏng vấn ý kiến nam nữ: dùng <b>설문조사를 실시하였다</b>.<br>2. Số 200 viết 2 chữ số gọn trong 원고지."
+      }
+    },
+    {
+      "noteId": 1793277493848,
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::Luyện viết 원고지::0. Luyện câu mở bài",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "tags": [
+        "cau53",
+        "luyen-viet",
+        "mo-bai",
+        "sach-cracking",
+        "chuong19"
+      ],
+      "cards": [
+        1793277493849
+      ],
+      "fields": {
+        "ID": "C53-MO-23",
+        "Nguồn": "Cracking the TOPIK II Writing · Chương 19",
+        "Đề": "다음을 참고하여 글의 도입부 문장을 쓰십시오. (조사한 결과에 따르면 형식)",
+        "DữLiệu": "<b>[조사 개요 · Cracking TOPIK Chương 19]</b><br>• <b>조사주제:</b> 스마트폰 사용 중 보행자와 차량 간 사고 발생 현황",
+        "Ảnh": "",
+        "BàiMẫu": "스마트폰 사용 중 보행자와 차량 간 사고 발생 현황에 대해 조사한 결과에 따르면",
+        "GhiChú": "<b>Điểm mấu chốt:</b><br>1. Thống kê tai nạn: khuyết cơ quan và đối tượng, mở bài bằng <b>[Chủ đề]에 대해 조사한 결과에 따르면</b>."
+      }
+    }
+  ]
+}

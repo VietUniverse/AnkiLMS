@@ -1,0 +1,86 @@
+---
+type: concept
+concept_type: meo
+source_count: 63
+groups: [han, nuoc_ngoai]
+agreement: đồng thuận
+tags: [cau54, meo]
+---
+
+# Luyện viết đều, học từ bài mẫu
+
+Viết thường xuyên nhiều đề, phân tích bài mẫu để lấy ý và cấu trúc.
+
+## Nguồn
+
+- [[topik/youtube_cau54/summaries/1I5lpQZvF8k-tomtat]]
+- [[topik/youtube_cau54/summaries/1pxpdH90gdw-tomtat]]
+- [[topik/youtube_cau54/summaries/263aUbPPStg-tomtat]]
+- [[topik/youtube_cau54/summaries/7R98thFuoKM-tomtat]]
+- [[topik/youtube_cau54/summaries/AEJ1kySjwsA-tomtat]]
+- [[topik/youtube_cau54/summaries/AZ1tc56QMz0-tomtat]]
+- [[topik/youtube_cau54/summaries/Bnbme0fo5rU-tomtat]]
+- [[topik/youtube_cau54/summaries/C8PLeqa6xqA-tomtat]]
+- [[topik/youtube_cau54/summaries/CdsHHGsZ_CI-tomtat]]
+- [[topik/youtube_cau54/summaries/E55P3fY_Vls-tomtat]]
+- [[topik/youtube_cau54/summaries/F8m-FTo-jKI-tomtat]]
+- [[topik/youtube_cau54/summaries/KZ5cD9rGDww-tomtat]]
+- [[topik/youtube_cau54/summaries/L7LkKMVzsAQ-tomtat]]
+- [[topik/youtube_cau54/summaries/LOk8UsLIek8-tomtat]]
+- [[topik/youtube_cau54/summaries/LpCgNF-Z3IQ-tomtat]]
+- [[topik/youtube_cau54/summaries/MyvigMGmPcQ-tomtat]]
+- [[topik/youtube_cau54/summaries/OK-8QVU_BoE-tomtat]]
+- [[topik/youtube_cau54/summaries/OxAOR2Ve5Uc-tomtat]]
+- [[topik/youtube_cau54/summaries/PjmlsFdCemc-tomtat]]
+- [[topik/youtube_cau54/summaries/R6Ly2zPldec-tomtat]]
+- [[topik/youtube_cau54/summaries/SZOD5QnEJ7M-tomtat]]
+- [[topik/youtube_cau54/summaries/Su0P9O_HxTg-tomtat]]
+- [[topik/youtube_cau54/summaries/UkJ6cVKoSbY-tomtat]]
+- [[topik/youtube_cau54/summaries/WjLG3AJ1W9w-tomtat]]
+- [[topik/youtube_cau54/summaries/XG-d8axvnv8-tomtat]]
+- [[topik/youtube_cau54/summaries/YGg9MzKk4oY-tomtat]]
+- [[topik/youtube_cau54/summaries/bNNd1WaOKf8-tomtat]]
+- [[topik/youtube_cau54/summaries/bl4w9JuxdZ8-tomtat]]
+- [[topik/youtube_cau54/summaries/c0mneS2lbd8-tomtat]]
+- [[topik/youtube_cau54/summaries/e1R7kWWIldc-tomtat]]
+- [[topik/youtube_cau54/summaries/et5HTw3QWwg-tomtat]]
+- [[topik/youtube_cau54/summaries/g7pSRXmE2BA-tomtat]]
+- [[topik/youtube_cau54/summaries/g8DWSzWlYWU-tomtat]]
+- [[topik/youtube_cau54/summaries/h_k1W7JL79s-tomtat]]
+- [[topik/web_cau54/summaries/hoctienghan-54-tomtat]]
+- [[topik/youtube_cau54/summaries/htesoEo2k0M-tomtat]]
+- [[topik/youtube_cau54/summaries/jHi3JAsAik8-tomtat]]
+- [[topik/web_cau54/summaries/kci-54-structure-tomtat]]
+- [[topik/web_cau54/summaries/kiss-model-tomtat]]
+- [[topik/web_cau54/summaries/nwoma-96-tomtat]]
+- [[topik/web_cau54/summaries/onthitopik-bai-10-tomtat]]
+- [[topik/web_cau54/summaries/onthitopik-bai-84-tomtat]]
+- [[topik/web_cau54/summaries/onthitopik-cum-dong-tu-tomtat]]
+- [[topik/web_cau54/summaries/onthitopik-tong-hop-tomtat]]
+- [[topik/youtube_cau54/summaries/qYjkkFe7FVU-tomtat]]
+- [[topik/youtube_cau54/summaries/qftTUuSeen4-tomtat]]
+- [[topik/web_cau54/summaries/srk-54-10-80-tomtat]]
+- [[topik/web_cau54/summaries/srk-day29-tomtat]]
+- [[topik/web_cau54/summaries/srk-values-tomtat]]
+- [[topik/youtube_cau54/summaries/taYA2QZzp0s-tomtat]]
+- [[topik/web_cau54/summaries/topikguide-writing-tomtat]]
+- [[topik/web_cau54/summaries/topiklab-ko-tomtat]]
+- [[topik/youtube_cau54/summaries/uwUgX8MnyjA-tomtat]]
+- [[topik/youtube_cau54/summaries/v27ffX9m31g-tomtat]]
+- [[topik/youtube_cau54/summaries/vYezMwTur3k-tomtat]]
+- [[topik/youtube_cau54/summaries/wAJncnc3gHs-tomtat]]
+- [[topik/youtube_cau54/summaries/wLWgHoBRbS8-tomtat]]
+- [[topik/youtube_cau54/summaries/wVRQ9R8xF4Q-tomtat]]
+- [[topik/youtube_cau54/summaries/xJmriIeECqI-tomtat]]
+- [[topik/web_cau54/summaries/xdf-54-tomtat]]
+- [[topik/youtube_cau54/summaries/xs8QY1sRdtU-tomtat]]
+- [[topik/youtube_cau54/summaries/zB0rVJYQJXs-tomtat]]
+- [[topik/youtube_cau54/summaries/zfb1Ez7gJiQ-tomtat]]
+
+## Liên quan
+
+- [[de-3-cau-hoi]]
+- [[khung-600-700-chu]]
+- [[dan-y-truoc-5-phut]]
+- [[chu-de-giao-duc-viec-lam]]
+- [[hoc-thuoc-khung-mau-cau]]

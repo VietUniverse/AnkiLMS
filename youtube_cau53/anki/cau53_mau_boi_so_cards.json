@@ -1,0 +1,165 @@
+{
+  "source": "topik/youtube_cau53/graph/concepts/mau-boi-so-khoang-nam.md",
+  "notes": [
+    {
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::5. Thân bài: Bội số + khoảng năm::01 — Tính khoảng năm: 지난 N년간 · N년 만에",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "fields": {
+        "ID": "C53-BOI-01",
+        "Nguồn": "Bội số + khoảng năm · 지난 N년간",
+        "Đề": "Tự tính khoảng năm và bội số. Viết 1 câu có <b style=\"color:#d9480f\">지난 N년간 약 N배</b>. Đơn vị %.",
+        "DữLiệu": "",
+        "Ảnh": "<div class=\"c53-fig\"><svg viewBox=\"0 0 460 260\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"반려동물 양육 가구 비율\" font-family=\"inherit\" fill=\"currentColor\"><text x=\"230.0\" y=\"24\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">반려동물 양육 가구 비율</text><text x=\"14\" y=\"38\" font-size=\"12\">(단위: %)</text><path d=\"M60 45 V205 H435\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.3\"/><text x=\"55\" y=\"209.0\" text-anchor=\"end\" font-size=\"12\">0</text><text x=\"55\" y=\"159.0\" text-anchor=\"end\" font-size=\"12\">10</text><line x1=\"65\" y1=\"155.0\" x2=\"425\" y2=\"155.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"109.0\" text-anchor=\"end\" font-size=\"12\">20</text><line x1=\"65\" y1=\"105.0\" x2=\"425\" y2=\"105.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"59.0\" text-anchor=\"end\" font-size=\"12\">30</text><line x1=\"65\" y1=\"55.0\" x2=\"425\" y2=\"55.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"65.0\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">2010년</text><line x1=\"65.0\" y1=\"185.0\" x2=\"65.0\" y2=\"205\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".5\"/><text x=\"237.5\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">2015년</text><line x1=\"237.5\" y1=\"160.0\" x2=\"237.5\" y2=\"205\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".5\"/><text x=\"410.0\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">2020년</text><line x1=\"410.0\" y1=\"75.0\" x2=\"410.0\" y2=\"205\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".5\"/><polyline points=\"65.0,185.0 237.5,160.0 410.0,75.0\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/><circle cx=\"65.0\" cy=\"185.0\" r=\"5\" fill=\"currentColor\"/><text x=\"65.0\" y=\"173.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">4%</text><circle cx=\"237.5\" cy=\"160.0\" r=\"5\" fill=\"currentColor\"/><text x=\"237.5\" y=\"148.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">9%</text><circle cx=\"410.0\" cy=\"75.0\" r=\"5\" fill=\"currentColor\"/><text x=\"410.0\" y=\"63.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">26%</text><path d=\"M75.0 160.0 Q235.0 35.0 395.0 50.0\" fill=\"none\" stroke=\"#5b66a8\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-dasharray=\"4 3\" opacity=\".8\"/><path d=\"M391.0 45.0 L399.0 50.0 L391.0 55.0 Z\" fill=\"#5b66a8\" opacity=\".85\"/></svg></div>",
+        "BàiMẫu": "반려동물을 키우는 가구 비율은 2010년 4%에서 2015년 9%, 2020년 26%로 지난 10년간 약 7배 증가하였다.",
+        "GhiChú": "<b style=\"color:#1971c2\">Khung:</b> <b style=\"color:#d9480f\">… [năm cuối] [số]로 지난 [N]년간 약 [M]배 증가하였다</b><br><b style=\"color:#1971c2\">Vì sao dùng 급증:</b> gộp hai mốc cuối vào một cụm thay vì liệt kê năm<br><b style=\"color:#1971c2\">Đọc số liệu:</b> 2020 − 2010 = <b>10년</b>; 26 ÷ 4 = 6,5 → <b>약 7배</b><br><b style=\"color:#1971c2\">Ngữ pháp:</b> <b>지난 10년간</b> đứng trước 약 N배; 4%에서 9%, 26%로: mốc đầu 에서, mốc cuối (으)로<br><b style=\"color:#1971c2\">Bẫy:</b> trừ năm sai là sai nội dung biểu đồ; luôn tính 2020 − 2010 trước"
+      },
+      "tags": [
+        "cau53",
+        "boi-so-khoang-nam",
+        "than-bai",
+        "cracking-topik-writing",
+        "luyen-viet"
+      ]
+    },
+    {
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::5. Thân bài: Bội số + khoảng năm::01 — Tính khoảng năm: 지난 N년간 · N년 만에",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "fields": {
+        "ID": "C53-BOI-02",
+        "Nguồn": "Bội số + khoảng năm · N년 만에",
+        "Đề": "Tự tính khoảng năm và bội số. Viết 1 câu có <b style=\"color:#d9480f\">N년 만에 약 N배</b>. Đơn vị tiền (원).",
+        "DữLiệu": "",
+        "Ảnh": "<div class=\"c53-fig\"><svg viewBox=\"0 0 460 260\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"전자책 매출액\" font-family=\"inherit\" fill=\"currentColor\"><text x=\"230.0\" y=\"24\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">전자책 매출액</text><text x=\"14\" y=\"38\" font-size=\"12\">(단위: 억 원)</text><path d=\"M60 45 V205 H425\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.3\"/><text x=\"55\" y=\"209.0\" text-anchor=\"end\" font-size=\"12\">0</text><text x=\"55\" y=\"171.5\" text-anchor=\"end\" font-size=\"12\">500</text><line x1=\"65\" y1=\"167.5\" x2=\"420\" y2=\"167.5\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"134.0\" text-anchor=\"end\" font-size=\"12\">1000</text><line x1=\"65\" y1=\"130.0\" x2=\"420\" y2=\"130.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"96.5\" text-anchor=\"end\" font-size=\"12\">1500</text><line x1=\"65\" y1=\"92.5\" x2=\"420\" y2=\"92.5\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"59.0\" text-anchor=\"end\" font-size=\"12\">2000</text><line x1=\"65\" y1=\"55.0\" x2=\"420\" y2=\"55.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><rect x=\"128.25\" y=\"132.25\" width=\"46\" height=\"72.75\" rx=\"3\" fill=\"#8c8c8c\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"151.25\" y=\"124.25\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">970억</text><text x=\"151.25\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">2015년</text><rect x=\"300.75\" y=\"58.75\" width=\"46\" height=\"146.25\" rx=\"3\" fill=\"#6a737d\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"323.75\" y=\"50.75\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">1950억</text><text x=\"323.75\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">2020년</text></svg></div>",
+        "BàiMẫu": "전자책 매출액은 2015년 970억 원에서 2020년 1950억 원으로 5년 만에 약 2배 증가하였다.",
+        "GhiChú": "<b style=\"color:#1971c2\">Khung:</b> <b style=\"color:#d9480f\">… [số 2]으로 [N]년 만에 약 [M]배 증가하였다</b><br><b style=\"color:#1971c2\">Vì sao dùng 급증:</b> nhấn mạnh tốc độ: chỉ trong N năm<br><b style=\"color:#1971c2\">Đọc số liệu:</b> 2020 − 2015 = <b>5년</b>; 1950 ÷ 970 ≈ 2,0 → <b>약 2배</b><br><b style=\"color:#1971c2\">Ngữ pháp:</b> <b>원</b> kết thúc bằng phụ âm nên dùng <b>으로</b>; <b>N년 만에</b> khác 지난 N년간 ở sắc thái 'chỉ sau'<br><b style=\"color:#1971c2\">Bẫy:</b> đừng quên đơn vị <b>원</b> sau số"
+      },
+      "tags": [
+        "cau53",
+        "boi-so-khoang-nam",
+        "than-bai",
+        "cracking-topik-writing",
+        "luyen-viet"
+      ]
+    },
+    {
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::5. Thân bài: Bội số + khoảng năm::01 — Tính khoảng năm: 지난 N년간 · N년 만에",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "fields": {
+        "ID": "C53-BOI-03",
+        "Nguồn": "Bội số + khoảng năm · Tính sai năm",
+        "Đề": "Tự tính khoảng năm. Viết 1 câu có <b style=\"color:#d9480f\">지난 N년간</b> và bội số. Đơn vị tiền (억 원).",
+        "DữLiệu": "",
+        "Ảnh": "<div class=\"c53-fig\"><svg viewBox=\"0 0 460 260\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"도시락 매출액\" font-family=\"inherit\" fill=\"currentColor\"><text x=\"230.0\" y=\"24\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">도시락 매출액</text><text x=\"14\" y=\"38\" font-size=\"12\">(단위: 억 원)</text><path d=\"M60 45 V205 H425\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.3\"/><text x=\"55\" y=\"209.0\" text-anchor=\"end\" font-size=\"12\">0</text><text x=\"55\" y=\"171.5\" text-anchor=\"end\" font-size=\"12\">100</text><line x1=\"65\" y1=\"167.5\" x2=\"420\" y2=\"167.5\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"134.0\" text-anchor=\"end\" font-size=\"12\">200</text><line x1=\"65\" y1=\"130.0\" x2=\"420\" y2=\"130.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"96.5\" text-anchor=\"end\" font-size=\"12\">300</text><line x1=\"65\" y1=\"92.5\" x2=\"420\" y2=\"92.5\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"59.0\" text-anchor=\"end\" font-size=\"12\">400</text><line x1=\"65\" y1=\"55.0\" x2=\"420\" y2=\"55.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><rect x=\"128.25\" y=\"167.5\" width=\"46\" height=\"37.5\" rx=\"3\" fill=\"#8c8c8c\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"151.25\" y=\"159.5\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">100억</text><text x=\"151.25\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">2015년</text><rect x=\"300.75\" y=\"96.25\" width=\"46\" height=\"108.75\" rx=\"3\" fill=\"#6a737d\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"323.75\" y=\"88.25\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">290억</text><text x=\"323.75\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">2023년</text></svg></div>",
+        "BàiMẫu": "도시락 매출액은 2015년 100억 원에서 2023년 290억 원으로 지난 8년간 약 3배 증가하였다.",
+        "GhiChú": "<b style=\"color:#1971c2\">Khung:</b> <b style=\"color:#d9480f\">… [năm 2]에는 [số]으로 지난 [N]년간 약 [M]배 증가하였다</b><br><b style=\"color:#1971c2\">Vì sao dùng 급증:</b> mốc năm xa nhau, cần tính khoảng thời gian<br><b style=\"color:#1971c2\">Đọc số liệu:</b> 2023 − 2015 = <b>8년</b> (không phải 3년); 290 ÷ 100 = 2,9 → <b>약 3배</b><br><b style=\"color:#1971c2\">Ngữ pháp:</b> <b>지난 8년간</b>; <b>원</b> → <b>으로</b><br><b style=\"color:#1971c2\">Bẫy:</b> giáo viên từng nói nhầm 3년 cho 2015–2023 rồi tự sửa thành 8년; luôn trừ lại"
+      },
+      "tags": [
+        "cau53",
+        "boi-so-khoang-nam",
+        "than-bai",
+        "cracking-topik-writing",
+        "luyen-viet"
+      ]
+    },
+    {
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::5. Thân bài: Bội số + khoảng năm::02 — Cách nói bội số: 약 · 이상 · 무려 ~나",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "fields": {
+        "ID": "C53-BOI-04",
+        "Nguồn": "Bội số + khoảng năm · Đúng bội số (không 약)",
+        "Đề": "Viết 1 câu: đúng bội số thì nói thẳng, không dùng 약. Có khoảng năm <b style=\"color:#d9480f\">N년간</b> và <b style=\"color:#d9480f\">1.4배</b>.",
+        "DữLiệu": "",
+        "Ảnh": "<div class=\"c53-fig\"><svg viewBox=\"0 0 460 260\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"인주시 가구 수\" font-family=\"inherit\" fill=\"currentColor\"><text x=\"230.0\" y=\"24\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">인주시 가구 수</text><text x=\"14\" y=\"38\" font-size=\"12\">(단위: 만 가구)</text><path d=\"M60 45 V205 H425\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.3\"/><text x=\"55\" y=\"209.0\" text-anchor=\"end\" font-size=\"12\">0</text><text x=\"55\" y=\"159.0\" text-anchor=\"end\" font-size=\"12\">10</text><line x1=\"65\" y1=\"155.0\" x2=\"420\" y2=\"155.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"109.0\" text-anchor=\"end\" font-size=\"12\">20</text><line x1=\"65\" y1=\"105.0\" x2=\"420\" y2=\"105.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"59.0\" text-anchor=\"end\" font-size=\"12\">30</text><line x1=\"65\" y1=\"55.0\" x2=\"420\" y2=\"55.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><rect x=\"128.25\" y=\"130.0\" width=\"46\" height=\"75.0\" rx=\"3\" fill=\"#8c8c8c\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"151.25\" y=\"122.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">15만</text><text x=\"151.25\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">2001년</text><rect x=\"300.75\" y=\"100.0\" width=\"46\" height=\"105.0\" rx=\"3\" fill=\"#6a737d\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"323.75\" y=\"92.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">21만</text><text x=\"323.75\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">2021년</text></svg></div>",
+        "BàiMẫu": "인주시 가구 수는 2001년 15만 가구에서 2021년 21만 가구로 20년간 1.4배 증가하였다.",
+        "GhiChú": "<b style=\"color:#1971c2\">Khung:</b> <b style=\"color:#d9480f\">… [số]로 [N]년간 [x.y]배 증가하였다</b><br><b style=\"color:#1971c2\">Vì sao dùng 급증:</b> đúng bội số thì chép thẳng hệ số, không thêm 약<br><b style=\"color:#1971c2\">Đọc số liệu:</b> 21 ÷ 15 = <b>1,4배</b>; 2021 − 2001 = <b>20년</b><br><b style=\"color:#1971c2\">Ngữ pháp:</b> <b>가구</b> kết thúc bằng nguyên âm nên mốc sau dùng <b>로</b><br><b style=\"color:#1971c2\">Bẫy:</b> nếu biểu đồ đã ghi sẵn hệ số, chép đúng hệ số đó, không tự tính lại"
+      },
+      "tags": [
+        "cau53",
+        "boi-so-khoang-nam",
+        "than-bai",
+        "cracking-topik-writing",
+        "luyen-viet"
+      ]
+    },
+    {
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::5. Thân bài: Bội số + khoảng năm::02 — Cách nói bội số: 약 · 이상 · 무려 ~나",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "fields": {
+        "ID": "C53-BOI-05",
+        "Nguồn": "Bội số + khoảng năm · 세 배 이상",
+        "Đề": "Viết 1 câu chỉ dùng hệ số, kết bằng <b style=\"color:#d9480f\">세 배 이상 증가하였다</b>. Đơn vị người (명).",
+        "DữLiệu": "",
+        "Ảnh": "<div class=\"c53-fig\"><svg viewBox=\"0 0 460 260\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"마라톤 참가자 수\" font-family=\"inherit\" fill=\"currentColor\"><text x=\"230.0\" y=\"24\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">마라톤 참가자 수</text><text x=\"14\" y=\"38\" font-size=\"12\">(단위: 만 명)</text><path d=\"M60 45 V205 H425\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.3\"/><text x=\"55\" y=\"209.0\" text-anchor=\"end\" font-size=\"12\">0</text><text x=\"55\" y=\"159.0\" text-anchor=\"end\" font-size=\"12\">50</text><line x1=\"65\" y1=\"155.0\" x2=\"420\" y2=\"155.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"109.0\" text-anchor=\"end\" font-size=\"12\">100</text><line x1=\"65\" y1=\"105.0\" x2=\"420\" y2=\"105.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"59.0\" text-anchor=\"end\" font-size=\"12\">150</text><line x1=\"65\" y1=\"55.0\" x2=\"420\" y2=\"55.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><rect x=\"128.25\" y=\"165.0\" width=\"46\" height=\"40.0\" rx=\"3\" fill=\"#8c8c8c\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"151.25\" y=\"157.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">40만</text><text x=\"151.25\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">2012년</text><rect x=\"300.75\" y=\"75.0\" width=\"46\" height=\"130.0\" rx=\"3\" fill=\"#6a737d\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"323.75\" y=\"67.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">130만</text><text x=\"323.75\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">2022년</text></svg></div>",
+        "BàiMẫu": "마라톤 참가자 수는 2012년 40만 명에서 2022년 130만 명으로 세 배 이상 증가하였다.",
+        "GhiChú": "<b style=\"color:#1971c2\">Khung:</b> <b style=\"color:#d9480f\">… [số 2]로 [N] 배 이상 증가하였다</b><br><b style=\"color:#1971c2\">Vì sao dùng 급증:</b> số cuối hơn N lần số đầu một ít<br><b style=\"color:#1971c2\">Đọc số liệu:</b> 130 ÷ 40 = 3,25 → <b>세 배 이상</b><br><b style=\"color:#1971c2\">Ngữ pháp:</b> <b>세 배</b> viết cách chữ; <b>이상</b> = hơn; 명 dùng 증가하다<br><b style=\"color:#1971c2\">Bẫy:</b> đừng viết <b>세배</b> liền; <b>두 배, 세 배</b> có khoảng trắng"
+      },
+      "tags": [
+        "cau53",
+        "boi-so-khoang-nam",
+        "than-bai",
+        "cracking-topik-writing",
+        "luyen-viet"
+      ]
+    },
+    {
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::5. Thân bài: Bội số + khoảng năm::02 — Cách nói bội số: 약 · 이상 · 무려 ~나",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "fields": {
+        "ID": "C53-BOI-06",
+        "Nguồn": "Bội số + khoảng năm · 무려 ~배나",
+        "Đề": "Viết 1 câu nhấn mạnh chênh lệch rất lớn bằng <b style=\"color:#d9480f\">무려 아홉 배나</b>. Đơn vị xe (대).",
+        "DữLiệu": "",
+        "Ảnh": "<div class=\"c53-fig\"><svg viewBox=\"0 0 460 260\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"전기 자전거 판매량\" font-family=\"inherit\" fill=\"currentColor\"><text x=\"230.0\" y=\"24\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">전기 자전거 판매량</text><text x=\"14\" y=\"38\" font-size=\"12\">(단위: 만 대)</text><path d=\"M60 45 V205 H435\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.3\"/><text x=\"55\" y=\"209.0\" text-anchor=\"end\" font-size=\"12\">0</text><text x=\"55\" y=\"171.5\" text-anchor=\"end\" font-size=\"12\">5</text><line x1=\"65\" y1=\"167.5\" x2=\"425\" y2=\"167.5\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"134.0\" text-anchor=\"end\" font-size=\"12\">10</text><line x1=\"65\" y1=\"130.0\" x2=\"425\" y2=\"130.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"96.5\" text-anchor=\"end\" font-size=\"12\">15</text><line x1=\"65\" y1=\"92.5\" x2=\"425\" y2=\"92.5\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"59.0\" text-anchor=\"end\" font-size=\"12\">20</text><line x1=\"65\" y1=\"55.0\" x2=\"425\" y2=\"55.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"65.0\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">2014년</text><line x1=\"65.0\" y1=\"190.0\" x2=\"65.0\" y2=\"205\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".5\"/><text x=\"237.5\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">2019년</text><line x1=\"237.5\" y1=\"145.0\" x2=\"237.5\" y2=\"205\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".5\"/><text x=\"410.0\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">2024년</text><line x1=\"410.0\" y1=\"70.0\" x2=\"410.0\" y2=\"205\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".5\"/><polyline points=\"65.0,190.0 237.5,145.0 410.0,70.0\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"/><circle cx=\"65.0\" cy=\"190.0\" r=\"5\" fill=\"currentColor\"/><text x=\"65.0\" y=\"178.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">2만</text><circle cx=\"237.5\" cy=\"145.0\" r=\"5\" fill=\"currentColor\"/><text x=\"237.5\" y=\"133.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">8만</text><circle cx=\"410.0\" cy=\"70.0\" r=\"5\" fill=\"currentColor\"/><text x=\"410.0\" y=\"58.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">18만</text><path d=\"M75.0 165.0 Q235.0 30.0 395.0 45.0\" fill=\"none\" stroke=\"#5b66a8\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-dasharray=\"4 3\" opacity=\".8\"/><path d=\"M391.0 40.0 L399.0 45.0 L391.0 50.0 Z\" fill=\"#5b66a8\" opacity=\".85\"/></svg></div>",
+        "BàiMẫu": "전기 자전거 판매량은 2014년 2만 대에서 2024년 18만 대로 10년 만에 무려 아홉 배나 증가하였다.",
+        "GhiChú": "<b style=\"color:#1971c2\">Khung:</b> <b style=\"color:#d9480f\">… [số]로 [N]년 만에 무려 [M] 배나 증가하였다</b><br><b style=\"color:#1971c2\">Vì sao dùng 급증:</b> chênh lệch rất lớn nên dùng cách nói nhấn mạnh<br><b style=\"color:#1971c2\">Đọc số liệu:</b> 18 ÷ 2 = <b>9배</b>; 2024 − 2014 = <b>10년</b><br><b style=\"color:#1971c2\">Ngữ pháp:</b> <b>무려 … 나</b> ôm số lần để nhấn sự ngạc nhiên; <b>아홉 배</b> đúng bội số nên không cần 약<br><b style=\"color:#1971c2\">Bẫy:</b> nêu <b>9배</b> trơ trọi thì thiếu tự nhiên; thêm 정도/가량 hoặc 나"
+      },
+      "tags": [
+        "cau53",
+        "boi-so-khoang-nam",
+        "than-bai",
+        "cracking-topik-writing",
+        "luyen-viet"
+      ]
+    },
+    {
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::5. Thân bài: Bội số + khoảng năm::03 — Mức nhỏ dùng % · so sánh hai mức",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "fields": {
+        "ID": "C53-BOI-07",
+        "Nguồn": "Bội số + khoảng năm · Mức nhỏ dùng %",
+        "Đề": "Viết 1 câu: mức tăng nhỏ thì KHÔNG viết 0.2배, đổi sang <b style=\"color:#d9480f\">20%</b>. Đơn vị người (명).",
+        "DữLiệu": "",
+        "Ảnh": "<div class=\"c53-fig\"><svg viewBox=\"0 0 460 260\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"40~60대 공원 이용자 수\" font-family=\"inherit\" fill=\"currentColor\"><text x=\"230.0\" y=\"24\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">40~60대 공원 이용자 수</text><text x=\"14\" y=\"38\" font-size=\"12\">(단위: 만 명)</text><path d=\"M60 45 V205 H425\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.3\"/><text x=\"55\" y=\"209.0\" text-anchor=\"end\" font-size=\"12\">0</text><text x=\"55\" y=\"159.0\" text-anchor=\"end\" font-size=\"12\">50</text><line x1=\"65\" y1=\"155.0\" x2=\"420\" y2=\"155.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"109.0\" text-anchor=\"end\" font-size=\"12\">100</text><line x1=\"65\" y1=\"105.0\" x2=\"420\" y2=\"105.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"59.0\" text-anchor=\"end\" font-size=\"12\">150</text><line x1=\"65\" y1=\"55.0\" x2=\"420\" y2=\"55.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><rect x=\"128.25\" y=\"105.0\" width=\"46\" height=\"100.0\" rx=\"3\" fill=\"#8c8c8c\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"151.25\" y=\"97.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">100만</text><text x=\"151.25\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">2010년</text><rect x=\"300.75\" y=\"85.0\" width=\"46\" height=\"120.0\" rx=\"3\" fill=\"#6a737d\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"323.75\" y=\"77.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">120만</text><text x=\"323.75\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">2018년</text></svg></div>",
+        "BàiMẫu": "40~60대 공원 이용자 수는 2010년 100만 명에서 2018년 120만 명으로 20% 증가하였다.",
+        "GhiChú": "<b style=\"color:#1971c2\">Khung:</b> <b style=\"color:#d9480f\">… [số 2]로 [N]% 증가하였다</b><br><b style=\"color:#1971c2\">Vì sao dùng 급증:</b> mức tăng nhỏ, không đủ gấp 2 lần<br><b style=\"color:#1971c2\">Đọc số liệu:</b> 120 ÷ 100 = 1,2 → tăng <b>20%</b> (không phải 0.2배)<br><b style=\"color:#1971c2\">Ngữ pháp:</b> <b>20% 증가하였다</b>; có thể dùng <b>소폭</b> nếu muốn nhấn mức nhỏ<br><b style=\"color:#1971c2\">Bẫy:</b> viết <b>0.2배</b> là sai; đổi sang % cho tự nhiên"
+      },
+      "tags": [
+        "cau53",
+        "boi-so-khoang-nam",
+        "than-bai",
+        "cracking-topik-writing",
+        "luyen-viet"
+      ]
+    },
+    {
+      "deckName": "Cracking the TOPIK II Writing::Câu 53::5. Thân bài: Bội số + khoảng năm::03 — Mức nhỏ dùng % · so sánh hai mức",
+      "modelName": "Cracking53 Luyện viết [2026]",
+      "fields": {
+        "ID": "C53-BOI-08",
+        "Nguồn": "Bội số + khoảng năm · So sánh hai mức",
+        "Đề": "Viết 1 câu: hai nhóm tăng khác nhau, nối bằng <b style=\"color:#d9480f\">~배 증가한 반면 ~배 증가하는 데 그쳤다</b>.",
+        "DữLiệu": "",
+        "Ảnh": "<div class=\"c53-fig\"><svg viewBox=\"0 0 460 260\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"20~30대 참가자 수\" font-family=\"inherit\" fill=\"currentColor\"><text x=\"230.0\" y=\"24\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">20~30대 참가자 수</text><text x=\"14\" y=\"38\" font-size=\"12\">(단위: 만 명)</text><path d=\"M60 45 V205 H425\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.3\"/><text x=\"55\" y=\"209.0\" text-anchor=\"end\" font-size=\"12\">0</text><text x=\"55\" y=\"159.0\" text-anchor=\"end\" font-size=\"12\">20</text><line x1=\"65\" y1=\"155.0\" x2=\"420\" y2=\"155.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"109.0\" text-anchor=\"end\" font-size=\"12\">40</text><line x1=\"65\" y1=\"105.0\" x2=\"420\" y2=\"105.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"59.0\" text-anchor=\"end\" font-size=\"12\">60</text><line x1=\"65\" y1=\"55.0\" x2=\"420\" y2=\"55.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><rect x=\"128.25\" y=\"180.0\" width=\"46\" height=\"25.0\" rx=\"3\" fill=\"#8c8c8c\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"151.25\" y=\"172.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">10만</text><text x=\"151.25\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">2012년</text><rect x=\"300.75\" y=\"105.0\" width=\"46\" height=\"100.0\" rx=\"3\" fill=\"#6a737d\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"323.75\" y=\"97.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">40만</text><text x=\"323.75\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">2022년</text></svg></div><div class=\"c53-fig\"><svg viewBox=\"0 0 460 260\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"40~50대 참가자 수\" font-family=\"inherit\" fill=\"currentColor\"><text x=\"230.0\" y=\"24\" text-anchor=\"middle\" font-size=\"16\" font-weight=\"700\">40~50대 참가자 수</text><text x=\"14\" y=\"38\" font-size=\"12\">(단위: 만 명)</text><path d=\"M60 45 V205 H425\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.3\"/><text x=\"55\" y=\"209.0\" text-anchor=\"end\" font-size=\"12\">0</text><text x=\"55\" y=\"159.0\" text-anchor=\"end\" font-size=\"12\">10</text><line x1=\"65\" y1=\"155.0\" x2=\"420\" y2=\"155.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"109.0\" text-anchor=\"end\" font-size=\"12\">20</text><line x1=\"65\" y1=\"105.0\" x2=\"420\" y2=\"105.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><text x=\"55\" y=\"59.0\" text-anchor=\"end\" font-size=\"12\">30</text><line x1=\"65\" y1=\"55.0\" x2=\"420\" y2=\"55.0\" stroke=\"currentColor\" stroke-dasharray=\"2 3\" opacity=\".35\"/><rect x=\"128.25\" y=\"105.0\" width=\"46\" height=\"100.0\" rx=\"3\" fill=\"#8c8c8c\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"151.25\" y=\"97.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">20만</text><text x=\"151.25\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">2012년</text><rect x=\"300.75\" y=\"75.0\" width=\"46\" height=\"130.0\" rx=\"3\" fill=\"#6a737d\" stroke=\"currentColor\" stroke-width=\".8\"/><text x=\"323.75\" y=\"67.0\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"600\">26만</text><text x=\"323.75\" y=\"225\" text-anchor=\"middle\" font-size=\"14\">2022년</text></svg></div>",
+        "BàiMẫu": "20~30대 참가자 수는 4배 증가한 반면 40~50대 참가자 수는 1.3배 증가하는 데 그쳤다.",
+        "GhiChú": "<b style=\"color:#1971c2\">Khung:</b> <b style=\"color:#d9480f\">[A]는 [N]배 증가한 반면 [B]는 [M]배 증가하는 데 그쳤다</b><br><b style=\"color:#1971c2\">Vì sao dùng 급증:</b> hai nhóm cùng tăng nhưng mức khác nhau (4 lần so với 1,3 lần)<br><b style=\"color:#1971c2\">Đọc số liệu:</b> 40 ÷ 10 = <b>4배</b>; 26 ÷ 20 = <b>1.3배</b><br><b style=\"color:#1971c2\">Ngữ pháp:</b> <b>-ㄴ 반면</b> đối lập; <b>증가하는 데 그쳤다</b> = chỉ tăng được ngần ấy<br><b style=\"color:#1971c2\">Bẫy:</b> <b>그쳤다</b> chỉ mức nhẹ; đừng nối bằng 그리고"
+      },
+      "tags": [
+        "cau53",
+        "boi-so-khoang-nam",
+        "than-bai",
+        "cracking-topik-writing",
+        "luyen-viet"
+      ]
+    }
+  ]
+}

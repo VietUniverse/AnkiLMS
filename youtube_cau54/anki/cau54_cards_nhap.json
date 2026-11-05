@@ -1,0 +1,743 @@
+{
+  "deck_root": "Câu 54",
+  "note_type": "(AnkiVN) Cloze",
+  "count": 49,
+  "source": "topik/youtube_cau54/HUONG-DAN-HOC-CAU54.md",
+  "notes": [
+    {
+      "id": "C54-MC-01",
+      "deckName": "Câu 54::01. Mẫu câu",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Mở câu kết bài · Tóm tắt thân bài (mc-001)</b><br>지금까지 현대 사회에서 조기 교육이 지닌 장단점{{c1::에 대해 살펴보았다::đã xem xét về..., vế mở kết bài tóm tắt thân bài}}.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Cho đến nay, chúng ta đã xem xét những ưu và nhược điểm của việc giáo dục sớm trong xã hội hiện đại.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Đặt ở câu đầu tiên của Kết bài để quy nạp, tổng hợp lại các khía cạnh đã phân tích ở thân bài.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Giáo dục / Trẻ em (12 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Sau câu này không được đưa ý mới; chuyển ngay sang câu khẳng định giải pháp hoặc triển vọng tương lai."
+      },
+      "tags": [
+        "cau54",
+        "mẫu-câu",
+        "mc-001",
+        "ket-bai"
+      ]
+    },
+    {
+      "id": "C54-MC-02",
+      "deckName": "Câu 54::01. Mẫu câu",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Từ nối quy nạp · Gom ý thân bài (mc-002)</b><br>{{c1::이처럼::như vậy / như thế này, liên từ quy nạp gom 2 mặt}} 인공지능 기술은 인간의 생활을 편리하게 만드는 동시에 일자리 감소라는 새로운 문제를 낳고 있다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Như vậy, công nghệ trí tuệ nhân tạo vừa làm cho đời sống con người thuận tiện, đồng thời cũng nảy sinh vấn đề mới là giảm sút việc làm.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Từ nối quy nạp đứng đầu câu để gom 2 mặt của vấn đề ở cuối thân bài hoặc mở đầu kết bài.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Khoa học - Công nghệ / AI (11 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Không dùng '이처럼' cho chi tiết vụn vặt; chỉ dùng để đúc kết hiện trạng tổng thể."
+      },
+      "tags": [
+        "cau54",
+        "mẫu-câu",
+        "mc-002",
+        "quy-nap"
+      ]
+    },
+    {
+      "id": "C54-MC-03",
+      "deckName": "Câu 54::01. Mẫu câu",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Đuôi câu nêu nguyên nhân cốt lõi (mc-003)</b><br>지구 온난화가 날로 심각해지는 이유는 화석 연료 사용량이 급증{{c1::했기 때문이다::đuôi câu giải thích nguyên nhân cốt lõi (bởi vì...)}}.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Lý do hiện tượng nóng lên toàn cầu ngày càng nghiêm trọng là bởi vì lượng sử dụng nhiên liệu hóa thạch đã tăng vọt.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Đuôi câu kinh điển để trả lời câu hỏi 'Nguyên nhân là gì?' (이유/원인).<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Môi trường / Biến đổi khí hậu (10 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Thường đi kèm với '… 이유는' ở đầu câu để tạo cặp cấu trúc hô ứng '이유는 …기 때문이다'."
+      },
+      "tags": [
+        "cau54",
+        "mẫu-câu",
+        "mc-003",
+        "nguyen-nhan"
+      ]
+    },
+    {
+      "id": "C54-MC-04",
+      "deckName": "Câu 54::01. Mẫu câu",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Từ nối hệ quả · Rút ra giải pháp (mc-004)</b><br>일회용품 쓰레기는 분해되는 데 수백 년이 걸린다. {{c1::따라서::do đó / vì vậy, liên từ hệ quả dẫn đến giải pháp}} 다회용품 사용을 생활화하려는 개인적 노력이 시급하다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Rác thải đồ dùng một lần mất hàng trăm năm để phân hủy. Do đó, nỗ lực cá nhân nhằm tạo thói quen dùng đồ nhiều lần là rất cấp bách.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Nối từ nhận định thực trạng sang giải pháp hành động cần thiết.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Môi trường / Rác thải nhựa (10 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Thay thế hoàn toàn cho '그래서' trong văn viết học thuật trang trọng."
+      },
+      "tags": [
+        "cau54",
+        "mẫu-câu",
+        "mc-004",
+        "he-qua"
+      ]
+    },
+    {
+      "id": "C54-MC-05",
+      "deckName": "Câu 54::01. Mẫu câu",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Minh họa thực tế · Cụ thể hóa luận điểm (mc-005)</b><br>스마트 기기는 교육 방식에 큰 변화를 가져왔다. {{c1::예를 들어::chẳng hạn như / ví dụ, liên từ đưa dẫn chứng thực tế}} 원격 화상 수업은 지리적 한계를 넘어 균등한 교육 기회를 제공한다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Thiết bị thông minh mang lại thay đổi lớn cho phương thức giáo dục. Ví dụ, lớp học trực tuyến từ xa vượt qua giới hạn địa lý để đem lại cơ hội học tập bình đẳng.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Đưa ví dụ điển hình để làm sáng tỏ một luận điểm lý thuyết trừu tượng.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Khoa học - Công nghệ / Giáo dục trực tuyến (10 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Ví dụ phải mang tính khách quan, phổ quát; tránh đưa trải nghiệm vụn vặt cá nhân tác giả."
+      },
+      "tags": [
+        "cau54",
+        "mẫu-câu",
+        "mc-005",
+        "vi-du"
+      ]
+    },
+    {
+      "id": "C54-MC-06",
+      "deckName": "Câu 54::01. Mẫu câu",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Chuyển ý đối lập · Tương phản ưu - nhược điểm (mc-006)</b><br>소셜 미디어는 시공간을 초월한 소통을 가능하게 한다. {{c1::반면에::ngược lại / mặt khác, liên từ đối chiếu hai mặt đối lập}} 타인과의 비교로 인한 상대적 박탈감을 유발하기도 한다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Mạng xã hội giúp kết nối vượt không gian và thời gian. Ngược lại, nó cũng có thể gây ra cảm giác hụt hẫng, thua thiệt do so sánh với người khác.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Chuyển tiếp mượt mà từ phân tích mặt tích cực sang mặt tiêu cực trong cùng một đoạn thân bài.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Công nghệ / Mạng xã hội SNS (8 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Công cụ đắc lực khi gộp hai câu hỏi đối lập thành một đoạn thân bài cân đối."
+      },
+      "tags": [
+        "cau54",
+        "mẫu-câu",
+        "mc-006",
+        "doi-lap"
+      ]
+    },
+    {
+      "id": "C54-MC-07",
+      "deckName": "Câu 54::01. Mẫu câu",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Đề xuất giải pháp · Bổn phận của chính phủ (mc-007)</b><br>환경오염을 근본적으로 줄이기 위해 정부는 탄소 배출 기업에 대한 법적 규제를 대폭 강화{{c1::해야 한다::đuôi câu đề xuất giải pháp bắt buộc (cần phải...)}}.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Để giảm thiểu ô nhiễm môi trường một cách căn bản, chính phủ cần phải tăng cường đáng kể các quy định pháp lý đối với các doanh nghiệp phát thải carbon.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Đuôi câu thể hiện tính tất yếu, bổn phận hành động của cơ quan quản lý hoặc tập thể.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Môi trường / Trách nhiệm chính sách (7 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Không dùng đuôi mệnh lệnh '-(으)십시오' hay rủ rê '-(으)ㅂ시다'; luôn dùng '-아/어야 한다'."
+      },
+      "tags": [
+        "cau54",
+        "mẫu-câu",
+        "mc-007",
+        "giai-phap"
+      ]
+    },
+    {
+      "id": "C54-MC-08",
+      "deckName": "Câu 54::01. Mẫu câu",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Từ nối phản biện · Lật lại hiện trạng (mc-008)</b><br>정부의 다양한 청년 고용 지원책이 마련되고 있다. {{c1::그러나::tuy nhiên, liên từ phản biện lật lại vấn đề}} 구직자들이 실제로 체감하는 취업의 문은 여전히 좁기만 하다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Nhiều chính sách hỗ trợ việc làm cho thanh niên của chính phủ đang được chuẩn bị. Tuy nhiên, cánh cửa việc làm mà người tìm việc thực tế cảm nhận vẫn còn rất hẹp.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Lật lại hiện trạng ở câu trước để nêu bật nghịch lý hoặc thách thức chưa được giải quyết.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Việc làm / Thanh niên (7 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Thay thế cho '하지만' và '그런데' trong văn viết chính luận."
+      },
+      "tags": [
+        "cau54",
+        "mẫu-câu",
+        "mc-008",
+        "phan-bien"
+      ]
+    },
+    {
+      "id": "C54-MC-09",
+      "deckName": "Câu 54::01. Mẫu câu",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Từ nối bổ sung · Tăng cường luận điểm (mc-009)</b><br>꾸준한 운동은 신체 건강을 유지하는 데 필수적이다. {{c1::또한::hơn nữa / ngoài ra, liên từ bổ sung luận điểm song song}} 뇌 기능을 활성화하여 학업 집중력을 높이는 데도 기여한다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Tập thể dục đều đặn là điều cần thiết để duy trì sức khỏe thể chất. Hơn nữa, nó còn kích thích chức năng não bộ, góp phần nâng cao khả năng tập trung học tập.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Bổ sung luận điểm thứ hai có cùng tính chất tích cực/tiêu cực với luận điểm trước.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Giáo dục / Sức khỏe thanh thiếu niên (6 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Không lặp lại từ nối '그리고' vụn vặt; dùng '또한' để tạo sự liền mạch trang trọng."
+      },
+      "tags": [
+        "cau54",
+        "mẫu-câu",
+        "mc-009",
+        "bo-sung"
+      ]
+    },
+    {
+      "id": "C54-MC-10",
+      "deckName": "Câu 54::01. Mẫu câu",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Căn cứ lập luận · Cấu trúc danh từ hóa (mc-010)</b><br>인공지능 윤리 교육이 시급한 {{c1::것은::điều mà..., danh từ hóa đi với đuôi ...기 때문이다}} 기술 오남용으로 인한 사회적 혼란을 사전에 방지할 수 있기 때문이다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Việc giáo dục đạo đức trí tuệ nhân tạo là cấp bách là vì có thể phòng ngừa từ trước những hỗn loạn xã hội do lạm dụng công nghệ gây ra.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Cặp hô ứng danh từ hóa '… 것은 …기 때문이다' để củng cố lý lẽ cho nhận định.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Khoa học - Công nghệ / Đạo đức AI (5 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Phân biệt với mc-003: mc-010 dùng danh từ hóa '-는 것은' để đưa chủ đề lên làm tâm điểm."
+      },
+      "tags": [
+        "cau54",
+        "mẫu-câu",
+        "mc-010",
+        "nguyen-nhan"
+      ]
+    },
+    {
+      "id": "C54-MC-11",
+      "deckName": "Câu 54::01. Mẫu câu",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Nêu lợi ích · Thói quen tích cực (mc-011)</b><br>가까운 거리를 걷거나 자전거를 타는 습관은 대기 오염 물질 배출을 줄이{{c1::는 데 도움이 된다::mẫu câu nêu lợi ích / tác dụng tích cực (có ích cho việc...)}}.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Thói quen đi bộ hoặc đi xe đạp ở cự ly gần có ích cho việc giảm phát thải các chất gây ô nhiễm không khí.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Trình bày tác dụng trực tiếp của một thói quen hoặc biện pháp cụ thể.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Môi trường / Thói quen sống xanh (5 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Động từ đứng trước kết hợp dạng định ngữ '-는 데', sau đó là '도움이 된다'."
+      },
+      "tags": [
+        "cau54",
+        "mẫu-câu",
+        "mc-011",
+        "loi-ich"
+      ]
+    },
+    {
+      "id": "C54-MC-12",
+      "deckName": "Câu 54::01. Mẫu câu",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Cặp cấu trúc nhân quả trọng tâm (mc-012)</b><br>현대 사회에서는 전문 지식 못지않게 협업 능력이 강조된다. {{c1::왜냐하면::sở dĩ như vậy là vì..., liên từ giải thích nguyên nhân đi với ...기 때문이다}} 대부분의 성과가 팀원 간의 소통과 협력을 통해 창출되기 때문이다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Trong xã hội hiện đại, năng lực hợp tác được nhấn mạnh không kém gì kiến thức chuyên môn. Sở dĩ như vậy là vì hầu hết thành quả đều được tạo ra thông qua giao tiếp và hợp tác giữa các thành viên.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Mở đầu câu giải thích để hướng sự chú ý của người đọc vào lý do trọng tâm nhất.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Việc làm / Năng lực thế kỷ 21 (5 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Luôn đi trọn vẹn cặp '왜냐하면' ở đầu câu và '…기 때문이다' ở cuối câu; không bỏ sót vế sau."
+      },
+      "tags": [
+        "cau54",
+        "mẫu-câu",
+        "mc-012",
+        "nguyen-nhan"
+      ]
+    },
+    {
+      "id": "C54-MC-13",
+      "deckName": "Câu 54::01. Mẫu câu",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Liên kết nguyên nhân giữa câu · Môi trường (mc-013)</b><br>지구 기온 상승으로 인해 해수면이 가파르게 상승하{{c1::기 때문에::vế liên kết nguyên nhân giữa câu (vì... nên...)}} 저지대 해안 도시들의 침수 피해가 우려된다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Vì mực nước biển đang dâng lên nhanh chóng do nhiệt độ Trái Đất tăng cao, nên các thành phố duyên hải vùng trũng thấp đang lo ngại về nguy cơ ngập lụt.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Nối liền nguyên nhân khách quan với hệ quả đáng lo ngại trong cùng một câu văn.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Môi trường / Biến đổi khí hậu (4 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Dùng '-기 때문에' giữa câu tạo câu phức mạch lạc, tránh ngắt vụn thành hai câu đơn bằng '그래서'."
+      },
+      "tags": [
+        "cau54",
+        "mẫu-câu",
+        "mc-013",
+        "nguyen-nhan"
+      ]
+    },
+    {
+      "id": "C54-MC-14",
+      "deckName": "Câu 54::01. Mẫu câu",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Khuyến nghị giải pháp mềm · Cá nhân (mc-014)</b><br>직장 내 업무 스트레스를 예방하기 위해서는 퇴근 후 온전한 휴식을 취하고 취미 생활을 병행하{{c1::는 것이 좋다::mẫu câu khuyến nghị giải pháp mềm (nên làm gì...)}}.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Để phòng ngừa căng thẳng công việc tại nơi làm việc, tốt nhất là nên nghỉ ngơi trọn vẹn sau giờ làm và kết hợp các sở thích cá nhân.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Đưa ra lời khuyên, đề xuất hành động nhẹ nhàng, phù hợp cho cấp độ giải pháp cá nhân.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Việc làm / Cân bằng công việc - cuộc sống (4 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Dùng thay cho '…아/어야 한다' khi giải pháp mang tính định hướng thói quen chứ không bắt buộc bằng luật pháp."
+      },
+      "tags": [
+        "cau54",
+        "mẫu-câu",
+        "mc-014",
+        "giai-phap"
+      ]
+    },
+    {
+      "id": "C54-MC-15",
+      "deckName": "Câu 54::01. Mẫu câu",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Kêu gọi nỗ lực xã hội · Môi trường (mc-015)</b><br>미래 세대에게 쾌적한 삶의 터전을 물려주기 위해 기업과 시민 모두가 자원 재활용에 적극 동참하{{c1::도록 노력해야 한다::mẫu câu kêu gọi nỗ lực chung (cần nỗ lực để...)}}.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Để để lại không gian sống trong lành cho thế hệ tương lai, cả doanh nghiệp và người dân đều cần nỗ lực tích cực tham gia vào việc tái chế tài nguyên.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Đưa ra giải pháp mang tính định hướng nỗ lực lâu dài, thường đặt ở cuối đoạn 3 hoặc câu kết bài.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Môi trường / Trách nhiệm xã hội (4 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Thể hiện tinh thần chung sức của tập thể hoặc xã hội."
+      },
+      "tags": [
+        "cau54",
+        "mẫu-câu",
+        "mc-015",
+        "giai-phap"
+      ]
+    },
+    {
+      "id": "C54-MC-16",
+      "deckName": "Câu 54::01. Mẫu câu",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Khẳng định lập trường · Với động từ (mc-016)</b><br>진정한 인재는 시험 성적만으로 결정되는 것이 아니라 타인과 소통하고 공감하는 인성을 갖추어야 완성된다{{c1::고 생각한다::mẫu câu bày tỏ quan điểm người viết sau động từ (tôi cho rằng...)}}.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Tôi cho rằng một nhân tài thực thụ không phải chỉ được quyết định bởi điểm thi, mà phải được hoàn thiện khi trang bị nhân cách biết giao tiếp và đồng cảm với người khác.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Trình bày lập trường rõ ràng của người viết trước các câu hỏi đòi hỏi quan điểm cá nhân.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Giáo dục / Tiêu chuẩn nhân tài (4 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Với động từ dùng '-(느)ㄴ다고 생각한다', phân biệt với danh từ đi với '-(이)라고 생각한다'."
+      },
+      "tags": [
+        "cau54",
+        "mẫu-câu",
+        "mc-016",
+        "quan-diem"
+      ]
+    },
+    {
+      "id": "C54-MC-17",
+      "deckName": "Câu 54::01. Mẫu câu",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Khẳng định lập trường · Với danh từ (mc-016)</b><br>환경 보전과 경제 성장은 양자택일의 문제가 아니라 상호 보완적인 관계로 나아가야 할 과제{{c1::라고 생각한다::mẫu câu khẳng định lập trường với danh từ (cho rằng là...)}}.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Tôi cho rằng bảo tồn môi trường và tăng trưởng kinh tế không phải là vấn đề chọn một trong hai, mà là nhiệm vụ cần hướng tới mối quan hệ bổ trợ lẫn nhau.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Đưa ra góc nhìn sâu sắc, đa chiều, giải quyết xung đột giữa hai giá trị xã hội.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Môi trường & Kinh tế (4 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Dùng '-(이)라고 생각한다' sau danh từ '과제'."
+      },
+      "tags": [
+        "cau54",
+        "mẫu-câu",
+        "mc-016",
+        "quan-diem"
+      ]
+    },
+    {
+      "id": "C54-MC-18",
+      "deckName": "Câu 54::01. Mẫu câu",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Thu hẹp điều kiện · Ngoại lệ của luận điểm (mc-017)</b><br>인공지능을 활용한 의료 진단은 오진율을 낮출 수 있다. {{c1::다만::chỉ có điều / tuy vậy, liên từ giới hạn điều kiện}} 의료 사고 발생 시 법적 책임의 주체에 대한 사회적 합의가 선행되어야 한다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Chẩn đoán y tế ứng dụng trí tuệ nhân tạo có thể làm giảm tỷ lệ chẩn đoán sai. Tuy vậy, sự đồng thuận xã hội về chủ thể chịu trách nhiệm pháp lý khi xảy ra sự cố y tế cần phải được đi trước một bước.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Giới hạn phạm vi đúng đắn của luận điểm hoặc chỉ ra điều kiện tiên quyết cần có.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Khoa học - Công nghệ / Y tế AI (4 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Giúp bài viết khách quan, thấu đáo và tránh được lỗi khẳng định tuyệt đối hóa một chiều."
+      },
+      "tags": [
+        "cau54",
+        "mẫu-câu",
+        "mc-017",
+        "gioi-han"
+      ]
+    },
+    {
+      "id": "C54-MC-19",
+      "deckName": "Câu 54::01. Mẫu câu",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Đánh số thứ tự · Luận điểm thứ hai (mc-018)</b><br>청년 실업을 극복하기 위한 첫째 방안은 맞춤형 직무 교육이다. {{c1::둘째::thứ hai là, từ nối mở đầu luận điểm thứ hai}}, 양질의 일자리를 창출하기 위한 중소기업 지원책이 마련되어야 한다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Phương án thứ nhất để khắc phục nạn thất nghiệp thanh niên là giáo dục kỹ năng nghề phù hợp. Thứ hai là cần chuẩn bị các chính sách hỗ trợ doanh nghiệp vừa và nhỏ để tạo ra việc làm chất lượng.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Mở đầu luận điểm thứ hai sau khi đã trình bày '첫째' ở câu trước.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Việc làm / Giải pháp chính sách (4 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Luôn có dấu phẩy đi kèm sau '둘째,' trong văn viết kẻ ô nguyên bản."
+      },
+      "tags": [
+        "cau54",
+        "mẫu-câu",
+        "mc-018",
+        "danh-so"
+      ]
+    },
+    {
+      "id": "C54-TN-01",
+      "deckName": "Câu 54::02. Từ nối",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Đánh số luận điểm · Luận điểm thứ nhất</b><br>환경 문제를 해결하기 위한 대책은 다음과 같다. {{c1::첫째::thứ nhất là, từ nối mở đầu luận điểm 1}}, 대중교통 이용을 적극 장려해야 한다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Các biện pháp giải quyết vấn đề môi trường gồm những điểm sau. Thứ nhất, cần tích cực khuyến khích sử dụng phương tiện giao thông công cộng.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Mở đầu luận điểm thứ nhất trong chuỗi giải pháp ở thân bài, tạo bố cục rõ ràng.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Thân bài đoạn 3 (Đề xuất giải pháp).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Đi liền sau câu giới thiệu và thường được tiếp nối bởi '둘째' ở câu sau."
+      },
+      "tags": [
+        "cau54",
+        "từ-nối",
+        "tu-noi",
+        "danh-so"
+      ]
+    },
+    {
+      "id": "C54-TN-02",
+      "deckName": "Câu 54::02. Từ nối",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Từ nối bắt đầu · Việc cấp bách trước mắt</b><br>심각한 저출생 문제를 해결하기 위해서는 {{c1::우선::trước hết / trước tiên, từ nối nêu việc cần làm trước}} 양육비 부담을 덜어 주는 실질적인 재정 지원이 이루어져야 한다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Để giải quyết vấn đề tỷ lệ sinh thấp nghiêm trọng, trước hết cần phải thực hiện các hỗ trợ tài chính thực chất nhằm giảm bớt gánh nặng chi phí nuôi con.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Nhấn mạnh giải pháp mang tính cấp bách, cần ưu tiên thực hiện trước các giải pháp khác.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Xã hội / Sinh con và Dân số.<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Có thể đi kèm với '다음으로' ở câu kế tiếp để tạo chuỗi hành động logic."
+      },
+      "tags": [
+        "cau54",
+        "từ-nối",
+        "tu-noi",
+        "thu-tu"
+      ]
+    },
+    {
+      "id": "C54-TN-03",
+      "deckName": "Câu 54::02. Từ nối",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Từ nối kết chuỗi · Ý then chốt kết đoạn</b><br>{{c1::마지막으로::cuối cùng là, từ nối dẫn vào luận điểm chốt hạ}} 제도의 실효성을 담보하기 위해 구성원 개개인의 자발적인 참여 의식이 뒷받침되어야 한다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Cuối cùng, để bảo đảm tính hiệu quả của thể chế, ý thức tham gia tự giác của từng thành viên cần phải được làm chỗ dựa vững chắc.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Khép lại chuỗi giải pháp liệt kê, thường nhấn mạnh yếu tố ý thức con người.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Cuối đoạn thân bài 3 (Giải pháp về mặt ý thức).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Không dùng '마지막으로' nếu trước đó chưa xuất hiện '첫째', '둘째' hoặc '우선'."
+      },
+      "tags": [
+        "cau54",
+        "từ-nối",
+        "tu-noi",
+        "thu-tu"
+      ]
+    },
+    {
+      "id": "C54-TN-04",
+      "deckName": "Câu 54::02. Từ nối",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Từ nối phản biện · Lật lại vấn đề</b><br>산업 발전은 인류에게 물질적 풍요를 안겨 주었다. {{c1::그러나::tuy nhiên, từ nối phản biện lật lại vấn đề}} 무분별한 개발로 인한 생태계 파괴는 인류의 생존을 위협하고 있다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Phát triển công nghiệp mang lại sự sung túc về vật chất cho nhân loại. Tuy nhiên, việc phá hủy hệ sinh thái do phát triển bừa bãi đang đe dọa sự sống còn của loài người.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Lật ngược hiện trạng ở câu trước, báo hiệu sự xuất hiện của khó khăn hoặc hệ lụy.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chuyển ý giữa các câu trong thân bài.<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Đứng đầu câu văn học thuật, không dùng '하지만' hay '그런데'."
+      },
+      "tags": [
+        "cau54",
+        "từ-nối",
+        "tu-noi",
+        "phan-bien"
+      ]
+    },
+    {
+      "id": "C54-TN-05",
+      "deckName": "Câu 54::02. Từ nối",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Từ nối đối chiếu · Ưu và nhược điểm</b><br>원격 근무는 출퇴근 시간을 절약하고 자율성을 높여 준다. {{c1::반면에::trái lại / mặt khác, từ nối đối chiếu hai mặt ưu - khuyết}} 업무와 일상의 경계가 모호해져 피로도가 가중되기도 한다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Làm việc từ xa giúp tiết kiệm thời gian đi lại và nâng cao tính tự chủ. Trái lại, ranh giới giữa công việc và đời sống trở nên mơ hồ có thể làm gia tăng mức độ mệt mỏi.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Đối chiếu trực tiếp hai khía cạnh trái ngược nhau của cùng một đối tượng.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Việc làm / Làm việc từ xa.<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Là từ nối chuẩn mực nhất để gộp câu hỏi ưu điểm và nhược điểm vào một đoạn."
+      },
+      "tags": [
+        "cau54",
+        "từ-nối",
+        "tu-noi",
+        "doi-lap"
+      ]
+    },
+    {
+      "id": "C54-TN-06",
+      "deckName": "Câu 54::02. Từ nối",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Từ nối so sánh · Đối tượng khác biệt</b><br>과거의 교육은 지식의 암기를 중시하였다. {{c1::이와 달리::khác với điều này, từ nối so sánh khác biệt}} 현대 사회에서는 정보를 비판적으로 분석하고 활용하는 능력이 요구된다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Giáo dục trong quá khứ coi trọng việc ghi nhớ kiến thức. Khác với điều này, trong xã hội hiện đại, năng lực phân tích và vận dụng thông tin một cách có phê phán lại được yêu cầu.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> So sánh sự khác biệt rõ rệt giữa hai thời kỳ, hai mô hình hoặc hai nhóm đối tượng.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Giáo dục / Xã hội thông tin.<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Đặt ở đầu câu thứ hai, mang sắc thái trang trọng hơn '…와 다르게'."
+      },
+      "tags": [
+        "cau54",
+        "từ-nối",
+        "tu-noi",
+        "so-sanh"
+      ]
+    },
+    {
+      "id": "C54-TN-07",
+      "deckName": "Câu 54::02. Từ nối",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Từ nối bổ sung · Ý nghĩa song song</b><br>친환경 에너지 개발은 대기 오염을 줄이는 효과가 있다. {{c1::또한::hơn nữa / ngoài ra, từ nối bổ sung ý nghĩa tích cực cùng chiều}} 새로운 녹색 일자리를 창출하여 경제 활성화에도 기여한다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Phát triển năng lượng thân thiện với môi trường có hiệu quả giảm ô nhiễm không khí. Hơn nữa, nó còn đóng góp vào việc phục hồi kinh tế bằng cách tạo ra việc làm xanh mới.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Bổ sung thêm lợi ích thứ hai có cùng chiều tích cực với câu trước.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Môi trường & Kinh tế.<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Dùng '또한' giúp câu văn liền mạch mà không bị cảm giác ngắt quãng."
+      },
+      "tags": [
+        "cau54",
+        "từ-nối",
+        "tu-noi",
+        "bo-sung"
+      ]
+    },
+    {
+      "id": "C54-TN-08",
+      "deckName": "Câu 54::02. Từ nối",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Từ nối tăng tiến · Mức độ sâu sắc hơn</b><br>취업난으로 인해 청년들의 고통이 커지고 있다. {{c1::더욱이::hơn thế nữa, từ nối tăng tiến mức độ nghiêm trọng}} 주거비 상승까지 겹치면서 청년층의 경제적 자립이 한층 어려워지고 있다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Khó khăn xin việc làm khiến nỗi khổ của thanh niên ngày một lớn. Hơn thế nữa, cùng với chi phí nhà ở leo thang, sự tự lập kinh tế của giới trẻ càng trở nên khó khăn hơn.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Nhấn mạnh mức độ gay gắt hoặc tăng thêm một yếu tố làm tình hình xấu đi.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Thanh niên / Gánh nặng kinh tế.<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Mang sắc thái văn viết trang trọng, thể hiện sự gia tăng về cấp độ; không làm lộ từ khóa '더욱'."
+      },
+      "tags": [
+        "cau54",
+        "từ-nối",
+        "tu-noi",
+        "tang-tien"
+      ]
+    },
+    {
+      "id": "C54-TN-09",
+      "deckName": "Câu 54::02. Từ nối",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Từ nối gia tăng · Yếu tố cộng dồn</b><br>기후 위기로 인해 농작물 생산량이 급감하였다. {{c1::게다가::đã vậy còn / thêm vào đó, từ nối gia tăng yếu tố bất lợi}} 유통 비용마저 증가하여 서민들의 장바구니 물가 부담이 가중되고 있다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Do khủng hoảng khí hậu, sản lượng cây trồng đã sụt giảm nghiêm trọng. Đã vậy còn thêm chi phí lưu thông tăng cao khiến gánh nặng giá cả tiêu dùng của người dân càng thêm trĩu nặng.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Nêu thêm một yếu tố bất lợi làm trầm trọng thêm vấn đề vốn đã khó khăn.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Khủng hoảng khí hậu / Đời sống kinh tế.<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Thường đi kèm với trợ từ nhấn mạnh '-마저 / -조차' ở vế sau."
+      },
+      "tags": [
+        "cau54",
+        "từ-nối",
+        "tu-noi",
+        "gia-tang"
+      ]
+    },
+    {
+      "id": "C54-TN-10",
+      "deckName": "Câu 54::02. Từ nối",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Từ nối hệ quả · Chuyển sang kết luận</b><br>환경오염은 국경을 초월하여 전 인류에 영향을 미친다. {{c1::따라서::do đó / vì vậy, từ nối hệ quả tất yếu dẫn đến hành động}} 개별 국가의 대책을 넘어 국제적인 연대와 공조가 필수적이다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Ô nhiễm môi trường vượt qua biên giới quốc gia và ảnh hưởng đến toàn nhân loại. Do đó, vượt lên các đối sách của từng quốc gia riêng lẻ, sự đoàn kết và hợp tác quốc tế là điều thiết yếu.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Rút ra kết luận tất yếu từ tiền đề đã lập luận ở câu trước, dẫn vào giải pháp.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chuyển ý sang câu giải pháp cốt lõi.<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Từ nối tần suất xuất hiện cao nhất trong các bài văn mẫu TOPIK điểm cao."
+      },
+      "tags": [
+        "cau54",
+        "từ-nối",
+        "tu-noi",
+        "he-qua"
+      ]
+    },
+    {
+      "id": "C54-TN-11",
+      "deckName": "Câu 54::02. Từ nối",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Từ nối suy luận · Kết quả hợp logic</b><br>인간은 자연 생태계의 일부로서 자연과 공존할 때 비로소 지속 가능하다. {{c1::그러므로::bởi vậy / chính vì thế, từ nối suy luận logic}} 무분별한 개발보다 환경 보전을 우선시하는 가치관 전환이 요구된다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Con người là một phần của hệ sinh thái tự nhiên và chỉ có thể phát triển bền vững khi cùng tồn tại với tự nhiên. Bởi vậy, sự chuyển đổi giá trị coi trọng bảo tồn môi trường hơn phát triển bừa bãi là điều được đòi hỏi.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Thể hiện tính suy luận chặt chẽ từ một chân lý hoặc nguyên lý nền tảng.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Môi trường / Triết lý sống hòa hợp.<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Đồng nghĩa với '따라서' nhưng nhấn mạnh vào tính tất yếu của triết lý/lý lẽ."
+      },
+      "tags": [
+        "cau54",
+        "từ-nối",
+        "tu-noi",
+        "suy-luan"
+      ]
+    },
+    {
+      "id": "C54-TN-12",
+      "deckName": "Câu 54::02. Từ nối",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Từ nối diễn tiến · Hành động theo tình hình</b><br>인공지능 기술이 산업 전반에 빠르게 도입되고 있다. {{c1::이에 따라::theo đó / phù hợp với điều đó, từ nối hành động diễn tiến}} 기업들은 단순 업무 인력을 줄이고 데이터 분석 역량을 갖춘 인재 채용을 확대하고 있다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Công nghệ trí tuệ nhân tạo đang được áp dụng nhanh chóng vào toàn bộ ngành công nghiệp. Theo đó, các doanh nghiệp đang cắt giảm nhân lực làm việc đơn giản và mở rộng tuyển dụng nhân tài có năng lực phân tích dữ liệu.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Thể hiện sự phản ứng, chuyển dịch hoặc điều chỉnh của xã hội phù hợp với xu hướng mới.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Công nghệ / Thị trường lao động.<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Dùng '이에 따라' ở đầu câu giúp diễn đạt sắc thái biến chuyển tự nhiên."
+      },
+      "tags": [
+        "cau54",
+        "từ-nối",
+        "tu-noi",
+        "dien-tien"
+      ]
+    },
+    {
+      "id": "C54-TN-13",
+      "deckName": "Câu 54::02. Từ nối",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Từ nối quy nạp · Gom ý đúc kết</b><br>{{c1::이처럼::như vậy / như thế này, từ nối quy nạp gom 2 mặt đã phân tích}} 과학 기술의 진보는 인류에게 커다란 혜택을 제공하는 한편 예기치 못한 윤리적 갈등을 유발하기도 한다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Như vậy, bước tiến của khoa học công nghệ vừa đem lại lợi ích to lớn cho nhân loại, mặt khác cũng gây ra những mâu thuẫn đạo đức không lường trước.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Quy nạp lại toàn bộ hai mặt của vấn đề đã phân tích ở thân bài để mở đầu câu kết bài.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Câu đầu tiên của Kết bài.<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Thường kết hợp với cấu trúc song hành '…는 한편 …하기도 한다'."
+      },
+      "tags": [
+        "cau54",
+        "từ-nối",
+        "tu-noi",
+        "quy-nap"
+      ]
+    },
+    {
+      "id": "C54-TN-14",
+      "deckName": "Câu 54::02. Từ nối",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Từ nối chốt hạ · Yếu tố quyết định</b><br>아무리 훌륭한 법률과 제도를 도입하더라도 {{c1::결국::rốt cuộc / suy cho cùng, từ nối chốt lại yếu tố quyết định}} 문제를 해결하는 가장 핵심적인 원동력은 시민들의 자발적인 실천이다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Cho dù có áp dụng luật pháp và thể chế tuyệt vời đến đâu chăng nữa, thì rốt cuộc động lực cốt lõi nhất để giải quyết vấn đề vẫn là sự thực hành tự giác của người dân.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Khẳng định yếu tố mang tính quyết định tối hậu sau khi đã xem xét nhiều giải pháp khác nhau.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Câu kết luận khẳng định ý thức con người.<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Thường đi kèm với cấu trúc nhượng bộ '아무리 …더라도 결국 …'."
+      },
+      "tags": [
+        "cau54",
+        "từ-nối",
+        "tu-noi",
+        "chot-ha"
+      ]
+    },
+    {
+      "id": "C54-TN-15",
+      "deckName": "Câu 54::02. Từ nối",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Từ nối giải thích · Làm rõ ý vừa nêu</b><br>진정한 소통은 자신의 주장을 앞세우기보다 상대방의 입장을 먼저 헤아리는 데서 출발한다. {{c1::즉::tức là / nói cách khác, từ nối giải thích rõ ý vừa nêu}} 경청과 배려의 태도가 소통의 본질이다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Giao tiếp thực thụ bắt đầu từ việc thấu hiểu lập trường của đối phương trước khi đưa ra quan điểm của mình. Tức là thái độ lắng nghe và quan tâm chính là bản chất của giao tiếp.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Đúc kết, làm rõ hoặc giải thích lại một ý tưởng phức tạp bằng một câu ngắn gọn, đanh thép.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Giao tiếp / Mối quan hệ xã hội.<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Có thể thay bằng '다시 말해' trong văn viết chính luận."
+      },
+      "tags": [
+        "cau54",
+        "từ-nối",
+        "tu-noi",
+        "giai-thich"
+      ]
+    },
+    {
+      "id": "C54-TN-16",
+      "deckName": "Câu 54::02. Từ nối",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Cấu trúc nhượng bộ · Mở đầu vế phụ</b><br>{{c1::비록::dù cho..., liên từ mở đầu vế nhượng bộ đi với -더라도}} 초기 시설 투자 비용이 많이 들더라도 친환경 에너지로의 전환은 미래 생존을 위해 반드시 가야 할 길이다.<br><span style=\"color:#868e96; font-size:0.9em\">Dịch: Dù cho chi phí đầu tư cơ sở hạ tầng ban đầu tốn kém nhiều, thì việc chuyển đổi sang năng lượng thân thiện với môi trường vẫn là con đường tất yếu phải đi vì sự sinh tồn tương lai.</span>",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Thừa nhận một khó khăn có thật ở vế trước nhằm làm nổi bật tính tất yếu và giá trị vượt trội của giải pháp ở vế sau.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Chủ đề Năng lượng xanh / Đầu tư công nghệ.<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Giúp lập luận trở nên khách quan, tránh bị bắt bẻ là người viết nhìn nhận vấn đề màu hồng."
+      },
+      "tags": [
+        "cau54",
+        "từ-nối",
+        "tu-noi",
+        "nhuong-bo"
+      ]
+    },
+    {
+      "id": "C54-KB-01",
+      "deckName": "Câu 54::03. Khung bài",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Quy cách dung lượng · Giới hạn số chữ</b><br>Bài thi TOPIK II Câu 54 yêu cầu viết một bài văn nghị luận xã hội hoàn chỉnh trên giấy kẻ ô 원고지 với dung lượng chuẩn từ {{c1::600–700 chữ::khoảng số chữ quy chuẩn bài Câu 54}} (tính cả khoảng trắng và dấu câu).",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Hiểu đúng quy chế đếm chữ của đề thi để căn chỉnh tốc độ viết.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Toàn bộ bài thi Câu 54 (244 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Viết dưới 500 chữ bị trừ điểm rất nặng; viết quá 700 chữ sẽ không được chấm phần thừa và mất điểm do vượt khung."
+      },
+      "tags": [
+        "cau54",
+        "khung-bài",
+        "khung-bai",
+        "dung-luong"
+      ]
+    },
+    {
+      "id": "C54-KB-02",
+      "deckName": "Câu 54::03. Khung bài",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Thang điểm tối đa · Tỷ trọng bài viết</b><br>Trong tổng điểm 100 của kỹ năng Viết TOPIK II, riêng bài luận Câu 54 chiếm trọn {{c1::50 điểm::thang điểm tối đa của Câu 54}}, quyết định trực tiếp khả năng đạt cấp độ TOPIK 5 hoặc 6.",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Định vị tầm quan trọng của Câu 54 trong chiến lược thi Viết.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Phân bổ chiến lược làm bài thi (71 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Dành 50 phút trọn vẹn cho Câu 54; Câu 51–53 hoàn thành trong 50 phút đầu."
+      },
+      "tags": [
+        "cau54",
+        "khung-bài",
+        "khung-bai",
+        "thang-diem"
+      ]
+    },
+    {
+      "id": "C54-KB-03",
+      "deckName": "Câu 54::03. Khung bài",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Tiêu chí chấm điểm · Ba trụ cột đánh giá</b><br>Giám khảo TOPIK chấm điểm Câu 54 dựa trên ba tiêu chí chính thức: {{c1::nội dung, cấu trúc logic, và năng lực ngôn ngữ::ba trụ cột chấm điểm chính thức của NIIED}} (내용, 구조, 언어 사용).",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Ba thước đo quyết định điểm số của mọi bài luận.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Hướng dẫn chấm thi của NIIED (54 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Hoàn thành đủ 3 câu hỏi của đề là điều kiện tiên quyết để không bị gãy tiêu chí nội dung."
+      },
+      "tags": [
+        "cau54",
+        "khung-bài",
+        "khung-bai",
+        "tieu-chi"
+      ]
+    },
+    {
+      "id": "C54-KB-04",
+      "deckName": "Câu 54::03. Khung bài",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Điểm ngôn ngữ · Từ vựng Hán Hàn học thuật</b><br>Để đạt điểm cao ở tiêu chí ngôn ngữ trong Câu 54, người viết cần ưu tiên sử dụng {{c1::từ vựng Hán Hàn và ngữ pháp trung–cao cấp::yêu cầu từ vựng và ngữ pháp để ghi điểm cao}}, hạn chế tối đa lặp từ ngữ sơ cấp.",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Nâng tầm phong cách bài viết từ mức giao tiếp thông thường lên trình độ văn phong học thuật.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Tiêu chí 언어 사용 (65 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Thay các từ nôm na như '많아지다' bằng '증가하다', '좋은 점' bằng '장점/긍정적 측면'."
+      },
+      "tags": [
+        "cau54",
+        "khung-bài",
+        "khung-bai",
+        "ngon-ngu"
+      ]
+    },
+    {
+      "id": "C54-KB-05",
+      "deckName": "Câu 54::03. Khung bài",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Quy tắc văn phong · Thể viết học thuật</b><br>Toàn bộ bài viết Câu 54 bắt buộc phải tuân thủ nghiêm ngặt văn thể viết học thuật {{c1::-(느)ㄴ다체::đuôi câu viết bắt buộc toàn bài}}, tuyệt đối không được dùng đuôi câu thân mật 해요체 hay kính ngữ nói 합니다체.",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Chuẩn mực văn phong bắt buộc đối với văn nghị luận (주장하는 글).<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Mọi câu văn trong bài thi (47 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Động từ chia '-는다/ㄴ다', tính từ chia '-다', danh từ đi với '-(이)다'. Lẫn một đuôi '해요' là bị trừ điểm."
+      },
+      "tags": [
+        "cau54",
+        "khung-bài",
+        "khung-bai",
+        "van-phong"
+      ]
+    },
+    {
+      "id": "C54-KB-06",
+      "deckName": "Câu 54::03. Khung bài",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Cấu trúc đề bài · Kim chỉ nam lập luận</b><br>Đề thi Câu 54 luôn gồm một đoạn văn dẫn dắt ngắn kèm theo {{c1::đúng 3 câu hỏi gợi ý::số lượng câu hỏi gợi ý trong đề thi Câu 54}}, và người viết bắt buộc phải trả lời trọn vẹn cả 3 câu hỏi này trong bài.",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Căn cứ cốt lõi để lập dàn ý và phân chia đoạn thân bài.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Phân tích đề bài (235 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Bỏ sót một câu hỏi gợi ý sẽ bị trừ từ 10 đến 20 điểm nội dung."
+      },
+      "tags": [
+        "cau54",
+        "khung-bài",
+        "khung-bai",
+        "cau-truc-de"
+      ]
+    },
+    {
+      "id": "C54-KB-07",
+      "deckName": "Câu 54::03. Khung bài",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Quy chuẩn Mở bài · Hai câu súc tích</b><br>Mở bài chuẩn của bài thi Câu 54 chỉ nên viết gọn gàng trong {{c1::2 câu (khoảng 100 chữ)::quy chuẩn số câu và dung lượng Mở bài}}: câu 1 nêu bối cảnh/chủ đề và câu 2 dẫn dắt vào vấn đề cần bàn luận.",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Khởi động bài viết nhanh chóng, tiết kiệm tối đa thời gian cho thân bài.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Khối Mở bài (서론) (61 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Không viết mở bài quá dài dòng lê thê vượt quá 150 chữ; 2 câu là độ dài vàng."
+      },
+      "tags": [
+        "cau54",
+        "khung-bài",
+        "khung-bai",
+        "mo-bai"
+      ]
+    },
+    {
+      "id": "C54-KB-08",
+      "deckName": "Câu 54::03. Khung bài",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Tổ chức Thân bài · Mỗi câu hỏi một đoạn</b><br>Trong phần thân bài Câu 54, quy tắc bố cục chuẩn nhất là {{c1::chia đoạn theo từng câu hỏi gợi ý::nguyên tắc phân đoạn thân bài}}, mỗi đoạn phát triển 2 gạch ý rõ ràng.",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Đảm bảo tính cân đối, trực quan giúp giám khảo chấm điểm dễ theo dõi.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Khối Thân bài (본론) (80 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Mỗi đoạn lùi đầu dòng đúng 1 ô ly trên 원고지."
+      },
+      "tags": [
+        "cau54",
+        "khung-bài",
+        "khung-bai",
+        "than-bai"
+      ]
+    },
+    {
+      "id": "C54-KB-09",
+      "deckName": "Câu 54::03. Khung bài",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Tổ chức Thân bài · Gộp ý đối lập</b><br>Khi đề bài xuất hiện hai câu hỏi mang tính đối lập như ưu điểm và nhược điểm, người viết có thể {{c1::gộp thành một đoạn thân bài duy nhất::cách xử lý bố cục khi gặp 2 câu hỏi đối lập}} và sử dụng từ nối 반면에 để chuyển ý.",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Tạo sự tương phản sắc sảo, cô đọng nội dung giúp bài viết có bố cục 4 đoạn hài hòa.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Dạng đề phân tích hai mặt của vấn đề (53 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Đảm bảo dung lượng hai nửa của đoạn văn đối lập phải cân đối nhau."
+      },
+      "tags": [
+        "cau54",
+        "khung-bài",
+        "khung-bai",
+        "than-bai"
+      ]
+    },
+    {
+      "id": "C54-KB-10",
+      "deckName": "Câu 54::03. Khung bài",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Quy chuẩn Kết bài · Tóm tắt và Khẳng định</b><br>Kết bài Câu 54 chuẩn gồm {{c1::2 câu (khoảng 80–100 chữ)::quy chuẩn số câu và dung lượng Kết bài}}: câu 1 tóm lược nội dung thân bài và câu 2 khẳng định giải pháp hoặc triển vọng tương lai.",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Đóng lại bài viết một cách đĩnh đạc, cân đối với mở bài.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Khối Kết bài (결론) (28 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Câu 1 thường bắt đầu bằng '지금까지 …에 대해 살펴보았다' hoặc '이처럼 …'."
+      },
+      "tags": [
+        "cau54",
+        "khung-bài",
+        "khung-bai",
+        "ket-bai"
+      ]
+    },
+    {
+      "id": "C54-KB-11",
+      "deckName": "Câu 54::03. Khung bài",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Cấm kỵ Kết bài · Không thêm ý tưởng mới</b><br>Nguyên tắc cấm kỵ hàng đầu ở phần kết bài Câu 54 là {{c1::không đưa thêm ý tưởng hay ví dụ mới::nguyên tắc cấm kỵ ở phần kết bài}} chưa từng được nhắc tới ở thân bài.",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Giữ tính thống nhất logic và tính quy nạp thuần túy của kết bài.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Viết kết bài (10 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Đưa ý mới vào kết bài sẽ bị trừ điểm bố cục và tính liên kết logic."
+      },
+      "tags": [
+        "cau54",
+        "khung-bài",
+        "khung-bai",
+        "ket-bai"
+      ]
+    },
+    {
+      "id": "C54-KB-12",
+      "deckName": "Câu 54::03. Khung bài",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Chiến lược thời gian · Quy tắc 5 - 40 - 5</b><br>Khung thời gian 50 phút làm bài Câu 54 được phân bổ tối ưu theo quy tắc: {{c1::5 phút dàn ý, 40 phút viết, và 5 phút soát bài::quy tắc phân bổ thời gian 50 phút}} trên giấy thi.",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Quản lý thời gian kỷ luật, tránh tình trạng viết dở dang do thiếu giờ.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Toàn bộ quá trình làm bài Câu 54 (23 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> 5 phút cuối cực kỳ quan trọng để soát lỗi chính tả và đuôi câu '-(느)ㄴda'."
+      },
+      "tags": [
+        "cau54",
+        "khung-bài",
+        "khung-bai",
+        "thoi-gian"
+      ]
+    },
+    {
+      "id": "C54-KB-13",
+      "deckName": "Câu 54::03. Khung bài",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Chiến lược dàn ý · Gạch từ khóa nhanh</b><br>Trong 5 phút đầu tiên, thí sinh cần gạch nhanh dàn ý ra nháp theo công thức: {{c1::mỗi câu hỏi chuẩn bị sẵn 2 từ khóa luận điểm và ngữ pháp dự kiến::công thức lập dàn ý 5 phút}}, tuyệt đối không viết thành câu văn dài.",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Định hình xương sống bài viết trước khi đặt bút, tránh sa đà vào viết lan man hoặc tắc ý giữa chừng.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Bước 1 của quy trình làm bài (134 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Chỉ viết từ khóa Hán Hàn và cấu trúc ngữ pháp ngắn, tuyệt đối không viết nháp cả bài."
+      },
+      "tags": [
+        "cau54",
+        "khung-bài",
+        "khung-bai",
+        "dan-y"
+      ]
+    },
+    {
+      "id": "C54-KB-14",
+      "deckName": "Câu 54::03. Khung bài",
+      "modelName": "(AnkiVN) Cloze",
+      "fields": {
+        "Text": "<b>Câu 54 · Kiểm soát độ dài câu · Tránh gãy ngữ pháp</b><br>Trong văn nghị luận Câu 54, người viết cần tránh bẫy viết câu quá dài, nên ngắt câu dứt khoát với độ dài lý tưởng từ {{c1::35–55 chữ::độ dài câu văn lý tưởng tránh gãy ngữ pháp}} để đảm bảo câu chuẩn xác và mạch lạc.",
+        "Back": "<b style=\"color:#1971c2\">Chức năng & Ý nghĩa:</b> Bảo đảm sự chính xác tuyệt đối trong quan hệ hô ứng chủ ngữ – vị ngữ.<br><b style=\"color:#1971c2\">Ngữ cảnh áp dụng:</b> Kỹ thuật viết câu trong thân bài (31 nguồn đồng thuận).<br><b style=\"color:#d9480f\">Lưu ý & Bẫy:</b> Chấm câu rõ ràng rồi liên kết câu sau bằng các từ nối trang trọng như '따라서', '또한', '그러나'."
+      },
+      "tags": [
+        "cau54",
+        "khung-bài",
+        "khung-bai",
+        "bay-loi"
+      ]
+    }
+  ]
+}

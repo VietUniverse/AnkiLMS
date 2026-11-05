@@ -1,0 +1,37 @@
+[
+  {
+    "noteId": 1793281293514,
+    "Text": "<b>Câu 53 · Lựa chọn động từ theo loại số liệu (명, 대, 건)</b><br>Đối với số lượng đếm được, quy mô, số người, số xe, số vụ (đơn vị: <code>명</code>, <code>대</code>, <code>건</code>):<br>• Động từ chuẩn: {{c1::증가하다}} hoặc {{c2::늘어나다}}.<br>• Tuyệt đối KHÔNG DÙNG: {{c3::상승하다}} (vì chỉ dùng cho giá cả, tỷ lệ, cấp độ).",
+    "Back": "Quy tắc vàng: Không nói 'người tăng cao' (사람이 상승하다 ❌) mà phải nói 'người tăng lên' (사람이 증가하다 / 늘어나다 ⭕)."
+  },
+  {
+    "noteId": 1793281293615,
+    "Text": "<b>Câu 53 · Lựa chọn động từ theo loại số liệu (원, 달러, %)</b><br>Đối với giá cả, kim ngạch xuất nhập khẩu, tỷ lệ phần trăm (đơn vị: <code>원</code>, <code>달러</code>, <code>%</code>):<br>• Có thể dùng: {{c1::증가하다 / 늘어나다}} (nghĩa rộng: tăng về lượng)<br>• Hoặc dùng: {{c2::상승하다 / 오르다}} (nghĩa: tăng về mức độ/giá trị).",
+    "Back": "Cả hai nhóm động từ đều chính xác cho tiền tệ và %, giúp luân chuyển tránh lặp từ khi bài có 2 biểu đồ."
+  },
+  {
+    "noteId": 1793281293721,
+    "Text": "<b>Câu 53 · Phó từ miêu tả tính liên tục (Tăng dần đều)</b><br>• Phổ biến, tự nhiên nhất cho mọi số liệu tăng đều: {{c1::꾸준히}}<br>• Tính học thuật cao, trang trọng (thường dùng trong văn viết báo cáo): {{c2::지속적으로}}<br>• Nhấn mạnh tiến trình từng bước, thay đổi từng chút một: {{c3::점차}}<br>• Nhấn mạnh tính tiếp diễn liên tiếp không ngắt quãng: {{c4::계속해서}}",
+    "Back": "Tuyệt đối không lặp lại cùng một phó từ cho cả 2 biểu đồ trong cùng một bài Câu 53."
+  },
+  {
+    "noteId": 1793281293816,
+    "Text": "<b>Câu 53 · Cụm danh từ hóa diễn đạt xu hướng cao cấp</b><br>Thay vì chỉ dùng động từ đơn điệu, việc danh từ hóa xu hướng sẽ giúp nâng điểm ngữ pháp diễn đạt:<br>• Cho thấy đà tăng: {{c1::증가세를 보이다}}<br>• Tiếp tục duy trì đà tăng: {{c2::상승세를 이어가다}}",
+    "Back": "Ví dụ: 419만 대로 꾸준한 증가세를 보였다 / 68억 달러로 지속적인 상승세를 이어갔다."
+  },
+  {
+    "noteId": 1793281293910,
+    "Text": "<b>Câu 53 · Trợ từ xuất phát và đích đến</b><br>• Khi dùng động từ thường (증가하다 / 늘어나다):<br><code>[Mốc đầu]{{c1::에서}} [Mốc cuối]{{c2::(으)로}} 증가하였다 / 늘어났다</code><br>• Khi dùng cụm danh từ (증가세를 보이다):<br>Cả chuỗi số liệu được gộp lại bằng trợ từ: <code>[Số liệu]{{c3::(으)로}} 꾸준한 증가세를 보였다</code>",
+    "Back": "Phân biệt: 10만 명'에서' 25만 명'으로' 증가했다 vs 25만 명'으로' 꾸준한 증가세를 보였다."
+  },
+  {
+    "noteId": 1793281294007,
+    "Text": "<b>Câu 53 · Bẫy lỗi: Tăng dần đều vs Tăng vọt (급증)</b><br>Khi các mốc số liệu tăng đều đặn theo từng năm (ví dụ: 10% → 15% → 20%):<br>• Tuyệt đối KHÔNG DÙNG: {{c1::급증하다}} hoặc {{c2::폭발적으로 증가하다}}.<br>• Từ <code>급증하다</code> chỉ được dùng khi: {{c3::đồ thị dốc đứng bất thường trong một giai đoạn ngắn}}.<br>Dùng sai mức độ sẽ bị trừ điểm đánh giá sai lệch số liệu.",
+    "Back": "Tăng vọt thường đi với trạng từ '특히' (đặc biệt) khi có một năm bật hẳn lên so với xu hướng chung."
+  },
+  {
+    "noteId": 1793281294097,
+    "Text": "<b>Câu 53 · Khung 3: Nhấn mạnh mốc xuất phát khiêm tốn</b><br>Để làm nổi bật đà tăng mạnh mẽ từ điểm xuất phát thấp:<br><code>[Năm đầu]에는 [Số đầu]{{c1::에 불과했던}} [Chủ ngữ]이/가 꾸준한 증가세를 보이며 [Năm cuối]에는 [Số cuối]{{c2::(으)로 늘어났다}}</code>",
+    "Back": "Cấu trúc '에 불과했던' (chỉ vỏn vẹn...) thể hiện mốc ban đầu nhỏ bé, làm tiền đề tôn vinh số liệu tăng trưởng ở mốc sau."
+  }
+]

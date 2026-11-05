@@ -1,0 +1,87 @@
+---
+type: concept
+concept_type: mau-cau
+source_count: 64
+groups: [han, nuoc_ngoai]
+agreement: đồng thuận
+tags: [cau54, mau-cau]
+---
+
+# Từ vựng học thuật theo chủ đề
+
+Các trang từ vựng cung cấp tính từ/cụm động từ học thuật (đuôi -적이다, 하다) để tăng mật độ học thuật, mỗi từ gắn với danh từ hay đi kèm.
+
+## Nguồn
+
+- [[topik/youtube_cau54/summaries/-SJmdDRiuKc-tomtat]]
+- [[topik/youtube_cau54/summaries/0Ju1OVEvLCM-tomtat]]
+- [[topik/youtube_cau54/summaries/19z3bik6puU-tomtat]]
+- [[topik/youtube_cau54/summaries/1pxpdH90gdw-tomtat]]
+- [[topik/youtube_cau54/summaries/3De74XGU7J4-tomtat]]
+- [[topik/youtube_cau54/summaries/3wznqP21AFQ-tomtat]]
+- [[topik/youtube_cau54/summaries/8H72DFxK2hg-tomtat]]
+- [[topik/youtube_cau54/summaries/DfYCwGINL5s-tomtat]]
+- [[topik/youtube_cau54/summaries/GS2_s9lXkv0-tomtat]]
+- [[topik/youtube_cau54/summaries/I8xcV4Z8hao-tomtat]]
+- [[topik/youtube_cau54/summaries/JKsPQo1t3bY-tomtat]]
+- [[topik/youtube_cau54/summaries/JPnw_R_tXIg-tomtat]]
+- [[topik/youtube_cau54/summaries/L3mn4IkByxw-tomtat]]
+- [[topik/youtube_cau54/summaries/O2d_zWM49lA-tomtat]]
+- [[topik/youtube_cau54/summaries/OK-8QVU_BoE-tomtat]]
+- [[topik/youtube_cau54/summaries/RtNZP91lh6s-tomtat]]
+- [[topik/youtube_cau54/summaries/SAIMmMBZ5CQ-tomtat]]
+- [[topik/youtube_cau54/summaries/SEQvaYcr7-I-tomtat]]
+- [[topik/youtube_cau54/summaries/UDzmzk48WwA-tomtat]]
+- [[topik/youtube_cau54/summaries/UQapQlUqEUU-tomtat]]
+- [[topik/youtube_cau54/summaries/VaJVw4-3n9U-tomtat]]
+- [[topik/youtube_cau54/summaries/Vu9LXINGHNU-tomtat]]
+- [[topik/youtube_cau54/summaries/VyJkae1j4oM-tomtat]]
+- [[topik/youtube_cau54/summaries/_WCiccmTYgg-tomtat]]
+- [[topik/youtube_cau54/summaries/_ahP8FBV43o-tomtat]]
+- [[topik/youtube_cau54/summaries/azWk_Gjuykg-tomtat]]
+- [[topik/youtube_cau54/summaries/h_k1W7JL79s-tomtat]]
+- [[topik/web_cau54/summaries/haniseoul-vi-tomtat]]
+- [[topik/youtube_cau54/summaries/htesoEo2k0M-tomtat]]
+- [[topik/youtube_cau54/summaries/iOhCYn9ABCY-tomtat]]
+- [[topik/youtube_cau54/summaries/kJOaxCs4MqI-tomtat]]
+- [[topik/youtube_cau54/summaries/lj5ZLBj8vms-tomtat]]
+- [[topik/web_cau54/summaries/loro-en-tomtat]]
+- [[topik/web_cau54/summaries/loro-ko-tomtat]]
+- [[topik/web_cau54/summaries/loro-vi-tomtat]]
+- [[topik/youtube_cau54/summaries/mgbnsIVwxHI-tomtat]]
+- [[topik/youtube_cau54/summaries/nYWWZCdmkTQ-tomtat]]
+- [[topik/youtube_cau54/summaries/nzSQvGY3cFs-tomtat]]
+- [[topik/web_cau54/summaries/onthitopik-bai-1-tomtat]]
+- [[topik/web_cau54/summaries/onthitopik-bai-3-tomtat]]
+- [[topik/web_cau54/summaries/onthitopik-bai-88-tomtat]]
+- [[topik/web_cau54/summaries/onthitopik-bai-89-tomtat]]
+- [[topik/web_cau54/summaries/onthitopik-cong-thuc-tomtat]]
+- [[topik/web_cau54/summaries/onthitopik-cum-dong-tu-tomtat]]
+- [[topik/web_cau54/summaries/onthitopik-list-tomtat]]
+- [[topik/web_cau54/summaries/onthitopik-tich-cuc-tomtat]]
+- [[topik/web_cau54/summaries/onthitopik-tinh-tu-tomtat]]
+- [[topik/youtube_cau54/summaries/sHOLUyonwls-tomtat]]
+- [[topik/youtube_cau54/summaries/sVhsRA6QNOA-tomtat]]
+- [[topik/youtube_cau54/summaries/spWsdSUS-w8-tomtat]]
+- [[topik/web_cau54/summaries/srk-54-skill-tomtat]]
+- [[topik/web_cau54/summaries/srk-adv-strategies-tomtat]]
+- [[topik/web_cau54/summaries/srk-day12-tomtat]]
+- [[topik/web_cau54/summaries/srk-day28-tomtat]]
+- [[topik/web_cau54/summaries/srk-q51q54-tomtat]]
+- [[topik/youtube_cau54/summaries/tCXCOrxyG9c-tomtat]]
+- [[topik/youtube_cau54/summaries/taYA2QZzp0s-tomtat]]
+- [[topik/youtube_cau54/summaries/vgUcgfiE8YU-tomtat]]
+- [[topik/youtube_cau54/summaries/w6BGI5cLSnU-tomtat]]
+- [[topik/youtube_cau54/summaries/wmx2MFI_HeY-tomtat]]
+- [[topik/youtube_cau54/summaries/xGsNjAnqggk-tomtat]]
+- [[topik/web_cau54/summaries/xdf-54-tomtat]]
+- [[topik/youtube_cau54/summaries/yhDORfR4rcM-tomtat]]
+- [[topik/youtube_cau54/summaries/zB0rVJYQJXs-tomtat]]
+
+## Liên quan
+
+- [[khung-600-700-chu]]
+- [[de-3-cau-hoi]]
+- [[dan-y-truoc-5-phut]]
+- [[chu-de-giao-duc-viec-lam]]
+- [[bo-cuc-3-phan-mo-than-ket]]
