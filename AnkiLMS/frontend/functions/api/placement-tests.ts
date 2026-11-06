@@ -3,6 +3,7 @@ import { Env, authenticateAdminRequest, authenticateRequest, errorResponse, isSa
 const TESTS = {
   "seoul-1a": { maxQuestions: 60 },
   "thth-1": { maxQuestions: 80 },
+  "thth-1-5": { maxQuestions: 50 },
 } as const;
 
 type TestSlug = keyof typeof TESTS;

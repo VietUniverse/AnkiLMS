@@ -554,6 +554,7 @@ export default function AdminPage() {
                   {[
                     { slug: "seoul-1a", title: "Seoul 1A", description: "Đầu vào học tiếp 1B" },
                     { slug: "thth-1", title: "Tiếng Hàn Tổng Hợp 1", description: "Đầu vào học tiếp quyển 2" },
+                    { slug: "thth-1-5", title: "Tổng Hợp 1 (bài 1–5)", description: "Kiểm tra 5 bài đầu" },
                   ].map((test) => {
                     const stats = placementStats.tests.find((item) => item.testSlug === test.slug);
                     return <article key={test.slug} className="card-duo rounded-2xl p-5">
@@ -607,7 +608,7 @@ export default function AdminPage() {
                       <tbody className="divide-y divide-stone-200 dark:divide-slate-800">
                         {placementStats.attempts.map((attempt) => <tr key={attempt.id}>
                           <td className="p-3"><b className="text-stone-900 dark:text-white">{attempt.name}</b><span className="mt-1 block text-stone-500 dark:text-slate-400">{attempt.email}</span></td>
-                          <td className="p-3">{attempt.testSlug === "seoul-1a" ? "Seoul 1A" : "Tiếng Hàn Tổng Hợp 1"}</td>
+                          <td className="p-3">{attempt.testSlug === "seoul-1a" ? "Seoul 1A" : attempt.testSlug === "thth-1-5" ? "Tổng Hợp 1 (bài 1–5)" : "Tiếng Hàn Tổng Hợp 1"}</td>
                           <td className="p-3">{attempt.correct} / {attempt.wrong} / {attempt.skipped} · {attempt.total} câu</td>
                           <td className="p-3 font-bold">{attempt.scorePercent}%</td>
                           <td className="p-3">{attempt.verdict === "pass" ? "Pass" : attempt.verdict === "almost" ? "Gần đạt" : "Chưa đạt"}</td>

@@ -55,6 +55,7 @@ export function VocabTest({ test }: { test: VocabTestDef }) {
     setSaved(finished);
     setResult(finished);
     setPhase("result");
+    if (!currentUser) return; // khách: chỉ lưu kết quả trên máy
     setHistorySync("saving");
     const attemptId = typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `attempt-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const durationSeconds = Math.min(1800, Math.max(0, Math.round((Date.now() - startedAt.current) / 1000)));

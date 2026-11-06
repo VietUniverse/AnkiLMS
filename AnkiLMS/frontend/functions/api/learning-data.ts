@@ -9,17 +9,19 @@ const PRIVATE_FILES = new Set([
   "thth-curriculum.json",
   "dictation-learning-content.json",
 ]);
+// Dữ liệu bài kiểm tra từ vựng mở cho khách làm không cần đăng nhập.
+const PUBLIC_FILES = new Set(["seoul-1a.json", "thth-1.json"]);
 
 export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   const name = new URL(request.url).searchParams.get("name") || "";
-  const user = await authenticateRequest(request, env);
+  const user = PUBLIC_FILES.has(name) ? null : await authenticateRequest(request, env);
   // Authenticate before validating the filename so anonymous callers cannot
   // distinguish existing private learning files from arbitrary names.
-  if (!user) return errorResponse("Đăng nhập để xem học liệu.", 401);
+  if (!user && !PUBLIC_FILES.has(name)) return errorResponse("Đăng nhập để xem học liệu.", 401);
   if (!PRIVATE_FILES.has(name)) return errorResponse("Không tìm thấy học liệu.", 404);
 
   // The two-volume Tiếng Hàn Tổng Hợp collection is reserved for admins.
-  if (name === "thth-curriculum.json" && user.role !== "admin") return errorResponse("Không tìm thấy học liệu.", 404);
+  if (name === "thth-curriculum.json" && user?.role !== "admin") return errorResponse("Không tìm thấy học liệu.", 404);
 
   const object = await env.MEDIA.get(`private-learning-data/${name}`);
   if (!object) return errorResponse("Học liệu chưa sẵn sàng.", 503);

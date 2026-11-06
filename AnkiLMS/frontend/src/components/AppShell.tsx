@@ -48,13 +48,16 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   const studyBackground = useStudyBackground();
   const studyBackgroundStyle = activeStudySession ? backgroundLayerStyle(studyBackground) : null;
 
+  // Bài kiểm tra từ vựng mở cho khách, không bắt đăng nhập.
+  const isPublicPath = pathname === "/login" || pathname.startsWith("/placement-test");
+
   useEffect(() => {
-    if (isAuthReady && !currentUser && pathname !== "/login") {
+    if (isAuthReady && !currentUser && !isPublicPath) {
       router.replace("/login");
     }
-  }, [isAuthReady, currentUser, pathname, router]);
+  }, [isAuthReady, currentUser, isPublicPath, router]);
 
-  if (isAuthReady && !currentUser && pathname !== "/login") {
+  if (isAuthReady && !currentUser && !isPublicPath) {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-[#0b1329] text-white font-sans">
         <BrandLoadingMascot label="Đang chuyển hướng sang trang đăng nhập…" className="animate-fadeIn" />
