@@ -68,22 +68,4 @@ export const THTH_1_TEST: VocabTestDef = {
   failCta: { href: "/flashcards", label: "Học Tiếng Hàn Tổng Hợp 1" },
 };
 
-export const THTH_1_5_TEST: VocabTestDef = {
-  ...THTH_1_TEST,
-  slug: "thth-1-5",
-  resultKey: "haechivn_thth1_5_result",
-  shortName: "Tiếng Hàn Tổng Hợp 1 (bài 1–5)",
-  hubDescription: "Đã chắc 5 bài đầu chưa? Lấy từ bài 1 đến 5 của Tiếng Hàn Tổng Hợp 1.",
-  title: "Bạn đã nắm bài 1–5 Tiếng Hàn Tổng Hợp 1 chưa?",
-  sourceName: "Tiếng Hàn Tổng Hợp quyển 1 (bài 1–5)",
-  minutes: 6,
-  config: { total: 50, minPerLesson: 5, maxPerLesson: 12, minLesson: 1, maxLesson: 5 },
-  verdicts: {
-    pass: { title: "Bạn đã nắm bài 1–5", text: "Bạn nắm vững từ vựng bài 1–5. Có thể học tiếp bài 6." },
-    almost: { title: "Gần đạt", text: "Bạn biết phần lớn từ vựng bài 1–5. Ôn lại các bài còn yếu rồi làm lại." },
-    fail: { title: "Chưa đạt", text: "Hãy ôn bài 1–5 Tiếng Hàn Tổng Hợp 1, rồi quay lại làm bài này." },
-  },
-  passCta: { href: "/flashcards", label: "Học tiếp bài 6" },
-};
-
-export const VOCAB_TESTS = [SEOUL_1A_TEST, THTH_1_TEST, THTH_1_5_TEST];
+export const VOCAB_TESTS = [SEOUL_1A_TEST, THTH_1_TEST];
