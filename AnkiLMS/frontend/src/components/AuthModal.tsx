@@ -72,11 +72,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   };
 
   const handleGoogleLogin = () => {
-    if (isRegister && !acceptedPolicies) {
-      setError("Bạn cần đồng ý các điều khoản và chính sách trước khi tạo tài khoản bằng Google.");
-      return;
-    }
-    ApiClient.loginWithGoogle(translationLanguage, acceptedPolicies);
+    ApiClient.loginWithGoogle(translationLanguage);
   };
 
   return (

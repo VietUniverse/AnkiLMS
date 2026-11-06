@@ -48,11 +48,9 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     // cookies set before redirecting to Google even though the OAuth state is valid.
     if (!validState) return redirect(siteUrl, "oauth_state_expired");
     let translationLanguage = "vi";
-    let acceptPolicies = false;
     try {
-      const stateData = JSON.parse(validState) as { translationLanguage?: string; acceptPolicies?: boolean };
+      const stateData = JSON.parse(validState) as { translationLanguage?: string };
       if (["vi", "en", "ja"].includes(stateData.translationLanguage || "")) translationLanguage = stateData.translationLanguage!;
-      acceptPolicies = stateData.acceptPolicies === true;
     } catch { /* Older OAuth states default to Vietnamese. */ }
 
     const clientId = env.GOOGLE_CLIENT_ID;
@@ -90,13 +88,12 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     const email = profile.email.trim().toLowerCase();
     let user = await env.DB.prepare("SELECT * FROM users WHERE email = ?").bind(email).first<UserRow>();
     if (!user) {
-      if (!acceptPolicies) return redirect(siteUrl, "policies_required");
       const userId = `usr_${crypto.randomUUID()}`;
       await env.DB.prepare(
       `INSERT INTO users (id, email, password_hash, name, avatar_url, translation_language, streak, longest_streak, xp, gems, level,
-        email_verified, terms_accepted_version, privacy_accepted_version, policies_accepted_at)
-         VALUES (?, ?, '', ?, ?, ?, 0, 0, 0, 2, 1, 1, '2026-11-03-v1', '2026-11-03-v1', ?)`
-      ).bind(userId, email, (profile.name || email.split("@")[0]).slice(0, 48), profile.picture || null, translationLanguage, new Date().toISOString()).run();
+        email_verified)
+         VALUES (?, ?, '', ?, ?, ?, 0, 0, 0, 2, 1, 1)`
+      ).bind(userId, email, (profile.name || email.split("@")[0]).slice(0, 48), profile.picture || null, translationLanguage).run();
       user = await env.DB.prepare("SELECT * FROM users WHERE id = ?").bind(userId).first<UserRow>();
     } else {
       if (user.email_verified === 0) {

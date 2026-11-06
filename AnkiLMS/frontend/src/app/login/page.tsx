@@ -42,25 +42,17 @@ export default function LoginPage() {
     const authError = params.get("auth_error");
     if (!authError) return;
 
-    if (authError === "policies_required") {
-      // Google authenticated successfully, but this is a new account and the
-      // user has not accepted the required policies yet. Show the registration
-      // form so they can consent and retry without repeating a login loop.
-      setIsRegister(true);
-      setError("Bạn cần đồng ý Điều khoản, Chính sách quyền riêng tư và Quy tắc cộng đồng trước khi tạo tài khoản bằng Google.");
-    } else {
-      const messages: Record<string, string> = {
-        oauth_invalid_request: "Yêu cầu đăng nhập không hợp lệ. Vui lòng thử lại.",
-        oauth_state_expired: "Phiên đăng nhập đã hết hạn. Vui lòng thử lại.",
-        oauth_not_configured: "Đăng nhập Google chưa được cấu hình trên máy chủ.",
-        oauth_token_failed: "Google không xác nhận được đăng nhập. Vui lòng thử lại.",
-        oauth_profile_failed: "Không lấy được hồ sơ Google. Vui lòng thử lại.",
-        oauth_email_unverified: "Tài khoản Google cần có email đã xác minh.",
-        oauth_account_failed: "Không thể tạo tài khoản. Vui lòng thử lại.",
-        oauth_failed: "Đăng nhập Google gặp lỗi. Vui lòng thử lại.",
-      };
-      setError(messages[authError] || "Đăng nhập Google thất bại. Vui lòng thử lại.");
-    }
+    const messages: Record<string, string> = {
+      oauth_invalid_request: "Yêu cầu đăng nhập không hợp lệ. Vui lòng thử lại.",
+      oauth_state_expired: "Phiên đăng nhập đã hết hạn. Vui lòng thử lại.",
+      oauth_not_configured: "Đăng nhập Google chưa được cấu hình trên máy chủ.",
+      oauth_token_failed: "Google không xác nhận được đăng nhập. Vui lòng thử lại.",
+      oauth_profile_failed: "Không lấy được hồ sơ Google. Vui lòng thử lại.",
+      oauth_email_unverified: "Tài khoản Google cần có email đã xác minh.",
+      oauth_account_failed: "Không thể tạo tài khoản. Vui lòng thử lại.",
+      oauth_failed: "Đăng nhập Google gặp lỗi. Vui lòng thử lại.",
+    };
+    setError(messages[authError] || "Đăng nhập Google thất bại. Vui lòng thử lại.");
 
     params.delete("auth_error");
     const query = params.toString();
@@ -111,11 +103,7 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = () => {
-    if (isRegister && !acceptedPolicies) {
-      setError("Bạn cần đồng ý các điều khoản và chính sách trước khi tạo tài khoản bằng Google.");
-      return;
-    }
-    ApiClient.loginWithGoogle(translationLanguage, acceptedPolicies);
+    ApiClient.loginWithGoogle(translationLanguage);
   };
 
   return (

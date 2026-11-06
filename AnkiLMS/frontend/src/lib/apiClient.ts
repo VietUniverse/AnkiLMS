@@ -221,8 +221,8 @@ export class ApiClient {
     return guestUser;
   }
 
-  public static loginWithGoogle(translationLanguage: "vi" | "en" | "ja" = "vi", acceptPolicies = false) {
-    window.location.href = `/api/auth/google?translationLanguage=${translationLanguage}&acceptPolicies=${acceptPolicies ? "1" : "0"}`;
+  public static loginWithGoogle(translationLanguage: "vi" | "en" | "ja" = "vi") {
+    window.location.href = `/api/auth/google?translationLanguage=${translationLanguage}`;
   }
 
   public static async logout(): Promise<void> {

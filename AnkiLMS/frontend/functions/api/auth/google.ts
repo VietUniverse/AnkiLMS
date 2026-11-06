@@ -16,8 +16,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     const state = Array.from(crypto.getRandomValues(new Uint8Array(32)), (byte) => byte.toString(16).padStart(2, "0")).join("");
     const requestedLanguage = new URL(request.url).searchParams.get("translationLanguage");
     const translationLanguage = ["vi", "en", "ja"].includes(requestedLanguage || "") ? requestedLanguage : "vi";
-    const acceptPolicies = new URL(request.url).searchParams.get("acceptPolicies") === "1";
-    await env.SESSIONS.put(`oauth_state:${state}`, JSON.stringify({ translationLanguage, acceptPolicies }), { expirationTtl: 600 });
+    await env.SESSIONS.put(`oauth_state:${state}`, JSON.stringify({ translationLanguage }), { expirationTtl: 600 });
     const siteUrl = configuredSiteUrl(request, env);
     const authorizationUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
     authorizationUrl.search = new URLSearchParams({
