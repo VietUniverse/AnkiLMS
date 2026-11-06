@@ -8,7 +8,10 @@ function siteOrigin(request: Request, env: Env): string {
 }
 
 function redirect(siteUrl: string, error?: string, cookie?: string, handoff?: string): Response {
-  const target = new URL("/", siteUrl);
+  // Keep OAuth errors on the login route. The app shell redirects anonymous
+  // visitors from `/` to `/login`; placing the error on `/` used to drop the
+  // query string before the login form could explain a missing policy consent.
+  const target = new URL(error ? "/login" : "/", siteUrl);
   if (error) target.searchParams.set("auth_error", error);
   if (handoff) target.hash = new URLSearchParams({ oauth_handoff: handoff }).toString();
   const headers = new Headers({

@@ -100,7 +100,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       window.history.replaceState({}, document.title, `${window.location.pathname}${window.location.search}`);
     }
 
-    if (authError) {
+    // The login page handles OAuth errors itself. Do not consume its query
+    // parameter here before it can switch to the registration/consent form.
+    const isLoginPage = window.location.pathname === "/login";
+    if (authError && !isLoginPage) {
       const authErrorMessages: Record<string, string> = {
         oauth_invalid_request: "Yêu cầu đăng nhập không hợp lệ. Vui lòng thử lại.",
         oauth_state_expired: "Phiên đăng nhập đã hết hạn. Vui lòng thử lại.",
