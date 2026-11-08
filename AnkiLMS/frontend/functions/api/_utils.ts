@@ -91,6 +91,48 @@ export async function refreshUserStreak(env: Env, userId: string): Promise<{ str
   return { streak: saved?.streak ?? streak, longest_streak: saved?.longest_streak ?? longest };
 }
 
+/** Recalculate current streaks together for leaderboard rows without N+1 queries. */
+export async function refreshUserStreaks(env: Env, userIds: string[]): Promise<Map<string, number>> {
+  const ids = [...new Set(userIds)].filter(Boolean).slice(0, 100);
+  if (!ids.length) return new Map();
+
+  const placeholders = ids.map(() => "?").join(", ");
+  const activity = await env.DB.prepare(
+    `SELECT user_id, day FROM (
+       SELECT user_id, checkin_date AS day FROM checkins WHERE user_id IN (${placeholders})
+       UNION
+       SELECT user_id, date(created_at, '+7 hours') AS day FROM study_sessions
+       WHERE user_id IN (${placeholders}) AND cards_reviewed > 0
+     ) WHERE day IS NOT NULL ORDER BY user_id, day DESC`,
+  ).bind(...ids, ...ids).all<{ user_id: string; day: string }>();
+
+  const daysByUser = new Map<string, Set<string>>(ids.map((id) => [id, new Set<string>()]));
+  for (const row of activity.results || []) {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(row.day)) daysByUser.get(row.user_id)?.add(row.day);
+  }
+
+  const today = new Date(Date.now() + 7 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  const shiftDate = (day: string, offset: number) => {
+    const [year, month, date] = day.split("-").map(Number);
+    return new Date(Date.UTC(year, month - 1, date + offset)).toISOString().slice(0, 10);
+  };
+  const streaks = new Map<string, number>();
+  const updates = ids.map((id) => {
+    const days = daysByUser.get(id)!;
+    let cursor: string | null = days.has(today) ? today : shiftDate(today, -1);
+    if (!days.has(cursor)) cursor = null;
+    let streak = 0;
+    while (cursor && days.has(cursor)) {
+      streak += 1;
+      cursor = shiftDate(cursor, -1);
+    }
+    streaks.set(id, streak);
+    return env.DB.prepare("UPDATE users SET streak = ? WHERE id = ?").bind(streak, id);
+  });
+  await env.DB.batch(updates);
+  return streaks;
+}
+
 export function jsonResponse(data: unknown, status = 200, headers: Record<string, string> = {}) {
   return new Response(JSON.stringify(data), {
     status,

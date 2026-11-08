@@ -1,4 +1,4 @@
-import { Env, jsonResponse, errorResponse, authenticateRequest } from "./_utils";
+import { Env, jsonResponse, errorResponse, authenticateRequest, refreshUserStreaks } from "./_utils";
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   try {
@@ -13,8 +13,11 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
        LIMIT 20`
     ).all();
 
+    const rows = topUsers.results || [];
+    const streaks = await refreshUserStreaks(env, rows.map((row: any) => String(row.id)));
+
     return jsonResponse({
-      leaderboard: topUsers.results || [],
+      leaderboard: rows.map((row: any) => ({ ...row, streak: streaks.get(String(row.id)) ?? 0 })),
     });
   } catch (e: any) {
     return errorResponse("Lỗi lấy bảng xếp hạng: " + e.message, 500);
