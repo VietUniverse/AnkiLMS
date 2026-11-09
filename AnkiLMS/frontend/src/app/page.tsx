@@ -8,7 +8,7 @@ import { OnigiriHeatmap } from "../components/OnigiriHeatmap";
 import { StreakPanel } from "../components/StreakPanel";
 import { InstallAppButton } from "../components/InstallAppButton";
 import { useApp } from "../contexts/AppProvider";
-import { Flame, Zap, Layers, CheckCircle2, Gamepad2, Target, X, LogIn, Search, Volume2, Play, ClipboardCheck, ArrowRight } from "lucide-react";
+import { Flame, Zap, Layers, CheckCircle2, Gamepad2, Target, X, LogIn, Search, Volume2, Play, ClipboardCheck, ArrowRight, GraduationCap } from "lucide-react";
 import { VOCABULARY_DATA } from "../data/koreanData";
 import { speakKorean } from "../lib/koreanSpeech";
 import { ApiClient } from "../lib/apiClient";
@@ -307,7 +307,7 @@ export default function Home() {
             </div>
 
             {/* Lối tắt */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               {isFeatureEnabled("flashcards") && (
                 <Link href="/flashcards" className="flex flex-col items-center gap-1.5 rounded-2xl border border-stone-200 bg-white px-2 py-4 text-center transition hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900/70">
                   <Layers className="h-6 w-6 text-sky-500" />
@@ -324,6 +324,12 @@ export default function Home() {
                 <Link href="/games" className="flex flex-col items-center gap-1.5 rounded-2xl border border-stone-200 bg-white px-2 py-4 text-center transition hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900/70">
                   <Gamepad2 className="h-6 w-6 text-amber-500" />
                   <span className="text-xs font-bold text-stone-800 dark:text-stone-200">Chơi game</span>
+                </Link>
+              )}
+              {isFeatureEnabled("topik") && (
+                <Link href="/topik/archive" className="flex flex-col items-center gap-1.5 rounded-2xl border border-sky-200 bg-sky-50 px-2 py-4 text-center transition hover:border-sky-500 dark:border-sky-400/20 dark:bg-sky-400/10">
+                  <GraduationCap className="h-6 w-6 text-sky-600 dark:text-sky-300" />
+                  <span className="text-xs font-bold text-sky-800 dark:text-sky-200">Thi thử TOPIK</span>
                 </Link>
               )}
             </div>

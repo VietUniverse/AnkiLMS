@@ -1,0 +1,2232 @@
+{
+  "id": "60-topik1",
+  "round": 60,
+  "year": 2018,
+  "level": "TOPIK I",
+  "assetDir": "60",
+  "source": "Đề thi và đáp án chính thức kỳ 60 (2018) — Viện Giáo dục Quốc tế Quốc gia Hàn Quốc (NIIED), topik.go.kr",
+  "sections": [
+    {
+      "id": "listening",
+      "title": "TOPIKⅠ 듣기 (1번 ～ 30번)",
+      "minutes": 40,
+      "audio": "audio/60_1-cbr.mp3",
+      "intro": [
+        0,
+        32.6
+      ],
+      "groups": [
+        {
+          "from": 1,
+          "to": 4,
+          "instruction": "※ [1 ～ 4] 다음을 듣고 <보기>와 같이 물음에 맞는 대답을 고르십시오.",
+          "example": {
+            "html": "<b>가 : 공책이에요?</b><br><b>나  :_____________________________</b><br><br>",
+            "options": [
+              "네, 공책이에요.",
+              "네, 공책이 커요.",
+              "아니요, 공책을 봐요.",
+              "아니요, 공책이 많아요."
+            ],
+            "answer": 1,
+            "layout": 2
+          },
+          "audio": [
+            32.6,
+            64.1
+          ]
+        },
+        {
+          "from": 5,
+          "to": 6,
+          "instruction": "※ [5～6] 다음을 듣고 <보기>와 같이 이어지는 말을 고르십시오.",
+          "example": {
+            "html": "<b>가 : 맛있게 드세요.</b><br><b>나   :_____________________________</b><br><br>",
+            "options": [
+              "좋겠습니다.",
+              "모르겠습니다.",
+              "잘 먹겠습니다.",
+              "처음 뵙겠습니다."
+            ],
+            "answer": 3,
+            "layout": 2
+          },
+          "audio": [
+            217.5,
+            249.3
+          ]
+        },
+        {
+          "from": 7,
+          "to": 10,
+          "instruction": "※ [7～10] 여기는 어디입니까? <보기>와 같이 알맞은 것을 고르십시오.",
+          "example": {
+            "html": "<b>가 : 어디가 아프세요?</b><br><b>나 : 배가 아파요.</b><br><br>",
+            "options": [
+              "공항",
+              "빵집",
+              "병원",
+              "호텔"
+            ],
+            "answer": 3,
+            "layout": 4
+          },
+          "audio": [
+            324.5,
+            369.2
+          ]
+        },
+        {
+          "from": 11,
+          "to": 14,
+          "instruction": "※ [11～14] 다음은 무엇에 대해 말하고 있습니까? <보기>와 같이 알맞은 것을 고르십시오.",
+          "example": {
+            "html": "<b>가 : 몇 살이에요?</b><br><b>나 : 스무 살이에요.</b><br><br>",
+            "options": [
+              "나이",
+              "선물",
+              "요일",
+              "주소"
+            ],
+            "answer": 1,
+            "layout": 4
+          },
+          "audio": [
+            591.8,
+            636.3
+          ]
+        },
+        {
+          "from": 15,
+          "to": 16,
+          "instruction": "※ [15～16] 다음 대화를 듣고 알맞은 그림을 고르십시오. (각 4점)",
+          "audio": [
+            860.1,
+            872.1
+          ]
+        },
+        {
+          "from": 17,
+          "to": 21,
+          "instruction": "※ [17～21] 다음을 듣고 <보기>와 같이 대화 내용과 같은 것을 고르십시오. (각 3점)",
+          "example": {
+            "html": "<b>남자 : 요즘 한국어를 공부해요?</b><br><b>여자 : 네. 한국 친구한테서 한국어를 배워요.</b><br><br>",
+            "options": [
+              "남자는 학생입니다.",
+              "여자는 학교에 다닙니다.",
+              "남자는 한국어를 가르칩니다.",
+              "여자는 한국어를 공부합니다."
+            ],
+            "answer": 4,
+            "layout": 2
+          },
+          "audio": [
+            986.2,
+            1042
+          ]
+        },
+        {
+          "from": 22,
+          "to": 24,
+          "instruction": "※ [22～24] 다음을 듣고 여자의 중심 생각을 고르십시오. (각 3점)",
+          "audio": [
+            1483.8,
+            1496.2
+          ]
+        },
+        {
+          "from": 25,
+          "to": 26,
+          "instruction": "※ [25～26] 다음을 듣고 물음에 답하십시오.",
+          "audio": [
+            1779,
+            1786.9
+          ],
+          "dialogue": [
+            1786.9,
+            1901.7
+          ]
+        },
+        {
+          "from": 27,
+          "to": 28,
+          "instruction": "※ [27～28] 다음을 듣고 물음에 답하십시오.",
+          "audio": [
+            1955.3,
+            1963.7
+          ],
+          "dialogue": [
+            1963.7,
+            2085
+          ]
+        },
+        {
+          "from": 29,
+          "to": 30,
+          "instruction": "※ [29～30] 다음을 듣고 물음에 답하십시오.",
+          "audio": [
+            2138.2,
+            2146.6
+          ],
+          "dialogue": [
+            2146.6,
+            2309.6
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "no": 1,
+          "points": 4,
+          "answer": 2,
+          "layout": 2,
+          "prompt": {
+            "html": "(4점)"
+          },
+          "options": [
+            {
+              "html": "네, 사과가 없어요."
+            },
+            {
+              "html": "네, 사과가 맛있어요."
+            },
+            {
+              "html": "아니요, 사과가 비싸요."
+            },
+            {
+              "html": "아니요, 사과가 좋아요."
+            }
+          ],
+          "audio": [
+            64.1,
+            101.7
+          ],
+          "replay": [
+            64.1,
+            77.4
+          ],
+          "explanation": "Đáp án ② 네, 사과가 맛있어요. (Vâng, táo ngon.)\nLời nghe:\n남자: 사과가 맛있어요? (Táo có ngon không?)\nHỏi \"có ngon không\" → đáp 네, 맛있어요 hoặc 아니요, 맛없어요.\n① \"Vâng, không có táo\" — không trả lời câu hỏi.\n③ \"Không, táo đắt\" — không trả lời câu hỏi.\n④ \"Không, táo tốt\" — 아니요 đi với ý khen, không khớp."
+        },
+        {
+          "no": 2,
+          "points": 4,
+          "answer": 3,
+          "layout": 2,
+          "prompt": {
+            "html": "(4점)"
+          },
+          "options": [
+            {
+              "html": "네, 학교가 작아요."
+            },
+            {
+              "html": "네, 학교가 아니에요."
+            },
+            {
+              "html": "아니요, 학교에 안 가요."
+            },
+            {
+              "html": "아니요, 학교에 있어요."
+            }
+          ],
+          "audio": [
+            101.7,
+            140.6
+          ],
+          "replay": [
+            101.5,
+            116.3
+          ],
+          "explanation": "Đáp án ③ 아니요, 학교에 안 가요. (Không, tôi không đi học.)\nLời nghe:\n여자: 오늘 학교에 가요? (Hôm nay bạn có đi học không?)\n① \"Vâng, trường nhỏ\" — không trả lời câu hỏi.\n② 아니에요 dùng để đáp câu hỏi \"là… phải không\".\n④ \"Không, tôi ở trường\" — không khớp câu hỏi."
+        },
+        {
+          "no": 3,
+          "points": 3,
+          "answer": 4,
+          "layout": 2,
+          "prompt": {
+            "html": "(3점)"
+          },
+          "options": [
+            {
+              "html": "조금 샀어요."
+            },
+            {
+              "html": "친구가 샀어요."
+            },
+            {
+              "html": "한 시에 샀어요."
+            },
+            {
+              "html": "시장에서 샀어요."
+            }
+          ],
+          "audio": [
+            140.6,
+            179.8
+          ],
+          "replay": [
+            140.4,
+            155.6
+          ],
+          "explanation": "Đáp án ④ 시장에서 샀어요. (Tôi mua ở chợ.)\nLời nghe:\n남자: 이거 어디에서 샀어요? (Cái này bạn mua ở đâu?)\n어디에서 hỏi \"ở đâu\".\n① \"Mua một ít\" — trả lời 얼마나.\n② \"Bạn tôi mua\" — trả lời 누가.\n③ \"Mua lúc 1 giờ\" — trả lời 언제."
+        },
+        {
+          "no": 4,
+          "points": 3,
+          "answer": 2,
+          "layout": 2,
+          "prompt": {
+            "html": "(3점)"
+          },
+          "options": [
+            {
+              "html": "자주 해요."
+            },
+            {
+              "html": "편지를 써요."
+            },
+            {
+              "html": "내일 만나요."
+            },
+            {
+              "html": "정말 좋아해요."
+            }
+          ],
+          "audio": [
+            179.8,
+            217.2
+          ],
+          "replay": [
+            179.7,
+            193
+          ],
+          "explanation": "Đáp án ② 편지를 써요. (Tôi đang viết thư.)\nLời nghe:\n여자: 지금 뭐 해요? (Bây giờ bạn đang làm gì?)\n뭐 해요 hỏi \"làm gì\" → trả lời việc đang làm.\n① \"Làm thường xuyên\" — trả lời 자주.\n③ \"Mai gặp\" — không trả lời câu hỏi.\n④ \"Rất thích\" — không trả lời câu hỏi."
+        },
+        {
+          "no": 5,
+          "points": 4,
+          "answer": 2,
+          "layout": 2,
+          "prompt": {
+            "html": "(4점)"
+          },
+          "options": [
+            {
+              "html": "미안해요."
+            },
+            {
+              "html": "고마워요."
+            },
+            {
+              "html": "반가워요."
+            },
+            {
+              "html": "괜찮아요."
+            }
+          ],
+          "audio": [
+            249.3,
+            286.3
+          ],
+          "replay": [
+            249.3,
+            262
+          ],
+          "explanation": "Đáp án ② 고마워요. (Cảm ơn.)\nLời nghe:\n남자: 생일 축하해요. (Chúc mừng sinh nhật.)\nĐược chúc mừng → đáp lời cảm ơn.\n① 미안해요: xin lỗi · ③ 반가워요: rất vui được gặp · ④ 괜찮아요: không sao."
+        },
+        {
+          "no": 6,
+          "points": 3,
+          "answer": 3,
+          "layout": 2,
+          "prompt": {
+            "html": "(3점)"
+          },
+          "options": [
+            {
+              "html": "잘 지냈어요."
+            },
+            {
+              "html": "어서 오세요."
+            },
+            {
+              "html": "네, 안녕히 계세요."
+            },
+            {
+              "html": "네, 오랜만이에요."
+            }
+          ],
+          "audio": [
+            286.3,
+            324.2
+          ],
+          "replay": [
+            286.1,
+            300.1
+          ],
+          "explanation": "Đáp án ③ 네, 안녕히 계세요. (Vâng, ở lại mạnh khỏe nhé.)\nLời nghe:\n여자: 민수 씨, 잘 가요. (Minsu, về cẩn thận nhé.)\nNgười ở lại chào 잘 가요 → người ra về đáp 안녕히 계세요.\n① 잘 지냈어요: dạo này khỏe không · ② 어서 오세요: xin mời vào · ④ 오랜만이에요: lâu rồi mới gặp."
+        },
+        {
+          "no": 7,
+          "points": 3,
+          "answer": 4,
+          "layout": 4,
+          "prompt": {
+            "html": "(3점)"
+          },
+          "options": [
+            {
+              "html": "꽃집"
+            },
+            {
+              "html": "식당"
+            },
+            {
+              "html": "우체국"
+            },
+            {
+              "html": "백화점"
+            }
+          ],
+          "audio": [
+            369.2,
+            422.3
+          ],
+          "replay": [
+            369.2,
+            398.1
+          ],
+          "explanation": "Đáp án ④ 백화점 (cửa hàng bách hóa).\nLời nghe:\n여자: 남자 옷은 어디 있어요? (Đồ nam ở đâu ạ?)\n남자: 3층에 있습니다. (Ở tầng 3 ạ.)\nBán quần áo, chia theo tầng → cửa hàng bách hóa.\n① 꽃집: tiệm hoa · ② 식당: quán ăn · ③ 우체국: bưu điện."
+        },
+        {
+          "no": 8,
+          "points": 3,
+          "answer": 3,
+          "layout": 4,
+          "prompt": {
+            "html": "(3점)"
+          },
+          "options": [
+            {
+              "html": "시장"
+            },
+            {
+              "html": "약국"
+            },
+            {
+              "html": "도서관"
+            },
+            {
+              "html": "여행사"
+            }
+          ],
+          "audio": [
+            422.3,
+            477.7
+          ],
+          "replay": [
+            422.2,
+            453.5
+          ],
+          "explanation": "Đáp án ③ 도서관 (thư viện).\nLời nghe:\n남자: 모두 두 권입니까? (Tất cả hai cuốn ạ?)\n여자: 네, 이 책 두 권 빌려 주세요. (Vâng, cho tôi mượn hai cuốn này.)\n빌리다 (mượn) sách → thư viện.\n① 시장: chợ · ② 약국: nhà thuốc · ④ 여행사: công ty du lịch."
+        },
+        {
+          "no": 9,
+          "points": 3,
+          "answer": 1,
+          "layout": 4,
+          "prompt": {
+            "html": "(3점)"
+          },
+          "options": [
+            {
+              "html": "은행"
+            },
+            {
+              "html": "교실"
+            },
+            {
+              "html": "극장"
+            },
+            {
+              "html": "공원"
+            }
+          ],
+          "audio": [
+            477.7,
+            535.2
+          ],
+          "replay": [
+            477.6,
+            510.9
+          ],
+          "explanation": "Đáp án ① 은행 (ngân hàng).\nLời nghe:\n여자: 이거 한국 돈으로 바꾸고 싶어요. (Tôi muốn đổi cái này sang tiền Hàn.)\n남자: 얼마나 바꿔 드릴까요? (Chị muốn đổi bao nhiêu ạ?)\nĐổi tiền → ngân hàng.\n② 교실: lớp học · ③ 극장: rạp hát · ④ 공원: công viên."
+        },
+        {
+          "no": 10,
+          "points": 4,
+          "answer": 1,
+          "layout": 4,
+          "prompt": {
+            "html": "(4점)"
+          },
+          "options": [
+            {
+              "html": "정류장"
+            },
+            {
+              "html": "미술관"
+            },
+            {
+              "html": "운동장"
+            },
+            {
+              "html": "박물관"
+            }
+          ],
+          "audio": [
+            535.2,
+            591.5
+          ],
+          "replay": [
+            535,
+            567.3
+          ],
+          "explanation": "Đáp án ① 정류장 (trạm xe buýt).\nLời nghe:\n남자: 수미 씨, 5번 버스 왔어요. (Sumi, xe buýt số 5 đến rồi.)\n여자: 그럼 저 먼저 갈게요. (Vậy tôi đi trước nhé.)\nĐang chờ xe buýt → trạm xe buýt.\n② 미술관: bảo tàng mỹ thuật · ③ 운동장: sân vận động · ④ 박물관: bảo tàng."
+        },
+        {
+          "no": 11,
+          "points": 3,
+          "answer": 2,
+          "layout": 4,
+          "prompt": {
+            "html": "(3점)"
+          },
+          "options": [
+            {
+              "html": "일"
+            },
+            {
+              "html": "집"
+            },
+            {
+              "html": "시간"
+            },
+            {
+              "html": "가족"
+            }
+          ],
+          "audio": [
+            636.3,
+            682.2
+          ],
+          "replay": [
+            636.3,
+            658
+          ],
+          "explanation": "Đáp án ② 집 (nhà).\nLời nghe:\n남자: 방이 몇 개예요? (Có mấy phòng?)\n여자: 두 개예요. (Hai phòng.)\nSố phòng → nói về nhà.\n① 일: công việc · ③ 시간: thời gian · ④ 가족: gia đình."
+        },
+        {
+          "no": 12,
+          "points": 3,
+          "answer": 1,
+          "layout": 4,
+          "prompt": {
+            "html": "(3점)"
+          },
+          "options": [
+            {
+              "html": "취미"
+            },
+            {
+              "html": "이름"
+            },
+            {
+              "html": "음식"
+            },
+            {
+              "html": "장소"
+            }
+          ],
+          "audio": [
+            682.2,
+            741.2
+          ],
+          "replay": [
+            682.1,
+            717
+          ],
+          "explanation": "Đáp án ① 취미 (sở thích).\nLời nghe:\n여자: 저는 영화를 좋아해요. 민수 씨는요? (Tôi thích phim. Còn anh Minsu?)\n남자: 저는 운동을 좋아해요. (Tôi thích thể thao.)\nThích phim, thích thể thao → sở thích.\n② 이름: tên · ③ 음식: món ăn · ④ 장소: địa điểm."
+        },
+        {
+          "no": 13,
+          "points": 4,
+          "answer": 2,
+          "layout": 4,
+          "prompt": {
+            "html": "(4점)"
+          },
+          "options": [
+            {
+              "html": "위치"
+            },
+            {
+              "html": "휴일"
+            },
+            {
+              "html": "날씨"
+            },
+            {
+              "html": "수업"
+            }
+          ],
+          "audio": [
+            741.2,
+            798.4
+          ],
+          "replay": [
+            741,
+            774.1
+          ],
+          "explanation": "Đáp án ② 휴일 (ngày nghỉ).\nLời nghe:\n남자: 여기 일요일에 쉬어요? (Ở đây Chủ nhật có nghỉ không?)\n여자: 아니요. 저희는 월요일에 쉽니다. (Không. Chúng tôi nghỉ thứ Hai.)\nNghỉ ngày nào → ngày nghỉ.\n① 위치: vị trí · ③ 날씨: thời tiết · ④ 수업: giờ học."
+        },
+        {
+          "no": 14,
+          "points": 3,
+          "answer": 3,
+          "layout": 4,
+          "prompt": {
+            "html": "(3점)"
+          },
+          "options": [
+            {
+              "html": "건강"
+            },
+            {
+              "html": "직업"
+            },
+            {
+              "html": "고향"
+            },
+            {
+              "html": "교통"
+            }
+          ],
+          "audio": [
+            798.4,
+            859.8
+          ],
+          "replay": [
+            798.2,
+            835.5
+          ],
+          "explanation": "Đáp án ③ 고향 (quê).\nLời nghe:\n여자: 민수 씨는 계속 서울에 살았어요? (Anh Minsu sống ở Seoul từ trước đến giờ à?)\n남자: 네, 저는 서울에서 태어났어요. (Vâng, tôi sinh ra ở Seoul.)\nSinh ra ở đâu → quê.\n① 건강: sức khỏe · ② 직업: nghề nghiệp · ④ 교통: giao thông."
+        },
+        {
+          "no": 15,
+          "points": 4,
+          "answer": 2,
+          "layout": 2,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "image": "images/60_1_15_1.webp",
+              "alt": "남여가 수박가게 앞을 지나감"
+            },
+            {
+              "image": "images/60_1_15_2.webp",
+              "alt": "여자가 수박을 고름"
+            },
+            {
+              "image": "images/60_1_15_3.webp",
+              "alt": "여자가 수박을 들고감"
+            },
+            {
+              "image": "images/60_1_15_4.webp",
+              "alt": "남여가 수박을 챙겨감"
+            }
+          ],
+          "audio": [
+            872.1,
+            924.8
+          ],
+          "replay": [
+            872.1,
+            900.6
+          ],
+          "explanation": "Đáp án ② (tranh người nữ đứng hỏi người bán dưa hấu, chưa mua).\nLời nghe:\n여자: 이 수박 얼마예요? (Quả dưa hấu này bao nhiêu tiền?)\n남자: 만 원이에요. 하나 드릴까요? (10.000 won. Lấy cho chị một quả nhé?)\nKhách đang hỏi giá, chưa mua → tranh ②.\n① Hai người đi ngang qua · ③ Đã xách dưa hấu đi · ④ Hai người xách dưa hấu đi."
+        },
+        {
+          "no": 16,
+          "points": 4,
+          "answer": 1,
+          "layout": 2,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "image": "images/60_1_16_1.webp",
+              "alt": "여자가 남자 손을 잡음"
+            },
+            {
+              "image": "images/60_1_16_2.webp",
+              "alt": "남여가 인사함"
+            },
+            {
+              "image": "images/60_1_16_3.webp",
+              "alt": "남자가 종이를 건넴"
+            },
+            {
+              "image": "images/60_1_16_4.webp",
+              "alt": "여자가 메뉴를 고름"
+            }
+          ],
+          "audio": [
+            924.8,
+            985.9
+          ],
+          "replay": [
+            924.6,
+            961.8
+          ],
+          "explanation": "Đáp án ① (tranh người nam đến cửa rạp, người nữ mời vào).\nLời nghe:\n남자: 수미 씨, 늦어서 미안해요. (Sumi, xin lỗi tôi đến muộn.)\n여자: 아직 영화 시작 안 했어요. 들어가요. (Phim chưa bắt đầu đâu. Vào thôi.)\nVừa đến muộn, phim chưa chiếu, rủ nhau vào → tranh ①.\n② Đang ngồi chờ với bắp rang · ③ ④ Đang mua vé ở quầy."
+        },
+        {
+          "no": 17,
+          "points": 3,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "html": "여자는 요리를 잘합니다."
+            },
+            {
+              "html": "여자는 요리를 자주 합니다."
+            },
+            {
+              "html": "남자는 요즘 밥을 잘 못 먹습니다."
+            },
+            {
+              "html": "남자는 보통 집에서 저녁을 먹습니다."
+            }
+          ],
+          "audio": [
+            1042,
+            1135.1
+          ],
+          "replay": [
+            1042,
+            1109.7
+          ],
+          "explanation": "Đáp án ④ 남자는 보통 집에서 저녁을 먹습니다. (Người nam thường ăn tối ở nhà.)\nLời nghe:\n여자: 민수 씨는 보통 저녁을 집에서 먹어요? (Anh Minsu thường ăn tối ở nhà à?)\n남자: 네, 요리하는 걸 좋아해서 만들어서 먹어요. 수미 씨는요? (Vâng, tôi thích nấu ăn nên tự nấu. Còn chị Sumi?)\n여자: 저는 요리를 잘 못해요. 그래서 밖에서 자주 먹어요. (Tôi nấu không giỏi. Nên hay ăn ngoài.)\n① Sai: chị nấu không giỏi.\n② Sai: chị hay ăn ngoài.\n③ Không nói anh ăn không ngon miệng."
+        },
+        {
+          "no": 18,
+          "points": 3,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "html": "여자는 옷을 입어 봤습니다."
+            },
+            {
+              "html": "남자는 삼만 원을 받았습니다."
+            },
+            {
+              "html": "남자는 티셔츠를 사려고 합니다."
+            },
+            {
+              "html": "여자는 남자에게 선물을 합니다."
+            }
+          ],
+          "audio": [
+            1135.1,
+            1209.7
+          ],
+          "replay": [
+            1134.9,
+            1184.5
+          ],
+          "explanation": "Đáp án ③ 남자는 티셔츠를 사려고 합니다. (Người nam định mua áo phông.)\nLời nghe:\n남자: 저, 어머니 선물을 좀 사려고 하는데요. (Tôi muốn mua quà cho mẹ.)\n여자: 이 티셔츠는 어떠세요? (Anh thấy áo phông này thế nào?)\n남자: 예쁘네요. 그걸로 주세요. 얼마예요? (Đẹp quá. Lấy cho tôi cái đó. Bao nhiêu tiền?)\n여자: 삼만 원입니다. (30.000 won ạ.)\n① Không ai mặc thử.\n② Sai: anh là người trả 30.000 won.\n④ Sai: anh mua quà cho mẹ mình."
+        },
+        {
+          "no": 19,
+          "points": 3,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "html": "남자는 오늘 집에서 쉽니다."
+            },
+            {
+              "html": "남자는 어제 많이 아팠습니다."
+            },
+            {
+              "html": "여자는 오늘 몸이 안 좋습니다."
+            },
+            {
+              "html": "여자는 어제 학교에 안 갔습니다."
+            }
+          ],
+          "audio": [
+            1209.7,
+            1296.2
+          ],
+          "replay": [
+            1209.5,
+            1271.1
+          ],
+          "explanation": "Đáp án ④ 여자는 어제 학교에 안 갔습니다. (Hôm qua người nữ không đi học.)\nLời nghe:\n남자: 수미 씨, 어제는 왜 학교에 안 왔어요? (Sumi, hôm qua sao chị không đến trường?)\n여자: 몸이 안 좋아서 집에 있었어요. (Tôi không khỏe nên ở nhà.)\n남자: 그랬어요? 지금은 괜찮아요? (Vậy à? Giờ chị ổn chưa?)\n여자: 네, 푹 쉬어서 이제 괜찮아요. (Rồi, nghỉ ngơi đủ nên giờ ổn rồi.)\n① ② Không nói anh nghỉ ở nhà hay bị ốm.\n③ Sai: hôm nay chị đã ổn."
+        },
+        {
+          "no": 20,
+          "points": 3,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "html": "남자는 회의에 못 갑니다."
+            },
+            {
+              "html": "여자는 회의를 늦게 할 겁니다."
+            },
+            {
+              "html": "남자는 지금부터 회의 준비를 합니다."
+            },
+            {
+              "html": "여자는 남자와 같이 회의를 할 겁니다."
+            }
+          ],
+          "audio": [
+            1296.2,
+            1373.3
+          ],
+          "replay": [
+            1296.1,
+            1348.2
+          ],
+          "explanation": "Đáp án ④ 여자는 남자와 같이 회의를 할 겁니다. (Người nữ sẽ họp cùng người nam.)\nLời nghe:\n여자: 민수 씨, 회의 준비 다 했어요? (Anh Minsu chuẩn bị họp xong chưa?)\n남자: 네, 조금 전에 다 했습니다. (Rồi, vừa xong lúc nãy.)\n여자: 그럼 지금 회의 시작할까요? (Vậy bắt đầu họp luôn nhé?)\n남자: 네, 회의실로 가겠습니다. (Vâng, tôi sang phòng họp.)\n① Sai: anh sang phòng họp.\n② Sai: họp ngay bây giờ.\n③ Sai: anh đã chuẩn bị xong."
+        },
+        {
+          "no": 21,
+          "points": 3,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "html": "남자는 그림을 배우고 있습니다."
+            },
+            {
+              "html": "여자는 요즘 미술관에 자주 갑니다."
+            },
+            {
+              "html": "남자는 그림 보는 것을 좋아합니다."
+            },
+            {
+              "html": "여자는 지금 미술관에 가고 있습니다."
+            }
+          ],
+          "audio": [
+            1373.3,
+            1483.5
+          ],
+          "replay": [
+            1373.1,
+            1458.3
+          ],
+          "explanation": "Đáp án ③ 남자는 그림 보는 것을 좋아합니다. (Người nam thích xem tranh.)\nLời nghe:\n여자: 오랜만에 미술관에 오니까 좋네요. 같이 와 줘서 고마워요. (Lâu lắm mới đến bảo tàng mỹ thuật, thích thật. Cảm ơn anh đã đi cùng.)\n남자: 아니에요. 저도 오고 싶었어요. (Không có gì. Tôi cũng muốn đến.)\n여자: 그런데 혹시 그림을 배운 적이 있어요? 그림을 잘 아는 것 같아서요. (Mà anh từng học vẽ à? Trông anh hiểu tranh lắm.)\n남자: 아니요. 그림을 좋아해서 평소에 많이 봐요. (Không. Tôi thích tranh nên hay xem.)\n① Sai: anh chưa học vẽ.\n② Sai: \"lâu lắm mới\" đến (오랜만에).\n④ Sai: hai người đã ở trong bảo tàng."
+        },
+        {
+          "no": 22,
+          "points": 3,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "html": "운전 연습을 많이 해야 합니다."
+            },
+            {
+              "html": "피곤할 때는 운전을 하면 안 됩니다."
+            },
+            {
+              "html": "지하철로 회사에 가는 것이 더 좋습니다."
+            },
+            {
+              "html": "회사에서 지하철역이 가까워서 좋습니다."
+            }
+          ],
+          "audio": [
+            1496.2,
+            1581.7
+          ],
+          "replay": [
+            1496.2,
+            1556.4
+          ],
+          "explanation": "Đáp án ③ 지하철로 회사에 가는 것이 더 좋습니다. (Đi làm bằng tàu điện ngầm thì hơn.)\nLời nghe:\n남자: 수미 씨는 회사에 차를 안 가지고 다녀요? (Chị Sumi không đi ô tô đi làm à?)\n여자: 네, 저는 지하철로 다녀요. (Vâng, tôi đi tàu điện ngầm.)\n남자: 운전해서 다니는 게 편하지 않아요? (Lái xe chẳng tiện hơn sao?)\n여자: 아니요. 길이 막혀서 지하철을 타는 게 편해요. (Không. Đường tắc nên đi tàu điện ngầm tiện hơn.)\n① ② Không nói chuyện tập lái hay mệt.\n④ Không nói ga gần công ty."
+        },
+        {
+          "no": 23,
+          "points": 3,
+          "answer": 1,
+          "layout": 1,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "html": "창문 쪽에 앉고 싶습니다."
+            },
+            {
+              "html": "밖에서 먹는 것이 좋습니다."
+            },
+            {
+              "html": "기다리지 않고 바로 먹고 싶습니다."
+            },
+            {
+              "html": "사람이 적은 식당에 가는 것이 좋습니다."
+            }
+          ],
+          "audio": [
+            1581.7,
+            1670
+          ],
+          "replay": [
+            1581.5,
+            1644.7
+          ],
+          "explanation": "Đáp án ① 창문 쪽에 앉고 싶습니다. (Cô ấy muốn ngồi phía cửa sổ.)\nLời nghe:\n남자: 손님, 두 분이세요? 저기 안쪽 자리 어떠세요? (Quý khách hai người ạ? Chỗ bên trong kia được không ạ?)\n여자: 창문 쪽은 오래 기다려야 돼요? (Phía cửa sổ phải chờ lâu không?)\n남자: 30분 정도 기다리셔야 합니다. (Phải chờ khoảng 30 phút ạ.)\n여자: 그럼 기다릴게요. 창문 밖 경치가 좋아서요. (Vậy tôi chờ. Cảnh ngoài cửa sổ đẹp mà.)\n② Không nói ăn ngoài trời.\n③ Ngược lại: chị chịu chờ 30 phút.\n④ Không nói quán vắng người."
+        },
+        {
+          "no": 24,
+          "points": 3,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "html": "혼자 여행을 가고 싶습니다."
+            },
+            {
+              "html": "여행 계획을 세우기 어렵습니다."
+            },
+            {
+              "html": "오랫동안 여행을 하는 것이 좋습니다."
+            },
+            {
+              "html": "계획을 세우고 여행을 가면 좋겠습니다."
+            }
+          ],
+          "audio": [
+            1670,
+            1778.7
+          ],
+          "replay": [
+            1669.9,
+            1753.4
+          ],
+          "explanation": "Đáp án ④ 계획을 세우고 여행을 가면 좋겠습니다. (Mong lập kế hoạch rồi mới đi du lịch.)\nLời nghe:\n여자: 우리 여행 가서 뭐 할까요? 이제 계획을 세워야죠. (Đi du lịch mình làm gì nhỉ? Phải lập kế hoạch thôi.)\n남자: 가서 정하는 게 어때요? 다 정하고 가면 재미가 없을 것 같아요. (Đến nơi rồi quyết thì sao? Quyết hết rồi mới đi chắc chán.)\n여자: 그렇지만 미리 계획을 하고 가면 시간을 잘 쓸 수 있잖아요. (Nhưng lên kế hoạch trước thì dùng thời gian hợp lý hơn mà.)\n남자: 거기에 가서 알아보면 더 좋은 곳이 있을 수도 있어요. (Đến nơi tìm hiểu biết đâu lại có chỗ hay hơn.)\n① ③ Không nói đi một mình hay đi lâu.\n② Không nói lập kế hoạch khó."
+        },
+        {
+          "no": 25,
+          "points": 3,
+          "answer": 2,
+          "layout": 1,
+          "prompt": {
+            "html": "여자가 왜 이 이야기를 하고 있는지 고르십시오. (3점)"
+          },
+          "options": [
+            {
+              "html": "신청 방법을 말해 주려고"
+            },
+            {
+              "html": "행사 장소를 알려 주려고"
+            },
+            {
+              "html": "행사 날짜를 정하고 싶어서"
+            },
+            {
+              "html": "더 많은 신청을 받고 싶어서"
+            }
+          ],
+          "audio": [
+            1786.9,
+            1927.6
+          ],
+          "replay": [
+            1786.9,
+            1902.3
+          ],
+          "explanation": "Đáp án ② 행사 장소를 알려 주려고 (để cho biết địa điểm sự kiện).\nLời nghe (người nữ thông báo):\n학생회에서 알립니다. 다음 주 금요일에 열리는 동아리 발표회 행사가 올해는 체육관에서 열립니다. 작년보다 많은 동아리가 신청을 해서 발표회를 체육관에서 하게 되었습니다. 학생회관으로 가지 마시고 체육관으로 와 주시기 바랍니다. 재미있는 공연도 볼 수 있으니까 많이 와 주세요. 감사합니다.\n(Hội sinh viên xin thông báo. Buổi trình diễn của các câu lạc bộ thứ Sáu tuần sau năm nay tổ chức ở nhà thi đấu. Vì nhiều câu lạc bộ đăng ký hơn năm ngoái nên chuyển ra nhà thi đấu. Xin đừng đến hội quán sinh viên mà hãy đến nhà thi đấu. Có cả tiết mục biểu diễn hay, mời mọi người đến đông đủ. Xin cảm ơn.)\nCả bài nhấn mạnh đổi chỗ: đến nhà thi đấu, không đến hội quán sinh viên.\n① Không nói cách đăng ký · ③ Ngày đã định (thứ Sáu tuần sau) · ④ Không kêu gọi đăng ký thêm."
+        },
+        {
+          "no": 26,
+          "points": 4,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": "들은 내용과 같은 것을 고르십시오. (4점)"
+          },
+          "options": [
+            {
+              "html": "금요일에 행사 신청을 받습니다."
+            },
+            {
+              "html": "공연은 이번 주에 볼 수 있습니다."
+            },
+            {
+              "html": "학생회관에서 동아리 발표회를 합니다."
+            },
+            {
+              "html": "작년보다 발표를 신청한 동아리가 많습니다."
+            }
+          ],
+          "audio": [
+            1927.6,
+            1955
+          ],
+          "replay": [
+            1927.5,
+            1929.8
+          ],
+          "explanation": "Đáp án ④ 작년보다 발표를 신청한 동아리가 많습니다. (Số câu lạc bộ đăng ký trình diễn nhiều hơn năm ngoái.)\n작년보다 많은 동아리가 신청을 해서 …\n① Sai: thứ Sáu là ngày diễn ra sự kiện.\n② Sai: sự kiện vào thứ Sáu TUẦN SAU.\n③ Sai: tổ chức ở nhà thi đấu, không phải hội quán sinh viên."
+        },
+        {
+          "no": 27,
+          "points": 3,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": "두 사람이 무엇에 대해 이야기를 하고 있는지 고르십시오. (3점)"
+          },
+          "options": [
+            {
+              "html": "인기 있는 운동"
+            },
+            {
+              "html": "운동을 하는 이유"
+            },
+            {
+              "html": "인터넷 수업의 좋은 점"
+            },
+            {
+              "html": "인터넷으로 많이 하는 일"
+            }
+          ],
+          "audio": [
+            1963.7,
+            2110.8
+          ],
+          "replay": [
+            1963.7,
+            2085.6
+          ],
+          "explanation": "Đáp án ③ 인터넷 수업의 좋은 점 (ưu điểm của lớp học qua mạng).\nLời nghe:\n남자: 나도 운동 좀 해야 하는데…… 수미 씨는 요즘 무슨 운동 하세요? (Tôi cũng phải tập thể dục mới được. Dạo này chị Sumi tập gì?)\n여자: 저는 인터넷으로 요가 수업을 듣고 있는데 생각보다 괜찮아요. (Tôi đang học yoga qua mạng, hay hơn tôi nghĩ.)\n남자: 아, 인터넷으로 운동을 하면 집에서 할 수 있으니까 좋겠네요. (À, tập qua mạng thì tập ở nhà được, tiện nhỉ.)\n여자: 네. 그리고 어려우면 화면을 멈추고 자세히 볼 수 있어서 좋아요. (Vâng. Chỗ nào khó thì dừng màn hình xem kỹ được.)\n남자: 필요하면 다시 봐도 되고요. (Cần thì xem lại cũng được nhỉ.)\n여자: 맞아요. 또 시간이 없으면 밤늦게 하거나 아침 일찍 해도 돼요. (Đúng vậy. Không có thời gian thì tập khuya hay sáng sớm cũng được.)\nCả hai kể những điểm tiện của việc học qua mạng.\n① ② ④ Không phải chủ đề."
+        },
+        {
+          "no": 28,
+          "points": 4,
+          "answer": 1,
+          "layout": 1,
+          "prompt": {
+            "html": "들은 내용과 같은 것을 고르십시오. (4점)"
+          },
+          "options": [
+            {
+              "html": "여자는 요가를 배우고 있습니다."
+            },
+            {
+              "html": "남자는 운동을 열심히 하고 있습니다."
+            },
+            {
+              "html": "여자는 남자와 같이 운동을 할 겁니다."
+            },
+            {
+              "html": "남자는 여자에게 운동을 소개했습니다."
+            }
+          ],
+          "audio": [
+            2110.8,
+            2137.9
+          ],
+          "replay": [
+            2110.7,
+            2112.8
+          ],
+          "explanation": "Đáp án ① 여자는 요가를 배우고 있습니다. (Người nữ đang học yoga.)\n저는 인터넷으로 요가 수업을 듣고 있는데 …\n② Sai: anh nói mình cũng phải tập (나도 운동 좀 해야 하는데) → chưa tập.\n③ Không nói hai người tập cùng nhau.\n④ Sai: chị là người giới thiệu cách tập."
+        },
+        {
+          "no": 29,
+          "points": 3,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": "남자가 이 책을 쓴 이유를 고르십시오. (3점)"
+          },
+          "options": [
+            {
+              "html": "글을 쓰는 것을 좋아해서"
+            },
+            {
+              "html": "특별한 이야기를 쓰고 싶어서"
+            },
+            {
+              "html": "한국 문화에 대한 책이 인기가 있어서"
+            },
+            {
+              "html": "한국 사람의 생활 모습을 소개하고 싶어서"
+            }
+          ],
+          "audio": [
+            2146.6,
+            2335.4
+          ],
+          "replay": [
+            2146.6,
+            2310.2
+          ],
+          "explanation": "Đáp án ④ 한국 사람의 생활 모습을 소개하고 싶어서 (vì muốn giới thiệu đời sống người Hàn).\nLời nghe:\n여자: 작가님의 책이 외국인들에게 인기가 많습니다. 어떤 책인가요? (Sách của anh rất được người nước ngoài yêu thích. Đó là sách gì vậy?)\n남자: 한국인의 재미있는 생활 모습에 대한 책이에요. 방에 신발을 벗고 들어가거나 음식을 자를 때 가위를 사용하는 것처럼요. (Sách về những nét thú vị trong đời sống người Hàn. Như cởi giày khi vào phòng, hay dùng kéo cắt đồ ăn.)\n여자: 그런데 어떻게 이런 책을 쓰셨어요? (Sao anh lại viết sách này?)\n남자: 제가 호텔에서 일했는데 그때 외국 손님들이 한국에 대한 질문을 많이 했어요. 그래서 이런 책을 생각하게 됐죠. (Tôi từng làm ở khách sạn, khi đó khách nước ngoài hỏi về Hàn Quốc rất nhiều. Nên tôi nghĩ đến việc viết sách này.)\n여자: 그렇군요. 두 번째 책도 준비하고 계세요? (Ra vậy. Anh có chuẩn bị cuốn thứ hai không?)\n남자: 네, 외국인들에게 알려 주고 싶은 것이 아직 많아요. 이번에는 한국의 아름다운 장소를 소개하는 책을 써 보려고요. (Có, còn nhiều điều tôi muốn kể cho người nước ngoài. Lần này tôi định viết sách giới thiệu những nơi đẹp ở Hàn Quốc.)\n① ② ③ Không phải lý do anh nói."
+        },
+        {
+          "no": 30,
+          "points": 4,
+          "answer": 1,
+          "layout": 1,
+          "prompt": {
+            "html": "들은 내용과 같은 것을 고르십시오. (4점)"
+          },
+          "options": [
+            {
+              "html": "남자는 호텔에서 일을 한 적이 있습니다."
+            },
+            {
+              "html": "남자는 외국 사람에게 질문을 많이 했습니다."
+            },
+            {
+              "html": "남자는 외국인을 위한 책을 여러 권 썼습니다."
+            },
+            {
+              "html": "남자는 앞으로 외국 문화에 대한 책을 쓸 겁니다."
+            }
+          ],
+          "audio": [
+            2335.4,
+            2381.8
+          ],
+          "replay": [
+            2335.2,
+            2337
+          ],
+          "explanation": "Đáp án ① 남자는 호텔에서 일을 한 적이 있습니다. (Người nam từng làm ở khách sạn.)\n제가 호텔에서 일했는데 …\n② Sai: khách nước ngoài hỏi anh, không phải anh hỏi.\n③ Sai: anh đang chuẩn bị cuốn thứ hai → mới có một cuốn.\n④ Sai: cuốn sau giới thiệu những nơi đẹp ở Hàn Quốc."
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "title": "TOPIKⅠ 읽기 (31번 ～ 70번)",
+      "minutes": 60,
+      "groups": [
+        {
+          "from": 31,
+          "to": 33,
+          "instruction": "※ [31～33] 무엇에 대한 이야기입니까? <보기>와 같이 알맞은 것을 고르십시오. (각 2점)",
+          "example": {
+            "html": "<b>바람이 붑니다. 시원합니다.</b><br><br>",
+            "options": [
+              "과일",
+              "사람",
+              "날씨",
+              "얼굴"
+            ],
+            "answer": 3,
+            "layout": 4
+          }
+        },
+        {
+          "from": 34,
+          "to": 39,
+          "instruction": "※ [34～39] <보기>와 같이 ( )에 들어갈 가장 알맞은 것을 고르십시오.",
+          "example": {
+            "html": "<b> (   )에 갑니다. 편지를 보냅니다.</b><br><br>",
+            "options": [
+              "서점",
+              "공항",
+              "우체국",
+              "대사관"
+            ],
+            "answer": 3,
+            "layout": 4
+          }
+        },
+        {
+          "from": 40,
+          "to": 42,
+          "instruction": "※ [40～42] 다음을 읽고 맞지 않는 것을 고르십시오. (각 3점)"
+        },
+        {
+          "from": 43,
+          "to": 45,
+          "instruction": "※ [43～45] 다음의 내용과 같은 것을 고르십시오."
+        },
+        {
+          "from": 46,
+          "to": 48,
+          "instruction": "※ [46～48] 다음을 읽고 중심 생각을 고르십시오."
+        },
+        {
+          "from": 49,
+          "to": 50,
+          "instruction": "※ [49～50] 다음을 읽고 물음에 답하십시오. (각 2점)",
+          "passage": "저는 작년 한국 여행 때 비행기를 처음 탔습니다. 그런데 비행기 안에서<br>귀가 ( ㉠ ). 귀가 계속 아파서 여행이 즐겁지 않았습니다. 그래서 이번<br>베트남 여행 때는 약을 먹고 비행기를 탔습니다. 이번에는 귀가 아프지<br>않아서 정말 좋았습니다."
+        },
+        {
+          "from": 51,
+          "to": 52,
+          "instruction": "※ [51～52] 다음을 읽고 물음에 답하십시오.",
+          "passage": "한국음악 박물관으로 오십시오. 한국음악 박물관에서는 한국의 옛날<br>악기를 보고 악기 소리를 들을 수 있습니다. ( ㉠ ) 사진을 보면서<br>한국음악의 역사에 대해서 알 수 있습니다. 주말에는 다양한 음악 공연을<br>볼 수 있습니다. 기념품을 살 수 있는 가게도 있습니다."
+        },
+        {
+          "from": 53,
+          "to": 54,
+          "instruction": "※ [53～54] 다음을 읽고 물음에 답하십시오.",
+          "passage": "저는 맛있는 빵을 만드는 사람이 되고 싶습니다. 그래서 학원에서 빵 만드는<br>것을 배웁니다. 저녁에는 빵 가게에서 아르바이트를 합니다. 빵 가게에서<br>일을 하면 학원에서 배운 빵을 만들어 볼 수 있고 사람들이 좋아하는 빵을<br>알 수 있습니다. 제가 일하는 가게는 ( ㉠ ) 곳이라서 손님이 많이 <br> 옵니다. 일이 힘들지만 행복합니다."
+        },
+        {
+          "from": 55,
+          "to": 56,
+          "instruction": "※ [55～56] 다음을 읽고 물음에 답하십시오.",
+          "passage": "이제 낚시를 하기 위해서 멀리 가지 않아도 됩니다. 도시에서 ( ㉠ )<br> 수 있는 ‘낚시 카페’가 있습니다. 이곳에서는 낚시에 필요한 물건을 빌려<br>주고 낚시하는 방법을 가르쳐 줍니다. 물고기를 잡아서 바로 먹을 수 없지만<br>집으로 가지고 갈 수 있습니다."
+        },
+        {
+          "from": 57,
+          "to": 58,
+          "instruction": "※ [57～58] 다음을 순서대로 맞게 나열한 것을 고르십시오."
+        },
+        {
+          "from": 59,
+          "to": 60,
+          "instruction": "※ [59～60] 다음을 읽고 물음에 답하십시오.",
+          "passage": "사람들은 보통 좋아하는 텔레비전 프로그램을 볼 때 조용히 봅니다.<br>( ㉠ ) 그러나 우리 가족은 다릅니다. ( ㉡ ) 드라마와 뉴스 이야기도<br>하지만 나와 아내의 회사 이야기도 하고 아이들의 학교 이야기도 합니다.<br>( ㉢ )텔레비전 소리를 못 들을 때가 있지만 가족들과 함께하는 이<br>시간이 정말 즐겁습니다. ( ㉣ )"
+        },
+        {
+          "from": 61,
+          "to": 62,
+          "instruction": "※ [61～62] 다음을 읽고 물음에 답하십시오. (각 2점)",
+          "passage": "저는 발표를 잘합니다. 하지만 전에는 발표를 잘하지 못했습니다. 여러<br>사람들이 저를 보고 있어서 너무 긴장했기 때문입니다. 저는 발표를 잘하고<br>싶어서 ( ㉠ ) 연습을 많이 했습니다. 혼자서 연습하는 것을 휴대전화로<br>찍고 잘 못한 부분을 다시 연습했습니다."
+        },
+        {
+          "from": 63,
+          "to": 64,
+          "instruction": "※ [63～64] 다음을 읽고 물음에 답하십시오."
+        },
+        {
+          "from": 65,
+          "to": 66,
+          "instruction": "※ [65～66] 다음을 읽고 물음에 답하십시오.",
+          "passage": "설탕은 단맛을 낼 때 사용합니다. 음식을 오래 먹고 싶을 때 사용하기도<br>합니다. 그런데 설탕은 음식을 할 때만 쓰는 것은 아닙니다. 꽃병에 물과<br>함께 설탕을 넣으면 꽃을 오래 볼 수 있습니다. 옷을 빨 때 설탕을 넣으면<br>하얀색 옷이 더 깨끗해지고 설탕과 레몬을 같이 넣으면 옷이 부드러워집니다.<br>요리한 후에 손을 ( ㉠ ) 컵을 닦을 때 사용할 수도 있습니다."
+        },
+        {
+          "from": 67,
+          "to": 68,
+          "instruction": "※ [67～68] 다음을 읽고 물음에 답하십시오. (각 3점)",
+          "passage": "한국에서는 아이의 첫 번째 생일을 ‘돌’이라고 말합니다. 돌에는 아이가<br>물건을 잡는 특별한 행사를 합니다. 아이가 공을 잡으면 운동선수, 마이크를<br>잡으면 연예인이 될 것이라고 생각합니다. 연필은 선생님, 돈은 부자를<br>의미합니다. 아이 앞에 놓는 물건들의 ( ㉠ ) 모두 아이의 건강과<br>행복을 생각하는 마음이 들어 있습니다."
+        },
+        {
+          "from": 69,
+          "to": 70,
+          "instruction": "※ [69～70] 다음을 읽고 물음에 답하십시오. (각 3점)",
+          "passage": "저는 일 때문에 외국에서 삽니다. 여기는 언제나 여름입니다. 저와 아이들은<br>한국의 ( ㉠ ). 특히 예쁜 꽃이 피는 봄과 단풍을 볼 수 있는 가을이<br>그립습니다. 그런데 오늘 한국에 계시는 아버지에게서 소포가 왔습니다.<br>아버지가 그리신 고향의 사계절 그림이었습니다. 저는 고향의 사계절을<br>선물해 주신 아버지가 고마웠습니다."
+        }
+      ],
+      "questions": [
+        {
+          "no": 31,
+          "points": 2,
+          "answer": 2,
+          "layout": 4,
+          "prompt": {
+            "html": "<div class=\"exam-box\">저는 일본에서 왔습니다. 친구는 미국에서 왔습니다.</div>"
+          },
+          "options": [
+            {
+              "html": "음식"
+            },
+            {
+              "html": "나라"
+            },
+            {
+              "html": "요일"
+            },
+            {
+              "html": "선물"
+            }
+          ],
+          "explanation": "Đáp án ② 나라 (đất nước).\n저는 일본에서 왔습니다. 친구는 미국에서 왔습니다. = Tôi đến từ Nhật. Bạn tôi đến từ Mỹ.\nNhật, Mỹ → nói về đất nước.\n① 음식: món ăn · ③ 요일: thứ trong tuần · ④ 선물: quà."
+        },
+        {
+          "no": 32,
+          "points": 2,
+          "answer": 1,
+          "layout": 4,
+          "prompt": {
+            "html": "<div class=\"exam-box\">과자가 천 원입니다. 조금 비쌉니다.</div>"
+          },
+          "options": [
+            {
+              "html": "값"
+            },
+            {
+              "html": "옷"
+            },
+            {
+              "html": "직업"
+            },
+            {
+              "html": "공부"
+            }
+          ],
+          "explanation": "Đáp án ① 값 (giá).\n과자가 천 원입니다. 조금 비쌉니다. = Bánh kẹo giá 1.000 won. Hơi đắt.\n천 원, 비싸다 → nói về giá.\n② 옷: quần áo · ③ 직업: nghề nghiệp · ④ 공부: học."
+        },
+        {
+          "no": 33,
+          "points": 2,
+          "answer": 4,
+          "layout": 4,
+          "prompt": {
+            "html": "<div class=\"exam-box\">아버지, 어머니는 서울에 삽니다. 회사에 다닙니다.</div>"
+          },
+          "options": [
+            {
+              "html": "나이"
+            },
+            {
+              "html": "숙제"
+            },
+            {
+              "html": "방학"
+            },
+            {
+              "html": "부모"
+            }
+          ],
+          "explanation": "Đáp án ④ 부모 (bố mẹ).\n아버지, 어머니는 서울에 삽니다. 회사에 다닙니다. = Bố mẹ tôi sống ở Seoul. Họ đi làm ở công ty.\n아버지, 어머니 → bố mẹ.\n① 나이: tuổi · ② 숙제: bài tập · ③ 방학: kỳ nghỉ."
+        },
+        {
+          "no": 34,
+          "points": 2,
+          "answer": 3,
+          "layout": 4,
+          "prompt": {
+            "html": "(2점)<br><br><div class=\"exam-box\">주스가 없습니다. 그래서 물을 (      ).</div>"
+          },
+          "options": [
+            {
+              "html": "놉니다"
+            },
+            {
+              "html": "합니다"
+            },
+            {
+              "html": "마십니다"
+            },
+            {
+              "html": "모릅니다"
+            }
+          ],
+          "explanation": "Đáp án ③ 마십니다 (uống).\n주스가 없습니다. 그래서 물을 마십니다. = Không có nước ép. Vì vậy tôi uống nước.\nNước (물) đi với 마시다.\n① 놉니다: chơi · ② 합니다: làm · ④ 모릅니다: không biết."
+        },
+        {
+          "no": 35,
+          "points": 2,
+          "answer": 1,
+          "layout": 4,
+          "prompt": {
+            "html": "(2점)<br><br><div class=\"exam-box\">비가 옵니다. 그런데 (      )이 없습니다.</div>"
+          },
+          "options": [
+            {
+              "html": "우산"
+            },
+            {
+              "html": "안경"
+            },
+            {
+              "html": "지갑"
+            },
+            {
+              "html": "사전"
+            }
+          ],
+          "explanation": "Đáp án ① 우산 (ô).\n비가 옵니다. 그런데 우산이 없습니다. = Trời mưa. Nhưng tôi không có ô.\nTrời mưa → cần ô.\n② 안경: kính · ③ 지갑: ví · ④ 사전: từ điển."
+        },
+        {
+          "no": 36,
+          "points": 2,
+          "answer": 4,
+          "layout": 4,
+          "prompt": {
+            "html": "(2점)<br><br><div class=\"exam-box\">저는 의사입니다. 수진 씨(      ) 의사입니다.</div>"
+          },
+          "options": [
+            {
+              "html": "만"
+            },
+            {
+              "html": "에"
+            },
+            {
+              "html": "를"
+            },
+            {
+              "html": "도"
+            }
+          ],
+          "explanation": "Đáp án ④ 도 (cũng).\n저는 의사입니다. 수진 씨도 의사입니다. = Tôi là bác sĩ. Chị Sujin cũng là bác sĩ.\nHai người cùng nghề → 도 (cũng).\n① 만: chỉ · ② 에: chỉ nơi chốn, thời gian · ③ 를: tân ngữ."
+        },
+        {
+          "no": 37,
+          "points": 3,
+          "answer": 1,
+          "layout": 4,
+          "prompt": {
+            "html": "(3점)<br><br><div class=\"exam-box\">우리 형은 농구 선수입니다. 키가 (      ) 큽니다.</div>"
+          },
+          "options": [
+            {
+              "html": "아주"
+            },
+            {
+              "html": "아직"
+            },
+            {
+              "html": "가끔"
+            },
+            {
+              "html": "먼저"
+            }
+          ],
+          "explanation": "Đáp án ① 아주 (rất).\n우리 형은 농구 선수입니다. 키가 아주 큽니다. = Anh tôi là cầu thủ bóng rổ. Anh ấy rất cao.\nCầu thủ bóng rổ → rất cao.\n② 아직: vẫn còn, vẫn chưa · ③ 가끔: thỉnh thoảng · ④ 먼저: trước."
+        },
+        {
+          "no": 38,
+          "points": 3,
+          "answer": 2,
+          "layout": 4,
+          "prompt": {
+            "html": "(3점)<br><br><div class=\"exam-box\">시험이 (      ). 그래서 시험을 잘 봤습니다.</div>"
+          },
+          "options": [
+            {
+              "html": "작았습니다"
+            },
+            {
+              "html": "쉬웠습니다"
+            },
+            {
+              "html": "나빴습니다"
+            },
+            {
+              "html": "재미없었습니다"
+            }
+          ],
+          "explanation": "Đáp án ② 쉬웠습니다 (dễ).\n시험이 쉬웠습니다. 그래서 시험을 잘 봤습니다. = Bài thi dễ. Vì vậy tôi làm bài tốt.\n그래서 nối nguyên nhân với kết quả: dễ → làm tốt.\n① 작았습니다: nhỏ · ③ 나빴습니다: tệ · ④ 재미없었습니다: chán."
+        },
+        {
+          "no": 39,
+          "points": 2,
+          "answer": 4,
+          "layout": 4,
+          "prompt": {
+            "html": "(2점)<br><br><div class=\"exam-box\">저는 매일 밤 열두 시에 잡니다. 아침 일곱 시에 (      ).</div>"
+          },
+          "options": [
+            {
+              "html": "삽니다"
+            },
+            {
+              "html": "옵니다"
+            },
+            {
+              "html": "입습니다"
+            },
+            {
+              "html": "일어납니다"
+            }
+          ],
+          "explanation": "Đáp án ④ 일어납니다 (thức dậy).\n저는 매일 밤 열두 시에 잡니다. 아침 일곱 시에 일어납니다. = Đêm nào tôi cũng ngủ lúc 12 giờ. 7 giờ sáng tôi thức dậy.\nNgủ lúc 12 giờ đêm → sáng thức dậy.\n① 삽니다: sống / mua · ② 옵니다: đến · ③ 입습니다: mặc."
+        },
+        {
+          "no": 40,
+          "points": 3,
+          "answer": 1,
+          "layout": 1,
+          "prompt": {
+            "image": "images/60_1_40.webp",
+            "alt": "사진관 안내 포스터"
+          },
+          "options": [
+            {
+              "html": "주말에 쉽니다."
+            },
+            {
+              "html": "이 층에 있습니다."
+            },
+            {
+              "html": "마트 옆에 있습니다."
+            },
+            {
+              "html": "저녁 여덟 시에 끝납니다."
+            }
+          ],
+          "explanation": "Đáp án ① 주말에 쉽니다. (Nghỉ vào cuối tuần.) — câu này SAI.\nBảng hiệu: Tiệm ảnh Haengbok. Vị trí: tầng 2 (cạnh siêu thị Singsing). Giờ mở cửa: 10 giờ sáng – 8 giờ tối, nghỉ thứ Hai.\nTiệm nghỉ thứ Hai (월요일은 쉽니다), không phải cuối tuần.\n② Ở tầng 2 — đúng.\n③ Cạnh siêu thị — đúng.\n④ Đóng cửa lúc 8 giờ tối — đúng."
+        },
+        {
+          "no": 41,
+          "points": 3,
+          "answer": 1,
+          "layout": 1,
+          "prompt": {
+            "image": "images/60_1_41.webp",
+            "alt": "영화 할인권 안내 포스터"
+          },
+          "options": [
+            {
+              "html": "일주일 동안 사용합니다."
+            },
+            {
+              "html": "칠천 원에 영화를 봅니다."
+            },
+            {
+              "html": "십일월 삼십 일까지 사용합니다."
+            },
+            {
+              "html": "메가 영화관에서 영화를 봅니다."
+            }
+          ],
+          "explanation": "Đáp án ① 일주일 동안 사용합니다. (Dùng trong một tuần.) — câu này SAI.\nVé giảm giá xem phim: giá 12.000 won → 7.000 won. Thời hạn: 1/11/2018 (thứ Năm) – 30/11 (thứ Sáu). Rạp Mega.\nDùng được cả tháng 11, không phải một tuần.\n② Xem phim với giá 7.000 won — đúng.\n③ Dùng đến ngày 30/11 — đúng.\n④ Xem ở rạp Mega — đúng."
+        },
+        {
+          "no": 42,
+          "points": 3,
+          "answer": 2,
+          "layout": 1,
+          "prompt": {
+            "image": "images/60_1_42.webp",
+            "alt": "은정이 민수에게 문자를 남김"
+          },
+          "options": [
+            {
+              "html": "은정 씨는 지금 집에 있습니다."
+            },
+            {
+              "html": "민수 씨는 내일 수업이 없습니다."
+            },
+            {
+              "html": "민수 씨와 은정 씨는 오늘 만났습니다."
+            },
+            {
+              "html": "은정 씨는 오늘 생일 파티에 갔습니다."
+            }
+          ],
+          "explanation": "Đáp án ② 민수 씨는 내일 수업이 없습니다. (Mai Minsu không có tiết học.) — câu này SAI.\nTin nhắn của Eun-jeong: Minsu ơi! Tôi về đến nhà rồi. Hôm nay tiệc sinh nhật của Minsu vui thật. Mai gặp nhau ở lớp nhé.\n내일 수업에서 만나요 → mai Minsu có tiết học.\n① Eun-jeong đang ở nhà — đúng (집에 잘 왔어요).\n③ Hôm nay hai người đã gặp nhau — đúng (cùng ở tiệc).\n④ Hôm nay Eun-jeong đã đi tiệc sinh nhật — đúng."
+        },
+        {
+          "no": 43,
+          "points": 3,
+          "answer": 1,
+          "layout": 1,
+          "prompt": {
+            "html": "(3점)<br><br><div class=\"exam-box\">  저는 화요일 저녁에 K-POP 수업에 갑니다. 거기에서 한국 노래를 부르고<br>춤을 배웁니다. 잘 못하지만 재미있습니다.</div>"
+          },
+          "options": [
+            {
+              "html": "저는 수업이 재미있습니다."
+            },
+            {
+              "html": "저는 한국 춤을 잘 춥니다."
+            },
+            {
+              "html": "저는 오전에 수업에 갑니다."
+            },
+            {
+              "html": "저는 한국 노래를 가르칩니다."
+            }
+          ],
+          "explanation": "Đáp án ① 저는 수업이 재미있습니다. (Tôi thấy lớp học thú vị.)\nĐoạn văn: Tối thứ Ba tôi đi học lớp K-POP. Ở đó tôi hát bài hát Hàn Quốc và học nhảy. Tôi chưa giỏi nhưng rất vui.\n잘 못하지만 재미있습니다 → thấy lớp học thú vị.\n② Sai: tôi chưa giỏi (잘 못하지만).\n③ Sai: học vào buổi tối thứ Ba.\n④ Sai: tôi là người học, không phải dạy."
+        },
+        {
+          "no": 44,
+          "points": 2,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": "(2점)<br><br><div class=\"exam-box\">  어제 친구와 공원에 갔습니다. 저는 맛있는 김밥을 준비했습니다. 공원<br>에서 친구와 같이 김밥을 먹고 자전거를 탔습니다.</div>"
+          },
+          "options": [
+            {
+              "html": "저는 오늘 공원에 갔습니다."
+            },
+            {
+              "html": "친구는 김밥을 준비했습니다."
+            },
+            {
+              "html": "친구는 김밥을 못 먹었습니다."
+            },
+            {
+              "html": "저는 공원에서 자전거를 탔습니다."
+            }
+          ],
+          "explanation": "Đáp án ④ 저는 공원에서 자전거를 탔습니다. (Tôi đạp xe ở công viên.)\nĐoạn văn: Hôm qua tôi đi công viên với bạn. Tôi chuẩn bị kimbap ngon. Ở công viên tôi cùng bạn ăn kimbap và đạp xe.\n① Sai: đi công viên HÔM QUA.\n② Sai: tôi là người chuẩn bị kimbap.\n③ Sai: hai người cùng ăn kimbap."
+        },
+        {
+          "no": 45,
+          "points": 3,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": "(3점)<br><br><div class=\"exam-box\">  7월에는 김치 축제가 있습니다. 여러 김치를 먹어 볼 수 있어서 김치<br>축제에 사람이 많이 옵니다. 김치 중에서 오이김치가 제일 인기 있습니다.</div>"
+          },
+          "options": [
+            {
+              "html": "축제는 구월에 합니다."
+            },
+            {
+              "html": "축제에서 김치를 먹지 못합니다."
+            },
+            {
+              "html": "축제에 사람들이 별로 없습니다."
+            },
+            {
+              "html": "사람들이 오이김치를 제일 좋아합니다."
+            }
+          ],
+          "explanation": "Đáp án ④ 사람들이 오이김치를 제일 좋아합니다. (Mọi người thích kimchi dưa chuột nhất.)\nĐoạn văn: Tháng 7 có lễ hội kimchi. Vì được ăn thử nhiều loại kimchi nên nhiều người đến. Trong các loại kimchi, kimchi dưa chuột được ưa chuộng nhất.\n오이김치가 제일 인기 있습니다 → được thích nhất.\n① Sai: lễ hội vào tháng 7.\n② Sai: được ăn thử nhiều loại kimchi.\n③ Sai: nhiều người đến."
+        },
+        {
+          "no": 46,
+          "points": 3,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": "(3점)<br><br><div class=\"exam-box\">  저는 스키를 좋아합니다. 겨울이 되면 주말마다 스키를 타러 갑니다. 빨리<br>눈이 오는 겨울이 되면 좋겠습니다.</div>"
+          },
+          "options": [
+            {
+              "html": "저는 주말을 기다립니다."
+            },
+            {
+              "html": "저는 겨울이 와서 좋습니다."
+            },
+            {
+              "html": "저는 빨리 스키를 타고 싶습니다."
+            },
+            {
+              "html": "저는 눈이 오는 날을 좋아합니다."
+            }
+          ],
+          "explanation": "Đáp án ③ 저는 빨리 스키를 타고 싶습니다. (Tôi muốn sớm được trượt tuyết.)\nĐoạn văn: Tôi thích trượt tuyết. Mùa đông đến là cuối tuần nào tôi cũng đi trượt tuyết. Mong mùa đông có tuyết mau đến.\n-(으)면 좋겠다 = mong: mong mùa đông đến để được trượt tuyết.\n① Không nói chờ cuối tuần.\n② Mùa đông chưa đến — tôi đang mong nó đến.\n④ Ý chính là trượt tuyết, không phải ngày tuyết rơi."
+        },
+        {
+          "no": 47,
+          "points": 3,
+          "answer": 1,
+          "layout": 1,
+          "prompt": {
+            "html": "(3점)<br><br><div class=\"exam-box\">  저는 오늘 친구를 만났습니다. 친구를 일 년 동안 못 만나서 보고 싶었<br>습니다. 우리는 밤 늦게까지 이야기했습니다.</div>"
+          },
+          "options": [
+            {
+              "html": "저는 친구를 만나서 좋았습니다."
+            },
+            {
+              "html": "저는 집에 일찍 가고 싶었습니다."
+            },
+            {
+              "html": "저는 친구를 많이 사귀고 싶습니다."
+            },
+            {
+              "html": "저는 친구가 저를 좋아하면 좋겠습니다."
+            }
+          ],
+          "explanation": "Đáp án ① 저는 친구를 만나서 좋았습니다. (Tôi vui vì được gặp bạn.)\nĐoạn văn: Hôm nay tôi gặp bạn. Một năm không gặp nên tôi rất nhớ. Chúng tôi nói chuyện đến tận khuya.\nNhớ bạn, gặp được thì nói chuyện đến khuya → vui.\n② Ngược lại: nói chuyện đến khuya.\n③ ④ Đoạn văn không nói."
+        },
+        {
+          "no": 48,
+          "points": 2,
+          "answer": 2,
+          "layout": 1,
+          "prompt": {
+            "html": "(2점)<br><br><div class=\"exam-box\">  집 근처에 새로 도서관이 생겼습니다. 읽고 싶은 책이 많고 의자가 편안<br>합니다. 그래서 저는 이 도서관에 자주 가려고 합니다.</div>"
+          },
+          "options": [
+            {
+              "html": "저는 책이 많으면 좋겠습니다."
+            },
+            {
+              "html": "저는 새 도서관이 마음에 듭니다."
+            },
+            {
+              "html": "저는 편안한 장소에 있고 싶습니다."
+            },
+            {
+              "html": "저는 집에서 책을 읽는 것이 좋습니다."
+            }
+          ],
+          "explanation": "Đáp án ② 저는 새 도서관이 마음에 듭니다. (Tôi ưng ý thư viện mới.)\nĐoạn văn: Gần nhà mới có thư viện. Có nhiều sách tôi muốn đọc, ghế ngồi thoải mái. Vì vậy tôi định hay đến thư viện này.\nKhen nhiều sách, ghế êm, định hay đến → ưng ý.\n① Thư viện đã nhiều sách rồi.\n③ Ghế thoải mái chỉ là một lý do.\n④ Ngược lại: tôi định đến thư viện."
+        },
+        {
+          "no": 49,
+          "points": 2,
+          "answer": 4,
+          "layout": 2,
+          "prompt": {
+            "html": "㉠에 들어갈 알맞은 말을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "아플 수 있습니다"
+            },
+            {
+              "html": "아프면 안 됩니다"
+            },
+            {
+              "html": "아프지 않았습니다"
+            },
+            {
+              "html": "아프기 시작했습니다"
+            }
+          ],
+          "explanation": "Đáp án ④ 아프기 시작했습니다 (bắt đầu đau).\nĐoạn văn: Năm ngoái khi đi du lịch Hàn Quốc tôi đi máy bay lần đầu. Nhưng trên máy bay tai tôi bắt đầu đau. Tai cứ đau mãi nên chuyến đi không vui. Vì vậy lần này đi Việt Nam tôi uống thuốc rồi mới lên máy bay. Lần này tai không đau, thật tốt.\nCâu sau 귀가 계속 아파서 (tai cứ đau) → trước đó tai bắt đầu đau.\n① -(으)ㄹ 수 있다: có thể · ② -(으)면 안 되다: không được · ③ \"không đau\" — trái với câu sau."
+        },
+        {
+          "no": 50,
+          "points": 2,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": "이 글의 내용과 같은 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "저는 한국 여행이 즐거웠습니다."
+            },
+            {
+              "html": "저는 베트남에서 귀가 아팠습니다."
+            },
+            {
+              "html": "저는 작년에 비행기를 처음 탔습니다."
+            },
+            {
+              "html": "저는 비행기 안에서 약을 먹었습니다."
+            }
+          ],
+          "explanation": "Đáp án ③ 저는 작년에 비행기를 처음 탔습니다. (Năm ngoái tôi đi máy bay lần đầu.)\n작년 한국 여행 때 비행기를 처음 탔습니다.\n① Sai: tai đau nên chuyến đi Hàn Quốc không vui.\n② Sai: lần đi Việt Nam tai không đau.\n④ Sai: tôi uống thuốc rồi mới lên máy bay (약을 먹고 비행기를 탔습니다)."
+        },
+        {
+          "no": 51,
+          "points": 3,
+          "answer": 1,
+          "layout": 2,
+          "prompt": {
+            "html": "㉠에 들어갈 알맞은 말을 고르십시오. (3점)"
+          },
+          "options": [
+            {
+              "html": "그리고"
+            },
+            {
+              "html": "그래서"
+            },
+            {
+              "html": "그러면"
+            },
+            {
+              "html": "그러나"
+            }
+          ],
+          "explanation": "Đáp án ① 그리고 (và, ngoài ra).\nĐoạn văn: Mời đến Bảo tàng Âm nhạc Hàn Quốc. Ở đây có thể xem nhạc cụ xưa và nghe tiếng nhạc cụ. Ngoài ra có thể xem ảnh để biết lịch sử âm nhạc Hàn Quốc. Cuối tuần có nhiều buổi biểu diễn âm nhạc. Còn có cửa hàng bán quà lưu niệm.\nCâu sau kể thêm một việc làm được ở bảo tàng → 그리고.\n② 그래서: vì vậy · ③ 그러면: nếu vậy thì · ④ 그러나: nhưng."
+        },
+        {
+          "no": 52,
+          "points": 2,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": "무엇에 대한 이야기인지 고르십시오. (2점)"
+          },
+          "options": [
+            {
+              "html": "박물관의 역사"
+            },
+            {
+              "html": "박물관을 만든 이유"
+            },
+            {
+              "html": "박물관에서 할 수 있는 일"
+            },
+            {
+              "html": "박물관에서 살 수 있는 악기"
+            }
+          ],
+          "explanation": "Đáp án ③ 박물관에서 할 수 있는 일 (những việc có thể làm ở bảo tàng).\nCả đoạn kể: xem và nghe nhạc cụ xưa, xem ảnh về lịch sử âm nhạc, xem biểu diễn cuối tuần, mua quà lưu niệm.\n① Không nói lịch sử bảo tàng.\n② Không nói lý do xây bảo tàng.\n④ Cửa hàng bán quà lưu niệm, không nói bán nhạc cụ."
+        },
+        {
+          "no": 53,
+          "points": 2,
+          "answer": 3,
+          "layout": 2,
+          "prompt": {
+            "html": "㉠에 들어갈 알맞은 말을 고르십시오. (2점)"
+          },
+          "options": [
+            {
+              "html": "간단한"
+            },
+            {
+              "html": "한가한"
+            },
+            {
+              "html": "유명한"
+            },
+            {
+              "html": "위험한"
+            }
+          ],
+          "explanation": "Đáp án ③ 유명한 (nổi tiếng).\nĐoạn văn: Tôi muốn trở thành người làm bánh mì ngon. Vì vậy tôi học làm bánh ở trung tâm. Buổi tối tôi làm thêm ở tiệm bánh. Làm ở tiệm thì được làm thử bánh đã học và biết mọi người thích bánh gì. Tiệm tôi làm là nơi nổi tiếng nên nhiều khách đến. Việc vất vả nhưng tôi hạnh phúc.\nNổi tiếng → nhiều khách (-라서 = vì là).\n① 간단한: đơn giản · ② 한가한: vắng vẻ, rảnh · ④ 위험한: nguy hiểm."
+        },
+        {
+          "no": 54,
+          "points": 3,
+          "answer": 2,
+          "layout": 1,
+          "prompt": {
+            "html": "이 글의 내용과 같은 것을 고르십시오. (3점)"
+          },
+          "options": [
+            {
+              "html": "저는 이제 학원에 다니지 않습니다."
+            },
+            {
+              "html": "저는 빵 가게에서 일하는 것이 좋습니다."
+            },
+            {
+              "html": "저는 오전에 빵 가게에서 아르바이트를 합니다."
+            },
+            {
+              "html": "저는 빵 가게에서 빵을 만들어 보지 못했습니다."
+            }
+          ],
+          "explanation": "Đáp án ② 저는 빵 가게에서 일하는 것이 좋습니다. (Tôi thích làm việc ở tiệm bánh.)\n일이 힘들지만 행복합니다 = việc vất vả nhưng tôi hạnh phúc.\n① Sai: tôi đang học ở trung tâm (학원에서 … 배웁니다).\n③ Sai: làm thêm buổi tối.\n④ Sai: ở tiệm được làm thử bánh đã học."
+        },
+        {
+          "no": 55,
+          "points": 2,
+          "answer": 4,
+          "layout": 2,
+          "prompt": {
+            "html": "㉠에 들어갈 알맞은 말을 고르십시오. (2점)"
+          },
+          "options": [
+            {
+              "html": "물고기를 팔"
+            },
+            {
+              "html": "물고기를 먹을"
+            },
+            {
+              "html": "낚시 재료를 살"
+            },
+            {
+              "html": "편하게 낚시를 할"
+            }
+          ],
+          "explanation": "Đáp án ④ 편하게 낚시를 할 (câu cá thoải mái).\nĐoạn văn: Giờ không cần đi xa để câu cá nữa. Ngay trong thành phố có \"quán cà phê câu cá\" để câu cá thoải mái. Ở đây cho mượn đồ câu và dạy cách câu. Cá câu được không ăn ngay được nhưng mang về nhà được.\nKhông cần đi xa, có đồ cho mượn, có người dạy → câu cá thoải mái.\n① bán cá · ② ăn cá — không ăn ngay được · ③ mua đồ câu — ở đây cho mượn."
+        },
+        {
+          "no": 56,
+          "points": 3,
+          "answer": 2,
+          "layout": 1,
+          "prompt": {
+            "html": "이 글의 내용과 같은 것을 고르십시오. (3점)"
+          },
+          "options": [
+            {
+              "html": "낚시 카페는 도시에서 먼 곳에 있습니다."
+            },
+            {
+              "html": "낚시 카페에서는 낚시하는 방법을 알려 줍니다."
+            },
+            {
+              "html": "낚시에 필요한 물건은 직접 가지고 가야 합니다."
+            },
+            {
+              "html": "낚시 카페에서 잡은 물고기는 가져갈 수 없습니다."
+            }
+          ],
+          "explanation": "Đáp án ② 낚시 카페에서는 낚시하는 방법을 알려 줍니다. (Quán cà phê câu cá dạy cách câu cá.)\n낚시하는 방법을 가르쳐 줍니다.\n① Sai: quán ở ngay trong thành phố.\n③ Sai: quán cho mượn đồ câu.\n④ Sai: mang cá về nhà được."
+        },
+        {
+          "no": 57,
+          "points": 3,
+          "answer": 3,
+          "layout": 2,
+          "prompt": {
+            "html": "(3점)<br><br><div class=\"exam-box\">(가) 그래서 건강에 관심이 생겼습니다.<br>(나) 내일부터 회사에 걸어 다닐 겁니다.<br>(다) 건강을 위해서 운동을 하려고 합니다.<br>(라) 요즘 조금만 일해도 빨리 피곤해집니다.</div>"
+          },
+          "options": [
+            {
+              "html": "(다)－(가)－(라)－(나)"
+            },
+            {
+              "html": "(다)－(나)－(가)－(라)"
+            },
+            {
+              "html": "(라)－(가)－(다)－(나)"
+            },
+            {
+              "html": "(라)－(나)－(가)－(다)"
+            }
+          ],
+          "explanation": "Đáp án ③ (라)－(가)－(다)－(나).\n(라) Dạo này làm việc một chút là tôi đã mệt.\n(가) Vì vậy tôi bắt đầu quan tâm đến sức khỏe.\n(다) Tôi định tập thể dục cho khỏe.\n(나) Từ mai tôi sẽ đi bộ đến công ty.\nManh mối: (가) 그래서 nói kết quả của (라); (나) là việc cụ thể để thực hiện (다)."
+        },
+        {
+          "no": 58,
+          "points": 2,
+          "answer": 2,
+          "layout": 2,
+          "prompt": {
+            "html": "(2점)<br><br><div class=\"exam-box\">(가) 학교 앞에서 어린이 교통사고가 많이 납니다.<br>(나) 또 어린이들이 갑자기 도로로 나올 때도 있습니다.<br>(다) 그래서 학교 앞에서 운전할 때는 조심해야 합니다.<br>(라) 어린이는 키가 작아서 운전할 때 잘 보이지 않습니다.</div>"
+          },
+          "options": [
+            {
+              "html": "(가)－(나)－(다)－(라)"
+            },
+            {
+              "html": "(가)－(라)－(나)－(다)"
+            },
+            {
+              "html": "(라)－(나)－(다)－(가)"
+            },
+            {
+              "html": "(라)－(다)－(가)－(나)"
+            }
+          ],
+          "explanation": "Đáp án ② (가)－(라)－(나)－(다).\n(가) Trước cổng trường hay xảy ra tai nạn giao thông với trẻ em.\n(라) Trẻ em thấp nên khi lái xe khó nhìn thấy.\n(나) Hơn nữa có lúc trẻ em đột ngột chạy ra đường.\n(다) Vì vậy khi lái xe trước cổng trường phải cẩn thận.\nManh mối: (나) 또 (hơn nữa) thêm lý do sau (라); (다) 그래서 là kết luận."
+        },
+        {
+          "no": 59,
+          "points": 2,
+          "answer": 2,
+          "layout": 4,
+          "prompt": {
+            "html": "다음 문장이 들어갈 곳을 고르십시오. (2점)<br><br><div class=\"exam-box\">텔레비전을 보면서 이야기를 많이 합니다.</div>"
+          },
+          "options": [
+            {
+              "html": "㉠"
+            },
+            {
+              "html": "㉡"
+            },
+            {
+              "html": "㉢"
+            },
+            {
+              "html": "㉣"
+            }
+          ],
+          "explanation": "Đáp án ② ㉡.\nCâu cần chèn: 텔레비전을 보면서 이야기를 많이 합니다. = Chúng tôi vừa xem TV vừa nói chuyện nhiều.\nĐoạn văn: Người ta thường xem chương trình yêu thích một cách im lặng. Nhưng gia đình tôi thì khác. (㉡) Chúng tôi nói chuyện phim, chuyện thời sự, cả chuyện công ty của tôi và vợ, chuyện trường của các con…\nSau \"gia đình tôi thì khác\" phải nói khác thế nào → vừa xem vừa nói chuyện; câu sau kể nói chuyện gì."
+        },
+        {
+          "no": 60,
+          "points": 3,
+          "answer": 1,
+          "layout": 1,
+          "prompt": {
+            "html": "이 글의 내용과 같은 것을 고르십시오. (3점)"
+          },
+          "options": [
+            {
+              "html": "아내와 나는 회사에 다니고 있습니다."
+            },
+            {
+              "html": "우리 가족은 다른 프로그램을 좋아합니다."
+            },
+            {
+              "html": "텔레비전 때문에 가족 이야기를 못 듣습니다."
+            },
+            {
+              "html": "우리 가족은 텔레비전을 같이 보는 것을 싫어합니다."
+            }
+          ],
+          "explanation": "Đáp án ① 아내와 나는 회사에 다니고 있습니다. (Vợ và tôi đều đi làm ở công ty.)\n나와 아내의 회사 이야기도 하고 = nói cả chuyện công ty của tôi và vợ.\n② Không nói gia đình thích chương trình khác.\n③ Ngược lại: có lúc không nghe được tiếng TV vì mải nói chuyện.\n④ Sai: thời gian cùng gia đình rất vui."
+        },
+        {
+          "no": 61,
+          "points": 2,
+          "answer": 4,
+          "layout": 2,
+          "prompt": {
+            "html": "㉠에 들어갈 알맞은 말을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "발표하면"
+            },
+            {
+              "html": "발표한 지"
+            },
+            {
+              "html": "발표하니까"
+            },
+            {
+              "html": "발표하기 전에"
+            }
+          ],
+          "explanation": "Đáp án ④ 발표하기 전에 (trước khi thuyết trình).\nĐoạn văn: Tôi thuyết trình giỏi. Nhưng trước đây tôi không giỏi, vì nhiều người nhìn nên tôi quá căng thẳng. Muốn thuyết trình giỏi, tôi tập rất nhiều trước khi thuyết trình. Tôi quay video lúc tự tập bằng điện thoại rồi tập lại chỗ làm chưa tốt.\nLuyện tập diễn ra trước buổi thuyết trình → -기 전에.\n① -(으)면: nếu · ② -(으)ㄴ 지: đã bao lâu kể từ · ③ -(으)니까: vì."
+        },
+        {
+          "no": 62,
+          "points": 2,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": "이 글의 내용과 같은 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "저는 사람들 앞에서 연습했습니다."
+            },
+            {
+              "html": "저는 연습할 때 너무 긴장했습니다."
+            },
+            {
+              "html": "저는 연습하는 것을 휴대전화로 찍었습니다."
+            },
+            {
+              "html": "발표할 때 사람들이 잘 못한 부분을 말해 주었습니다."
+            }
+          ],
+          "explanation": "Đáp án ③ 저는 연습하는 것을 휴대전화로 찍었습니다. (Tôi quay lại lúc tập bằng điện thoại.)\n혼자서 연습하는 것을 휴대전화로 찍고 …\n① Sai: tôi tự tập một mình (혼자서).\n② Sai: căng thẳng là khi thuyết trình trước nhiều người.\n④ Sai: tôi tự xem video để tìm chỗ chưa tốt."
+        },
+        {
+          "no": 63,
+          "points": 2,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": "왜 이 글을 썼는지 맞는 것을 고르십시오. (2점)"
+          },
+          "options": [
+            {
+              "html": "주문 방법을 물어보려고"
+            },
+            {
+              "html": "구두를 더 주문하고 싶어서"
+            },
+            {
+              "html": "구두 사이즈를 바꾸고 싶어서"
+            },
+            {
+              "html": "구두를 산 날짜를 확인하려고"
+            }
+          ],
+          "explanation": "Đáp án ③ 구두 사이즈를 바꾸고 싶어서 (vì muốn đổi cỡ giày).\nEmail gửi người phụ trách cửa hàng online \"Giày đẹp\": Xin chào. Tôi gọi điện nhiều lần nhưng máy bận nên gửi email. Thứ Tư tuần trước tôi đặt giày ở cửa hàng online này. Hôm nay nhận giày đi thử thì rất khó chịu. Có thể đổi sang cỡ 240 được không? Mong được trả lời. Kim Su-jin.\n① Không hỏi cách đặt hàng · ② Không đặt thêm · ④ Không hỏi ngày mua."
+        },
+        {
+          "no": 64,
+          "points": 3,
+          "answer": 2,
+          "layout": 1,
+          "prompt": {
+            "html": "이 글의 내용과 같은 것을 고르십시오. (3점)"
+          },
+          "options": [
+            {
+              "html": "지난주에 구두를 받았습니다."
+            },
+            {
+              "html": "인터넷으로 구두를 샀습니다."
+            },
+            {
+              "html": "240 사이즈의 구두를 샀습니다."
+            },
+            {
+              "html": "쇼핑몰에 이메일을 여러 번 보냈습니다."
+            }
+          ],
+          "explanation": "Đáp án ② 인터넷으로 구두를 샀습니다. (Đã mua giày qua mạng.)\n이 인터넷 쇼핑몰에서 구두를 주문했습니다.\n① Sai: đặt tuần trước, nhận giày HÔM NAY.\n③ Sai: muốn đổi SANG cỡ 240 → giày đã mua không phải cỡ 240.\n④ Sai: gọi điện nhiều lần, email chỉ gửi một lần này."
+        },
+        {
+          "no": 65,
+          "points": 2,
+          "answer": 3,
+          "layout": 2,
+          "prompt": {
+            "html": "㉠에 들어갈 알맞은 말을 고르십시오. (2점)"
+          },
+          "options": [
+            {
+              "html": "씻어서"
+            },
+            {
+              "html": "씻지만"
+            },
+            {
+              "html": "씻거나"
+            },
+            {
+              "html": "씻는데"
+            }
+          ],
+          "explanation": "Đáp án ③ 씻거나 (rửa… hoặc).\nĐoạn văn: Đường dùng để tạo vị ngọt, cũng dùng để giữ thức ăn lâu. Nhưng đường không chỉ dùng khi nấu ăn. Cho đường vào bình hoa cùng nước thì hoa tươi lâu. Giặt đồ cho đường vào thì đồ trắng sạch hơn, cho đường cùng chanh thì đồ mềm hơn. Nấu xong có thể dùng đường để rửa tay hoặc lau cốc.\nHai việc ngang nhau, chọn một trong hai → -거나 (hoặc).\n① -아서: rồi, nên · ② -지만: nhưng · ④ -는데: mà, nhưng."
+        },
+        {
+          "no": 66,
+          "points": 3,
+          "answer": 2,
+          "layout": 1,
+          "prompt": {
+            "html": "이 글의 내용과 같은 것을 고르십시오. (3점)"
+          },
+          "options": [
+            {
+              "html": "설탕을 넣은 음식은 빨리 먹어야 합니다."
+            },
+            {
+              "html": "꽃병에 설탕을 넣으면 꽃이 오래 삽니다."
+            },
+            {
+              "html": "하얀 옷을 빨 때 설탕을 넣으면 좋지 않습니다."
+            },
+            {
+              "html": "빨래할 때 레몬과 설탕을 함께 쓰면 안 됩니다."
+            }
+          ],
+          "explanation": "Đáp án ② 꽃병에 설탕을 넣으면 꽃이 오래 삽니다. (Cho đường vào bình hoa thì hoa tươi lâu.)\n꽃병에 물과 함께 설탕을 넣으면 꽃을 오래 볼 수 있습니다.\n① Sai: đường giúp giữ thức ăn LÂU.\n③ Sai: cho đường thì đồ trắng sạch hơn.\n④ Sai: dùng chanh với đường thì đồ mềm hơn."
+        },
+        {
+          "no": 67,
+          "points": 3,
+          "answer": 1,
+          "layout": 2,
+          "prompt": {
+            "html": "㉠에 들어갈 알맞은 말을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "의미는 다르지만"
+            },
+            {
+              "html": "색깔은 다양하지만"
+            },
+            {
+              "html": "모양은 특별하지만"
+            },
+            {
+              "html": "분위기는 비슷하지만"
+            }
+          ],
+          "explanation": "Đáp án ① 의미는 다르지만 (ý nghĩa khác nhau nhưng).\nĐoạn văn: Ở Hàn Quốc sinh nhật đầu tiên của trẻ gọi là \"dol\". Hôm đó có nghi thức cho trẻ cầm đồ vật. Cầm bóng thì sẽ thành vận động viên, cầm micro thì thành nghệ sĩ. Bút chì là giáo viên, tiền là giàu có. Đồ vật đặt trước trẻ tuy ý nghĩa khác nhau nhưng đều chứa tấm lòng mong trẻ khỏe mạnh, hạnh phúc.\nMỗi đồ vật một ý nghĩa riêng (vận động viên, nghệ sĩ, giáo viên…) → \"ý nghĩa khác nhau\".\n② màu sắc đa dạng · ③ hình dáng đặc biệt · ④ không khí giống nhau."
+        },
+        {
+          "no": 68,
+          "points": 3,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": "이 글의 내용과 같은 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "공은 부자가 되는 것을 의미합니다."
+            },
+            {
+              "html": "아이가 물건을 많이 잡으면 더 좋습니다."
+            },
+            {
+              "html": "물건을 잡는 행사는 첫 번째 생일에 합니다."
+            },
+            {
+              "html": "마이크를 잡으면 선생님이 될 것이라고 생각합니다."
+            }
+          ],
+          "explanation": "Đáp án ③ 물건을 잡는 행사는 첫 번째 생일에 합니다. (Nghi thức cầm đồ vật làm vào sinh nhật đầu tiên.)\n아이의 첫 번째 생일을 '돌'이라고 … 돌에는 아이가 물건을 잡는 특별한 행사를 합니다.\n① Sai: bóng là vận động viên; tiền mới là giàu có.\n② Không nói cầm nhiều đồ thì tốt hơn.\n④ Sai: micro là nghệ sĩ; bút chì mới là giáo viên."
+        },
+        {
+          "no": 69,
+          "points": 3,
+          "answer": 4,
+          "layout": 2,
+          "prompt": {
+            "html": "㉠에 들어갈 알맞은 말을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "일을 걱정했습니다"
+            },
+            {
+              "html": "생활을 잊었습니다"
+            },
+            {
+              "html": "친구와 자주 연락합니다"
+            },
+            {
+              "html": "사계절을 많이 생각합니다"
+            }
+          ],
+          "explanation": "Đáp án ④ 사계절을 많이 생각합니다 (hay nghĩ về bốn mùa).\nĐoạn văn: Vì công việc tôi sống ở nước ngoài. Ở đây lúc nào cũng là mùa hè. Tôi và các con hay nghĩ về bốn mùa của Hàn Quốc. Nhất là nhớ mùa xuân hoa nở và mùa thu lá đỏ. Hôm nay bố ở Hàn Quốc gửi bưu kiện sang. Đó là tranh bốn mùa quê nhà bố vẽ. Tôi cảm ơn bố đã tặng bốn mùa quê hương.\nManh mối: \"ở đây lúc nào cũng là mùa hè\", câu sau \"nhớ mùa xuân, mùa thu\".\n① lo công việc · ② quên cuộc sống · ③ hay liên lạc với bạn."
+        },
+        {
+          "no": 70,
+          "points": 3,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": "이 글의 내용으로 알 수 있는 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "아버지는 자주 계절 그림을 보내 줍니다."
+            },
+            {
+              "html": "제가 사는 곳의 꽃과 단풍이 아름답습니다."
+            },
+            {
+              "html": "저는 아버지와 이곳에서 함께 살고 싶습니다."
+            },
+            {
+              "html": "저는 소포를 받고 아버지의 사랑을 느꼈습니다."
+            }
+          ],
+          "explanation": "Đáp án ④ 저는 소포를 받고 아버지의 사랑을 느꼈습니다. (Nhận bưu kiện, tôi cảm nhận được tình thương của bố.)\n고향의 사계절을 선물해 주신 아버지가 고마웠습니다 = tôi biết ơn bố đã tặng bốn mùa quê hương.\n① Sai: bưu kiện \"hôm nay\" mới đến, không nói bố hay gửi.\n② Sai: nơi tôi sống lúc nào cũng mùa hè; hoa và lá đỏ là ở Hàn Quốc.\n③ Không nói muốn sống cùng bố ở đây."
+        }
+      ]
+    }
+  ]
+}

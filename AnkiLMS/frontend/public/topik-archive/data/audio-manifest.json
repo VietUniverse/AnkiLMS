@@ -1,0 +1,150 @@
+{
+  "downloadedAt": "2026-11-05T09:13:06.123Z",
+  "files": [
+    {
+      "exam": "102-topik1",
+      "file": "102-102_1-cbr.mp3",
+      "bytes": 39905144,
+      "sha256": "05e0de779f193b6dd98de8b130b91e65dc27c5aa065cc7e23ff38dd1fc32d5e4"
+    },
+    {
+      "exam": "96-topik1",
+      "file": "96-96_1-cbr.mp3",
+      "bytes": 40221168,
+      "sha256": "278e69fb931143eaabdcb1924ff1fb0cba5c6acc5c7c9f00de9c025a4dca3498"
+    },
+    {
+      "exam": "96-topik2",
+      "file": "96-96_2-cbr.mp3",
+      "bytes": 57069925,
+      "sha256": "0a25791eaa31a7744eb405fa4ccbf4aada2176d27dcc7995fe6d2f17c912673e"
+    },
+    {
+      "exam": "91-topik1",
+      "file": "91-91_1-cbr.mp3",
+      "bytes": 39650414,
+      "sha256": "f6a174f45ad835b806165f2469246128898fe97abc7a9c74c24a81ee897f3fae"
+    },
+    {
+      "exam": "102-topik2",
+      "file": "102-102_2-cbr.mp3",
+      "bytes": 59076095,
+      "sha256": "398bd165792620dd7f110d7ee531b28a87dd7453c0fc9341edd517a8f97a4487"
+    },
+    {
+      "exam": "83-topik1",
+      "file": "83-83_1-cbr.mp3",
+      "bytes": 36781781,
+      "sha256": "6101df25c86af5a39c12a4a1b5aae7c89d44eb810276bc5d4db54f54611641f9"
+    },
+    {
+      "exam": "91-topik2",
+      "file": "91-91_2-cbr.mp3",
+      "bytes": 58774137,
+      "sha256": "2ca86e852f27fa64e7b0cb50dcfdd4b10b2fd099944fe9986bf980b22a412b0b"
+    },
+    {
+      "exam": "64-topik1",
+      "file": "64-64_1-cbr.mp3",
+      "bytes": 38337350,
+      "sha256": "4a2cbaf980bf3477e2f45795f4c696ac2b9a359602bb4c573d11370406bcac42"
+    },
+    {
+      "exam": "64-topik2",
+      "file": "64-64_2-cbr.mp3",
+      "bytes": 57541738,
+      "sha256": "9f4cb0786fb0c878025f6d9db5307b8fa17820fa690805f1abf12454c7ce71d0"
+    },
+    {
+      "exam": "83-topik2",
+      "file": "83-83_2-cbr.mp3",
+      "bytes": 54791642,
+      "sha256": "21b89d9d54b89b751e3e30bb04708904dbdf78f2b24ffca286b64e2764a8d0b6"
+    },
+    {
+      "exam": "60-topik1",
+      "file": "60-60_1-cbr.mp3",
+      "bytes": 38382071,
+      "sha256": "35efa32b39a110c43d269d855f8b8993aa37cad0d136d4681f03732a5622df5a"
+    },
+    {
+      "exam": "60-topik2",
+      "file": "60-60_2-cbr.mp3",
+      "bytes": 57628674,
+      "sha256": "683cb5765269220992f33efac16dfd3e0ae213963569f0b2c51429ebed07c77c"
+    },
+    {
+      "exam": "52-topik1",
+      "file": "52-52_1-cbr.mp3",
+      "bytes": 37432557,
+      "sha256": "d7d7fa212c53df470c3d9e2a8d2b8921bf2cf530d5f3b9c52a0b5c0bbb73458d"
+    },
+    {
+      "exam": "47-topik1",
+      "file": "47-47_1-cbr.mp3",
+      "bytes": 36222058,
+      "sha256": "8c2db3649fe240339fd7bc0f59694b845b4d04238f4100cec0f9703912e24e4a"
+    },
+    {
+      "exam": "52-topik2",
+      "file": "52-52_2-cbr.mp3",
+      "bytes": 57651885,
+      "sha256": "c5a49ca824a3c6b81e72c07aa4037338e33dcdb6886d8186f8e892f6b0c07f2a"
+    },
+    {
+      "exam": "47-topik2",
+      "file": "47-47_2-cbr.mp3",
+      "bytes": 56627662,
+      "sha256": "652e23ffaa4208d695bda19576837dc17dfe6c711734bc89307be3b18189cfab"
+    },
+    {
+      "exam": "41-topik1",
+      "file": "41-41_1-cbr.mp3",
+      "bytes": 35947041,
+      "sha256": "96856cb63522c83106756b702c51c6858b9e54bf22cb81cc4cfea282f0740712"
+    },
+    {
+      "exam": "41-topik2",
+      "file": "41-41_2-cbr.mp3",
+      "bytes": 57052308,
+      "sha256": "2716dd168934ddd76aac9c5ed3a2d25ab748848b7172784bc2d55345a2ef4194"
+    },
+    {
+      "exam": "37-topik1",
+      "file": "37-37_1-cbr.mp3",
+      "bytes": 41950918,
+      "sha256": "d7f8305918dbd60f9eb9698bb53f71d1c3d0091438fe40724ce2354d68b306bd"
+    },
+    {
+      "exam": "36-topik1",
+      "file": "36-36_1-cbr.mp3",
+      "bytes": 38455108,
+      "sha256": "83268a52e5408734476519c354fdd3eb11fb12de556b998062d1ffd32587920c"
+    },
+    {
+      "exam": "37-topik2",
+      "file": "37-37_2-cbr.mp3",
+      "bytes": 61061266,
+      "sha256": "6c26b8f596f8d115e2bb36892ff55214fff66dce48502217d42807e8336553ae"
+    },
+    {
+      "exam": "36-topik2",
+      "file": "36-36_2-cbr.mp3",
+      "bytes": 59937374,
+      "sha256": "e1d847c95f42fe043bb1b00669674605c2ba1ef07c3acd1cecede100961bea4f"
+    },
+    {
+      "exam": "35-topik1",
+      "file": "35-35_1-cbr.mp3",
+      "bytes": 37696511,
+      "sha256": "fac344ad721aa797fb2ff44ad1eb8adc8e0a2ad10b421e5b34817c790feafacf"
+    },
+    {
+      "exam": "35-topik2",
+      "file": "35-35_2-cbr.mp3",
+      "bytes": 60015114,
+      "sha256": "e40cda2fa322eeecc957584f6fabc31925a13f00eb975673608c53506f2cc4cb"
+    }
+  ],
+  "totalBytes": 1158209941
+}

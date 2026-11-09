@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { TOPIK_QUESTION_BANK, TopikQuestion } from "../data/topikQuestionBank";
 import { TOPIK_I_FILL_BLANK_EXAMS } from "../data/topikFillBlankExams";
-import { ArrowLeft, ArrowRight, BookOpen, Check, CheckCircle2, Clock3, ExternalLink, Headphones, ListChecks, RotateCcw, Volume2, XCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpen, Check, CheckCircle2, Clock3, Headphones, ListChecks, RotateCcw, Volume2, XCircle } from "lucide-react";
 import { ApiClient } from "../lib/apiClient";
 
 type ExamSet = { id: string; title: string; subtitle: string; section: string; icon: React.ElementType; duration: number; questions: TopikQuestion[]; instruction?: string };
@@ -15,10 +15,20 @@ const QUESTION_GROUPS: Omit<ExamSet, "questions">[] = [
   { id: "grammar", title: "Từ vựng & ngữ pháp", subtitle: "Ngữ pháp và cách dùng từ", section: "grammar", icon: ListChecks, duration: 10 },
 ];
 
-const OFFICIAL_PAST_TEST = "https://www.topik.go.kr/TWSTDY/TWSTDY0090.do";
-const OFFICIAL_TOPIK_BASIC = "https://www.topik.go.kr/TWSTDY/TWSTDY0111.do";
-const OFFICIAL_IBT_TOPIK_I = "https://www.topik.go.kr/asset/vendor/tutorial/exam1/login.html";
-const OFFICIAL_IBT_TOPIK_II = "https://www.topik.go.kr/asset/vendor/tutorial/exam2/login.html";
+const OFFICIAL_EXAM_SESSIONS = [
+  { round: 102, year: 2025 },
+  { round: 96, year: 2024 },
+  { round: 91, year: 2023 },
+  { round: 83, year: 2022 },
+  { round: 64, year: 2019 },
+  { round: 60, year: 2018 },
+  { round: 52, year: 2017 },
+  { round: 47, year: 2016 },
+  { round: 41, year: 2015 },
+  { round: 37, year: 2014 },
+  { round: 36, year: 2014 },
+  { round: 35, year: 2014 },
+];
 
 export const TopikExamModule: React.FC = () => {
   const [levelTab, setLevelTab] = useState<"I" | "II">("I");
@@ -105,7 +115,7 @@ export const TopikExamModule: React.FC = () => {
       <header className="rounded-3xl border border-indigo-400/15 bg-gradient-to-br from-[#111d38] via-[#121a31] to-[#1e1940] p-5 sm:p-7">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div><p className="text-[10px] font-black uppercase tracking-[0.18em] text-indigo-300">HaechiVN · Luyện thi</p><h1 className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">TOPIK I / II</h1><p className="mt-2 max-w-2xl text-sm text-slate-300">Chọn cấp độ và dạng bài để luyện. Theo dõi tiến độ, làm từng câu và xem giải thích sau khi nộp.</p></div>
-          <a href={OFFICIAL_PAST_TEST} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-xl border border-sky-400/30 bg-sky-400/10 px-4 py-3 text-xs font-black text-sky-200 hover:bg-sky-400/15">Đề chính thức <ExternalLink className="h-4 w-4" /></a>
+          <div className="flex flex-wrap gap-2"><a href="/topik/archive" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 px-4 py-3 text-xs font-black text-white hover:brightness-110">24 đề chính thức <ArrowRight className="h-4 w-4" /></a><a href="/topik/archive?mode=practice" className="inline-flex items-center gap-2 rounded-xl border border-sky-400/30 bg-sky-400/10 px-4 py-3 text-xs font-black text-sky-200 hover:bg-sky-400/15">Luyện đề</a></div>
         </div>
         <div className="mt-6 grid grid-cols-2 gap-3">
           <button onClick={() => setLevelTab("I")} aria-pressed={levelTab === "I"} className={`rounded-2xl border p-4 text-left transition ${levelTab === "I" ? "border-sky-400/60 bg-sky-400/10" : "border-white/10 bg-slate-950/20 hover:border-white/20"}`}><span className="text-xs font-black uppercase tracking-widest text-sky-300">TOPIK I</span><span className="mt-1 block text-sm font-bold text-white">Sơ cấp · cấp 1–2</span><span className="mt-1 block text-[11px] text-slate-400">Nghe và đọc · 200 điểm</span></button>
@@ -120,6 +130,23 @@ export const TopikExamModule: React.FC = () => {
             return <button key={set.id} onClick={() => startSet(set)} className="group rounded-2xl border border-slate-700/80 bg-slate-900/70 p-4 text-left transition hover:border-sky-400/40 hover:bg-slate-900 sm:p-5"><span className="flex items-center justify-between"><span className="rounded-xl bg-sky-400/10 p-2.5 text-sky-300"><Icon className="h-5 w-5" /></span><span className="text-[11px] font-bold text-slate-500">{stat}</span></span><span className="mt-4 block text-base font-black text-white">{set.title}</span><span className="mt-1 block text-xs text-slate-400">{set.subtitle}</span><span className="mt-4 inline-flex items-center gap-1 text-xs font-black text-sky-300">Bắt đầu <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></span></button>;
           })}
         </div>
+        <section className="mt-8" aria-labelledby="topik-i-past-tests">
+          <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
+            <div><h2 id="topik-i-past-tests" className="text-lg font-black text-white">Các kỳ TOPIK I</h2><p className="mt-1 text-xs text-slate-400">12 kỳ trong danh mục lưu trữ · 70 câu · 100 phút mỗi kỳ</p></div>
+            <a href="/topik/archive" className="inline-flex items-center gap-1.5 rounded-lg border border-sky-400/30 bg-sky-400/[0.06] px-3 py-2 text-[11px] font-bold text-sky-200 hover:bg-sky-400/10">Mở kho 24 đề</a>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {OFFICIAL_EXAM_SESSIONS.map(({ round, year }) => <article key={`i-${round}`} className="rounded-2xl border border-slate-800 bg-slate-900/65 p-4">
+              <p className="text-sm font-black text-white">Kỳ {round} <span className="text-slate-400">· {year}</span></p>
+              <p className="mt-1 text-[11px] text-slate-400">TOPIK I · 70 câu · 100 phút</p>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <a href={`/topik/archive?id=${round}-topik1&mode=practice`} className="inline-flex items-center justify-center gap-1 rounded-lg border border-slate-700 px-2 py-2 text-[10px] font-bold text-slate-200 hover:border-sky-400/50">Luyện đề</a>
+                <a href={`/topik/archive?id=${round}-topik1&mode=mock`} className="inline-flex items-center justify-center gap-1 rounded-lg bg-sky-500/15 px-2 py-2 text-[10px] font-bold text-sky-200 hover:bg-sky-500/25">Thi thử</a>
+              </div>
+            </article>)}
+          </div>
+          <p className="mt-3 text-[10px] leading-5 text-slate-500">Đề, đáp án, ảnh và audio được lưu trong kho nội bộ của HaechiVN; không cần mở cổng TOPIK.</p>
+        </section>
         <div className="mb-3 mt-8 flex flex-wrap items-end justify-between gap-3">
           <div><h2 className="text-lg font-black text-white">10 đề luyện theo nhóm câu</h2><p className="mt-1 text-xs text-slate-400">Mỗi đề gồm 5 câu cùng dạng · làm nhanh trong khoảng 5 phút</p></div>
           <span className="rounded-full border border-emerald-400/20 bg-emerald-400/[0.06] px-3 py-1.5 text-[10px] font-bold text-emerald-200">HaechiVN biên soạn · không phải đề chính thức</span>
@@ -130,15 +157,34 @@ export const TopikExamModule: React.FC = () => {
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
           {[{ label: "Nghe", count: listeningCount }, { label: "Đọc", count: readingCount }, { label: "Từ vựng & ngữ pháp", count: grammarCount }].map((item) => <div key={item.label} className="rounded-xl border border-slate-800 bg-slate-950/35 px-4 py-3"><span className="text-sm font-bold text-slate-200">{item.label}</span><span className="float-right text-xs text-slate-500">{item.count} câu hiện có</span></div>)}
         </div>
-      </section> : <section className="rounded-2xl border border-violet-400/20 bg-violet-400/[0.04] p-5 sm:p-6">
-        <p className="text-[10px] font-black uppercase tracking-widest text-violet-300">Bộ luyện TOPIK II</p><h2 className="mt-2 text-xl font-black text-white">Luyện nghe · đọc · viết</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">Ngân hàng câu luyện TOPIK II của HaechiVN chưa được biên soạn đủ để tạo đề mô phỏng đáng tin cậy. Bạn có thể làm đề và trải nghiệm IBT trực tiếp trên cổng chính thức trong lúc bộ đề nội bộ được hoàn thiện.</p>
-        <div className="mt-4 flex flex-wrap gap-2"><a href={OFFICIAL_IBT_TOPIK_II} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-xl bg-violet-500 px-4 py-3 text-xs font-black text-white hover:bg-violet-400">Trải nghiệm IBT TOPIK II <ExternalLink className="h-4 w-4" /></a><a href={OFFICIAL_PAST_TEST} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-4 py-3 text-xs font-bold text-slate-200 hover:border-violet-400/50">Làm đề công khai <ExternalLink className="h-4 w-4" /></a></div>
+      </section> : <section>
+        <div className="rounded-2xl border border-violet-400/20 bg-violet-400/[0.04] p-5 sm:p-6">
+          <p className="text-[10px] font-black uppercase tracking-widest text-violet-300">Bộ luyện TOPIK II</p><h2 className="mt-2 text-xl font-black text-white">Luyện nghe · đọc · viết</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">24 đề chính thức đã được lưu trong kho HaechiVN, gồm câu hỏi, đáp án, giải thích, ảnh và audio.</p>
+          <div className="mt-4 flex flex-wrap gap-2"><a href="/topik/archive?id=102-topik2&mode=practice" className="inline-flex items-center gap-2 rounded-xl bg-violet-500 px-4 py-3 text-xs font-black text-white hover:bg-violet-400">Luyện đề TOPIK II</a><a href="/topik/archive?id=102-topik2&mode=mock" className="inline-flex items-center gap-2 rounded-xl border border-slate-700 px-4 py-3 text-xs font-bold text-slate-200 hover:border-violet-400/50">Thi thử có giờ</a></div>
+        </div>
+        <section className="mt-6" aria-labelledby="topik-ii-past-tests">
+          <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
+            <div><h2 id="topik-ii-past-tests" className="text-lg font-black text-white">Các kỳ TOPIK II</h2><p className="mt-1 text-xs text-slate-400">12 kỳ trong danh mục lưu trữ · 100 câu · 180 phút mỗi kỳ</p></div>
+            <a href="/topik/archive" className="inline-flex items-center gap-1.5 rounded-lg border border-violet-400/30 bg-violet-400/[0.06] px-3 py-2 text-[11px] font-bold text-violet-200 hover:bg-violet-400/10">Mở kho 24 đề</a>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {OFFICIAL_EXAM_SESSIONS.map(({ round, year }) => <article key={`ii-${round}`} className="rounded-2xl border border-slate-800 bg-slate-900/65 p-4">
+              <p className="text-sm font-black text-white">Kỳ {round} <span className="text-slate-400">· {year}</span></p>
+              <p className="mt-1 text-[11px] text-slate-400">TOPIK II · 100 câu · 180 phút</p>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <a href={`/topik/archive?id=${round}-topik2&mode=practice`} className="inline-flex items-center justify-center gap-1 rounded-lg border border-slate-700 px-2 py-2 text-[10px] font-bold text-slate-200 hover:border-violet-400/50">Luyện đề</a>
+                <a href={`/topik/archive?id=${round}-topik2&mode=mock`} className="inline-flex items-center justify-center gap-1 rounded-lg bg-violet-500/15 px-2 py-2 text-[10px] font-bold text-violet-200 hover:bg-violet-500/25">Thi thử</a>
+              </div>
+            </article>)}
+          </div>
+          <p className="mt-3 text-[10px] leading-5 text-slate-500">Đề, đáp án, ảnh và audio được lưu trong kho nội bộ của HaechiVN; không cần mở cổng TOPIK.</p>
+        </section>
       </section>}
 
       <section className="rounded-2xl border border-slate-800 bg-slate-950/40 p-4">
-        <div className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-300" /><h2 className="text-sm font-black text-white">Đề và tài liệu chính thức</h2></div>
-        <p className="mt-1 text-xs text-slate-400">Mở bài thi công khai, bài thi cơ bản hoặc phần trải nghiệm IBT do TOPIK cung cấp.</p>
-        <div className="mt-3 flex flex-wrap gap-2"><a href={OFFICIAL_PAST_TEST} target="_blank" rel="noreferrer" className="rounded-lg border border-slate-700 px-3 py-2 text-[11px] font-bold text-slate-300 hover:border-sky-400/40 hover:text-white">Đề thi công khai ↗</a><a href={OFFICIAL_TOPIK_BASIC} target="_blank" rel="noreferrer" className="rounded-lg border border-slate-700 px-3 py-2 text-[11px] font-bold text-slate-300 hover:border-sky-400/40 hover:text-white">TOPIK Basic ↗</a><a href={OFFICIAL_IBT_TOPIK_I} target="_blank" rel="noreferrer" className="rounded-lg border border-slate-700 px-3 py-2 text-[11px] font-bold text-slate-300 hover:border-sky-400/40 hover:text-white">Trải nghiệm IBT I ↗</a></div>
+        <div className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-300" /><h2 className="text-sm font-black text-white">24 đề chính thức có sẵn</h2></div>
+        <p className="mt-1 text-xs text-slate-400">Toàn bộ đề, đáp án, giải thích, ảnh và audio được lưu trong kho HaechiVN để luyện offline.</p>
+        <div className="mt-3 flex flex-wrap gap-2"><a href="/topik/archive" className="rounded-lg bg-sky-500 px-3 py-2 text-[11px] font-black text-white hover:bg-sky-400">Mở kho 24 đề</a><a href="/topik/archive?id=102-topik1&mode=practice" className="rounded-lg border border-slate-700 px-3 py-2 text-[11px] font-bold text-slate-300 hover:border-sky-400/40 hover:text-white">Luyện đề</a><a href="/topik/archive?id=102-topik1&mode=mock" className="rounded-lg border border-slate-700 px-3 py-2 text-[11px] font-bold text-slate-300 hover:border-sky-400/40 hover:text-white">Thi thử</a></div>
       </section>
     </main>;
   }

@@ -1,0 +1,3153 @@
+{
+  "id": "52-topik2",
+  "round": 52,
+  "year": 2017,
+  "level": "TOPIK II",
+  "assetDir": "52",
+  "source": "Đề thi và đáp án chính thức kỳ 52 (2017) — Viện Giáo dục Quốc tế Quốc gia Hàn Quốc (NIIED), topik.go.kr",
+  "sections": [
+    {
+      "id": "listening",
+      "title": "TOPIK II 듣기 (1번 ～ 50번)",
+      "minutes": 60,
+      "audio": "audio/52_2-cbr.mp3",
+      "intro": [
+        0,
+        15
+      ],
+      "groups": [
+        {
+          "from": 1,
+          "to": 3,
+          "instruction": "※ [1～3] 다음을 듣고 알맞은 그림을 고르십시오. (각 2점)"
+        },
+        {
+          "from": 4,
+          "to": 8,
+          "instruction": "※ [4～8] 다음 대화를 잘 듣고 이어질 수 있는 말을 고르십시오. (각 2점)"
+        },
+        {
+          "from": 9,
+          "to": 12,
+          "instruction": "※ [9～12] 다음 대화를 잘 듣고 여자가 이어서 할 행동으로 알맞은 것을 고르십시오. (각 2점)"
+        },
+        {
+          "from": 13,
+          "to": 16,
+          "instruction": "※ [13～16] 다음을 듣고 내용과 일치하는 것을 고르십시오. (각 2점)"
+        },
+        {
+          "from": 17,
+          "to": 20,
+          "instruction": "※ [17～20] 다음을 듣고 남자의 중심 생각을 고르십시오. (각 2점)"
+        },
+        {
+          "from": 21,
+          "to": 22,
+          "instruction": "※ [21～22] 다음을 듣고 물음에 답하십시오. (각 2점)",
+          "dialogue": [
+            886.7,
+            1014.6
+          ]
+        },
+        {
+          "from": 23,
+          "to": 24,
+          "instruction": "※ [23～24] 다음을 듣고 물음에 답하십시오. (각 2점)",
+          "dialogue": [
+            1035.8,
+            1150.8
+          ]
+        },
+        {
+          "from": 25,
+          "to": 26,
+          "instruction": "※ [25～26] 다음을 듣고 물음에 답하십시오. (각 2점)",
+          "dialogue": [
+            1172.8,
+            1346.9
+          ]
+        },
+        {
+          "from": 27,
+          "to": 28,
+          "instruction": "※ [27～28] 다음을 듣고 물음에 답하십시오. (각 2점)",
+          "dialogue": [
+            1369.2,
+            1484
+          ]
+        },
+        {
+          "from": 29,
+          "to": 30,
+          "instruction": "※ [29～30] 다음을 듣고 물음에 답하십시오. (각 2점)",
+          "dialogue": [
+            1506.2,
+            1684.1
+          ]
+        },
+        {
+          "from": 31,
+          "to": 32,
+          "instruction": "※ [31～32] 다음을 듣고 물음에 답하십시오. (각 2점)",
+          "dialogue": [
+            1706.5,
+            1839
+          ]
+        },
+        {
+          "from": 33,
+          "to": 34,
+          "instruction": "※ [33～34] 다음을 듣고 물음에 답하십시오. (각 2점)",
+          "dialogue": [
+            1862.1,
+            2013.6
+          ]
+        },
+        {
+          "from": 35,
+          "to": 36,
+          "instruction": "※ [35～36] 다음을 듣고 물음에 답하십시오. (각 2점)",
+          "dialogue": [
+            2037,
+            2221.9
+          ]
+        },
+        {
+          "from": 37,
+          "to": 38,
+          "instruction": "※ [37～38] 다음은 교양 프로그램입니다. 잘 듣고 물음에 답하십시오. (각 2점)",
+          "dialogue": [
+            2245.4,
+            2394.6
+          ]
+        },
+        {
+          "from": 39,
+          "to": 40,
+          "instruction": "※ [39～40] 다음은 대담입니다. 잘 듣고 물음에 답하십시오. (각 2점)",
+          "dialogue": [
+            2417.9,
+            2579.8
+          ]
+        },
+        {
+          "from": 41,
+          "to": 42,
+          "instruction": "※ [41～42] 다음은 강연입니다. 잘 듣고 물음에 답하십시오. (각 2점)",
+          "dialogue": [
+            2602.5,
+            2781.1
+          ]
+        },
+        {
+          "from": 43,
+          "to": 44,
+          "instruction": "※ [43～44] 다음은 다큐멘터리입니다. 잘 듣고 물음에 답하십시오. (각 2점)",
+          "dialogue": [
+            2803.9,
+            2978
+          ]
+        },
+        {
+          "from": 45,
+          "to": 46,
+          "instruction": "※ [45～46] 다음은 강연입니다. 잘 듣고 물음에 답하십시오. (각 2점)",
+          "dialogue": [
+            3000.4,
+            3170.3
+          ]
+        },
+        {
+          "from": 47,
+          "to": 48,
+          "instruction": "※ [47～48] 다음은 대담입니다. 잘 듣고 물음에 답하십시오. (각 2점)",
+          "dialogue": [
+            3193.2,
+            3370.9
+          ]
+        },
+        {
+          "from": 49,
+          "to": 50,
+          "instruction": "※ [49～50] 다음은 강연입니다. 잘 듣고 물음에 답하십시오. (각 2점)",
+          "dialogue": [
+            3393.4,
+            3567
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "no": 1,
+          "points": 2,
+          "answer": 2,
+          "layout": 2,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "image": "images/52_2_1_1_1.webp",
+              "alt": "남자가 침대에 누워있음"
+            },
+            {
+              "image": "images/52_2_1_1_2.webp",
+              "alt": "남자가 병원에 왔음"
+            },
+            {
+              "image": "images/52_2_1_1_3.webp",
+              "alt": "남자가 링게를 맞고 있음"
+            },
+            {
+              "image": "images/52_2_1_1_4.webp",
+              "alt": "남자가 음료수를 마시고 있음"
+            }
+          ],
+          "audio": [
+            15,
+            57.8
+          ],
+          "replay": [
+            15,
+            55.8
+          ],
+          "explanation": "Đáp án ② (tranh quầy tiếp nhận bệnh viện, nhân viên nữ đưa giấy cho người nam).\nLời nghe:\n여자: 어디가 아파서 오셨어요? (Anh đau ở đâu mà đến ạ?)\n남자: 배가 아파서 왔는데요. (Tôi bị đau bụng.)\n여자: 그럼 여기 이름과 생년월일을 쓰시고 잠깐 기다리세요. (Vậy anh ghi tên và ngày sinh vào đây rồi chờ một chút nhé.)\nĐang ở quầy tiếp nhận, được đưa giấy để ghi thông tin → tranh ②.\n① Bác sĩ đang khám · ③ Bệnh nhân nằm truyền dịch · ④ Bệnh nhân ngồi uống nước ở phòng chờ."
+        },
+        {
+          "no": 2,
+          "points": 2,
+          "answer": 1,
+          "layout": 2,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "image": "images/52_2_1_2_1.webp",
+              "alt": "여자가 설겆이를 하고 있음"
+            },
+            {
+              "image": "images/52_2_1_2_2.webp",
+              "alt": "남자가 청소기를 돌리고 있음"
+            },
+            {
+              "image": "images/52_2_1_2_3.webp",
+              "alt": "남자가 설겆이를 하고 있음"
+            },
+            {
+              "image": "images/52_2_1_2_4.webp",
+              "alt": "둘이서 커피를 마시고 있음"
+            }
+          ],
+          "audio": [
+            57.8,
+            87
+          ],
+          "replay": [
+            57.6,
+            76.8
+          ],
+          "explanation": "Đáp án ① (tranh người nữ đang rửa bát, người nam cầm máy hút bụi đứng cạnh).\nLời nghe:\n남자: 청소 다 했는데 설거지 좀 도와줄까요? (Anh dọn xong rồi, phụ em rửa bát nhé?)\n여자: 괜찮아요. 거의 다 했으니까 앉아서 좀 쉬어요. (Không sao. Em sắp xong rồi, anh ngồi nghỉ đi.)\n남자: 그럼 설거지 끝나면 차 한 잔 같이 마셔요. (Vậy rửa xong thì mình cùng uống trà nhé.)\nAnh vừa dọn xong, chị đang rửa bát → tranh ①.\n② Anh vẫn đang hút bụi · ③ Anh đang rửa bát · ④ Hai người đã ngồi uống trà."
+        },
+        {
+          "no": 3,
+          "points": 2,
+          "answer": 2,
+          "layout": 2,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "image": "images/52_2_1_3_1.webp",
+              "alt": "생활체육 참여율"
+            },
+            {
+              "image": "images/52_2_1_3_2.webp",
+              "alt": "생활체육 참여율"
+            },
+            {
+              "image": "images/52_2_1_3_3.webp",
+              "alt": "운동별 참여율"
+            },
+            {
+              "image": "images/52_2_1_3_4.webp",
+              "alt": "운동별 참여율"
+            }
+          ],
+          "audio": [
+            87,
+            130.2
+          ],
+          "replay": [
+            86.9,
+            119.3
+          ],
+          "explanation": "Đáp án ② (biểu đồ tỉ lệ tham gia thể thao tăng dần từ 2014 đến 2016).\n우리 국민이 주 1회 이상 생활체육에 참여하는 비율이 2014년 이후 계속해서 증가한 것으로 나타났습니다. 가장 많이 하는 운동은 '걷기'였으며 그 다음은 '등산', 그리고 '헬스'가 그 뒤를 이었습니다. = Tỉ lệ người dân tập thể thao ít nhất mỗi tuần một lần tăng liên tục từ 2014. Môn được tập nhiều nhất là đi bộ, tiếp theo là leo núi rồi đến tập gym.\n① Sai: tỉ lệ tăng liên tục, không giảm.\n③ Sai: đứng thứ hai là leo núi, nhưng biểu đồ ghi gym 25% nhiều hơn leo núi 15%.\n④ Sai: đứng đầu là đi bộ, không phải gym."
+        },
+        {
+          "no": 4,
+          "points": 2,
+          "answer": 2,
+          "layout": 1,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "html": "찾아서 다행이네요."
+            },
+            {
+              "html": "천천히 잘 찾아봐요."
+            },
+            {
+              "html": "가방을 찾고 있는데요."
+            },
+            {
+              "html": "아무리 찾아도 없어서요."
+            }
+          ],
+          "audio": [
+            130.2,
+            168.4
+          ],
+          "replay": [
+            130.2,
+            158.2
+          ],
+          "explanation": "Đáp án ② 천천히 잘 찾아봐요. (Cứ từ từ tìm kỹ nhé.)\nLời nghe:\n남자: 왜 그래요? 뭐 잃어버렸어요? (Sao vậy? Mất gì à?)\n여자: 제 가방이 어디에 있는지 모르겠어요. (Tôi không biết túi của mình ở đâu.)\nChị đang tìm túi → khuyên tìm kỹ.\n① Chưa tìm thấy, không thể nói \"may mà tìm được\".\n③ ④ Là câu người mất đồ nói, không phải người nam."
+        },
+        {
+          "no": 5,
+          "points": 2,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "html": "점심 먹으러 갈래요?"
+            },
+            {
+              "html": "점심시간이 언제예요?"
+            },
+            {
+              "html": "식사 맛있게 하셨어요?"
+            },
+            {
+              "html": "다른 데 가서 먹을까요?"
+            }
+          ],
+          "audio": [
+            168.4,
+            192.7
+          ],
+          "replay": [
+            168.2,
+            182.7
+          ],
+          "explanation": "Đáp án ④ 다른 데 가서 먹을까요? (Mình đi chỗ khác ăn nhé?)\nLời nghe:\n남자: 점심시간이 지났는데도 식당에 사람이 많네요. (Qua giờ trưa rồi mà quán vẫn đông.)\n여자: 그러네요. 밥 먹으려면 한참 기다려야겠어요. (Đúng vậy. Muốn ăn chắc phải chờ lâu.)\nQuán đông, phải chờ lâu → rủ đi quán khác.\n① Hai người đã đến quán rồi.\n② Đã biết qua giờ trưa.\n③ Chưa ăn."
+        },
+        {
+          "no": 6,
+          "points": 2,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "html": "다행히 잘 본 것 같아요."
+            },
+            {
+              "html": "생각보다 시험이 쉬웠어요."
+            },
+            {
+              "html": "떨지 말고 면접시험 잘 보세요."
+            },
+            {
+              "html": "열심히 준비했으니까 잘 될 거예요."
+            }
+          ],
+          "audio": [
+            192.7,
+            218.8
+          ],
+          "replay": [
+            192.5,
+            208.8
+          ],
+          "explanation": "Đáp án ④ 열심히 준비했으니까 잘 될 거예요. (Chị đã chuẩn bị chăm chỉ nên sẽ ổn thôi.)\nLời nghe:\n남자: 수미 씨, 면접시험은 어땠어요? 잘 본 것 같아요? (Chị Sumi, phỏng vấn thế nào? Làm tốt chứ?)\n여자: 잘할 수 있었는데 떨려서 잘 못 본 것 같아요. (Lẽ ra làm tốt được, nhưng run quá nên chắc không ổn.)\nChị lo lắng → an ủi, động viên.\n① ② Là câu của người đi phỏng vấn.\n③ Phỏng vấn đã xong rồi."
+        },
+        {
+          "no": 7,
+          "points": 2,
+          "answer": 1,
+          "layout": 1,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "html": "학교 홈페이지에 있던데요."
+            },
+            {
+              "html": "다음 학기에 신청하려고 해요."
+            },
+            {
+              "html": "이미 교환 학생 신청을 했어요."
+            },
+            {
+              "html": "벌써 학생 선발이 끝난 것 같아요."
+            }
+          ],
+          "audio": [
+            218.8,
+            243.9
+          ],
+          "replay": [
+            218.6,
+            233.6
+          ],
+          "explanation": "Đáp án ① 학교 홈페이지에 있던데요. (Có trên trang web của trường đấy.)\nLời nghe:\n남자: 수미 씨, 다음 주까지 교환 학생 신청 기간이라던데 신청할 거예요? (Chị Sumi, nghe nói đến tuần sau là hạn đăng ký du học trao đổi, chị có đăng ký không?)\n여자: 그래요? 어떻게 알았어요? (Vậy à? Sao anh biết?)\nChị hỏi \"sao anh biết\" → anh nói nguồn tin.\n② ③ Là câu của người đăng ký.\n④ Trái với \"đến tuần sau mới hết hạn\"."
+        },
+        {
+          "no": 8,
+          "points": 2,
+          "answer": 2,
+          "layout": 1,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "html": "화장품 좀 주문하려고 하는데요."
+            },
+            {
+              "html": "그럼 언제쯤 다시 받을 수 있을까요?"
+            },
+            {
+              "html": "이 화장품 써 보니까 정말 좋은데요."
+            },
+            {
+              "html": "주문하신 날짜를 말씀해 주시겠어요?"
+            }
+          ],
+          "audio": [
+            243.9,
+            277.3
+          ],
+          "replay": [
+            243.7,
+            267.2
+          ],
+          "explanation": "Đáp án ② 그럼 언제쯤 다시 받을 수 있을까요? (Vậy khoảng khi nào tôi nhận lại được?)\nLời nghe:\n여자: 저, 화장품을 주문했었는데요. 제가 주문한 제품과 다른 게 와서요. (Tôi đã đặt mỹ phẩm, nhưng nhận được sản phẩm khác với cái tôi đặt.)\n남자: 아, 죄송합니다, 고객님. 물건을 저희에게 보내 주시면 확인하고 주문하신 제품으로 다시 보내 드리겠습니다. (Xin lỗi quý khách. Chị gửi lại hàng cho chúng tôi, chúng tôi kiểm tra rồi gửi lại đúng sản phẩm chị đặt.)\nSẽ được gửi lại → hỏi khi nào nhận.\n① Chị đã đặt rồi · ③ Chị nhận nhầm hàng · ④ Là câu của nhân viên."
+        },
+        {
+          "no": 9,
+          "points": 2,
+          "answer": 3,
+          "layout": 2,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "html": "옷을 맡긴다."
+            },
+            {
+              "html": "코트를 산다."
+            },
+            {
+              "html": "세탁소에 간다."
+            },
+            {
+              "html": "우편물을 가져온다."
+            }
+          ],
+          "audio": [
+            277.3,
+            332
+          ],
+          "replay": [
+            277.3,
+            322.1
+          ],
+          "explanation": "Đáp án ③ 세탁소에 간다. (Đi đến tiệm giặt là.)\nLời nghe:\n여자: 민수 씨, 지난번에 산 내 검은색 코트 못 봤어요? (Anh Minsu, có thấy cái áo khoác đen em mua lần trước không?)\n남자: 그거 월요일에 세탁소에 맡겼잖아요. 내가 찾아다 줄까요? (Thứ Hai em gửi tiệm giặt rồi mà. Anh lấy giúp nhé?)\n여자: 괜찮아요. 그냥 내가 가서 찾아올게요. (Không sao. Em tự đi lấy.)\n남자: 그럼 들어올 때 우편물도 좀 갖다 줘요. (Vậy lúc về lấy giúp anh thư nhé.)\n① Áo đã gửi từ thứ Hai.\n② Áo đã mua rồi.\n④ Lấy thư là việc làm lúc về, sau khi đến tiệm giặt."
+        },
+        {
+          "no": 10,
+          "points": 2,
+          "answer": 1,
+          "layout": 2,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "html": "안내 책자를 꺼낸다."
+            },
+            {
+              "html": "안내 책자를 받는다."
+            },
+            {
+              "html": "거래처 직원을 만난다."
+            },
+            {
+              "html": "상자를 책상 밑에 둔다."
+            }
+          ],
+          "audio": [
+            332,
+            376.5
+          ],
+          "replay": [
+            331.8,
+            366.4
+          ],
+          "explanation": "Đáp án ① 안내 책자를 꺼낸다. (Lấy tài liệu hướng dẫn ra.)\nLời nghe:\n여자: 여보세요? 민수 씨, 옆 사무실에서 안내 책자 받으러 왔는데요. (Alô? Anh Minsu, tôi sang lấy tài liệu hướng dẫn ở văn phòng bên cạnh.)\n남자: 아, 네. 제가 밖에서 거래처 직원을 만나고 있어서요. 미안하지만 수미 씨가 상자에서 좀 꺼내서 주시겠어요? (À vâng. Tôi đang ở ngoài gặp nhân viên đối tác. Xin lỗi, chị Sumi lấy giúp từ trong hộp được không?)\n여자: 네, 그럴게요. 그런데 상자는 어디에 있어요? (Vâng. Nhưng hộp ở đâu?)\n남자: 제 책상 밑에 뒀어요. (Tôi để dưới bàn.)\n② Chị tự lấy, không có ai đưa.\n③ Người gặp đối tác là người nam.\n④ Hộp đã ở dưới bàn sẵn."
+        },
+        {
+          "no": 11,
+          "points": 2,
+          "answer": 2,
+          "layout": 2,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "html": "전등을 산다."
+            },
+            {
+              "html": "전등을 찾는다."
+            },
+            {
+              "html": "전등을 바꾼다."
+            },
+            {
+              "html": "전등을 가져온다."
+            }
+          ],
+          "audio": [
+            376.5,
+            410
+          ],
+          "replay": [
+            376.4,
+            400
+          ],
+          "explanation": "Đáp án ② 전등을 찾는다. (Tìm bóng đèn.)\nLời nghe:\n여자: 여보, 욕실 전등을 좀 바꿔야겠어요. (Anh ơi, phải thay bóng đèn phòng tắm rồi.)\n남자: 그래요? 집에 전등 사다 놓은 거 있으면 가져와 봐요. (Vậy à? Nhà có bóng mua sẵn thì mang ra đây.)\n여자: 잠깐만요. 어디 있는지 찾아볼게요. (Chờ chút. Để em tìm xem ở đâu.)\n남자: 없으면 말해요. 내가 사러 갈게요. (Không có thì nói, anh đi mua.)\n① Người đi mua (nếu không có) là người nam.\n③ ④ Phải tìm được bóng trước đã."
+        },
+        {
+          "no": 12,
+          "points": 2,
+          "answer": 3,
+          "layout": 2,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "html": "현황을 확인한다."
+            },
+            {
+              "html": "부장님께 보고한다."
+            },
+            {
+              "html": "인사과에 연락한다."
+            },
+            {
+              "html": "지원자 명단을 본다."
+            }
+          ],
+          "audio": [
+            410,
+            457.3
+          ],
+          "replay": [
+            409.8,
+            447.1
+          ],
+          "explanation": "Đáp án ③ 인사과에 연락한다. (Liên lạc với phòng nhân sự.)\nLời nghe:\n여자: 과장님, 여기 해외 파견 근무 지원자 명단입니다. 한번 보시겠어요? (Trưởng phòng, đây là danh sách người đăng ký đi công tác nước ngoài. Anh xem qua nhé?)\n남자: 아, 네. 이번에는 지원 현황이 어떻게 되지요? (À vâng. Lần này tình hình đăng ký thế nào?)\n여자: 확인해 봤는데 생각보다 지원자가 적습니다. (Tôi đã xem, số người đăng ký ít hơn dự kiến.)\n남자: 그거 큰일이군요. 그럼 인사과에 연락해서 추가 지원을 받을 수 있는지 알아보세요. 전 부장님께 말씀드릴게요. (Gay nhỉ. Vậy chị liên lạc phòng nhân sự xem có nhận thêm đăng ký được không. Tôi sẽ báo trưởng ban.)\n① Chị đã xem tình hình rồi.\n② Người báo trưởng ban là người nam.\n④ Người xem danh sách là người nam."
+        },
+        {
+          "no": 13,
+          "points": 2,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "html": "남자는 모임에 참석했다."
+            },
+            {
+              "html": "여자는 교통사고를 당했다."
+            },
+            {
+              "html": "여자는 어제 모임에 안 갔다."
+            },
+            {
+              "html": "남자는 얼마 전에 자동차를 샀다."
+            }
+          ],
+          "audio": [
+            457.3,
+            512.5
+          ],
+          "replay": [
+            457.3,
+            502.9
+          ],
+          "explanation": "Đáp án ④ 남자는 얼마 전에 자동차를 샀다. (Người nam mới mua ô tô cách đây không lâu.)\nLời nghe:\n여자: 어제 모임에 왜 안 왔어? 연락도 없어서 궁금했잖아. (Hôm qua sao không đến buổi gặp? Không liên lạc gì, tớ lo đấy.)\n남자: 응, 어제 가벼운 교통사고가 나서 처리하느라 시간이 오래 걸렸거든. (Ừ, hôm qua tớ bị va chạm nhẹ, giải quyết mất nhiều thời gian.)\n여자: 정말? 자동차 산 지 얼마 안 됐는데 속상하겠다. 어디 다친 데는 없고? (Thật à? Mới mua xe chưa lâu, chắc buồn lắm. Có bị thương đâu không?)\n남자: 응. 다행히 다친 데는 없어. (Không. May là không bị thương.)\n① Sai: anh không đến buổi gặp.\n② Sai: người gặp tai nạn là người nam.\n③ Sai: chị đã đến buổi gặp."
+        },
+        {
+          "no": 14,
+          "points": 2,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "html": "이 세일 행사는 어제부터 시작했다."
+            },
+            {
+              "html": "모든 고객에게 양말을 선물로 준다."
+            },
+            {
+              "html": "선물을 받으려면 행사장으로 가야 한다."
+            },
+            {
+              "html": "행사장에 가면 청바지를 만 원에 살 수 있다."
+            }
+          ],
+          "audio": [
+            512.5,
+            572.7
+          ],
+          "replay": [
+            512.4,
+            561.1
+          ],
+          "explanation": "Đáp án ④ 행사장에 가면 청바지를 만 원에 살 수 있다. (Đến khu sự kiện có thể mua quần jeans giá 10.000 won.)\nLời nghe (người nữ thông báo):\n(딩동댕) 고객님들께 쇼핑 안내드립니다. 행사장에서는 청바지를 만 원에 세일하고 있습니다. 이 행사는 오늘 하루만 진행되니 고객 여러분들의 많은 관심 부탁드립니다. 또한 오늘 저희 쇼핑몰에서 5만 원 이상 구매하신 분들께는 양말을 드립니다. 영수증을 가지고 고객센터로 오십시오. 그럼 즐거운 쇼핑하시기 바랍니다. 감사합니다. (딩동댕)\n(Thông báo mua sắm đến quý khách. Khu sự kiện đang giảm giá quần jeans còn 10.000 won. Chương trình chỉ diễn ra hôm nay. Ngoài ra, khách mua từ 50.000 won trở lên hôm nay sẽ được tặng tất; xin mang hóa đơn đến trung tâm chăm sóc khách hàng. Chúc quý khách mua sắm vui vẻ.)\n① Sai: chương trình chỉ diễn ra hôm nay.\n② Sai: chỉ khách mua từ 50.000 won trở lên mới được tặng tất.\n③ Sai: nhận quà ở trung tâm chăm sóc khách hàng."
+        },
+        {
+          "no": 15,
+          "points": 2,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "html": "비는 오늘 밤에 그칠 것이다."
+            },
+            {
+              "html": "제주 지역에는 눈이 내릴 것이다."
+            },
+            {
+              "html": "모레는 기온이 떨어져 추워질 것이다."
+            },
+            {
+              "html": "내일 낮부터 전국적으로 비가 올 것이다."
+            }
+          ],
+          "audio": [
+            572.7,
+            617
+          ],
+          "replay": [
+            572.5,
+            607.2
+          ],
+          "explanation": "Đáp án ③ 모레는 기온이 떨어져 추워질 것이다. (Ngày kia nhiệt độ giảm, trời sẽ lạnh.)\nLời nghe (bản tin thời tiết):\n날씨 소식입니다. 현재 전국에 비가 내리고 제주도에는 폭우가 쏟아지고 있는데요. 이 비는 내일 아침에 대부분 그치겠고, 낮부터는 점차 맑아지겠습니다. 모레 아침에는 꽃샘추위가 찾아와 전국이 일시적으로 영하의 날씨를 보이겠는데요. 외출하실 때 따뜻하게 입으시는 것이 좋겠습니다.\n(Hiện cả nước đang mưa, đảo Jeju mưa lớn. Mưa sẽ tạnh phần lớn vào sáng mai, từ trưa trời dần quang. Sáng ngày kia có đợt rét nàng Bân, cả nước tạm thời xuống dưới 0 độ. Ra ngoài nên mặc ấm.)\n① Sai: mưa tạnh vào sáng mai.\n② Sai: Jeju đang mưa lớn, không nói tuyết.\n④ Sai: từ trưa mai trời quang dần."
+        },
+        {
+          "no": 16,
+          "points": 2,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "html": "여자는 한 달 전에 다리를 다쳤다."
+            },
+            {
+              "html": "여자는 운동을 시작한 지 1 년이 됐다."
+            },
+            {
+              "html": "여자는 지금 다른 나라에서 선수 생활을 한다."
+            },
+            {
+              "html": "여자는 처음에 팀 동료들과 사이가 안 좋았다."
+            }
+          ],
+          "audio": [
+            617,
+            667.7
+          ],
+          "replay": [
+            616.8,
+            657.5
+          ],
+          "explanation": "Đáp án ③ 여자는 지금 다른 나라에서 선수 생활을 한다. (Người nữ đang thi đấu ở nước ngoài.)\nLời nghe:\n남자: 국내 배구 선수로는 처음으로 해외 무대에 진출한 김미경 선수 나와 계시는데요. 지난 1년 어떠셨는지 말씀 좀 해 주시죠. (Hôm nay có vận động viên Kim Mi-gyeong, VĐV bóng chuyền đầu tiên của Hàn Quốc ra thi đấu nước ngoài. Chị kể về một năm qua nhé.)\n여자: 처음에 말이 잘 안 통해서 힘들었는데요. 팀 동료들이 잘 챙겨 줘서 금방 적응할 수 있었습니다. 초반에 다리 부상으로 한 달간 경기에 못 나갔을 때 많이 답답했는데요. 복귀 후에는 팀이 우승하는 데 조금이나마 힘이 된 것 같아 기뻤습니다. (Lúc đầu không hiểu ngôn ngữ nên vất vả, nhưng đồng đội chăm sóc nên tôi thích nghi nhanh. Đầu mùa bị chấn thương chân, nghỉ một tháng nên rất bức bối. Trở lại, góp chút sức cho đội vô địch, tôi rất vui.)\n① Sai: bị chấn thương lúc đầu mùa, không phải một tháng trước.\n② Sai: một năm là thời gian thi đấu ở nước ngoài.\n④ Sai: đồng đội chăm sóc chị rất tốt."
+        },
+        {
+          "no": 17,
+          "points": 2,
+          "answer": 2,
+          "layout": 1,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "html": "결혼식을 하는 데 너무 많은 돈을 쓰면 안 된다."
+            },
+            {
+              "html": "결혼은 많은 사람들의 축하를 받으면서 해야 한다."
+            },
+            {
+              "html": "결혼식 장소는 사람들이 찾아오기 편한 곳이 좋다."
+            },
+            {
+              "html": "결혼을 결정할 때 가족들의 의견을 고려해야 한다."
+            }
+          ],
+          "audio": [
+            667.7,
+            737.1
+          ],
+          "replay": [
+            667.7,
+            727.4
+          ],
+          "explanation": "Đáp án ② 결혼은 많은 사람들의 축하를 받으면서 해야 한다. (Đám cưới nên được nhiều người chúc mừng.)\nLời nghe:\n남자: 내 친구 민수 알지? 다음 달에 결혼하는데 가족들하고 친한 친구들 몇 명만 부른다고 하더라고. 결혼식은 사람들을 많이 초대하는 게 좋은 거 아냐? (Biết Minsu bạn tớ chứ? Tháng sau cưới mà chỉ mời gia đình với vài bạn thân. Đám cưới mời nhiều người chẳng tốt hơn à?)\n여자: 아니. 정말 가까운 사람들만 초대하는 거, 나는 좋은 것 같은데. 비용 부담도 적을 거고. 요즘 그런 작은 결혼식이 유행이거든. (Không. Chỉ mời người thật thân, tớ thấy hay. Chi phí cũng nhẹ. Dạo này đám cưới nhỏ đang thịnh hành.)\n남자: 그래도 평생에 한 번뿐인 결혼식인데 너무 작게 하면 서운할 것 같아. (Nhưng cả đời có một lần, làm nhỏ quá thì tiếc.)\n① Chi phí là ý của người nữ.\n③ ④ Không được nhắc tới."
+        },
+        {
+          "no": 18,
+          "points": 2,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "html": "회사 일은 회사에서 끝내야 한다."
+            },
+            {
+              "html": "소비자들의 의견을 잘 들어야 한다."
+            },
+            {
+              "html": "일을 같이 하는 사람들과 잘 지내야 한다."
+            },
+            {
+              "html": "발표 내용은 짧고 분명하게 하는 것이 좋다."
+            }
+          ],
+          "audio": [
+            737.1,
+            782.3
+          ],
+          "replay": [
+            737,
+            772.7
+          ],
+          "explanation": "Đáp án ④ 발표 내용은 짧고 분명하게 하는 것이 좋다. (Nội dung thuyết trình nên ngắn gọn, rõ ràng.)\nLời nghe:\n남자: 수미 씨, 내일 신제품 발표 자료는 다 만들었지요? (Chị Sumi, làm xong tài liệu thuyết trình sản phẩm mới cho ngày mai chưa?)\n여자: 네, 여기 있습니다. 지난번에 말씀해 주신 부분 보충해서 준비했습니다. 과장님께서 먼저 한번 봐 주시겠어요? (Rồi ạ. Tôi đã bổ sung phần anh góp ý lần trước. Anh xem qua giúp nhé?)\n남자: 음, 내용이 너무 길고 복잡하네요. 제품의 특징을 짧지만 명확하게 소개해야 소비자들이 제품을 잘 이해할 수 있어요. (Ừm, dài và rối quá. Phải giới thiệu đặc điểm sản phẩm ngắn mà rõ thì người tiêu dùng mới hiểu.)\n① ② ③ Không phải ý của người nam."
+        },
+        {
+          "no": 19,
+          "points": 2,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "html": "물건은 마트에서 사는 것이 싸다."
+            },
+            {
+              "html": "물건은 조금씩 사면 돈이 더 든다."
+            },
+            {
+              "html": "물건은 가격이 쌀 때 사 두어야 한다."
+            },
+            {
+              "html": "물건은 필요할 때 조금씩 사는 게 좋다."
+            }
+          ],
+          "audio": [
+            782.3,
+            836.1
+          ],
+          "replay": [
+            782.2,
+            826.5
+          ],
+          "explanation": "Đáp án ④ 물건은 필요할 때 조금씩 사는 게 좋다. (Nên mua từng ít một khi cần.)\nLời nghe:\n여자: 어, 이 빵 지금 할인하네. 7개 묶어서 만 원밖에 안 하잖아. 우리도 사자. (Ơ, bánh này đang giảm giá. 7 cái chỉ 10.000 won. Mình mua đi.)\n남자: 글쎄, 나는 마트에서 이렇게 파는 게 정말 싼 건지 잘 모르겠어. (Chà, anh không chắc bán kiểu này ở siêu thị có thật rẻ không.)\n여자: 왜? 한 개씩 사면 비싼데 이럴 때 사면 싸게 살 수 있잖아. (Sao vậy? Mua lẻ thì đắt, lúc này mua thì rẻ mà.)\n남자: 지난번에도 묶음으로 샀다가 다 못 먹고 반이나 버렸잖아. 그냥 먹고 싶을 때 조금씩 사서 먹는 게 오히려 돈을 아끼는 거라고. (Lần trước mua cả lố, ăn không hết, vứt mất nửa. Muốn ăn thì mua ít một, thế mới đỡ tốn.)\n① ③ Là ý của người nữ.\n② Ngược với ý người nam."
+        },
+        {
+          "no": 20,
+          "points": 2,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": ""
+          },
+          "options": [
+            {
+              "html": "노래를 하는 사람은 정기적으로 앨범을 내야 한다."
+            },
+            {
+              "html": "음악을 만들 때는 여러 악기를 사용하는 것이 좋다."
+            },
+            {
+              "html": "악기 없이 가수의 목소리만으로도 아름다운 음악이 된다."
+            },
+            {
+              "html": "혼자 노래하는 것보다 여럿이 모여 노래하는 것이 좋다."
+            }
+          ],
+          "audio": [
+            836.1,
+            886.7
+          ],
+          "replay": [
+            835.9,
+            876.5
+          ],
+          "explanation": "Đáp án ③ 악기 없이 가수의 목소리만으로도 아름다운 음악이 된다. (Không cần nhạc cụ, chỉ giọng ca sĩ cũng thành âm nhạc đẹp.)\nLời nghe:\n여자: 이번 정규 앨범의 곡들 중 악기 없이 목소리만으로 노래한 곡들이 주목을 받고 있는데요. 이렇게 만드신 특별한 이유가 있나요? (Trong album lần này, những bài hát chỉ bằng giọng, không nhạc cụ, đang được chú ý. Có lý do đặc biệt nào không?)\n남자: 다양한 악기도 좋지만 저는 가수가 가진 목소리가 최고의 악기라고 생각합니다. 저희 4명만 모이면 악기가 없어도 말씀하신 곡들을 언제 어디서나 사람들에게 들려 줄 수 있는데요. 저는 이렇게 가수들의 목소리만으로도 아름다운 음악을 만들 수 있다고 생각합니다. (Nhạc cụ đa dạng cũng hay, nhưng tôi nghĩ giọng hát là nhạc cụ tuyệt nhất. Chỉ cần bốn chúng tôi là hát được những bài đó ở bất cứ đâu. Tôi nghĩ chỉ bằng giọng ca sĩ cũng làm được âm nhạc đẹp.)\n① ② ④ Không phải ý chính của anh."
+        },
+        {
+          "no": 21,
+          "points": 2,
+          "answer": 1,
+          "layout": 1,
+          "prompt": {
+            "html": "남자의 중심 생각으로 알맞는 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "우산이 홍보에 더 효과적이다."
+            },
+            {
+              "html": "우산을 만들 때 색깔이 중요하다."
+            },
+            {
+              "html": "수첩에 학교 이름이 들어가야 한다."
+            },
+            {
+              "html": "수첩에 메모하는 습관을 길러야 한다."
+            }
+          ],
+          "audio": [
+            886.7,
+            1024.8
+          ],
+          "replay": [
+            886.7,
+            1014.6
+          ],
+          "explanation": "Đáp án ① 우산이 홍보에 더 효과적이다. (Ô quảng bá hiệu quả hơn.)\nLời nghe:\n여자: 김 선생님, 올해 학교 홍보 용품은 뭐가 좋을까요? 작년처럼 우리 학교 이름이 들어간 수첩으로 할까요? (Thầy Kim, năm nay đồ quảng bá của trường làm gì thì tốt? Làm sổ tay có tên trường như năm ngoái nhé?)\n남자: 글쎄요. 수첩은 학생들이 잘 사용하지 않아서 학교 홍보에 효과가 없는 것 같아요. 작년에 학생들 반응도 별로였고요. 이번에는 우산이 어떨까요? 우산은 자주 사용하는 거니까 우산에 학교 이름을 새기면 학교를 알리는 데 좋을 거예요. (Chà. Học sinh ít dùng sổ tay nên quảng bá không hiệu quả. Năm ngoái học sinh cũng không hào hứng. Lần này làm ô thì sao? Ô dùng thường xuyên, in tên trường lên ô thì quảng bá tốt.)\n여자: 네, 알겠습니다. 그런데 무슨 색깔로 하는 게 좋을까요? (Vâng. Vậy màu gì thì hay?)\n남자: 글쎄요. 그건 다음에 다른 선생님들과 같이 결정하도록 하죠. (Chuyện đó để lần sau quyết cùng các thầy cô khác.)\n② Màu để quyết sau, không phải ý chính.\n③ ④ Ngược lại — anh cho rằng sổ tay không hiệu quả."
+        },
+        {
+          "no": 22,
+          "points": 2,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": "들은 내용으로 맞는 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "올해 처음으로 홍보 용품을 만들었다."
+            },
+            {
+              "html": "홍보 용품으로 수첩을 제작할 예정이다."
+            },
+            {
+              "html": "여자는 남자에게 홍보 용품을 보여 줬다."
+            },
+            {
+              "html": "홍보 용품의 색깔은 다음에 정하기로 했다."
+            }
+          ],
+          "audio": [
+            1024.8,
+            1035.8
+          ],
+          "replay": [
+            1024.6,
+            1026.4
+          ],
+          "explanation": "Đáp án ④ 홍보 용품의 색깔은 다음에 정하기로 했다. (Màu của đồ quảng bá sẽ quyết sau.)\n그건 다음에 다른 선생님들과 같이 결정하도록 하죠.\n① Sai: năm ngoái đã làm sổ tay.\n② Sai: lần này định làm ô.\n③ Không có chuyện cho xem đồ quảng bá."
+        },
+        {
+          "no": 23,
+          "points": 2,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": "남자는 무엇을 하고 있는지 고르십시오."
+          },
+          "options": [
+            {
+              "html": "박물관 관람 예약을 하고 있다."
+            },
+            {
+              "html": "박물관의 위치를 안내하고 있다."
+            },
+            {
+              "html": "박물관 이용에 대해 문의하고 있다."
+            },
+            {
+              "html": "박물에 사전 예약을 확인하고 있다."
+            }
+          ],
+          "audio": [
+            1035.8,
+            1160.8
+          ],
+          "replay": [
+            1035.8,
+            1150.8
+          ],
+          "explanation": "Đáp án ③ 박물관 이용에 대해 문의하고 있다. (Đang hỏi về việc sử dụng bảo tàng.)\nLời nghe:\n남자: 여보세요. 어린이박물관이죠? 오늘 2시 표 예매했는데요. 혹시 일찍 도착하면 1시에도 들어갈 수 있는지 해서요. (Alô, Bảo tàng Thiếu nhi phải không? Tôi đã đặt vé 2 giờ hôm nay. Nếu đến sớm thì 1 giờ vào được không?)\n여자: 네, 안녕하세요? 그러시면 입구에서 2시 관람권은 환불 받으시고 1시 관람권을 새로 사시면 됩니다. (Xin chào. Vậy anh hoàn vé 2 giờ ở cổng rồi mua vé 1 giờ mới là được.)\n남자: 네, 알겠습니다. 그런데 혹시 박물관 안에 식사가 가능한 곳이 있나요? (Vâng. Trong bảo tàng có chỗ ăn uống không?)\n여자: 따로 식당은 마련되어 있지 않습니다. 대신 3층에 가족 쉼터가 있는데요. 거기에서 준비해 오신 음식을 드실 수 있습니다. (Không có nhà hàng riêng. Nhưng tầng 3 có khu nghỉ cho gia đình, có thể ăn đồ mang theo ở đó.)\n① Anh đã đặt vé rồi.\n② Người hỏi là anh, không phải hướng dẫn.\n④ Anh không xác nhận đặt chỗ mà hỏi đổi giờ và chỗ ăn."
+        },
+        {
+          "no": 24,
+          "points": 2,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": "들은 내용으로 맞는 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "이 박물관의 관람권은 환불 받을 수 없다."
+            },
+            {
+              "html": "이 박물관에는 음식을 가지고 들어갈 수 없다."
+            },
+            {
+              "html": "이 박물관은 표를 예매하지 않아도 이용이 가능하다."
+            },
+            {
+              "html": "이 박물관에서는 자체적으로 식당을 운영하고 있다."
+            }
+          ],
+          "audio": [
+            1160.8,
+            1172.8
+          ],
+          "replay": [
+            1160.7,
+            1162.7
+          ],
+          "explanation": "Đáp án ③ 이 박물관은 표를 예매하지 않아도 이용이 가능하다. (Không đặt vé trước vẫn vào được bảo tàng này.)\n1시 관람권을 새로 사시면 됩니다 → mua vé ngay tại cổng được.\n① Sai: vé hoàn được (환불 받으시고).\n② Sai: mang đồ ăn vào ăn ở tầng 3 được.\n④ Sai: bảo tàng không có nhà hàng riêng."
+        },
+        {
+          "no": 25,
+          "points": 2,
+          "answer": 2,
+          "layout": 1,
+          "prompt": {
+            "html": "남자의 중심 생각으로 알맞은 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "기업은 시민 영웅을 채용해야 한다."
+            },
+            {
+              "html": "기업은 사회에 도움이 되는 일에 앞장서야 한다."
+            },
+            {
+              "html": "시민 영웅은 사회를 위해 자신을 희생해야 한다."
+            },
+            {
+              "html": "언론은 숨어 있는 시민 영웅을 찾아 알려야 한다."
+            }
+          ],
+          "audio": [
+            1172.8,
+            1356.7
+          ],
+          "replay": [
+            1172.8,
+            1346.9
+          ],
+          "explanation": "Đáp án ② 기업은 사회에 도움이 되는 일에 앞장서야 한다. (Doanh nghiệp nên đi đầu trong việc giúp ích cho xã hội.)\nLời nghe:\n여자: 사장님께서는 어려운 이웃을 돕고 가난한 학생들을 지원하는 등 훌륭한 일을 많이 하고 계시는데요. 최근에는 '시민 영웅상'을 만드셨다고 들었습니다. 그게 어떤 상인가요? (Giám đốc làm nhiều việc tốt như giúp hàng xóm khó khăn, hỗ trợ học sinh nghèo. Nghe nói gần đây ông lập giải \"Anh hùng công dân\". Đó là giải gì?)\n남자: 네, 우리 주변에는 알려지지 않았지만 사회에 모범이 되는 분들이 있는데요. 그런 분들을 찾아서 상을 드리는 것입니다. … 그동안 총 31명의 시민 영웅을 찾아 상장과 상금을 드렸는데요. … 화재 현장에서 아이를 구조한 대학생 수상자도 있었는데 졸업 후에 저희가 채용하기도 했습니다. 이렇게 사회로부터 받은 이익을 다시 사회로 돌려주는 것이 기업의 책임이라고 생각합니다. (Quanh ta có những người không được biết đến nhưng là tấm gương cho xã hội; chúng tôi tìm họ để trao giải. … Đến nay đã trao bằng khen và tiền thưởng cho 31 người. … Có sinh viên đã cứu em bé trong đám cháy, tốt nghiệp xong chúng tôi tuyển vào làm. Tôi nghĩ đem lợi ích nhận từ xã hội trả lại cho xã hội là trách nhiệm của doanh nghiệp.)\n① Tuyển người đoạt giải chỉ là một ví dụ.\n③ ④ Không phải ý của ông."
+        },
+        {
+          "no": 26,
+          "points": 2,
+          "answer": 1,
+          "layout": 1,
+          "prompt": {
+            "html": "들은 내용으로 맞는 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "이 기업에 입사한 수상자가 있다."
+            },
+            {
+              "html": "이 상은 시상식을 따로 하지 않는다."
+            },
+            {
+              "html": "이 남자는 최근에 시민 영웅상을 받았다."
+            },
+            {
+              "html": "이 상은 시민들이 기부금을 모아 만들었다."
+            }
+          ],
+          "audio": [
+            1356.7,
+            1369.2
+          ],
+          "replay": [
+            1356.5,
+            1358.6
+          ],
+          "explanation": "Đáp án ① 이 기업에 입사한 수상자가 있다. (Có người đoạt giải đã vào làm ở công ty này.)\n졸업 후에 저희가 채용하기도 했습니다.\n② Sai: có lễ trao giải, chỉ là không công khai với báo chí nếu người nhận không muốn.\n③ Sai: ông là người lập ra giải này.\n④ Sai: giải do doanh nghiệp lập, không phải người dân quyên góp."
+        },
+        {
+          "no": 27,
+          "points": 2,
+          "answer": 2,
+          "layout": 1,
+          "prompt": {
+            "html": "남자가 여자에게 말하는 의도를 고르십시오."
+          },
+          "options": [
+            {
+              "html": "임시 공휴일을 지정하게 된 이유를 알려 주기 위해"
+            },
+            {
+              "html": "임시 공휴일에 못 쉬는 것에 대한 불만을 제기하기 위해"
+            },
+            {
+              "html": "임시 공휴일이 회사 운영에 미치는 영향을 파악하기 위해"
+            },
+            {
+              "html": "임시 공휴일 지정으로 얻을 수 있는 효과를 강조하기 위해"
+            }
+          ],
+          "audio": [
+            1369.2,
+            1494.2
+          ],
+          "replay": [
+            1369.2,
+            1484
+          ],
+          "explanation": "Đáp án ② 임시 공휴일에 못 쉬는 것에 대한 불만을 제기하기 위해 (để bày tỏ bất mãn vì không được nghỉ ngày lễ tạm thời).\nLời nghe:\n남자: 뉴스를 보니까 정부에서 다음 달 6일을 임시 공휴일로 지정했다던데. (Thấy tin nói chính phủ chọn ngày 6 tháng sau làm ngày nghỉ lễ tạm thời.)\n여자: 그래? 5일하고 7일이 쉬는 날이라서 그런 모양이구나. 그날 쉬는 사람들은 좋겠다. 지난번 임시 공휴일에도 놀러 가는 사람이 많았대. (Vậy à? Chắc vì ngày 5 với 7 là ngày nghỉ. Ai được nghỉ thì sướng. Lần nghỉ tạm thời trước nhiều người đi chơi lắm.)\n남자: 우리 회사도 쉬면 좋을 텐데. 임시 공휴일에는 우리도 쉬어야 하는 거 아냐? (Công ty mình cũng được nghỉ thì tốt. Ngày nghỉ tạm thời thì mình cũng phải được nghỉ chứ?)\n여자: 맞아. 그날 회사에 나와야 하는데 아이 유치원이 쉬니까 당장 아이 맡길 데를 알아봐야 해. (Đúng vậy. Hôm đó phải đi làm mà trường mẫu giáo của con lại nghỉ, phải tìm chỗ gửi con ngay.)\n남자: 우리처럼 못 쉬는 사람한테는 임시 공휴일이 별 소용이 없는 것 같아. (Với người không được nghỉ như mình thì ngày nghỉ tạm thời chẳng có ích gì.)\n① ③ ④ Không phải ý của người nam."
+        },
+        {
+          "no": 28,
+          "points": 2,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": "들은 내용으로 맞는 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "유치원은 임시 공휴일에 쉬지 않는다."
+            },
+            {
+              "html": "남자는 임시 공휴일에 여행을 가려고 한다."
+            },
+            {
+              "html": "여자는 아이를 맡길 곳이 없어서 걱정하고 있다."
+            },
+            {
+              "html": "정부는 이번에 처음으로 임시 공휴일을 지정했다."
+            }
+          ],
+          "audio": [
+            1494.2,
+            1506.2
+          ],
+          "replay": [
+            1494.1,
+            1496
+          ],
+          "explanation": "Đáp án ③ 여자는 아이를 맡길 곳이 없어서 걱정하고 있다. (Người nữ lo vì không có chỗ gửi con.)\n당장 아이 맡길 데를 알아봐야 해.\n① Sai: trường mẫu giáo nghỉ hôm đó.\n② Sai: anh phải đi làm.\n④ Sai: trước đây đã có ngày nghỉ tạm thời (지난번 임시 공휴일)."
+        },
+        {
+          "no": 29,
+          "points": 2,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": "남자는 누구인지 맞는 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "식물의 향기를 분석하는 사람"
+            },
+            {
+              "html": "문제가 생긴 식물을 관리하는 사람"
+            },
+            {
+              "html": "식물의 재배 방법을 연구하는 사람"
+            },
+            {
+              "html": "식물을 활용해 사람들을 치료하는 사람"
+            }
+          ],
+          "audio": [
+            1506.2,
+            1694.5
+          ],
+          "replay": [
+            1506.2,
+            1684.1
+          ],
+          "explanation": "$34"
+        },
+        {
+          "no": 30,
+          "points": 2,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": "들은 내용으로 맞는 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "남자는 식물의 향기를 이용해 약을 만든다."
+            },
+            {
+              "html": "정원에서 재배하는 식물은 판매하지 않는다."
+            },
+            {
+              "html": "남자는 환자들에게 정원 가꾸는 법을 배웠다."
+            },
+            {
+              "html": "식물을 재배하는 활동은 운동 능력을 향상시킨다."
+            }
+          ],
+          "audio": [
+            1694.5,
+            1706.5
+          ],
+          "replay": [
+            1694.4,
+            1696
+          ],
+          "explanation": "Đáp án ④ 식물을 재배하는 활동은 운동 능력을 향상시킨다. (Hoạt động trồng cây cải thiện khả năng vận động.)\n이런 크고 작은 신체 활동은 운동 능력을 향상시킬 수 있어요.\n① Sai: ông không dùng thuốc (약을 사용하지 않고).\n② Sai: có bán cây trồng trong vườn.\n③ Sai: ông là người dạy bệnh nhân làm vườn."
+        },
+        {
+          "no": 31,
+          "points": 2,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": "남자의 생각으로 알맞은 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "유동 인구가 많은 곳에 매장을 만들어야 한다."
+            },
+            {
+              "html": "매장의 임대료가 매년 상승하는 것은 바람직하지 않다."
+            },
+            {
+              "html": "지역에 따라 동일 제품의 가격이 다른 것은 불합리하다."
+            },
+            {
+              "html": "매장의 관리 비용을 고려하여 커피 값을 책정해야 한다."
+            }
+          ],
+          "audio": [
+            1706.5,
+            1849.5
+          ],
+          "replay": [
+            1706.5,
+            1839
+          ],
+          "explanation": "Đáp án ③ 지역에 따라 동일 제품의 가격이 다른 것은 불합리하다. (Cùng một sản phẩm mà giá khác nhau theo vùng là vô lý.)\nLời nghe:\n남자: 같은 커피 전문점의 커피가 지역별로 가격이 다른 것에 소비자들이 불만을 표하고 있습니다. 동일한 재료와 방법으로 만드는데 왜 가격이 다른지 이해할 수가 없습니다. (Người tiêu dùng bất bình vì cà phê của cùng một chuỗi lại khác giá theo vùng. Cùng nguyên liệu, cùng cách pha, sao giá lại khác — tôi không hiểu được.)\n여자: 커피 값은 임대료 등 매장의 여건에 따라 가격이 다를 수 있다고 생각합니다. (Tôi nghĩ giá có thể khác tùy điều kiện cửa hàng như tiền thuê mặt bằng.)\n남자: 그렇다면 임대료가 낮은 지역의 커피 값이 비싼 이유는 뭡니까? (Vậy sao ở vùng tiền thuê thấp cà phê lại đắt?)\n여자: 임대료만이 커피 값의 가장 중요한 기준이 되는 건 아닙니다. 시설이나 관리 비용 등 다양한 요인이 있는 거지요. … (Tiền thuê không phải tiêu chí duy nhất. Còn nhiều yếu tố như cơ sở vật chất, chi phí quản lý…)\n① ② Không được nhắc tới.\n④ Là ý của người nữ."
+        },
+        {
+          "no": 32,
+          "points": 2,
+          "answer": 1,
+          "layout": 1,
+          "prompt": {
+            "html": "남자의 태도로 알맞은 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "현재의 상황을 비판하고 있다."
+            },
+            {
+              "html": "자신의 주장을 합리화하고 있다."
+            },
+            {
+              "html": "문제에 대한 해결책을 제시하고 있다."
+            },
+            {
+              "html": "상대방의 의견을 긍정적으로 평가하고 있다."
+            }
+          ],
+          "audio": [
+            1849.5,
+            1862.1
+          ],
+          "replay": [
+            1849.4,
+            1851.2
+          ],
+          "explanation": "Đáp án ① 현재의 상황을 비판하고 있다. (Đang phê phán tình trạng hiện nay.)\nNgười nam nêu bất bình của người tiêu dùng, nói \"không hiểu được\" và chất vấn lại lời giải thích của người nữ → phê phán việc giá khác nhau theo vùng.\n② Anh không biện minh cho mình.\n③ Anh không đưa ra giải pháp.\n④ Anh phản bác chứ không khen ý người nữ."
+        },
+        {
+          "no": 33,
+          "points": 2,
+          "answer": 1,
+          "layout": 1,
+          "prompt": {
+            "html": "무엇에 대한 내용인지 맞는 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "지명이 만들어진 배경"
+            },
+            {
+              "html": "지명을 연구하는 이유"
+            },
+            {
+              "html": "지명을 분류하는 방법"
+            },
+            {
+              "html": "지명이 변천하는 과정"
+            }
+          ],
+          "audio": [
+            1862.1,
+            2024.5
+          ],
+          "replay": [
+            1862.1,
+            2013.6
+          ],
+          "explanation": "Đáp án ① 지명이 만들어진 배경 (bối cảnh ra đời của địa danh).\n이렇게 지명을 들여다보면 그 마을의 특징을 알 수 있는 경우가 있습니다. = Nhìn vào địa danh, có khi biết được đặc điểm của làng đó.\nNgười nói lấy các ví dụ: 소목 (làng ở chỗ \"cổ con bò\" vì địa hình như con bò nằm), 토끼실 (núi sau làng nhiều thỏ), 땅끝마을 (làng ở cực nam đất liền), 두물머리 (nơi hai dòng sông Hán gặp nhau) — đều giải thích vì sao có tên đó.\n② ③ ④ Không nói lý do nghiên cứu, cách phân loại hay quá trình thay đổi địa danh."
+        },
+        {
+          "no": 34,
+          "points": 2,
+          "answer": 2,
+          "layout": 1,
+          "prompt": {
+            "html": "들은 내용으로 맞는 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "토끼실은 지형이 토끼의 귀 모양을 닮은 곳이다."
+            },
+            {
+              "html": "두물머리는 한강의 물길이 하나로 합쳐지는 곳이다."
+            },
+            {
+              "html": "소목은 소를 많이 키우는 지역에 붙여진 이름이다."
+            },
+            {
+              "html": "땅끝마을은 한국의 가장 남쪽 끝에 있는 섬 이름이다."
+            }
+          ],
+          "audio": [
+            2024.5,
+            2037
+          ],
+          "replay": [
+            2024.4,
+            2026.5
+          ],
+          "explanation": "Đáp án ② 두물머리는 한강의 물길이 하나로 합쳐지는 곳이다. (Dumulmeori là nơi hai dòng sông Hán hợp làm một.)\n그곳은 한강의 두 물길이 하나로 만나는 곳에 위치한 마을이라서 그렇게 불립니다.\n① Sai: 토끼실 vì núi sau làng có nhiều thỏ.\n③ Sai: 소목 vì địa hình giống con bò nằm, làng ở phần cổ.\n④ Sai: 땅끝마을 là làng ở cực nam ĐẤT LIỀN, không phải đảo."
+        },
+        {
+          "no": 35,
+          "points": 2,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": "남자는 무엇을 하고 있는지 고르십시오."
+          },
+          "options": [
+            {
+              "html": "졸업생들의 업적을 소개하고 있다."
+            },
+            {
+              "html": "전문 지식의 습득을 강조하고 있다."
+            },
+            {
+              "html": "인격 함양의 중요성을 당부하고 있다."
+            },
+            {
+              "html": "생명과학의 발전 가능성을 진단하고 있다."
+            }
+          ],
+          "audio": [
+            2037,
+            2232.7
+          ],
+          "replay": [
+            2037,
+            2221.9
+          ],
+          "explanation": "Đáp án ③ 인격 함양의 중요성을 당부하고 있다. (Đang dặn dò về tầm quan trọng của việc rèn luyện nhân cách.)\n저는 훌륭한 인격을 갖추는 것이 전문 지식이나 실력보다 더 중요하다는 말씀을 드리고 싶습니다. = Tôi muốn nói rằng có nhân cách tốt còn quan trọng hơn kiến thức chuyên môn hay năng lực.\n① Thành tích sinh viên tốt nghiệp chỉ được nhắc qua.\n② Ông nói nhân cách quan trọng hơn kiến thức.\n④ Không đánh giá triển vọng ngành khoa học sự sống."
+        },
+        {
+          "no": 36,
+          "points": 2,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": "들은 내용으로 맞는 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "이 학교의 졸업생들은 해외 진출에 어려움을 겪고 있다."
+            },
+            {
+              "html": "이 학교는 앞으로 선후배 간의 교류를 위해 노력할 것이다."
+            },
+            {
+              "html": "이 학교는 과학 분야에서 세계 10위권 진입을 앞두고 있다."
+            },
+            {
+              "html": "이 학교의 학생들은 재학 중에 현장에서 실습할 기회가 있다."
+            }
+          ],
+          "audio": [
+            2232.7,
+            2245.4
+          ],
+          "replay": [
+            2232.5,
+            2234.7
+          ],
+          "explanation": "Đáp án ④ 이 학교의 학생들은 재학 중에 현장에서 실습할 기회가 있다. (Sinh viên trường này có cơ hội thực tập thực tế khi đang học.)\n여러분은 학업과 기업 현장 실습을 병행하며 … = các bạn vừa học vừa thực tập tại doanh nghiệp.\n① Sai: sinh viên tốt nghiệp hoạt động sôi nổi trong và ngoài nước.\n② Không được nhắc tới.\n③ Sai: năm ngoái đã lọt vào top 10 thế giới (작년에 … 진입하는 쾌거를 이뤘습니다)."
+        },
+        {
+          "no": 37,
+          "points": 2,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": "여자의 중심 생각으로 알맞은 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "숙면을 돕는 보조 용품이 다양해져야 한다."
+            },
+            {
+              "html": "수면 장애는 인간의 심리에 영향을 미친다."
+            },
+            {
+              "html": "불면증 치료법 개발에 적극적으로 나서야 한다."
+            },
+            {
+              "html": "수면 장애가 생긴 원인을 파악하는 것이 중요하다."
+            }
+          ],
+          "audio": [
+            2245.4,
+            2405.4
+          ],
+          "replay": [
+            2245.4,
+            2394.6
+          ],
+          "explanation": "Đáp án ④ 수면 장애가 생긴 원인을 파악하는 것이 중요하다. (Quan trọng là tìm ra nguyên nhân gây rối loạn giấc ngủ.)\n무작정 이런 제품을 사용하기보다는 수면 장애가 왜 생겼는지 그 원인을 먼저 생각해 봐야 합니다. = Thay vì cứ dùng sản phẩm đó, trước hết phải nghĩ xem vì sao bị rối loạn giấc ngủ.\n① ③ Không phải ý của bà.\n② Bà nói tâm lý là một nguyên nhân gây rối loạn giấc ngủ, không phải ngược lại."
+        },
+        {
+          "no": 38,
+          "points": 2,
+          "answer": 2,
+          "layout": 1,
+          "prompt": {
+            "html": "들은 내용과 일치하는 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "수면 보조 용품은 심리적인 문제를 해결해 준다."
+            },
+            {
+              "html": "수면 산업의 시장 규모가 빠르게 확대되고 있다."
+            },
+            {
+              "html": "수면 산업은 생활 습관을 바꾸는 것을 목적으로 한다."
+            },
+            {
+              "html": "수면 보조 용품 사용은 장기적인 측면에서 효과가 있다."
+            }
+          ],
+          "audio": [
+            2405.4,
+            2417.9
+          ],
+          "replay": [
+            2405.3,
+            2407.4
+          ],
+          "explanation": "Đáp án ② 수면 산업의 시장 규모가 빠르게 확대되고 있다. (Thị trường ngành giấc ngủ đang mở rộng nhanh.)\n요즘 수면 산업이 빠른 성장세를 보이고 있습니다.\n① Sai: sản phẩm hỗ trợ không giải quyết tận gốc vấn đề.\n③ Không được nhắc tới.\n④ Sai: về lâu dài dựa vào sản phẩm đó là vô nghĩa (장기적으로 봤을 때는 의미가 없습니다)."
+        },
+        {
+          "no": 39,
+          "points": 2,
+          "answer": 1,
+          "layout": 1,
+          "prompt": {
+            "html": "이 담화 앞의 내용으로 알맞은 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "서울시에서 차도를 줄이고 인도를 넓혔다."
+            },
+            {
+              "html": "서울시에서 불법 주차 단속을 강화하고 있다."
+            },
+            {
+              "html": "서울시가 주민 설명회에 소극적으로 임하고 있다."
+            },
+            {
+              "html": "서울시가 일방통행로를 양방향 도로로 변경하기로 했다."
+            }
+          ],
+          "audio": [
+            2417.9,
+            2590.3
+          ],
+          "replay": [
+            2417.9,
+            2579.8
+          ],
+          "explanation": "Đáp án ① 서울시에서 차도를 줄이고 인도를 넓혔다. (Seoul thu hẹp lòng đường và mở rộng vỉa hè.)\nNgười nam mở đầu bằng 앞에서 말씀드린 것과 같이 (như đã nói ở trên) rồi nhắc lại: 2차선이었던 차도를 1차선으로 줄이고 … 인도를 넓히고 → trước đoạn này đã nói Seoul thu hẹp đường xe chạy, mở rộng vỉa hè.\n② ③ ④ Không khớp nội dung."
+        },
+        {
+          "no": 40,
+          "points": 2,
+          "answer": 1,
+          "layout": 1,
+          "prompt": {
+            "html": "들은 내용과 일치하는 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "이 사업으로 차량 흐름이 원활해진 곳이 있다."
+            },
+            {
+              "html": "이 사업의 시행에 반대하는 주민들이 늘고 있다."
+            },
+            {
+              "html": "이 사업은 주차 공간 부족이라는 문제를 남겼다."
+            },
+            {
+              "html": "이 사업에서는 도로의 제한 속도를 낮추는 방안을 검토 중이다."
+            }
+          ],
+          "audio": [
+            2590.3,
+            2602.5
+          ],
+          "replay": [
+            2590.1,
+            2591.8
+          ],
+          "explanation": "Đáp án ① 이 사업으로 차량 흐름이 원활해진 곳이 있다. (Nhờ dự án này có nơi xe cộ lưu thông thông suốt hơn.)\n불법 주차된 차로 인해 막히던 도로 상황도 이를 통해서 크게 나아졌지요.\n② Sai: hiện nay người dân rất hài lòng.\n③ Sai: dự án giải quyết được vấn đề thiếu chỗ đỗ xe.\n④ Sai: đã giảm tốc độ giới hạn rồi, không phải đang xem xét."
+        },
+        {
+          "no": 41,
+          "points": 2,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": "이 강연의 중심 내용으로 맞는 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "방백은 배우의 실력을 판단하는 중요한 요소이다."
+            },
+            {
+              "html": "관객들은 방백보다 배우의 연기에 집중해야 한다."
+            },
+            {
+              "html": "방백은 관객이 등장인물을 이해하는 데 도움이 된다."
+            },
+            {
+              "html": "관객들은 방백의 내용을 파악하려는 노력을 해야 한다."
+            }
+          ],
+          "audio": [
+            2602.5,
+            2791.6
+          ],
+          "replay": [
+            2602.5,
+            2781.1
+          ],
+          "explanation": "Đáp án ③ 방백은 관객이 등장인물을 이해하는 데 도움이 된다. (Lời nói riêng giúp khán giả hiểu nhân vật.)\n방백만큼 등장인물의 숨겨진 심리를 분명하게 보여 주는 것은 없습니다. 그래서 관객은 방백을 통해 등장인물을 더 깊이 이해하게 되죠. = Không gì cho thấy tâm lý ẩn giấu của nhân vật rõ bằng lời nói riêng (방백). Nhờ đó khán giả hiểu nhân vật sâu hơn.\n① ② ④ Không phải nội dung chính."
+        },
+        {
+          "no": 42,
+          "points": 2,
+          "answer": 2,
+          "layout": 1,
+          "prompt": {
+            "html": "들은 내용과 일치하는 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "방백은 관객들의 반응을 유도하기 위해 사용된다."
+            },
+            {
+              "html": "현대극에서는 배우가 방백을 하는 것이 허용된다."
+            },
+            {
+              "html": "19세기 말에는 연극에서 방백이 활발히 활용되었다."
+            },
+            {
+              "html": "방백은 부자연스러워서 로마 시대에는 사용되지 않았다."
+            }
+          ],
+          "audio": [
+            2791.6,
+            2803.9
+          ],
+          "replay": [
+            2791.5,
+            2793.5
+          ],
+          "explanation": "Đáp án ② 현대극에서는 배우가 방백을 하는 것이 허용된다. (Trong kịch hiện đại, diễn viên được dùng lời nói riêng.)\n현대극에서는 필요에 따라 사용되며 …\n① Sai: dùng để cho khán giả biết mạch kịch, ý đồ nhân vật.\n③ Sai: cuối thế kỷ 19 không dùng nữa.\n④ Sai: phát triển từ thời La Mã."
+        },
+        {
+          "no": 43,
+          "points": 2,
+          "answer": 1,
+          "layout": 1,
+          "prompt": {
+            "html": "이 이야기의 중심 내용으로 맞는 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "나방에 대해 잘못 알려져 있는 부분이 많다."
+            },
+            {
+              "html": "사람들은 나방의 유해성에 관심을 가져 왔다."
+            },
+            {
+              "html": "나방과 나비는 유사한 행동 양식을 가지고 있다."
+            },
+            {
+              "html": "나방의 애벌레는 생태계에서 중요한 역할을 한다."
+            }
+          ],
+          "audio": [
+            2803.9,
+            2988
+          ],
+          "replay": [
+            2803.9,
+            2978
+          ],
+          "explanation": "Đáp án ① 나방에 대해 잘못 알려져 있는 부분이 많다. (Có nhiều điều bị hiểu sai về loài bướm đêm.)\nCả bài lần lượt bác bỏ những hiểu lầm về bướm đêm: chỉ hoạt động ban đêm — có loài hoạt động ban ngày; màu xỉn — nhiều loài màu sắc rực rỡ hơn bướm; phấn trên mình có hại — không gây bệnh; sâu non là sâu hại — thực ra không thể thiếu trong hệ sinh thái.\n② Không nói người ta quan tâm đến tác hại.\n③ Không phải ý chính.\n④ Chỉ là một trong nhiều ý."
+        },
+        {
+          "no": 44,
+          "points": 2,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": "나방에 대한 설명으로 맞는 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "나방의 애벌레는 새들에게 피해를 입힌다."
+            },
+            {
+              "html": "나방은 나비와 달리 꽃가루를 모으지 않는다."
+            },
+            {
+              "html": "나방의 몸에 있는 가루는 우리 몸에 해롭지 않다."
+            },
+            {
+              "html": "나방은 개체 수가 많아서 숲의 생태계를 위협한다."
+            }
+          ],
+          "audio": [
+            2988,
+            3000.4
+          ],
+          "replay": [
+            2987.9,
+            2990
+          ],
+          "explanation": "Đáp án ③ 나방의 몸에 있는 가루는 우리 몸에 해롭지 않다. (Phấn trên mình bướm đêm không có hại cho cơ thể.)\n이것이 병을 유발하거나 특별한 화학 작용을 일으키는 경우는 없다.\n① Sai: sâu non là thức ăn quan trọng nhất của chim.\n② Sai: có loài bướm đêm đậu trên hoa lấy phấn.\n④ Sai: chúng không thể thiếu trong hệ sinh thái rừng."
+        },
+        {
+          "no": 45,
+          "points": 2,
+          "answer": 1,
+          "layout": 1,
+          "prompt": {
+            "html": "들은 내용과 일치하는 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "우유 단백질 포장재는 산소 차단율이 높다."
+            },
+            {
+              "html": "탄수화물 포장재는 환경오염의 주된 원인이다."
+            },
+            {
+              "html": "탄수화물 포장재의 미세 구멍을 줄이는 데 성공했다."
+            },
+            {
+              "html": "우유 단백질 포장재는 음식으로 만든 최초의 포장재이다."
+            }
+          ],
+          "audio": [
+            3000.4,
+            3180.7
+          ],
+          "replay": [
+            3000.4,
+            3170.3
+          ],
+          "explanation": "Đáp án ① 우유 단백질 포장재는 산소 차단율이 높다. (Bao bì làm từ protein sữa chặn oxy tốt.)\n최근에는 우유에 들어 있는 단백질로 포장재를 만드는 데 성공했습니다. 이건 … 산소도 더 잘 차단합니다.\n② Sai: nguyên nhân gây ô nhiễm là bao bì ni lông.\n③ Sai: bao bì tinh bột có nhiều lỗ nhỏ nên khó chặn oxy, không nói đã giảm được lỗ.\n④ Sai: bao bì từ tinh bột đã được thử trước."
+        },
+        {
+          "no": 46,
+          "points": 2,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": "여자가 말하는 방식으로 가장 알맞은 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "친환경 제품의 문제점을 비판하고 있다."
+            },
+            {
+              "html": "과학 기술이 지닌 한계점을 지적하고 있다."
+            },
+            {
+              "html": "환경오염 실태를 자료를 바탕으로 분석하고 있다."
+            },
+            {
+              "html": "과학 기술 분야의 노력을 예를 들어 설명하고 있다."
+            }
+          ],
+          "audio": [
+            3180.7,
+            3193.2
+          ],
+          "replay": [
+            3180.5,
+            3182.8
+          ],
+          "explanation": "Đáp án ④ 과학 기술 분야의 노력을 예를 들어 설명하고 있다. (Giải thích nỗ lực của ngành khoa học công nghệ bằng ví dụ.)\nBà nói ngành khoa học đang nỗ lực phát triển vật liệu thân thiện môi trường, rồi lấy ví dụ bao bì từ tinh bột và từ protein sữa.\n① ② ③ Không đúng cách nói của bà."
+        },
+        {
+          "no": 47,
+          "points": 2,
+          "answer": 2,
+          "layout": 1,
+          "prompt": {
+            "html": "들은 내용과 일치하는 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "미래 사회를 위한 새로운 복지 모델을 찾았다."
+            },
+            {
+              "html": "기본 소득을 바라보는 두 가지 입장이 존재한다."
+            },
+            {
+              "html": "많은 나라에서 국민들에게 기본 소득을 지급하고 있다."
+            },
+            {
+              "html": "기본 소득은 노동에 대한 최소한의 대가를 보장하는 것이다."
+            }
+          ],
+          "audio": [
+            3193.2,
+            3381.5
+          ],
+          "replay": [
+            3193.2,
+            3370.9
+          ],
+          "explanation": "Đáp án ② 기본 소득을 바라보는 두 가지 입장이 존재한다. (Có hai quan điểm về thu nhập cơ bản.)\n노동 의욕이 감소할 거라는 우려가 있는데요. 하지만 오히려 노동 의욕을 촉진할 거라고 보는 입장도 있습니다. = Có lo ngại sẽ làm giảm ý muốn lao động, nhưng cũng có quan điểm cho rằng nó còn thúc đẩy lao động.\n① Sai: phải chờ kết quả thử nghiệm.\n③ Sai: mới có một nước thử nghiệm ở quy mô quốc gia.\n④ Sai: là khoản tiền nhà nước cho vô điều kiện, không phải tiền công lao động."
+        },
+        {
+          "no": 48,
+          "points": 2,
+          "answer": 1,
+          "layout": 1,
+          "prompt": {
+            "html": "남자의 태도로 가장 알맞은 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "기본 소득의 효과에 대한 결론을 유보하고 있다."
+            },
+            {
+              "html": "기본 소득이 노동에 미칠 영향을 우려하고 있다."
+            },
+            {
+              "html": "기본 소득이 인간의 본성에 어긋남을 지적하고 있다."
+            },
+            {
+              "html": "기본 소득의 필요성에 대해 적극적으로 동의하고 있다."
+            }
+          ],
+          "audio": [
+            3381.5,
+            3393.4
+          ],
+          "replay": [
+            3381.4,
+            3383.6
+          ],
+          "explanation": "Đáp án ① 기본 소득의 효과에 대한 결론을 유보하고 있다. (Chưa đưa ra kết luận về hiệu quả của thu nhập cơ bản.)\n결과를 지켜봐야 할 것 같습니다. = Phải chờ xem kết quả.\n② Anh nêu cả lo ngại lẫn mặt tích cực, không chỉ lo ngại.\n③ ④ Anh không phản đối cũng không ủng hộ hẳn."
+        },
+        {
+          "no": 49,
+          "points": 2,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": "들은 내용과 일치하는 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "붕당은 초반부터 심한 갈등을 겪었다."
+            },
+            {
+              "html": "현대의 정당 정치는 탕평책에서 비롯되었다."
+            },
+            {
+              "html": "탕평책은 여론을 효율적으로 모으기 위한 정책이다."
+            },
+            {
+              "html": "붕당 정치의 폐단을 해결하기 위해 탕평책이 나왔다."
+            }
+          ],
+          "audio": [
+            3393.4,
+            3576.8
+          ],
+          "replay": [
+            3393.4,
+            3567
+          ],
+          "explanation": "Đáp án ④ 붕당 정치의 폐단을 해결하기 위해 탕평책이 나왔다. (Chính sách Tangpyeong ra đời để khắc phục tệ nạn của chính trị bè phái.)\n갈수록 붕당 간의 갈등이 심화되면서 폐단이 생겨났죠. 이런 상황에서 모든 붕당이 정치에 골고루 참여할 수 있도록 한 것이 탕평책입니다. = Mâu thuẫn giữa các bè phái ngày càng gay gắt, sinh ra tệ nạn. Trong tình hình đó, chính sách cho mọi bè phái tham chính đồng đều là Tangpyeong.\n① Sai: ban đầu bè phái giúp điều hành đất nước hiệu quả.\n② Sai: không nói chính trị đảng phái hiện đại bắt nguồn từ chính sách này.\n③ Sai: mục đích là cân bằng các thế lực chính trị."
+        },
+        {
+          "no": 50,
+          "points": 2,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": "여자의 태도로 가장 알맞은 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "조선 시대 정치 형태의 문제점을 분석하고 있다."
+            },
+            {
+              "html": "정치 이념의 부재로 인한 혼란을 경계하고 있다."
+            },
+            {
+              "html": "정치적 균형을 위한 제도의 필요성을 제기하고 있다."
+            },
+            {
+              "html": "여론을 바탕으로 한 정치의 효율성을 역설하고 있다."
+            }
+          ],
+          "audio": [
+            3576.8,
+            3586.1
+          ],
+          "replay": [
+            3576.6,
+            3578.2
+          ],
+          "explanation": "Đáp án ③ 정치적 균형을 위한 제도의 필요성을 제기하고 있다. (Nêu ra sự cần thiết của chế độ nhằm cân bằng chính trị.)\n오늘날의 정치 상황에도 이런 균형을 위한 제도가 시행되어야 하지 않을까요? = Tình hình chính trị ngày nay chẳng phải cũng cần một chế độ vì sự cân bằng như vậy sao?\n① Bà phân tích để rút ra bài học cho hôm nay, không chỉ nêu vấn đề.\n② ④ Không phải thái độ của bà."
+        }
+      ]
+    },
+    {
+      "id": "writing",
+      "title": "TOPIKⅡ 쓰기 (51번 ～ 54번)",
+      "minutes": 50,
+      "groups": [],
+      "questions": [],
+      "writing": {
+        "tasks": [
+          {
+            "no": 51,
+            "points": 10,
+            "kind": "blanks",
+            "image": "writing/q51.webp",
+            "answer": "answer-key/w51.webp"
+          },
+          {
+            "no": 52,
+            "points": 10,
+            "kind": "blanks",
+            "image": "writing/q52.webp",
+            "answer": "answer-key/w52.webp"
+          },
+          {
+            "no": 53,
+            "points": 30,
+            "kind": "essay",
+            "chars": [
+              200,
+              300
+            ],
+            "image": "writing/q53.webp",
+            "answer": "answer-key/w53.webp"
+          },
+          {
+            "no": 54,
+            "points": 50,
+            "kind": "essay",
+            "chars": [
+              600,
+              700
+            ],
+            "image": "writing/q54.webp",
+            "answer": "answer-key/w54.webp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "reading",
+      "title": "TOPIK II 읽기 (1번 ～ 50번)",
+      "minutes": 70,
+      "groups": [
+        {
+          "from": 1,
+          "to": 2,
+          "instruction": "※ [1～2] ( )에 들어갈 가장 알맞은 것을 고르십시오. (각 2점)"
+        },
+        {
+          "from": 3,
+          "to": 4,
+          "instruction": "※ [3～4] 다음 밑줄 친 부분과 의미가 비슷한 것을 고르십시오. (각 2점)"
+        },
+        {
+          "from": 5,
+          "to": 8,
+          "instruction": "※ [5～8] 다음은 무엇에 대한 글인지 고르십시오. (각 2점)"
+        },
+        {
+          "from": 9,
+          "to": 12,
+          "instruction": "※ [9～12] 다음 글 또는 그래프의 내용과 같은 것을 고르십시오. (각 2점)"
+        },
+        {
+          "from": 13,
+          "to": 15,
+          "instruction": "※ [13～15] 다음을 순서대로 맞게 배열한 것을 고르십시오. (각 2점)"
+        },
+        {
+          "from": 16,
+          "to": 18,
+          "instruction": "※ [16～18] 다음을 읽고 ( )에 들어갈 내용으로 가장 알맞은 것을 고르십시오. (각 2점)"
+        },
+        {
+          "from": 19,
+          "to": 20,
+          "instruction": "※ [19～20] 다음을 읽고 물음에 답하십시오. (각 2점)",
+          "passage": "인터넷으로 회원 가입을 할 때 설정하는 비밀번호는 초기에는 숫자 네<br>개면 충분했다. 하지만 최근에는 보안 강화를 위해 특수 문자까지 넣어 만들<br>어야 한다. (      ) 비밀번호 변경도 주기적으로 해야 한다. 이 때문에<br>가입자는 번거로운 것은 물론이고 자주 바뀌는 비밀번호를 기억하지 못해<br>스트레스를 받는다. 개인 정보 보호를 가입자에게만 요구하지 말고 기업도<br>보안 기술 개발에 적극 투자해야 한다."
+        },
+        {
+          "from": 21,
+          "to": 22,
+          "instruction": "※ [21～22] 다음을 읽고 물음에 답하십시오. (각 2점)",
+          "passage": "어떤 사람들은 연예인을 열광적으로 좋아하는 청소년들을 부정적으로<br>본다. 학교생활에는 소홀하면서 (      ) 무조건 연예인만 쫓아<br>다닌다고 생각하기 때문이다. 하지만 청소년들이 연예인을 좋아하는 것을<br>그렇게 부정적으로만 볼 일은 아니다. 취향이 비슷한 친구들을 사귈 수도<br>있고 또 공부나 입시로 인한 부담감에서 벗어날 수도 있기 때문이다. 그들을<br>너무 부정적으로만 보지 말고 이해하려는 노력이 필요하다.."
+        },
+        {
+          "from": 23,
+          "to": 24,
+          "instruction": "※ [23～24] 다음을 읽고 물음에 답하십시오. (각 2점)",
+          "passage": "친정아버지가 손자들이 보고 싶다며 오랜만에 우리 집에 오셨다. 내가<br>집안일을 하는 사이에 아버지는 큰애를 데리고 놀이터에 다녀온다며 나가<br>셨다. 한 시간쯤 지났는데 아버지가 다급한 목소리로 전화를 하셨다. 아이가<br>다쳐서 병원 응급실로 데리고 가신다는 것이었다. 나는 너무 놀라 허둥<br>지둥 응급실로 달려갔다. 아이는 이마가 찢어져 치료를 받고 있었다. 나도<br>모르게 “아버지, 애 좀 잘 보고 계시지 그러셨어요?”라며 퉁명스럽게 말했다.<br>아버지는 아무 말씀 없이 치료받는 아이의 손만 꼭 잡고 계셨다. 집에 와서<br>아이를 재우고 나서야 아버지 손등의 상처가 눈에 들어왔다. 아이의 상처<br>에는 그렇게 가슴 아파하면서 아버지의 상처는 미처 살피지 못했다. <u>나는<br>아버지에게 홧김에 내뱉은 말을 생각하며 약을 발라 드렸다.</u>"
+        },
+        {
+          "from": 25,
+          "to": 27,
+          "instruction": "※ [25～27] 다음 신문 기사의 제목을 가장 잘 설명한 것을 고르십시오. (각 2점)"
+        },
+        {
+          "from": 28,
+          "to": 31,
+          "instruction": "※ [28～31] 다음을 읽고 ( )에 들어갈 내용으로 가장 알맞은 것을 고르십시오. (각 2점)"
+        },
+        {
+          "from": 32,
+          "to": 34,
+          "instruction": "※ [32～34] 다음을 읽고 내용이 같은 것을 고르십시오. (각 2점)"
+        },
+        {
+          "from": 35,
+          "to": 38,
+          "instruction": "※ [35～38] 다음 글의 주제로 가장 알맞은 것을 고르십시오. (각 2점)"
+        },
+        {
+          "from": 39,
+          "to": 41,
+          "instruction": "※ [39～41] 다음 글에서 <보기>의 글이 들어가기에 가장 알맞은 곳을 고르십시오. (각 2점)"
+        },
+        {
+          "from": 42,
+          "to": 43,
+          "instruction": "※ [42～43] 다음 글을 읽고 물음에 답하십시오. (각 2점)",
+          "passage": "예쁘고 멋쟁이인 박영은 선생님을 새 담임으로 맞이한 것은 우리 모두에게 가슴 떨리는 일이었다. 먼젓번 담임 선생님의 말은 죽어라고 안 듣던 말썽꾸러기들이 박 선생님 앞에서는 고개도 제대로 못 들고 수줍어했다. 우리 반은 당장 전교에서 제일 말 잘 듣고 가장 깨끗한 반이 되었다. 나도 박 선생님에게 잘 보이고 싶은 마음이 태산 같았지만 늘 그렇듯이 머리가 따라 주지를 않았다. 아마 이번 시험에서도 모든 과목이 50점을 넘지 못했을 것이다. 아이들이 모두 떠난 교실에서 나는 몸을 비비 꼬며 창밖에서 놀고 있는 아이들에게 시선을 주고 있었다. (중략) 선생님이 마침내 입을 연 것은 20분이나 시간이 지나서였다. (중략)<br>“동구를 가만히 보면, 아는데 말을 못하는 적도 많은 것 같아. 그러다 보니 자신감도 없어지고.”<br><u>나의 간지럽고 아픈 부분을 이렇게나 간결하게 짚어 준 사람이 내 인생에 또 있으랴.</u> 공부 못하는 죄를 추궁당하는 것이 아니라 공부 못하는 서러움을 이해받는 것은 생애 처음 있는 일이었다. 안 그래도 물러 터진 내 마음은 완전히 물에 만 휴지처럼 흐물흐물해져서, 예쁘고 멋진 데다 현명하기까지 한 박 선생님 앞에서 때 아닌 눈물까지 한 방울 선을 보일 뻔했다."
+        },
+        {
+          "from": 44,
+          "to": 45,
+          "instruction": "※ [44～45] 다음을 읽고 물음에 답하십시오. (각 2점)",
+          "passage": "보편적 디자인이란 성별, 연령, 장애의 유무 등에 관계없이 누구나 편리<br>하게 이용할 수 있도록 제품이나 사용 환경을 만드는 것을 말한다. 산업<br>혁명 시대에는 대량 생산을 목적으로 생산의 효율성을 추구하였다. 따라서<br>디자인을 할 때 (    ). 그러다 보니 여기에 속하지 못한<br>대상들은 불편을 겪을 수밖에 없었다. 이에 대한 비판과 반성에서 출발한<br>것이 보편적 디자인이다. 대표적인 예가 계단이 없는 저상 버스인데 이<br>버스는 타고 내리기 쉬워 어린이와 노인, 임산부와 장애인 등 모두가 편리<br>하게 이용할 수 있다. 다양한 대상의 특성을 고려한 보편적 디자인은 최대한<br>많은 사람들이 차별 없이 생활할 수 있는 환경을 조성하는 데 큰 몫을<br>하고 있다."
+        },
+        {
+          "from": 46,
+          "to": 47,
+          "instruction": "※ [46～47] 다음을 읽고 물음에 답하십시오. (각 2점)",
+          "passage": "보수와 진보의 개념은 정치뿐만 아니라 경제 분야에서도 사용된다.<br>( ㉠ ) 자유를 중시하는 보수주의자들은 자유가 최대한 보장될 때 경제<br>성장이 가능하다고 본다. 그래서 경제를 시장의 자율에 맡기고 정부는<br>최소한의 역할만을 담당해야 한다고 주장한다. ( ㉡ ) 반면 평등을<br>우선시하는 진보주의자들은 시장을 자율에 맡기기보다 국가가 개입해야<br>한다고 생각한다. ( ㉢ ) 그래야 시장 경제 체제의 문제점인 불평등을<br>해소할 수 있다고 주장한다. 보수와 진보 중 어느 하나의 입장만이 옳다고<br>단정하기는 어렵다. 경제 발전을 위해서는 보수가 추구하는 바가 필요하며<br>경제 발전에 따른 문제점을 해결하기 위해서는 진보의 정책들이 요구된다.<br>보수와 진보가 서로 보완하여 상호 균형을 이룰 때 경제는 더 발전적인<br>방향으로 나아갈 수 있을 것이다. ( ㉣ )"
+        },
+        {
+          "from": 48,
+          "to": 50,
+          "instruction": "※ [48～50] 다음을 읽고 물음에 답하십시오. (각 2점)",
+          "passage": "특허법은 독창적인 기술을 최초로 발명한 사람에게 기술에 대한 독점적<br>사용권을 부여하는 대신 그 기술을 사회에 공개할 의무를 부과한다. 공개된<br>기술 공유를 통해 사회 전체의 기술력을 높이는 것이 특허의 취지이다. 이런<br>취지에 부합하여 실제로 특허 제도는 기술 혁신과 산업 발전에 크게 이바지해<br>왔다. 그런데 최근 들어 특허의 본래 취지가 변질되어 기술 개발보다 독점권<br>확보를 우선하는 현상이 두드러지게 나타나고 있다. (    )<br>상태에서 마구잡이 특허 출원으로 권리부터 선점해 놓고 기술을 개발하려는<br>경우가 비일비재한 것이다. 이 때문에 정작 신기술 개발에 힘들게 성공한<br>사람들이 권리를 확보하지 못하는 경우가 자주 발생하곤 한다. 특허는<br>발명의 대가로 당연히 보호받을 가치가 있다. 하지만 그것은 기술 개발에<br>성공해 사회 발전에 공헌하는 경우에 한해서이다. 무분별한 특허 출원으로<br>기술 발전을 저해한다면 이는 특허가 가진 본래의 취지를 훼손하는 것이다."
+        }
+      ],
+      "questions": [
+        {
+          "no": 1,
+          "points": 2,
+          "answer": 2,
+          "layout": 2,
+          "prompt": {
+            "html": "해가 뜨는 것을 (        ) 아침 일찍 일어났다."
+          },
+          "options": [
+            {
+              "html": "보아야"
+            },
+            {
+              "html": "보려고"
+            },
+            {
+              "html": "보거나"
+            },
+            {
+              "html": "보는데"
+            }
+          ],
+          "explanation": "Đáp án ② 보려고.\n해가 뜨는 것을 보려고 아침 일찍 일어났다. = Tôi dậy sớm để ngắm mặt trời mọc.\n-(으)려고 = để, định (mục đích): dậy sớm là để ngắm bình minh.\n① -아야: phải… mới · ③ -거나: hoặc · ④ -는데: nhưng / bối cảnh."
+        },
+        {
+          "no": 2,
+          "points": 2,
+          "answer": 1,
+          "layout": 2,
+          "prompt": {
+            "html": "무슨 일을 (       ) 열심히 하는 것이 중요하다."
+          },
+          "options": [
+            {
+              "html": "하든지"
+            },
+            {
+              "html": "하도록"
+            },
+            {
+              "html": "하다가"
+            },
+            {
+              "html": "하더니"
+            }
+          ],
+          "explanation": "Đáp án ① 하든지.\n무슨 일을 하든지 열심히 하는 것이 중요하다. = Làm việc gì đi nữa thì chăm chỉ mới là điều quan trọng.\n무슨/어떤 + -든지 = dù… gì đi nữa.\n② -도록: để cho · ③ -다가: đang… thì · ④ -더니: (thấy) … rồi thì."
+        },
+        {
+          "no": 3,
+          "points": 2,
+          "answer": 4,
+          "layout": 2,
+          "prompt": {
+            "html": "계속 웃고 다니는 걸 보니 좋은 일이 <u>있나 보다.</u>"
+          },
+          "options": [
+            {
+              "html": "있는 척한다"
+            },
+            {
+              "html": "있을 뿐이다"
+            },
+            {
+              "html": "있을 지경이다"
+            },
+            {
+              "html": "있는 모양이다"
+            }
+          ],
+          "explanation": "Đáp án ④ 있는 모양이다 (hình như có).\n계속 웃고 다니는 걸 보니 좋은 일이 있나 보다. = Thấy cứ cười suốt, chắc là có chuyện vui.\n-나 보다 = đoán qua điều nhìn thấy → gần nghĩa -는 모양이다.\n① -는 척하다: giả vờ · ② -(으)ㄹ 뿐이다: chỉ là · ③ -(으)ㄹ 지경이다: đến mức."
+        },
+        {
+          "no": 4,
+          "points": 2,
+          "answer": 1,
+          "layout": 2,
+          "prompt": {
+            "html": "다음 주가 개강이니 방학도 다 <u>끝난 거나 마찬가지이다.</u>"
+          },
+          "options": [
+            {
+              "html": "끝난 셈이다"
+            },
+            {
+              "html": "끝난 탓이다"
+            },
+            {
+              "html": "끝나기 마련이다"
+            },
+            {
+              "html": "끝나기 나름이다"
+            }
+          ],
+          "explanation": "Đáp án ① 끝난 셈이다 (coi như đã hết).\n다음 주가 개강이니 방학도 다 끝난 거나 마찬가지이다. = Tuần sau khai giảng nên kỳ nghỉ coi như đã hết.\n-(으)ㄴ 거나 마찬가지이다 = chẳng khác gì → gần nghĩa -(으)ㄴ 셈이다.\n② -(으)ㄴ 탓이다: tại vì · ③ -기 마련이다: lẽ đương nhiên · ④ -기 나름이다: tùy vào."
+        },
+        {
+          "no": 5,
+          "points": 2,
+          "answer": 2,
+          "layout": 4,
+          "prompt": {
+            "image": "images/52_2_2_5.webp",
+            "alt": "침대 광고 포스터"
+          },
+          "options": [
+            {
+              "html": "수건"
+            },
+            {
+              "html": "침대"
+            },
+            {
+              "html": "시계"
+            },
+            {
+              "html": "신발"
+            }
+          ],
+          "explanation": "Đáp án ② 침대 (giường).\n눕는 순간 잠이 솔솔~ 아침까지 편안하게 = Vừa nằm xuống là ngủ ngon lành~ Êm ái đến sáng.\nNằm, ngủ ngon đến sáng → quảng cáo giường.\n① 수건: khăn · ③ 시계: đồng hồ · ④ 신발: giày."
+        },
+        {
+          "no": 6,
+          "points": 2,
+          "answer": 2,
+          "layout": 4,
+          "prompt": {
+            "image": "images/52_2_2_6.webp",
+            "alt": "식당 광고 포스터"
+          },
+          "options": [
+            {
+              "html": "은행"
+            },
+            {
+              "html": "식당"
+            },
+            {
+              "html": "세탁소"
+            },
+            {
+              "html": "편의점"
+            }
+          ],
+          "explanation": "Đáp án ② 식당 (quán ăn).\n신선한 재료! 부담 없는 가격! 가족 모임, 단체 환영 = Nguyên liệu tươi! Giá phải chăng! Chào đón họp mặt gia đình, khách đoàn.\nNguyên liệu, giá, khách đoàn → quán ăn.\n① 은행: ngân hàng · ③ 세탁소: tiệm giặt · ④ 편의점: cửa hàng tiện lợi."
+        },
+        {
+          "no": 7,
+          "points": 2,
+          "answer": 1,
+          "layout": 4,
+          "prompt": {
+            "image": "images/52_2_2_7.webp",
+            "alt": "자연보호 캠페인"
+          },
+          "options": [
+            {
+              "html": "자연 보호"
+            },
+            {
+              "html": "시간 절약"
+            },
+            {
+              "html": "자리 양보"
+            },
+            {
+              "html": "안전 관리"
+            }
+          ],
+          "explanation": "Đáp án ① 자연 보호 (bảo vệ thiên nhiên).\n푸른 숲, 맑은 강 다 함께 지켜 가요! = Rừng xanh, sông trong — chúng ta cùng gìn giữ!\nGìn giữ rừng, sông → bảo vệ thiên nhiên.\n② 시간 절약: tiết kiệm thời gian · ③ 자리 양보: nhường chỗ · ④ 안전 관리: quản lý an toàn."
+        },
+        {
+          "no": 8,
+          "points": 2,
+          "answer": 2,
+          "layout": 4,
+          "prompt": {
+            "image": "images/52_2_2_8.webp",
+            "alt": "마트 배달 안내"
+          },
+          "options": [
+            {
+              "html": "사용 설명"
+            },
+            {
+              "html": "배달 안내"
+            },
+            {
+              "html": "이용 순서"
+            },
+            {
+              "html": "교환 방법"
+            }
+          ],
+          "explanation": "Đáp án ② 배달 안내 (thông báo giao hàng).\n오후 1시까지 구매하면 그날 가져다 드립니다. 주문이 많을 때는 늦어질 수 있습니다. — 행복마트 = Mua trước 1 giờ chiều thì giao ngay trong ngày. Khi nhiều đơn có thể giao muộn. — Siêu thị Hạnh Phúc\n가져다 드리다 (mang đến tận nơi) → giao hàng.\n① 사용 설명: hướng dẫn sử dụng · ③ 이용 순서: thứ tự sử dụng · ④ 교환 방법: cách đổi hàng."
+        },
+        {
+          "no": 9,
+          "points": 2,
+          "answer": 1,
+          "layout": 1,
+          "prompt": {
+            "image": "images/52_2_2_9.webp",
+            "alt": "도서 신청 방법 안내"
+          },
+          "options": [
+            {
+              "html": "신청할 수 없는 책 종류가 있다."
+            },
+            {
+              "html": "책이 도착하면 전화로 연락해 준다."
+            },
+            {
+              "html": "사월 한 달 동안 도서 신청을 받는다."
+            },
+            {
+              "html": "필요한 책은 이메일로 신청을 해야 한다."
+            }
+          ],
+          "explanation": "Đáp án ① 신청할 수 없는 책 종류가 있다. (Có loại sách không đăng ký được.)\nThông báo đăng ký sách 2017: thời gian 17/4 (thứ Hai) – 30/4 (Chủ nhật); đăng ký qua trang web thư viện; mỗi người tối đa 10 cuốn (trừ tạp chí, giáo trình ngoại ngữ); sách về sẽ báo qua email.\n잡지, 어학 교재 제외 → tạp chí, giáo trình ngoại ngữ không đăng ký được.\n② Sai: báo qua email, không phải điện thoại.\n③ Sai: chỉ từ 17/4 đến 30/4, không phải cả tháng 4.\n④ Sai: đăng ký qua trang web thư viện."
+        },
+        {
+          "no": 10,
+          "points": 2,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "image": "images/52_2_2_10.webp",
+            "alt": "직업 선택의 기준 순위표"
+          },
+          "options": [
+            {
+              "html": "직업의 안정성을 중요하게 생각하는 사람이 가장 적다."
+            },
+            {
+              "html": "월급과 적성을 중요하게 생각하는 사람의 비율이 같다."
+            },
+            {
+              "html": "개인의 발전보다 월급을 중요하게 생각하는 사람이 더 많다."
+            },
+            {
+              "html": "근무 조건을 중요하게 생각하는 사람이 전체의 반을 넘는다."
+            }
+          ],
+          "explanation": "Đáp án ③ 개인의 발전보다 월급을 중요하게 생각하는 사람이 더 많다. (Người coi trọng lương nhiều hơn người coi trọng phát triển bản thân.)\nBiểu đồ \"Tiêu chí chọn nghề\": điều kiện làm việc 48%, tính ổn định 16%, năng khiếu 13%, lương 12%, phát triển bản thân 7%, khác 4%.\nLương 12% > phát triển bản thân 7%.\n① Sai: tính ổn định 16%, không phải thấp nhất.\n② Sai: lương 12%, năng khiếu 13% — không bằng nhau.\n④ Sai: điều kiện làm việc 48%, chưa quá nửa."
+        },
+        {
+          "no": 11,
+          "points": 2,
+          "answer": 1,
+          "layout": 1,
+          "prompt": {
+            "html": "<div class=\"exam-box\">  지난 13일 인주경찰서에 편지 한 통이 배달되었다. 편지를 보낸 사람은<br>지난달 인주시를 방문했다가 지갑을 잃어버린 외국인 관광객 장 모 씨였다.<br>장 씨는 말이 통하지 않아 지갑을 찾는 데 어려움을 겪었다. 그때 한 경찰이<br>사전과 몸짓을 이용해 장 씨와 이야기하며 잃어버린 지갑을 찾는 데 도움을<br>주었다. 이에 장 씨가 고마움을 담은 감사 편지를 보낸 것이다.</div>"
+          },
+          "options": [
+            {
+              "html": "관광객이 경찰에게 감사하는 마음을 표현했다."
+            },
+            {
+              "html": "관광객이 잃어버린 지갑을 찾지 못하고 돌아갔다."
+            },
+            {
+              "html": "경찰이 지갑을 잃어버린 관광객에게 편지를 썼다."
+            },
+            {
+              "html": "경찰이 관광객의 말을 이해하지 못해 도와줄 수 없었다."
+            }
+          ],
+          "explanation": "Đáp án ① 관광객이 경찰에게 감사하는 마음을 표현했다. (Du khách bày tỏ lòng biết ơn với cảnh sát.)\nNgày 13, đồn cảnh sát Inju nhận một lá thư của du khách nước ngoài họ Jang, người tháng trước làm mất ví khi đến Inju. Ông Jang không nói được tiếng nên khó tìm ví; một cảnh sát đã dùng từ điển và cử chỉ để nói chuyện, giúp ông tìm lại ví. Vì vậy ông gửi thư cảm ơn.\n② Sai: cảnh sát đã giúp tìm được ví.\n③ Sai: du khách viết thư cho cảnh sát.\n④ Sai: cảnh sát dùng từ điển và cử chỉ để giúp."
+        },
+        {
+          "no": 12,
+          "points": 2,
+          "answer": 2,
+          "layout": 1,
+          "prompt": {
+            "html": "<div class=\"exam-box\">  최근 공연을 혼자 보는 사람들이 많아졌다. 친구나 연인이 함께 보는<br>장르로 생각했던 뮤지컬, 연극 등도 혼자 보는 사람들이 늘어난 것이다.<br>한 조사 결과에 따르면 열 명 중 네 명이 혼자 공연을 관람하는 것으로<br>나타났다. 혼자 공연을 보는 사람들은 함께 간 사람에게 신경을 쓰지 않고<br>공연에만 집중할 수 있어서 좋다고 말한다.</div>"
+          },
+          "options": [
+            {
+              "html": "사람들은 연극과 뮤지컬을 혼자 보는 장르로 생각한다."
+            },
+            {
+              "html": "혼자 공연을 보면 공연에 집중할 수 있다는 장점이 있다."
+            },
+            {
+              "html": "사람들은 공연을 볼 때 다른 사람에게 신경을 쓰지 않는다."
+            },
+            {
+              "html": "조사 결과에 따르면 공연을 혼자 보는 사람들이 줄고 있다."
+            }
+          ],
+          "explanation": "Đáp án ② 혼자 공연을 보면 공연에 집중할 수 있다는 장점이 있다. (Xem biểu diễn một mình có ưu điểm là tập trung được.)\n함께 간 사람에게 신경을 쓰지 않고 공연에만 집중할 수 있어서 좋다 = không phải để ý người đi cùng, chỉ tập trung vào buổi diễn nên thích.\n① Sai: nhạc kịch, kịch vốn được nghĩ là thể loại đi xem cùng bạn bè, người yêu.\n③ Sai: chỉ người xem một mình mới không phải để ý người khác.\n④ Sai: người xem một mình đang tăng (10 người thì 4)."
+        },
+        {
+          "no": 13,
+          "points": 2,
+          "answer": 1,
+          "layout": 2,
+          "prompt": {
+            "html": "<div class=\"exam-box\">(가) 개와 고양이는 사이가 나쁜 것으로 유명하다.<br>(나) 개가 앞발을 드는 행동은 함께 놀고 싶다는 의미이다.<br>(다) 그런데 고양이는 이런 행동을 공격하는 것으로 오해하는 것이다.<br>(라) 둘 사이가 안 좋은 이유는 표현을 서로 다르게 받아들이기 때문이다.</div>"
+          },
+          "options": [
+            {
+              "html": "(가)－(라)－(나)－(다)"
+            },
+            {
+              "html": "(가)－(나)－(라)－(다)"
+            },
+            {
+              "html": "(나)－(다)－(가)－(라)"
+            },
+            {
+              "html": "(나)－(가)－(다)－(라)"
+            }
+          ],
+          "explanation": "Đáp án ① (가)－(라)－(나)－(다).\n(가) Chó và mèo nổi tiếng là không hợp nhau.\n(라) Lý do là chúng hiểu cách biểu hiện của nhau khác nhau.\n(나) Chó giơ chân trước nghĩa là muốn chơi cùng.\n(다) Nhưng mèo lại hiểu nhầm hành động đó là tấn công.\nManh mối: (라) 둘 사이 nói tiếp (가); (나) là ví dụ cho (라); (다) 이런 행동 chỉ hành động ở (나)."
+        },
+        {
+          "no": 14,
+          "points": 2,
+          "answer": 2,
+          "layout": 2,
+          "prompt": {
+            "html": "<div class=\"exam-box\">(가) 시대가 변하면서 회식 문화가 바뀌고 있는 것이다.<br>(나) 직장에서는 좋은 업무 분위기를 위해서 회식을 한다.<br>(다) 예전에는 직장에서 회식을 할 때 주로 술을 많이 마셨다.<br>(라) 그러나 요즘에는 회식 대신에 공연을 관람하거나 맛집을 탐방하는<br>경우가 늘고 있다.</div>"
+          },
+          "options": [
+            {
+              "html": "(나)－(다)－(가)－(라)"
+            },
+            {
+              "html": "(나)－(다)－(라)－(가)"
+            },
+            {
+              "html": "(다)－(가)－(나)－(라)"
+            },
+            {
+              "html": "(다)－(나)－(라)－(가)"
+            }
+          ],
+          "explanation": "Đáp án ② (나)－(다)－(라)－(가).\n(나) Ở nơi làm việc, người ta liên hoan để tạo không khí làm việc tốt.\n(다) Trước đây liên hoan chủ yếu là uống nhiều rượu.\n(라) Nhưng dạo này thay vì liên hoan, ngày càng nhiều nơi đi xem biểu diễn hay đi ăn quán ngon.\n(가) Văn hóa liên hoan đang thay đổi theo thời đại.\nManh mối: 예전에는 → 그러나 요즘에는 (trước đây → nhưng dạo này); (가) tổng kết sự thay đổi."
+        },
+        {
+          "no": 15,
+          "points": 2,
+          "answer": 3,
+          "layout": 2,
+          "prompt": {
+            "html": "<div class=\"exam-box\">(가) 아들은 보물을 찾기 위해 밭을 파 봤지만 아무것도 나오지 않았다.<br>(나) 아들은 실망했지만 힘들게 밭을 판 것이 아까워서 밭에 씨를 뿌렸다.<br>(다) 한 농부가 게으른 아들에게 밭에 보물을 숨겼다는 말을 남기고 죽었다.<br>(라) 시간이 흘러 많은 열매가 맺혔고 아들은 그때서야 아버지의 뜻을 알게<br>되었다.</div>"
+          },
+          "options": [
+            {
+              "html": "(가)－(라)－(나)－(다)"
+            },
+            {
+              "html": "(가)－(나)－(라)－(다)"
+            },
+            {
+              "html": "(다)－(가)－(나)－(라)"
+            },
+            {
+              "html": "(다)－(나)－(가)－(라)"
+            }
+          ],
+          "explanation": "Đáp án ③ (다)－(가)－(나)－(라).\n(다) Một người nông dân trước khi mất nói với cậu con lười rằng đã giấu kho báu ngoài ruộng.\n(가) Cậu con đào ruộng tìm kho báu nhưng không thấy gì.\n(나) Thất vọng nhưng tiếc công đào nên cậu gieo hạt.\n(라) Thời gian trôi, cây ra nhiều quả, lúc đó cậu mới hiểu ý cha.\nManh mối: (다) mở đầu câu chuyện; (가) đào ruộng; (나) thất vọng → gieo hạt; (라) kết quả."
+        },
+        {
+          "no": 16,
+          "points": 2,
+          "answer": 2,
+          "layout": 2,
+          "prompt": {
+            "html": "<div class=\"exam-box\">  사람들은 일반적으로 쓴맛을 꺼린다. 이것은 (      ) 본능과<br>관계가 있다. 식물 중에는 독성이 있어 몸에 해로운 것들이 있다. 그런데<br>이런 독이 있는 식물은 보통 쓴맛이 난다. 따라서 사람들은 무의식적으로<br>쓴맛이 나는 것을 위험하다고 여기고 이를 거부하게 되는 것이다.</div>"
+          },
+          "options": [
+            {
+              "html": "지나친 과식을 피하려는"
+            },
+            {
+              "html": "자신의 몸을 보호하려는"
+            },
+            {
+              "html": "맛없는 음식을 멀리하려는"
+            },
+            {
+              "html": "입맛이 변하는 것을 막으려는"
+            }
+          ],
+          "explanation": "Đáp án ② 자신의 몸을 보호하려는 (muốn bảo vệ cơ thể mình).\nNgười ta thường ngại vị đắng. Trong thực vật có loại độc hại cho cơ thể, mà cây có độc thường đắng. Vì vậy người ta vô thức coi vị đắng là nguy hiểm và từ chối.\nTránh vị đắng = tránh chất độc → bản năng tự bảo vệ.\n① tránh ăn quá no · ③ tránh đồ ăn dở · ④ ngăn khẩu vị thay đổi."
+        },
+        {
+          "no": 17,
+          "points": 2,
+          "answer": 2,
+          "layout": 2,
+          "prompt": {
+            "html": "<div class=\"exam-box\">  대화를 원활하게 하기 위해서는 상대방에게 내가 그의 말을 잘 듣고<br>있다는 느낌을 주어야 한다. 이때 (      ) 행동을 하면 좋다.<br>대부분의 나라에서 이런 행동은 긍정을 나타낸다. 따라서 머리를 위아래로<br>움직이는 행동을 하면 상대방을 존중하고 이야기에 공감하고 있다는 인상을<br>줄 수 있다.</div>"
+          },
+          "options": [
+            {
+              "html": "손뼉을 치는"
+            },
+            {
+              "html": "고개를 끄덕이는"
+            },
+            {
+              "html": "질문하면서 듣는"
+            },
+            {
+              "html": "들으면서 기록하는"
+            }
+          ],
+          "explanation": "Đáp án ② 고개를 끄덕이는 (gật đầu).\nĐể nói chuyện suôn sẻ, cần cho người kia cảm giác mình đang lắng nghe. Lúc đó nên gật đầu. Ở hầu hết các nước hành động này là đồng ý; cử động đầu lên xuống tạo ấn tượng tôn trọng và đồng cảm.\nManh mối: 머리를 위아래로 움직이는 행동 = cử động đầu lên xuống.\n① vỗ tay · ③ vừa nghe vừa hỏi · ④ vừa nghe vừa ghi chép."
+        },
+        {
+          "no": 18,
+          "points": 2,
+          "answer": 3,
+          "layout": 2,
+          "prompt": {
+            "html": "<div class=\"exam-box\">  사용 여부에 관계없이 물건을 못 버리고 저장해 두는 사람들이 있다. 습관<br>이나 취미로 수집하는 정도를 넘어 생활에 방해가 될 정도로 심할 경우 이는<br>치료가 필요한 행동 장애로 본다. 연구에 따르면 주변 사람들에게 사랑을<br>충분히 받지 못한 사람이 물건에 지나치게 집착한다고 한다. 따라서 인간<br>관계에서 안정을 찾으면 (      ) 행동은 사라질 수 있다.</div>"
+          },
+          "options": [
+            {
+              "html": "사람들을 피하려고 하는"
+            },
+            {
+              "html": "불필요한 물건들을 사는"
+            },
+            {
+              "html": "물건들을 집에 쌓아 두는"
+            },
+            {
+              "html": "쓰레기를 함부로 버리는"
+            }
+          ],
+          "explanation": "Đáp án ③ 물건들을 집에 쌓아 두는 (chất đồ đạc trong nhà).\nCó người không vứt được đồ, dù dùng hay không cũng giữ lại. Nếu nặng đến mức cản trở cuộc sống thì đó là rối loạn hành vi cần điều trị. Nghiên cứu cho thấy người không được yêu thương đủ hay bám víu vào đồ vật. Vì vậy tìm được sự ổn định trong quan hệ thì hành vi chất đồ này có thể biến mất.\n① tránh mặt người khác · ② mua đồ không cần thiết · ④ vứt rác bừa bãi."
+        },
+        {
+          "no": 19,
+          "points": 2,
+          "answer": 2,
+          "layout": 4,
+          "prompt": {
+            "html": "(      )에 들어갈 알맞은 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "그러면"
+            },
+            {
+              "html": "게다가"
+            },
+            {
+              "html": "반면에"
+            },
+            {
+              "html": "이처럼"
+            }
+          ],
+          "explanation": "Đáp án ② 게다가 (hơn nữa).\nTrước đây mật khẩu chỉ cần 4 chữ số; nay phải có cả ký tự đặc biệt. Hơn nữa còn phải đổi mật khẩu định kỳ.\nCâu sau thêm một yêu cầu phiền phức nữa → 게다가.\n① 그러면: nếu vậy thì · ③ 반면에: ngược lại · ④ 이처럼: như vậy."
+        },
+        {
+          "no": 20,
+          "points": 2,
+          "answer": 1,
+          "layout": 1,
+          "prompt": {
+            "html": "위 글의 내용과 같은 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "가입자는 비밀번호 변경으로 스트레스를 받는다."
+            },
+            {
+              "html": "초기의 비밀번호는 숫자 네 개로는 만들 수 없었다."
+            },
+            {
+              "html": "가입자는 기업에 비밀번호 설정을 까다롭게 요구한다."
+            },
+            {
+              "html": "비밀번호 설정 시에 숫자와 문자 중 하나를 선택해야 한다."
+            }
+          ],
+          "explanation": "Đáp án ① 가입자는 비밀번호 변경으로 스트레스를 받는다. (Người đăng ký bị căng thẳng vì đổi mật khẩu.)\n자주 바뀌는 비밀번호를 기억하지 못해 스트레스를 받는다 = không nhớ được mật khẩu hay đổi nên bị căng thẳng.\n② Sai: lúc đầu 4 chữ số là đủ.\n③ Sai: tác giả muốn doanh nghiệp đầu tư bảo mật, không phải người dùng đòi hỏi.\n④ Sai: phải có cả ký tự đặc biệt."
+        },
+        {
+          "no": 21,
+          "points": 2,
+          "answer": 4,
+          "layout": 2,
+          "prompt": {
+            "html": "(      )에 들어갈 알맞은 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "앞뒤를 재고"
+            },
+            {
+              "html": "발을 빼지 않고"
+            },
+            {
+              "html": "발걸음을 맞추고"
+            },
+            {
+              "html": "앞뒤를 가리지 않고"
+            }
+          ],
+          "explanation": "Đáp án ④ 앞뒤를 가리지 않고 (bất chấp, không cân nhắc).\nCó người nhìn tiêu cực thanh thiếu niên cuồng thần tượng, vì nghĩ các em lơ là việc học mà bất chấp chạy theo nghệ sĩ.\n앞뒤를 가리지 않다 = không cân nhắc trước sau, bất chấp; đi với 무조건.\n① 앞뒤를 재다: tính toán kỹ · ② 발을 빼지 않다: không rút lui · ③ 발걸음을 맞추다: đi cùng nhịp."
+        },
+        {
+          "no": 22,
+          "points": 2,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": "위 글의 중심 생각을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "청소년 시기에 인간관계를 넓히는 것이 좋다."
+            },
+            {
+              "html": "연예인을 좋아해도 성적에 영향을 주면 안 된다."
+            },
+            {
+              "html": "청소년들에게 입시의 부담감을 지나치게 주지 않아야 한다."
+            },
+            {
+              "html": "연예인을 좋아하는 청소년에 대해 이해하는 마음을 가져야 한다."
+            }
+          ],
+          "explanation": "Đáp án ④ 연예인을 좋아하는 청소년에 대해 이해하는 마음을 가져야 한다. (Nên thông cảm với thanh thiếu niên yêu thích nghệ sĩ.)\n그들을 너무 부정적으로만 보지 말고 이해하려는 노력이 필요하다. = Đừng chỉ nhìn tiêu cực mà cần cố gắng thấu hiểu các em.\n① Kết bạn chỉ là một lợi ích được nhắc tới.\n② Không nói chuyện ảnh hưởng thành tích.\n③ Áp lực thi cử chỉ là một lý do."
+        },
+        {
+          "no": 23,
+          "points": 2,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": "밑줄 친 부분에 나타난 ‘나’의 심정으로 알맞은 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "억울하다"
+            },
+            {
+              "html": "허전하다"
+            },
+            {
+              "html": "후회스럽다"
+            },
+            {
+              "html": "부담스럽다"
+            }
+          ],
+          "explanation": "Đáp án ③ 후회스럽다 (hối hận).\nCon bị rách trán khi đi chơi với ông ngoại; tôi buột miệng nói cộc lốc \"Bố trông cháu cẩn thận chút chứ\". Về nhà mới thấy vết thương trên mu bàn tay bố — tôi xót con mà không để ý đến vết thương của bố. Tôi nghĩ lại câu nói lúc nóng giận và bôi thuốc cho bố.\nNghĩ lại lời nói lúc giận (홧김에 내뱉은 말) khi thấy bố cũng bị thương → hối hận.\n① ấm ức · ② trống trải · ④ ngại, nặng nề."
+        },
+        {
+          "no": 24,
+          "points": 2,
+          "answer": 2,
+          "layout": 1,
+          "prompt": {
+            "html": "위 글의 내용과 같은 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "나는 친정아버지를 모시고 살고 있다."
+            },
+            {
+              "html": "아버지는 다친 큰애를 데리고 응급실에 가셨다."
+            },
+            {
+              "html": "나는 병원에서 아이가 다쳤다는 전화를 받았다."
+            },
+            {
+              "html": "아버지는 매일 큰애와 놀이터에서 놀아 주셨다."
+            }
+          ],
+          "explanation": "Đáp án ② 아버지는 다친 큰애를 데리고 응급실에 가셨다. (Bố đưa đứa lớn bị thương đến phòng cấp cứu.)\n아이가 다쳐서 병원 응급실로 데리고 가신다는 것이었다.\n① Sai: bố đến chơi lâu lâu một lần (오랜만에 우리 집에 오셨다).\n③ Sai: tôi nhận điện thoại ở nhà rồi chạy đến bệnh viện.\n④ Sai: hôm đó bố mới dẫn cháu ra sân chơi."
+        },
+        {
+          "no": 25,
+          "points": 2,
+          "answer": 1,
+          "layout": 1,
+          "prompt": {
+            "html": "<div class=\"exam-box\"> 소비 심리 ‘봄바람’, 백화점 매출 기지개</div>"
+          },
+          "options": [
+            {
+              "html": "소비자들의 구매 욕구가 살아나 백화점 매출이 늘어나고 있다."
+            },
+            {
+              "html": "날씨의 영향으로 백화점에서 물건을 구입하는 사람들이 많아졌다."
+            },
+            {
+              "html": "백화점에서 매출을 늘리기 위해 행사를 하자 사람들이 모여들었다."
+            },
+            {
+              "html": "소비자들의 심리를 반영한 백화점의 매출 전략이 호응을 얻고 있다."
+            }
+          ],
+          "explanation": "Đáp án ① 소비자들의 구매 욕구가 살아나 백화점 매출이 늘어나고 있다. (Nhu cầu mua sắm hồi phục, doanh thu bách hóa tăng.)\nTiêu đề: 소비 심리 '봄바람', 백화점 매출 기지개.\n봄바람 = gió xuân (tâm lý tiêu dùng ấm lên); 기지개(를 켜다) = vươn vai, khởi sắc.\n② Không phải do thời tiết.\n③ Không nói sự kiện khuyến mãi.\n④ Không nói chiến lược của bách hóa."
+        },
+        {
+          "no": 26,
+          "points": 2,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": "<div class=\"exam-box\"> 연휴 마지막 날 교통 체증, 고속도로 몸살 앓아</div>"
+          },
+          "options": [
+            {
+              "html": "연휴의 마지막 날에 고속도로에서 심각한 교통사고가 발생했다."
+            },
+            {
+              "html": "연휴에 실시한 고속도로 공사 때문에 사람들이 큰 불편을 겪었다."
+            },
+            {
+              "html": "연휴가 끝나는 날 고속도로에 몰린 차들로 인해 길이 많이 막혔다."
+            },
+            {
+              "html": "연휴 때마다 발생하는 교통 혼잡을 해결하기 위해 고속도로를 확장했다."
+            }
+          ],
+          "explanation": "Đáp án ③ 연휴가 끝나는 날 고속도로에 몰린 차들로 인해 길이 많이 막혔다. (Ngày cuối kỳ nghỉ, xe dồn lên cao tốc nên rất kẹt.)\nTiêu đề: 연휴 마지막 날 교통 체증, 고속도로 몸살 앓아.\n몸살을 앓다 = \"ốm\" vì quá tải → đường kẹt nặng.\n① Không nói tai nạn · ② Không nói công trình · ④ Không nói mở rộng đường."
+        },
+        {
+          "no": 27,
+          "points": 2,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": "<div class=\"exam-box\"> 시청자 사로잡는 드라마 음악, 시청률 상승 효과 ‘톡톡’</div>"
+          },
+          "options": [
+            {
+              "html": "시청자에게 익숙한 음악을 활용해 드라마의 시청률을 높이려고 했다."
+            },
+            {
+              "html": "시청자들은 시청률이 높은 드라마에 더 많은 음악이 나오기를 원했다."
+            },
+            {
+              "html": "드라마 음악을 시청자와 함께 만들어 시청률에 긍정적인 영향을 주었다."
+            },
+            {
+              "html": "드라마 음악이 시청자에게 사랑을 받으며 시청률을 높이는 역할을 했다."
+            }
+          ],
+          "explanation": "Đáp án ④ 드라마 음악이 시청자에게 사랑을 받으며 시청률을 높이는 역할을 했다. (Nhạc phim được yêu thích và giúp tăng tỷ suất người xem.)\nTiêu đề: 시청자 사로잡는 드라마 음악, 시청률 상승 효과 '톡톡'.\n사로잡다 = chinh phục; 효과(를) 톡톡히 보다 = hiệu quả rõ rệt.\n① ② ③ Không đúng ý tiêu đề."
+        },
+        {
+          "no": 28,
+          "points": 2,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": "<div class=\"exam-box\">   한 연구에 따르면 과거에 비해 요즘 사람들의 손톱이 더 빨리 자란다고<br>한다. 80년 전 사람들은 손톱이 한 달에 3mm 정도 자랐지만 최근에는<br>그보다 길게 3.5mm 정도 자란다는 것이다. 손톱 주변을 (     )<br>세포 활동이 활발해져 손톱이 더 빨리 자란다. 연구팀은 최근 컴퓨터나<br>휴대전화의 자판을 누르는 등 손가락 끝을 사용하는 일이 많아지면서 손톱이<br>자라는 것에 영향을 준 것으로 보았다.</div>"
+          },
+          "options": [
+            {
+              "html": "깨끗하게 관리하면"
+            },
+            {
+              "html": "감싸서 보호해 주면"
+            },
+            {
+              "html": "자극하는 활동을 하면"
+            },
+            {
+              "html": "건조하지 않게 해 주면"
+            }
+          ],
+          "explanation": "Đáp án ③ 자극하는 활동을 하면 (khi có hoạt động kích thích).\nMóng tay người bây giờ mọc nhanh hơn trước (3mm → 3,5mm/tháng). Khi vùng quanh móng được kích thích, tế bào hoạt động mạnh nên móng mọc nhanh. Nhóm nghiên cứu cho rằng do gõ phím máy tính, điện thoại nhiều bằng đầu ngón tay.\nGõ phím = kích thích đầu ngón tay.\n① giữ sạch · ② bọc bảo vệ · ④ giữ không bị khô."
+        },
+        {
+          "no": 29,
+          "points": 2,
+          "answer": 2,
+          "layout": 1,
+          "prompt": {
+            "html": "<div class=\"exam-box\">   한국에서는 보통 명절에 여러 가지 나물을 만들어 먹는다. 집집마다<br>조금씩 다르지만 뿌리채소, 줄기채소, 잎채소를 재료로 해서 세 가지 종류의<br>나물을 만드는 것이 기본이다. 이 세 가지 나물은 (    )<br>상징적 의미를 담고 있다. 뿌리는 조상, 줄기는 부모, 잎은 자손을 뜻하기<br>때문이다. 뿌리, 줄기, 잎이 어우러져 하나의 나무가 되듯 한 집안도 이러한<br>결합을 통해 이루어짐을 나타내는 것이다.</div>"
+          },
+          "options": [
+            {
+              "html": "식물의 성장과 번식이라는"
+            },
+            {
+              "html": "조상과 후손의 연결이라는"
+            },
+            {
+              "html": "자연과 인간의 화합이라는"
+            },
+            {
+              "html": "음식의 장만과 나눔이라는"
+            }
+          ],
+          "explanation": "Đáp án ② 조상과 후손의 연결이라는 (sự nối kết tổ tiên và con cháu).\nNgày lễ, người Hàn làm ba loại rau từ rễ, thân, lá. Rễ là tổ tiên, thân là cha mẹ, lá là con cháu; rễ, thân, lá hợp thành một cây như một gia tộc.\n① sinh trưởng, sinh sản của cây · ③ hòa hợp thiên nhiên và con người · ④ chuẩn bị và chia sẻ đồ ăn."
+        },
+        {
+          "no": 30,
+          "points": 2,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": "<div class=\"exam-box\">   전자레인지는 보통 음식을 따뜻하게 데울 때 사용된다. 그런데 전자레인<br>지는 직접 열을 가하는 것이 아니라 음식에 포함된 물 분자의 움직임을<br>이용하여 음식을 데운다. 음식물에 전자레인지의 전자파가 닿으면 음식물<br>안에 있는 물 분자들이 진동하면서 열이 발생하는 것이다. 한편 얼음은 전자<br>레인지의 전자파가 닿아도 녹지 않는다. 얼음 속의 물 분자가 얼어 있어서<br>(    ) 때문이다.</div>"
+          },
+          "options": [
+            {
+              "html": "부피가 커지기"
+            },
+            {
+              "html": "결합이 안 되기"
+            },
+            {
+              "html": "움직이지 못하기"
+            },
+            {
+              "html": "열을 모두 반사하기"
+            }
+          ],
+          "explanation": "Đáp án ③ 움직이지 못하기 (không chuyển động được).\nLò vi sóng làm nóng nhờ phân tử nước trong thức ăn rung lên khi gặp sóng điện từ. Còn đá thì không tan, vì phân tử nước trong đá bị đóng băng nên không chuyển động được.\nNguyên lý: phân tử nước phải rung → đá đông cứng thì không rung.\n① thể tích tăng · ② không liên kết được · ④ phản xạ hết nhiệt."
+        },
+        {
+          "no": 31,
+          "points": 2,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": "<div class=\"exam-box\">   최근 일부 대기업을 중심으로 ‘기업 쪼개기’가 이루어지고 있다. 이는<br>(    ) 의도에서 비롯된 것이다. 그동안 대기업들은 큰 몸집<br>탓에 복잡한 결재 절차를 거쳐야 했다. 그런데 최근 시장 환경이 급변하면서<br>의사 결정 속도가 곧 기업의 경쟁력인 시대가 되었다. 이에 기업들은 계열사를<br>독립적인 회사로 분리하고 각 회사에 최종 결정 권한을 넘김으로써 시장<br>변화에 신속히 대처하고 있다.</div>"
+          },
+          "options": [
+            {
+              "html": "회사의 이미지를 바꾸려는"
+            },
+            {
+              "html": "시장의 흐름을 변화시키려는"
+            },
+            {
+              "html": "기업 간에 정보를 공유하려는"
+            },
+            {
+              "html": "의사 결정 단계를 단순화하려는"
+            }
+          ],
+          "explanation": "Đáp án ④ 의사 결정 단계를 단순화하려는 (muốn đơn giản hóa các bước ra quyết định).\nDoanh nghiệp lớn \"chia nhỏ\" công ty: trước đây vì quy mô lớn phải qua thủ tục phê duyệt phức tạp; nay tốc độ ra quyết định là năng lực cạnh tranh nên tách công ty con, trao quyền quyết định cuối cùng để phản ứng nhanh.\n① đổi hình ảnh công ty · ② thay đổi xu hướng thị trường · ③ chia sẻ thông tin giữa doanh nghiệp."
+        },
+        {
+          "no": 32,
+          "points": 2,
+          "answer": 1,
+          "layout": 1,
+          "prompt": {
+            "html": "<div class=\"exam-box\">   물감은 섞거나 덧칠할수록 색이 탁해진다. 그래서 19세기 화가들은 점을 찍어<br>색을 표현하는 점묘법을 생각해 냈다. 이 기법은 예를 들어 빨간색과 파란<br>색의 작은 점을 촘촘히 찍어서, 조금 떨어진 곳에서 볼 때 점들이 섞여 보라색<br>으로 보이도록 한 것이다. 이렇게 표현한 색은 물감을 섞어서 만든 색보다<br>훨씬 더 맑고 부드러운 느낌을 준다. 이 때문에 점묘법은 회화의 대표적인<br>표현 기법으로 자리 잡게 되었고 현대 화가들도 즐겨 사용하고 있다.</div>"
+          },
+          "options": [
+            {
+              "html": "이 기법으로 그림을 그리면 그림이 부드럽게 느껴진다."
+            },
+            {
+              "html": "이 기법은 19세기 이후에는 화가들의 외면을 받게 되었다."
+            },
+            {
+              "html": "이 기법은 가까운 곳에서 봐야 색이 섞여 보이는 효과가 있다."
+            },
+            {
+              "html": "이 기법으로 그림을 그릴 때는 넓은 간격으로 점을 찍어야 한다."
+            }
+          ],
+          "explanation": "Đáp án ① 이 기법으로 그림을 그리면 그림이 부드럽게 느껴진다. (Vẽ bằng kỹ thuật này thì tranh có cảm giác dịu.)\n이렇게 표현한 색은 … 훨씬 더 맑고 부드러운 느낌을 준다. = Màu thể hiện như vậy trong và dịu hơn nhiều.\n② Sai: họa sĩ hiện đại vẫn hay dùng.\n③ Sai: nhìn từ hơi xa mới thấy màu hòa vào nhau.\n④ Sai: chấm dày đặc (촘촘히), không phải thưa."
+        },
+        {
+          "no": 33,
+          "points": 2,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": "<div class=\"exam-box\">   생물들은 환경 변화에 민감하게 반응하기 때문에 환경오염을 나타내는<br>지표 역할을 한다. 한 예로 나팔꽃은 대기 오염의 지표가 된다. 나팔꽃에 흰색<br>반점이 생기면 공기가 오염되었다는 것을 알 수 있다. 또 물고기는 수질 오염<br>정도를 보여 준다. 은어가 살면 깨끗한 1급수의 물이라는 것을, 미꾸라지가<br>살면 깨끗하지 않은 3급수의 물이라는 것을 뜻한다. 이처럼 복잡한 측정 장비<br>없이도 지표 생물로 그 지역 환경의 오염 정도를 알 수 있다.</div>"
+          },
+          "options": [
+            {
+              "html": "대기 오염의 여부는 지표 생물로 판별하기 어렵다."
+            },
+            {
+              "html": "자연 환경이 깨끗한 곳에서는 미꾸라지를 발견할 수 있다."
+            },
+            {
+              "html": "물속에 사는 물고기의 종류로 물이 오염되었는지 파악할 수 있다."
+            },
+            {
+              "html": "나팔꽃은 크기의 변화를 통해 환경 변화를 알려 주는 지표 생물이다."
+            }
+          ],
+          "explanation": "Đáp án ③ 물속에 사는 물고기의 종류로 물이 오염되었는지 파악할 수 있다. (Dựa vào loài cá sống trong nước có thể biết nước có ô nhiễm không.)\n물고기는 수질 오염 정도를 보여 준다: cá ngọt (은어) sống → nước loại 1 sạch; cá chạch (미꾸라지) sống → nước loại 3 không sạch.\n① Sai: hoa bìm bìm là chỉ thị ô nhiễm không khí.\n② Sai: cá chạch sống ở nước không sạch.\n④ Sai: hoa bìm bìm báo hiệu bằng đốm trắng, không phải kích thước."
+        },
+        {
+          "no": 34,
+          "points": 2,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": "<div class=\"exam-box\">   정부는 환자의 의약품 처방 이력을 제공하는 ‘의약품 안전 사용 서비스’를<br>실시하고 있다. 이 제도는 의료 기관에서 의약품을 처방하기 전에 환자가<br>다른 기관에서 어떤 약을 처방받았는지 온라인으로 점검하도록 하는 것이다.<br>함께 먹으면 안 되는 약이나 같은 약이 여러 번 처방될 경우 생기는 부작용을<br>방지하려는 목적이다. 이 제도를 통한 적절한 의약품 처방이 국민의 건강<br>증진에 도움이 될 것으로 기대된다.</div>"
+          },
+          "options": [
+            {
+              "html": "이 제도를 온라인에서 이용할 수 있도록 할 예정이다."
+            },
+            {
+              "html": "환자들은 의약품을 처방받기 전에 이 제도를 이용해야 한다."
+            },
+            {
+              "html": "환자들은 의료 기관에 방문하지 않고 의약품을 처방받을 수 있다."
+            },
+            {
+              "html": "의약품의 부적절한 처방을 예방하기 위해 이 제도가 시행되고 있다."
+            }
+          ],
+          "explanation": "Đáp án ④ 의약품의 부적절한 처방을 예방하기 위해 이 제도가 시행되고 있다. (Chế độ này được thực hiện để phòng kê đơn thuốc không phù hợp.)\nCơ sở y tế kiểm tra trực tuyến thuốc bệnh nhân đã được kê ở nơi khác, nhằm tránh tác dụng phụ do thuốc kỵ nhau hay kê trùng.\n① Sai: đã đang thực hiện, việc kiểm tra vốn là trực tuyến.\n② Sai: cơ sở y tế kiểm tra trước khi kê đơn, không phải bệnh nhân.\n③ Sai: không nói nhận thuốc mà không đến cơ sở y tế."
+        },
+        {
+          "no": 35,
+          "points": 2,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": "<div class=\"exam-box\">   현대인들은 통계를 이용해 실상을 파악하는 경우가 많다. 하지만 통계가<br>절대적인 사실을 반영하는 것만은 아니다. 예컨대 오이의 가격이 1월에<br>1,000원이고 2월에 3,000원이며 현재 2,000원이라고 가정해 보자. 현재의<br>오이 값을 통계에 근거해서 평가할 때 1월을 기준으로 하면 물가가 큰 폭으로<br>오른 것이 되고 2월을 기준으로 삼으면 대폭 하락한 것으로 이해될 수 있는<br>것이다.</div>"
+          },
+          "options": [
+            {
+              "html": "통계 수치에 근거하면 실상을 파악할 수 있다."
+            },
+            {
+              "html": "현실이 반영되지 않는 통계 수치는 무의미하다."
+            },
+            {
+              "html": "통계를 통해 물가 상승률과 하락률을 알 수 있다."
+            },
+            {
+              "html": "통계는 기준 설정에 따라 다양하게 해석될 수 있다."
+            }
+          ],
+          "explanation": "Đáp án ④ 통계는 기준 설정에 따라 다양하게 해석될 수 있다. (Thống kê có thể được hiểu khác nhau tùy mốc so sánh.)\nVí dụ dưa leo: tháng 1 giá 1.000 won, tháng 2 giá 3.000, nay 2.000. Lấy tháng 1 làm mốc thì giá tăng mạnh; lấy tháng 2 thì giảm mạnh.\n① Ngược ý: thống kê không phản ánh tuyệt đối sự thật.\n② Không nói thống kê vô nghĩa.\n③ Chỉ là ví dụ, không phải chủ đề."
+        },
+        {
+          "no": 36,
+          "points": 2,
+          "answer": 2,
+          "layout": 1,
+          "prompt": {
+            "html": "<div class=\"exam-box\">   철새는 종에 따라 수만에서 수십만 개체가 무리를 지어 일정한 대형<br>으로 이동한다. 이때 대형의 선두에서 나는 새가 무리의 리더인데, 이 새는<br>무리를 안전하게 이끄는 역할을 맡는다. 이를 위해서 이 새는 거친 바람을<br>맨 앞에서 맞서 비행하며 최적의 항로와 고도를 찾아낼 수 있는 경험을 두루<br>갖추고 있어야 한다. 또한 어떤 위기 상황이 발생하더라도 신속하게 대처할<br>수 있는 판단 능력도 있어야 된다.</div>"
+          },
+          "options": [
+            {
+              "html": "철새는 최적의 항로로 신속하게 이동해야 한다."
+            },
+            {
+              "html": "철새의 리더는 경험과 판단 능력을 갖춰야 한다."
+            },
+            {
+              "html": "철새는 위험에 대처하기 위해 무리를 지어야 한다."
+            },
+            {
+              "html": "철새의 리더가 되려면 대형의 선두에서 비행해야 한다."
+            }
+          ],
+          "explanation": "Đáp án ② 철새의 리더는 경험과 판단 능력을 갖춰야 한다. (Con đầu đàn chim di cư phải có kinh nghiệm và khả năng phán đoán.)\nCon bay đầu đội hình dẫn đàn an toàn: phải có kinh nghiệm tìm đường bay, độ cao tối ưu, và khả năng phán đoán để xử lý nhanh mọi tình huống nguy hiểm.\n① ③ Không phải trọng tâm.\n④ Bay đầu đội hình là vị trí của con đầu đàn, không phải điều kiện để làm đầu đàn."
+        },
+        {
+          "no": 37,
+          "points": 2,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": "<div class=\"exam-box\">   어떤 사람들은 경제적 여유를 얻게 되면서 삶의 무료함을 느끼기도 한다.<br>그런데 사람들은 이런 무료함을 별것 아닌 사소한 것으로 여기는 경향이<br>있다. 하지만 무료함은 개인의 행복한 삶을 저해하는 하나의 요소가 될 수도<br>있다. 돈이나 명예로는 남부럽지 않을 것 같은 사람들이 무료함 때문에<br>사회적 일탈 행동을 하기도 하고 무료함이 심해져 우울증으로까지 발전하는<br>경우도 있기 때문이다. 무료함은 간과해도 되는 사소한 것이 아니다.</div>"
+          },
+          "options": [
+            {
+              "html": "경제적 여유가 있는 사람들이 무료함에 빠지기 쉽다."
+            },
+            {
+              "html": "사회적 일탈 행동은 돈과 명예가 없는 데에서 기인한다."
+            },
+            {
+              "html": "무료함을 가볍게 여기지 말고 그 심각성을 인식해야 한다."
+            },
+            {
+              "html": "행복한 삶을 위해서는 우울증을 예방하려고 노력해야 한다."
+            }
+          ],
+          "explanation": "Đáp án ③ 무료함을 가볍게 여기지 말고 그 심각성을 인식해야 한다. (Đừng coi nhẹ sự buồn chán, cần nhận thức sự nghiêm trọng của nó.)\n무료함은 간과해도 되는 사소한 것이 아니다. = Sự buồn chán không phải chuyện nhỏ có thể bỏ qua.\n① Chỉ là bối cảnh.\n② Sai: người có tiền, danh vọng cũng lệch chuẩn vì buồn chán.\n④ Trầm cảm chỉ là một hậu quả được nhắc tới."
+        },
+        {
+          "no": 38,
+          "points": 2,
+          "answer": 1,
+          "layout": 1,
+          "prompt": {
+            "html": "<div class=\"exam-box\">   사과를 할 때 진심 없이 건성으로 하는 사람들이 있다. 또한 어떤 사람<br>들은 사과를 할 때 선한 의도로 행한 것이었음을 강조하면서 행위에 대한<br>책임을 회피하려고 한다. 하지만 사과는 어떤 일의 결과에 책임을 지는<br>행위가 되어야 한다. 의도가 선한 것이었든 악한 것이었든 자신의 행위가<br>상대방에게 고통을 주었다면 그에 대한 책임을 져야 진정한 사과가 되는<br>것이다. 사과를 하는 사람들이 먼저 알아야 하는 것이 바로 이것이다.</div>"
+          },
+          "options": [
+            {
+              "html": "일의 결과를 책임지는 것이 진정한 사과이다."
+            },
+            {
+              "html": "잘못을 해도 의도가 선하다면 용서를 해야 한다."
+            },
+            {
+              "html": "사과는 잘못을 반복하지 않기 위해 하는 것이다."
+            },
+            {
+              "html": "악의적인 의도로 상대방에게 고통을 주면 안 된다."
+            }
+          ],
+          "explanation": "Đáp án ① 일의 결과를 책임지는 것이 진정한 사과이다. (Chịu trách nhiệm về kết quả mới là xin lỗi thật lòng.)\n사과는 어떤 일의 결과에 책임을 지는 행위가 되어야 한다. … 그에 대한 책임을 져야 진정한 사과가 되는 것이다.\n② Ngược ý: dù ý tốt hay xấu vẫn phải chịu trách nhiệm.\n③ Không nói xin lỗi để không lặp lại lỗi.\n④ Không phải chủ đề."
+        },
+        {
+          "no": 39,
+          "points": 2,
+          "answer": 4,
+          "layout": 4,
+          "prompt": {
+            "html": "<div class=\"exam-box\">   한 연구팀이 냄새가 나지 않는 무취 상태의 조건을 알아냈다. ( ㉠ )<br>사람의 코는 다양한 냄새 중에 농도가 짙은 것 위주로 냄새를 맡는다.<br>( ㉡ ) 그런데 서로 다른 냄새 입자를 동일한 양으로 섞으면 사람의<br>코는 냄새가 거의 나지 않는 것처럼 느낀다는 것이다. ( ㉢ ) 여기에서<br>착안해 악취를 없애는 기술을 연구하고 있다. ( ㉣ ) 이 기술이 개발<br>되면 심한 악취 환경에서 작업하는 사람들의 어려움을 줄여 줄 수 있을<br>것이다.<br><br><div class=\"exam-box\">&lt;보기&gt;<br>악취에 동일한 양의 다른 냄새들을 더해 악취를 느끼지 못하게 하는 것이<br>목표이다.</div></div>"
+          },
+          "options": [
+            {
+              "html": "㉠"
+            },
+            {
+              "html": "㉡"
+            },
+            {
+              "html": "㉢"
+            },
+            {
+              "html": "㉣"
+            }
+          ],
+          "explanation": "Đáp án ④ ㉣.\nCâu cần chèn: 악취에 동일한 양의 다른 냄새들을 더해 악취를 느끼지 못하게 하는 것이 목표이다. = Mục tiêu là thêm các mùi khác với lượng bằng nhau vào mùi hôi để không còn cảm thấy mùi hôi.\nTrước ㉣: dựa vào phát hiện đó, người ta nghiên cứu công nghệ khử mùi hôi. Câu chèn nói mục tiêu của công nghệ này; sau đó là lợi ích khi công nghệ được phát triển."
+        },
+        {
+          "no": 40,
+          "points": 2,
+          "answer": 4,
+          "layout": 4,
+          "prompt": {
+            "html": "<div class=\"exam-box\">   요리사 박찬일 씨가 에세이집 『미식가의 허기』를 펴냈다. ( ㉠ )<br>이 책에는 서민들이 일상적으로 먹던 음식들이 계절별로 소개되어 있다.<br>( ㉡ ) 그러나 음식에 대한 내용만 담겨 있는 것은 아니다. ( ㉢ )<br>산지에서 음식 재료를 생산하기 위해 애쓰는 사람들, 그 재료로 뜨거운 불<br>앞에서 음식을 준비하는 사람들에 대한 이야기도 있다. ( ㉣ ) 이 책은<br>미각을 자극하기보다는 한 끼 식사가 마련되는 과정의 어려움을 일깨운다.<br><br><div class=\"exam-box\">&lt;보기&gt;<br>작가는 따뜻한 한 끼의 음식과 그것을 만들기까지 수고한 사람들에 대한<br>이야기를 담고 싶었던 것이다.</div></div>"
+          },
+          "options": [
+            {
+              "html": "㉠"
+            },
+            {
+              "html": "㉡"
+            },
+            {
+              "html": "㉢"
+            },
+            {
+              "html": "㉣"
+            }
+          ],
+          "explanation": "Đáp án ④ ㉣.\nCâu cần chèn: 작가는 따뜻한 한 끼의 음식과 그것을 만들기까지 수고한 사람들에 대한 이야기를 담고 싶었던 것이다. = Tác giả muốn kể về bữa ăn ấm áp và những người vất vả làm ra nó.\nTrước ㉣: sách có cả chuyện người sản xuất nguyên liệu và người nấu bên bếp lửa. Câu chèn tổng kết ý định tác giả; sau đó là \"cuốn sách giúp nhận ra sự vất vả để có một bữa ăn\"."
+        },
+        {
+          "no": 41,
+          "points": 2,
+          "answer": 3,
+          "layout": 4,
+          "prompt": {
+            "html": "<div class=\"exam-box\">   지금 우리는 기계가 인간의 인지적인 영역까지 대신하는 제2의 기계<br>시대로 접어들고 있다. ( ㉠ ) 이러한 비약적인 기계 발전의 시대가<br>인간의 삶을 더 윤택하게 할지 더 소외시킬지 단정 지을 수는 없다.<br>( ㉡ ) 하지만 급속한 기술의 발달로 현재의 산업 구조가 크게 바뀐다는<br>것만은 분명하다. ( ㉢ ) 그래서 지금 초등학교에 진학하는 아이들의<br>65%는 현재에는 없는 직업을 갖게 될 것으로 전망된다. ( ㉣ )<br><br><div class=\"exam-box\">&lt;보기&gt;<br>산업 구조의 변화에 따라 당연히 일자리의 변동성도 커질 것이다.</div></div>"
+          },
+          "options": [
+            {
+              "html": "㉠"
+            },
+            {
+              "html": "㉡"
+            },
+            {
+              "html": "㉢"
+            },
+            {
+              "html": "㉣"
+            }
+          ],
+          "explanation": "Đáp án ③ ㉢.\nCâu cần chèn: 산업 구조의 변화에 따라 당연히 일자리의 변동성도 커질 것이다. = Theo sự thay đổi cơ cấu công nghiệp, việc làm đương nhiên cũng biến động nhiều hơn.\nTrước ㉢: cơ cấu công nghiệp chắc chắn sẽ thay đổi lớn. Sau ㉢: 그래서 65% trẻ vào tiểu học bây giờ sẽ làm những nghề hiện chưa có — kết quả của biến động việc làm."
+        },
+        {
+          "no": 42,
+          "points": 2,
+          "answer": 3,
+          "layout": 2,
+          "prompt": {
+            "html": "밑줄 친 부분에 나타난 ‘나’의 심정으로 알맞은 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "난처하다"
+            },
+            {
+              "html": "담담하다"
+            },
+            {
+              "html": "감격스럽다"
+            },
+            {
+              "html": "의심스럽다"
+            }
+          ]
+        },
+        {
+          "no": 43,
+          "points": 2,
+          "answer": 1,
+          "layout": 1,
+          "prompt": {
+            "html": "위 글의 내용과 같은 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "나는 담임 선생님께 인정을 받고 싶다."
+            },
+            {
+              "html": "반 아이들은 요즘 교실 청소를 잘 하지 않는다."
+            },
+            {
+              "html": "반 아이들은 예전 담임 선생님 말을 잘 들었다."
+            },
+            {
+              "html": "담임 선생님은 내가 공부를 못해서 화를 내셨다."
+            }
+          ]
+        },
+        {
+          "no": 44,
+          "points": 2,
+          "answer": 3,
+          "layout": 1,
+          "prompt": {
+            "html": "위 글의 주제로 알맞은 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "과거와는 다른 새로운 디자인의 개발이 요구된다."
+            },
+            {
+              "html": "보편적 디자인을 사용해야 제품의 대량 생산이 가능하다."
+            },
+            {
+              "html": "보편적 디자인은 사회의 여러 계층을 고려한 디자인이다."
+            },
+            {
+              "html": "제품을 디자인할 때 가장 중요한 것은 생산의 효율성이다."
+            }
+          ],
+          "explanation": "Đáp án ③ 보편적 디자인은 사회의 여러 계층을 고려한 디자인이다. (Thiết kế phổ quát là thiết kế tính đến nhiều tầng lớp trong xã hội.)\nThiết kế phổ quát giúp ai cũng dùng thuận tiện, bất kể giới tính, tuổi, khuyết tật; ví dụ xe buýt sàn thấp tiện cho trẻ em, người già, phụ nữ mang thai, người khuyết tật.\n① Không phải trọng tâm.\n② Sai: sản xuất hàng loạt là mục tiêu thời cách mạng công nghiệp.\n④ Ngược ý bài."
+        },
+        {
+          "no": 45,
+          "points": 2,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": "(   )에 들어갈 내용으로 가장 알맞은 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "생산할 제품의 특성을 최대한 반영하였다"
+            },
+            {
+              "html": "편리한 사용 환경을 마련해 주고자 하였다"
+            },
+            {
+              "html": "당시 널리 퍼져 있던 유행의 흐름을 따랐다"
+            },
+            {
+              "html": "표준이라 여기는 다수만을 기준으로 하였다"
+            }
+          ],
+          "explanation": "Đáp án ④ 표준이라 여기는 다수만을 기준으로 하였다 (chỉ lấy số đông được coi là chuẩn làm tiêu chuẩn).\nThời cách mạng công nghiệp theo đuổi hiệu quả sản xuất hàng loạt, nên khi thiết kế chỉ lấy số đông \"chuẩn\" làm tiêu chuẩn. Vì vậy những người không thuộc nhóm đó phải chịu bất tiện.\nManh mối: 여기에 속하지 못한 대상들 (những người không thuộc nhóm này) → trước đó phải nói về một nhóm chuẩn.\n① phản ánh đặc tính sản phẩm · ② tạo môi trường tiện lợi · ③ theo trào lưu thời đó."
+        },
+        {
+          "no": 46,
+          "points": 2,
+          "answer": 1,
+          "layout": 4,
+          "prompt": {
+            "html": "<div class=\"exam-box\">위 글에서 &lt;보기&gt;의 글이 들어가기에 가장 알맞은 곳을 고르십시오.</div><br><div class=\"exam-box\">&lt;보기&gt;<br>경제적 관점에서 보수와 진보는 시장 경제를 조절하는 두 축인 시장과<br>국가의 역할에 대한 견해에 따라 구분된다.</div>"
+          },
+          "options": [
+            {
+              "html": "㉠"
+            },
+            {
+              "html": "㉡"
+            },
+            {
+              "html": "㉢"
+            },
+            {
+              "html": "㉣"
+            }
+          ],
+          "explanation": "Đáp án ① ㉠.\nCâu cần chèn: 경제적 관점에서 보수와 진보는 시장 경제를 조절하는 두 축인 시장과 국가의 역할에 대한 견해에 따라 구분된다. = Về kinh tế, bảo thủ và cấp tiến khác nhau ở quan điểm về vai trò của thị trường và nhà nước.\nTrước ㉠: khái niệm bảo thủ, cấp tiến dùng cả trong kinh tế. Câu chèn giới thiệu tiêu chí phân biệt; sau đó lần lượt giải thích quan điểm bảo thủ (thị trường tự do) và cấp tiến (nhà nước can thiệp)."
+        },
+        {
+          "no": 47,
+          "points": 2,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": "위 글의 내용과 같은 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "경제 성장을 위해서는 국가가 시장을 주도해야 한다."
+            },
+            {
+              "html": "시장 경제를 제어할 수 있는 주체는 시장이 유일하다."
+            },
+            {
+              "html": "진보주의자가 보수주의자에 비해 자유에 더 가치를 둔다."
+            },
+            {
+              "html": "경제 성장으로 인한 문제 해결에는 진보적 관점이 필요하다."
+            }
+          ],
+          "explanation": "Đáp án ④ 경제 성장으로 인한 문제 해결에는 진보적 관점이 필요하다. (Để giải quyết vấn đề do tăng trưởng kinh tế cần quan điểm cấp tiến.)\n경제 발전에 따른 문제점을 해결하기 위해서는 진보의 정책들이 요구된다.\n① Sai: bài nói để phát triển kinh tế cần điều phe bảo thủ theo đuổi (để thị trường tự do); nhà nước can thiệp là cách phe cấp tiến giải quyết bất bình đẳng.\n② Sai: thị trường và nhà nước là hai trục điều tiết.\n③ Sai: bảo thủ coi trọng tự do, cấp tiến coi trọng bình đẳng."
+        },
+        {
+          "no": 48,
+          "points": 2,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": "위 글을 쓴 목적으로 알맞은 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "특허 심사 절차를 설명하기 위해서"
+            },
+            {
+              "html": "특허권의 필요성을 역설하기 위해서"
+            },
+            {
+              "html": "특허의 실질적 가치를 분석하기 위해서"
+            },
+            {
+              "html": "특허 출원 남용의 문제를 제기하기 위해서"
+            }
+          ],
+          "explanation": "Đáp án ④ 특허 출원 남용의 문제를 제기하기 위해서 (để nêu vấn đề lạm dụng đăng ký sáng chế).\nBài nói gần đây nhiều người đăng ký sáng chế bừa bãi để chiếm quyền trước khi phát triển công nghệ, khiến người thực sự phát triển công nghệ mới không có được quyền — làm tổn hại mục đích vốn có của sáng chế.\n① Không giải thích thủ tục thẩm định.\n② Không nhấn mạnh sự cần thiết của quyền sáng chế.\n③ Không phân tích giá trị thực tế."
+        },
+        {
+          "no": 49,
+          "points": 2,
+          "answer": 3,
+          "layout": 2,
+          "prompt": {
+            "html": "(   )에 들어갈 내용으로 가장 알맞은 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "특허가 만료되지 않은"
+            },
+            {
+              "html": "신기술을 특허로 인정받은"
+            },
+            {
+              "html": "기술이 완벽하게 개발되지 않은"
+            },
+            {
+              "html": "기존의 기술과 차별성을 확인한"
+            }
+          ],
+          "explanation": "Đáp án ③ 기술이 완벽하게 개발되지 않은 (công nghệ chưa được phát triển hoàn chỉnh).\nTrong tình trạng công nghệ chưa phát triển hoàn chỉnh, người ta đăng ký sáng chế bừa bãi để chiếm quyền trước rồi mới phát triển công nghệ.\nManh mối: 권리부터 선점해 놓고 기술을 개발하려는 = chiếm quyền trước rồi mới phát triển → lúc đăng ký công nghệ chưa xong.\n① sáng chế chưa hết hạn · ② công nghệ mới đã được công nhận sáng chế · ④ đã xác nhận khác biệt với công nghệ cũ."
+        },
+        {
+          "no": 50,
+          "points": 2,
+          "answer": 4,
+          "layout": 1,
+          "prompt": {
+            "html": "밑줄 친 부분에 나타난 필자의 태도로 알맞은 것을 고르십시오."
+          },
+          "options": [
+            {
+              "html": "특허 출원 감소를 심각하게 우려하고 있다."
+            },
+            {
+              "html": "특허권자의 독점권을 강하게 옹호하고 있다."
+            },
+            {
+              "html": "특허 제도의 정책적 보완을 강력히 요구하고 있다."
+            },
+            {
+              "html": "특허 제도가 사회에 기여한 바를 높이 평가하고 있다."
+            }
+          ],
+          "explanation": "Đáp án ④ 특허 제도가 사회에 기여한 바를 높이 평가하고 있다. (Đánh giá cao những đóng góp của chế độ sáng chế cho xã hội.)\n이런 취지에 부합하여 실제로 특허 제도는 기술 혁신과 산업 발전에 크게 이바지해 왔다. = Đúng với mục đích đó, chế độ sáng chế thực tế đã đóng góp lớn cho đổi mới công nghệ và phát triển công nghiệp.\nTác giả ghi nhận đóng góp của chế độ trước khi nêu vấn đề.\n① Sai: vấn đề là đăng ký quá nhiều, không phải giảm.\n② Sai: tác giả chỉ bảo vệ quyền khi công nghệ thực sự đóng góp cho xã hội.\n③ Bài không đòi bổ sung chính sách."
+        }
+      ]
+    }
+  ]
+}

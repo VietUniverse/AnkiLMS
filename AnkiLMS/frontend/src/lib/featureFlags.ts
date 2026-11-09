@@ -38,7 +38,6 @@ export const BETA_FEATURE_KEYS: readonly FeatureKey[] = [
   "topics",
   "lessons",
   "aiSpeaking",
-  "topik",
   "achievements",
   "community",
   "chat",

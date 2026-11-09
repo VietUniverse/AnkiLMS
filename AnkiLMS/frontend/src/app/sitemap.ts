@@ -7,7 +7,7 @@ export const dynamic = "force-static";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const origin = "https://lms.ankivn.com";
-  const pages = ["", "/hangul", "/dictionary", "/explore", "/flashcards", "/dictation", "/shadowing", "/listen", "/games"];
+  const pages = ["", "/hangul", "/dictionary", "/explore", "/flashcards", "/dictation", "/shadowing", "/listen", "/games", "/topik/archive"];
   const deckIds = CURATED_DECKS.map((deck) => deck.id);
   try {
     const data = JSON.parse(readFileSync(path.join(process.cwd(), "public/data/course-vocabulary.json"), "utf8"));
