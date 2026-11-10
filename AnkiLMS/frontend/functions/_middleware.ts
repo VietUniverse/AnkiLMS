@@ -102,10 +102,53 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     // to consume a missing RSC stream (which surfaces as minified React #412).
     rewriter.on("head", {
       element(element) {
-        element.append(`<script nonce="${nonce}">
+        // Run before the exported Next runtime chunks: they are async and can
+        // otherwise register Link prefetches before the navigation guard.
+        element.prepend(`<script nonce="${nonce}">
           (() => {
+            // These pages are standalone HTML exports. Their visible links
+            // must navigate as documents; there is no matching App Router
+            // route/Flight payload at /sach/* for Next's automatic prefetch.
+            // Suppress only observer-based prefetching of lesson links while
+            // leaving IntersectionObserver available to the rest of the UI.
+            const NativeObserver = window.IntersectionObserver;
+            if (NativeObserver) {
+              window.IntersectionObserver = class extends NativeObserver {
+                observe(target) {
+                  if (target instanceof HTMLAnchorElement) {
+                    try {
+                      const destination = new URL(target.href, location.href);
+                      if (destination.origin === location.origin &&
+                          (destination.pathname.startsWith('/sach/') || destination.pathname.startsWith('/tieng-han/sach/'))) return;
+                    } catch { /* Ignore malformed hrefs and preserve observer behavior. */ }
+                  }
+                  return super.observe(target);
+                }
+              };
+            }
+
+            const isBookLink = (event) => {
+              const target = event.target;
+              const anchor = target instanceof Element ? target.closest('a[href]') : null;
+              if (!anchor) return false;
+              try {
+                const destination = new URL(anchor.href, location.href);
+                return destination.origin === location.origin &&
+                  (destination.pathname.startsWith('/sach/') || destination.pathname.startsWith('/tieng-han/sach/'));
+              } catch { return false; }
+            };
+
+            // Next Link can prefetch on hover/touch independently of click.
+            // Stop those synthetic events at capture so no broken RSC request
+            // reaches the React Flight client and triggers error #412.
+            for (const type of ['pointerover', 'mouseover', 'touchstart']) {
+              document.addEventListener(type, (event) => {
+                if (isBookLink(event)) event.stopImmediatePropagation();
+              }, true);
+            }
+
             document.addEventListener('click', (event) => {
-              if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+              if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
               const target = event.target;
               const anchor = target instanceof Element ? target.closest('a[href]') : null;
               if (!anchor || anchor.hasAttribute('download') || (anchor.target && anchor.target !== '_self')) return;
