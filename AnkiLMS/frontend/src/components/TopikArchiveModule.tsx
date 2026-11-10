@@ -26,18 +26,14 @@ type Mode = "practice" | "mock";
 const LEVEL_I_TIME = 100 * 60;
 const LEVEL_II_TIME = 180 * 60;
 
+// Giao diện sáng: globals.css đã đổi màu nền/chữ tối; ở đây chỉ làm đậm các màu chữ nhạt mà globals.css chưa đổi.
 const ARCHIVE_CSS = `
-  html[data-theme="light"] body:not(:has(.login-page-root)) .topik-archive [class*="text-white"]{color:#ffffff!important}
-  html[data-theme="light"] body:not(:has(.login-page-root)) .topik-archive [class*="text-slate-300"]{color:#cbd5e1!important}
-  html[data-theme="light"] body:not(:has(.login-page-root)) .topik-archive [class*="text-slate-200"]{color:#e2e8f0!important}
-  html[data-theme="light"] body:not(:has(.login-page-root)) .topik-archive [class*="text-slate-100"]{color:#f1f5f9!important}
-  html[data-theme="light"] body:not(:has(.login-page-root)) .topik-archive [class*="text-slate-400"]{color:#94a3b8!important}
-  html[data-theme="light"] body:not(:has(.login-page-root)) .topik-archive [class*="text-slate-500"]{color:#64748b!important}
-  html[data-theme="light"] body:not(:has(.login-page-root)) .topik-archive [class*="text-sky-300"]{color:#7dd3fc!important}
-  html[data-theme="light"] body:not(:has(.login-page-root)) .topik-archive [class*="bg-slate-900"]{background-color:#0f172a!important}
-  html[data-theme="light"] body:not(:has(.login-page-root)) .topik-archive [class*="bg-slate-800"]{background-color:#1e293b!important}
-  html[data-theme="light"] body:not(:has(.login-page-root)) .topik-archive [class*="bg-slate-700"]{background-color:#334155!important}
-  html[data-theme="light"] body:not(:has(.login-page-root)) .topik-archive [class*="bg-slate-950"]{background-color:#020617!important}
+  html[data-theme="light"] body:not(:has(.login-page-root)) .topik-archive [class*="text-sky-200"]{color:#0369a1!important}
+  html[data-theme="light"] body:not(:has(.login-page-root)) .topik-archive [class*="text-rose-200"]{color:#be123c!important}
+  html[data-theme="light"] body:not(:has(.login-page-root)) .topik-archive [class*="text-rose-300"]{color:#be123c!important}
+  html[data-theme="light"] body:not(:has(.login-page-root)) .topik-archive [class*="text-emerald-200"]{color:#047857!important}
+  html[data-theme="light"] body:not(:has(.login-page-root)) .topik-archive [class*="text-amber-200"]{color:#b45309!important}
+  html[data-theme="light"] body:not(:has(.login-page-root)) .topik-archive [class*="text-indigo-300"]{color:#4338ca!important}
 `;
 
 function safeHtml(html?: string) {
@@ -399,7 +395,7 @@ export function TopikArchiveModule() {
 
   return <main className="topik-archive mx-auto max-w-5xl space-y-5 pb-24 animate-fadeIn">
     <style>{ARCHIVE_CSS}</style>
-    <header className="rounded-3xl border border-indigo-400/15 bg-gradient-to-br from-[#111d38] via-[#121a31] to-[#1e1940] p-5 sm:p-7">
+    <header className="rounded-3xl border border-indigo-400/15 bg-gradient-to-br from-sky-50 via-white to-indigo-50 p-5 dark:from-[#111d38] dark:via-[#121a31] dark:to-[#1e1940] sm:p-7">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div><p className="text-[10px] font-black uppercase tracking-[0.18em] text-indigo-300">HaechiVN · Kho đề</p><h1 className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">TOPIK I / II · 24 đề chính thức</h1><p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">Luyện đề có đáp án và giải thích, hoặc thi thử có tính giờ. Đề, ảnh và audio lấy từ bộ lưu trữ NIIED 2014–2025.</p></div>
         <a href="/topik" className="inline-flex items-center gap-2 rounded-xl border border-sky-400/30 bg-sky-400/10 px-4 py-3 text-xs font-black text-sky-200 hover:bg-sky-400/15"><ArrowLeft className="h-4 w-4" /> Luyện theo dạng bài</a>
