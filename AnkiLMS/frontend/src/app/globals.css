@@ -2,8 +2,38 @@
 @import "./egg-toggle.css";
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *, .dark, .dark *));
 
+/* Vai trò màu: chỉnh màu ở đây (khối :root = tối, html[data-theme="light"] = sáng).
+   Component dùng class theo vai trò: text-ink, bg-field, border-line, text-accent... */
+@theme inline {
+  --color-ink: var(--c-ink);
+  --color-ink-soft: var(--c-ink-soft);
+  --color-ink-mute: var(--c-ink-mute);
+  --color-ink-faint: var(--c-ink-faint);
+  --color-field: var(--c-field);
+  --color-line: var(--c-line);
+  --color-panel: var(--c-panel);
+  --color-accent: var(--c-accent);
+  --color-danger: var(--c-danger);
+  --color-warn: var(--c-warn);
+  --color-warn-ink: var(--c-warn-ink);
+  --color-warn-icon: var(--c-warn-icon);
+}
+
 @layer base {
   :root {
+    --c-ink: #ffffff;
+    --c-ink-soft: #cbd5e1;
+    --c-ink-mute: #94a3b8;
+    --c-ink-faint: #64748b;
+    --c-field: #020617;
+    --c-line: #334155;
+    --c-panel: rgb(2 6 23 / 0.4);
+    --c-accent: #67e8f9;
+    --c-danger: #fda4af;
+    --c-warn: #f59e0b;
+    --c-warn-ink: #fef3c7;
+    --c-warn-icon: #fcd34d;
+
     --bg-primary: #0b1329;
     --bg-secondary: #0f1b38;
     --bg-card: #132247;
@@ -53,6 +83,17 @@ html[data-theme="light"] {
   --border-color: #d5deeb;
   --text-primary: #172033;
   --text-secondary: #52627a;
+  --c-ink: #0f172a;
+  --c-ink-soft: #475569;
+  --c-ink-mute: #64748b;
+  --c-ink-faint: #94a3b8;
+  --c-field: #ffffff;
+  --c-line: #d5deeb;
+  --c-panel: #f8fafc;
+  --c-accent: #0e7490;
+  --c-danger: #be123c;
+  --c-warn-ink: #78350f;
+  --c-warn-icon: #d97706;
 }
 
 html[data-theme="light"] body:not(:has(.login-page-root)) {
