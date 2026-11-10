@@ -48,8 +48,8 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   const studyBackground = useStudyBackground();
   const studyBackgroundStyle = activeStudySession ? backgroundLayerStyle(studyBackground) : null;
 
-  // Bài kiểm tra từ vựng mở cho khách, không bắt đăng nhập.
-  const isPublicPath = pathname === "/login" || pathname.startsWith("/placement-test");
+  // Cửa vào cho khách: học thử lớp mở, kiểm tra trình độ, từ điển và kho bộ thẻ dùng được không cần đăng nhập.
+  const isPublicPath = pathname === "/login" || ["/classes", "/placement-test", "/dictionary", "/explore"].some((route) => pathname === route || pathname.startsWith(`${route}/`));
 
   useEffect(() => {
     if (isAuthReady && !currentUser && !isPublicPath) {

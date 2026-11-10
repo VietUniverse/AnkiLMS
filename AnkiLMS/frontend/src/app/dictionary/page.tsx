@@ -19,7 +19,7 @@ type NaverLookup = {
 };
 
 export default function DictionaryPage() {
-  const { userDecks } = useApp();
+  const { userDecks, currentUser } = useApp();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<DictionaryEntry[]>([]);
   const [loading, setLoading] = useState(false);
@@ -62,7 +62,8 @@ export default function DictionaryPage() {
 
   useEffect(() => {
     const term = query.trim();
-    if ((!/[가-힣]/u.test(term) && !/^[a-z][a-z\s.-]*$/iu.test(term)) || term.length < 2 || term.length > 60) {
+    // Tra Naver cần đăng nhập (máy chủ chặn khách), nên khách chỉ thấy kết quả NIKL.
+    if (!currentUser || (!/[가-힣]/u.test(term) && !/^[a-z][a-z\s.-]*$/iu.test(term)) || term.length < 2 || term.length > 60) {
       setNaverEntry(null);
       setNaverLoading(false);
       setNaverError("");
@@ -87,7 +88,7 @@ export default function DictionaryPage() {
         .finally(() => { if (!controller.signal.aborted) setNaverLoading(false); });
     }, 350);
     return () => { controller.abort(); window.clearTimeout(timer); };
-  }, [query]);
+  }, [query, currentUser]);
 
   // Chủ đề có thể gồm nhiều nhãn nối bằng " · ": chỉ hiện 2 nhãn đầu, còn lại ghi "+N".
   function topicLabel(topic: string) {

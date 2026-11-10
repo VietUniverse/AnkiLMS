@@ -36,7 +36,7 @@ const HEADER_LEVEL: Record<string, string> = {
 };
 
 export default function DeckDetailClient({ id }: { id: string }) {
-  const { userDecks, handleDeckImported, handleRemoveDeck } = useApp();
+  const { userDecks, handleDeckImported, handleRemoveDeck, currentUser, handleOpenAuth } = useApp();
   const [courseDeck, setCourseDeck] = useState<CuratedDeckItem | null>(null);
   const [catalogOverride, setCatalogOverride] = useState<Partial<CuratedDeckItem> | null>(null);
   const [catalogHidden, setCatalogHidden] = useState(false);
@@ -175,6 +175,8 @@ export default function DeckDetailClient({ id }: { id: string }) {
 
   const handleAdd = () => {
     if (!deck) return;
+    // Khách xem bộ thẻ thoải mái; muốn lưu để ôn thì mời đăng ký.
+    if (!currentUser) return handleOpenAuth(true);
     const ankiDeck = curatedDeckToAnkiDeck(deck);
     handleDeckImported(ankiDeck);
     setToastMessage(`Đã thêm bộ thẻ "${deck.title}" vào Kho thẻ thành công!`);

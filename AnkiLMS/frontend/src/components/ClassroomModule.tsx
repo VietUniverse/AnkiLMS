@@ -85,15 +85,20 @@ export interface Classroom {
 
 interface ClassroomModuleProps {
   currentUser: UserProfile | null;
+  /** Báo danh sách lớp hiện tại (để mục lớp mở biết người học đã vào lớp nào). */
+  onClassesChange?: (classIds: string[]) => void;
+  /** Mở sẵn lớp này khi hiện module (nút "Vào học" của lớp mở). */
+  initialClassId?: string | null;
 }
 
-export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser }) => {
+export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, onClassesChange, initialClassId = null }) => {
   const { handleOpenAuth, userDecks } = useApp();
   const [courseDeckGroups, setCourseDeckGroups] = useState<TopikDeck[]>([]);
 
   const [classes, setClasses] = useState<Classroom[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
+  const [selectedClassId, setSelectedClassId] = useState<string | null>(initialClassId);
+  useEffect(() => { onClassesChange?.(classes.map((item) => item.id)); }, [classes, onClassesChange]);
 
   // Join Class Form State
   const [joinCodeInput, setJoinCodeInput] = useState("");

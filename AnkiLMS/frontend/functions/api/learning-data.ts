@@ -9,8 +9,9 @@ const PRIVATE_FILES = new Set([
   "thth-curriculum.json",
   "dictation-learning-content.json",
 ]);
-// Dữ liệu bài kiểm tra từ vựng mở cho khách làm không cần đăng nhập.
-const PUBLIC_FILES = new Set(["seoul-1a.json", "thth-1.json"]);
+// Mở cho khách: dữ liệu bài kiểm tra và từ điển NIKL (CC BY-SA, xem THIRD_PARTY_DATA.md).
+// course-vocabulary.json chưa có giấy phép tái bản nên vẫn bắt đăng nhập.
+const PUBLIC_FILES = new Set(["seoul-1a.json", "thth-1.json", "dictionary-ko-multi.json", "dictionary-topic-vocab.json"]);
 
 export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   const name = new URL(request.url).searchParams.get("name") || "";
@@ -29,7 +30,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   return new Response(object.body, {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
-      "Cache-Control": "private, no-store",
+      "Cache-Control": PUBLIC_FILES.has(name) ? "public, max-age=3600" : "private, no-store",
       "X-Content-Type-Options": "nosniff",
       "X-Robots-Tag": "noindex, nofollow, noarchive",
     },

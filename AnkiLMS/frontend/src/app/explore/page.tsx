@@ -35,7 +35,7 @@ const deckCardCount = (d: CuratedDeckItem) => d.cardCount ?? d.cards.length;
 const ROW_GRID = "sm:grid sm:grid-cols-[minmax(0,1fr)_6rem_4.5rem_6.5rem] items-center gap-3";
 
 export default function ExplorePage() {
-  const { userDecks, handleDeckImported, handleRemoveDeck, currentUser } = useApp();
+  const { userDecks, handleDeckImported, handleRemoveDeck, currentUser, handleOpenAuth } = useApp();
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sort, setSort] = useState<{ key: SortKey; dir: "asc" | "desc" } | null>(null);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
@@ -100,6 +100,7 @@ export default function ExplorePage() {
   };
 
   const handleAddDeck = async (deck: CuratedDeckItem) => {
+    if (!currentUser) return handleOpenAuth(true);
     let currentDeck = deck;
     const override = deckOverrides.find((item) => item.deckId.replace(/^catalog:/, "") === deck.id);
     if (override) {

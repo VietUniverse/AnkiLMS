@@ -1,18 +1,13 @@
 import type { MetadataRoute } from "next";
 import { CURATED_DECKS } from "../data/curatedDecks";
-import { readFileSync } from "node:fs";
-import path from "node:path";
 
 export const dynamic = "force-static";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const origin = "https://lms.ankivn.com";
-  const pages = ["", "/hangul", "/dictionary", "/explore", "/flashcards", "/dictation", "/shadowing", "/listen", "/games", "/topik/archive"];
+  // Chỉ liệt kê trang khách mở được; trang bắt đăng nhập (kể cả /topik/archive) và bộ thẻ khoá học (dữ liệu riêng) không cho máy tìm kiếm.
+  const pages = ["", "/classes", "/placement-test", "/dictionary", "/explore"];
   const deckIds = CURATED_DECKS.map((deck) => deck.id);
-  try {
-    const data = JSON.parse(readFileSync(path.join(process.cwd(), "public/data/course-vocabulary.json"), "utf8"));
-    for (const group of data.decks || []) for (const course of group.courses || []) deckIds.push(`course-${course.id}`);
-  } catch { /* Optional course catalog. */ }
   return [...pages, ...deckIds.map((id) => `/explore/${id}`)].map((route) => ({
     url: `${origin}${route}`,
     changeFrequency: route ? "monthly" : "weekly",

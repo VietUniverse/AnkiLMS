@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { UserPlus, LogIn } from "lucide-react";
 import { ApiClient, UserProfile } from "../../lib/apiClient";
@@ -170,6 +171,12 @@ export default function LoginPage() {
                 </div>
               </div>
             </div>
+
+            {/* Cửa vào cho khách: dùng thử trước, đăng ký khi muốn lưu tiến độ. */}
+            <nav aria-label="Dùng thử không cần đăng nhập" className="flex flex-wrap justify-center gap-2 text-sm font-bold">
+              <Link href="/classes" className="rounded-xl bg-blue-500 px-4 py-2.5 text-white transition hover:bg-blue-600" style={{ color: "#fff" }}>Học thử lớp Sơ cấp → Cao cấp</Link>
+              <Link href="/placement-test" className="rounded-xl bg-blue-500/15 px-4 py-2.5 text-blue-200 transition hover:bg-blue-500/25">Kiểm tra trình độ</Link>
+            </nav>
           </div>
 
           {/* Cột phải: Form Đăng nhập nguyên khối không viền */}

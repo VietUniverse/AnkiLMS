@@ -55,6 +55,7 @@ interface SidebarProps {
 
 const mainNav = [
   { href: "/", label: "Trang chủ", icon: Home },
+  { href: "/classes", label: "Lớp học", icon: Users, badge: "MỚI", feature: "classes" },
   { href: "/flashcards", label: "Từ vựng", icon: Brain, feature: "flashcards" },
   { href: "/explore", label: "Khám phá", icon: Layers, badge: "MỚI", feature: "explore" },
   { href: "/topik/archive", label: "Thi thử TOPIK I/II", icon: GraduationCap, badge: "MỚI", feature: "topik" },
@@ -74,7 +75,6 @@ const communityNav = [
 
 // LƯU Ý BACKEND: Các tính năng Beta đang thử nghiệm UX/UI, không đưa lên production
 const betaNav = [
-  { href: "/classes", label: "Lớp học", icon: Users, badge: "BETA", feature: "classes" },
   { href: "/hangul", label: "Bảng Hangeul", icon: BookOpen, badge: "BETA", feature: "hangul" },
   { href: "/topics", label: "Học theo chủ đề", icon: Compass, badge: "BETA", feature: "topics" },
   { href: "/lessons", label: "Lộ trình bài học", icon: BookOpen, badge: "BETA", feature: "lessons" },
