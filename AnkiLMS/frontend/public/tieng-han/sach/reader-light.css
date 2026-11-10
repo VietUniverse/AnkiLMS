@@ -1,0 +1,34 @@
+/* HaechiVN light reading surface, scoped to the interactive Korean books. */
+html,
+html.dark {
+  color-scheme: light !important;
+  --sach-paper: #ffffff;
+  --sach-card: #ffffff;
+  --sach-ink: #10213a;
+  --sach-body: #334155;
+  --sach-muted: #64748b;
+  --sach-line: #dbe5f0;
+  --sach-chip: #eff6ff;
+  --sach-warm: #f8fbff;
+  --sach-accent: #0284c7;
+  --sach-accent-text: #0369a1;
+  --sach-accent-ink: #075985;
+  --sach-accent-tint: #e0f2fe;
+  --sach-ok: #059669;
+  --sach-ok-ink: #047857;
+  --sach-ok-tint: #ecfdf5;
+  --sach-gram: #0f766e;
+  --sach-gram-ink: #115e59;
+  --sach-gram-tint: #f0fdfa;
+  --sach-note: #f8fafc;
+  --sach-frame: #f1f7fb;
+  --v2-wall: #f3f8fc;
+  --sach-shadow: 0 8px 28px rgb(15 37 64 / 8%);
+  --v2-rule-line: #cbd5e1;
+  --sach-tap: #0369a1;
+  --sach-tap-tint: #e0f2fe;
+}
+html body { background: #f3f8fc !important; color: #10213a !important; }
+html .sach-paper { background: #ffffff !important; color: #10213a !important; }
+html .sach-paper :is(h1,h2,h3,h4,p,span,li,label,button,a) { color: inherit; }
+html .sach-paper :is(input,textarea,select) { background-color: #ffffff; color: #10213a; border-color: #cbd5e1; }

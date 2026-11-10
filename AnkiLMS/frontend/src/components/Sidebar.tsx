@@ -58,6 +58,7 @@ const mainNav = [
   { href: "/classes", label: "Lớp học", icon: Users, badge: "MỚI", feature: "classes" },
   { href: "/flashcards", label: "Từ vựng", icon: Brain, feature: "flashcards" },
   { href: "/explore", label: "Khám phá", icon: Layers, badge: "MỚI", feature: "explore" },
+  { href: "/sach", label: "Sách tương tác", icon: BookOpen },
   { href: "/topik/archive", label: "Thi thử TOPIK I/II", icon: GraduationCap, badge: "MỚI", feature: "topik" },
   { href: "/placement-test", label: "Kiểm tra đầu vào", icon: ClipboardCheck, feature: "placementTest" },
   { href: "/tools", label: "Công cụ du học", icon: BriefcaseBusiness },

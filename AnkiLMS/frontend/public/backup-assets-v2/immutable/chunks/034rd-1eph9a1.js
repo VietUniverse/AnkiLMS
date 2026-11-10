@@ -1,0 +1,1 @@
+(globalThis.TURBOPACK||(globalThis.TURBOPACK=[])).push(["object"==typeof document?document.currentScript:void 0,195567,c=>{"use strict";var t=c.i(25515),o=c.i(172394);c.s(["drawObject",()=>t.drawObject,"scallop",()=>o.scallop])}]);

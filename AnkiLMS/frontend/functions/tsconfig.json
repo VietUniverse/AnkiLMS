@@ -9,5 +9,5 @@
     "moduleResolution": "Bundler",
     "types": ["@cloudflare/workers-types"]
   },
-  "include": ["api/**/*.ts", "types.d.ts"]
+  "include": ["**/*.ts"]
 }
