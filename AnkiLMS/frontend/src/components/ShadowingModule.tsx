@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import { Headphones, Volume2, CheckCircle2, Play, RefreshCw, HelpCircle, Sparkles, Filter, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Eye, Mic, MicOff, RotateCcw, Pause, Keyboard, ArrowLeft, Star, PlayCircle, Lock, AlertTriangle, Repeat, Award } from "lucide-react";
+import { Headphones, Volume2, CheckCircle2, Play, RefreshCw, HelpCircle, Sparkles, Filter, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Eye, RotateCcw, Pause, Keyboard, ArrowLeft, Star, PlayCircle, Lock, AlertTriangle, Repeat, Award } from "lucide-react";
 import { ApiClient } from "../lib/apiClient";
 import { useApp } from "../contexts/AppProvider";
-import { calculateKoreanSimilarity, normalizeKoreanText } from "../lib/koreanText";
+import { normalizeKoreanText } from "../lib/koreanText";
 import { loadLessonProgress, saveLessonProgress } from "../lib/lessonProgress";
 import { loadYouTubeIframeApi } from "../lib/youtubeIframe";
 import { KOREAN_LESSON_TOPICS, matchesLessonTopic } from "../lib/lessonTopics";
@@ -44,12 +44,7 @@ export const ShadowingModule: React.FC = () => {
   const [autoPause, setAutoPause] = useState(false);
   const [translationLanguage, setTranslationLanguage] = useTranslationLanguage();
 
-  // Voice Recognition States
-  const [isRecording, setIsRecording] = useState<boolean>(false);
-  const [spokenText, setSpokenText] = useState<string | null>(null);
-  const [speakingScore, setSpeakingScore] = useState<number | null>(null);
   const [completedSubIds, setCompletedSubIds] = useState<number[]>([]);
-  const [speechError, setSpeechError] = useState<string | null>(null);
   const [ytError, setYtError] = useState<string | null>(null);
   const [sessionStartTime, setSessionStartTime] = useState<number>(Date.now());
   const [managedLessons, setManagedLessons] = useState<any[]>([]);
@@ -97,7 +92,6 @@ export const ShadowingModule: React.FC = () => {
   const seekTargetEndRef = useRef<number | null>(null);
   const isSeekingRef = useRef<boolean>(false);
   const seekTimeRef = useRef<number>(0);
-  const recognitionRef = useRef<any>(null);
 
   // Filter lessons by level & TOPIK
   const filteredLessons = useMemo(() => {
@@ -393,95 +387,9 @@ export const ShadowingModule: React.FC = () => {
     return normalizeKoreanText(str);
   }
 
-  function calculateSpeakingSimilarity(target: string, actual: string): number {
-    return calculateKoreanSimilarity(target, actual);
-  }
-
-  // Web Speech Recognition Recording Handler
-  const handleToggleRecord = () => {
-    setSpeechError(null);
-
-    if (isRecording) {
-      setIsRecording(false);
-      if (recognitionRef.current) {
-        try { recognitionRef.current.stop(); } catch (_e) {}
-        recognitionRef.current = null;
-      }
-      return;
-    }
-
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      setSpeechError("Trình duyệt không hỗ trợ Nhận dạng Giọng nói (Web Speech API). Vui lòng dùng Chrome hoặc Edge.");
-      return;
-    }
-
-    try {
-      pausePlayer(); // Pause video while recording
-      const recognition = new SpeechRecognition();
-      recognition.lang = "ko-KR";
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
-      recognition.continuous = false;
-
-      recognition.onresult = (event: any) => {
-        const transcript = event.results?.[0]?.[0]?.transcript?.trim();
-        if (!transcript) {
-          setSpeechError("Chưa nhận được nội dung giọng nói. Hãy thử nói lại.");
-          setIsRecording(false);
-          return;
-        }
-        setSpokenText(transcript);
-
-        if (currentSub) {
-          const score = calculateSpeakingSimilarity(currentSub.text, transcript);
-          setSpeakingScore(score);
-
-          if (score >= 70 && !completedSubIds.includes(currentSub.id)) {
-            const nextCompleted = [...completedSubIds, currentSub.id];
-            setCompletedSubIds(nextCompleted);
-            saveLessonProgress("shadowing", selectedLessonId, nextCompleted);
-            const realDuration = Math.round((Date.now() - sessionStartTime) / 1000);
-            const xpEarned = Math.min(25, Math.round(score / 8));
-            ApiClient.recordStudySession("shadowing", 1, 1, xpEarned, Math.min(realDuration, 300));
-          }
-        }
-        setIsRecording(false);
-      };
-
-      recognition.onerror = (event: any) => {
-        setIsRecording(false);
-        if (event.error === "no-speech") {
-          setSpeechError("Không phát hiện giọng nói. Hãy nói to rõ hơn và thử lại.");
-        } else if (event.error === "not-allowed") {
-          setSpeechError("Cần cấp quyền truy cập Microphone cho trang web.");
-        } else {
-          setSpeechError(`Lỗi nhận dạng: ${event.error}`);
-        }
-      };
-
-      recognition.onend = () => {
-        setIsRecording(false);
-        recognitionRef.current = null;
-      };
-
-      recognitionRef.current = recognition;
-      setSpokenText(null);
-      setSpeakingScore(null);
-      setIsRecording(true);
-      recognition.start();
-    } catch (e: any) {
-      setIsRecording(false);
-      setSpeechError("Lỗi khởi chạy Microphone: " + (e.message || e));
-    }
-  };
-
   const handleSelectSub = (subIdx: number) => {
     pausePlayer();
     setCurrentSubIndex(subIdx);
-    setSpokenText(null);
-    setSpeakingScore(null);
-    setSpeechError(null);
     setSessionStartTime(Date.now());
 
     const sub = currentLesson?.segments?.[subIdx];
@@ -514,9 +422,6 @@ export const ShadowingModule: React.FC = () => {
     if (!lesson) return;
     setSelectedLessonId(lesson.id);
     setCurrentSubIndex(0);
-    setSpokenText(null);
-    setSpeakingScore(null);
-    setSpeechError(null);
     setCompletedSubIds(loadLessonProgress("shadowing", lesson.id));
     setSessionStartTime(Date.now());
     setYtError(null);
@@ -525,10 +430,6 @@ export const ShadowingModule: React.FC = () => {
 
   const backToCatalog = () => {
     pausePlayer();
-    if (isRecording && recognitionRef.current) {
-      try { recognitionRef.current.stop(); } catch (_e) {}
-    }
-    setIsRecording(false);
     setViewMode("catalog");
     setSelectedTopik("all");
   };
@@ -804,14 +705,6 @@ export const ShadowingModule: React.FC = () => {
         </div>
       )}
 
-      {/* Speech Error Toast */}
-      {speechError && (
-        <div className="p-3.5 bg-amber-500/20 border border-amber-500 rounded-2xl text-xs text-amber-300 font-bold flex items-center gap-2 animate-fadeIn">
-          <AlertTriangle className="w-4 h-4" aria-hidden="true" />
-          <span>{speechError}</span>
-        </div>
-      )}
-
       {/* Main Spacious Dashboard Layout (3 Columns) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-4 lg:flex-1 lg:min-h-0 lg:items-stretch">
 
@@ -916,43 +809,6 @@ export const ShadowingModule: React.FC = () => {
               {(currentTranslation || generatedTranslation) && <p className="text-sm text-slate-400">{currentTranslation || generatedTranslation}</p>}
             </div>
 
-            {/* Microphone Voice Recording Button */}
-            <div className="flex flex-col items-center justify-center space-y-1.5 lg:py-0 py-2">
-              <button
-                onClick={handleToggleRecord}
-                className={`relative w-14 h-14 rounded-full flex items-center justify-center transition-all shadow-2xl ${
-                  isRecording
-                    ? "bg-rose-600 text-white animate-pulse ring-8 ring-rose-500/30"
-                    : "bg-gradient-to-tr from-rose-600 to-amber-500 hover:scale-105 text-white ring-4 ring-rose-500/20"
-                }`}
-              >
-                {isRecording ? <MicOff className="w-7 h-7" /> : <Mic className="w-7 h-7" />}
-              </button>
-
-              <span className="text-xs font-bold text-slate-300">
-                {isRecording ? "🔴 Đang thu âm... Hãy nói câu tiếng Hàn trên!" : "Bấm Micro để bắt đầu nói nhại"}
-              </span>
-            </div>
-
-            {/* Feedback Score Panel after Recording */}
-            {spokenText !== null && (
-              <div className="p-5 bg-slate-950 rounded-2xl border border-slate-800 space-y-3 animate-fadeIn">
-                <div className="flex items-center justify-between text-xs font-bold">
-                  <span className="text-slate-400 flex items-center gap-2">
-                    <Award className="w-4 h-4 text-amber-400" /> MỨC ĐỘ KHỚP VỚI BẢN NHẬN DẠNG:
-                  </span>
-                  <span className={(speakingScore || 0) >= 80 ? "text-emerald-400 text-base font-black" : (speakingScore || 0) >= 50 ? "text-amber-400 text-base font-black" : "text-rose-400 text-base font-black"}>
-                    {speakingScore}% khớp {(speakingScore || 0) >= 80 ? "🌟 Rất tốt!" : (speakingScore || 0) >= 50 ? "👍 Khá tốt" : "⚠️ Hãy nghe và thử lại"}
-                  </span>
-                </div>
-
-                <div className="p-3.5 bg-slate-900 rounded-xl text-xs font-noto font-bold text-slate-200 border border-slate-800 space-y-1">
-                  <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Giọng nói nhận dạng được từ bạn:</span>
-                  <p className="text-sm text-sky-300 font-noto">"{spokenText}"</p>
-                </div>
-              </div>
-            )}
-
           </div>
         </main>
 
@@ -989,7 +845,7 @@ export const ShadowingModule: React.FC = () => {
                     <span className={`font-mono font-bold ${isDone ? "text-emerald-400" : isSelected ? "text-rose-400" : "text-sky-400"}`}>
                       #{subIdx + 1} ({Math.floor(sub.start / 60)}:{Math.floor(sub.start % 60).toString().padStart(2, '0')})
                     </span>
-                    <span>{isDone ? "✅" : "🎙️"}</span>
+                    <span>{isDone ? "✅" : ""}</span>
                   </div>
                   <p className="text-xs font-noto font-bold line-clamp-2 leading-relaxed">
                     {sub.text}
