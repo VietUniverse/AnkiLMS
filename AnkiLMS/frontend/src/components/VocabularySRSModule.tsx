@@ -37,7 +37,6 @@ import { speakKorean } from "../lib/koreanSpeech";
 import { inferTopikLevel, getCourseRank } from "../lib/studyRanks";
 import { LockKeyhole, Globe2 } from "lucide-react";
 import { VocabularySizeTest } from "./VocabularySizeTest";
-import { HandwritingPractice } from "./HandwritingPractice";
 
 interface VocabularySRSModuleProps {
   userDecks?: AnkiDeck[];
@@ -46,6 +45,8 @@ interface VocabularySRSModuleProps {
 
 export interface VocabularyCard {
   id: number | string;
+  /** Thẻ anh em của cùng một note: "typing" = nhìn nghĩa gõ chữ, có lịch ôn riêng. Không có = thẻ Review (nhìn chữ đoán nghĩa). */
+  sibling?: "typing";
   code?: string;
   word: string;
   meaning: string;
@@ -79,8 +80,10 @@ export interface DeckTreeNode {
 }
 
 // Clean image string helper
+const stateKeyOf = (c: VocabularyCard) => `${c.deckName || "deck"}_${c.id}${c.sibling ? "_typing" : ""}`;
+// Lịch Anki cũ chỉ thuộc thẻ Review; thẻ Typing luôn bắt đầu từ mới.
 const cardStateFor = (map: Record<string, FSRSState>, key: string, card: VocabularyCard): FSRSState =>
-  map[key] || (card.ankiSchedule ? ankiScheduleToFSRSState(card.ankiSchedule) : undefined) || {
+  map[key] || (card.ankiSchedule && !card.sibling ? ankiScheduleToFSRSState(card.ankiSchedule) : undefined) || {
     interval: 1,
     reps: 0,
     lapses: 0,
@@ -170,7 +173,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   }, []);
   // Navigation View: "dashboard" (Lộ trình cây bài học) | "study" (Màn hình học)
   const [viewMode, setViewMode] = useState<"dashboard" | "study">(initialViewMode);
-  const [studyMode, setStudyMode] = useState<"flip" | "typing" | "handwriting">("flip");
 
   // Selected Deck and Lesson
   const [activeDeckTitle, setActiveDeckTitle] = useState<string>("1. Quốc gia (나라)");
@@ -548,15 +550,14 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   // Đếm trạng thái theo cùng nguồn FSRS dùng khi mở lượt học, không dùng danh sách legacy theo tên từ.
   const getDeckStats = useCallback((cards: VocabularyCard[]) => {
     const now = new Date();
-    const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1);
+    const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).flatMap((card) => [card, { ...card, sibling: "typing" as const }]);
     const total = playableCards.length;
     if (total === 0) return { total: 0, mastered: 0, percent: 0, newCount: 0, reviewCount: 0 };
     let mastered = 0;
     let newCount = 0;
     let reviewCount = 0;
     for (const card of playableCards) {
-      const key = `${card.deckName || "deck"}_${card.id}`;
-      const state = cardStateMap[key] || (card.ankiSchedule ? ankiScheduleToFSRSState(card.ankiSchedule) : undefined);
+      const state = cardStateMap[stateKeyOf(card)] || (card.ankiSchedule && !card.sibling ? ankiScheduleToFSRSState(card.ankiSchedule) : undefined);
       if (!state || state.state === "new") {
         newCount += 1;
         continue;
@@ -593,14 +594,19 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     const reviewLeft = remaining(dailyLimits.reviewPerDay, progress.reviewDone);
     const dueCards: VocabularyCard[] = [];
     const newCards: VocabularyCard[] = [];
-    for (const c of cards) {
-      // Anki's suspended queue is intentional; keep it out of the review queue.
-      if (c.ankiSchedule?.queue === -1) continue;
-      const key = `${c.deckName || "deck"}_${c.id}`;
-      const state = cardStateMap[key] || (c.ankiSchedule ? ankiScheduleToFSRSState(c.ankiSchedule) : undefined);
-      if (state && state.state !== "new" && !isFSRSCardDue(state, now)) continue;
-      (state && state.state !== "new" ? dueCards : newCards).push(c);
-    }
+    // Mỗi từ có 2 thẻ: Review (nhìn chữ đoán nghĩa) rồi Typing (nhìn nghĩa gõ chữ), lịch ôn riêng từng thẻ.
+    const queue = (kind?: "typing") => {
+      for (const base of cards) {
+        // Anki's suspended queue is intentional; keep it out of the review queue.
+        if (base.ankiSchedule?.queue === -1) continue;
+        const c = kind ? { ...base, sibling: kind } : base;
+        const state = cardStateMap[stateKeyOf(c)] || (!kind && c.ankiSchedule ? ankiScheduleToFSRSState(c.ankiSchedule) : undefined);
+        if (state && state.state !== "new" && !isFSRSCardDue(state, now)) continue;
+        (state && state.state !== "new" ? dueCards : newCards).push(c);
+      }
+    };
+    queue();
+    queue("typing");
     const activeList = [...dueCards.slice(0, reviewLeft), ...newCards.slice(0, newLeft)];
     setDailyProgress(progress);
     if (newLeft === 0 && newCards.length > 0 && !options?.skipMorePrompt) {
@@ -637,8 +643,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     setActiveStudySession({
       title,
       onExit: exitStudy,
-      studyMode,
-      setStudyMode,
       progressText: activeList.length > 0 ? `1 / ${activeList.length}` : "Hoàn thành",
     });
 
@@ -648,7 +652,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       localStorage.setItem("haechivn_last_lesson_id", deckId);
       localStorage.setItem("haechivn_last_lesson_title", title);
     }
-  }, [cardStateMap, currentUser, dailyLimits, exitStudy, studyMode, setActiveStudySession]);
+  }, [cardStateMap, currentUser, dailyLimits, exitStudy, setActiveStudySession]);
 
   // Recursive search for node by id
   const findNodeById = useCallback((nodes: DeckTreeNode[], id: string): DeckTreeNode | null => {
@@ -683,7 +687,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     let newCount = 0;
     let reviewCount = 0;
     for (const card of activeCardsList.slice(currentCardIndex)) {
-      const state = cardStateMap[`${card.deckName || "deck"}_${card.id}`];
+      const state = cardStateMap[stateKeyOf(card)];
       if (state && state.state !== "new") reviewCount += 1;
       else newCount += 1;
     }
@@ -696,15 +700,13 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       setActiveStudySession({
         title: activeDeckTitle,
         onExit: exitStudy,
-        studyMode,
-        setStudyMode,
         progressText: activeCardsList.length > 0 ? `${currentCardIndex + 1} / ${activeCardsList.length}` : "Hoàn thành",
         progressPercent: activeCardsList.length > 0 ? Math.round((currentCardIndex / activeCardsList.length) * 100) : 0,
         remainingNew: remainingCounts.newCount,
         remainingReview: remainingCounts.reviewCount,
       });
     }
-  }, [viewMode, activeDeckTitle, exitStudy, studyMode, setStudyMode, currentCardIndex, activeCardsList.length, remainingCounts, setActiveStudySession]);
+  }, [viewMode, activeDeckTitle, exitStudy, currentCardIndex, activeCardsList.length, remainingCounts, setActiveStudySession]);
 
   // Auto-resume if query param ?resume=true or ?study=true is present
   useEffect(() => {
@@ -776,8 +778,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       setActiveStudySession({
         title: activeDeckTitle,
         onExit: exitStudy,
-        studyMode,
-        setStudyMode,
         progressText: activeCardsList.length > 0 ? `${currentCardIndex + 1} / ${activeCardsList.length}` : "",
         progressPercent: activeCardsList.length > 0 ? Math.round((currentCardIndex / activeCardsList.length) * 100) : 0,
         remainingNew: remainingCounts.newCount,
@@ -789,13 +789,14 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     return () => {
       setActiveStudySession(null);
     };
-  }, [viewMode, activeDeckTitle, exitStudy, studyMode, setStudyMode, currentCardIndex, activeCardsList.length, remainingCounts, setActiveStudySession]);
+  }, [viewMode, activeDeckTitle, exitStudy, currentCardIndex, activeCardsList.length, remainingCounts, setActiveStudySession]);
 
   const currentCard = activeCardsList[currentCardIndex] || activeCardsList[0];
+  const studyMode = currentCard?.sibling ? "typing" : "flip";
   const nextReviewLabel = (rating: FSRSRating): string => {
     if (!currentCard) return "";
     try {
-      return ` (${formatNextReview(calculateFSRS45(rating, cardStateFor(cardStateMap, `${currentCard.deckName || "deck"}_${currentCard.id}`, currentCard)))})`;
+      return ` (${formatNextReview(calculateFSRS45(rating, cardStateFor(cardStateMap, stateKeyOf(currentCard), currentCard)))})`;
     } catch {
       return "";
     }
@@ -812,15 +813,16 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   // to another card. Depend on its text/index so unrelated renders do not replay it.
   const currentWordForAudio = currentCard ? cleanTextOnly(currentCard.word) : "";
   useEffect(() => {
-    if (viewMode === "study" && currentWordForAudio) speakKorean(currentWordForAudio);
-  }, [viewMode, currentCardIndex, currentWordForAudio]);
+    // Thẻ Typing: đọc to từ sẽ lộ đáp án, nên không tự phát.
+    if (viewMode === "study" && currentWordForAudio && !currentCard?.sibling) speakKorean(currentWordForAudio);
+  }, [viewMode, currentCardIndex, currentWordForAudio, currentCard?.sibling]);
 
   // Handle Response (Quên: false | Thuộc: true)
   const handleResponse = useCallback((isMastered: boolean, customRating?: FSRSRating) => {
     if (!currentCard) return;
     if (studyMode === "typing" && isMastered && typedInput.trim().normalize("NFC") !== cleanTextOnly(currentCard.word).normalize("NFC")) return;
     const wordKey = currentCard.word;
-    const activeKey = `${currentCard.deckName || "deck"}_${currentCard.id}`;
+    const activeKey = stateKeyOf(currentCard);
     if (lastRatedCardRef.current === activeKey || Date.now() - answerShownAtRef.current < 450) return;
     lastRatedCardRef.current = activeKey;
     srsActivityRef.current.reviewed += 1;
@@ -866,7 +868,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     });
 
     if (currentUser) {
-      void ApiClient.saveCardState(activeDeckTitle, Number(currentCard.id) || 1, newState).catch(() => {});
+      void ApiClient.saveCardState(activeDeckTitle, (currentCard.sibling ? -1 : 1) * (Number(currentCard.id) || 1), newState).catch(() => {});
     }
 
     // Keep the imported Anki history intact and append future reviews to the
@@ -874,7 +876,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     const owningDeck = ownedDecks.find((deck) => deck.cards.some((card) =>
       card.id === Number(currentCard.id) && card.deckName === currentCard.deckName
     ));
-    if (owningDeck) {
+    if (owningDeck && !currentCard.sibling) {
       const reviewTime = new Date();
       const reviewEvent: AnkiReviewEvent = {
         id: reviewTime.getTime(), reviewedAt: reviewTime.toISOString(),
@@ -1383,14 +1385,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
             <div className="min-h-[calc(100vh-140px)] flex flex-col justify-between py-2 pb-28 animate-reveal">
               <div className="flex-1 flex flex-col">
 
-            <div className="mb-4 grid grid-cols-3 gap-2 rounded-2xl border border-stone-200 bg-white p-1.5 dark:border-stone-800 dark:bg-[#141b2d]" aria-label="Chế độ học thẻ">
-              {([
-                ["flip", "Nhìn chữ đoán nghĩa"],
-                ["typing", "Nhìn nghĩa gõ chữ"],
-                ["handwriting", "Tập viết tay"],
-              ] as const).map(([mode, label]) => <button key={mode} type="button" aria-pressed={studyMode === mode} onClick={() => { setStudyMode(mode); setIsFlipped(false); setTypedInput(""); }} className={`rounded-xl px-2 py-2.5 text-[11px] font-bold sm:text-xs ${studyMode === mode ? "bg-sky-600 text-white" : "text-stone-600 hover:bg-stone-100 dark:text-stone-300 dark:hover:bg-stone-800"}`}>{label}</button>)}
-            </div>
-
             {/* CHẾ ĐỘ 1: THẺ NHẬN DIỆN PHẲNG REVEAL (2 CỘT DESKTOP) */}
             {studyMode === "flip" && (
               <div className="w-full mb-5 select-text">
@@ -1624,13 +1618,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                 </div>
               </div>
             )}
-
-            {studyMode === "handwriting" && <div className="mb-5 space-y-4 rounded-[24px] border border-stone-200 bg-white p-5 shadow-xs dark:border-stone-800 dark:bg-[#141b2d] sm:p-8">
-              <div><span className="pos-chip">{currentCard.pos || "Từ vựng"}</span><div className="mt-3 text-xl font-bold text-stone-900 dark:text-stone-100" dangerouslySetInnerHTML={{ __html: cleanHtmlText(currentCard.meaning) }} /></div>
-              <p className="text-xs text-stone-500 dark:text-stone-400">Viết từ tiếng Hàn bằng ngón tay hoặc chuột. Bấm hiện nét mẫu nếu cần, rồi tự đối chiếu trước khi chọn Quên hoặc Thuộc.</p>
-              <HandwritingPractice word={cleanTextOnly(currentCard.word)} revealed={isFlipped} />
-              {isFlipped && <div className="rounded-xl bg-emerald-50 p-3 text-center text-2xl font-bold text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">{cleanTextOnly(currentCard.word)}</div>}
-            </div>}
 
             {/* ========================================================
                 NÚT HÀNH ĐỘNG DƯỚI THẺ (SHOW ANSWER vs GRADE BUTTONS)
