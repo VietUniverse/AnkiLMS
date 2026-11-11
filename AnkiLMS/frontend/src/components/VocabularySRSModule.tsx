@@ -1389,34 +1389,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
             {studyMode === "flip" && (
               <div className="w-full mb-5 select-text">
                 <div className="relative w-full min-h-[440px] rounded-[24px] border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-[#141b2d] p-6 sm:p-8 flex flex-col justify-between shadow-xs transition-all">
-                  {/* Top Bar: Loại từ + Nút Audio + ChatGPT */}
-                  <div className="w-full flex items-center justify-between pb-3.5 border-b border-stone-100 dark:border-stone-800">
-                    <span className="pos-chip">{currentCard.pos || "Từ vựng"}</span>
-
-                    <div className="flex items-center gap-2">
-                      {/* Nút ChatGPT */}
-                      <a
-                        href={chatGptUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-500/40 transition text-xs font-medium shadow-xs"
-                        title="Hỏi trợ lý AI về từ này"
-                      >
-                        <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
-                        <span>ChatGPT</span>
-                      </a>
-
-                      {/* Nút Loa Phát Âm */}
-                      <button
-                        onClick={playCurrentSound}
-                        className="w-9 h-9 rounded-full bg-stone-100 dark:bg-stone-800 hover:bg-sky-500/10 text-stone-600 hover:text-sky-600 dark:text-stone-300 dark:hover:text-sky-400 flex items-center justify-center transition shadow-xs cursor-pointer"
-                        title="Nghe phát âm (Phím R)"
-                      >
-                        <Volume2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-
                   {/* Body 2 Cột Desktop: Trái Ảnh - Phải Chữ */}
                   <div className="my-auto py-5 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
                     {/* Cột Trái: Ảnh Minh Họa Cỡ Lớn */}
@@ -1443,7 +1415,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                     <div
                       className={`${
                         activeImageSrc ? "md:col-span-7" : "md:col-span-12"
-                      } flex flex-col justify-center space-y-4 text-center md:text-left`}
+                      } flex flex-col justify-center space-y-4 text-center`}
                     >
                       {/* Từ Tiếng Hàn Chính Luôn Đứng Cố Định */}
                       <div className="space-y-1">
@@ -1469,7 +1441,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
                             {/* Cụm từ liên quan, Đồng nghĩa, Trái nghĩa */}
                             {(currentCard.collocation || currentCard.synonym || currentCard.antonym) && (
-                              <div className="flex flex-wrap items-center gap-2 pt-0.5 justify-center md:justify-start">
+                              <div className="flex flex-wrap items-center gap-2 pt-0.5 justify-center">
                                 {currentCard.collocation && (
                                   <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-stone-100 dark:bg-stone-800 text-[11px] border border-stone-200/80 dark:border-stone-700/80">
                                     <span className="text-stone-400 font-mono uppercase text-[9px]">Cụm từ</span>
@@ -1505,7 +1477,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
                       {/* Hộp Ví dụ: Tiếng Hàn luôn hiện, khi lật hiện thêm tiếng Việt */}
                       {currentCard.example && (
-                        <div className="p-4 rounded-xl bg-stone-50 dark:bg-stone-800/50 border border-stone-100 dark:border-stone-700/70 text-left">
+                        <div className="p-4 rounded-xl bg-stone-50 dark:bg-stone-800/50 border border-stone-100 dark:border-stone-700/70 text-center">
                           <p
                             className="text-sm sm:text-base font-semibold text-stone-800 dark:text-stone-200 leading-relaxed font-noto"
                             dangerouslySetInnerHTML={{ __html: cleanHtmlText(currentCard.example) }}
@@ -1518,6 +1490,34 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                           )}
                         </div>
                       )}
+                    </div>
+                  </div>
+
+                  {/* Thanh dưới thẻ: Loại từ + Nút Audio + ChatGPT */}
+                  <div className="w-full flex items-center justify-between pt-3.5 border-t border-stone-100 dark:border-stone-800">
+                    <span className="pos-chip">{currentCard.pos || "Từ vựng"}</span>
+
+                    <div className="flex items-center gap-2">
+                      {/* Nút ChatGPT */}
+                      <a
+                        href={chatGptUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-500/40 transition text-xs font-medium shadow-xs"
+                        title="Hỏi trợ lý AI về từ này"
+                      >
+                        <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
+                        <span>ChatGPT</span>
+                      </a>
+
+                      {/* Nút Loa Phát Âm */}
+                      <button
+                        onClick={playCurrentSound}
+                        className="w-9 h-9 rounded-full bg-stone-100 dark:bg-stone-800 hover:bg-sky-500/10 text-stone-600 hover:text-sky-600 dark:text-stone-300 dark:hover:text-sky-400 flex items-center justify-center transition shadow-xs cursor-pointer"
+                        title="Nghe phát âm (Phím R)"
+                      >
+                        <Volume2 className="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
 
@@ -1550,7 +1550,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                   <div
                     className={`${
                       activeImageSrc ? "md:col-span-7" : "md:col-span-12"
-                    } space-y-4 text-center md:text-left`}
+                    } space-y-4 text-center`}
                   >
                     <div>
                       <span className="pos-chip">{currentCard.pos || "Từ vựng"}</span>
@@ -1596,7 +1596,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                           autoCorrect="off"
                           autoCapitalize="none"
                           spellCheck={false}
-                          className="w-full h-12 text-center md:text-left md:px-5 text-lg font-semibold bg-stone-100 dark:bg-stone-800/80 border border-stone-200 dark:border-stone-700 rounded-full text-stone-900 dark:text-white placeholder-stone-400 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition"
+                          className="w-full h-12 text-center text-lg font-semibold bg-stone-100 dark:bg-stone-800/80 border border-stone-200 dark:border-stone-700 rounded-full text-stone-900 dark:text-white placeholder-stone-400 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition"
                         />
                       </div>
 
