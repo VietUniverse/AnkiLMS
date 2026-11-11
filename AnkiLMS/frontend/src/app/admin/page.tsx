@@ -1466,9 +1466,9 @@ export default function AdminPage() {
                       <button onClick={() => renameClass(item)} className={`${ghostBtnCls} h-8 px-3 text-xs`}>
                         Sửa thông tin
                       </button>
-                      <button disabled={busy === item.id} onClick={() => deleteClass(item)} className={`${dangerBtnCls} h-8 px-3 text-xs`}>
-                        <Trash2 className="h-3.5 w-3.5" />
-                        Xóa lớp
+                      <button disabled={busy === item.id} onClick={() => deleteClass(item)} className={`${dangerBtnCls} h-8 px-3 text-xs disabled:opacity-60`}>
+                        {busy === item.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+                        {busy === item.id ? "Đang xóa…" : "Xóa lớp"}
                       </button>
                     </div>
                   </article>
