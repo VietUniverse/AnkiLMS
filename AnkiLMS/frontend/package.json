@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && node scripts/flatten-next-export.mjs",
+    "build": "next build && node scripts/flatten-next-export.mjs && node scripts/prepare-sach-public-routes.mjs",
     "start": "next start",
     "lint": "eslint src/app src/components src/contexts src/lib functions next.config.ts",
     "typecheck": "tsc --noEmit && tsc -p functions/tsconfig.json"
