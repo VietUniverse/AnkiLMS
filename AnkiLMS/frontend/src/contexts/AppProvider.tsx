@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
+import React, { createContext, useContext, useState, useEffect, useLayoutEffect, useCallback, useRef } from "react";
 import { AnkiDeck } from "../lib/ankiParser";
 import { ApiClient, UserProfile } from "../lib/apiClient";
 import { BETA_FEATURE_KEYS, DEFAULT_FEATURE_FLAGS, FeatureFlags, FeatureKey, IS_BETA_FEATURES_ENABLED } from "../lib/featureFlags";
@@ -75,6 +75,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isAuthReady, setIsAuthReady] = useState(false);
   const [featureFlags, setFeatureFlags] = useState<FeatureFlags>(DEFAULT_FEATURE_FLAGS);
   const [featureFlagsLoaded, setFeatureFlagsLoaded] = useState(false);
+  // Dùng cờ đã lưu từ lần trước ngay trước khi vẽ, để menu không nháy hiện rồi ẩn khi F5.
+  useLayoutEffect(() => {
+    try {
+      const cached = localStorage.getItem("haechivn_feature_flags");
+      if (cached) setFeatureFlags({ ...DEFAULT_FEATURE_FLAGS, ...JSON.parse(cached) });
+    } catch { /* không có cache thì dùng mặc định */ }
+  }, []);
   const [activeStudySession, setActiveStudySession] = useState<StudySessionInfo | null>(null);
   const syncingDeckIds = useRef(new Set<string>());
   const nextSharedDeckBackupAt = useRef(0);
@@ -131,6 +138,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         if (featureResponse?.ok) {
           const payload = await featureResponse.json() as { features?: Partial<FeatureFlags> };
           setFeatureFlags({ ...DEFAULT_FEATURE_FLAGS, ...payload.features });
+          try { localStorage.setItem("haechivn_feature_flags", JSON.stringify(payload.features || {})); } catch { /* bỏ qua */ }
         }
         setFeatureFlagsLoaded(true);
         let decks = await ApiClient.getSavedDecks(user?.id);

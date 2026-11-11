@@ -21,6 +21,7 @@ import {
   Trash2,
   ChevronLeft,
   XCircle,
+  Loader2,
   Award,
   Flame,
   Zap,
@@ -106,6 +107,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
 
   // Create Class Modal
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [creating, setCreating] = useState(false);
   const [newClassName, setNewClassName] = useState("");
   const [newClassDesc, setNewClassDesc] = useState("");
 
@@ -228,7 +230,9 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
 
     if (!newClassName.trim()) return;
 
+    setCreating(true);
     const created = await runClassAction({ action: "create", name: newClassName, description: newClassDesc });
+    setCreating(false);
     if (!created) return;
     setShowCreateModal(false);
     setNewClassName("");
@@ -1093,6 +1097,8 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
               <span>Tạo Lớp Học Riêng Tư Mới</span>
             </h3>
 
+            {msg?.type === "error" && <p className="rounded-xl border border-rose-500/40 bg-rose-500/10 p-3 text-xs font-bold text-rose-300">{msg.text}</p>}
+
             <form onSubmit={handleCreateClass} className="space-y-4">
               <div>
                 <label className="text-xs font-bold text-slate-300 block mb-1">Tên Lớp Học *</label>
@@ -1127,9 +1133,11 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-md transition-all cursor-pointer"
+                  disabled={creating}
+                  className="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-md transition-all cursor-pointer disabled:opacity-60 inline-flex items-center gap-2"
                 >
-                  Tạo Lớp & Sinh Mã
+                  {creating && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                  {creating ? "Đang tạo…" : "Tạo Lớp & Sinh Mã"}
                 </button>
               </div>
             </form>
