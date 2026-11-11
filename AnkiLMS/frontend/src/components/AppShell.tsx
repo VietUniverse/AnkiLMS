@@ -66,7 +66,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   }
 
   const routeFeature = featureForPath(pathname);
-  const routeDisabled = !!(routeFeature && !isFeatureEnabled(routeFeature));
+  const routeDisabled = !!(routeFeature && routeFeature !== "books" && !isFeatureEnabled(routeFeature));
 
   return (
     <div className="flex h-[100dvh] min-h-[100svh] bg-[#0b1329] text-white overflow-hidden font-sans">

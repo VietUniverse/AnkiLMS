@@ -73,7 +73,6 @@ const communityNav = [
 
 // LƯU Ý BACKEND: Các tính năng Beta đang thử nghiệm UX/UI, không đưa lên production
 const betaNav = [
-  { href: "/sach", label: "Sách tương tác", icon: BookOpen, badge: "BETA", feature: "books" },
   { href: "/dictation", label: "Luyện nghe chính tả", icon: Headphones, feature: "dictation", badge: "BETA" },
   { href: "/games", label: "Trò chơi từ vựng", icon: Gamepad2, feature: "games", badge: "BETA" },
   { href: "/hangul", label: "Bảng Hangeul", icon: BookOpen, badge: "BETA", feature: "hangul" },
