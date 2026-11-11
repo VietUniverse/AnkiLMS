@@ -1,5 +1,5 @@
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
-import { join, relative, sep } from "node:path";
+import { join } from "node:path";
 
 // The book lessons are static exports from a separate interactive reader.
 // Publish them at /sach/* as real files so Cloudflare Pages serves the exact
@@ -30,7 +30,29 @@ function copyLessons(from, to) {
       const canonicalRoutes = original
         .replaceAll("/tieng-han/sach/", "/sach/")
         .replaceAll("https://www.haechivn.com/sach/", "https://lms.ankivn.com/sach/");
-      if (canonicalRoutes !== original) writeFileSync(targetPath, canonicalRoutes, "utf8");
+      const publicRouteState = canonicalRoutes.replace(
+        /self\.__next_f\.push\(\[1,"((?:\\.|[^"\\])*)"\]\)/g,
+        (script, encodedPayload) => {
+          let payload;
+          try {
+            payload = JSON.parse(`"${encodedPayload}"`);
+          } catch {
+            return script;
+          }
+
+          // These files are exported from /tieng-han/sach/* and copied to
+          // /sach/*. Keep the App Router's initial Flight state in sync with
+          // the public URL; otherwise hydration starts with a different route
+          // tree and React can abort the page with minified error #412.
+          const routeState = payload
+            .replace('"c":["","tieng-han","sach",', '"c":["","sach",')
+            .replace('"children":["(sach)",{"children":["tieng-han",{"children":["sach",', '"children":["(sach)",{"children":["sach",');
+          if (routeState === payload) return script;
+          return `self.__next_f.push([1,${JSON.stringify(routeState)}])`;
+        },
+      );
+
+      if (publicRouteState !== original) writeFileSync(targetPath, publicRouteState, "utf8");
     }
   }
 }
