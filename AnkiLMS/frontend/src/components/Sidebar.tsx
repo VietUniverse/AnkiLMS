@@ -40,6 +40,7 @@ import {
   Users,
   ClipboardCheck,
   BriefcaseBusiness,
+  Target,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -58,15 +59,11 @@ const mainNav = [
   { href: "/classes", label: "Lớp học", icon: Users, badge: "MỚI", feature: "classes" },
   { href: "/flashcards", label: "Từ vựng", icon: Brain, feature: "flashcards" },
   { href: "/explore", label: "Khám phá", icon: Layers, badge: "MỚI", feature: "explore" },
-  { href: "/sach", label: "Sách tương tác", icon: BookOpen },
   { href: "/topik/archive", label: "Thi thử TOPIK I/II", icon: GraduationCap, badge: "MỚI", feature: "topik" },
-  { href: "/placement-test", label: "Kiểm tra đầu vào", icon: ClipboardCheck, feature: "placementTest" },
-  { href: "/tools", label: "Công cụ du học", icon: BriefcaseBusiness },
+  { href: "/placement-test", label: "Kiểm tra vốn từ", icon: ClipboardCheck, feature: "placementTest" },
+  { href: "/tools", label: "Làm giấy tờ", icon: BriefcaseBusiness },
   { href: "/dictionary", label: "Tra từ điển", icon: Search, feature: "dictionary" },
-  { href: "/dictation", label: "Luyện nghe chính tả", icon: Headphones, feature: "dictation" },
   { href: "/shadowing", label: "Shadowing", icon: Repeat, feature: "shadowing" },
-  { href: "/listen", label: "Nghe thụ động", icon: ListMusic, badge: "MỚI", feature: "listen" },
-  { href: "/games", label: "Trò chơi từ vựng", icon: Gamepad2, feature: "games" },
 ] as const;
 
 const communityNav = [
@@ -76,10 +73,15 @@ const communityNav = [
 
 // LƯU Ý BACKEND: Các tính năng Beta đang thử nghiệm UX/UI, không đưa lên production
 const betaNav = [
+  { href: "/sach", label: "Sách tương tác", icon: BookOpen, badge: "BETA", feature: "books" },
+  { href: "/dictation", label: "Luyện nghe chính tả", icon: Headphones, feature: "dictation", badge: "BETA" },
+  { href: "/games", label: "Trò chơi từ vựng", icon: Gamepad2, feature: "games", badge: "BETA" },
   { href: "/hangul", label: "Bảng Hangeul", icon: BookOpen, badge: "BETA", feature: "hangul" },
   { href: "/topics", label: "Học theo chủ đề", icon: Compass, badge: "BETA", feature: "topics" },
   { href: "/lessons", label: "Lộ trình bài học", icon: BookOpen, badge: "BETA", feature: "lessons" },
   { href: "/ai-speaking", label: "Luyện nói tiếng Hàn", icon: Mic, badge: "BETA", feature: "aiSpeaking" },
+  { href: "/listen", label: "Nghe thụ động", icon: ListMusic, badge: "BETA", feature: "listen" },
+  { href: "/missions", label: "Nhiệm vụ hằng ngày", icon: Target, badge: "BETA", feature: "missions" },
   { href: "/achievements", label: "Huy hiệu & Mốc thưởng", icon: Award, badge: "BETA", feature: "achievements" },
   { href: "/community", label: "Cộng đồng Haechi", icon: MessageSquare, badge: "BETA", feature: "community" },
   { href: "/chat", label: "Phòng Trò chuyện", icon: MessagesSquare, badge: "BETA", feature: "chat" },
@@ -185,18 +187,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </p>
                 <nav className="space-y-0.5 mt-1">
                   {mainNav.filter((item) => isFeatureEnabled("feature" in item ? item.feature : undefined)).map((item) => renderNavItem(item, true))}
+                  {communityNav.filter((item) => isFeatureEnabled(item.feature)).map((item) => renderNavItem(item, true))}
                   {currentUser?.role === "admin" && renderNavItem({ href: "/admin", label: "Quản trị hệ thống", icon: ShieldCheck }, true)}
                 </nav>
               </div>
 
-              <div className="pt-3 border-t border-[#132247]/60">
-                <p className="px-3 py-1 text-[10px] font-extrabold uppercase tracking-widest text-slate-500">
-                  CỘNG ĐỒNG & XẾP HẠNG
-                </p>
-                <div className="space-y-0.5 mt-1">
-                  {communityNav.filter((item) => isFeatureEnabled(item.feature)).map((item) => renderNavItem(item, true))}
-                </div>
-              </div>
 
               {IS_BETA_FEATURES_ENABLED && (
                 <div className="pt-3 border-t border-[#132247]/60">
@@ -322,21 +317,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
           )}
           <nav className="space-y-0.5 mt-1">
             {mainNav.filter((item) => isFeatureEnabled("feature" in item ? item.feature : undefined)).map((item) => renderNavItem(item))}
+            {communityNav.filter((item) => isFeatureEnabled(item.feature)).map((item) => renderNavItem(item))}
             {currentUser?.role === "admin" && renderNavItem({ href: "/admin", label: "Quản trị hệ thống", icon: ShieldCheck })}
           </nav>
         </div>
 
-        {/* Section 2: CỘNG ĐỒNG & XẾP HẠNG */}
-        <div className="pt-3 border-t border-[#132247]/60">
-          {!collapsed && (
-            <p className="px-3 py-1 text-[10px] font-extrabold uppercase tracking-widest text-slate-500">
-              CỘNG ĐỒNG & XẾP HẠNG
-            </p>
-          )}
-          <div className="space-y-0.5 mt-1">
-            {communityNav.filter((item) => isFeatureEnabled(item.feature)).map((item) => renderNavItem(item))}
-          </div>
-        </div>
 
         {/* Section 3: TÍNH NĂNG BETA (Xuống dưới cùng) */}
         {IS_BETA_FEATURES_ENABLED && (
