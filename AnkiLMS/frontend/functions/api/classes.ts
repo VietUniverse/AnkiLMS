@@ -152,6 +152,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const user = await authenticateRequest(request, env);
   if (!user) return errorResponse("Vui lòng đăng nhập để thao tác với lớp học.", 401);
 
+  let actionName = "";
   try {
     const body = await request.json() as {
       action?: string; name?: string; description?: string; code?: string; classId?: string; level?: string;
@@ -160,6 +161,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       deckCards?: { id: number; korean: string; meaning: string; example?: string; pronunciation?: string; mediaAssetIds?: string[] }[];
       mediaAssets?: { id: string; filename: string; contentType: string; size: number }[];
     };
+    actionName = body.action || "";
 
     if (body.action === "create") {
       const name = typeof body.name === "string" ? body.name.trim() : "";
@@ -369,7 +371,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     }
 
     return jsonResponse({ success: true, classes: await getClasses(env, user.id) });
-  } catch {
+  } catch (error) {
+    console.error("Class action failed", { action: actionName, error: error instanceof Error ? error.message : "unknown" });
     return errorResponse("Không thể lưu thay đổi lớp học lúc này.", 500);
   }
 };
