@@ -34,6 +34,34 @@ const ARCHIVE_CSS = `
   html[data-theme="light"] body:not(:has(.login-page-root)) .topik-archive [class*="text-emerald-200"]{color:#047857!important}
   html[data-theme="light"] body:not(:has(.login-page-root)) .topik-archive [class*="text-amber-200"]{color:#b45309!important}
   html[data-theme="light"] body:not(:has(.login-page-root)) .topik-archive [class*="text-indigo-300"]{color:#4338ca!important}
+
+  /* Hỗ trợ cuộn mượt mà khi toàn màn hình / thi thử */
+  .topik-archive:fullscreen,
+  .topik-archive:-webkit-full-screen,
+  .topik-archive:-moz-full-screen,
+  .topik-archive:-ms-fullscreen {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    max-height: 100vh !important;
+    height: 100vh !important;
+    width: 100vw !important;
+    box-sizing: border-box !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-behavior: smooth;
+  }
+  .topik-archive::-webkit-scrollbar {
+    width: 8px;
+  }
+  .topik-archive::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.6);
+  }
+  .topik-archive::-webkit-scrollbar-thumb {
+    background: rgba(100, 116, 139, 0.5);
+    border-radius: 4px;
+  }
+  .topik-archive::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.8);
+  }
 `;
 
 function safeHtml(html?: string) {
@@ -212,31 +240,64 @@ function ExamRunner({ exam, mode, onExit }: { exam: ArchiveExam; mode: Mode; onE
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, submitted, sectionIndex, index, audioUrl]);
 
-  const choose = (optionIndex: number) => {
+  const choose = useCallback((optionIndex: number) => {
     if (!question || submitted) return;
     setAnswers((current) => ({ ...current, [question.no]: optionIndex + 1 }));
     if (mode === "practice") setChecked((current) => ({ ...current, [question.no]: true }));
-  };
+  }, [mode, question, submitted]);
 
-  const goTo = (nextSection: number, nextIndex: number) => {
+  const goTo = useCallback((nextSection: number, nextIndex: number) => {
     if (mode === "practice") pauseAudio();
     setSectionIndex(Math.max(0, Math.min(sections.length - 1, nextSection)));
     setIndex(Math.max(0, Math.min(sections[nextSection]?.questions.length - 1 || 0, nextIndex)));
     setShowMap(false);
-  };
+  }, [mode, pauseAudio, sections]);
 
-  const nextQuestion = () => {
+  const nextQuestion = useCallback(() => {
     if (!section) return;
     if (index < section.questions.length - 1) goTo(sectionIndex, index + 1);
     else if (sectionIndex < sections.length - 1) goTo(sectionIndex + 1, 0);
     else if (mode === "practice" && !submitted) submit();
-  };
+  }, [goTo, index, mode, section, sectionIndex, sections.length, submit, submitted]);
 
-  const previousQuestion = () => {
+  const previousQuestion = useCallback(() => {
     if (!section) return;
     if (index > 0) goTo(sectionIndex, index - 1);
     else if (sectionIndex > 0) goTo(sectionIndex - 1, sections[sectionIndex - 1].questions.length - 1);
-  };
+  }, [goTo, index, section, sectionIndex, sections]);
+
+  // Cuộn mượt về đầu câu hỏi mỗi khi chuyển câu
+  useEffect(() => {
+    if (fullscreenRootRef.current) {
+      fullscreenRootRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [sectionIndex, index]);
+
+  // Hỗ trợ phím tắt khi làm bài: Phím mũi tên Trái/Phải để chuyển câu, phím 1-4 để chọn đáp án
+  useEffect(() => {
+    if (submitted) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName?.toLowerCase();
+      if (tag === "input" || tag === "textarea") return;
+
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        nextQuestion();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        previousQuestion();
+      } else if (["1", "2", "3", "4"].includes(e.key)) {
+        const optionIdx = parseInt(e.key, 10) - 1;
+        if (question?.options && optionIdx < question.options.length) {
+          e.preventDefault();
+          choose(optionIdx);
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [choose, nextQuestion, previousQuestion, question, submitted]);
 
   const seekPracticeAudio = (value: number) => {
     const audio = audioRef.current;
@@ -254,7 +315,7 @@ function ExamRunner({ exam, mode, onExit }: { exam: ArchiveExam; mode: Mode; onE
 
   if (!section || !question) return <div className="rounded-2xl border border-slate-800 bg-slate-900 p-8 text-center text-sm text-slate-300">Không tải được câu hỏi.</div>;
 
-  if (mode === "mock" && !started) return <main ref={fullscreenRootRef} className="topik-archive mx-auto max-w-3xl space-y-5 p-5 sm:p-8">
+  if (mode === "mock" && !started) return <main ref={fullscreenRootRef} className="topik-archive mx-auto max-w-3xl space-y-5 p-5 sm:p-8 min-h-screen overflow-y-auto">
     <style>{ARCHIVE_CSS}</style>
     <audio ref={audioRef} preload="auto" className="hidden" />
     <div className="rounded-3xl border border-amber-400/25 bg-slate-900 p-6 sm:p-9">
@@ -269,88 +330,92 @@ function ExamRunner({ exam, mode, onExit }: { exam: ArchiveExam; mode: Mode; onE
     </div>
   </main>;
 
-  return <main ref={fullscreenRootRef} className={`topik-archive ${mode === "mock" ? "min-h-screen w-full space-y-4 bg-slate-950 p-3 sm:p-6" : "mx-auto max-w-4xl space-y-4 pb-24 animate-fadeIn"}`}>
+  return <main ref={fullscreenRootRef} className={`topik-archive ${mode === "mock" ? "h-screen max-h-screen min-h-screen w-full overflow-y-auto overflow-x-hidden bg-slate-950 p-3 sm:p-6 pb-36" : "mx-auto max-w-4xl space-y-4 pb-24 animate-fadeIn"}`}>
     <style>{ARCHIVE_CSS}</style>
     <audio ref={audioRef} onLoadedMetadata={(event) => setAudioDuration(Number.isFinite(event.currentTarget.duration) ? event.currentTarget.duration : 0)} onDurationChange={(event) => setAudioDuration(Number.isFinite(event.currentTarget.duration) ? event.currentTarget.duration : 0)} onTimeUpdate={(event) => { const current = event.currentTarget.currentTime; setAudioTime(current); if (stopAtRef.current != null && current >= stopAtRef.current) { event.currentTarget.pause(); stopAtRef.current = null; } }} onPause={(event) => { const audio = event.currentTarget; if (mode === "mock" && startedRef.current && !submittedRef.current && audio.currentTime < audio.duration) void audio.play().catch(() => undefined); }} preload="auto" className="hidden" />
-    <header className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-800 bg-slate-900/90 p-4">
-      {mode === "mock" ? <button onClick={() => { if (window.confirm("Bỏ thi và thoát khỏi bài thi này? Tiến độ hiện tại sẽ không được lưu.")) { exitFullscreen(); onExit(); } }} className="inline-flex items-center gap-2 rounded-lg border border-rose-400/30 bg-rose-400/10 px-3 py-2 text-xs font-bold text-rose-200 hover:bg-rose-400/20"><ArrowLeft className="h-4 w-4" /> Bỏ thi</button> : <button onClick={() => { pauseAudio(); onExit(); }} className="inline-flex items-center gap-2 text-xs font-bold text-slate-300 hover:text-white"><ArrowLeft className="h-4 w-4" /> Kho đề</button>}
-      <div className="text-center"><p className="text-xs font-black text-white">Kỳ {exam.round} · {exam.year} · {exam.level}</p><p className="text-[10px] text-slate-500">{mode === "mock" ? "Thi thử · không xem đáp án trước khi nộp" : "Luyện đề · phản hồi ngay"}</p></div>
-      <div className="flex items-center gap-2">
-        {mode === "mock" ? <span className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 font-mono text-xs font-bold ${timeLeft < 300 ? "border-rose-400/30 bg-rose-400/10 text-rose-200" : "border-slate-700 bg-slate-950 text-amber-200"}`}><Clock3 className="h-3.5 w-3.5" />{formatTime(timeLeft)}</span> : <span className="rounded-xl border border-emerald-400/20 bg-emerald-400/[0.06] px-3 py-2 text-[10px] font-bold text-emerald-200">Luyện đề</span>}
-        <button onClick={() => setShowMap((value) => !value)} className="inline-flex items-center gap-2 rounded-lg border border-slate-700 px-3 py-2 text-[11px] font-bold text-slate-300"><ListChecks className="h-4 w-4" />{Object.keys(answers).length}/{allQuestions.length}</button>
-      </div>
-    </header>
+    
+    <div className={mode === "mock" ? "mx-auto max-w-5xl space-y-4 pb-12" : "space-y-4"}>
+      <header className={`flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-800 bg-slate-900/95 backdrop-blur-md p-4 ${mode === "mock" ? "sticky top-0 z-30 shadow-lg" : ""}`}>
+        {mode === "mock" ? <button onClick={() => { if (window.confirm("Bỏ thi và thoát khỏi bài thi này? Tiến độ hiện tại sẽ không được lưu.")) { exitFullscreen(); onExit(); } }} className="inline-flex items-center gap-2 rounded-lg border border-rose-400/30 bg-rose-400/10 px-3 py-2 text-xs font-bold text-rose-200 hover:bg-rose-400/20"><ArrowLeft className="h-4 w-4" /> Bỏ thi</button> : <button onClick={() => { pauseAudio(); onExit(); }} className="inline-flex items-center gap-2 text-xs font-bold text-slate-300 hover:text-white"><ArrowLeft className="h-4 w-4" /> Kho đề</button>}
+        <div className="text-center"><p className="text-xs font-black text-white">Kỳ {exam.round} · {exam.year} · {exam.level}</p><p className="text-[10px] text-slate-500">{mode === "mock" ? "Thi thử · không xem đáp án trước khi nộp" : "Luyện đề · phản hồi ngay"}</p></div>
+        <div className="flex items-center gap-2">
+          {mode === "mock" ? <span className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 font-mono text-xs font-bold ${timeLeft < 300 ? "border-rose-400/30 bg-rose-400/10 text-rose-200" : "border-slate-700 bg-slate-950 text-amber-200"}`}><Clock3 className="h-3.5 w-3.5" />{formatTime(timeLeft)}</span> : <span className="rounded-xl border border-emerald-400/20 bg-emerald-400/[0.06] px-3 py-2 text-[10px] font-bold text-emerald-200">Luyện đề</span>}
+          <button onClick={() => setShowMap((value) => !value)} className="inline-flex items-center gap-2 rounded-lg border border-slate-700 px-3 py-2 text-[11px] font-bold text-slate-300"><ListChecks className="h-4 w-4" />{Object.keys(answers).length}/{allQuestions.length}</button>
+        </div>
+      </header>
 
-    {section.id === "listening" && section.audio && <section className="rounded-2xl border border-slate-800 bg-slate-900/75 p-4" aria-label="Tiến trình audio bài nghe">
-      <div className="flex items-center justify-between gap-3 text-xs"><span className="font-bold text-slate-200">{mode === "mock" ? "Bài nghe · tự phát liên tục" : `Nghe câu ${question.no} · tự phát`}</span><span className="font-mono text-slate-300">{formatTime(mode === "mock" ? audioTime : Math.max(0, audioTime - audioWindow[0]))} / {formatTime(mode === "mock" ? audioDuration : Math.max(0, (audioWindow[1] ?? audioDuration) - audioWindow[0]))}</span></div>
-      <div className="mt-3 flex items-center gap-3">
-        <input aria-label="Tiến trình audio" type="range" min={mode === "mock" ? 0 : audioWindow[0]} max={Math.max(mode === "mock" ? audioDuration : audioWindow[1] ?? audioDuration, 0.1)} step="0.1" value={Math.min(audioTime, Math.max(mode === "mock" ? audioDuration : audioWindow[1] ?? audioDuration, 0.1))} disabled={mode === "mock" || !audioDuration} onChange={(event) => seekPracticeAudio(Number(event.target.value))} className={`h-2 min-w-0 flex-1 accent-sky-500 ${mode === "mock" ? "cursor-not-allowed opacity-70" : "cursor-pointer"}`} />
-        <span className="shrink-0 text-[10px] font-bold text-slate-400">Còn {formatTime(Math.max(0, (mode === "mock" ? audioDuration : audioWindow[1] ?? audioDuration) - audioTime))}</span>
-        {mode === "practice" && <button onClick={() => play(question.audio?.[0] ?? question.replay?.[0], question.audio?.[1] ?? question.replay?.[1])} aria-label="Phát lại câu hiện tại" className="rounded-lg border border-sky-400/25 bg-sky-400/10 p-2 text-sky-200"><Play className="h-4 w-4" /></button>}
-      </div>
-      {mode === "mock" && <p className="mt-2 text-[10px] text-slate-400">Không thể tua hoặc tạm dừng trong khi thi.</p>}
-    </section>}
+      {section.id === "listening" && section.audio && <section className="rounded-2xl border border-slate-800 bg-slate-900/75 p-4" aria-label="Tiến trình audio bài nghe">
+        <div className="flex items-center justify-between gap-3 text-xs"><span className="font-bold text-slate-200">{mode === "mock" ? "Bài nghe · tự phát liên tục" : `Nghe câu ${question.no} · tự phát`}</span><span className="font-mono text-slate-300">{formatTime(mode === "mock" ? audioTime : Math.max(0, audioTime - audioWindow[0]))} / {formatTime(mode === "mock" ? audioDuration : Math.max(0, (audioWindow[1] ?? audioDuration) - audioWindow[0]))}</span></div>
+        <div className="mt-3 flex items-center gap-3">
+          <input aria-label="Tiến trình audio" type="range" min={mode === "mock" ? 0 : audioWindow[0]} max={Math.max(mode === "mock" ? audioDuration : audioWindow[1] ?? audioDuration, 0.1)} step="0.1" value={Math.min(audioTime, Math.max(mode === "mock" ? audioDuration : audioWindow[1] ?? audioDuration, 0.1))} disabled={mode === "mock" || !audioDuration} onChange={(event) => seekPracticeAudio(Number(event.target.value))} className={`h-2 min-w-0 flex-1 accent-sky-500 ${mode === "mock" ? "cursor-not-allowed opacity-70" : "cursor-pointer"}`} />
+          <span className="shrink-0 text-[10px] font-bold text-slate-400">Còn {formatTime(Math.max(0, (mode === "mock" ? audioDuration : audioWindow[1] ?? audioDuration) - audioTime))}</span>
+          {mode === "practice" && <button onClick={() => play(question.audio?.[0] ?? question.replay?.[0], question.audio?.[1] ?? question.replay?.[1])} aria-label="Phát lại câu hiện tại" className="rounded-lg border border-sky-400/25 bg-sky-400/10 p-2 text-sky-200"><Play className="h-4 w-4" /></button>}
+        </div>
+        {mode === "mock" && <p className="mt-2 text-[10px] text-slate-400">Không thể tua hoặc tạm dừng trong khi thi.</p>}
+      </section>}
 
-    <div className="flex flex-wrap gap-2">
-      {sections.map((item, itemIndex) => <button key={item.id} onClick={() => goTo(itemIndex, 0)} className={`rounded-xl border px-4 py-2 text-xs font-black transition ${itemIndex === sectionIndex ? "border-sky-400/60 bg-sky-400/10 text-sky-700 dark:text-sky-200" : "border-slate-800 bg-slate-900/60 text-slate-400 hover:text-white"}`}>{item.id === "listening" ? <Headphones className="mr-1.5 inline h-3.5 w-3.5" /> : null}{item.id === "listening" ? "Nghe" : "Đọc"} · {item.questions.length} câu</button>)}
-    </div>
-
-    {showMap && <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
-      <div className="mb-3 flex items-center justify-between"><p className="text-xs font-black text-white">Bản đồ câu hỏi</p><span className="text-[10px] text-slate-500">Đã chọn {Object.keys(answers).length}/{allQuestions.length}</span></div>
-      {sections.map((item, itemIndex) => <div key={item.id} className="mb-3 last:mb-0"><p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">{item.id === "listening" ? "Nghe" : "Đọc"}</p><div className="grid grid-cols-8 gap-1.5 sm:grid-cols-10">{item.questions.map((q, qIndex) => <button key={q.no} onClick={() => goTo(itemIndex, qIndex)} className={`h-8 rounded-md border text-[10px] font-bold ${itemIndex === sectionIndex && qIndex === index ? "border-sky-400 bg-sky-400/15 text-sky-200" : answers[q.no] ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-200" : "border-slate-700 text-slate-500"}`}>{q.no}</button>)}</div></div>)}
-    </div>}
-
-    <section className="rounded-2xl border border-slate-800 bg-slate-900/75 p-4 sm:p-6">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
-        <div><p className="text-[10px] font-black uppercase tracking-widest text-sky-300">Câu {question.no} / {exam.level === "TOPIK I" ? 70 : 100}</p><p className="mt-0.5 text-[10px] text-slate-500">{question.points || 2} điểm · {section.title}</p></div>
-        {mode === "practice" && question.audio && <span className="inline-flex items-center gap-1.5 rounded-lg border border-sky-400/25 bg-sky-400/10 px-3 py-2 text-[10px] font-bold text-sky-200"><Volume2 className="h-3.5 w-3.5" /> Audio câu hỏi</span>}
+      <div className="flex flex-wrap gap-2">
+        {sections.map((item, itemIndex) => <button key={item.id} onClick={() => goTo(itemIndex, 0)} className={`rounded-xl border px-4 py-2 text-xs font-black transition ${itemIndex === sectionIndex ? "border-sky-400/60 bg-sky-400/10 text-sky-700 dark:text-sky-200" : "border-slate-800 bg-slate-900/60 text-slate-400 hover:text-white"}`}>{item.id === "listening" ? <Headphones className="mr-1.5 inline h-3.5 w-3.5" /> : null}{item.id === "listening" ? "Nghe" : "Đọc"} · {item.questions.length} câu</button>)}
       </div>
 
-      {group?.instruction && <div className="mt-4 rounded-xl border border-emerald-400/20 bg-emerald-400/[0.05] px-4 py-3"><p className="text-[10px] font-black uppercase tracking-wider text-emerald-300">Hướng dẫn nhóm câu {group.from}–{group.to}</p><p className="mt-1 whitespace-pre-line text-xs leading-6 text-slate-300" dangerouslySetInnerHTML={{ __html: safeHtml(group.instruction) }} /></div>}
-
-      {question.prompt?.html && <div className="mt-4 rounded-xl border border-slate-800 bg-slate-950/60 p-4 font-noto text-sm leading-7 text-slate-100 [&_.exam-box]:rounded-lg [&_.exam-box]:border [&_.exam-box]:border-slate-700 [&_.exam-box]:p-3 [&_b]:font-black" dangerouslySetInnerHTML={{ __html: safeHtml(question.prompt.html) }} />}
-      {question.prompt?.image && <figure className="mt-4 overflow-hidden rounded-xl border border-slate-800 bg-white p-2"><img src={imageUrl(exam.round, question.prompt.image)} alt={question.prompt.alt || `Câu ${question.no}`} className="mx-auto max-h-[360px] w-auto max-w-full object-contain" loading="lazy" /></figure>}
-
-      <div className={`mt-4 grid gap-2 ${question.layout === 4 ? "sm:grid-cols-2" : question.layout === 2 ? "sm:grid-cols-2" : ""}`}>
-        {(question.options || []).map((option, optionIndex) => {
-          const active = selected === optionIndex + 1;
-          const correct = question.answer === optionIndex + 1;
-          const reveal = submitted || (mode === "practice" && isChecked);
-          const style = reveal && correct ? "border-emerald-500/60 bg-emerald-500/10" : reveal && active && !correct ? "border-rose-500/60 bg-rose-500/10" : active ? "border-sky-400/60 bg-sky-400/10" : "border-slate-800 bg-slate-950/50 hover:border-slate-600";
-          return <button key={optionIndex} onClick={() => choose(optionIndex)} disabled={submitted} className={`flex min-h-12 items-start gap-3 rounded-xl border p-3 text-left transition ${style}`}>
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-800 text-xs font-black text-white">{optionIndex + 1}</span>
-            <span className="min-w-0 flex-1">
-              {option.html && <span className="block whitespace-pre-line font-noto text-sm leading-6 text-slate-100" dangerouslySetInnerHTML={{ __html: safeHtml(option.html) }} />}
-              {option.image && <img src={imageUrl(exam.round, option.image)} alt={option.alt || `Lựa chọn ${optionIndex + 1}`} className="mt-2 max-h-48 w-full rounded-lg bg-white object-contain" loading="lazy" />}
-            </span>
-            {reveal && correct && <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-emerald-300" />}
-            {reveal && active && !correct && <XCircle className="mt-1 h-4 w-4 shrink-0 text-rose-300" />}
-          </button>;
-        })}
-      </div>
-
-      {(submitted || (mode === "practice" && isChecked)) && <div className="mt-4 rounded-xl border border-indigo-400/20 bg-indigo-400/[0.05] p-4">
-        <p className="text-[10px] font-black uppercase tracking-wider text-indigo-300">Đáp án {question.answer} · Giải thích</p>
-        <div className="mt-1 whitespace-pre-line text-sm leading-6 text-slate-200">{question.explanation || `Đáp án đúng là ${question.answer}.`}</div>
+      {showMap && <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
+        <div className="mb-3 flex items-center justify-between"><p className="text-xs font-black text-white">Bản đồ câu hỏi</p><span className="text-[10px] text-slate-500">Đã chọn {Object.keys(answers).length}/{allQuestions.length}</span></div>
+        {sections.map((item, itemIndex) => <div key={item.id} className="mb-3 last:mb-0"><p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">{item.id === "listening" ? "Nghe" : "Đọc"}</p><div className="grid grid-cols-8 gap-1.5 sm:grid-cols-10">{item.questions.map((q, qIndex) => <button key={q.no} onClick={() => goTo(itemIndex, qIndex)} className={`h-8 rounded-md border text-[10px] font-bold ${itemIndex === sectionIndex && qIndex === index ? "border-sky-400 bg-sky-400/15 text-sky-200" : answers[q.no] ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-200" : "border-slate-700 text-slate-500"}`}>{q.no}</button>)}</div></div>)}
       </div>}
 
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-slate-800 pt-4">
-        <button onClick={previousQuestion} disabled={sectionIndex === 0 && index === 0} className="rounded-lg border border-slate-700 px-3 py-2 text-xs font-bold text-slate-300 disabled:opacity-40">← Trước</button>
-        <div className="flex flex-wrap gap-2">
-          {mode === "practice" && !isChecked && <button onClick={() => setChecked((current) => ({ ...current, [question.no]: true }))} disabled={!selected} className="rounded-lg border border-amber-400/30 px-4 py-2 text-xs font-black text-amber-200 hover:bg-amber-400/10 disabled:opacity-40">Kiểm tra</button>}
-          {!submitted && (sectionIndex < sections.length - 1 || index < section.questions.length - 1) && <button onClick={nextQuestion} className="inline-flex items-center gap-1 rounded-lg bg-sky-500 px-4 py-2 text-xs font-black text-white hover:bg-sky-400">Tiếp <ArrowRight className="h-3.5 w-3.5" /></button>}
-          {!submitted && sectionIndex === sections.length - 1 && index === section.questions.length - 1 && <button onClick={submit} className="rounded-lg bg-emerald-500 px-4 py-2 text-xs font-black text-white hover:bg-emerald-400">Nộp bài</button>}
+      <section className="rounded-2xl border border-slate-800 bg-slate-900/75 p-4 sm:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+          <div><p className="text-[10px] font-black uppercase tracking-widest text-sky-300">Câu {question.no} / {exam.level === "TOPIK I" ? 70 : 100}</p><p className="mt-0.5 text-[10px] text-slate-500">{question.points || 2} điểm · {section.title}</p></div>
+          {mode === "practice" && question.audio && <span className="inline-flex items-center gap-1.5 rounded-lg border border-sky-400/25 bg-sky-400/10 px-3 py-2 text-[10px] font-bold text-sky-200"><Volume2 className="h-3.5 w-3.5" /> Audio câu hỏi</span>}
         </div>
-      </div>
-    </section>
 
-    {submitted && score && <section className="rounded-2xl border border-emerald-400/25 bg-emerald-400/[0.05] p-5 text-center">
-      <p className="text-xs font-bold text-slate-300">Kết quả · Kỳ {exam.round} · {exam.level}</p>
-      <p className="mt-1 text-4xl font-black text-emerald-300">{score.points}<span className="text-lg text-emerald-200/70">/{score.total} điểm</span></p>
-      <p className="mt-1 text-xs text-slate-400">{score.correct}/{allQuestions.length} câu đúng · {Math.round(score.correct / allQuestions.length * 100)}% chính xác</p>
-      <p className="mt-2 text-[10px] text-slate-500">Điểm luyện tập nội bộ, không phải kết quả do NIIED cấp.</p>
-      <div className="mt-4 flex flex-wrap justify-center gap-2"><button onClick={() => { setAnswers({}); setChecked({}); setSubmitted(false); setScore(null); submittedRef.current = false; setSectionIndex(0); setIndex(0); setTimeLeft(mode === "mock" ? (exam.level === "TOPIK I" ? LEVEL_I_TIME : LEVEL_II_TIME) : 0); if (mode === "mock") { exitFullscreen(); setStarted(false); } }} className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 px-4 py-2 text-xs font-bold text-slate-200"><RotateCcw className="h-3.5 w-3.5" /> Làm lại</button>{mode === "practice" && <button onClick={() => { pauseAudio(); onExit(); }} className="rounded-lg bg-slate-800 px-4 py-2 text-xs font-bold text-slate-200">Chọn đề khác</button>}</div>
-    </section>}
+        {group?.instruction && <div className="mt-4 rounded-xl border border-emerald-400/20 bg-emerald-400/[0.05] px-4 py-3"><p className="text-[10px] font-black uppercase tracking-wider text-emerald-300">Hướng dẫn nhóm câu {group.from}–{group.to}</p><p className="mt-1 whitespace-pre-line text-xs leading-6 text-slate-300" dangerouslySetInnerHTML={{ __html: safeHtml(group.instruction) }} /></div>}
+
+        {question.prompt?.html && <div className="mt-4 rounded-xl border border-slate-800 bg-slate-950/60 p-4 font-noto text-sm leading-7 text-slate-100 [&_.exam-box]:rounded-lg [&_.exam-box]:border [&_.exam-box]:border-slate-700 [&_.exam-box]:p-3 [&_b]:font-black" dangerouslySetInnerHTML={{ __html: safeHtml(question.prompt.html) }} />}
+        {question.prompt?.image && <figure className="mt-4 overflow-hidden rounded-xl border border-slate-800 bg-white p-2 text-center"><img src={imageUrl(exam.round, question.prompt.image)} alt={question.prompt.alt || `Câu ${question.no}`} className="mx-auto max-h-[300px] sm:max-h-[340px] md:max-h-[360px] w-auto max-w-full object-contain" loading="lazy" /></figure>}
+
+        <div className={`mt-4 grid gap-2 pb-2 ${question.layout === 4 ? "sm:grid-cols-2" : question.layout === 2 ? "sm:grid-cols-2" : ""}`}>
+          {(question.options || []).map((option, optionIndex) => {
+            const active = selected === optionIndex + 1;
+            const correct = question.answer === optionIndex + 1;
+            const reveal = submitted || (mode === "practice" && isChecked);
+            const style = reveal && correct ? "border-emerald-500/60 bg-emerald-500/10" : reveal && active && !correct ? "border-rose-500/60 bg-rose-500/10" : active ? "border-sky-400/60 bg-sky-400/10" : "border-slate-800 bg-slate-950/50 hover:border-slate-600";
+            return <button key={optionIndex} onClick={() => choose(optionIndex)} disabled={submitted} className={`flex min-h-12 items-start gap-3 rounded-xl border p-3 text-left transition ${style}`}>
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-800 text-xs font-black text-white">{optionIndex + 1}</span>
+              <span className="min-w-0 flex-1">
+                {option.html && <span className="block whitespace-pre-line font-noto text-sm leading-6 text-slate-100" dangerouslySetInnerHTML={{ __html: safeHtml(option.html) }} />}
+                {option.image && <img src={imageUrl(exam.round, option.image)} alt={option.alt || `Lựa chọn ${optionIndex + 1}`} className="mt-2 max-h-48 w-full rounded-lg bg-white object-contain" loading="lazy" />}
+              </span>
+              {reveal && correct && <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-emerald-300" />}
+              {reveal && active && !correct && <XCircle className="mt-1 h-4 w-4 shrink-0 text-rose-300" />}
+            </button>;
+          })}
+        </div>
+
+        {(submitted || (mode === "practice" && isChecked)) && <div className="mt-4 rounded-xl border border-indigo-400/20 bg-indigo-400/[0.05] p-4">
+          <p className="text-[10px] font-black uppercase tracking-wider text-indigo-300">Đáp án {question.answer} · Giải thích</p>
+          <div className="mt-1 whitespace-pre-line text-sm leading-6 text-slate-200">{question.explanation || `Đáp án đúng là ${question.answer}.`}</div>
+        </div>}
+
+        {/* Thanh chuyển câu và nộp bài dính chân (sticky bottom) giúp luôn nhìn thấy và thao tác ngay cả khi ảnh hoặc bài đọc rất dài */}
+        <div className="sticky bottom-0 z-20 -mx-4 -mb-4 sm:-mx-6 sm:-mb-6 mt-6 flex flex-wrap items-center justify-between gap-2 border-t border-slate-800 bg-slate-900/95 backdrop-blur-md p-3.5 sm:p-4 rounded-b-2xl shadow-xl">
+          <button onClick={previousQuestion} disabled={sectionIndex === 0 && index === 0} className="rounded-lg border border-slate-700 px-3.5 py-2 text-xs font-bold text-slate-300 hover:bg-slate-800 disabled:opacity-40 transition">← Trước</button>
+          <div className="flex flex-wrap items-center gap-2">
+            {mode === "practice" && !isChecked && <button onClick={() => setChecked((current) => ({ ...current, [question.no]: true }))} disabled={!selected} className="rounded-lg border border-amber-400/30 px-4 py-2 text-xs font-black text-amber-200 hover:bg-amber-400/10 disabled:opacity-40">Kiểm tra</button>}
+            {!submitted && (sectionIndex < sections.length - 1 || index < section.questions.length - 1) && <button onClick={nextQuestion} className="inline-flex items-center gap-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 px-4 py-2 text-xs font-black text-white shadow-md shadow-sky-500/20 transition active:scale-95">Tiếp <ArrowRight className="h-3.5 w-3.5" /></button>}
+            {!submitted && sectionIndex === sections.length - 1 && index === section.questions.length - 1 && <button onClick={submit} className="rounded-lg bg-emerald-500 hover:bg-emerald-400 px-5 py-2 text-xs font-black text-white shadow-md shadow-emerald-500/20 transition active:scale-95">Nộp bài</button>}
+          </div>
+        </div>
+      </section>
+
+      {submitted && score && <section className="rounded-2xl border border-emerald-400/25 bg-emerald-400/[0.05] p-5 text-center">
+        <p className="text-xs font-bold text-slate-300">Kết quả · Kỳ {exam.round} · {exam.level}</p>
+        <p className="mt-1 text-4xl font-black text-emerald-300">{score.points}<span className="text-lg text-emerald-200/70">/{score.total} điểm</span></p>
+        <p className="mt-1 text-xs text-slate-400">{score.correct}/{allQuestions.length} câu đúng · {Math.round(score.correct / allQuestions.length * 100)}% chính xác</p>
+        <p className="mt-2 text-[10px] text-slate-500">Điểm luyện tập nội bộ, không phải kết quả do NIIED cấp.</p>
+        <div className="mt-4 flex flex-wrap justify-center gap-2"><button onClick={() => { setAnswers({}); setChecked({}); setSubmitted(false); setScore(null); submittedRef.current = false; setSectionIndex(0); setIndex(0); setTimeLeft(mode === "mock" ? (exam.level === "TOPIK I" ? LEVEL_I_TIME : LEVEL_II_TIME) : 0); if (mode === "mock") { exitFullscreen(); setStarted(false); } }} className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 px-4 py-2 text-xs font-bold text-slate-200"><RotateCcw className="h-3.5 w-3.5" /> Làm lại</button>{mode === "practice" && <button onClick={() => { pauseAudio(); onExit(); }} className="rounded-lg bg-slate-800 px-4 py-2 text-xs font-bold text-slate-200">Chọn đề khác</button>}</div>
+      </section>}
+    </div>
   </main>;
 }
 

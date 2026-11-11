@@ -73,6 +73,10 @@ export const TopikExamModule: React.FC = () => {
 
   useEffect(() => () => window.speechSynthesis?.cancel(), []);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentIndex]);
+
   const startSet = (set: ExamSet) => {
     submittedRef.current = false;
     setActiveSet(set);
@@ -93,6 +97,30 @@ export const TopikExamModule: React.FC = () => {
   const formatTime = (seconds: number) => `${Math.floor(seconds / 60).toString().padStart(2, "0")}:${(seconds % 60).toString().padStart(2, "0")}`;
   const currentQ = activeSet?.questions[currentIndex];
   const currentCorrect = currentQ ? selectedAnswers[currentQ.id] === currentQ.correctAnswer : false;
+
+  useEffect(() => {
+    if (!activeSet || isSubmitted) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName?.toLowerCase();
+      if (tag === "input" || tag === "textarea") return;
+
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        setCurrentIndex((index) => Math.min(activeSet.questions.length - 1, index + 1));
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        setCurrentIndex((index) => Math.max(0, index - 1));
+      } else if (["1", "2", "3", "4"].includes(e.key)) {
+        const optionIdx = parseInt(e.key, 10) - 1;
+        if (currentQ && optionIdx < currentQ.options.length) {
+          e.preventDefault();
+          setSelectedAnswers((answers) => ({ ...answers, [currentQ.id]: optionIdx }));
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activeSet, currentQ, isSubmitted]);
 
   const playListeningPassage = () => {
     if (!currentQ?.passage || !window.speechSynthesis) return;
@@ -211,9 +239,9 @@ export const TopikExamModule: React.FC = () => {
           return <button key={optionIndex} disabled={isSubmitted} onClick={() => setSelectedAnswers((answers) => ({ ...answers, [currentQ.id]: optionIndex }))} className={`flex w-full items-center gap-3 rounded-xl border p-3.5 text-left text-sm transition ${color}`}><span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-800 text-xs font-black">{optionIndex + 1}</span><span className="flex-1 font-noto">{option}</span>{isSubmitted && correct && <CheckCircle2 className="h-4 w-4 text-emerald-300" />}{isSubmitted && selected && !correct && <XCircle className="h-4 w-4 text-rose-300" />}</button>;
         })}</div>
         {isSubmitted && <div className="mt-4 rounded-xl border border-indigo-400/20 bg-indigo-400/[0.05] p-4"><p className="text-[10px] font-black uppercase tracking-wider text-indigo-300">Giải thích</p><p className="mt-1 text-sm text-slate-200">{currentQ.explanation}</p></div>}
-        <div className="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-slate-800 pt-4">
-          <button onClick={() => setCurrentIndex((index) => Math.max(0, index - 1))} disabled={currentIndex === 0} className="rounded-lg border border-slate-700 px-3 py-2 text-xs font-bold text-slate-300 disabled:opacity-40">← Trước</button>
-          <div className="flex gap-2">{!isSubmitted && <button onClick={handleSubmit} className="rounded-lg border border-amber-400/30 px-4 py-2 text-xs font-black text-amber-200 hover:bg-amber-400/10">Nộp bộ luyện</button>}<button onClick={() => currentIndex === activeSet.questions.length - 1 ? (isSubmitted ? returnToCatalog() : handleSubmit()) : setCurrentIndex((index) => Math.min(activeSet.questions.length - 1, index + 1))} className="inline-flex items-center gap-1 rounded-lg bg-sky-500 px-4 py-2 text-xs font-black text-white hover:bg-sky-400">{currentIndex === activeSet.questions.length - 1 ? isSubmitted ? "Xong" : "Nộp bài" : "Tiếp"}<ArrowRight className="h-3.5 w-3.5" /></button></div>
+        <div className="sticky bottom-0 z-20 mt-6 flex flex-wrap items-center justify-between gap-2 border-t border-slate-800 bg-slate-900/95 backdrop-blur-md p-3.5 -mx-4 -mb-4 sm:-mx-6 sm:-mb-6 rounded-b-2xl shadow-xl">
+          <button onClick={() => setCurrentIndex((index) => Math.max(0, index - 1))} disabled={currentIndex === 0} className="rounded-lg border border-slate-700 px-3.5 py-2 text-xs font-bold text-slate-300 hover:bg-slate-800 disabled:opacity-40 transition">← Trước</button>
+          <div className="flex items-center gap-2">{!isSubmitted && <button onClick={handleSubmit} className="rounded-lg border border-amber-400/30 px-4 py-2 text-xs font-black text-amber-200 hover:bg-amber-400/10">Nộp bộ luyện</button>}<button onClick={() => currentIndex === activeSet.questions.length - 1 ? (isSubmitted ? returnToCatalog() : handleSubmit()) : setCurrentIndex((index) => Math.min(activeSet.questions.length - 1, index + 1))} className="inline-flex items-center gap-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 px-4 py-2 text-xs font-black text-white shadow-md shadow-sky-500/20 transition active:scale-95">{currentIndex === activeSet.questions.length - 1 ? isSubmitted ? "Xong" : "Nộp bài" : "Tiếp"}<ArrowRight className="h-3.5 w-3.5" /></button></div>
         </div>
       </div>}
     </div>
