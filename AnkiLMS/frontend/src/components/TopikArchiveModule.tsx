@@ -418,7 +418,6 @@ export function TopikArchiveModule() {
     <section className="rounded-2xl border border-slate-800 bg-slate-950/40 p-4 text-[11px] leading-5 text-slate-400">
       <p className="font-bold text-slate-200">Nguồn và lưu ý</p>
       <p className="mt-1">Đề thi, hình ảnh và audio thuộc bản quyền của NIIED/TOPIK. Trang này dùng cho luyện tập nội bộ, không thay thế cổng đăng ký hoặc kết quả chính thức. Audio có thể tải chậm ở lần nghe đầu.</p>
-      <p className="mt-2 font-bold text-emerald-300">Tài nguyên được sử dụng cho mục đích phi thương mại theo sự cho phép của đơn vị cung cấp.</p>
     </section>
   </main>;
 }

@@ -7,7 +7,7 @@ const newCard = { interval: 1, reps: 0, lapses: 0, state: "new", dueDate: "2026-
 let now = new Date("2026-11-11T07:00:00Z");
 let state = calculateFSRS45("good", newCard, now);
 assert.equal(state.state, "learning");
-assert.equal(state.learningStep, 1);
+assert.equal(state.learningSteps, 1);
 
 // Round-trip through JSON like the API/localStorage does, then Good again 10 minutes later.
 state = JSON.parse(JSON.stringify(state));
@@ -19,5 +19,5 @@ assert.ok(state.interval >= 1, `expected a multi-day interval, got ${state.inter
 // Again during learning goes back to the first step.
 const again = calculateFSRS45("again", { ...calculateFSRS45("good", newCard, now) }, now);
 assert.equal(again.state, "learning");
-assert.equal(again.learningStep, 0);
+assert.equal(again.learningSteps, 0);
 console.log("ok: learning cards graduate after Good on the last step");

@@ -90,6 +90,7 @@ const cardStateFor = (map: Record<string, FSRSState>, key: string, card: Vocabul
     difficulty: 5,
     lastReview: null,
     easeFactor: 2.5,
+    learningSteps: 0,
   };
 
 /** Anki-style label for the next review gap, e.g. "10 phút", "5 ngày". */

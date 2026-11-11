@@ -1,4 +1,4 @@
--- Cloudflare D1 Database Schema for HaechiVN Korean LMS
+﻿-- Cloudflare D1 Database Schema for HaechiVN Korean LMS
 
 -- 1. Users Table
 CREATE TABLE IF NOT EXISTS users (
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS card_states (
     ease_factor REAL DEFAULT 2.5,
     due_date TEXT NOT NULL, -- YYYY-MM-DD
     due_at TEXT, -- precise timestamp for short-term FSRS steps
-    learning_step INTEGER DEFAULT 0, -- ts-fsrs learning step index
+    learning_steps INTEGER DEFAULT 0, -- ts-fsrs learning step index
     reps INTEGER DEFAULT 0,
     lapses INTEGER DEFAULT 0,
     state TEXT DEFAULT 'new', -- new, learning, review
@@ -128,3 +128,4 @@ CREATE TABLE IF NOT EXISTS shared_decks (
 CREATE INDEX IF NOT EXISTS idx_shared_decks_visibility_updated ON shared_decks(visibility, updated_at DESC);
 CREATE INDEX IF NOT EXISTS idx_shared_decks_owner_updated ON shared_decks(owner_id, updated_at DESC);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_shared_decks_owner_deck ON shared_decks(owner_id, deck_id);
+

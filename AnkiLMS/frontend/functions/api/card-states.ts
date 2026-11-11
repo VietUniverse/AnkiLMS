@@ -40,12 +40,12 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       easeFactor: number;
       dueDate: string;
       dueAt?: string;
-      learningStep?: number;
       reps: number;
       lapses: number;
       state: string;
       stability: number;
       difficulty: number;
+      learningSteps?: number;
       lastReview: string | null;
     };
 
@@ -55,30 +55,30 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (!Number.isFinite(body.easeFactor) || body.easeFactor < 1.3 || body.easeFactor > 5) return errorResponse("Hệ số ôn tập không hợp lệ.");
     if (!/^\d{4}-\d{2}-\d{2}$/.test(body.dueDate)) return errorResponse("Ngày ôn tập không hợp lệ.");
     if (body.dueAt !== undefined && (typeof body.dueAt !== "string" || Number.isNaN(Date.parse(body.dueAt)))) return errorResponse("Thời điểm ôn tập không hợp lệ.");
-    if (body.learningStep !== undefined && (!Number.isInteger(body.learningStep) || body.learningStep < 0 || body.learningStep > 100)) return errorResponse("Bước học không hợp lệ.");
     if (!Number.isInteger(body.reps) || body.reps < 0 || body.reps > 100_000) return errorResponse("Số lần ôn tập không hợp lệ.");
     if (!Number.isInteger(body.lapses) || body.lapses < 0 || body.lapses > 100_000) return errorResponse("Số lần quên không hợp lệ.");
     if (!["new", "learning", "review"].includes(body.state)) return errorResponse("Trạng thái thẻ không hợp lệ.");
     if (typeof body.stability !== "number" || !Number.isFinite(body.stability) || body.stability < 0 || body.stability > 36_500) return errorResponse("Độ ổn định ghi nhớ không hợp lệ.");
     if (typeof body.difficulty !== "number" || !Number.isFinite(body.difficulty) || body.difficulty < 1 || body.difficulty > 10) return errorResponse("Độ khó ghi nhớ không hợp lệ.");
+    if (body.learningSteps !== undefined && (!Number.isInteger(body.learningSteps) || body.learningSteps < 0 || body.learningSteps > 50)) return errorResponse("Bước học không hợp lệ.");
     if (body.lastReview !== null && (typeof body.lastReview !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(body.lastReview))) return errorResponse("Ngày ôn gần nhất không hợp lệ.");
 
     const id = `cs_${user.id}_${body.deckId}_${body.cardId}`;
 
     await env.DB.prepare(
-      `INSERT INTO card_states (id, user_id, deck_id, card_id, interval, ease_factor, due_date, due_at, learning_step, reps, lapses, state, stability, difficulty, last_review, updated_at)
+      `INSERT INTO card_states (id, user_id, deck_id, card_id, interval, ease_factor, due_date, due_at, reps, lapses, state, stability, difficulty, learning_steps, last_review, updated_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
        ON CONFLICT(user_id, deck_id, card_id) DO UPDATE SET
          interval = excluded.interval,
          ease_factor = excluded.ease_factor,
          due_date = excluded.due_date,
          due_at = excluded.due_at,
-         learning_step = excluded.learning_step,
          reps = excluded.reps,
          lapses = excluded.lapses,
          state = excluded.state,
          stability = excluded.stability,
          difficulty = excluded.difficulty,
+         learning_steps = excluded.learning_steps,
          last_review = excluded.last_review,
          updated_at = CURRENT_TIMESTAMP`
     ).bind(
@@ -90,12 +90,12 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       body.easeFactor,
       body.dueDate,
       body.dueAt || null,
-      body.learningStep ?? 0,
       body.reps,
       body.lapses,
       body.state,
       body.stability,
       body.difficulty,
+      body.learningSteps ?? 0,
       body.lastReview
     ).run();
 

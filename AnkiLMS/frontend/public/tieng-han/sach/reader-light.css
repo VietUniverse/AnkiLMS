@@ -1,10 +1,12 @@
-/* HaechiVN light reading surface, scoped to the interactive Korean books. */
-html,
-html.dark {
+/* AnkiVN LMS light reading surface, scoped to the interactive Korean books. */
+html:root,
+html:root.dark,
+html:root[data-sach-ui="v2"],
+html:root[data-sach-ui="v2"].dark {
   color-scheme: light !important;
   --sach-paper: #ffffff;
   --sach-card: #ffffff;
-  --sach-ink: #10213a;
+  --sach-ink: #0f172a;
   --sach-body: #334155;
   --sach-muted: #64748b;
   --sach-line: #dbe5f0;
@@ -21,14 +23,79 @@ html.dark {
   --sach-gram-ink: #115e59;
   --sach-gram-tint: #f0fdfa;
   --sach-note: #f8fafc;
+  --sach-stamp: #e11d48;
   --sach-frame: #f1f7fb;
-  --v2-wall: #f3f8fc;
-  --sach-shadow: 0 8px 28px rgb(15 37 64 / 8%);
+  --v2-wall: #f1f5f9;
+  --sach-shadow: 0 8px 28px rgb(15 23 42 / 7%);
   --v2-rule-line: #cbd5e1;
-  --sach-tap: #0369a1;
+  --sach-tap: #0284c7;
   --sach-tap-tint: #e0f2fe;
+  --v2-radius: 14px;
+  --v2-radius-sm: 10px;
 }
-html body { background: #f3f8fc !important; color: #10213a !important; }
-html .sach-paper { background: #ffffff !important; color: #10213a !important; }
-html .sach-paper :is(h1,h2,h3,h4,p,span,li,label,button,a) { color: inherit; }
-html .sach-paper :is(input,textarea,select) { background-color: #ffffff; color: #10213a; border-color: #cbd5e1; }
+
+html body {
+  background: #f3f8fc !important;
+  color: #0f172a !important;
+}
+
+html .sach-paper {
+  background: transparent !important;
+  color: #0f172a !important;
+}
+
+html .v2-top {
+  background: rgb(255 255 255 / 92%) !important;
+  border-bottom: 1px solid rgb(219 229 240 / 85%);
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 4px 16px -6px rgb(15 23 42 / 6%);
+}
+
+html .v2-sheet {
+  background: #ffffff !important;
+  border: 1px solid #dbe5f0;
+  border-radius: 22px;
+  padding: 1.375rem 1.25rem 2rem;
+  box-shadow: 0 10px 30px -10px rgb(15 23 42 / 6%), 0 2px 6px -1px rgb(15 23 42 / 3%);
+}
+
+@media (min-width: 640px) {
+  html .v2-sheet {
+    padding: 2.25rem 2.5rem 2.75rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  html:root[data-sach-ui="v2"] .v2-side {
+    background: rgb(255 255 255 / 88%);
+    border: 1px solid #dbe5f0;
+    border-radius: 18px;
+    padding: 1.125rem 0.75rem;
+    margin-top: 2rem;
+    box-shadow: 0 8px 24px -8px rgb(15 23 42 / 5%);
+    backdrop-filter: blur(8px);
+  }
+
+  html:root[data-sach-ui="v2"] .v2-side-item.is-here {
+    background: #e0f2fe !important;
+    color: #0369a1 !important;
+    font-weight: 600;
+  }
+}
+
+html:root[data-sach-ui="v2"] .v2-kind {
+  background: #e0f2fe !important;
+  color: #0369a1 !important;
+  border: 1px solid #bae6fd;
+  border-radius: 8px !important;
+}
+
+html .sach-paper :is(h1, h2, h3, h4, p, span, li, label, button, a) {
+  color: inherit;
+}
+
+html .sach-paper :is(input, textarea, select) {
+  background-color: #ffffff;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}

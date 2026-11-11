@@ -15,8 +15,8 @@ export interface FSRSState {
   difficulty: number;
   lastReview: string | null;
   dueAt?: string;
-  /** ts-fsrs learning step index; without it a "learning" card restarts at step 0 and never graduates. */
-  learningStep?: number;
+  /** Index of the current learning step (0-based). Persisted so "Good" can graduate a card. */
+  learningSteps?: number;
   fsrsVersion?: string;
   /** Original Anki preset retained for subsequent scheduling after import. */
   schedulerConfig?: Record<string, unknown>;
@@ -64,6 +64,17 @@ function legacyStateToFsrs(state: FSRSState["state"] | undefined): State {
   return State.New;
 }
 
+function resumeLearningStep(current: Partial<FSRSState>): number {
+  if (current.learningSteps !== undefined) {
+    return Math.max(0, Math.floor(Number(current.learningSteps) || 0));
+  }
+  // Records written before the step index was persisted always restarted at
+  // step 0, which is why cards never graduated. Those cards already repeated
+  // that step at least `reps` times, so resume them at the following step and
+  // let one more "Good" promote them to Review.
+  return current.state === "learning" && (current.reps ?? 0) > 0 ? 1 : 0;
+}
+
 function toFsrsCard(current: Partial<FSRSState>, now: Date) {
   const emptyCard = createEmptyCard(now);
   // lastReview thường là chuỗi ngày "YYYY-MM-DD". new Date() hiểu nó là 00:00 UTC, tức là có thể nằm SAU "bây giờ"
@@ -79,24 +90,32 @@ function toFsrsCard(current: Partial<FSRSState>, now: Date) {
     : current.dueDate
       ? new Date(`${current.dueDate}T23:59:00`)
       : now;
+  const state = legacyStateToFsrs(current.state);
+  const stability = Number.isFinite(current.stability) && (current.stability ?? 0) > 0
+    ? current.stability!
+    : Math.max(0, current.interval || 0);
+  // ts-fsrs rejects a New card that carries memory values (difficulty > 0 with
+  // stability 0). Imported Anki cards that were never studied map to exactly
+  // that shape, so keep a fresh card's memory empty until the first rating.
+  const emptyMemory = state === State.New && stability <= 0;
 
   return {
     ...emptyCard,
     due: Number.isNaN(due.getTime()) ? now : due,
-    stability: Number.isFinite(current.stability) && (current.stability ?? 0) > 0
-      ? current.stability!
-      : Math.max(0, current.interval || 0),
-    difficulty: Number.isFinite(current.difficulty) && (current.difficulty ?? 0) > 0
-      ? current.difficulty!
-      : 5,
+    stability,
+    difficulty: emptyMemory
+      ? 0
+      : Number.isFinite(current.difficulty) && (current.difficulty ?? 0) > 0
+        ? current.difficulty!
+        : 5,
     elapsed_days: lastReview && !Number.isNaN(lastReview.getTime())
       ? Math.max(0, Math.floor((now.getTime() - lastReview.getTime()) / 86_400_000))
       : Math.max(0, current.interval || 0),
     scheduled_days: Math.max(0, current.interval || 0),
-    learning_steps: current.state === "learning" ? Math.max(0, Math.floor(current.learningStep || 0)) : 0,
+    learning_steps: resumeLearningStep(current),
     reps: Math.max(0, current.reps || 0),
     lapses: Math.max(0, current.lapses || 0),
-    state: legacyStateToFsrs(current.state),
+    state,
     ...(lastReview && !Number.isNaN(lastReview.getTime()) ? { last_review: lastReview } : {}),
   };
 }
@@ -232,9 +251,9 @@ export function calculateFSRS45(
     state: card.state === State.Review || card.state === State.Relearning ? "review" : "learning",
     dueDate: formatLocalDate(card.due),
     dueAt: card.due.toISOString(),
-    learningStep: card.learning_steps,
     stability: Number(card.stability.toFixed(4)),
     difficulty: Number(card.difficulty.toFixed(4)),
+    learningSteps: card.learning_steps,
     lastReview: formatLocalDate(now),
     fsrsVersion: FSRS45_DEFAULTS.version,
     ...(importedConfig ? { schedulerConfig: importedConfig } : {}),

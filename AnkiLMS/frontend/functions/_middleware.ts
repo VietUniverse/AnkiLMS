@@ -12,18 +12,19 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   // The interactive lessons are published as real static files at /sach/*.
   // Keep old links working with a redirect; never rewrite their responses at
   // the edge because that makes Next's serialized route disagree with the URL.
-  if (path.startsWith("/tieng-han/sach/")) {
-    url.pathname = path.replace(/^\/tieng-han\/sach\//, "/sach/");
+  if (path === "/tieng-han/sach" || path.startsWith("/tieng-han/sach/")) {
+    url.pathname = path.replace(/^\/tieng-han\/sach(?=\/|$)/, "/sach");
     return Response.redirect(url.toString(), 301);
   }
 
   // These lessons are static HTML, not App Router pages. Returning HTML for a
   // Flight request makes Next try to hydrate a document as an RSC stream.
-  const isBookPath = path.startsWith("/sach/");
+  const isBookPath = path === "/sach" || path.startsWith("/sach/");
+  const isStaticLessonHtml = /^\/sach\/so-cap-[12]\/[^/]+/.test(path) && !path.endsWith(".txt");
   const isFlightRequest = request.headers.get("RSC") === "1"
     || request.headers.has("Next-Router-Prefetch")
     || url.searchParams.has("_rsc");
-  if (isBookPath && isFlightRequest) {
+  if (isStaticLessonHtml && isFlightRequest) {
     return new Response("Static lesson pages do not provide an RSC payload.", {
       status: 404,
       headers: {

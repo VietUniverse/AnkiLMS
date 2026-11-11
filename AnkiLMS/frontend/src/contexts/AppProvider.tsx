@@ -7,6 +7,7 @@ import { BETA_FEATURE_KEYS, DEFAULT_FEATURE_FLAGS, FeatureFlags, FeatureKey, IS_
 import { CURATED_DECKS, curatedDeckToAnkiDeck } from "../data/curatedDecks";
 import { courseToExploreDeck, loadCourseVocabulary, loadSeoul1AExploreDeck } from "../lib/courseVocabulary";
 import { syncManagedDecks } from "../lib/deckSync";
+import { loadProgress, NEW_WORDS_FOR_CHECKIN, vietnamToday } from "../lib/dailyLimits";
 
 export interface StudySessionInfo {
   title: string;
@@ -77,6 +78,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [activeStudySession, setActiveStudySession] = useState<StudySessionInfo | null>(null);
   const syncingDeckIds = useRef(new Set<string>());
   const nextSharedDeckBackupAt = useRef(0);
+  const autoCheckinRef = useRef<string | null>(null);
   const [sharedDeckSyncTick, setSharedDeckSyncTick] = useState(0);
 
   useEffect(() => {
@@ -383,6 +385,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setTimeout(() => setCheckinMessage(null), 4000);
     }
   }, [currentUser, handleOpenAuth]);
+
+  // Điểm danh tự động khi học đủ 10 từ mới trong ngày (bỏ nút điểm danh thủ công).
+  const autoCheckinFromStudy = useCallback(async () => {
+    if (!currentUser) return;
+    const today = vietnamToday();
+    if (currentUser.last_checkin_date === today) return;
+    const guardKey = `${currentUser.id}:${today}`;
+    if (autoCheckinRef.current === guardKey) return;
+    autoCheckinRef.current = guardKey;
+    await handleCheckin();
+  }, [currentUser, handleCheckin]);
+
+  useEffect(() => {
+    if (!isAuthReady || !currentUser) return;
+    const maybeCheckin = () => {
+      if (typeof window === "undefined") return;
+      if (loadProgress().newDone >= NEW_WORDS_FOR_CHECKIN) void autoCheckinFromStudy();
+    };
+    maybeCheckin();
+    window.addEventListener("haechivn:daily-progress-updated", maybeCheckin);
+    window.addEventListener("focus", maybeCheckin);
+    return () => {
+      window.removeEventListener("haechivn:daily-progress-updated", maybeCheckin);
+      window.removeEventListener("focus", maybeCheckin);
+    };
+  }, [isAuthReady, currentUser, autoCheckinFromStudy]);
 
   const handleLogout = useCallback(async () => {
     await ApiClient.logout();

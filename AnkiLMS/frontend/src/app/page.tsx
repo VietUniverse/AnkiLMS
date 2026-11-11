@@ -15,11 +15,13 @@ import { ApiClient } from "../lib/apiClient";
 import { detectDictionarySearchLanguage, matchesDictionarySearchText, searchLearningDictionary } from "../lib/dictionarySearch";
 import { useTranslationLanguage } from "../lib/translationPreference";
 import { getStudyRank } from "../lib/studyRanks";
+import { loadProgress, NEW_WORDS_FOR_CHECKIN, vietnamToday } from "../lib/dailyLimits";
 
 export default function Home() {
   const router = useRouter();
-  const { currentUser, heatmapData, handleCheckin, handleOpenAuth, isAuthReady, isFeatureEnabled } = useApp();
+  const { currentUser, heatmapData, handleOpenAuth, isAuthReady, isFeatureEnabled } = useApp();
   const [dailyMissionCount, setDailyMissionCount] = React.useState(0);
+  const [newWordsToday, setNewWordsToday] = React.useState(0);
   const [showWelcome, setShowWelcome] = React.useState(false);
   const [showPlacementPrompt, setShowPlacementPrompt] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -143,7 +145,18 @@ export default function Home() {
     };
   }, [currentUser?.id]);
 
-  const todayStr = new Date().toISOString().split("T")[0];
+  React.useEffect(() => {
+    const syncNewWords = () => setNewWordsToday(loadProgress().newDone);
+    syncNewWords();
+    window.addEventListener("haechivn:daily-progress-updated", syncNewWords);
+    window.addEventListener("focus", syncNewWords);
+    return () => {
+      window.removeEventListener("haechivn:daily-progress-updated", syncNewWords);
+      window.removeEventListener("focus", syncNewWords);
+    };
+  }, [currentUser?.id]);
+
+  const todayStr = vietnamToday();
   const hasCheckedInToday = currentUser?.last_checkin_date === todayStr;
   const userXP = currentUser?.xp ?? 150;
   const userLevel = currentUser ? Math.floor(userXP / 300) + 1 : 1;
@@ -264,20 +277,24 @@ export default function Home() {
               {hasCheckedInToday ? (
                 <div className="flex min-h-16 items-center gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-5 py-3 text-emerald-700 dark:text-emerald-300">
                   <CheckCircle2 className="h-6 w-6 shrink-0" />
-                  <span className="text-sm font-black">Đã điểm danh hôm nay</span>
+                  <span className="min-w-0">
+                    <span className="block text-sm font-black">Đã điểm danh hôm nay</span>
+                    <span className="block text-xs opacity-80">Học 10 từ mới mỗi ngày để giữ chuỗi</span>
+                  </span>
                 </div>
               ) : (
-                <button
-                  onClick={handleCheckin}
-                  style={{ color: "#fff" }}
-                  className="flex min-h-16 cursor-pointer items-center gap-3 rounded-2xl bg-amber-500 px-5 py-3 text-left shadow-sm transition hover:bg-amber-600 active:scale-[0.99]"
-                >
-                  <Flame className="h-6 w-6 shrink-0 fill-current" />
-                  <span>
-                    <span className="block text-base font-black">Điểm danh</span>
-                    <span className="block text-xs opacity-90">Nhận 1 💎 hôm nay</span>
-                  </span>
-                </button>
+                <div className="flex min-h-16 flex-col justify-center gap-2 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-5 py-3 text-amber-700 dark:text-amber-300">
+                  <div className="flex items-center gap-2">
+                    <Flame className="h-5 w-5 shrink-0 fill-current" />
+                    <span className="text-sm font-black">Học {NEW_WORDS_FOR_CHECKIN} từ mới để điểm danh</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 flex-1 overflow-hidden rounded-full bg-amber-500/20" role="progressbar" aria-valuemin={0} aria-valuemax={NEW_WORDS_FOR_CHECKIN} aria-valuenow={Math.min(newWordsToday, NEW_WORDS_FOR_CHECKIN)}>
+                      <div className="h-full rounded-full bg-amber-500 transition-all duration-300" style={{ width: `${Math.min(100, (newWordsToday / NEW_WORDS_FOR_CHECKIN) * 100)}%` }} />
+                    </div>
+                    <span className="shrink-0 text-xs font-black tabular-nums">{Math.min(newWordsToday, NEW_WORDS_FOR_CHECKIN)}/{NEW_WORDS_FOR_CHECKIN}</span>
+                  </div>
+                </div>
               )}
             </div>
 
