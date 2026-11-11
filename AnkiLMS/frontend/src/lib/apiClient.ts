@@ -279,21 +279,21 @@ export class ApiClient {
     }
   }
 
-  public static async getCardStates(): Promise<Record<string, { interval: number; easeFactor: number; reps: number; lapses: number; state: "new" | "learning" | "review"; dueDate: string; dueAt?: string; stability: number; difficulty: number; lastReview: string | null }>> {
+  public static async getCardStates(): Promise<Record<string, { interval: number; easeFactor: number; reps: number; lapses: number; state: "new" | "learning" | "review"; dueDate: string; dueAt?: string; learningStep?: number; stability: number; difficulty: number; lastReview: string | null }>> {
     const res = await fetch("/api/card-states", { credentials: "same-origin" });
     if (!res.ok) throw new Error("Không tải được tiến độ ôn tập.");
     const data = await res.json();
     return Object.fromEntries((data.cardStates || []).map((item: any) => [
       `${item.deck_id}_${item.card_id}`,
-      { interval: item.interval, easeFactor: item.ease_factor, reps: item.reps, lapses: item.lapses, state: item.state, dueDate: item.due_date, dueAt: item.due_at || undefined, stability: item.stability || 0, difficulty: item.difficulty || 5, lastReview: item.last_review || null },
+      { interval: item.interval, easeFactor: item.ease_factor, reps: item.reps, lapses: item.lapses, state: item.state, dueDate: item.due_date, dueAt: item.due_at || undefined, learningStep: item.learning_step ?? undefined, stability: item.stability || 0, difficulty: item.difficulty || 5, lastReview: item.last_review || null },
     ]));
   }
 
-  public static async saveCardState(deckId: string, cardId: number, state: { interval: number; easeFactor: number; reps: number; lapses: number; state: string; dueDate: string; dueAt?: string; stability: number; difficulty: number; lastReview: string | null }): Promise<void> {
+  public static async saveCardState(deckId: string, cardId: number, state: { interval: number; easeFactor: number; reps: number; lapses: number; state: string; dueDate: string; dueAt?: string; learningStep?: number; stability: number; difficulty: number; lastReview: string | null }): Promise<void> {
     const res = await fetch("/api/card-states", {
       method: "POST", credentials: "same-origin",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ deckId, cardId, interval: state.interval, easeFactor: state.easeFactor, reps: state.reps, lapses: state.lapses, state: state.state, dueDate: state.dueDate, dueAt: state.dueAt, stability: state.stability, difficulty: state.difficulty, lastReview: state.lastReview }),
+      body: JSON.stringify({ deckId, cardId, interval: state.interval, easeFactor: state.easeFactor, reps: state.reps, lapses: state.lapses, state: state.state, dueDate: state.dueDate, dueAt: state.dueAt, learningStep: state.learningStep, stability: state.stability, difficulty: state.difficulty, lastReview: state.lastReview }),
     });
     if (!res.ok) throw new Error("Không lưu được tiến độ ôn tập.");
   }

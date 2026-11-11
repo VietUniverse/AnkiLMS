@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS card_states (
     ease_factor REAL DEFAULT 2.5,
     due_date TEXT NOT NULL, -- YYYY-MM-DD
     due_at TEXT, -- precise timestamp for short-term FSRS steps
+    learning_step INTEGER DEFAULT 0, -- ts-fsrs learning step index
     reps INTEGER DEFAULT 0,
     lapses INTEGER DEFAULT 0,
     state TEXT DEFAULT 'new', -- new, learning, review

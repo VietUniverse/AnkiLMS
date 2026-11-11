@@ -15,6 +15,8 @@ export interface FSRSState {
   difficulty: number;
   lastReview: string | null;
   dueAt?: string;
+  /** ts-fsrs learning step index; without it a "learning" card restarts at step 0 and never graduates. */
+  learningStep?: number;
   fsrsVersion?: string;
   /** Original Anki preset retained for subsequent scheduling after import. */
   schedulerConfig?: Record<string, unknown>;
@@ -91,7 +93,7 @@ function toFsrsCard(current: Partial<FSRSState>, now: Date) {
       ? Math.max(0, Math.floor((now.getTime() - lastReview.getTime()) / 86_400_000))
       : Math.max(0, current.interval || 0),
     scheduled_days: Math.max(0, current.interval || 0),
-    learning_steps: 0,
+    learning_steps: current.state === "learning" ? Math.max(0, Math.floor(current.learningStep || 0)) : 0,
     reps: Math.max(0, current.reps || 0),
     lapses: Math.max(0, current.lapses || 0),
     state: legacyStateToFsrs(current.state),
@@ -230,6 +232,7 @@ export function calculateFSRS45(
     state: card.state === State.Review || card.state === State.Relearning ? "review" : "learning",
     dueDate: formatLocalDate(card.due),
     dueAt: card.due.toISOString(),
+    learningStep: card.learning_steps,
     stability: Number(card.stability.toFixed(4)),
     difficulty: Number(card.difficulty.toFixed(4)),
     lastReview: formatLocalDate(now),

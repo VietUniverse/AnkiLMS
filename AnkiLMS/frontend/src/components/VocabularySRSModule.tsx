@@ -79,6 +79,30 @@ export interface DeckTreeNode {
 }
 
 // Clean image string helper
+const cardStateFor = (map: Record<string, FSRSState>, key: string, card: VocabularyCard): FSRSState =>
+  map[key] || (card.ankiSchedule ? ankiScheduleToFSRSState(card.ankiSchedule) : undefined) || {
+    interval: 1,
+    reps: 0,
+    lapses: 0,
+    state: "new",
+    dueDate: formatLocalDate(new Date()),
+    stability: 0,
+    difficulty: 5,
+    lastReview: null,
+    easeFactor: 2.5,
+  };
+
+/** Anki-style label for the next review gap, e.g. "10 phút", "5 ngày". */
+const formatNextReview = (state: FSRSState, now = new Date()): string => {
+  const minutes = Math.max(1, Math.round((new Date(state.dueAt || `${state.dueDate}T00:00:00`).getTime() - now.getTime()) / 60_000));
+  if (minutes < 60) return `${minutes} phút`;
+  if (minutes < 1440) return `${Math.round(minutes / 60)} giờ`;
+  const days = Math.max(1, state.interval || Math.round(minutes / 1440));
+  if (days < 30) return `${days} ngày`;
+  if (days < 365) return `${Math.round(days / 30)} tháng`;
+  return `${Math.round(days / 36.5) / 10} năm`;
+};
+
 const extractImageSrc = (imgStr?: string): string | null => {
   if (!imgStr) return null;
   const match = imgStr.match(/src=["']([^"']+)["']/i);
@@ -767,6 +791,14 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   }, [viewMode, activeDeckTitle, exitStudy, studyMode, setStudyMode, currentCardIndex, activeCardsList.length, remainingCounts, setActiveStudySession]);
 
   const currentCard = activeCardsList[currentCardIndex] || activeCardsList[0];
+  const nextReviewLabel = (rating: FSRSRating): string => {
+    if (!currentCard) return "";
+    try {
+      return ` (${formatNextReview(calculateFSRS45(rating, cardStateFor(cardStateMap, `${currentCard.deckName || "deck"}_${currentCard.id}`, currentCard)))})`;
+    } catch {
+      return "";
+    }
+  };
 
   // Sound playback helper
   const playCurrentSound = useCallback(() => {
@@ -821,17 +853,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     // Ignore key repeats/double clicks on the same card and enforce a short recall window.
     // Official ts-fsrs scheduler; calculateFSRS45 remains as a compatibility adapter name.
     const rating: FSRSRating = customRating || (isMastered ? "good" : "again");
-    const curState = cardStateMap[activeKey] || (currentCard.ankiSchedule ? ankiScheduleToFSRSState(currentCard.ankiSchedule) : undefined) || {
-      interval: 1,
-      reps: 0,
-      lapses: 0,
-      state: "new",
-      dueDate: formatLocalDate(new Date()),
-      stability: 0,
-      difficulty: 5,
-      lastReview: null,
-      easeFactor: 2.5,
-    };
+    const curState = cardStateFor(cardStateMap, activeKey, currentCard);
     const newState = calculateFSRS45(rating, curState);
     if (curState.reps === 0 || curState.state === "new") setDailyProgress(recordCard(true));
     else setDailyProgress(recordCard(false));
@@ -1187,8 +1209,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                       style={{ color: "#fff" }}
                       className="h-12 rounded-xl bg-rose-500 hover:bg-rose-600 font-bold text-sm flex items-center justify-center gap-2 transition cursor-pointer"
                     >
-                      <span>Quên</span>
-                      <kbd className="hidden sm:inline font-mono text-[10px] opacity-80 ml-1">Q / 1 (←)</kbd>
+                      <span>Quên{nextReviewLabel("again")}</span>
                     </button>
 
                     <button
@@ -1197,8 +1218,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                       style={{ color: "#fff" }}
                       className="h-12 rounded-xl bg-emerald-500 hover:bg-emerald-600 font-bold text-sm flex items-center justify-center gap-2 transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                     >
-                      <span>Thuộc</span>
-                      <kbd className="hidden sm:inline font-mono text-[10px] opacity-80 ml-1">T / 2 / Space (→)</kbd>
+                      <span>Thuộc{nextReviewLabel("good")}</span>
                     </button>
                   </div>
                 </div>
