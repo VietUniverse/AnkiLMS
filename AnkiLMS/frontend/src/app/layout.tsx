@@ -51,6 +51,11 @@ export default function RootLayout({
         />
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-EMV6CCJTG1" />
         <script
+          type="module"
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon='{"token": "f1d955afc7004b55a5774b8325214afd"}'
+        />
+        <script
           dangerouslySetInnerHTML={{
             __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-EMV6CCJTG1');`,
           }}
