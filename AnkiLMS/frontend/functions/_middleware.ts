@@ -43,11 +43,11 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const nonce = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(24))));
   const policy = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}'${isBookPath ? " 'unsafe-eval'" : ""}`,
+    `script-src 'self' 'nonce-${nonce}' https://www.googletagmanager.com${isBookPath ? " 'unsafe-eval'" : ""}`,
     "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: blob: https://img.youtube.com https://i.ytimg.com https://*.googleusercontent.com",
+    "img-src 'self' data: blob: https://img.youtube.com https://i.ytimg.com https://*.googleusercontent.com https://www.google-analytics.com https://www.googletagmanager.com",
     "font-src 'self' data:",
-    "connect-src 'self' https://www.youtube.com https://*.googlevideo.com https://translate.googleapis.com https://stats.g.doubleclick.net",
+    "connect-src 'self' https://www.youtube.com https://*.googlevideo.com https://translate.googleapis.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://*.doubleclick.net",
     "frame-src 'self' blob: https://www.youtube.com https://www.youtube-nocookie.com https://accounts.google.com",
     "media-src 'self' blob: https://*.googlevideo.com",
     "worker-src 'self' blob:",

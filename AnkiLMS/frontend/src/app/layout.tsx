@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import { Inter, Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "../contexts/AppProvider";
@@ -50,15 +49,17 @@ export default function RootLayout({
             __html: `try{var p=new URLSearchParams(window.location.search);var t=p.get('theme')||localStorage.getItem('haechivn_theme')||'light';document.documentElement.dataset.theme=t;if(t==='dark'){document.documentElement.classList.add('dark');}else{document.documentElement.classList.remove('dark');}}catch(e){}`,
           }}
         />
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-EMV6CCJTG1" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-EMV6CCJTG1');`,
+          }}
+        />
       </head>
       <body
         suppressHydrationWarning
         className={`${inter.variable} ${notoKorean.variable} bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-blue-500 selection:text-white`}
       >
-        <Script src="https://www.googletagmanager.com/gtag/js?id=G-EMV6CCJTG1" strategy="afterInteractive" />
-        <Script id="ga-init" strategy="afterInteractive">
-          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-EMV6CCJTG1');`}
-        </Script>
         <AppProvider>
           {children}
         </AppProvider>
