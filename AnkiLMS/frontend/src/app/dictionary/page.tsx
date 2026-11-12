@@ -29,7 +29,6 @@ import {
   detectDictionarySearchLanguage,
   DictionaryEntry,
   DictionaryLevel,
-  getDictionaryCorpusStats,
   naverLookupUrl,
   searchLearningDictionary,
 } from "../../lib/dictionarySearch";
@@ -119,10 +118,6 @@ export default function DictionaryPage() {
   const [results, setResults] = useState<DictionaryEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [corpusStats, setCorpusStats] = useState<{
-    totalEntries: number;
-    uniqueHeadwords: number;
-  }>({ totalEntries: 6847729, uniqueHeadwords: 1865482 });
 
   const [naverEntry, setNaverEntry] = useState<NaverLookup | null>(null);
   const [naverLoading, setNaverLoading] = useState(false);
@@ -178,7 +173,6 @@ export default function DictionaryPage() {
 
   useEffect(() => {
     setQuery(new URLSearchParams(window.location.search).get("q") || "");
-    void getDictionaryCorpusStats().then(setCorpusStats);
   }, []);
 
   useEffect(() => {
@@ -510,15 +504,12 @@ export default function DictionaryPage() {
           </div>
         )}
 
-        {/* Header + Corpus Stats + My Deck Builder Bar */}
+        {/* Header + My Deck Builder Bar */}
         <div className="space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-2xl font-black tracking-tight">Từ điển Hàn – Việt – Anh</h1>
-                <span className="rounded-full bg-sky-500/10 border border-sky-500/30 px-2.5 py-0.5 text-[11px] font-extrabold text-sky-600 dark:text-sky-300">
-                  {corpusStats.totalEntries.toLocaleString("vi-VN")} từ & nghĩa
-                </span>
               </div>
               <p className="mt-0.5 text-xs text-stone-500 dark:text-stone-400">
                 Tra từ bằng tiếng Việt, Hangul hoặc English · Lưu vào bộ thẻ cá nhân hoặc chia sẻ công khai lên /explore.
@@ -578,7 +569,7 @@ export default function DictionaryPage() {
               onKeyDown={(event) => {
                 if (event.key === "Escape") setQuery("");
               }}
-              placeholder="Gõ tiếng Việt, Hangul hoặc English (hơn 6,84 triệu từ)..."
+              placeholder="Gõ tiếng Việt, Hangul hoặc English..."
               aria-label="Tìm bằng tiếng Việt, tiếng Hàn hoặc tiếng Anh"
               className="min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-stone-400"
             />
@@ -626,9 +617,6 @@ export default function DictionaryPage() {
           >
             <BookOpen className="mx-auto h-8 w-8 text-sky-500" />
             <div className="space-y-1.5">
-              <p className="text-base font-black text-stone-800 dark:text-stone-100">
-                Kho từ điển hợp nhất {corpusStats.totalEntries.toLocaleString("vi-VN")} mục từ & nghĩa ({corpusStats.uniqueHeadwords.toLocaleString("vi-VN")} từ khóa Hangul)
-              </p>
               <p className="max-w-xl mx-auto text-xs sm:text-sm">
                 Tra từ bằng tiếng Việt, Hangul hoặc English. Khi tra cứu, bấm <b>+ Thêm vào bộ thẻ</b> để lưu học cá nhân hoặc chuyển sang <b>Public</b> để chia sẻ lên <b>/explore</b>.
               </p>
@@ -654,7 +642,7 @@ export default function DictionaryPage() {
             className={`${card} p-8 text-center text-sm text-stone-500 dark:text-stone-400`}
           >
             <Loader2 className="mx-auto mb-2 h-5 w-5 animate-spin text-sky-500" />
-            Đang tìm trong kho {corpusStats.totalEntries.toLocaleString("vi-VN")} từ…
+            Đang tra từ điển…
           </section>
         ) : error ? (
           <section className={`${card} p-8 text-center text-sm text-rose-600`}>
@@ -751,7 +739,7 @@ export default function DictionaryPage() {
             <p className="px-1 text-xs font-semibold text-stone-500 dark:text-stone-400">
               {results.length
                 ? query.trim()
-                  ? `${results.length} kết quả từ kho ${corpusStats.totalEntries.toLocaleString("vi-VN")} từ`
+                  ? `${results.length} kết quả phù hợp`
                   : `${level === "all" ? "Tất cả cấp" : level}, trang ${page + 1}`
                 : "Không tìm thấy nghĩa trong dữ liệu hiện có."}
             </p>

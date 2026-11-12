@@ -989,7 +989,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
                       : "text-slate-300 hover:text-white"
                   }`}
                 >
-                  Soạn từ Từ điển (6,84M từ)
+                  Soạn từ Từ điển
                 </button>
               </div>
 
@@ -1075,7 +1075,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
                   <div className="space-y-3">
                     <div>
                       <label className="text-xs font-bold text-slate-300 block mb-1">
-                        Tìm từ trong kho 6,84 triệu từ (Hangul / Tiếng Việt / Tiếng Anh)
+                        Tìm từ trong Từ điển (Hangul / Tiếng Việt / Tiếng Anh)
                       </label>
                       <div className="flex items-center gap-2 rounded-xl bg-[#132247] border border-[#1e3a70] px-3 py-2">
                         <Search className="w-4 h-4 text-slate-400 shrink-0" />
@@ -1097,7 +1097,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
                     {dictQuery.trim() && (
                       <div className="max-h-44 overflow-y-auto divide-y divide-slate-800 rounded-xl border border-[#1e3466] bg-[#0a1329]">
                         {dictLoading && (
-                          <p className="p-3 text-xs text-slate-400">Đang tìm trong kho 6,84M từ…</p>
+                          <p className="p-3 text-xs text-slate-400">Đang tra từ điển…</p>
                         )}
                         {!dictLoading && dictResults.length === 0 && (
                           <p className="p-3 text-xs text-slate-500">Không tìm thấy từ phù hợp.</p>
