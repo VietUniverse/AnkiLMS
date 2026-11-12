@@ -223,13 +223,20 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       return jsonResponse({ success: true, classId: id, classes: await getClasses(env, user.id) });
     }
 
-    const classId = typeof body.classId === "string" ? body.classId : "";
+    let classId = typeof body.classId === "string" ? body.classId.trim() : "";
+    if (!classId && typeof body.assignmentId === "string" && body.assignmentId.trim()) {
+      const foundAsg = await env.DB.prepare("SELECT class_id FROM class_assignments WHERE id = ?")
+        .bind(body.assignmentId.trim())
+        .first<{ class_id: string }>();
+      if (foundAsg?.class_id) classId = foundAsg.class_id;
+    }
     if (!classId || classId.length > 100) return errorResponse("Lớp học không hợp lệ.");
     const classroom = await env.DB.prepare("SELECT owner_id FROM classrooms WHERE id = ?").bind(classId).first<{ owner_id: string }>();
     if (!classroom) return errorResponse("Không tìm thấy lớp học.", 404);
     const membership = await getMembership(env, classId, user.id);
-    if (!membership || membership.status !== "approved") return errorResponse("Bạn không có quyền thao tác với lớp này.", 403);
-    const isManager = membership.role === "owner" || membership.role === "admin" || membership.role === "staff";
+    const isSiteAdmin = user.role === "admin";
+    if ((!membership || membership.status !== "approved") && !isSiteAdmin) return errorResponse("Bạn không có quyền thao tác với lớp này.", 403);
+    const isManager = isSiteAdmin || membership?.role === "owner" || membership?.role === "admin" || membership?.role === "staff";
 
     if (body.action === "get_assignment") {
       if (!body.assignmentId) return errorResponse("Bài tập không hợp lệ.");
@@ -271,7 +278,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     }
 
     if (body.action === "delete") {
-      if (classroom.owner_id !== user.id) return errorResponse("Chỉ chủ lớp mới được xóa lớp.", 403);
+      if (classroom.owner_id !== user.id && !isSiteAdmin) return errorResponse("Chỉ chủ lớp mới được xóa lớp.", 403);
       const mediaRows = await env.DB.prepare("SELECT m.assignment_id AS assignmentId, m.asset_id AS assetId FROM class_assignment_media m JOIN class_assignments a ON a.id = m.assignment_id WHERE a.class_id = ?")
         .bind(classId).all<{ assignmentId: string; assetId: string }>();
       await Promise.all((mediaRows.results || []).map((item) => env.MEDIA.delete(`class-assignments/${item.assignmentId}/${item.assetId}`)));
@@ -283,10 +290,10 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       if (body.action === "approve") {
         await env.DB.prepare("UPDATE classroom_members SET status = 'approved' WHERE class_id = ? AND user_id = ? AND status = 'pending'").bind(classId, body.memberId).run();
       } else if (body.action === "remove") {
-        if (membership.role === "staff") return errorResponse("Giáo vụ không có quyền xóa thành viên khỏi lớp.", 403);
+        if (membership?.role === "staff" && !isSiteAdmin) return errorResponse("Giáo vụ không có quyền xóa thành viên khỏi lớp.", 403);
         await env.DB.prepare("DELETE FROM classroom_members WHERE class_id = ? AND user_id = ?").bind(classId, body.memberId).run();
       } else {
-        if (classroom.owner_id !== user.id || !["admin", "staff", "student"].includes(body.role || "")) return errorResponse("Chỉ giáo viên chủ lớp mới được phân quyền nhân sự.", 403);
+        if ((classroom.owner_id !== user.id && !isSiteAdmin) || !["admin", "staff", "student"].includes(body.role || "")) return errorResponse("Chỉ giáo viên chủ lớp mới được phân quyền nhân sự.", 403);
         await env.DB.prepare("UPDATE classroom_members SET role = ? WHERE class_id = ? AND user_id = ? AND status = 'approved'").bind(body.role, classId, body.memberId).run();
       }
     } else if (body.action === "assignment") {
@@ -329,7 +336,6 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
         throw error;
       }
     } else if (body.action === "review_card") {
-      if (membership.role !== "student") return errorResponse("Chỉ tài khoản học sinh mới được ghi nhận tiến độ bài tập.", 403);
       if (!body.assignmentId || !Number.isSafeInteger(body.cardId) || typeof body.correct !== "boolean") return errorResponse("Tiến độ ôn thẻ không hợp lệ.");
       const assignment = await env.DB.prepare("SELECT id, total_cards AS totalCards, deck_json AS deckJson FROM class_assignments WHERE id = ? AND class_id = ?").bind(body.assignmentId, classId).first<{ id: string; totalCards: number; deckJson: string }>();
       if (!assignment) return errorResponse("Không tìm thấy bài tập.", 404);

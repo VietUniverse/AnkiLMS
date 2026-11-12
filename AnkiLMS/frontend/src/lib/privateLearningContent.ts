@@ -37,10 +37,15 @@ export function loadPrivateLearningContent(): Promise<PrivateLearningContent | n
   return contentPromise;
 }
 
-export function loadAdminThthCurriculum(): Promise<any[] | null> {
-  ththPromise ??= fetch("/api/learning-data?name=thth-curriculum.json", { credentials: "same-origin" })
+export function loadAdminThthCurriculum(forceRefresh = false): Promise<any[] | null> {
+  if (forceRefresh) ththPromise = null;
+  ththPromise ??= fetch("/api/learning-data?name=thth-curriculum.json", { credentials: "same-origin", cache: "no-store" })
     .then(async (response) => response.ok ? await response.json() as any[] : null)
     .then((data) => { if (!data) ththPromise = null; return data; })
     .catch(() => { ththPromise = null; return null; });
   return ththPromise;
+}
+
+export function clearAdminThthCurriculumCache() {
+  ththPromise = null;
 }

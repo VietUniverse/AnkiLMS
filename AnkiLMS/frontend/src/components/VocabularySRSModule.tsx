@@ -107,16 +107,45 @@ const formatNextReview = (state: FSRSState, now = new Date()): string => {
   return `${Math.round(days / 36.5) / 10} năm`;
 };
 
+const toThthMediaUrl = (rawPath: string): string => {
+  const trimmed = rawPath.trim();
+  if (!trimmed) return "";
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("data:") || trimmed.startsWith("blob:")) {
+    return trimmed;
+  }
+  if (trimmed.startsWith("/api/")) return trimmed;
+  const cleanName = trimmed.replace(/^\/+/, "");
+  if (!cleanName.includes("/")) {
+    return `/api/thth-media?file=${encodeURIComponent(cleanName)}`;
+  }
+  return trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
+};
+
 const extractImageSrc = (imgStr?: string): string | null => {
   if (!imgStr) return null;
   const match = imgStr.match(/src=["']([^"']+)["']/i);
   if (match) {
-    const src = match[1];
-    return src.startsWith("http") || src.startsWith("/") ? src : `/${src}`;
+    return toThthMediaUrl(match[1]) || null;
   }
-  if (imgStr.startsWith("http") || imgStr.startsWith("/")) return imgStr;
   if (imgStr.includes("<img")) return null;
-  return `/${imgStr}`;
+  return toThthMediaUrl(imgStr) || null;
+};
+
+const extractAudioSrc = (audioField?: string): string | null => {
+  if (!audioField) return null;
+  const soundMatch = audioField.match(/\[sound:([^\]]+)\]/i);
+  if (soundMatch?.[1]) {
+    return toThthMediaUrl(soundMatch[1]) || null;
+  }
+  const srcMatch = audioField.match(/src=["']([^"']+)["']/i);
+  if (srcMatch?.[1]) {
+    return toThthMediaUrl(srcMatch[1]) || null;
+  }
+  const trimmed = audioField.trim();
+  if (/\.(mp3|ogg|wav|m4a)(\?|$)/i.test(trimmed) || trimmed.startsWith("/api/thth-media")) {
+    return toThthMediaUrl(trimmed) || null;
+  }
+  return null;
 };
 
 // Clean HTML text helper
@@ -205,6 +234,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   // Đã chạm giới hạn từ mới mà người học bấm vào một bộ: hỏi muốn học thêm bao nhiêu từ mới.
   const [morePrompt, setMorePrompt] = useState<{ deckId: string; title: string; cards: VocabularyCard[]; available: number } | null>(null);
   const [moreAmount, setMoreAmount] = useState("10");
+  const [activeAssignmentMeta, setActiveAssignmentMeta] = useState<{ id: string; classId: string; title: string } | null>(null);
+  const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     setDailyLimits(loadLimits());
@@ -213,11 +244,11 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
   useEffect(() => {
     let active = true;
-    if (isAdmin) {
+    if (currentUser) {
       void loadAdminThthCurriculum().then((decks) => { if (active) setAdminThthDecks(decks || []); });
     } else setAdminThthDecks([]);
     return () => { active = false; };
-  }, [isAdmin, currentUser?.id]);
+  }, [currentUser?.id, currentUser?.role]);
 
   const updateLimits = useCallback((next: DailyLimits) => {
     setDailyLimits(next);
@@ -324,7 +355,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
     const booksMap = new Map<string, Map<string, { id: string; title: string; cards: VocabularyCard[] }[]>>();
 
-    if (isAdmin) adminThthDecks.forEach((d) => {
+    adminThthDecks.forEach((d) => {
       const parts = d.name.split("::");
       // e.g. ["Tiếng Hàn Tổng Hợp", "Quyển 01", "Bài 01", "1. Quốc gia (나라)"]
       const rawBook = parts[1]?.trim() || "Quyển 01";
@@ -375,10 +406,16 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       });
 
       const bookId = toSlug(bookTitle);
+      const subtitleByBook: Record<number, string> = {
+        1: "Sơ cấp 1 · TOPIK 1 · Âm thanh gốc",
+        2: "Sơ cấp 2 · TOPIK 2 · Âm thanh gốc",
+        3: "Trung cấp 3 · TOPIK 3 · Âm thanh gốc",
+        4: "Trung cấp 4 · TOPIK 4 · Âm thanh gốc",
+      };
       rootNodes.push({
         id: bookId,
         title: bookTitle,
-        subtitle: rootBookNumber === 1 ? "Sơ cấp 1, TOPIK 1–2" : "Sơ cấp 2, TOPIK 2–3",
+        subtitle: subtitleByBook[rootBookNumber] || `Quyển ${rootBookNumber} · Âm thanh gốc`,
         cards: allBookCards,
         children: lessonNodes,
       });
@@ -577,6 +614,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     setViewMode("dashboard");
     setIsFlipped(false);
     setTypedInput("");
+    setActiveAssignmentMeta(null);
     setActiveStudySession(null);
     const returnTo = returnToRef.current;
     returnToRef.current = null;
@@ -708,11 +746,46 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     }
   }, [viewMode, activeDeckTitle, exitStudy, currentCardIndex, activeCardsList.length, remainingCounts, setActiveStudySession]);
 
-  // Auto-resume if query param ?resume=true or ?study=true is present
+  // Auto-resume if query param ?resume=true or ?study=true or ?assignment=... is present
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (autoResumedRef.current || !isAuthReady) return; // đợi tài khoản và bộ thẻ lưu trên máy nạp xong
     const params = new URLSearchParams(window.location.search);
+    const assignmentId = params.get("assignment")?.trim();
+    const classId = params.get("classId")?.trim() || "";
+    if (assignmentId && currentUser) {
+      autoResumedRef.current = true;
+      returnToRef.current = "/classes";
+      window.history.replaceState(null, "", window.location.pathname);
+      void ApiClient.getClassAssignment(classId, assignmentId)
+        .then((asg) => {
+          const cards: VocabularyCard[] = (asg.deckCards || []).map((c: any, idx: number) => ({
+            id: c.id ?? idx + 1,
+            word: c.word || c.korean || "",
+            meaning: c.meaning || "",
+            pos: c.pos || "Bài tập lớp",
+            transliteration: c.transliteration || c.pronunciation || "",
+            explain: c.explain || "",
+            image: c.image || (c.mediaHtml && c.mediaHtml.includes("<img") ? c.mediaHtml : ""),
+            example: c.example || "",
+            example_translated: c.example_translated || "",
+            collocation: c.collocation || "",
+            synonym: c.synonym || "",
+            antonym: c.antonym || "",
+            audio_word: c.audio_word || (c.mediaHtml && c.mediaHtml.includes("<audio") ? c.mediaHtml : ""),
+            audio_meaning: c.audio_meaning || "",
+            audio_example: c.audio_example || "",
+            deckName: asg.deckName || asg.title,
+          }));
+          if (cards.length > 0) {
+            setActiveAssignmentMeta({ id: asg.id, classId: asg.classId, title: asg.title });
+            startStudy(`assignment-${asg.id}`, asg.title, cards, { skipMorePrompt: true });
+          }
+        })
+        .catch(() => {});
+      return;
+    }
+
     // Chờ cây bộ thẻ dựng xong rồi mới vào học; nếu vào sớm quá thì không có bài nào để mở.
     if ((params.get("resume") === "true" || params.get("study") === "true") && deckTree.length > 0) {
       const requestedDeckId = params.get("deckId");
@@ -725,7 +798,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       if (requestedDeck) startStudy(requestedDeck.id, requestedDeck.title, requestedDeck.cards);
       else if (params.get("resume") === "true" || params.get("study") === "true") resumeLastLesson();
     }
-  }, [isAuthReady, resumeLastLesson, startStudy, findNodeById, deckTree]);
+  }, [isAuthReady, currentUser, resumeLastLesson, startStudy, findNodeById, deckTree]);
 
   // Collect all container ids for toggle all
   const getAllContainerIds = useCallback((nodes: DeckTreeNode[]): string[] => {
@@ -802,20 +875,51 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     }
   };
 
-  // Sound playback helper
+  const playAudioWithFallback = useCallback((audioField: string | undefined, fallbackText: string) => {
+    const cleanFallback = cleanTextOnly(fallbackText);
+    const audioUrl = extractAudioSrc(audioField);
+    if (audioPlayerRef.current) {
+      audioPlayerRef.current.pause();
+      audioPlayerRef.current = null;
+    }
+    if (audioUrl && typeof window !== "undefined") {
+      try {
+        const audio = new Audio(audioUrl);
+        audioPlayerRef.current = audio;
+        audio.play().catch(() => {
+          if (cleanFallback) speakKorean(cleanFallback);
+        });
+        return;
+      } catch {
+        // Fallback to Web Speech below
+      }
+    }
+    if (cleanFallback) {
+      speakKorean(cleanFallback);
+    }
+  }, []);
+
+  // Sound playback helper (plays original .apkg audio_word first, falls back to TTS)
   const playCurrentSound = useCallback(() => {
     if (!currentCard) return;
-    const wordText = cleanTextOnly(currentCard.word);
-    speakKorean(wordText);
-  }, [currentCard]);
+    playAudioWithFallback(currentCard.audio_word, currentCard.word);
+  }, [currentCard, playAudioWithFallback]);
+
+  const playExampleSound = useCallback(() => {
+    if (!currentCard?.example) return;
+    playAudioWithFallback(currentCard.audio_example, currentCard.example);
+  }, [currentCard, playAudioWithFallback]);
 
   // Speak each card when a study session starts and whenever the learner moves
   // to another card. Depend on its text/index so unrelated renders do not replay it.
   const currentWordForAudio = currentCard ? cleanTextOnly(currentCard.word) : "";
+  const currentAudioWordField = currentCard?.audio_word || "";
   useEffect(() => {
     // Thẻ Typing: đọc to từ sẽ lộ đáp án, nên không tự phát.
-    if (viewMode === "study" && currentWordForAudio && !currentCard?.sibling) speakKorean(currentWordForAudio);
-  }, [viewMode, currentCardIndex, currentWordForAudio, currentCard?.sibling]);
+    if (viewMode === "study" && currentWordForAudio && !currentCard?.sibling) {
+      playAudioWithFallback(currentAudioWordField, currentWordForAudio);
+    }
+  }, [viewMode, currentCardIndex, currentWordForAudio, currentAudioWordField, currentCard?.sibling, playAudioWithFallback]);
 
   // Handle Response (Quên: false | Thuộc: true)
   const handleResponse = useCallback((isMastered: boolean, customRating?: FSRSRating) => {
@@ -869,6 +973,14 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
     if (currentUser) {
       void ApiClient.saveCardState(activeDeckTitle, (currentCard.sibling ? -1 : 1) * (Number(currentCard.id) || 1), newState).catch(() => {});
+      if (activeAssignmentMeta && !currentCard.sibling && Number.isSafeInteger(Number(currentCard.id))) {
+        void ApiClient.recordClassAssignmentReview(
+          activeAssignmentMeta.classId,
+          activeAssignmentMeta.id,
+          Number(currentCard.id),
+          isMastered,
+        ).catch(() => {});
+      }
     }
 
     // Keep the imported Anki history intact and append future reviews to the
@@ -1477,11 +1589,24 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
                       {/* Hộp Ví dụ: Tiếng Hàn luôn hiện, khi lật hiện thêm tiếng Việt */}
                       {currentCard.example && (
-                        <div className="p-4 rounded-xl bg-stone-50 dark:bg-stone-800/50 border border-stone-100 dark:border-stone-700/70 text-center">
-                          <p
-                            className="text-sm sm:text-base font-semibold text-stone-800 dark:text-stone-200 leading-relaxed font-noto"
-                            dangerouslySetInnerHTML={{ __html: cleanHtmlText(currentCard.example) }}
-                          />
+                        <div className="p-4 rounded-xl bg-stone-50 dark:bg-stone-800/50 border border-stone-100 dark:border-stone-700/70 text-center relative group/example">
+                          <div className="flex items-center justify-center gap-2">
+                            <p
+                              className="text-sm sm:text-base font-semibold text-stone-800 dark:text-stone-200 leading-relaxed font-noto"
+                              dangerouslySetInnerHTML={{ __html: cleanHtmlText(currentCard.example) }}
+                            />
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                playExampleSound();
+                              }}
+                              className="w-7 h-7 rounded-full bg-stone-200/70 dark:bg-stone-700/70 hover:bg-sky-500/20 text-stone-600 dark:text-stone-300 hover:text-sky-500 flex items-center justify-center shrink-0 transition cursor-pointer"
+                              title="Nghe phát âm câu ví dụ"
+                            >
+                              <Volume2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
                           {isFlipped && currentCard.example_translated && (
                             <p
                               className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 mt-1 italic border-t border-stone-200/50 dark:border-stone-700/50 pt-1.5 animate-fade-only"

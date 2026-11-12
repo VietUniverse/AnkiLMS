@@ -26,15 +26,35 @@ export const onRequestPatch: PagesFunction<Env> = async ({ request, env }) => {
   const admin = await authenticateAdminRequest(request, env);
   if (!admin) return errorResponse("Chỉ quản trị viên mới được truy cập.", 403);
   try {
-    const body = (await request.json()) as { userId?: string; role?: string };
-    if (!body.userId || !["student", "teacher", "admin"].includes(body.role || "")) return errorResponse("Vai trò không hợp lệ.");
-    if (body.userId === admin.id && body.role !== "admin") return errorResponse("Không thể tự gỡ quyền admin.", 409);
-    const target = await env.DB.prepare("SELECT id, role FROM users WHERE id = ?").bind(body.userId).first<{ id: string; role: string }>();
+    const body = (await request.json()) as {
+      userId?: string;
+      role?: string;
+      name?: string;
+      xp?: number;
+      gems?: number;
+      streak?: number;
+    };
+    if (!body.userId) return errorResponse("Thiếu mã tài khoản.");
+    const target = await env.DB.prepare("SELECT id, role, name, xp, gems, streak FROM users WHERE id = ?")
+      .bind(body.userId)
+      .first<{ id: string; role: string; name: string; xp: number; gems: number; streak: number }>();
     if (!target) return errorResponse("Không tìm thấy tài khoản.", 404);
-    await env.DB.prepare("UPDATE users SET role = ? WHERE id = ?").bind(body.role, body.userId).run();
+
+    const nextRole = body.role !== undefined ? body.role : target.role;
+    if (!["student", "teacher", "admin"].includes(nextRole)) return errorResponse("Vai trò không hợp lệ.");
+    if (body.userId === admin.id && nextRole !== "admin") return errorResponse("Không thể tự gỡ quyền admin.", 409);
+
+    const nextName = typeof body.name === "string" && body.name.trim() ? body.name.trim().slice(0, 80) : target.name;
+    const nextXp = typeof body.xp === "number" && Number.isFinite(body.xp) ? Math.max(0, Math.floor(body.xp)) : target.xp || 0;
+    const nextGems = typeof body.gems === "number" && Number.isFinite(body.gems) ? Math.max(0, Math.floor(body.gems)) : target.gems || 0;
+    const nextStreak = typeof body.streak === "number" && Number.isFinite(body.streak) ? Math.max(0, Math.floor(body.streak)) : target.streak || 0;
+
+    await env.DB.prepare("UPDATE users SET role = ?, name = ?, xp = ?, gems = ?, streak = ? WHERE id = ?")
+      .bind(nextRole, nextName, nextXp, nextGems, nextStreak, body.userId)
+      .run();
     return jsonResponse({ success: true });
   } catch {
-    return errorResponse("Không thể cập nhật vai trò.", 500);
+    return errorResponse("Không thể cập nhật thông tin tài khoản.", 500);
   }
 };
 
@@ -60,8 +80,6 @@ export const onRequestDelete: PagesFunction<Env> = async ({ request, env }) => {
        WHERE a.created_by = ? OR c.owner_id = ?`,
     ).bind(userId, userId).all<{ assignmentId: string; assetId: string }>();
 
-    // Batch runs atomically. Explicitly clear the non-cascading author/referral links;
-    // the remaining personal and classroom records cascade from their owners.
     await env.DB.batch([
       env.DB.prepare("DELETE FROM managed_lessons WHERE created_by = ?").bind(userId),
       env.DB.prepare("DELETE FROM class_assignments WHERE created_by = ?").bind(userId),

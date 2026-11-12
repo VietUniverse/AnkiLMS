@@ -35,6 +35,7 @@ import { ApiClient, UserProfile } from "../lib/apiClient";
 import { useApp } from "../contexts/AppProvider";
 import { AnkiDeck, AnkiParser } from "../lib/ankiParser";
 import { loadCourseVocabulary, TopikDeck } from "../lib/courseVocabulary";
+import { loadAdminThthCurriculum } from "../lib/privateLearningContent";
 
 export interface ClassMember {
   id: string;
@@ -95,6 +96,8 @@ interface ClassroomModuleProps {
 export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, onClassesChange, initialClassId = null }) => {
   const { handleOpenAuth, userDecks } = useApp();
   const [courseDeckGroups, setCourseDeckGroups] = useState<TopikDeck[]>([]);
+  const [adminThthDecks, setAdminThthDecks] = useState<any[]>([]);
+  const isAdmin = currentUser?.role === "admin";
 
   const [classes, setClasses] = useState<Classroom[]>([]);
   const [loading, setLoading] = useState(true);
@@ -132,10 +135,104 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
     void loadCourseVocabulary().then((data) => {
       if (active) setCourseDeckGroups(data?.decks || []);
     });
+    if (isAdmin) {
+      void loadAdminThthCurriculum().then((decks) => {
+        if (active) setAdminThthDecks(decks || []);
+      });
+    } else {
+      setAdminThthDecks([]);
+    }
     return () => { active = false; };
-  }, []);
+  }, [isAdmin]);
+
+  const adminThthLessonDecks = React.useMemo(() => {
+    if (!isAdmin || !adminThthDecks.length) return [];
+    type RichAssignmentCard = {
+      id: number;
+      korean: string;
+      meaning: string;
+      example: string;
+      mediaRefs: string[];
+      [key: string]: unknown;
+    };
+    const byLesson = new Map<string, { id: string; name: string; book: number; topic: string; difficulty: string; cards: RichAssignmentCard[] }>();
+    for (const d of adminThthDecks) {
+      const parts = String(d.name || "").split("::");
+      const bookNum = Number(d.book || 1);
+      const lessonName = (parts[2] || d.topic || "Bài học").trim();
+      const key = `thth-lesson:${bookNum}:${lessonName}`;
+      if (!byLesson.has(key)) {
+        byLesson.set(key, {
+          id: key,
+          name: `Tiếng Hàn Tổng Hợp ${bookNum} · ${lessonName} (Trọn bài)`,
+          book: 100 + bookNum,
+          topic: lessonName,
+          difficulty: d.difficulty || `Quyển ${bookNum}`,
+          cards: [],
+        });
+      }
+      const entry = byLesson.get(key)!;
+      for (const c of d.cards || []) {
+        entry.cards.push({
+          id: Number(c.id) || entry.cards.length + 1,
+          korean: String(c.word || "").replace(/<[^>]*>/g, "").trim(),
+          meaning: String(c.meaning || "").replace(/<[^>]*>/g, "").trim(),
+          word: c.word,
+          pos: c.pos || "",
+          transliteration: c.transliteration || "",
+          explain: c.explain || "",
+          image: c.image || "",
+          example: String(c.example || ""),
+          example_translated: c.example_translated || "",
+          collocation: c.collocation || "",
+          synonym: c.synonym || "",
+          antonym: c.antonym || "",
+          audio_word: c.audio_word || "",
+          audio_meaning: c.audio_meaning || "",
+          audio_example: c.audio_example || "",
+          mediaRefs: [] as string[],
+        });
+      }
+    }
+    const subdecks = adminThthDecks.map((d: any) => {
+      const parts = String(d.name || "").split("::");
+      const bookNum = Number(d.book || 1);
+      const lessonName = (parts[2] || "Bài học").trim();
+      const subName = (parts[3] || d.topic || d.name).trim();
+      const rawCards: any[] = Array.isArray(d.cards) ? d.cards : [];
+      return {
+        id: `thth-sub:${d.id}`,
+        name: `Tiếng Hàn Tổng Hợp ${bookNum} · ${lessonName} · ${subName}`,
+        book: 100 + bookNum,
+        topic: lessonName,
+        difficulty: String(d.difficulty || `Quyển ${bookNum}`),
+        mediaAssets: [] as Array<{ filename: string; contentType: string; blob: Blob }>,
+        cards: rawCards.map((c: any, idx: number): RichAssignmentCard => ({
+          id: Number(c.id) || idx + 1,
+          korean: String(c.word || "").replace(/<[^>]*>/g, "").trim(),
+          meaning: String(c.meaning || "").replace(/<[^>]*>/g, "").trim(),
+          word: c.word,
+          pos: c.pos || "",
+          transliteration: c.transliteration || "",
+          explain: c.explain || "",
+          image: c.image || "",
+          example: String(c.example || ""),
+          example_translated: c.example_translated || "",
+          collocation: c.collocation || "",
+          synonym: c.synonym || "",
+          antonym: c.antonym || "",
+          audio_word: c.audio_word || "",
+          audio_meaning: c.audio_meaning || "",
+          audio_example: c.audio_example || "",
+          mediaRefs: [] as string[],
+        })),
+      };
+    });
+    return [...Array.from(byLesson.values()).map((x) => ({ ...x, mediaAssets: [] as Array<{ filename: string; contentType: string; blob: Blob }> })), ...subdecks];
+  }, [isAdmin, adminThthDecks]);
 
   const assignmentDecks = [
+    ...adminThthLessonDecks,
     ...courseDeckGroups.flatMap((group) => group.courses.flatMap((course) => course.units.map((unit) => ({
       id: `course:${course.id}:${unit.number}`,
       name: `${course.title} · ${unit.title}`,
@@ -608,7 +705,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
                     <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
                       <span className="text-[11px] text-slate-500 font-semibold">Giao bởi: {asg.assignedBy}</span>
                       <Link
-                        href={`/flashcards?assignment=${encodeURIComponent(asg.id)}`}
+                        href={`/flashcards?assignment=${encodeURIComponent(asg.id)}&classId=${encodeURIComponent(selectedClass.id)}`}
                         className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs flex items-center gap-1.5 shadow-md transition-all"
                       >
                         <span>{isCompletedByMe ? "Ôn Lại Bộ Thẻ" : "Vào Ôn Thẻ Ngay"}</span>
@@ -809,6 +906,14 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
                       }}
                       className="min-w-0 rounded-xl border border-[#1e3a70] bg-[#132247] px-3 py-2.5 text-[11px] font-bold text-white"
                     >
+                      {isAdmin && (
+                        <>
+                          <option value="101">★ Tiếng Hàn Tổng Hợp · Quyển 1 (Admin)</option>
+                          <option value="102">★ Tiếng Hàn Tổng Hợp · Quyển 2 (Admin)</option>
+                          <option value="103">★ Tiếng Hàn Tổng Hợp · Quyển 3 (Admin)</option>
+                          <option value="104">★ Tiếng Hàn Tổng Hợp · Quyển 4 (Admin)</option>
+                        </>
+                      )}
                       <option value="1">TOPIK 1 · Sơ cấp</option>
                       <option value="2">TOPIK 2 · Sơ cấp</option>
                       <option value="3">TOPIK 3 · Trung cấp</option>
