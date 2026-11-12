@@ -102,12 +102,20 @@ export default function ExplorePage() {
   const handleAddDeck = async (deck: CuratedDeckItem) => {
     if (!currentUser) return handleOpenAuth(true);
     let currentDeck = deck;
-    const override = deckOverrides.find((item) => item.deckId.replace(/^catalog:/, "") === deck.id);
-    if (override) {
-      const response = await fetch(`/api/explore/deck-overrides?id=${encodeURIComponent(deck.id)}`, { cache: "no-store" });
-      if (response.ok) {
-        const payload = await response.json() as { deck?: { cards?: CuratedDeckItem["cards"] } };
-        if (payload.deck?.cards) currentDeck = { ...deck, cards: payload.deck.cards };
+    if (deck.id.startsWith("shared-") && (!deck.cards || deck.cards.length === 0)) {
+      const sharedId = deck.sharedId || deck.id.slice("shared-".length);
+      const record = await ApiClient.getSharedDeck(sharedId);
+      if (record && record.cards?.length) {
+        currentDeck = sharedDeckToExploreDeck(record);
+      }
+    } else {
+      const override = deckOverrides.find((item) => item.deckId.replace(/^catalog:/, "") === deck.id);
+      if (override) {
+        const response = await fetch(`/api/explore/deck-overrides?id=${encodeURIComponent(deck.id)}`, { cache: "no-store" });
+        if (response.ok) {
+          const payload = await response.json() as { deck?: { cards?: CuratedDeckItem["cards"] } };
+          if (payload.deck?.cards) currentDeck = { ...deck, cards: payload.deck.cards };
+        }
       }
     }
     handleDeckImported(curatedDeckToAnkiDeck(currentDeck));
@@ -151,17 +159,20 @@ export default function ExplorePage() {
     const isLevel = (d: CuratedDeckItem) => LEVEL_DECK_IDS.includes(d.id);
     const isCourse = (d: CuratedDeckItem) => d.id.startsWith("curriculum-") || d.id === "seoul-1a" || COURSE_BOOK_IDS.includes(d.id);
     const isTopik = (d: CuratedDeckItem) => !isLevel(d) && !isCourse(d) && d.category === "topik" && d.id !== "course-topic-vocabulary";
+    const isCommunity = (d: CuratedDeckItem) => d.id.startsWith("shared-");
     // Mỗi bộ luôn nằm đúng mục; sắp xếp chỉ đổi thứ tự bên trong từng mục.
     const levels = sortedDecks.filter(isLevel);
     if (!sort) levels.sort((a, b) => LEVEL_DECK_IDS.indexOf(a.id) - LEVEL_DECK_IDS.indexOf(b.id));
     const courses = sortedDecks.filter(isCourse);
     const topik = sortedDecks.filter(isTopik);
-    const themes = sortedDecks.filter((d) => !isLevel(d) && !isCourse(d) && !isTopik(d));
+    const community = sortedDecks.filter(isCommunity);
+    const themes = sortedDecks.filter((d) => !isLevel(d) && !isCourse(d) && !isTopik(d) && !isCommunity(d));
     const groups: { label: string; decks: CuratedDeckItem[] }[] = [];
     if (levels.length > 0) groups.push({ label: "Cấp độ", decks: levels });
     if (courses.length > 0) groups.push({ label: "Giáo trình", decks: courses });
     if (topik.length > 0) groups.push({ label: "TOPIK", decks: topik });
     if (themes.length > 0) groups.push({ label: "Chủ đề", decks: themes });
+    if (community.length > 0) groups.push({ label: "Cộng đồng chia sẻ", decks: community });
     return groups;
   }, [sortedDecks, sort]);
 
@@ -174,19 +185,30 @@ export default function ExplorePage() {
 
   const renderDeckRow = (deck: CuratedDeckItem) => {
     const added = isDeckAdded(deck);
+    const isCommunity = deck.id.startsWith("shared-");
     // Tên đã có cấp độ (Từ vựng Sơ cấp 1...) thì không cần nhãn cấp độ nữa.
     const showLevel = !deck.title.toLowerCase().includes(deck.level.toLowerCase());
     return (
       <li key={deck.id} className={`${ROW_GRID} relative grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 px-2 -mx-2 py-2.5 sm:py-3 rounded-xl transition-colors hover:bg-stone-100 dark:hover:bg-stone-800/60`}>
         <a href={deckHref(deck)} className="flex items-center gap-3 min-w-0 group cursor-pointer after:absolute after:inset-0 after:content-['']">
           <DeckIcon name={deck.iconName} className="w-5 h-5 shrink-0 text-stone-400 group-hover:text-sky-500 transition" />
-          <h3 className="min-w-0 text-sm font-semibold text-stone-900 dark:text-white line-clamp-2 sm:line-clamp-1 group-hover:text-sky-500 transition">
-            {deck.title}
-            <span className="sm:hidden font-normal text-stone-500 dark:text-stone-400"> ({deckCardCount(deck).toLocaleString("vi-VN")})</span>
-            {showLevel && <span className={`sm:hidden ml-1.5 align-middle rounded-full px-1.5 py-0.5 text-[10px] font-bold ${LEVEL_PILL[deck.level] || "bg-stone-500/10 text-stone-500"}`}>{deck.level}</span>}
-          </h3>
+          <div className="min-w-0">
+            <h3 className="min-w-0 text-sm font-semibold text-stone-900 dark:text-white line-clamp-2 sm:line-clamp-1 group-hover:text-sky-500 transition">
+              {deck.title}
+              <span className="sm:hidden font-normal text-stone-500 dark:text-stone-400"> ({deckCardCount(deck).toLocaleString("vi-VN")})</span>
+              {showLevel && <span className={`sm:hidden ml-1.5 align-middle rounded-full px-1.5 py-0.5 text-[10px] font-bold ${LEVEL_PILL[deck.level] || "bg-stone-500/10 text-stone-500"}`}>{deck.level}</span>}
+            </h3>
+            {isCommunity && deck.author?.name && (
+              <p className="mt-0.5 text-[11px] font-medium text-stone-500 dark:text-stone-400">
+                Tác giả: <span className="font-bold text-sky-600 dark:text-sky-400">{deck.author.name}</span>
+                {deck.description && <span className="ml-1.5 text-stone-400 dark:text-stone-500">· {deck.description}</span>}
+              </p>
+            )}
+          </div>
         </a>
-        <span className="hidden sm:block text-xs text-stone-500 dark:text-stone-400 truncate">{deck.level}</span>
+        <span className="hidden sm:block text-xs text-stone-500 dark:text-stone-400 truncate">
+          {isCommunity && deck.author?.name ? `bởi ${deck.author.name}` : deck.level}
+        </span>
         <span className="hidden sm:block text-xs text-stone-500 dark:text-stone-400 tabular-nums text-right">{deckCardCount(deck)}</span>
 
         {added ? (
@@ -203,13 +225,23 @@ export default function ExplorePage() {
               <Trash2 className="w-4 h-4" />
             </button>
           </div>
-        ) : deck.id.startsWith("shared-") ? (
-          <a href={deckHref(deck)} title="Xem bộ thẻ" aria-label="Xem bộ thẻ" className={`${iconAction} justify-self-end text-sky-600 dark:text-sky-400 hover:bg-sky-500/10`}>
-            <Eye className="w-4 h-4" />
-          </a>
+        ) : isCommunity ? (
+          <div className="relative z-10 flex items-center justify-end gap-0.5 shrink-0">
+            <a href={deckHref(deck)} title="Xem bộ thẻ" aria-label="Xem bộ thẻ" className={`${iconAction} text-stone-500 dark:text-stone-400 hover:bg-stone-500/10`}>
+              <Eye className="w-4 h-4" />
+            </a>
+            <button
+              onClick={() => void handleAddDeck(deck)}
+              title="Thêm vào kho thẻ"
+              aria-label={`Thêm ${deck.title} vào kho thẻ`}
+              className={`${iconAction} text-sky-600 dark:text-sky-400 hover:bg-sky-500/10`}
+            >
+              <Plus className="w-5 h-5" />
+            </button>
+          </div>
         ) : (
           <button
-            onClick={() => handleAddDeck(deck)}
+            onClick={() => void handleAddDeck(deck)}
             title="Thêm vào kho thẻ"
             aria-label={`Thêm ${deck.title} vào kho thẻ`}
             className={`${iconAction} justify-self-end text-sky-600 dark:text-sky-400 hover:bg-sky-500/10`}

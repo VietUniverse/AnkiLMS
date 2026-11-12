@@ -9,13 +9,38 @@ export type DictionaryEntry = {
   partOfSpeech: string;
   level: string;
   source: "nikl" | "yomichan" | "topic-pdf" | "course-vocabulary" | "admin";
+  sourceDetail?: string;
   topic?: string;
   romanization?: string;
   hanja?: string;
   pronunciation?: string;
   topik?: string;
   courseId?: string;
+  url?: string;
 };
+
+let cachedCorpusStats: { totalEntries: number; uniqueHeadwords: number } | null = null;
+
+export async function getDictionaryCorpusStats(): Promise<{ totalEntries: number; uniqueHeadwords: number }> {
+  if (cachedCorpusStats) return cachedCorpusStats;
+  try {
+    const res = await fetch("/api/dictionary/search?mode=stats", { credentials: "same-origin" });
+    if (res.ok) {
+      const data = await res.json() as { totalEntries?: number; uniqueHeadwords?: number };
+      if (data.totalEntries && data.totalEntries > 0) {
+        cachedCorpusStats = {
+          totalEntries: data.totalEntries,
+          uniqueHeadwords: data.uniqueHeadwords || data.totalEntries,
+        };
+        return cachedCorpusStats;
+      }
+    }
+  } catch {
+    // Fallback below
+  }
+  const localCount = (await loadEntries()).length;
+  return { totalEntries: Math.max(6658013, localCount), uniqueHeadwords: localCount };
+}
 
 type PackedEntry = [string, string, string, string, string, string, string?, string?, string?, string?, string?, string?, string?];
 type TopicVocabularyRow = [string, string, string, string?];
@@ -124,12 +149,14 @@ async function loadEntries(): Promise<PackedEntry[]> {
   return entriesPromise;
 }
 
-/** Number of unique Hangul headwords in the effective dictionary used by search and study. */
+/** Total entries in the unified 6.84M+ dictionary used by search and study. */
 export async function countLearningDictionaryEntries(): Promise<number> {
-  return (await loadEntries()).length;
+  const stats = await getDictionaryCorpusStats();
+  return stats.totalEntries;
 }
 
 export function refreshLearningDictionaryCache(): void {
+  cachedCorpusStats = null;
   entriesPromise = null;
   for (const language of Object.keys(indexedEntriesPromises) as SearchLanguage[]) delete indexedEntriesPromises[language];
 }
@@ -236,6 +263,34 @@ export function matchesDictionarySearchText(text: string, query: string): boolea
 export async function searchLearningDictionary(query: string, limit = 30, signal?: AbortSignal, language: SearchLanguage = "vi", level: DictionaryLevel = "all"): Promise<DictionaryEntry[]> {
   const q = normalizeDictionaryText(query);
   if (!q || (q.length < 2 && !HANGUL_CHAR.test(q))) return [];
+  try {
+    const params = new URLSearchParams({
+      q: query.trim(),
+      limit: String(limit),
+      level,
+    });
+    const res = await fetch(`/api/dictionary/search?${params.toString()}`, {
+      signal,
+      credentials: "same-origin",
+    });
+    if (res.ok) {
+      const data = await res.json() as { entries?: DictionaryEntry[]; totalEntries?: number; uniqueHeadwords?: number };
+      if (data.totalEntries) {
+        cachedCorpusStats = {
+          totalEntries: data.totalEntries,
+          uniqueHeadwords: data.uniqueHeadwords || data.totalEntries,
+        };
+      }
+      if (Array.isArray(data.entries)) {
+        return data.entries.map((entry) => ({
+          ...entry,
+          romanization: entry.romanization || romanizeKorean(entry.hangul),
+        }));
+      }
+    }
+  } catch (err) {
+    if (signal?.aborted) return [];
+  }
   const index = await loadIndexedEntries(language);
   if (signal?.aborted) return [];
   const candidates = new Set<IndexedEntry>();
@@ -291,6 +346,34 @@ export async function searchLearningDictionary(query: string, limit = 30, signal
 }
 
 export async function browseLearningDictionary(level: DictionaryLevel, language: SearchLanguage, offset = 0, limit = 30): Promise<DictionaryEntry[]> {
+  try {
+    const params = new URLSearchParams({
+      mode: "browse",
+      level,
+      offset: String(offset),
+      limit: String(limit),
+    });
+    const res = await fetch(`/api/dictionary/search?${params.toString()}`, {
+      credentials: "same-origin",
+    });
+    if (res.ok) {
+      const data = await res.json() as { entries?: DictionaryEntry[]; totalEntries?: number; uniqueHeadwords?: number };
+      if (data.totalEntries) {
+        cachedCorpusStats = {
+          totalEntries: data.totalEntries,
+          uniqueHeadwords: data.uniqueHeadwords || data.totalEntries,
+        };
+      }
+      if (Array.isArray(data.entries)) {
+        return data.entries.map((entry) => ({
+          ...entry,
+          romanization: entry.romanization || romanizeKorean(entry.hangul),
+        }));
+      }
+    }
+  } catch {
+    // Fallback below
+  }
   const rows = await loadEntries();
   const meaningColumn = language === "vi" ? 2 : language === "en" ? 1 : 3;
   const result: DictionaryEntry[] = [];

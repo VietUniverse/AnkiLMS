@@ -30,12 +30,19 @@ import {
   GraduationCap,
   Settings,
   UserCheck2,
+  Search,
+  X,
 } from "lucide-react";
 import { ApiClient, UserProfile } from "../lib/apiClient";
 import { useApp } from "../contexts/AppProvider";
 import { AnkiDeck, AnkiParser } from "../lib/ankiParser";
 import { loadCourseVocabulary, TopikDeck } from "../lib/courseVocabulary";
 import { loadAdminThthCurriculum } from "../lib/privateLearningContent";
+import {
+  detectDictionarySearchLanguage,
+  DictionaryEntry,
+  searchLearningDictionary,
+} from "../lib/dictionarySearch";
 
 export interface ClassMember {
   id: string;
@@ -116,6 +123,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
 
   // Assign Deck Modal
   const [showAssignModal, setShowAssignModal] = useState(false);
+  const [assignMode, setAssignMode] = useState<"existing" | "dictionary">("existing");
   const [assignTitle, setAssignTitle] = useState("");
   const [assignDeckId, setAssignDeckId] = useState("");
   const [assignBookFilter, setAssignBookFilter] = useState("1");
@@ -123,6 +131,45 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
   const [uploadedAssignmentDecks, setUploadedAssignmentDecks] = useState<AnkiDeck[]>([]);
   const [parsingAssignmentApkg, setParsingAssignmentApkg] = useState(false);
   const [assignDueDate, setAssignDueDate] = useState("");
+  const [dictQuery, setDictQuery] = useState("");
+  const [dictResults, setDictResults] = useState<DictionaryEntry[]>([]);
+  const [dictLoading, setDictLoading] = useState(false);
+  const [dictSelectedWords, setDictSelectedWords] = useState<
+    Array<{ korean: string; meaning: string; example: string; pos?: string }>
+  >([]);
+
+  useEffect(() => {
+    if (!showAssignModal || assignMode !== "dictionary") return;
+    const q = dictQuery.trim();
+    if (!q) {
+      setDictResults([]);
+      setDictLoading(false);
+      return;
+    }
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => {
+      setDictLoading(true);
+      void searchLearningDictionary(
+        q,
+        24,
+        controller.signal,
+        detectDictionarySearchLanguage(q),
+      )
+        .then((res) => {
+          if (!controller.signal.aborted) setDictResults(res);
+        })
+        .catch(() => {
+          if (!controller.signal.aborted) setDictResults([]);
+        })
+        .finally(() => {
+          if (!controller.signal.aborted) setDictLoading(false);
+        });
+    }, 220);
+    return () => {
+      window.clearTimeout(timer);
+      controller.abort();
+    };
+  }, [showAssignModal, assignMode, dictQuery]);
 
   // Detail View Active Tab
   const [activeTab, setActiveTab] = useState<"assignments" | "leaderboard" | "members">("assignments");
@@ -360,6 +407,45 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
     e.preventDefault();
     if (!selectedClassId || !assignTitle.trim()) return;
 
+    const dueDate = assignDueDate || (() => {
+      const due = new Date();
+      due.setDate(due.getDate() + 7);
+      return `${due.getFullYear()}-${String(due.getMonth() + 1).padStart(2, "0")}-${String(due.getDate()).padStart(2, "0")}`;
+    })();
+    const assignmentId = `asg_${crypto.randomUUID().replace(/-/g, "")}`;
+
+    if (assignMode === "dictionary") {
+      const validWords = dictSelectedWords.filter((w) => w.korean.trim() && w.meaning.trim()).slice(0, 500);
+      if (!validWords.length) {
+        setMsg({ type: "error", text: "Hãy chọn ít nhất 1 từ vựng từ Từ điển trước khi giao bài." });
+        return;
+      }
+      const deckCards = validWords.map((w, idx) => ({
+        id: idx + 1,
+        korean: w.korean.trim(),
+        meaning: w.meaning.trim(),
+        example: w.example.trim(),
+        pos: w.pos || "",
+        mediaAssetIds: [],
+      }));
+      const saved = await runClassAction({
+        action: "assignment",
+        classId: selectedClassId,
+        assignmentId,
+        title: assignTitle.trim(),
+        deckName: `Từ điển · ${assignTitle.trim()}`,
+        dueDate,
+        deckCards,
+        mediaAssets: [],
+      });
+      if (!saved) return;
+      setShowAssignModal(false);
+      setAssignTitle("");
+      setDictSelectedWords([]);
+      setDictQuery("");
+      return;
+    }
+
     if (!selectedAssignmentDeck?.cards.length) {
       setMsg({ type: "error", text: "Bộ thẻ này không có thẻ hợp lệ để giao." });
       return;
@@ -381,16 +467,10 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
       setMsg({ type: "error", text: "Tổng dung lượng ảnh và âm thanh tối đa 60 MB cho mỗi bài tập." });
       return;
     }
-    const assignmentId = `asg_${crypto.randomUUID().replace(/-/g, "")}`;
     const deckCards = cards.map((card) => ({
       ...card,
       mediaAssetIds: (card.mediaRefs || []).map((filename) => assetIds.get(filename)).filter((id): id is string => !!id),
     }));
-    const dueDate = assignDueDate || (() => {
-      const due = new Date();
-      due.setDate(due.getDate() + 7);
-      return `${due.getFullYear()}-${String(due.getMonth() + 1).padStart(2, "0")}-${String(due.getDate()).padStart(2, "0")}`;
-    })();
     const saved = await runClassAction({ action: "assignment", classId: selectedClassId, assignmentId, title: assignTitle, deckName: selectedAssignmentDeck.name, dueDate, deckCards, mediaAssets });
     if (!saved) return;
     try {
@@ -873,11 +953,45 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
         {/* Modal Assign Deck */}
         {showAssignModal && (
           <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-            <div className="card-duo p-6 bg-[#0f1b38] border-[#1e3466] max-w-md w-full space-y-4 shadow-2xl">
-              <h3 className="text-lg font-black text-white flex items-center gap-2">
-                <Plus className="w-5 h-5 text-amber-400" />
-                <span>Giao Bài Tập & Bộ Thẻ Mới</span>
-              </h3>
+            <div className="card-duo p-6 bg-[#0f1b38] border-[#1e3466] max-w-xl w-full space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto">
+              <div className="flex items-center justify-between gap-2">
+                <h3 className="text-lg font-black text-white flex items-center gap-2">
+                  <Plus className="w-5 h-5 text-amber-400" />
+                  <span>Giao Bài Tập & Bộ Thẻ Mới</span>
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setShowAssignModal(false)}
+                  className="text-slate-400 hover:text-white p-1"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 rounded-xl bg-[#0a1329] p-1 border border-[#1e3466]">
+                <button
+                  type="button"
+                  onClick={() => setAssignMode("existing")}
+                  className={`py-2 px-3 rounded-lg text-xs font-extrabold transition cursor-pointer ${
+                    assignMode === "existing"
+                      ? "bg-amber-500 text-slate-950"
+                      : "text-slate-300 hover:text-white"
+                  }`}
+                >
+                  Chọn bộ thẻ có sẵn / .apkg
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAssignMode("dictionary")}
+                  className={`py-2 px-3 rounded-lg text-xs font-extrabold transition cursor-pointer ${
+                    assignMode === "dictionary"
+                      ? "bg-amber-500 text-slate-950"
+                      : "text-slate-300 hover:text-white"
+                  }`}
+                >
+                  Soạn từ Từ điển (6,84M từ)
+                </button>
+              </div>
 
               <form onSubmit={handleAssignDeck} className="space-y-4">
                 <div>
@@ -892,68 +1006,197 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
                   />
                 </div>
 
-                <div>
-                  <label className="text-xs font-bold text-slate-300 block mb-1">Nguồn thẻ có sẵn · lọc theo quyển/độ khó</label>
-                  <div className="mb-2 grid grid-cols-2 gap-2">
-                    <select
-                      value={assignBookFilter}
-                      onChange={(event) => {
-                        const nextBook = event.target.value;
-                        setAssignBookFilter(nextBook);
-                        setAssignTopicFilter("all");
-                        const firstDeck = builtinAssignmentDecks.find((deck) => deck.book === Number(nextBook));
-                        if (firstDeck) setAssignDeckId(firstDeck.id);
-                      }}
-                      className="min-w-0 rounded-xl border border-[#1e3a70] bg-[#132247] px-3 py-2.5 text-[11px] font-bold text-white"
-                    >
-                      {isAdmin && (
-                        <>
-                          <option value="101">★ Tiếng Hàn Tổng Hợp · Quyển 1 (Admin)</option>
-                          <option value="102">★ Tiếng Hàn Tổng Hợp · Quyển 2 (Admin)</option>
-                          <option value="103">★ Tiếng Hàn Tổng Hợp · Quyển 3 (Admin)</option>
-                          <option value="104">★ Tiếng Hàn Tổng Hợp · Quyển 4 (Admin)</option>
-                        </>
-                      )}
-                      <option value="1">TOPIK 1 · Sơ cấp</option>
-                      <option value="2">TOPIK 2 · Sơ cấp</option>
-                      <option value="3">TOPIK 3 · Trung cấp</option>
-                      <option value="4">TOPIK 4 · Trung cấp</option>
-                      <option value="5">TOPIK 5 · Cao cấp</option>
-                      <option value="6">TOPIK 6 · Cao cấp</option>
-                    </select>
-                    <select
-                      value={assignTopicFilter}
-                      onChange={(event) => {
-                        const nextTopic = event.target.value;
-                        setAssignTopicFilter(nextTopic);
-                        const firstDeck = builtinAssignmentDecks.find((deck) => deck.book === Number(assignBookFilter) && (nextTopic === "all" || deck.topic === nextTopic));
-                        if (firstDeck) setAssignDeckId(firstDeck.id);
-                      }}
-                      className="min-w-0 rounded-xl border border-[#1e3a70] bg-[#132247] px-3 py-2.5 text-[11px] font-bold text-white"
-                    >
-                      <option value="all">Tất cả chủ đề trong quyển</option>
-                      {assignmentTopics.map((topic) => <option key={topic} value={topic}>{topic}</option>)}
-                    </select>
-                  </div>
-                  <label className="text-xs font-bold text-slate-300 block mb-1">Chọn chủ đề/bộ thẻ để giao</label>
-                  <select
-                    value={visibleAssignmentDecks.some((deck) => deck.id === assignDeckId) ? assignDeckId : visibleAssignmentDecks[0]?.id || ""}
-                    onChange={(e) => setAssignDeckId(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#132247] border border-[#1e3a70] text-white text-xs font-bold"
-                  >
-                    {visibleAssignmentDecks.map((deck) => (
-                      <option key={deck.id} value={deck.id} disabled={deck.cards.filter((card) => card.korean && card.meaning).length === 0 || deck.cards.filter((card) => card.korean && card.meaning).length > 500}>
-                        {deck.book ? `${deck.topic} · ${deck.name.split(" · ").slice(1, 3).join(" · ")} · ${deck.difficulty}` : deck.name} · {deck.cards.filter((card) => card.korean && card.meaning).length} thẻ
-                      </option>
-                    ))}
-                  </select>
-                  <p className="mt-2 text-[10px] leading-4 text-slate-500">Thư viện có sẵn gồm từ, nghĩa, từ loại và ví dụ theo chủ đề. Để chia sẻ ảnh/âm thanh gốc của Anki, tải file .apkg bên dưới. Mỗi bài tối đa 500 thẻ và 60 MB media.</p>
-                </div>
+                {assignMode === "existing" ? (
+                  <>
+                    <div>
+                      <label className="text-xs font-bold text-slate-300 block mb-1">Nguồn thẻ có sẵn · lọc theo quyển/độ khó</label>
+                      <div className="mb-2 grid grid-cols-2 gap-2">
+                        <select
+                          value={assignBookFilter}
+                          onChange={(event) => {
+                            const nextBook = event.target.value;
+                            setAssignBookFilter(nextBook);
+                            setAssignTopicFilter("all");
+                            const firstDeck = builtinAssignmentDecks.find((deck) => deck.book === Number(nextBook));
+                            if (firstDeck) setAssignDeckId(firstDeck.id);
+                          }}
+                          className="min-w-0 rounded-xl border border-[#1e3a70] bg-[#132247] px-3 py-2.5 text-[11px] font-bold text-white"
+                        >
+                          {isAdmin && (
+                            <>
+                              <option value="101">★ Tiếng Hàn Tổng Hợp · Quyển 1 (Admin)</option>
+                              <option value="102">★ Tiếng Hàn Tổng Hợp · Quyển 2 (Admin)</option>
+                              <option value="103">★ Tiếng Hàn Tổng Hợp · Quyển 3 (Admin)</option>
+                              <option value="104">★ Tiếng Hàn Tổng Hợp · Quyển 4 (Admin)</option>
+                            </>
+                          )}
+                          <option value="1">TOPIK 1 · Sơ cấp</option>
+                          <option value="2">TOPIK 2 · Sơ cấp</option>
+                          <option value="3">TOPIK 3 · Trung cấp</option>
+                          <option value="4">TOPIK 4 · Trung cấp</option>
+                          <option value="5">TOPIK 5 · Cao cấp</option>
+                          <option value="6">TOPIK 6 · Cao cấp</option>
+                        </select>
+                        <select
+                          value={assignTopicFilter}
+                          onChange={(event) => {
+                            const nextTopic = event.target.value;
+                            setAssignTopicFilter(nextTopic);
+                            const firstDeck = builtinAssignmentDecks.find((deck) => deck.book === Number(assignBookFilter) && (nextTopic === "all" || deck.topic === nextTopic));
+                            if (firstDeck) setAssignDeckId(firstDeck.id);
+                          }}
+                          className="min-w-0 rounded-xl border border-[#1e3a70] bg-[#132247] px-3 py-2.5 text-[11px] font-bold text-white"
+                        >
+                          <option value="all">Tất cả chủ đề trong quyển</option>
+                          {assignmentTopics.map((topic) => <option key={topic} value={topic}>{topic}</option>)}
+                        </select>
+                      </div>
+                      <label className="text-xs font-bold text-slate-300 block mb-1">Chọn chủ đề/bộ thẻ để giao (gồm cả bộ thẻ cá nhân của bạn)</label>
+                      <select
+                        value={visibleAssignmentDecks.some((deck) => deck.id === assignDeckId) ? assignDeckId : visibleAssignmentDecks[0]?.id || ""}
+                        onChange={(e) => setAssignDeckId(e.target.value)}
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#132247] border border-[#1e3a70] text-white text-xs font-bold"
+                      >
+                        {visibleAssignmentDecks.map((deck) => (
+                          <option key={deck.id} value={deck.id} disabled={deck.cards.filter((card) => card.korean && card.meaning).length === 0 || deck.cards.filter((card) => card.korean && card.meaning).length > 500}>
+                            {deck.book ? `${deck.topic} · ${deck.name.split(" · ").slice(1, 3).join(" · ")} · ${deck.difficulty}` : deck.name} · {deck.cards.filter((card) => card.korean && card.meaning).length} thẻ
+                          </option>
+                        ))}
+                      </select>
+                      <p className="mt-2 text-[10px] leading-4 text-slate-500">Thư viện có sẵn gồm từ, nghĩa, từ loại và ví dụ theo chủ đề. Để chia sẻ ảnh/âm thanh gốc của Anki, tải file .apkg bên dưới. Mỗi bài tối đa 500 thẻ và 60 MB media.</p>
+                    </div>
 
-                <label className="block rounded-xl border border-dashed border-sky-500/40 bg-sky-950/20 p-3 text-center text-xs font-bold text-sky-200 cursor-pointer hover:bg-sky-900/30">
-                  <input type="file" accept=".apkg,application/zip" className="hidden" disabled={parsingAssignmentApkg} onChange={(event) => { void handleAssignmentApkgUpload(event.currentTarget.files?.[0]); event.currentTarget.value = ""; }} />
-                  {parsingAssignmentApkg ? "Đang giải nén .apkg…" : "Tải .apkg lên để chia sẻ kèm hình ảnh và âm thanh"}
-                </label>
+                    <label className="block rounded-xl border border-dashed border-sky-500/40 bg-sky-950/20 p-3 text-center text-xs font-bold text-sky-200 cursor-pointer hover:bg-sky-900/30">
+                      <input type="file" accept=".apkg,application/zip" className="hidden" disabled={parsingAssignmentApkg} onChange={(event) => { void handleAssignmentApkgUpload(event.currentTarget.files?.[0]); event.currentTarget.value = ""; }} />
+                      {parsingAssignmentApkg ? "Đang giải nén .apkg…" : "Tải .apkg lên để chia sẻ kèm hình ảnh và âm thanh"}
+                    </label>
+                  </>
+                ) : (
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-xs font-bold text-slate-300 block mb-1">
+                        Tìm từ trong kho 6,84 triệu từ (Hangul / Tiếng Việt / Tiếng Anh)
+                      </label>
+                      <div className="flex items-center gap-2 rounded-xl bg-[#132247] border border-[#1e3a70] px-3 py-2">
+                        <Search className="w-4 h-4 text-slate-400 shrink-0" />
+                        <input
+                          value={dictQuery}
+                          onChange={(e) => setDictQuery(e.target.value)}
+                          placeholder="Gõ từ cần thêm vào bài tập lớp..."
+                          className="w-full bg-transparent text-xs text-white outline-none"
+                        />
+                        {dictQuery && (
+                          <button type="button" onClick={() => setDictQuery("")} className="text-slate-400 hover:text-white">
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Search Results */}
+                    {dictQuery.trim() && (
+                      <div className="max-h-44 overflow-y-auto divide-y divide-slate-800 rounded-xl border border-[#1e3466] bg-[#0a1329]">
+                        {dictLoading && (
+                          <p className="p-3 text-xs text-slate-400">Đang tìm trong kho 6,84M từ…</p>
+                        )}
+                        {!dictLoading && dictResults.length === 0 && (
+                          <p className="p-3 text-xs text-slate-500">Không tìm thấy từ phù hợp.</p>
+                        )}
+                        {dictResults.map((entry, idx) => {
+                          const added = dictSelectedWords.some((w) => w.korean === entry.hangul);
+                          const meaning = entry.vietnamese || entry.english || entry.japanese || "";
+                          return (
+                            <div
+                              key={`${entry.hangul}-${idx}`}
+                              className="flex items-center justify-between gap-2 p-2.5 text-xs"
+                            >
+                              <div className="min-w-0">
+                                <p className="font-noto font-bold text-white truncate">
+                                  {entry.hangul}
+                                  {entry.partOfSpeech && (
+                                    <span className="ml-2 text-[10px] text-sky-400">{entry.partOfSpeech}</span>
+                                  )}
+                                </p>
+                                <p className="text-slate-300 truncate">{meaning}</p>
+                              </div>
+                              <button
+                                type="button"
+                                disabled={added || dictSelectedWords.length >= 500}
+                                onClick={() =>
+                                  setDictSelectedWords((prev) => [
+                                    ...prev,
+                                    {
+                                      korean: entry.hangul,
+                                      meaning,
+                                      example: entry.english && entry.vietnamese ? entry.english : "",
+                                      pos: entry.partOfSpeech || "",
+                                    },
+                                  ])
+                                }
+                                className="shrink-0 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 border border-sky-500/40 px-2.5 py-1 text-[11px] font-bold text-sky-200 disabled:opacity-40 cursor-pointer"
+                              >
+                                {added ? "Đã chọn" : "+ Chọn"}
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* Selected Words List */}
+                    <div className="rounded-xl border border-[#1e3466] bg-[#0a1329] p-3 space-y-2">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-amber-400">
+                          Danh sách từ sẽ giao ({dictSelectedWords.length} / 500 từ)
+                        </span>
+                        {dictSelectedWords.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => setDictSelectedWords([])}
+                            className="text-[11px] text-rose-400 hover:underline"
+                          >
+                            Xóa hết
+                          </button>
+                        )}
+                      </div>
+                      <div className="max-h-44 overflow-y-auto divide-y divide-slate-800">
+                        {dictSelectedWords.map((w, i) => (
+                          <div key={`${w.korean}-${i}`} className="flex items-center gap-2 py-2 text-xs">
+                            <span className="font-noto font-bold text-white shrink-0 w-28 truncate">
+                              {w.korean}
+                            </span>
+                            <input
+                              value={w.meaning}
+                              onChange={(e) =>
+                                setDictSelectedWords((prev) =>
+                                  prev.map((item, idx) =>
+                                    idx === i ? { ...item, meaning: e.target.value } : item,
+                                  ),
+                                )
+                              }
+                              placeholder="Nghĩa tiếng Việt..."
+                              className="flex-1 rounded-lg bg-[#132247] border border-[#1e3a70] px-2.5 py-1 text-xs text-white outline-none"
+                            />
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setDictSelectedWords((prev) => prev.filter((_, idx) => idx !== i))
+                              }
+                              className="text-slate-400 hover:text-rose-400 p-1"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        ))}
+                        {dictSelectedWords.length === 0 && (
+                          <p className="py-3 text-center text-xs text-slate-500">
+                            Chưa chọn từ nào. Hãy tìm và bấm &quot;+ Chọn&quot; phía trên.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <div>
                   <label className="text-xs font-bold text-slate-300 block mb-1">Hạn Nộp (Hạn Ôn)</label>
@@ -975,7 +1218,14 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
                   </button>
                   <button
                     type="submit"
-                    disabled={parsingAssignmentApkg || !selectedAssignmentDeck || selectedAssignmentDeck.cards.filter((card) => card.korean && card.meaning).length === 0 || selectedAssignmentDeck.cards.filter((card) => card.korean && card.meaning).length > 500}
+                    disabled={
+                      assignMode === "dictionary"
+                        ? dictSelectedWords.length === 0
+                        : parsingAssignmentApkg ||
+                          !selectedAssignmentDeck ||
+                          selectedAssignmentDeck.cards.filter((card) => card.korean && card.meaning).length === 0 ||
+                          selectedAssignmentDeck.cards.filter((card) => card.korean && card.meaning).length > 500
+                    }
                     className="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     Giao Cho Lớp
