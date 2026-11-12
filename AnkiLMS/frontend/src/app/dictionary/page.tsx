@@ -50,11 +50,31 @@ type NaverLookup = {
   }>;
 };
 
+function formatDictionaryGloss(text: string | undefined): string {
+  if (!text) return "";
+  const parts = text
+    .split(/\s*[;；]\s*/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+  const seen = new Set<string>();
+  const unique: string[] = [];
+  for (const part of parts) {
+    const key = part.toLocaleLowerCase();
+    if (!seen.has(key)) {
+      seen.add(key);
+      unique.push(part);
+    }
+  }
+  return unique.join("; ");
+}
+
 function dictionaryEntryToAnkiCard(entry: DictionaryEntry, id: number, deckName: string): AnkiCard {
-  const meaning = entry.vietnamese || entry.english || entry.japanese || "";
+  const cleanVi = formatDictionaryGloss(entry.vietnamese);
+  const cleanEn = formatDictionaryGloss(entry.english);
+  const meaning = cleanVi || cleanEn || formatDictionaryGloss(entry.japanese) || "";
   const extraNotes = [
     entry.partOfSpeech ? `[${entry.partOfSpeech}]` : "",
-    entry.english && entry.vietnamese ? `EN: ${entry.english}` : "",
+    cleanEn && cleanVi ? `EN: ${cleanEn.slice(0, 180)}` : "",
     entry.hanja ? `Hanja: ${entry.hanja}` : "",
     entry.pronunciation ? `[${entry.pronunciation}]` : "",
   ]
@@ -123,12 +143,7 @@ export default function DictionaryPage() {
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   const customUserDecks = useMemo(
-    () =>
-      userDecks.filter(
-        (d) =>
-          !d.id.startsWith("curated-") &&
-          !d.id.startsWith("community-copy-"),
-      ),
+    () => userDecks.filter((d) => d.id.startsWith("custom-dict-")),
     [userDecks],
   );
 
@@ -479,7 +494,7 @@ export default function DictionaryPage() {
 
   return (
     <AppShell>
-      <main className="mx-auto max-w-3xl space-y-4 pb-24 text-stone-900 dark:text-stone-100">
+      <main className="mx-auto max-w-4xl space-y-4 pb-24 text-stone-900 dark:text-stone-100">
         {/* Toast notification */}
         {toastMsg && (
           <div className="fixed bottom-24 lg:bottom-6 left-1/2 -translate-x-1/2 lg:left-auto lg:right-6 lg:translate-x-0 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-emerald-600 text-white shadow-xl shadow-emerald-900/30 font-bold text-xs animate-slideUp">
@@ -497,8 +512,8 @@ export default function DictionaryPage() {
 
         {/* Header + Corpus Stats + My Deck Builder Bar */}
         <div className="space-y-3">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-2xl font-black tracking-tight">Từ điển Hàn – Việt – Anh</h1>
                 <span className="rounded-full bg-sky-500/10 border border-sky-500/30 px-2.5 py-0.5 text-[11px] font-extrabold text-sky-600 dark:text-sky-300">
@@ -506,33 +521,53 @@ export default function DictionaryPage() {
                 </span>
               </div>
               <p className="mt-0.5 text-xs text-stone-500 dark:text-stone-400">
-                Tra cứu hơn 6,84 triệu từ vựng và thêm thẳng từ vào bộ thẻ cá nhân hoặc chia sẻ công khai lên /explore.
+                Tra từ bằng tiếng Việt, Hangul hoặc English · Lưu vào bộ thẻ cá nhân hoặc chia sẻ công khai lên /explore.
               </p>
             </div>
 
-            <button
-              type="button"
-              onClick={() => {
-                if (!currentUser) {
-                  handleOpenAuth(false);
-                  return;
-                }
-                setShowDeckModal(true);
-              }}
-              className="inline-flex items-center gap-2 rounded-2xl border border-sky-500/40 bg-sky-500/10 hover:bg-sky-500/20 px-3.5 py-2 text-xs font-extrabold text-sky-700 dark:text-sky-300 transition cursor-pointer"
-            >
-              <Layers className="h-4 w-4" />
-              <span>
-                {activeCustomDeck
-                  ? `${activeCustomDeck.name} (${activeCustomDeck.cards.length})`
-                  : "Tạo bộ thẻ của tôi"}
-              </span>
-              {activeCustomDeck?.visibility === "public" && (
-                <span title="Đang công khai trên /explore">
-                  <Globe2 className="h-3.5 w-3.5 text-emerald-500" />
-                </span>
+            <div className="flex flex-wrap items-center gap-2 shrink-0">
+              {currentUser && customUserDecks.length > 1 && (
+                <select
+                  value={activeCustomDeck?.id || ""}
+                  onChange={(e) => setSelectedDeckId(e.target.value)}
+                  aria-label="Chọn bộ thẻ từ điển"
+                  className="max-w-[190px] truncate rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 px-2.5 py-2 text-xs font-bold text-stone-900 dark:text-white outline-none"
+                >
+                  {customUserDecks.map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {d.name} ({d.cards.length})
+                    </option>
+                  ))}
+                </select>
               )}
-            </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (!currentUser) {
+                    handleOpenAuth(false);
+                    return;
+                  }
+                  if (!activeCustomDeck) {
+                    setCreatingNewDeck(true);
+                  }
+                  setShowDeckModal(true);
+                }}
+                className="inline-flex items-center gap-2 rounded-2xl border border-sky-500/40 bg-sky-500/10 hover:bg-sky-500/20 px-3.5 py-2 text-xs font-extrabold text-sky-700 dark:text-sky-300 transition cursor-pointer max-w-full"
+              >
+                <Layers className="h-4 w-4 shrink-0" />
+                <span className="max-w-[200px] truncate">
+                  {activeCustomDeck
+                    ? `${activeCustomDeck.name} (${activeCustomDeck.cards.length})`
+                    : "Bộ thẻ của tôi"}
+                </span>
+                {activeCustomDeck?.visibility === "public" && (
+                  <span title="Đang công khai trên /explore" className="shrink-0">
+                    <Globe2 className="h-3.5 w-3.5 text-emerald-500" />
+                  </span>
+                )}
+              </button>
+            </div>
           </div>
 
           <label className="flex h-12 items-center gap-3 rounded-2xl border border-stone-200 bg-white px-4 transition focus-within:border-sky-500 focus-within:ring-2 focus-within:ring-sky-500/20 dark:border-stone-700 dark:bg-stone-900">
@@ -558,53 +593,6 @@ export default function DictionaryPage() {
               </button>
             )}
           </label>
-
-          {/* Active Deck Quick Selector Bar */}
-          {currentUser && customUserDecks.length > 0 && (
-            <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-stone-200/80 dark:border-stone-800 bg-stone-50/70 dark:bg-stone-900/50 px-3 py-2 text-xs">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="font-bold text-stone-500 dark:text-stone-400">
-                  Bộ thẻ đang chọn khi bấm (+ Thêm từ):
-                </span>
-                <select
-                  value={activeCustomDeck?.id || ""}
-                  onChange={(e) => setSelectedDeckId(e.target.value)}
-                  className="rounded-lg border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 px-2.5 py-1 text-xs font-bold text-stone-900 dark:text-white outline-none"
-                >
-                  {customUserDecks.map((d) => (
-                    <option key={d.id} value={d.id}>
-                      {d.name} ({d.cards.length} thẻ ·{" "}
-                      {d.visibility === "public" ? "Công khai /explore" : "Cá nhân"})
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCreatingNewDeck(true);
-                    setShowDeckModal(true);
-                  }}
-                  className="inline-flex items-center gap-1 font-bold text-sky-600 dark:text-sky-400 hover:underline cursor-pointer"
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                  Bộ thẻ mới
-                </button>
-                <span className="text-stone-300 dark:text-stone-700">|</span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCreatingNewDeck(false);
-                    setShowDeckModal(true);
-                  }}
-                  className="font-bold text-violet-600 dark:text-violet-400 hover:underline cursor-pointer"
-                >
-                  Quản lý / Công khai lên /explore
-                </button>
-              </div>
-            </div>
-          )}
 
           <div
             className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1"
@@ -634,15 +622,32 @@ export default function DictionaryPage() {
 
         {browsing ? (
           <section
-            className={`${card} px-6 py-12 text-center text-sm text-stone-500 dark:text-stone-400 space-y-3`}
+            className={`${card} px-6 py-10 text-center text-sm text-stone-500 dark:text-stone-400 space-y-4`}
           >
-            <BookOpen className="mx-auto mb-2 h-8 w-8 text-sky-500" />
-            <p className="font-bold text-stone-800 dark:text-stone-200">
-              Kho từ điển hợp nhất {corpusStats.totalEntries.toLocaleString("vi-VN")} mục từ & nghĩa ({corpusStats.uniqueHeadwords.toLocaleString("vi-VN")} từ khóa Hangul)
-            </p>
-            <p>
-              Tra từ bằng tiếng Việt, Hangul hoặc English. Khi tra cứu, bấm <b>+ Thêm vào bộ thẻ</b> để lưu học cá nhân hoặc chuyển sang <b>Public</b> để chia sẻ lên <b>/explore</b>.
-            </p>
+            <BookOpen className="mx-auto h-8 w-8 text-sky-500" />
+            <div className="space-y-1.5">
+              <p className="text-base font-black text-stone-800 dark:text-stone-100">
+                Kho từ điển hợp nhất {corpusStats.totalEntries.toLocaleString("vi-VN")} mục từ & nghĩa ({corpusStats.uniqueHeadwords.toLocaleString("vi-VN")} từ khóa Hangul)
+              </p>
+              <p className="max-w-xl mx-auto text-xs sm:text-sm">
+                Tra từ bằng tiếng Việt, Hangul hoặc English. Khi tra cứu, bấm <b>+ Thêm vào bộ thẻ</b> để lưu học cá nhân hoặc chuyển sang <b>Public</b> để chia sẻ lên <b>/explore</b>.
+              </p>
+            </div>
+            <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
+              <span className="text-xs font-bold text-stone-400">Tra nhanh:</span>
+              {["사랑", "은행", "합격하다", "인공지능", "ngân hàng", "hợp đồng", "du học", "khách sạn"].map(
+                (sample) => (
+                  <button
+                    key={sample}
+                    type="button"
+                    onClick={() => setQuery(sample)}
+                    className="rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800/80 hover:border-sky-500/50 hover:text-sky-500 px-3 py-1 text-xs font-bold text-stone-700 dark:text-stone-300 transition cursor-pointer"
+                  >
+                    {sample}
+                  </button>
+                ),
+              )}
+            </div>
           </section>
         ) : loading ? (
           <section
@@ -786,8 +791,8 @@ export default function DictionaryPage() {
                         )}
                       </div>
                       {entry.vietnamese ? (
-                        <p className="mt-1.5 text-sm font-semibold text-emerald-700 dark:text-emerald-300">
-                          {entry.vietnamese}
+                        <p className="mt-1.5 text-sm font-semibold text-emerald-700 dark:text-emerald-300 line-clamp-3">
+                          {formatDictionaryGloss(entry.vietnamese)}
                         </p>
                       ) : (
                         <p className="mt-1.5 text-sm text-amber-600">
@@ -795,13 +800,13 @@ export default function DictionaryPage() {
                         </p>
                       )}
                       {entry.english && (
-                        <p className="mt-0.5 text-sm text-stone-600 dark:text-stone-300">
-                          {entry.english}
+                        <p className="mt-0.5 text-sm text-stone-600 dark:text-stone-300 line-clamp-2">
+                          {formatDictionaryGloss(entry.english)}
                         </p>
                       )}
                       {entry.japanese && (
-                        <p className="mt-0.5 text-xs text-stone-500 dark:text-stone-400">
-                          {entry.japanese}
+                        <p className="mt-0.5 text-xs text-stone-500 dark:text-stone-400 line-clamp-1">
+                          {formatDictionaryGloss(entry.japanese)}
                         </p>
                       )}
                     </div>
@@ -828,11 +833,11 @@ export default function DictionaryPage() {
                   </div>
 
                   <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-stone-100 dark:border-stone-800/80 pt-2.5">
-                    <div className="flex flex-wrap items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2 min-w-0">
                       <button
                         type="button"
                         onClick={() => handleQuickAddWord(entry)}
-                        className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-extrabold transition cursor-pointer ${
+                        className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-extrabold transition cursor-pointer max-w-full ${
                           inActiveDeck
                             ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30"
                             : "bg-sky-500/10 hover:bg-sky-500/20 text-sky-700 dark:text-sky-300 border border-sky-500/30"
@@ -840,15 +845,19 @@ export default function DictionaryPage() {
                       >
                         {inActiveDeck ? (
                           <>
-                            <Check className="h-3.5 w-3.5" />
-                            Đã lưu trong {activeCustomDeck?.name}
+                            <Check className="h-3.5 w-3.5 shrink-0" />
+                            <span className="max-w-[220px] truncate">
+                              Đã lưu trong {activeCustomDeck?.name}
+                            </span>
                           </>
                         ) : (
                           <>
-                            <Plus className="h-3.5 w-3.5" />
-                            {activeCustomDeck
-                              ? `Thêm vào "${activeCustomDeck.name}"`
-                              : "Thêm vào bộ thẻ của tôi"}
+                            <Plus className="h-3.5 w-3.5 shrink-0" />
+                            <span className="max-w-[220px] truncate">
+                              {activeCustomDeck
+                                ? `Thêm vào "${activeCustomDeck.name}"`
+                                : "Thêm vào bộ thẻ của tôi"}
+                            </span>
                           </>
                         )}
                       </button>
