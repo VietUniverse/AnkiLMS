@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Inter, Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "../contexts/AppProvider";
@@ -54,6 +55,10 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${inter.variable} ${notoKorean.variable} bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-blue-500 selection:text-white`}
       >
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-EMV6CCJTG1" strategy="afterInteractive" />
+        <Script id="ga-init" strategy="afterInteractive">
+          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-EMV6CCJTG1');`}
+        </Script>
         <AppProvider>
           {children}
         </AppProvider>
