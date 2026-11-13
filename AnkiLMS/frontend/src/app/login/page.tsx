@@ -239,6 +239,7 @@ export default function LoginPage() {
               <div>
                 <input
                   type="password"
+                  autoComplete={isRegister ? "new-password" : "current-password"}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}

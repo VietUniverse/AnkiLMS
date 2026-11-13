@@ -848,6 +848,11 @@ html[data-theme="light"] body:not(:has(.login-page-root)) .metric-card-subtext {
 }
 
 /* Custom Scrollbar */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #1e2f5a #0b1329;
+}
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;

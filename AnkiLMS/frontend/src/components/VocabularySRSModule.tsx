@@ -1710,7 +1710,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                             }
                           }}
                           onKeyDown={(e) => {
-                            if (e.key === "Enter") {
+                            if (e.key === "Enter" && !e.nativeEvent.isComposing) {
                               e.preventDefault();
                               revealAnswer();
                               inputRef.current?.blur();
