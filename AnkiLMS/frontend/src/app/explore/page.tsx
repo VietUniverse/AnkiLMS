@@ -72,7 +72,7 @@ export default function ExplorePage() {
   }, []);
 
   const baseDecks = useMemo(() => [
-    ...(IS_DEMO_DECKS_ENABLED ? CURATED_DECKS : []),
+    ...CURATED_DECKS,
     ...courseVocabularyToExploreDecks({ version: 1, source: "", courseCount: 0, wordCount: 0, decks: courseDecks }),
     ...(seoul1ADeck ? [seoul1ADeck] : []),
     ...sharedDecks,

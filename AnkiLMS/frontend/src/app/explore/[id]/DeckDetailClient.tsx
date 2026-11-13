@@ -109,7 +109,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
 
   const sourceDeck = useMemo(() => CURATED_DECKS.find((d) => d.id === id) || courseDeck, [id, courseDeck]);
   const deck = useMemo(() => sourceDeck && catalogOverride ? { ...sourceDeck, ...catalogOverride, id: sourceDeck.id, cards: catalogOverride.cards || sourceDeck.cards } : sourceDeck, [sourceDeck, catalogOverride]);
-  const isDemoDeck = CURATED_DECKS.some((item) => item.id === id);
+  const isDemoDeck = CURATED_DECKS.some((item) => item.id === id && (item as unknown as { isDemo?: boolean }).isDemo === true);
 
   const [activePreviewIndex, setActivePreviewIndex] = useState(0);
   const [requestedPreviewCardId, setRequestedPreviewCardId] = useState<number | null>(null);
