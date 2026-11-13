@@ -181,10 +181,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {/* Mobile Scrollable Links */}
             <div className="flex-1 overflow-y-auto p-3 space-y-4">
               <div>
-                <p className="px-3 py-1 text-[10px] font-extrabold uppercase tracking-widest text-slate-500">
-                  HỌC TẬP
-                </p>
-                <nav className="space-y-0.5 mt-1">
+                <nav aria-label="Học tập" className="space-y-0.5">
                   {mainNav.filter((item) => isFeatureEnabled("feature" in item ? item.feature : undefined)).map((item) => renderNavItem(item, true))}
                   {communityNav.filter((item) => isFeatureEnabled(item.feature)).map((item) => renderNavItem(item, true))}
                   {currentUser?.role === "admin" && renderNavItem({ href: "/admin", label: "Quản trị hệ thống", icon: ShieldCheck }, true)}
@@ -307,14 +304,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Navigation Scrollable Area */}
       <div className="flex-1 overflow-y-auto p-3 space-y-4">
-        {/* Section 1: HỌC TẬP (Chính) */}
         <div>
-          {!collapsed && (
-            <p className="px-3 py-1 text-[10px] font-extrabold uppercase tracking-widest text-slate-500">
-              HỌC TẬP
-            </p>
-          )}
-          <nav className="space-y-0.5 mt-1">
+          <nav aria-label="Học tập" className="space-y-0.5">
             {mainNav.filter((item) => isFeatureEnabled("feature" in item ? item.feature : undefined)).map((item) => renderNavItem(item))}
             {communityNav.filter((item) => isFeatureEnabled(item.feature)).map((item) => renderNavItem(item))}
             {currentUser?.role === "admin" && renderNavItem({ href: "/admin", label: "Quản trị hệ thống", icon: ShieldCheck })}
