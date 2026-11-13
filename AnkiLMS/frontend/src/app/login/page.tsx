@@ -174,7 +174,6 @@ export default function LoginPage() {
 
             {/* Cửa vào cho khách: dùng thử trước, đăng ký khi muốn lưu tiến độ. */}
             <nav aria-label="Dùng thử không cần đăng nhập" className="flex flex-wrap justify-center gap-2 text-sm font-bold">
-              <Link href="/classes" className="rounded-xl bg-blue-500 px-4 py-2.5 text-white transition hover:bg-blue-600" style={{ color: "#fff" }}>Học thử lớp Sơ cấp → Cao cấp</Link>
               <Link href="/placement-test" className="rounded-xl bg-blue-500/15 px-4 py-2.5 text-blue-200 transition hover:bg-blue-500/25">Kiểm tra trình độ</Link>
             </nav>
           </div>

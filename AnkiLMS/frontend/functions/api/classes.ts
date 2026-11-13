@@ -1,12 +1,4 @@
 import { Env, authenticateRequest, errorResponse, isSameOriginRequest, jsonResponse } from "./_utils";
-import { findOpenClass, OPEN_CLASS_LESSON_SIZE, openClassId } from "../../src/lib/openClasses";
-import { OPEN_CLASS_WORDS } from "../../src/data/openClassWords";
-
-/** Mã bài cố định theo lớp và số bài để hai người vào lớp cùng lúc không tạo bài trùng. */
-async function openLessonId(classId: string, lesson: number) {
-  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`${classId}:${lesson}`));
-  return `asg_${[...new Uint8Array(digest)].slice(0, 16).map((byte) => byte.toString(16).padStart(2, "0")).join("")}`;
-}
 
 type ClassRole = "owner" | "admin" | "staff" | "student";
 
@@ -185,42 +177,6 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       if (existing) return errorResponse(existing.status === "approved" ? "Bạn đã tham gia lớp này." : "Yêu cầu tham gia đang chờ duyệt.", 409);
       await env.DB.prepare("INSERT INTO classroom_members (class_id, user_id, role, status) VALUES (?, ?, 'student', 'pending')").bind(classroom.id, user.id).run();
       return jsonResponse({ success: true, classes: await getClasses(env, user.id) });
-    }
-
-    if (body.action === "join_open") {
-      const openClass = findOpenClass(body.level);
-      if (!openClass) return errorResponse("Lớp mở không hợp lệ.");
-      const id = openClassId(openClass.key);
-      // Lớp mở được tạo lần đầu có người tham gia, do admin đầu tiên làm chủ lớp để quản lý như lớp thường.
-      const exists = await env.DB.prepare("SELECT id FROM classrooms WHERE id = ?").bind(id).first<{ id: string }>();
-      if (!exists) {
-        const owner = await env.DB.prepare("SELECT id FROM users WHERE role = 'admin' ORDER BY created_at ASC LIMIT 1").first<{ id: string }>();
-        if (!owner) return errorResponse("Lớp chưa mở, vui lòng quay lại sau.", 503);
-        const code = crypto.randomUUID().replace(/-/g, "").slice(0, 8).toUpperCase();
-        // Mỗi bài 50 từ, là một bài tập của lớp nên học viên ôn và lưu tiến độ như bài tập thường.
-        const words = OPEN_CLASS_WORDS[openClass.key] || [];
-        const lessons = [];
-        for (let start = 0, lesson = 1; start < words.length; start += OPEN_CLASS_LESSON_SIZE, lesson += 1) {
-          const cards = words.slice(start, start + OPEN_CLASS_LESSON_SIZE).map(([korean, meaning], offset) => ({ id: start + offset + 1, korean, meaning }));
-          const title = `${openClass.title} · Bài ${lesson}`;
-          // Lớp tự học: hạn xa và tăng dần theo số bài để danh sách bài (xếp theo hạn) luôn đúng thứ tự.
-          const dueDate = new Date(Date.now() + (365 + lesson) * 86_400_000).toISOString().slice(0, 10);
-          lessons.push(env.DB.prepare("INSERT OR IGNORE INTO class_assignments (id, class_id, title, deck_name, due_date, created_by, deck_json, total_cards) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
-            .bind(await openLessonId(id, lesson), id, title, title, dueDate, owner.id, JSON.stringify(cards), cards.length));
-        }
-        await env.DB.batch([
-          env.DB.prepare("INSERT OR IGNORE INTO classrooms (id, code, name, description, owner_id) VALUES (?, ?, ?, ?, ?)").bind(id, code, openClass.title, openClass.description, owner.id),
-          env.DB.prepare("INSERT OR IGNORE INTO classroom_members (class_id, user_id, role, status) VALUES (?, ?, 'owner', 'approved')").bind(id, owner.id),
-          ...lessons,
-        ]);
-      }
-      const existing = await getMembership(env, id, user.id);
-      if (!existing) {
-        await env.DB.prepare("INSERT INTO classroom_members (class_id, user_id, role, status) VALUES (?, ?, 'student', 'approved')").bind(id, user.id).run();
-      } else if (existing.status === "pending") {
-        await env.DB.prepare("UPDATE classroom_members SET status = 'approved' WHERE class_id = ? AND user_id = ?").bind(id, user.id).run();
-      }
-      return jsonResponse({ success: true, classId: id, classes: await getClasses(env, user.id) });
     }
 
     let classId = typeof body.classId === "string" ? body.classId.trim() : "";
