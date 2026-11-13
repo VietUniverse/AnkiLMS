@@ -113,6 +113,11 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
 
   // Join Class Form State
   const [joinCodeInput, setJoinCodeInput] = useState("");
+  // Link mời /classes?join=MÃ điền sẵn ô mã lớp cho người được mời.
+  useEffect(() => {
+    const invited = new URLSearchParams(window.location.search).get("join");
+    if (invited) setJoinCodeInput(invited.trim().toUpperCase());
+  }, []);
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   // Create Class Modal
@@ -856,6 +861,40 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
         {/* TAB 3: MEMBER MANAGEMENT / LIST */}
         {activeTab === "members" && (
           <div className="space-y-6">
+            {canManageClass && (
+              <section aria-labelledby="invite-heading" className="card-duo p-4 bg-[#132247] border border-sky-500/40 space-y-3">
+                <h3 id="invite-heading" className="text-sm font-black text-sky-300 flex items-center gap-2">
+                  <UserPlus className="w-4 h-4" />
+                  <span>Thêm thành viên</span>
+                </h3>
+                <p className="text-[11px] text-slate-400">Gửi link mời hoặc mã lớp cho học viên. Họ mở link, bấm tham gia, rồi bạn duyệt ở danh sách chờ bên dưới.</p>
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <input
+                    readOnly
+                    aria-label="Link mời vào lớp"
+                    value={`${typeof window !== "undefined" ? window.location.origin : ""}/classes?join=${encodeURIComponent(selectedClass.code)}`}
+                    onFocus={(e) => e.currentTarget.select()}
+                    className="min-w-0 flex-1 rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-xs text-slate-200 outline-none focus:border-sky-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => copyToClipboard(`${window.location.origin}/classes?join=${encodeURIComponent(selectedClass.code)}`)}
+                    className="shrink-0 rounded-xl bg-sky-600 hover:bg-sky-500 px-4 py-2.5 text-xs font-bold text-white flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    {copiedCode?.includes("?join=") ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                    <span aria-live="polite">{copiedCode?.includes("?join=") ? "Đã chép link" : "Chép link mời"}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => copyToClipboard(selectedClass.code)}
+                    className="shrink-0 rounded-xl border border-slate-600 hover:border-sky-400 px-4 py-2.5 text-xs font-bold text-slate-200 flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <KeyRound className="w-3.5 h-3.5" />
+                    <span>{copiedCode === selectedClass.code ? "Đã chép mã" : `Mã: ${selectedClass.code}`}</span>
+                  </button>
+                </div>
+              </section>
+            )}
             {/* Pending Requests Section (Admins/Owner Only) */}
             {canManageClass && (
               <div className="space-y-3">
