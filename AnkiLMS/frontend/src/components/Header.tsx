@@ -78,11 +78,11 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onToggl
         </div>
       )}
 
-      {/* Giữa thanh khi học thẻ: số thẻ mới (xanh) và thẻ ôn (đỏ) còn lại, chỉ phân biệt bằng màu */}
+      {/* Giữa thanh khi học thẻ: số thẻ mới (xanh) và thẻ ôn (đỏ) còn lại, kèm nhãn chữ để không phải đoán theo màu */}
       {activeStudySession && activeStudySession.remainingNew !== undefined && (
         <div className={`pointer-events-none absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-4 text-xl font-black tabular-nums animate-reveal ${bgActive ? "rounded-full bg-white/85 px-4 py-0.5 backdrop-blur dark:bg-stone-900/75" : ""}`}>
-          <span className="text-sky-500" title="Từ mới còn lại" aria-label={`${activeStudySession.remainingNew} từ mới còn lại`}>{activeStudySession.remainingNew}</span>
-          <span className="text-rose-500" title="Từ ôn còn lại" aria-label={`${activeStudySession.remainingReview} từ ôn còn lại`}>{activeStudySession.remainingReview}</span>
+          <span className="flex items-baseline gap-1 text-sky-500" aria-label={`${activeStudySession.remainingNew} từ mới còn lại`}>{activeStudySession.remainingNew}<span aria-hidden="true" className="text-xs font-semibold text-stone-500 dark:text-stone-400">mới</span></span>
+          <span className="flex items-baseline gap-1 text-rose-500" aria-label={`${activeStudySession.remainingReview} từ ôn còn lại`}>{activeStudySession.remainingReview}<span aria-hidden="true" className="text-xs font-semibold text-stone-500 dark:text-stone-400">ôn</span></span>
         </div>
       )}
 

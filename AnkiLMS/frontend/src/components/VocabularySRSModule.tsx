@@ -1288,7 +1288,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       }
     }
 
-    return <div className="hint-display justify-center md:justify-start">{chars}</div>;
+    return <div className={`hint-display justify-center ${activeImageSrc ? "md:justify-start" : ""}`}>{chars}</div>;
   };
 
   // Smart ChatGPT prompt URL
@@ -1311,8 +1311,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                   className="w-full h-12 rounded-xl bg-sky-500 hover:bg-sky-600 dark:bg-stone-800 dark:hover:bg-stone-700 dark:border dark:border-stone-700 dark:bg-[image:var(--reveal-bg)] dark:hover:brightness-110 font-bold text-sm flex items-center justify-center gap-2 transition cursor-pointer"
                 >
                   <span className="font-extrabold">Hiện đáp án</span>
-                  <kbd className="hidden sm:inline font-mono text-[10px] px-2 py-0.5 rounded border border-white/50 font-bold">
-                    Space / Enter
+                  <kbd className="hidden sm:inline font-sans text-[11px] font-semibold px-1.5 py-0.5 rounded-md bg-white/20">
+                    Space
                   </kbd>
                 </button>
               ) : (
@@ -1499,10 +1499,10 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
             {/* CHẾ ĐỘ 1: THẺ NHẬN DIỆN PHẲNG REVEAL (2 CỘT DESKTOP) */}
             {studyMode === "flip" && (
-              <div className="w-full mb-5 select-text">
-                <div className="relative w-full min-h-[440px] rounded-[24px] border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-[#141b2d] p-6 sm:p-8 flex flex-col justify-between shadow-xs transition-all">
+              <div className={`mx-auto w-full mb-5 select-text ${activeImageSrc ? "max-w-4xl" : "max-w-2xl"}`}>
+                <div className="relative w-full min-h-[22rem] rounded-2xl bg-white dark:bg-[#141b2d] dark:border dark:border-stone-800/80 px-6 pt-10 pb-5 sm:px-10 sm:pt-14 flex flex-col justify-between shadow-[0_1px_2px_rgba(28,25,23,0.05),0_12px_32px_-16px_rgba(28,25,23,0.18)] dark:shadow-none">
                   {/* Body 2 Cột Desktop: Trái Ảnh - Phải Chữ */}
-                  <div className="my-auto py-5 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                  <div className="my-auto pb-8 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
                     {/* Cột Trái: Ảnh Minh Họa Cỡ Lớn */}
                     {activeImageSrc && (
                       <div
@@ -1589,10 +1589,10 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
                       {/* Hộp Ví dụ: Tiếng Hàn luôn hiện, khi lật hiện thêm tiếng Việt */}
                       {currentCard.example && (
-                        <div className="p-4 rounded-xl bg-stone-50 dark:bg-stone-800/50 border border-stone-100 dark:border-stone-700/70 text-center relative group/example">
+                        <div className="mx-auto max-w-prose pt-2 text-center">
                           <div className="flex items-center justify-center gap-2">
                             <p
-                              className="text-sm sm:text-base font-semibold text-stone-800 dark:text-stone-200 leading-relaxed font-noto"
+                              className="text-base sm:text-lg text-stone-600 dark:text-stone-300 leading-relaxed font-noto text-pretty"
                               dangerouslySetInnerHTML={{ __html: cleanHtmlText(currentCard.example) }}
                             />
                             <button
@@ -1601,15 +1601,16 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                                 e.stopPropagation();
                                 playExampleSound();
                               }}
-                              className="w-7 h-7 rounded-full bg-stone-200/70 dark:bg-stone-700/70 hover:bg-sky-500/20 text-stone-600 dark:text-stone-300 hover:text-sky-500 flex items-center justify-center shrink-0 transition cursor-pointer"
-                              title="Nghe phát âm câu ví dụ"
+                              className="w-8 h-8 rounded-full text-stone-400 hover:bg-sky-500/10 hover:text-sky-600 dark:hover:text-sky-400 flex items-center justify-center shrink-0 transition cursor-pointer"
+                              title="Nghe câu ví dụ"
+                              aria-label="Nghe câu ví dụ"
                             >
-                              <Volume2 className="w-3.5 h-3.5" />
+                              <Volume2 aria-hidden="true" className="w-4 h-4" />
                             </button>
                           </div>
                           {isFlipped && currentCard.example_translated && (
                             <p
-                              className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 mt-1 italic border-t border-stone-200/50 dark:border-stone-700/50 pt-1.5 animate-fade-only"
+                              className="text-sm text-stone-500 dark:text-stone-400 mt-1 animate-fade-only"
                               dangerouslySetInnerHTML={{ __html: cleanHtmlText(currentCard.example_translated) }}
                             />
                           )}
@@ -1619,8 +1620,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                   </div>
 
                   {/* Thanh dưới thẻ: Loại từ + Nút Audio + ChatGPT */}
-                  <div className="w-full flex items-center justify-between pt-3.5 border-t border-stone-100 dark:border-stone-800">
-                    <span className="pos-chip">{currentCard.pos || "Từ vựng"}</span>
+                  <div className="w-full flex items-center justify-between pt-4 border-t border-stone-100 dark:border-stone-800">
+                    <span className="text-sm font-medium text-stone-500 dark:text-stone-400">{currentCard.pos || "Từ vựng"}</span>
 
                     <div className="flex items-center gap-2">
                       {/* Nút ChatGPT */}
@@ -1628,20 +1629,21 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                         href={chatGptUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:border-emerald-500/40 transition text-xs font-medium shadow-xs"
-                        title="Hỏi trợ lý AI về từ này"
+                        className="inline-flex h-9 items-center gap-1.5 px-3 rounded-lg text-stone-500 dark:text-stone-400 hover:bg-emerald-500/10 hover:text-emerald-700 dark:hover:text-emerald-400 transition text-sm font-medium"
+                        title="Hỏi ChatGPT về từ này (mở tab mới)"
                       >
-                        <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
-                        <span>ChatGPT</span>
+                        <Sparkles aria-hidden="true" className="w-4 h-4" />
+                        <span>Hỏi ChatGPT</span>
                       </a>
 
                       {/* Nút Loa Phát Âm */}
                       <button
                         onClick={playCurrentSound}
-                        className="w-9 h-9 rounded-full bg-stone-100 dark:bg-stone-800 hover:bg-sky-500/10 text-stone-600 hover:text-sky-600 dark:text-stone-300 dark:hover:text-sky-400 flex items-center justify-center transition shadow-xs cursor-pointer"
-                        title="Nghe phát âm (Phím R)"
+                        className="w-9 h-9 rounded-full text-stone-500 dark:text-stone-400 hover:bg-sky-500/10 hover:text-sky-600 dark:hover:text-sky-400 flex items-center justify-center transition cursor-pointer"
+                        title="Nghe phát âm (phím R)"
+                        aria-label="Nghe phát âm từ"
                       >
-                        <Volume2 className="w-4 h-4" />
+                        <Volume2 aria-hidden="true" className="w-5 h-5" />
                       </button>
                     </div>
                   </div>
@@ -1652,8 +1654,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
             {/* CHẾ ĐỘ 2: THẺ GÕ TỪ (TYPING - 2 CỘT DESKTOP) */}
             {studyMode === "typing" && (
-              <div className="w-full mb-5 p-6 sm:p-8 rounded-[24px] border border-stone-200 dark:border-stone-800/80 bg-white dark:bg-[#141b2d] shadow-xs">
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+              <div className={`mx-auto w-full mb-5 rounded-2xl bg-white dark:bg-[#141b2d] dark:border dark:border-stone-800/80 px-6 py-10 sm:px-10 sm:py-12 shadow-[0_1px_2px_rgba(28,25,23,0.05),0_12px_32px_-16px_rgba(28,25,23,0.18)] dark:shadow-none ${activeImageSrc ? "max-w-4xl" : "max-w-2xl"}`}>
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
                   {/* Cột Trái: Ảnh Gợi Ý */}
                   {activeImageSrc && (
                     <div
@@ -1667,7 +1669,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                           className="w-full h-48 sm:h-56 md:h-64 object-cover rounded-xl shadow-xs"
                         />
                       </div>
-                      <span className="text-[10px] text-stone-400 mt-1.5">Ảnh gợi ý trực quan</span>
+                      <span className="text-xs text-stone-500 dark:text-stone-400 mt-2">Ảnh gợi ý</span>
                     </div>
                   )}
 
@@ -1678,9 +1680,9 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                     } space-y-4 text-center`}
                   >
                     <div>
-                      <span className="pos-chip">{currentCard.pos || "Từ vựng"}</span>
+                      <span className="text-sm font-medium text-stone-500 dark:text-stone-400">{currentCard.pos || "Từ vựng"}</span>
                       <div
-                        className="text-2xl sm:text-3xl font-extrabold mt-2 text-stone-900 dark:text-white"
+                        className="text-3xl sm:text-4xl font-extrabold tracking-tight mt-1 text-stone-900 dark:text-white text-balance"
                         dangerouslySetInnerHTML={{ __html: cleanHtmlText(currentCard.meaning) }}
                       />
                       {currentCard.explain && (
@@ -1692,10 +1694,10 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                     </div>
 
                     {/* Khu Vực Gõ và Gợi Ý Ký Tự Gạch Chân */}
-                    <div className="py-2 space-y-3">
+                    <div className="pt-4 space-y-3">
                       {renderTypingHintDisplay()}
 
-                      <div className="relative w-full max-w-sm mx-auto md:mx-0">
+                      <div className={`relative w-full max-w-sm mx-auto ${activeImageSrc ? "md:mx-0" : ""}`}>
                         <input
                           ref={inputRef}
                           type="text"
@@ -1716,26 +1718,28 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                               inputRef.current?.blur();
                             }
                           }}
-                          placeholder="Gõ từ tiếng Hàn vào đây..."
+                          placeholder="Gõ từ tiếng Hàn…"
+                          aria-label="Gõ từ tiếng Hàn"
+                          lang="ko"
                           autoComplete="off"
                           autoCorrect="off"
                           autoCapitalize="none"
                           spellCheck={false}
-                          className="w-full h-12 text-center text-lg font-semibold bg-stone-100 dark:bg-stone-800/80 border border-stone-200 dark:border-stone-700 rounded-full text-stone-900 dark:text-white placeholder-stone-400 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition"
+                          className="w-full h-12 text-center text-lg font-semibold font-noto bg-stone-50 dark:bg-stone-800/80 border border-stone-300 dark:border-stone-700 rounded-xl text-stone-900 dark:text-white placeholder:font-sans placeholder:font-medium placeholder:text-stone-400 focus:outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-500/15 transition"
                         />
                       </div>
 
-                      <div className="flex items-center justify-center md:justify-start gap-2">
+                      <div className={`flex items-center justify-center gap-2 ${activeImageSrc ? "md:justify-start" : ""}`}>
                         <button
                           type="button"
                           onClick={handleGiveHint}
-                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700/80 text-xs font-semibold text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white transition shadow-xs cursor-pointer"
+                          className="inline-flex h-9 items-center gap-1.5 px-3 rounded-lg text-sm font-medium text-stone-500 dark:text-stone-400 hover:bg-amber-500/10 hover:text-amber-700 dark:hover:text-amber-300 transition cursor-pointer"
                         >
-                          <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
+                          <Lightbulb aria-hidden="true" className="w-4 h-4" />
                           <span>Gợi ý 1 ký tự</span>
                         </button>
                       </div>
-                      {isFlipped && <div role="status" className={`rounded-xl p-3 text-sm font-bold ${typedInput.trim().normalize("NFC") === cleanTextOnly(currentCard.word).normalize("NFC") ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300" : "bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300"}`}>
+                      {isFlipped && <div role="status" className={`w-full max-w-sm mx-auto ${activeImageSrc ? "md:mx-0" : ""} rounded-xl p-3 text-sm font-bold ${typedInput.trim().normalize("NFC") === cleanTextOnly(currentCard.word).normalize("NFC") ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300" : "bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300"}`}>
                         {typedInput.trim().normalize("NFC") === cleanTextOnly(currentCard.word).normalize("NFC") ? "Đúng rồi" : "Chưa đúng"} · {cleanTextOnly(currentCard.word)}
                       </div>}
                     </div>
@@ -1752,7 +1756,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
               {/* Thanh hành động luôn cố định sát đáy màn hình ở mọi kích cỡ, không đổi vị trí khi thẻ lật hay nội dung dài ngắn khác nhau. */}
               {hydrated && createPortal(
                 <div className="fixed right-0 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 px-3" style={{ left: sidebarWidth }}>
-                  <div className="mx-auto max-w-xl rounded-2xl border border-stone-200 dark:border-stone-700 bg-white/95 dark:bg-stone-900/95 backdrop-blur p-1.5 shadow-lg">
+                  <div className="mx-auto max-w-md [&_button]:shadow-[0_8px_20px_-10px_rgba(28,25,23,0.45)]">
                     {studyActions}
                   </div>
                 </div>,

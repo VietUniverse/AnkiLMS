@@ -1367,23 +1367,7 @@ html {
   50% { opacity: 0.35; }
 }
 
-.pos-chip {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #0284c7;
-  background: rgba(2, 132, 199, 0.08);
-  border: 1px solid rgba(2, 132, 199, 0.2);
-  padding: 3px 10px;
-  border-radius: 9999px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
 
-.dark .pos-chip {
-  color: #38bdf8;
-  background: rgba(56, 189, 248, 0.12);
-  border-color: rgba(56, 189, 248, 0.25);
-}
 
 @keyframes haechiRun {
   0%, 100% { transform: translateX(-18px) translateY(0) scaleX(1); }
