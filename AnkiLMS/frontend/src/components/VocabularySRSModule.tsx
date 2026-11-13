@@ -158,6 +158,11 @@ const cleanHtmlText = (htmlContent?: string): string => {
   return withoutAudio;
 };
 
+// Dấu câu trong đáp án chế độ gõ: hiện sẵn trên dải gợi ý, không bắt người học gõ.
+const TYPING_PUNCTUATION = /[\p{P}~]/u;
+const stripTypingPunctuation = (str: string): string =>
+  str.normalize("NFC").replace(/[\p{P}~]/gu, "").replace(/\s+/g, " ").trim();
+
 const cleanTextOnly = (str?: string): string => {
   if (!str) return "";
   return str.replace(/<[^>]*>/g, "").replace(/\[sound:.*?\]/gi, "").trim();
@@ -913,6 +918,9 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   // Speak each card when a study session starts and whenever the learner moves
   // to another card. Depend on its text/index so unrelated renders do not replay it.
   const currentWordForAudio = currentCard ? cleanTextOnly(currentCard.word) : "";
+  // Chế độ gõ: dấu câu (. ? ! , …) hiện sẵn, người học chỉ gõ phần chữ.
+  const typingAnswer = currentCard ? stripTypingPunctuation(cleanTextOnly(currentCard.word)) : "";
+  const isTypedCorrect = (typed: string) => stripTypingPunctuation(typed) === typingAnswer;
   const currentAudioWordField = currentCard?.audio_word || "";
   useEffect(() => {
     // Thẻ Typing: đọc to từ sẽ lộ đáp án, nên không tự phát.
@@ -924,7 +932,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   // Handle Response (Quên: false | Thuộc: true)
   const handleResponse = useCallback((isMastered: boolean, customRating?: FSRSRating) => {
     if (!currentCard) return;
-    if (studyMode === "typing" && isMastered && typedInput.trim().normalize("NFC") !== cleanTextOnly(currentCard.word).normalize("NFC")) return;
+    if (studyMode === "typing" && isMastered && !isTypedCorrect(typedInput)) return;
     const wordKey = currentCard.word;
     const activeKey = stateKeyOf(currentCard);
     if (lastRatedCardRef.current === activeKey || Date.now() - answerShownAtRef.current < 450) return;
@@ -1022,11 +1030,10 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   // Give typing hint
   const handleGiveHint = () => {
     if (!currentCard?.word) return;
-    const target = cleanTextOnly(currentCard.word);
-    if (typedInput.length < target.length) {
-      const nextTyped = typedInput + target[typedInput.length];
+    if (typedInput.length < typingAnswer.length) {
+      const nextTyped = typedInput + typingAnswer[typedInput.length];
       setTypedInput(nextTyped);
-      if (nextTyped.trim().normalize("NFC") === target.normalize("NFC")) {
+      if (isTypedCorrect(nextTyped)) {
         revealAnswer();
         inputRef.current?.blur();
       } else {
@@ -1250,12 +1257,22 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   // Render typing hint display
   const renderTypingHintDisplay = () => {
     if (!currentCard?.word) return null;
-    const target = cleanTextOnly(currentCard.word);
-    const typed = typedInput;
+    const target = cleanTextOnly(currentCard.word).normalize("NFC");
+    const typed = typedInput.normalize("NFC");
 
     const chars = [];
+    let t = 0; // vị trí trong chuỗi người học gõ (không tính dấu câu)
     for (let i = 0; i < target.length; i++) {
       const targetChar = target[i];
+      if (TYPING_PUNCTUATION.test(targetChar)) {
+        chars.push(
+          <span key={i} className="ch text-stone-400 dark:text-stone-500">
+            {targetChar}
+          </span>
+        );
+        continue;
+      }
+      const ti = t++;
       if (targetChar === " ") {
         chars.push(
           <span key={i} className="inline-block w-3 text-center text-stone-300 dark:text-stone-700">
@@ -1265,9 +1282,15 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
         continue;
       }
 
-      const inputChar = typed[i];
-      if (inputChar === undefined) {
-        const isCursor = i === typed.length;
+      const inputChar = typed[ti];
+      if (inputChar === undefined && isFlipped) {
+        chars.push(
+          <span key={i} className="ch incorrect">
+            {targetChar}
+          </span>
+        );
+      } else if (inputChar === undefined) {
+        const isCursor = ti === typed.length;
         chars.push(
           <span key={i} className={`ch blank ${isCursor ? "active-cursor" : ""}`}>
             _
@@ -1282,7 +1305,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       } else {
         chars.push(
           <span key={i} className="ch incorrect">
-            {inputChar}
+            {isFlipped ? targetChar : inputChar}
           </span>
         );
       }
@@ -1680,9 +1703,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                     } space-y-4 text-center`}
                   >
                     <div>
-                      <span className="text-sm font-medium text-stone-500 dark:text-stone-400">{currentCard.pos || "Từ vựng"}</span>
                       <div
-                        className="text-3xl sm:text-4xl font-extrabold tracking-tight mt-1 text-stone-900 dark:text-white text-balance"
+                        className="text-3xl sm:text-4xl font-extrabold tracking-tight text-stone-900 dark:text-white text-balance"
                         dangerouslySetInnerHTML={{ __html: cleanHtmlText(currentCard.meaning) }}
                       />
                       {currentCard.explain && (
@@ -1705,8 +1727,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                           onChange={(e) => {
                             const val = e.target.value;
                             setTypedInput(val);
-                            const target = cleanTextOnly(currentCard.word);
-                            if (val.trim().normalize("NFC") === target.normalize("NFC")) {
+                            if (isTypedCorrect(val)) {
                               revealAnswer();
                               inputRef.current?.blur();
                             }
@@ -1729,7 +1750,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                         />
                       </div>
 
-                      <div className={`flex items-center justify-center gap-2 ${activeImageSrc ? "md:justify-start" : ""}`}>
+                      {!isFlipped && <div className={`flex items-center justify-center gap-2 ${activeImageSrc ? "md:justify-start" : ""}`}>
                         <button
                           type="button"
                           onClick={handleGiveHint}
@@ -1738,13 +1759,12 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                           <Lightbulb aria-hidden="true" className="w-4 h-4" />
                           <span>Gợi ý 1 ký tự</span>
                         </button>
-                      </div>
-                      {isFlipped && <div role="status" className={`w-full max-w-sm mx-auto ${activeImageSrc ? "md:mx-0" : ""} rounded-xl p-3 text-sm font-bold ${typedInput.trim().normalize("NFC") === cleanTextOnly(currentCard.word).normalize("NFC") ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300" : "bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300"}`}>
-                        {typedInput.trim().normalize("NFC") === cleanTextOnly(currentCard.word).normalize("NFC") ? "Đúng rồi" : "Chưa đúng"} · {cleanTextOnly(currentCard.word)}
                       </div>}
                     </div>
                   </div>
                 </div>
+                {/* Chủ đề ít khi cần nhìn nên đặt cuối thẻ. */}
+                <p className="mt-8 border-t border-stone-100 dark:border-stone-800 pt-4 text-center text-sm font-medium text-stone-500 dark:text-stone-400">{currentCard.pos || "Từ vựng"}</p>
               </div>
             )}
 
