@@ -1719,7 +1719,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                     <div className="pt-4 space-y-3">
                       {renderTypingHintDisplay()}
 
-                      <div className={`relative w-full max-w-sm mx-auto ${activeImageSrc ? "md:mx-0" : ""}`}>
+                      {!(isFlipped && isTypedCorrect(typedInput)) && <div className={`relative w-full max-w-sm mx-auto ${activeImageSrc ? "md:mx-0" : ""}`}>
                         <input
                           ref={inputRef}
                           type="text"
@@ -1748,7 +1748,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                           spellCheck={false}
                           className="w-full h-12 text-center text-lg font-semibold font-noto bg-stone-50 dark:bg-stone-800/80 border border-stone-300 dark:border-stone-700 rounded-xl text-stone-900 dark:text-white placeholder:font-sans placeholder:font-medium placeholder:text-stone-400 focus:outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-500/15 transition"
                         />
-                      </div>
+                      </div>}
 
                       {!isFlipped && <div className={`flex items-center justify-center gap-2 ${activeImageSrc ? "md:justify-start" : ""}`}>
                         <button
@@ -1764,7 +1764,32 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
                   </div>
                 </div>
                 {/* Chủ đề ít khi cần nhìn nên đặt cuối thẻ. */}
-                <p className="mt-8 border-t border-stone-100 dark:border-stone-800 pt-4 text-center text-sm font-medium text-stone-500 dark:text-stone-400">{currentCard.pos || "Từ vựng"}</p>
+                <div className="mt-8 flex min-h-9 items-center justify-between border-t border-stone-100 dark:border-stone-800 pt-4">
+                  <span className="text-sm font-medium text-stone-500 dark:text-stone-400">{currentCard.pos || "Từ vựng"}</span>
+                  {isFlipped && (
+                    <div className="flex items-center gap-2 animate-fade-only">
+                      <a
+                        href={chatGptUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex h-9 items-center gap-1.5 px-3 rounded-lg text-stone-500 dark:text-stone-400 hover:bg-emerald-500/10 hover:text-emerald-700 dark:hover:text-emerald-400 transition text-sm font-medium"
+                        title="Hỏi ChatGPT về từ này (mở tab mới)"
+                      >
+                        <Sparkles aria-hidden="true" className="w-4 h-4" />
+                        <span>Hỏi ChatGPT</span>
+                      </a>
+                      <button
+                        type="button"
+                        onClick={playCurrentSound}
+                        className="w-9 h-9 rounded-full text-stone-500 dark:text-stone-400 hover:bg-sky-500/10 hover:text-sky-600 dark:hover:text-sky-400 flex items-center justify-center transition cursor-pointer"
+                        title="Nghe phát âm (phím R)"
+                        aria-label="Nghe phát âm từ"
+                      >
+                        <Volume2 aria-hidden="true" className="w-5 h-5" />
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
