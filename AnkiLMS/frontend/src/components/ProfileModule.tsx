@@ -90,7 +90,6 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
     { label: "Tổng thời gian học", value: formatDuration(summary?.duration_seconds || 0), hint: `${summary?.session_count || 0} phiên học`, icon: Clock3, color: "text-sky-500", bg: "bg-sky-400/10" },
     { label: "Câu đã luyện", value: (summary?.cards_reviewed || 0).toLocaleString("vi-VN"), hint: `${accuracy}% chính xác`, icon: CheckCircle2, color: "text-emerald-500", bg: "bg-emerald-400/10" },
     { label: "Trí nhớ", value: retention === null ? "—" : `${retention}%`, hint: "Mục tiêu 90%", icon: Brain, color: "text-rose-500", bg: "bg-rose-400/10" },
-    { label: "Kim cương", value: (currentUser.gems || 0).toLocaleString("vi-VN"), hint: `${(currentUser.xp || 0).toLocaleString("vi-VN")} XP tích lũy`, icon: Gem, color: "text-violet-500", bg: "bg-violet-400/10" },
   ];
 
   const card = "rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/70";
@@ -131,6 +130,7 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
               <span className="rounded-full bg-amber-500/10 px-2.5 py-1 text-amber-600 dark:text-amber-300">{rankLabel}</span>
               <span className="rounded-full bg-sky-500/10 px-2.5 py-1 text-sky-600 dark:text-sky-300"><Zap className="mr-1 inline h-3.5 w-3.5" />{(currentUser.xp || 0).toLocaleString("vi-VN")} XP</span>
               <span className="rounded-full bg-orange-500/10 px-2.5 py-1 text-orange-600 dark:text-orange-300"><Flame className="mr-1 inline h-3.5 w-3.5" />{currentUser.streak || 0} ngày</span>
+              <span className="rounded-full bg-violet-500/10 px-2.5 py-1 text-violet-600 dark:text-violet-300"><Gem className="mr-1 inline h-3.5 w-3.5" />{(currentUser.gems || 0).toLocaleString("vi-VN")} Kim cương</span>
               {currentUser.active_badge && <span className="rounded-full bg-fuchsia-500/10 px-2.5 py-1 text-fuchsia-600 dark:text-fuchsia-300">🏅 {badgeNames[currentUser.active_badge] || "Huy hiệu Haechi"}</span>}
             </div>
           </div>
@@ -144,7 +144,7 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
       </section>
 
       {/* Số liệu */}
-      <section className={`${card} grid grid-cols-2 divide-x divide-y divide-stone-200 dark:divide-stone-800 lg:grid-cols-4 lg:divide-y-0 overflow-hidden`}>
+      <section className={`${card} grid grid-cols-2 divide-x divide-y divide-stone-200 dark:divide-stone-800 lg:grid-cols-3 lg:divide-y-0 overflow-hidden`}>
         {statsCards.map(({ label, value, hint, icon: Icon, color }) => (
           <div key={label} className="p-4 text-center">
             <p className="flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400"><Icon className={`h-3.5 w-3.5 ${color}`} />{label}</p>
