@@ -311,57 +311,87 @@ export function AdminClassManager({
     );
   });
 
+  const totalMembers = classes.reduce((sum, item) => sum + (item.members || 0), 0);
+  const totalAssignments = classes.reduce((sum, item) => sum + (item.assignments || 0), 0);
+  const stats = [
+    { label: "Lớp học", value: classes.length, icon: <GraduationCap className="h-4 w-4" />, tone: "text-blue-600 dark:text-sky-300 bg-blue-500/10" },
+    { label: "Thành viên", value: totalMembers, icon: <Users className="h-4 w-4" />, tone: "text-emerald-600 dark:text-emerald-300 bg-emerald-500/10" },
+    { label: "Bài tập", value: totalAssignments, icon: <BookOpen className="h-4 w-4" />, tone: "text-violet-600 dark:text-violet-300 bg-violet-500/10" },
+  ];
+
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       {/* Top Toolbar */}
-      <div className="card-duo rounded-2xl p-5 flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h2 className="text-lg font-black text-stone-900 dark:text-white flex items-center gap-2">
-            <GraduationCap className="h-5 w-5 text-blue-500" />
-            Quản lý Lớp học & Bài tập ({classes.length} lớp)
-          </h2>
-          <p className="mt-1 text-xs text-stone-500 dark:text-slate-400">
-            Tạo lớp mới, thêm học viên bằng email, duyệt yêu cầu vào lớp, phân quyền giáo viên và quản lý bài tập được giao.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          {onOpenThthPanel && (
+      <div className="card-duo rounded-2xl p-4 sm:p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h2 className="flex items-center gap-2 text-base font-black text-stone-900 dark:text-white sm:text-lg">
+              <GraduationCap className="h-5 w-5 text-blue-500" />
+              Quản lý lớp học
+            </h2>
+            <p className="mt-1 text-xs text-stone-500 dark:text-slate-400">
+              Tạo lớp, duyệt học viên và giao bài tập.
+            </p>
+          </div>
+          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
+            {onOpenThthPanel && (
+              <button type="button" onClick={onOpenThthPanel} className={`${ghostBtnCls} flex-1 sm:flex-none`}>
+                <BookOpen className="h-4 w-4 text-blue-500" />
+                Giao bài THTH
+              </button>
+            )}
             <button
               type="button"
-              onClick={onOpenThthPanel}
-              className={ghostBtnCls}
+              onClick={() => setShowCreateModal(true)}
+              className="btn-duo btn-duo-primary inline-flex flex-1 items-center justify-center gap-2 px-4 py-2.5 text-xs font-bold sm:flex-none"
             >
-              <BookOpen className="h-4 w-4 text-blue-500" />
-              Giao bài Tiếng Hàn Tổng Hợp
+              <Plus className="h-4 w-4" />
+              Tạo lớp mới
             </button>
-          )}
-          <button
-            type="button"
-            onClick={() => setShowCreateModal(true)}
-            className="btn-duo btn-duo-primary inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold"
-          >
-            <Plus className="h-4 w-4" />
-            Tạo lớp học mới
-          </button>
+          </div>
+        </div>
+
+        <div className="mt-4 grid grid-cols-3 gap-2">
+          {stats.map((stat) => (
+            <div
+              key={stat.label}
+              className="flex items-center gap-2.5 rounded-xl border border-stone-200/80 dark:border-slate-800 bg-stone-50/60 dark:bg-[#101d3d] px-3 py-2.5"
+            >
+              <span className={`shrink-0 rounded-lg p-1.5 ${stat.tone}`}>{stat.icon}</span>
+              <div className="min-w-0">
+                <p className="text-base font-black leading-none text-stone-900 dark:text-white">{stat.value}</p>
+                <p className="mt-1 truncate text-[10px] font-bold uppercase tracking-wide text-stone-400 dark:text-slate-500">
+                  {stat.label}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Search bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <label className="flex flex-1 min-w-[260px] items-center gap-2 rounded-xl border border-stone-200 dark:border-slate-800 bg-white dark:bg-[#132247] px-3.5 py-2 shadow-inner">
-          <Search className="h-4 w-4 text-stone-400" />
+      {/* Search */}
+      <div className="flex items-center gap-3">
+        <label className="flex flex-1 items-center gap-2 rounded-xl border border-stone-200 dark:border-slate-800 bg-white dark:bg-[#132247] px-3.5 py-2.5 shadow-inner">
+          <Search className="h-4 w-4 shrink-0 text-stone-400" />
           <input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Tìm theo tên lớp, mã lớp (VD: HAECHI-...), tên hoặc email chủ lớp..."
-            className="w-full bg-transparent text-xs text-stone-900 dark:text-white outline-none"
+            placeholder="Tìm theo tên lớp, mã lớp, chủ lớp hoặc email..."
+            className="w-full bg-transparent text-xs text-stone-900 outline-none dark:text-white"
           />
           {searchQuery && (
-            <button type="button" onClick={() => setSearchQuery("")} className="text-stone-400 hover:text-stone-600">
+            <button
+              type="button"
+              onClick={() => setSearchQuery("")}
+              className="shrink-0 text-stone-400 transition hover:text-stone-600 dark:hover:text-slate-200"
+            >
               <X className="h-4 w-4" />
             </button>
           )}
         </label>
+        <span className="hidden shrink-0 text-[11px] font-bold text-stone-400 dark:text-slate-500 sm:inline">
+          {filteredClasses.length}/{classes.length} lớp
+        </span>
       </div>
 
       {/* Class List */}
@@ -378,119 +408,135 @@ export function AdminClassManager({
                 isExpanded ? "ring-2 ring-blue-500/40" : ""
               }`}
             >
-              <div className="flex flex-col gap-4 p-4 sm:p-5 lg:flex-row lg:items-center lg:justify-between">
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="text-base font-black text-stone-900 dark:text-white">
-                      {item.name}
-                    </h3>
+              <div className="p-4 sm:p-5">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+                      <h3 className="truncate text-sm font-black text-stone-900 dark:text-white sm:text-base">
+                        {item.name}
+                      </h3>
+                      <button
+                        type="button"
+                        onClick={() => copyClassCode(item.code)}
+                        title="Sao chép mã lớp"
+                        className="inline-flex items-center gap-1.5 rounded-lg bg-blue-500/10 px-2 py-0.5 font-mono text-[11px] font-extrabold text-blue-600 transition hover:bg-blue-500/20 dark:text-sky-300 cursor-pointer"
+                      >
+                        {item.code}
+                        {copiedCode === item.code ? (
+                          <Check className="h-3 w-3 text-emerald-500" />
+                        ) : (
+                          <Copy className="h-3 w-3 opacity-70" />
+                        )}
+                      </button>
+                    </div>
+                    <p className="mt-1 truncate text-[11px] text-stone-500 dark:text-slate-400">
+                      Chủ lớp:{" "}
+                      <strong className="font-bold text-stone-700 dark:text-slate-200">{item.ownerName}</strong>
+                      {item.ownerEmail ? ` · ${item.ownerEmail}` : ""} · Tạo {String(item.createdAt).slice(0, 10)}
+                    </p>
+                  </div>
+
+                  <div className="flex shrink-0 items-center gap-1.5">
                     <button
                       type="button"
-                      onClick={() => copyClassCode(item.code)}
-                      title="Sao chép mã lớp"
-                      className="inline-flex items-center gap-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 px-2.5 py-1 font-mono text-xs font-extrabold text-blue-600 dark:text-sky-300 transition cursor-pointer"
+                      onClick={() => {
+                        setEditingClass(item);
+                        setEditName(item.name);
+                        setEditDescription(item.description || "");
+                      }}
+                      className={`${ghostBtnCls} px-2.5`}
+                      title="Sửa thông tin lớp"
                     >
-                      {item.code}
-                      {copiedCode === item.code ? (
-                        <Check className="h-3 w-3 text-emerald-500" />
+                      <Pencil className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      disabled={busy === `delete:${item.id}`}
+                      onClick={() => void handleDeleteClass(item)}
+                      className={`${dangerBtnCls} px-2.5`}
+                      title="Xóa lớp học"
+                    >
+                      {busy === `delete:${item.id}` ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
                       ) : (
-                        <Copy className="h-3 w-3 opacity-70" />
+                        <Trash2 className="h-3.5 w-3.5" />
                       )}
                     </button>
-                    <span className="rounded-full bg-stone-100 dark:bg-slate-800 px-2.5 py-0.5 text-[11px] font-bold text-stone-600 dark:text-slate-300">
+                  </div>
+                </div>
+
+                {item.description && (
+                  <p className="mt-2 line-clamp-2 text-xs leading-5 text-stone-600 dark:text-slate-300">
+                    {item.description}
+                  </p>
+                )}
+
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-stone-100 px-2.5 py-1 text-[11px] font-bold text-stone-600 dark:bg-slate-800 dark:text-slate-300">
+                      <Users className="h-3 w-3" />
                       {item.members} thành viên
                     </span>
-                    <span className="rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-bold text-emerald-600 dark:text-emerald-300">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-300">
+                      <BookOpen className="h-3 w-3" />
                       {item.assignments} bài tập
                     </span>
                   </div>
-                  <p className="mt-1.5 text-xs text-stone-600 dark:text-slate-300">
-                    {item.description || "Chưa có mô tả lớp học"}
-                  </p>
-                  <p className="mt-1 text-[11px] text-stone-400 dark:text-slate-500">
-                    Chủ lớp: <strong className="text-stone-600 dark:text-slate-300">{item.ownerName}</strong> ({item.ownerEmail}) · Tạo ngày {String(item.createdAt).slice(0, 10)}
-                  </p>
-                </div>
 
-                <div className="flex flex-wrap items-center gap-2 shrink-0">
                   <button
                     type="button"
                     onClick={() => toggleExpandClass(item.id)}
-                    className={`inline-flex items-center gap-1.5 rounded-xl border px-3.5 py-2 text-xs font-bold transition cursor-pointer ${
+                    className={`inline-flex w-full items-center justify-center gap-1.5 rounded-xl border px-3.5 py-2 text-xs font-bold transition cursor-pointer sm:w-auto ${
                       isExpanded
                         ? "border-blue-500 bg-blue-600 text-white"
-                        : "border-blue-200 dark:border-blue-800/60 bg-blue-50/70 dark:bg-blue-950/40 text-blue-600 dark:text-sky-300 hover:bg-blue-100"
+                        : "border-blue-200 bg-blue-50/70 text-blue-600 hover:bg-blue-100 dark:border-blue-800/60 dark:bg-blue-950/40 dark:text-sky-300"
                     }`}
                   >
-                    <Users className="h-3.5 w-3.5" />
-                    {isExpanded ? "Đóng chi tiết" : "Quản lý học viên & bài tập"}
+                    {isExpanded ? "Đóng chi tiết" : "Quản lý lớp"}
                     {isExpanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEditingClass(item);
-                      setEditName(item.name);
-                      setEditDescription(item.description || "");
-                    }}
-                    className={ghostBtnCls}
-                  >
-                    <Pencil className="h-3.5 w-3.5" />
-                    Sửa
-                  </button>
-                  <button
-                    type="button"
-                    disabled={busy === `delete:${item.id}`}
-                    onClick={() => void handleDeleteClass(item)}
-                    className={dangerBtnCls}
-                  >
-                    {busy === `delete:${item.id}` ? (
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    ) : (
-                      <Trash2 className="h-3.5 w-3.5" />
-                    )}
-                    Xóa
                   </button>
                 </div>
               </div>
 
-              {/* Expanded Detail Drawer */}
+              {/* Expanded Detail */}
               {isExpanded && (
-                <div className="border-t border-stone-200 dark:border-slate-800 bg-stone-50/60 dark:bg-slate-950/50 p-4 sm:p-6">
+                <div className="border-t border-stone-200 bg-stone-50/70 px-4 pb-5 pt-4 dark:border-slate-800 dark:bg-slate-950/50 sm:px-5">
                   {isLoadingDetail && !detail ? (
-                    <div className="py-8 text-center text-xs text-stone-500">
+                    <div className="py-10 text-center text-xs text-stone-500 dark:text-slate-400">
                       <Loader2 className="mx-auto mb-2 h-5 w-5 animate-spin text-blue-500" />
-                      Đang tải danh sách thành viên và bài tập...
+                      Đang tải thành viên và bài tập...
                     </div>
                   ) : detail ? (
-                    <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-                      {/* Left Column: Members Management */}
-                      <div className="space-y-4">
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                          <h4 className="text-sm font-black text-stone-900 dark:text-white flex items-center gap-2">
+                    <div className="grid gap-4 xl:grid-cols-2">
+                      {/* Members */}
+                      <section className="space-y-3 rounded-2xl border border-stone-200 bg-white p-4 dark:border-slate-800 dark:bg-[#101d3d]">
+                        <div className="flex items-center justify-between gap-2">
+                          <h4 className="flex items-center gap-2 text-sm font-black text-stone-900 dark:text-white">
                             <Users className="h-4 w-4 text-blue-500" />
-                            Thành viên trong lớp ({detail.members.length})
+                            Thành viên
+                            <span className="rounded-full bg-stone-100 px-2 py-0.5 text-[10px] font-black text-stone-500 dark:bg-slate-800 dark:text-slate-300">
+                              {detail.members.length}
+                            </span>
                           </h4>
                           <button
                             type="button"
                             onClick={() => void loadClassDetail(item.id)}
-                            className="text-xs font-bold text-blue-600 dark:text-sky-400 hover:underline cursor-pointer"
+                            className="text-[11px] font-bold text-blue-600 hover:underline dark:text-sky-400 cursor-pointer"
                           >
                             Làm mới
                           </button>
                         </div>
 
-                        {/* Add member form */}
                         <form
                           onSubmit={(e) => void handleAddMember(e, item.id)}
-                          className="flex flex-wrap gap-2 rounded-xl border border-stone-200 dark:border-slate-800 bg-white dark:bg-[#101d3d] p-3"
+                          className="flex flex-wrap gap-2 rounded-xl border border-stone-200 bg-stone-50/70 p-2 dark:border-slate-800 dark:bg-[#0d1930]"
                         >
                           <input
                             required
                             value={newMemberIdentifier}
                             onChange={(e) => setNewMemberIdentifier(e.target.value)}
-                            placeholder="Nhập email học viên để thêm thẳng vào lớp..."
-                            className="flex-1 min-w-[200px] bg-transparent px-2 py-1 text-xs text-stone-900 dark:text-white outline-none"
+                            placeholder="Email học viên..."
+                            className="min-w-[140px] flex-1 bg-transparent px-2 py-1.5 text-xs text-stone-900 outline-none dark:text-white"
                           />
                           <select
                             value={newMemberRole}
@@ -498,76 +544,76 @@ export function AdminClassManager({
                             className={selectCls}
                           >
                             <option value="student">Học viên</option>
-                            <option value="teacher">Giáo viên phụ trách</option>
+                            <option value="teacher">Giáo viên</option>
                           </select>
                           <button
                             type="submit"
                             disabled={busy === `add-member:${item.id}`}
-                            className="btn-duo btn-duo-primary inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold"
+                            className="btn-duo btn-duo-primary inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold"
                           >
                             {busy === `add-member:${item.id}` ? (
                               <Loader2 className="h-3.5 w-3.5 animate-spin" />
                             ) : (
                               <UserPlus className="h-3.5 w-3.5" />
                             )}
-                            Thêm vào lớp
+                            Thêm
                           </button>
                         </form>
 
-                        {/* Member table */}
-                        <div className="max-h-96 overflow-y-auto divide-y divide-stone-200 dark:divide-slate-800 rounded-xl border border-stone-200 dark:border-slate-800 bg-white dark:bg-[#101d3d]">
+                        <div className="max-h-[380px] divide-y divide-stone-100 overflow-y-auto rounded-xl border border-stone-200 dark:divide-slate-800 dark:border-slate-800">
                           {detail.members.map((m) => {
                             const isPending = m.role === "pending";
                             const isOwner = m.userId === detail.class.ownerId || m.role === "owner";
+                            const initials = (m.name || m.email || "?")
+                              .trim()
+                              .split(/\s+/)
+                              .slice(0, 2)
+                              .map((part) => part[0])
+                              .join("")
+                              .toUpperCase();
                             return (
-                              <div
-                                key={m.userId}
-                                className="flex flex-wrap items-center justify-between gap-3 p-3 text-xs"
-                              >
-                                <div className="min-w-0">
-                                  <div className="flex items-center gap-2">
-                                    <span className="font-bold text-stone-900 dark:text-white">{m.name}</span>
+                              <div key={m.userId} className="flex items-center gap-2.5 p-2.5 text-xs">
+                                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-stone-100 text-[11px] font-black text-stone-600 dark:bg-slate-800 dark:text-slate-200">
+                                  {initials}
+                                </span>
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex flex-wrap items-center gap-1.5">
+                                    <span className="truncate font-bold text-stone-900 dark:text-white">{m.name}</span>
                                     {isOwner && (
-                                      <span className="rounded-md bg-violet-500/15 px-2 py-0.5 text-[10px] font-extrabold text-violet-600 dark:text-violet-300">
+                                      <span className="inline-flex items-center gap-0.5 rounded-md bg-violet-500/15 px-1.5 py-0.5 text-[10px] font-extrabold text-violet-600 dark:text-violet-300">
+                                        <ShieldCheck className="h-2.5 w-2.5" />
                                         Chủ lớp
                                       </span>
                                     )}
                                     {isPending && (
-                                      <span className="rounded-md bg-amber-500/15 px-2 py-0.5 text-[10px] font-extrabold text-amber-600 dark:text-amber-300">
+                                      <span className="rounded-md bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-extrabold text-amber-600 dark:text-amber-300">
                                         Chờ duyệt
                                       </span>
                                     )}
                                   </div>
-                                  <p className="text-[11px] text-stone-500 dark:text-slate-400">
-                                    {m.email} · {m.xp} XP · Chuỗi {m.streak || 0} ngày
+                                  <p className="truncate text-[11px] text-stone-500 dark:text-slate-400">
+                                    {m.email} · {m.xp} XP · chuỗi {m.streak || 0} ngày
                                   </p>
                                 </div>
-                                <div className="flex items-center gap-2">
+                                <div className="flex shrink-0 items-center gap-1.5">
                                   {isPending ? (
                                     <button
                                       type="button"
                                       disabled={busy === `approve_member:${m.userId}`}
-                                      onClick={() =>
-                                        void handleMemberAction(item.id, m.userId, "approve_member")
-                                      }
-                                      className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 px-2.5 py-1.5 text-xs font-bold text-white cursor-pointer"
+                                      onClick={() => void handleMemberAction(item.id, m.userId, "approve_member")}
+                                      className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-2 py-1.5 text-[11px] font-bold text-white transition hover:bg-emerald-500 cursor-pointer"
                                     >
-                                      <UserCheck className="h-3.5 w-3.5" />
-                                      Duyệt vào lớp
+                                      <UserCheck className="h-3 w-3" />
+                                      Duyệt
                                     </button>
                                   ) : !isOwner ? (
                                     <select
                                       value={m.role}
                                       disabled={busy === `change_role:${m.userId}`}
                                       onChange={(e) =>
-                                        void handleMemberAction(
-                                          item.id,
-                                          m.userId,
-                                          "change_role",
-                                          e.target.value,
-                                        )
+                                        void handleMemberAction(item.id, m.userId, "change_role", e.target.value)
                                       }
-                                      className={selectCls}
+                                      className="rounded-lg border border-stone-200 bg-white px-1.5 py-1 text-[11px] font-bold text-stone-700 outline-none dark:border-slate-700 dark:bg-[#132247] dark:text-slate-200"
                                     >
                                       <option value="student">Học viên</option>
                                       <option value="teacher">Giáo viên</option>
@@ -583,10 +629,10 @@ export function AdminClassManager({
                                           void handleMemberAction(item.id, m.userId, "remove_member");
                                         }
                                       }}
-                                      className={dangerBtnCls}
+                                      className={`${dangerBtnCls} px-1.5 py-1.5`}
                                       title="Xóa khỏi lớp"
                                     >
-                                      <Trash2 className="h-3.5 w-3.5" />
+                                      <Trash2 className="h-3 w-3" />
                                     </button>
                                   )}
                                 </div>
@@ -594,90 +640,88 @@ export function AdminClassManager({
                             );
                           })}
                           {detail.members.length === 0 && (
-                            <p className="p-5 text-center text-xs text-stone-400">
+                            <p className="p-6 text-center text-xs text-stone-400 dark:text-slate-500">
                               Chưa có thành viên nào trong lớp.
                             </p>
                           )}
                         </div>
-                      </div>
+                      </section>
 
-                      {/* Right Column: Class Assignments */}
-                      <div className="space-y-4">
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                          <h4 className="text-sm font-black text-stone-900 dark:text-white flex items-center gap-2">
+                      {/* Assignments */}
+                      <section className="space-y-3 rounded-2xl border border-stone-200 bg-white p-4 dark:border-slate-800 dark:bg-[#101d3d]">
+                        <div className="flex items-center justify-between gap-2">
+                          <h4 className="flex items-center gap-2 text-sm font-black text-stone-900 dark:text-white">
                             <BookOpen className="h-4 w-4 text-emerald-500" />
-                            Bài tập đã giao ({detail.assignments.length})
+                            Bài tập
+                            <span className="rounded-full bg-stone-100 px-2 py-0.5 text-[10px] font-black text-stone-500 dark:bg-slate-800 dark:text-slate-300">
+                              {detail.assignments.length}
+                            </span>
                           </h4>
                           {onOpenThthPanel && (
                             <button
                               type="button"
                               onClick={onOpenThthPanel}
-                              className="text-xs font-bold text-blue-600 dark:text-sky-400 hover:underline cursor-pointer"
+                              className="text-[11px] font-bold text-blue-600 hover:underline dark:text-sky-400 cursor-pointer"
                             >
-                              + Giao thêm bài THTH
+                              + Giao bài
                             </button>
                           )}
                         </div>
 
-                        <div className="max-h-96 overflow-y-auto divide-y divide-stone-200 dark:divide-slate-800 rounded-xl border border-stone-200 dark:border-slate-800 bg-white dark:bg-[#101d3d]">
+                        <div className="max-h-[380px] divide-y divide-stone-100 overflow-y-auto rounded-xl border border-stone-200 dark:divide-slate-800 dark:border-slate-800">
                           {detail.assignments.map((a) => (
-                            <div
-                              key={a.id}
-                              className="flex items-start justify-between gap-3 p-3.5 text-xs"
-                            >
+                            <div key={a.id} className="flex items-start justify-between gap-2.5 p-3 text-xs">
                               <div className="min-w-0">
-                                <p className="font-bold text-stone-900 dark:text-white">{a.title}</p>
+                                <p className="truncate font-bold text-stone-900 dark:text-white">{a.title}</p>
                                 {a.description && (
-                                  <p className="mt-0.5 text-[11px] text-stone-500 dark:text-slate-400">
+                                  <p className="mt-0.5 line-clamp-1 text-[11px] text-stone-500 dark:text-slate-400">
                                     {a.description}
                                   </p>
                                 )}
-                                <div className="mt-1.5 flex flex-wrap items-center gap-2 text-[10px] text-stone-400">
-                                  <span className="rounded bg-blue-500/10 px-2 py-0.5 font-bold text-blue-600 dark:text-sky-300">
+                                <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[10px]">
+                                  <span className="rounded bg-blue-500/10 px-1.5 py-0.5 font-bold text-blue-600 dark:text-sky-300">
                                     {a.cardCount} thẻ
                                   </span>
-                                  <span className="rounded bg-emerald-500/10 px-2 py-0.5 font-bold text-emerald-600 dark:text-emerald-300">
-                                    {a.completedMembers} học viên đã học
+                                  <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 font-bold text-emerald-600 dark:text-emerald-300">
+                                    {a.completedMembers} đã học
                                   </span>
-                                  {a.dueDate && <span>Hạn: {a.dueDate}</span>}
+                                  {a.dueDate && (
+                                    <span className="text-stone-400 dark:text-slate-500">Hạn {a.dueDate}</span>
+                                  )}
                                 </div>
                               </div>
-                              <div className="flex items-center gap-1.5 shrink-0">
+                              <div className="flex shrink-0 items-center gap-1">
                                 <a
                                   href={`/flashcards?assignment=${encodeURIComponent(a.id)}&classId=${encodeURIComponent(item.id)}`}
-                                  className={ghostBtnCls}
+                                  className={`${ghostBtnCls} px-1.5 py-1.5`}
                                   title="Học thử bài tập này"
                                 >
-                                  <ExternalLink className="h-3.5 w-3.5" />
+                                  <ExternalLink className="h-3 w-3" />
                                 </a>
                                 <button
                                   type="button"
                                   disabled={busy === `del-assign:${a.id}`}
                                   onClick={() => void handleDeleteAssignment(item.id, a)}
-                                  className={dangerBtnCls}
+                                  className={`${dangerBtnCls} px-1.5 py-1.5`}
                                   title="Xóa bài tập"
                                 >
-                                  <Trash2 className="h-3.5 w-3.5" />
+                                  <Trash2 className="h-3 w-3" />
                                 </button>
                               </div>
                             </div>
                           ))}
                           {detail.assignments.length === 0 && (
-                            <div className="p-6 text-center text-xs text-stone-400 space-y-2">
-                              <p>Chưa có bài tập nào được giao cho lớp này.</p>
+                            <div className="space-y-2 p-6 text-center text-xs text-stone-400 dark:text-slate-500">
+                              <p>Chưa có bài tập nào được giao.</p>
                               {onOpenThthPanel && (
-                                <button
-                                  type="button"
-                                  onClick={onOpenThthPanel}
-                                  className={ghostBtnCls}
-                                >
-                                  Giao bài từ bộ Tiếng Hàn Tổng Hợp
+                                <button type="button" onClick={onOpenThthPanel} className={ghostBtnCls}>
+                                  Giao bài từ Tiếng Hàn Tổng Hợp
                                 </button>
                               )}
                             </div>
                           )}
                         </div>
-                      </div>
+                      </section>
                     </div>
                   ) : null}
                 </div>
@@ -687,8 +731,14 @@ export function AdminClassManager({
         })}
 
         {filteredClasses.length === 0 && (
-          <div className="card-duo rounded-2xl p-8 text-center text-sm text-stone-500 dark:text-slate-400">
-            Không tìm thấy lớp học nào phù hợp.
+          <div className="card-duo rounded-2xl p-10 text-center">
+            <GraduationCap className="mx-auto mb-2 h-8 w-8 text-stone-300 dark:text-slate-600" />
+            <p className="text-sm font-bold text-stone-600 dark:text-slate-300">
+              {searchQuery ? "Không tìm thấy lớp phù hợp" : "Chưa có lớp học nào"}
+            </p>
+            <p className="mt-1 text-xs text-stone-400 dark:text-slate-500">
+              {searchQuery ? "Thử từ khóa khác hoặc xóa bộ lọc." : "Tạo lớp đầu tiên để bắt đầu giao bài."}
+            </p>
           </div>
         )}
       </div>
@@ -701,14 +751,8 @@ export function AdminClassManager({
             className="card-duo w-full max-w-md rounded-3xl p-6 space-y-4 shadow-2xl"
           >
             <div className="flex items-center justify-between border-b border-stone-200 dark:border-slate-800 pb-3">
-              <h3 className="text-base font-black text-stone-900 dark:text-white">
-                Tạo lớp học mới
-              </h3>
-              <button
-                type="button"
-                onClick={() => setShowCreateModal(false)}
-                className={ghostBtnCls}
-              >
+              <h3 className="text-base font-black text-stone-900 dark:text-white">Tạo lớp học mới</h3>
+              <button type="button" onClick={() => setShowCreateModal(false)} className={ghostBtnCls}>
                 <X className="h-4 w-4" />
               </button>
             </div>
@@ -733,11 +777,7 @@ export function AdminClassManager({
               />
             </label>
             <div className="flex justify-end gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => setShowCreateModal(false)}
-                className={ghostBtnCls}
-              >
+              <button type="button" onClick={() => setShowCreateModal(false)} className={ghostBtnCls}>
                 Hủy
               </button>
               <button
@@ -766,13 +806,9 @@ export function AdminClassManager({
           >
             <div className="flex items-center justify-between border-b border-stone-200 dark:border-slate-800 pb-3">
               <h3 className="text-base font-black text-stone-900 dark:text-white">
-                Sửa thông tin lớp ({editingClass.code})
+                Sửa lớp ({editingClass.code})
               </h3>
-              <button
-                type="button"
-                onClick={() => setEditingClass(null)}
-                className={ghostBtnCls}
-              >
+              <button type="button" onClick={() => setEditingClass(null)} className={ghostBtnCls}>
                 <X className="h-4 w-4" />
               </button>
             </div>
@@ -795,11 +831,7 @@ export function AdminClassManager({
               />
             </label>
             <div className="flex justify-end gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => setEditingClass(null)}
-                className={ghostBtnCls}
-              >
+              <button type="button" onClick={() => setEditingClass(null)} className={ghostBtnCls}>
                 Hủy
               </button>
               <button
@@ -807,9 +839,7 @@ export function AdminClassManager({
                 disabled={busy === `edit:${editingClass.id}`}
                 className="btn-duo btn-duo-primary inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold"
               >
-                {busy === `edit:${editingClass.id}` && (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                )}
+                {busy === `edit:${editingClass.id}` && <Loader2 className="h-4 w-4 animate-spin" />}
                 Lưu thay đổi
               </button>
             </div>
