@@ -27,7 +27,7 @@ function GoalBar({ done, value, onOpen }: { done: number; value: number; onOpen:
       <Target className={`h-5 w-5 shrink-0 ${complete ? "text-emerald-500" : "text-sky-500"}`} />
       <span className="min-w-0 flex-1 space-y-1.5">
         <span className="flex items-baseline justify-between gap-2">
-          <span className="text-sm font-bold text-stone-900 dark:text-white">Từ mới hôm nay</span>
+          <span className="text-sm font-bold text-stone-900 dark:text-white">Cấu hình</span>
           <span className="text-sm font-black tabular-nums text-stone-900 dark:text-white">
             {done}
             <span className="font-bold text-stone-400">{value === 0 ? " / không giới hạn" : ` / ${value}`}</span>
