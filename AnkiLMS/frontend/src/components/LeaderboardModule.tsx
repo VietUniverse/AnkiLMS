@@ -102,7 +102,6 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
       {/* Không dùng <header>: globals.css tô nền trắng cho mọi header ở giao diện sáng. */}
       <div className="flex flex-col items-center gap-4 text-center">
         <div className="min-w-0">
-          <h2 className="text-3xl font-black tracking-tight text-white">Bảng xếp hạng</h2>
           {!loading && me && (
             <p className="mt-2 text-sm text-slate-400">
               Bạn hạng <strong className="font-black text-white tabular-nums">{myIndex + 1}</strong> trên {sortedList.length}.{" "}
