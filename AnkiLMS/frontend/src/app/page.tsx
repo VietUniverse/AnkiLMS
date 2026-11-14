@@ -8,7 +8,7 @@ import { OnigiriHeatmap } from "../components/OnigiriHeatmap";
 import { StreakPanel } from "../components/StreakPanel";
 import { InstallAppButton } from "../components/InstallAppButton";
 import { useApp } from "../contexts/AppProvider";
-import { Flame, Zap, Layers, CheckCircle2, Gamepad2, Target, X, LogIn, Search, Volume2, Play, ClipboardCheck, ArrowRight, GraduationCap } from "lucide-react";
+import { Flame, Zap, Layers, CheckCircle2, X, LogIn, Search, Volume2, Play, ClipboardCheck, ArrowRight, GraduationCap } from "lucide-react";
 import { VOCABULARY_DATA } from "../data/koreanData";
 import { speakKorean } from "../lib/koreanSpeech";
 import { ApiClient } from "../lib/apiClient";
@@ -20,7 +20,6 @@ import { loadProgress, NEW_WORDS_FOR_CHECKIN, vietnamToday } from "../lib/dailyL
 export default function Home() {
   const router = useRouter();
   const { currentUser, heatmapData, handleOpenAuth, isAuthReady, isFeatureEnabled } = useApp();
-  const [dailyMissionCount, setDailyMissionCount] = React.useState(0);
   const [newWordsToday, setNewWordsToday] = React.useState(0);
   const [showWelcome, setShowWelcome] = React.useState(false);
   const [showPlacementPrompt, setShowPlacementPrompt] = React.useState(false);
@@ -129,21 +128,6 @@ export default function Home() {
       localStorage.setItem("haechivn_hide_welcome_banner", "true");
     }
   };
-
-  React.useEffect(() => {
-    setDailyMissionCount(0);
-    const refreshMissions = () => {
-      if (currentUser) void ApiClient.getDailyMissions().then((summary) => setDailyMissionCount(summary?.completedCount || 0));
-      else setDailyMissionCount(0);
-    };
-    refreshMissions();
-    window.addEventListener("haechivn:daily-mission-updated", refreshMissions);
-    window.addEventListener("focus", refreshMissions);
-    return () => {
-      window.removeEventListener("haechivn:daily-mission-updated", refreshMissions);
-      window.removeEventListener("focus", refreshMissions);
-    };
-  }, [currentUser?.id]);
 
   React.useEffect(() => {
     const syncNewWords = () => setNewWordsToday(loadProgress().newDone);
@@ -322,18 +306,6 @@ export default function Home() {
                 <Link href="/flashcards" className="flex flex-col items-center gap-1.5 rounded-2xl border border-stone-200 bg-white px-2 py-4 text-center transition hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900/70">
                   <Layers className="h-6 w-6 text-sky-500" />
                   <span className="text-xs font-bold text-stone-800 dark:text-stone-200">Từ vựng</span>
-                </Link>
-              )}
-              {isFeatureEnabled("missions") && (
-                <Link href="/missions" className="flex flex-col items-center gap-1.5 rounded-2xl border border-stone-200 bg-white px-2 py-4 text-center transition hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900/70">
-                  <Target className="h-6 w-6 text-rose-500" />
-                  <span className="text-xs font-bold text-stone-800 dark:text-stone-200">Nhiệm vụ <span className="tabular-nums text-stone-500 dark:text-stone-400">{dailyMissionCount}/3</span></span>
-                </Link>
-              )}
-              {isFeatureEnabled("games") && (
-                <Link href="/games" className="flex flex-col items-center gap-1.5 rounded-2xl border border-stone-200 bg-white px-2 py-4 text-center transition hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900/70">
-                  <Gamepad2 className="h-6 w-6 text-amber-500" />
-                  <span className="text-xs font-bold text-stone-800 dark:text-stone-200">Chơi game</span>
                 </Link>
               )}
               {isFeatureEnabled("topik") && (
