@@ -1473,11 +1473,11 @@ export default function AdminPage() {
                               Chỉnh sửa tên, vai trò (Học viên / Giáo viên / Admin), điểm XP, Gems, chuỗi ngày học hoặc cấp quyền bộ Tiếng Hàn Tổng Hợp.
                             </p>
                           </div>
-                          <div className="flex flex-wrap items-center gap-2">
+                          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
                             <select
                               value={roleFilter}
                               onChange={(e) => setRoleFilter(e.target.value as any)}
-                              className={selectCls}
+                              className={`${selectCls} h-10`}
                             >
                               <option value="all">Tất cả vai trò ({users.length})</option>
                               <option value="student">
@@ -1495,18 +1495,33 @@ export default function AdminPage() {
                                 event.preventDefault();
                                 setSearch(query.trim());
                               }}
-                              className="flex gap-2"
+                              className="flex h-10 min-w-[220px] flex-1 items-center gap-2 rounded-xl border border-stone-300 bg-stone-50 px-3 transition focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 dark:border-slate-700 dark:bg-[#132247] sm:flex-none"
                             >
-                              <label className="flex items-center gap-2 rounded-xl border border-stone-200 dark:border-slate-700 bg-white dark:bg-[#132247] px-3 py-1.5 shadow-inner">
-                                <Search className="h-4 w-4 text-stone-400 dark:text-slate-500" />
-                                <input
-                                  value={query}
-                                  onChange={(event) => setQuery(event.target.value)}
-                                  placeholder="Tìm tên hoặc email..."
-                                  className="w-36 sm:w-48 bg-transparent py-1 text-xs text-stone-900 dark:text-white placeholder:text-stone-400 outline-none"
-                                />
-                              </label>
-                              <button className="btn-duo btn-duo-primary h-8 px-4 text-xs font-bold">
+                              <Search className="h-4 w-4 shrink-0 text-stone-400 dark:text-slate-500" />
+                              <input
+                                value={query}
+                                onChange={(event) => setQuery(event.target.value)}
+                                placeholder="Tìm tên hoặc email..."
+                                autoComplete="off"
+                                className="admin-field-input w-full min-w-0 bg-transparent py-1 text-xs text-stone-900 outline-none placeholder:text-stone-400 dark:text-white dark:placeholder:text-slate-500 sm:w-44"
+                              />
+                              {query && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setQuery("");
+                                    setSearch("");
+                                  }}
+                                  className="shrink-0 text-stone-400 transition hover:text-stone-600 dark:hover:text-slate-200"
+                                  title="Xóa tìm kiếm"
+                                >
+                                  <X className="h-3.5 w-3.5" />
+                                </button>
+                              )}
+                              <button
+                                type="submit"
+                                className="shrink-0 border-l border-stone-200 pl-2.5 text-[11px] font-extrabold text-blue-600 transition hover:text-blue-700 dark:border-slate-700 dark:text-sky-400 dark:hover:text-sky-300"
+                              >
                                 Tìm
                               </button>
                             </form>

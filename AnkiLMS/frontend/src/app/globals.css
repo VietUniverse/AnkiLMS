@@ -301,6 +301,11 @@ html[data-theme="light"] body:not(:has(.login-page-root)) textarea::placeholder 
   color: #94a3b8 !important;
 }
 
+/* Ô tìm kiếm nằm trong khung có nền riêng: giữ nền trong suốt thay vì bị ép trắng */
+html[data-theme="light"] body:not(:has(.login-page-root)) input.admin-field-input {
+  background-color: transparent !important;
+}
+
 html[data-theme="light"] .card-duo {
   background-color: #fff !important;
   border-color: #d5deeb !important;
