@@ -55,9 +55,9 @@ export function StreakPanel({ data, streak, longestStreak, publicView = false }:
 
   return (
     <section className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/70 p-4 sm:p-6 space-y-5">
-      {/* Streak lớn */}
-      <div className="flex items-center gap-4 sm:gap-6">
-        <div className="flex min-w-0 flex-1 items-center gap-3 sm:gap-4">
+      {/* Streak + dải 7 ngày trên cùng một hàng để tiết kiệm chiều cao */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+        <div className="flex min-w-0 items-center gap-3 sm:gap-4">
           <Flame
             className={`h-14 w-14 shrink-0 sm:h-16 sm:w-16 ${streak > 0 ? "fill-orange-400 text-orange-500 drop-shadow-[0_0_12px_rgba(251,146,60,0.55)]" : "fill-stone-200 text-stone-300 dark:fill-stone-800 dark:text-stone-700"}`}
           />
@@ -69,38 +69,38 @@ export function StreakPanel({ data, streak, longestStreak, publicView = false }:
             </p>
           </div>
         </div>
-      </div>
 
-      {/* Dải 7 ngày */}
-      <div className="grid grid-cols-7 gap-1.5">
-        {week.map((d) => (
-          <div key={d.key} className="flex flex-col items-center gap-1.5">
-            <span className={`text-[11px] font-bold ${d.isToday ? "text-orange-600 dark:text-orange-400" : "text-stone-400"}`}>{d.label}</span>
-            <span
-              className={`flex h-9 w-9 items-center justify-center rounded-full text-xs font-black transition sm:h-10 sm:w-10 ${
-                d.isToday
-                  ? "border-2 border-white bg-red-500 shadow-sm"
-                  : d.done
-                    ? "bg-orange-400 shadow-sm"
-                    : d.future
-                      ? "border border-dashed border-stone-200 text-stone-300 dark:border-stone-800 dark:text-stone-700"
-                      : "bg-stone-100 text-stone-400 dark:bg-stone-800 dark:text-stone-600"
-              }`}
-              style={d.done || d.isToday ? { color: "#fff" } : undefined}
-              aria-label={`${d.label} ngày ${d.date}: ${d.done ? "đã học" : d.future ? "chưa tới" : "chưa học"}`}
-            >
-              {d.done ? (
-                d.isToday ? (
-                  <Flame className="h-5 w-5 drop-shadow-[0_0_8px_rgba(255,255,255,0.55)]" fill="#fff" stroke="#fff" strokeWidth={2.5} />
+        {/* Dải 7 ngày */}
+        <div className="grid grid-cols-7 gap-1.5 sm:shrink-0">
+          {week.map((d) => (
+            <div key={d.key} className="flex flex-col items-center gap-1.5">
+              <span className={`text-[11px] font-bold ${d.isToday ? "text-orange-600 dark:text-orange-400" : "text-stone-400"}`}>{d.label}</span>
+              <span
+                className={`flex h-9 w-9 items-center justify-center rounded-full text-xs font-black transition sm:h-10 sm:w-10 ${
+                  d.isToday
+                    ? "border-2 border-white bg-red-500 shadow-sm"
+                    : d.done
+                      ? "bg-orange-400 shadow-sm"
+                      : d.future
+                        ? "border border-dashed border-stone-200 text-stone-300 dark:border-stone-800 dark:text-stone-700"
+                        : "bg-stone-100 text-stone-400 dark:bg-stone-800 dark:text-stone-600"
+                }`}
+                style={d.done || d.isToday ? { color: "#fff" } : undefined}
+                aria-label={`${d.label} ngày ${d.date}: ${d.done ? "đã học" : d.future ? "chưa tới" : "chưa học"}`}
+              >
+                {d.done ? (
+                  d.isToday ? (
+                    <Flame className="h-5 w-5 drop-shadow-[0_0_8px_rgba(255,255,255,0.55)]" fill="#fff" stroke="#fff" strokeWidth={2.5} />
+                  ) : (
+                    <Check className="h-5 w-5" strokeWidth={3.5} />
+                  )
                 ) : (
-                  <Check className="h-5 w-5" strokeWidth={3.5} />
-                )
-              ) : (
-                d.date
-              )}
-            </span>
-          </div>
-        ))}
+                  d.date
+                )}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
 
       {!publicView && !learnedToday && (
