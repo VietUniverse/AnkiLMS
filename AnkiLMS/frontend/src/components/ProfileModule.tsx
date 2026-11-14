@@ -11,6 +11,9 @@ import { StreakPanel } from "./StreakPanel";
 import { TestHistory } from "./TestHistory";
 import { useApp } from "../contexts/AppProvider";
 
+// Tạm ẩn khối Thành tích trên trang cá nhân.
+const SHOW_ACHIEVEMENTS = false;
+
 interface ProfileModuleProps {
   currentUser: UserProfile | null;
   onOpenAuth: (isRegisterMode?: boolean) => void;
@@ -156,8 +159,9 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
 
       <TestHistory limit={5} showMoreLink />
 
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)]">
+      <div className={`grid gap-5 ${SHOW_ACHIEVEMENTS ? "lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)]" : ""}`}>
         {/* Thành tích */}
+        {SHOW_ACHIEVEMENTS && (
         <section className={`${card} p-5`}>
           <div className="mb-3 flex items-center justify-between">
             <h2 className="flex items-center gap-2 text-sm font-black"><Trophy className="h-4 w-4 text-amber-500" />Thành tích <span className="font-normal text-stone-400">({earnedBadges.length})</span></h2>
@@ -179,6 +183,7 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
             <span><Gem className="mr-1.5 inline h-4 w-4 text-violet-500" />Đổi kim cương</span><span>→</span>
           </a>
         </section>
+        )}
 
         {/* Phiên học */}
         <section className={`${card} p-5`}>
