@@ -1543,8 +1543,8 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
           <div className="space-y-6 pt-2">
             {/* Thanh công cụ tìm kiếm và chuyển sang Khám phá */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-2 flex-wrap">
-                <div className="relative flex-1 sm:w-56">
+              <div className="flex w-full items-center gap-2">
+                <div className="relative flex-1">
                   <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
                   <input
                     type="text"
@@ -1564,7 +1564,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
 
                 <Link
                   href="/explore"
-                  className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-300 border border-sky-200 dark:border-sky-800/80 hover:bg-sky-100 dark:hover:bg-sky-900/60 transition w-fit"
+                  className="inline-flex shrink-0 items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-300 border border-sky-200 dark:border-sky-800/80 hover:bg-sky-100 dark:hover:bg-sky-900/60 transition"
                 >
                   <Compass className="w-4 h-4 text-sky-500" />
                   Khám phá
