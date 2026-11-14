@@ -1541,34 +1541,6 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
             ========================================== */}
         {viewMode === "dashboard" && (
           <div className="space-y-6 pt-2">
-            {/* Banner tiếp tục học lượt trước + Cấu hình gộp chung một hàng trên desktop */}
-            {lastStudiedDeckId && lastStudiedTitle ? (
-              <div className="grid gap-3 sm:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] sm:items-stretch">
-                <div className="p-4 rounded-2xl bg-white dark:bg-[#141b2d] border border-stone-200/80 dark:border-stone-800/80 flex items-center justify-between gap-4 shadow-xs animate-reveal">
-                  <div className="min-w-0">
-                    <span className="inline-block text-[10px] font-mono tracking-wider text-emerald-700 dark:text-emerald-400 font-bold uppercase bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-200/50 dark:border-emerald-800/40">
-                      Học tiếp
-                    </span>
-                    <h3 className="text-sm sm:text-base font-bold truncate mt-1 text-stone-900 dark:text-white">
-                      {lastStudiedTitle}
-                    </h3>
-                  </div>
-                  <button
-                    onClick={resumeLastLesson}
-                    className="w-10 h-10 rounded-full bg-stone-900 text-white hover:bg-stone-800 dark:bg-emerald-500 dark:text-stone-950 dark:hover:bg-emerald-400 flex items-center justify-center shrink-0 transition-transform active:scale-95 cursor-pointer shadow-sm"
-                    title="Học tiếp ngay"
-                  >
-                    <Play className="w-4 h-4 ml-0.5 fill-current" />
-                  </button>
-                </div>
-                <div className="flex items-center">
-                  <DailyLimitsPanel limits={dailyLimits} progress={dailyProgress} onChange={updateLimits} />
-                </div>
-              </div>
-            ) : (
-              <DailyLimitsPanel limits={dailyLimits} progress={dailyProgress} onChange={updateLimits} />
-            )}
-
             {/* Thanh công cụ tìm kiếm và chuyển sang Khám phá */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-2 flex-wrap">
@@ -1600,6 +1572,34 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                 </Link>
               </div>
             </div>
+
+            {/* Banner tiếp tục học lượt trước + Cấu hình gộp chung một hàng trên desktop */}
+            {lastStudiedDeckId && lastStudiedTitle ? (
+              <div className="grid gap-3 sm:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] sm:items-stretch">
+                <div className="p-4 rounded-2xl bg-white dark:bg-[#141b2d] border border-stone-200/80 dark:border-stone-800/80 flex items-center justify-between gap-4 shadow-xs animate-reveal">
+                  <div className="min-w-0">
+                    <span className="inline-block text-[10px] font-mono tracking-wider text-emerald-700 dark:text-emerald-400 font-bold uppercase bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-200/50 dark:border-emerald-800/40">
+                      Học tiếp
+                    </span>
+                    <h3 className="text-sm sm:text-base font-bold truncate mt-1 text-stone-900 dark:text-white">
+                      {lastStudiedTitle}
+                    </h3>
+                  </div>
+                  <button
+                    onClick={resumeLastLesson}
+                    className="w-10 h-10 rounded-full bg-stone-900 text-white hover:bg-stone-800 dark:bg-emerald-500 dark:text-stone-950 dark:hover:bg-emerald-400 flex items-center justify-center shrink-0 transition-transform active:scale-95 cursor-pointer shadow-sm"
+                    title="Học tiếp ngay"
+                  >
+                    <Play className="w-4 h-4 ml-0.5 fill-current" />
+                  </button>
+                </div>
+                <div className="flex items-center">
+                  <DailyLimitsPanel limits={dailyLimits} progress={dailyProgress} onChange={updateLimits} />
+                </div>
+              </div>
+            ) : (
+              <DailyLimitsPanel limits={dailyLimits} progress={dailyProgress} onChange={updateLimits} />
+            )}
 
             {limitNotice && (
               <div role="status" className="rounded-xl border border-amber-300/60 bg-amber-50 dark:bg-amber-500/10 dark:border-amber-500/30 px-4 py-3 text-xs text-amber-800 dark:text-amber-200">
