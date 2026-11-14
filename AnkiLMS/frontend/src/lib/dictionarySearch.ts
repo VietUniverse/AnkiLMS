@@ -38,8 +38,7 @@ export async function getDictionaryCorpusStats(): Promise<{ totalEntries: number
   } catch {
     // Fallback below
   }
-  const localCount = (await loadEntries()).length;
-  return { totalEntries: Math.max(6658013, localCount), uniqueHeadwords: localCount };
+  return { totalEntries: 6847729, uniqueHeadwords: 1865482 };
 }
 
 type PackedEntry = [string, string, string, string, string, string, string?, string?, string?, string?, string?, string?, string?];
@@ -269,10 +268,20 @@ export async function searchLearningDictionary(query: string, limit = 30, signal
       limit: String(limit),
       level,
     });
-    const res = await fetch(`/api/dictionary/search?${params.toString()}`, {
+    let res = await fetch(`/api/dictionary/search?${params.toString()}`, {
       signal,
       credentials: "same-origin",
     });
+    // One quick retry on transient 5xx error
+    if (!res.ok && res.status >= 500 && !signal?.aborted) {
+      await new Promise((r) => setTimeout(r, 350));
+      if (!signal?.aborted) {
+        res = await fetch(`/api/dictionary/search?${params.toString()}`, {
+          signal,
+          credentials: "same-origin",
+        });
+      }
+    }
     if (res.ok) {
       const data = await res.json() as { entries?: DictionaryEntry[]; totalEntries?: number; uniqueHeadwords?: number };
       if (data.totalEntries) {
@@ -345,7 +354,13 @@ export async function searchLearningDictionary(query: string, limit = 30, signal
   return ranked.slice(0, limit).map(({ entry }) => entry);
 }
 
-export async function browseLearningDictionary(level: DictionaryLevel, language: SearchLanguage, offset = 0, limit = 30): Promise<DictionaryEntry[]> {
+export async function browseLearningDictionary(
+  level: DictionaryLevel,
+  language: SearchLanguage,
+  offset = 0,
+  limit = 30,
+  signal?: AbortSignal,
+): Promise<DictionaryEntry[]> {
   try {
     const params = new URLSearchParams({
       mode: "browse",
@@ -353,9 +368,20 @@ export async function browseLearningDictionary(level: DictionaryLevel, language:
       offset: String(offset),
       limit: String(limit),
     });
-    const res = await fetch(`/api/dictionary/search?${params.toString()}`, {
+    let res = await fetch(`/api/dictionary/search?${params.toString()}`, {
       credentials: "same-origin",
+      signal,
     });
+    // One quick retry on transient 5xx error
+    if (!res.ok && res.status >= 500 && !signal?.aborted) {
+      await new Promise((r) => setTimeout(r, 350));
+      if (!signal?.aborted) {
+        res = await fetch(`/api/dictionary/search?${params.toString()}`, {
+          credentials: "same-origin",
+          signal,
+        });
+      }
+    }
     if (res.ok) {
       const data = await res.json() as { entries?: DictionaryEntry[]; totalEntries?: number; uniqueHeadwords?: number };
       if (data.totalEntries) {
@@ -372,29 +398,37 @@ export async function browseLearningDictionary(level: DictionaryLevel, language:
       }
     }
   } catch {
-    // Fallback below
+    if (signal?.aborted) return [];
   }
-  const rows = await loadEntries();
-  const meaningColumn = language === "vi" ? 2 : language === "en" ? 1 : 3;
-  const result: DictionaryEntry[] = [];
-  let skipped = 0;
-  for (const row of rows) {
-    if (!row[meaningColumn] || (level !== "all" && row[11] !== level)) continue;
-    if (skipped++ < offset) continue;
-    result.push({
-      hangul: row[0], english: row[1], vietnamese: row[2], japanese: row[3],
-      partOfSpeech: row[4], level: row[5],
-      source: row[7]?.includes("admin") ? "admin" : row[7]?.includes("course-vocabulary") ? "course-vocabulary" : row[7]?.includes("topic-pdf") || row[7]?.includes("user-pdf") ? "topic-pdf" : "nikl",
-      topic: row[6] || undefined,
-      romanization: romanizeKorean(row[0]),
-      hanja: row[9] || undefined,
-      pronunciation: row[10] || undefined,
-      topik: row[11] || undefined,
-      courseId: row[12] || undefined,
-    });
-    if (result.length >= limit) break;
+
+  // Graceful fallback to client index if available
+  try {
+    const rows = await loadEntries();
+    if (signal?.aborted) return [];
+    const meaningColumn = language === "vi" ? 2 : language === "en" ? 1 : 3;
+    const result: DictionaryEntry[] = [];
+    let skipped = 0;
+    for (const row of rows) {
+      if (!row[meaningColumn] || (level !== "all" && row[11] !== level)) continue;
+      if (skipped++ < offset) continue;
+      result.push({
+        hangul: row[0], english: row[1], vietnamese: row[2], japanese: row[3],
+        partOfSpeech: row[4], level: row[5],
+        source: row[7]?.includes("admin") ? "admin" : row[7]?.includes("course-vocabulary") ? "course-vocabulary" : row[7]?.includes("topic-pdf") || row[7]?.includes("user-pdf") ? "topic-pdf" : "nikl",
+        topic: row[6] || undefined,
+        romanization: romanizeKorean(row[0]),
+        hanja: row[9] || undefined,
+        pronunciation: row[10] || undefined,
+        topik: row[11] || undefined,
+        courseId: row[12] || undefined,
+      });
+      if (result.length >= limit) break;
+    }
+    return result;
+  } catch (err) {
+    if (signal?.aborted) return [];
+    throw new Error("Không thể kết nối đến máy chủ từ điển. Vui lòng thử lại.");
   }
-  return result;
 }
 
 export const naverLookupUrl = (word: string) => `https://ko.dict.naver.com/#/search?query=${encodeURIComponent(word)}`;

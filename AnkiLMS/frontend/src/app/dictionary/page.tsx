@@ -13,6 +13,7 @@ import {
   Lock,
   Pencil,
   Plus,
+  RotateCcw,
   Search,
   Sparkles,
   Trash2,
@@ -194,7 +195,7 @@ export default function DictionaryPage() {
             detectDictionarySearchLanguage(query),
             level,
           )
-        : browseLearningDictionary(level, "vi", page * 30, 30);
+        : browseLearningDictionary(level, "vi", page * 30, 30, controller.signal);
       void lookup
         .then((found) => {
           if (!cancelled) setResults(found);
@@ -645,8 +646,26 @@ export default function DictionaryPage() {
             Đang tra từ điển…
           </section>
         ) : error ? (
-          <section className={`${card} p-8 text-center text-sm text-rose-600`}>
-            {error}
+          <section className={`${card} p-8 text-center text-sm space-y-3`}>
+            <p className="text-rose-500 font-medium">{error}</p>
+            <button
+              type="button"
+              onClick={() => {
+                setError("");
+                setLoading(true);
+                const lookup = query.trim()
+                  ? searchLearningDictionary(query, 60, undefined, detectDictionarySearchLanguage(query), level)
+                  : browseLearningDictionary(level, "vi", page * 30, 30);
+                void lookup
+                  .then((found) => setResults(found))
+                  .catch((cause) => setError(cause instanceof Error ? cause.message : "Không tải được từ điển."))
+                  .finally(() => setLoading(false));
+              }}
+              className="px-4 py-2 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/30 text-sky-400 font-bold text-xs inline-flex items-center gap-1.5 cursor-pointer transition"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Thử lại</span>
+            </button>
           </section>
         ) : (
           <section className="space-y-3">
