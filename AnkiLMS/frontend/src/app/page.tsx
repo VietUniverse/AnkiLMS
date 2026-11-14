@@ -249,13 +249,6 @@ export default function Home() {
         {/* Bảng điều khiển kiểu Duolingo: streak là nhân vật chính, rồi nút học tiếp, điểm danh, cấp độ, lối tắt */}
         {currentUser && (
           <section className="space-y-4" aria-label="Tiến độ hôm nay">
-            <div className="flex items-end justify-between gap-3 px-1">
-              <h1 className="text-xl sm:text-2xl font-black tracking-tight text-stone-900 dark:text-white">Chào {currentUser.name || "bạn"}</h1>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-violet-500/10 px-3 py-1 text-xs font-black text-violet-700 dark:text-violet-300">
-                💎 {(currentUser.gems || 0).toLocaleString("vi-VN")}
-              </span>
-            </div>
-
             <StreakPanel data={heatmapData} streak={currentUser.streak || 0} longestStreak={currentUser.longest_streak || 0} />
 
             {/* Hành động chính */}
