@@ -168,13 +168,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   </span>
                 </div>
               </Link>
-              <button
-                onClick={onCloseMobile}
-                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
-                aria-label="Đóng menu"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <EggThemeToggle />
+                <button
+                  onClick={onCloseMobile}
+                  className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+                  aria-label="Đóng menu"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {/* Mobile Scrollable Links */}
@@ -224,9 +227,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
             {/* Mobile Footer User info */}
             <div className="p-3 space-y-2 border-t border-[#111c38]/70 bg-[#070d1a] shrink-0">
-              <div className="flex justify-center py-1">
-                <EggThemeToggle />
-              </div>
               <InstallAppButton onDone={onCloseMobile} />
               {currentUser ? (
                 <div className="flex items-center justify-between p-2 rounded-xl bg-[#0b1329]">
@@ -282,11 +282,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
         }`}
       >
       {/* HaechiVN Brand Header */}
-      <Link
-        href="/"
-        className="flex h-16 items-center border-b border-[#111c38]/70 px-4 shrink-0 justify-between cursor-pointer hover:bg-[#0b1329] transition-colors"
+      <div
+        className={`flex h-16 items-center border-b border-[#111c38]/70 shrink-0 ${
+          collapsed ? "flex-col justify-center gap-0.5 px-2" : "justify-between px-4"
+        }`}
       >
-        <div className="flex items-center gap-2.5">
+        <Link
+          href="/"
+          title="HaechiVN"
+          className="flex items-center gap-2.5 min-w-0 rounded-xl p-1 -m-1 hover:bg-[#0b1329] transition-colors cursor-pointer"
+        >
           <div className="w-8 h-8 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
             <img src="/brand/haechivn-mark.webp" alt="HaechiVN" className="w-7 h-7 object-contain" />
           </div>
@@ -297,8 +302,31 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </span>
             </div>
           )}
-        </div>
-      </Link>
+        </Link>
+
+        {collapsed ? (
+          <button
+            onClick={() => setCollapsed(false)}
+            title="Mở rộng"
+            aria-label="Mở rộng thanh bên"
+            className="p-1 rounded-lg text-slate-500 hover:text-slate-200 hover:bg-[#111c38] transition-colors cursor-pointer border-0"
+          >
+            <ChevronsRight className="w-4 h-4" />
+          </button>
+        ) : (
+          <div className="flex items-center gap-1.5 shrink-0">
+            <EggThemeToggle />
+            <button
+              onClick={() => setCollapsed(true)}
+              title="Thu gọn"
+              aria-label="Thu gọn thanh bên"
+              className="p-1.5 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-[#111c38] transition-colors cursor-pointer border-0"
+            >
+              <ChevronsLeft className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* Navigation Scrollable Area */}
       <div className="flex-1 overflow-y-auto p-3 space-y-4">
@@ -351,17 +379,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Bottom Action Area: Login / User Profile */}
       <div className="p-3 space-y-2 border-t border-[#111c38]/70 bg-[#070d1a] shrink-0">
         {!collapsed && <InstallAppButton />}
-        <div className={`flex items-center ${collapsed ? "justify-center" : "justify-between"}`}>
-          {!collapsed && <EggThemeToggle />}
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            title={collapsed ? "Mở rộng" : "Thu gọn"}
-            aria-label={collapsed ? "Mở rộng thanh bên" : "Thu gọn thanh bên"}
-            className="p-1.5 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-[#111c38] transition-colors cursor-pointer border-0"
-          >
-            {collapsed ? <ChevronsRight className="w-4 h-4" /> : <ChevronsLeft className="w-4 h-4" />}
-          </button>
-        </div>
 
         {currentUser ? (
           <div className={`flex items-center rounded-xl bg-[#0b1329] border-0 ${collapsed ? "justify-center py-2" : "justify-between p-2"}`}>
