@@ -241,6 +241,11 @@ const toSlug = (str: string): string => {
     .replace(/^-+|-+$/g, "");
 };
 
+const DICT_PANEL_WIDTH_KEY = "haechi.dictionaryPanelWidth";
+const DICT_PANEL_DEFAULT_WIDTH = 420;
+const DICT_PANEL_MIN_WIDTH = 320;
+const DICT_PANEL_MAX_WIDTH = 720;
+
 export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDecks = [], initialViewMode = "dashboard" }) => {
   const { currentUser, isAuthReady, setActiveStudySession, removedBuiltInDeckIds, userDecks: ownedDecks, setUserDecks, handleOpenAuth } = useApp();
   const isAdmin = currentUser?.role === "admin";
@@ -292,6 +297,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   // Modal zoom image
   const [modalImage, setModalImage] = useState<string | null>(null);
   const [dictPanelOpen, setDictPanelOpen] = useState(false);
+  const [dictPanelWidth, setDictPanelWidth] = useState(DICT_PANEL_DEFAULT_WIDTH);
   const hideChatGpt = useHideChatGpt();
   const muteWordAudio = useMuteWordAudio();
   const muteExampleAudio = useMuteExampleAudio();
@@ -1327,6 +1333,40 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     return () => window.removeEventListener("keydown", onKey);
   }, [dictPanelOpen]);
 
+  // Nhớ kích thước panel từ điển người học đã kéo.
+  useEffect(() => {
+    const saved = Number(window.localStorage.getItem(DICT_PANEL_WIDTH_KEY));
+    if (Number.isFinite(saved) && saved >= DICT_PANEL_MIN_WIDTH && saved <= DICT_PANEL_MAX_WIDTH) {
+      setDictPanelWidth(saved);
+    }
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem(DICT_PANEL_WIDTH_KEY, String(Math.round(dictPanelWidth)));
+  }, [dictPanelWidth]);
+
+  const clampDictPanelWidth = (value: number) => {
+    const maxWidth = Math.min(DICT_PANEL_MAX_WIDTH, Math.max(DICT_PANEL_MIN_WIDTH, window.innerWidth * 0.62));
+    return Math.max(DICT_PANEL_MIN_WIDTH, Math.min(maxWidth, value));
+  };
+
+  const startDictPanelResize = (event: React.PointerEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const onMove = (moveEvent: PointerEvent) => {
+      setDictPanelWidth(clampDictPanelWidth(window.innerWidth - moveEvent.clientX));
+    };
+    const onUp = () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      document.body.style.removeProperty("cursor");
+      document.body.style.removeProperty("user-select");
+    };
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+  };
+
   // Auto-focus input when in typing mode and not flipped
   useEffect(() => {
     if (viewMode === "study" && studyMode === "typing" && !isFlipped) {
@@ -1604,11 +1644,11 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
   const moreValid = Number.isInteger(Number(moreAmount)) && Number(moreAmount) >= 1 && moreAmount !== "";
 
   return (
-    <div className="w-full min-h-[calc(100vh-6rem)] pb-12 transition-colors">
+    <div className="flex w-full min-h-[calc(100vh-6rem)] pb-12 transition-colors lg:items-start lg:gap-4">
       {/* ====================================================================
           NỘI DUNG CHÍNH (CONTAINER)
           ==================================================================== */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6">
+      <main className="mx-auto w-full min-w-0 max-w-4xl flex-1 px-4 sm:px-6">
         {/* ==========================================
             A. DASHBOARD: BẢNG CÂY ANKI TOÀN TRANG
             ========================================== */}
@@ -2523,12 +2563,34 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
           PANEL TRA TỪ ĐIỂN (SIDEBAR PHẢI)
           ==================================================================== */}
       {dictPanelOpen && (
-        <div className="fixed inset-0 z-[70]" role="dialog" aria-modal="true" aria-label="Tra từ điển">
+        <>
           <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-[1px]"
+            className="fixed inset-0 z-[70] bg-black/40 backdrop-blur-[1px] lg:hidden"
             onClick={() => setDictPanelOpen(false)}
           />
-          <aside className="absolute right-0 top-0 flex h-full w-full max-w-md flex-col border-l border-stone-200 bg-white shadow-2xl dark:border-stone-800 dark:bg-[#0b1329] animate-reveal">
+          <aside
+            role="dialog"
+            aria-label="Tra từ điển"
+            style={{ "--dict-panel-width": `${dictPanelWidth}px` } as React.CSSProperties}
+            className="fixed inset-y-0 right-0 z-[70] flex h-full w-full max-w-md flex-col border-l border-stone-200 bg-white shadow-2xl animate-reveal dark:border-stone-800 dark:bg-[#0b1329] lg:sticky lg:top-0 lg:z-30 lg:h-[calc(100dvh-2rem)] lg:w-[var(--dict-panel-width)] lg:max-w-none lg:shrink-0 lg:animate-none lg:rounded-2xl lg:border"
+          >
+            <div
+              role="separator"
+              aria-orientation="vertical"
+              aria-label="Kéo để chỉnh kích thước từ điển"
+              tabIndex={0}
+              onPointerDown={startDictPanelResize}
+              onDoubleClick={() => setDictPanelWidth(DICT_PANEL_DEFAULT_WIDTH)}
+              onKeyDown={(event) => {
+                if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+                event.preventDefault();
+                const delta = event.key === "ArrowLeft" ? 16 : -16;
+                setDictPanelWidth((prev) => clampDictPanelWidth(prev + delta));
+              }}
+              className="group absolute inset-y-0 left-0 hidden w-2 -translate-x-1/2 cursor-col-resize items-center justify-center lg:flex"
+            >
+              <span className="h-10 w-1 rounded-full bg-stone-300 transition-colors group-hover:bg-sky-400 dark:bg-stone-600 dark:group-hover:bg-sky-500" />
+            </div>
             <header className="flex items-center justify-between gap-3 border-b border-stone-200 px-4 py-3 dark:border-stone-800">
               <div className="flex min-w-0 items-center gap-2.5">
                 <span className="rounded-lg bg-sky-500/10 p-2 text-sky-600 dark:text-sky-400">
@@ -2671,7 +2733,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
               </Link>
             </footer>
           </aside>
-        </div>
+        </>
       )}
 
       {/* ====================================================================
