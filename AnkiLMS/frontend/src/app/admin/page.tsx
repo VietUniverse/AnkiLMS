@@ -1265,10 +1265,6 @@ export default function AdminPage() {
                         {/* Highlight Banner for THTH Curriculum */}
                         <section className="card-duo rounded-3xl border-2 border-blue-500/30 bg-gradient-to-r from-blue-500/10 via-indigo-500/5 to-transparent p-5 sm:p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                           <div className="space-y-1.5">
-                            <div className="inline-flex items-center gap-2 rounded-full bg-blue-500/15 px-3 py-1 text-[11px] font-extrabold text-blue-600 dark:text-sky-300">
-                              <Volume2 className="h-3.5 w-3.5" />
-                              Giáo trình Độc quyền Admin · Đã đồng bộ từ Tiếng Hàn Tổng Hợp.apkg
-                            </div>
                             <h2 className="text-lg sm:text-xl font-black text-stone-900 dark:text-white">
                               Bộ Tiếng Hàn Tổng Hợp (Quyển 1, 2, 3, 4 · 6.019 thẻ + 17.480 file âm thanh/hình gốc)
                             </h2>
