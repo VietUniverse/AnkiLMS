@@ -67,13 +67,13 @@ const mainNav = [
 
 const communityNav = [
   { href: "/leaderboard", label: "Bảng xếp hạng", icon: Trophy, feature: "leaderboard" },
-  { href: "/feedback", label: "Góp ý & Đánh giá", icon: MessageSquareHeart, feature: "feedback" },
 ] as const;
 
 // LƯU Ý BACKEND: Các tính năng Beta đang thử nghiệm UX/UI, không đưa lên production
 const betaNav = [
   { href: "/dictation", label: "Luyện nghe chính tả", icon: Headphones, feature: "dictation", badge: "BETA" },
   { href: "/shadowing", label: "Shadowing", icon: Repeat, feature: "shadowing", badge: "BETA" },
+  { href: "/feedback", label: "Góp ý & Đánh giá", icon: MessageSquareHeart, feature: "feedback", badge: "BETA" },
   { href: "/games", label: "Trò chơi từ vựng", icon: Gamepad2, feature: "games", badge: "BETA" },
   { href: "/hangul", label: "Bảng Hangeul", icon: BookOpen, badge: "BETA", feature: "hangul" },
   { href: "/topics", label: "Học theo chủ đề", icon: Compass, badge: "BETA", feature: "topics" },
