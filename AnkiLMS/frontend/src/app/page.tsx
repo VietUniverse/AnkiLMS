@@ -181,6 +181,23 @@ export default function Home() {
         {/* Bảng điều khiển kiểu Duolingo: streak là nhân vật chính, rồi nút học tiếp, điểm danh, cấp độ, lối tắt */}
         {currentUser && (
           <section className="space-y-4" aria-label="Tiến độ hôm nay">
+            {/* Cấp độ và XP */}
+            <div className="rounded-2xl border border-stone-200 bg-white p-4 dark:border-stone-800 dark:bg-stone-900/70">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/15 text-base font-black text-amber-700 dark:text-amber-300">{userLevel || 1}</span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-black text-stone-900 dark:text-white">{getStudyRank(userLevel)}</p>
+                    <p className="text-xs text-stone-500 dark:text-stone-400">Còn {neededXPForNext} XP lên Lv.{(userLevel || 1) + 1}</p>
+                  </div>
+                </div>
+                <p className="flex shrink-0 items-center gap-1 text-sm font-black tabular-nums text-stone-900 dark:text-white"><Zap className="h-4 w-4 fill-amber-400 text-amber-500" />{(currentUser.xp || 0).toLocaleString("vi-VN")}</p>
+              </div>
+              <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-stone-200 dark:bg-stone-800" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={levelProgressPercent}>
+                <div className="h-full rounded-full bg-amber-400 transition-all duration-500" style={{ width: `${Math.max(4, levelProgressPercent || 0)}%` }} />
+              </div>
+            </div>
+
             <StreakPanel data={heatmapData} streak={currentUser.streak || 0} longestStreak={currentUser.longest_streak || 0} />
 
             {/* Hành động chính */}
@@ -222,23 +239,6 @@ export default function Home() {
                 <button type="button" onClick={dismissInstall} className="mx-auto block cursor-pointer text-xs font-semibold text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200">Để sau</button>
               </div>
             )}
-
-            {/* Cấp độ và XP */}
-            <div className="rounded-2xl border border-stone-200 bg-white p-4 dark:border-stone-800 dark:bg-stone-900/70">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3 min-w-0">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/15 text-base font-black text-amber-700 dark:text-amber-300">{userLevel || 1}</span>
-                  <div className="min-w-0">
-                    <p className="text-sm font-black text-stone-900 dark:text-white">{getStudyRank(userLevel)}</p>
-                    <p className="text-xs text-stone-500 dark:text-stone-400">Còn {neededXPForNext} XP lên Lv.{(userLevel || 1) + 1}</p>
-                  </div>
-                </div>
-                <p className="flex shrink-0 items-center gap-1 text-sm font-black tabular-nums text-stone-900 dark:text-white"><Zap className="h-4 w-4 fill-amber-400 text-amber-500" />{(currentUser.xp || 0).toLocaleString("vi-VN")}</p>
-              </div>
-              <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-stone-200 dark:bg-stone-800" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={levelProgressPercent}>
-                <div className="h-full rounded-full bg-amber-400 transition-all duration-500" style={{ width: `${Math.max(4, levelProgressPercent || 0)}%` }} />
-              </div>
-            </div>
 
             {/* Lối tắt */}
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
