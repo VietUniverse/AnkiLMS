@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Check, ImagePlus, Settings, Trash2, X } from "lucide-react";
 import { EggThemeToggle } from "./EggThemeToggle";
@@ -19,6 +19,20 @@ export function StudyBackgroundPanel() {
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [error, setError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [open]);
 
   const update = (patch: Partial<typeof bg>) => {
     if (!saveStudyBackground({ ...bg, ...patch })) setError("Không lưu được. Thử ảnh nhỏ hơn.");
@@ -103,15 +117,24 @@ export function StudyBackgroundPanel() {
         document.body,
       )}
 
-      {open && (
-        <>
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} aria-hidden />
-          <div role="dialog" aria-label="Cài đặt học" className="absolute right-0 top-full z-50 mt-2 w-72 space-y-4 rounded-2xl border border-stone-200 bg-white p-4 text-stone-900 shadow-2xl dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100">
-            <div className="flex items-center justify-between">
-              <h2 className="text-sm font-black">Cài đặt học</h2>
-              <button type="button" onClick={() => setOpen(false)} aria-label="Đóng" className="rounded-lg p-1 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 cursor-pointer"><X className="h-4 w-4" /></button>
+      {open && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4" onClick={() => setOpen(false)}>
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Cài đặt học"
+            className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-2xl border border-stone-200 bg-white text-stone-900 shadow-2xl dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-stone-200 bg-white px-4 py-3 dark:border-stone-700 dark:bg-stone-900 sm:px-6">
+              <div>
+                <h2 className="text-sm font-black">Cài đặt học</h2>
+                <p className="mt-0.5 text-[11px] text-stone-500 dark:text-stone-400">Tùy chỉnh nền, âm thanh và giao diện khi học</p>
+              </div>
+              <button type="button" onClick={() => setOpen(false)} aria-label="Đóng" className="rounded-lg p-1.5 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 cursor-pointer"><X className="h-4 w-4" /></button>
             </div>
 
+            <div className="grid grid-cols-1 gap-3 p-4 sm:p-6 md:grid-cols-2 xl:grid-cols-3">
             <div className="flex items-center justify-between">
               <p className="text-xs font-bold text-stone-500 dark:text-stone-400">Giao diện sáng / tối</p>
               <EggThemeToggle />
@@ -303,13 +326,17 @@ export function StudyBackgroundPanel() {
               />
             </div>
 
-            {error && <p role="alert" className="text-xs text-rose-600">{error}</p>}
+            <div className="space-y-2 md:col-span-2 xl:col-span-3">
+              {error && <p role="alert" className="text-xs text-rose-600">{error}</p>}
 
-            <button type="button" onClick={() => { saveStudyBackground({ ...DEFAULT_STUDY_BG }); setError(""); }} className="w-full rounded-xl py-2 text-xs font-bold text-stone-600 hover:bg-stone-100 dark:text-stone-300 dark:hover:bg-stone-800 cursor-pointer">
-              Bỏ nền, về mặc định
-            </button>
+              <button type="button" onClick={() => { saveStudyBackground({ ...DEFAULT_STUDY_BG }); setError(""); }} className="w-full rounded-xl py-2 text-xs font-bold text-stone-600 hover:bg-stone-100 dark:text-stone-300 dark:hover:bg-stone-800 cursor-pointer">
+                Bỏ nền, về mặc định
+              </button>
+            </div>
+            </div>
           </div>
-        </>
+        </div>,
+        document.body,
       )}
     </div>
   );
