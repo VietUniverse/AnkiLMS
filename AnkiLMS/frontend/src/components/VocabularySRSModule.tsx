@@ -35,7 +35,7 @@ import { DailyLimitsPanel } from "./DailyLimitsPanel";
 import { useStudyBackground } from "../lib/studyBackground";
 import { addExtraNew, DailyLimits, DEFAULT_LIMITS, effectiveNewLimit, loadLimits, loadProgress, recordCard, remaining, saveLimits } from "../lib/dailyLimits";
 import { speakKorean } from "../lib/koreanSpeech";
-import { useHideChatGpt } from "../lib/studyPreferences";
+import { useHideChatGpt, useMuteSound } from "../lib/studyPreferences";
 import { inferTopikLevel, getCourseRank } from "../lib/studyRanks";
 import { LockKeyhole, Globe2 } from "lucide-react";
 import { VocabularySizeTest } from "./VocabularySizeTest";
@@ -293,6 +293,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const [modalImage, setModalImage] = useState<string | null>(null);
   const [dictPanelOpen, setDictPanelOpen] = useState(false);
   const hideChatGpt = useHideChatGpt();
+  const muteSound = useMuteSound();
+  const muteSoundRef = useRef(muteSound);
   const [dictQuery, setDictQuery] = useState("");
   const [dictResults, setDictResults] = useState<DictionaryEntry[]>([]);
   const [dictLoading, setDictLoading] = useState(false);
@@ -1019,6 +1021,14 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
   }, [viewMode, activeDeckTitle, exitStudy, currentCardIndex, activeCardsList.length, remainingCounts, setActiveStudySession]);
 
   const currentCard = activeCardsList[currentCardIndex] || activeCardsList[0];
+
+  useEffect(() => {
+    muteSoundRef.current = muteSound;
+    if (muteSound) {
+      audioPlayerRef.current?.pause();
+      audioPlayerRef.current = null;
+    }
+  }, [muteSound]);
   const studyMode = currentCard?.sibling ? "typing" : "flip";
   const nextReviewLabel = (rating: FSRSRating): string => {
     if (!currentCard) return "";
@@ -1030,6 +1040,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
   };
 
   const playAudioWithFallback = useCallback((audioField: string | undefined, fallbackText: string) => {
+    if (muteSoundRef.current) return;
     const cleanFallback = cleanTextOnly(fallbackText);
     const audioUrl = extractAudioSrc(audioField);
     if (audioPlayerRef.current) {
@@ -2617,7 +2628,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                       <div className="flex shrink-0 flex-col items-center gap-1">
                         <button
                           type="button"
-                          onClick={() => speakKorean(entry.hangul)}
+                          onClick={() => { if (!muteSound) speakKorean(entry.hangul); }}
                           aria-label={`Nghe ${entry.hangul}`}
                           title="Nghe phát âm"
                           className="rounded-lg p-1.5 text-sky-600 transition hover:bg-sky-500/10 dark:text-sky-400 cursor-pointer"
