@@ -9,6 +9,7 @@ import {
   BookOpen,
   Check,
   CheckCircle2,
+  ChevronDown,
   ClipboardCheck,
   ExternalLink,
   GraduationCap,
@@ -355,6 +356,12 @@ const dangerBtnCls =
 export default function AdminPage() {
   const { currentUser, handleOpenAuth } = useApp();
   const [panel, setPanel] = useState<Panel>("overview");
+  const [openNavGroup, setOpenNavGroup] = useState<string>(NAV_GROUPS[0].groupTitle);
+
+  useEffect(() => {
+    const group = NAV_GROUPS.find((item) => item.items.some((entry) => entry.id === panel));
+    if (group) setOpenNavGroup(group.groupTitle);
+  }, [panel]);
   const [overview, setOverview] = useState<Overview | null>(null);
   const [users, setUsers] = useState<UserRow[]>([]);
   const [decks, setDecks] = useState<DeckRow[]>([]);
@@ -1121,107 +1128,154 @@ export default function AdminPage() {
               </div>
             )}
 
-            {/* Mobile horizontal navigation bar */}
-            <nav
-              aria-label="Menu quản trị di động"
-              className="flex lg:hidden items-center gap-2 overflow-x-auto py-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            >
-              {NAV_GROUPS.flatMap((g) => g.items).map((item) => {
-                const active = panel === item.id;
-                const badge = getBadgeCount(item.id);
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => setPanel(item.id)}
-                    className={`inline-flex shrink-0 items-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-bold transition-all cursor-pointer ${
-                      active
-                        ? "border-blue-500 bg-blue-600 text-white shadow-lg shadow-blue-900/30"
-                        : "border-stone-200 dark:border-slate-800 bg-stone-100 dark:bg-[#132247] text-stone-600 dark:text-slate-300"
-                    }`}
-                  >
-                    {item.icon}
-                    <span>{item.label}</span>
-                    {badge !== null && (
-                      <span
-                        className={`rounded-full px-1.5 py-0.5 text-[10px] font-extrabold ${
-                          active
-                            ? "bg-blue-500/40 text-white"
-                            : "bg-stone-200 dark:bg-slate-800 text-stone-500 dark:text-slate-400"
-                        }`}
-                      >
-                        {badge}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </nav>
+            {/* Mobile navigation: nhóm chức năng + tính năng của nhóm đang mở */}
+            <div className="space-y-2 lg:hidden">
+              <div className="flex items-center gap-1.5 overflow-x-auto py-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {NAV_GROUPS.map((group) => {
+                  const isOpen = openNavGroup === group.groupTitle;
+                  const hasActive = group.items.some((item) => item.id === panel);
+                  return (
+                    <button
+                      key={group.groupTitle}
+                      type="button"
+                      onClick={() => setOpenNavGroup(group.groupTitle)}
+                      className={`inline-flex shrink-0 items-center gap-1.5 rounded-xl border px-3 py-2 text-[11px] font-extrabold transition-all cursor-pointer ${
+                        isOpen
+                          ? "border-blue-500 bg-blue-600 text-white shadow-lg shadow-blue-900/30"
+                          : "border-stone-200 dark:border-slate-800 bg-stone-100 dark:bg-[#132247] text-stone-600 dark:text-slate-300"
+                      }`}
+                    >
+                      <span>{group.groupTitle}</span>
+                      {hasActive && !isOpen && (
+                        <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
 
-            {/* Main 2-column Layout: Categorized Sidebar + Workspace */}
-            <div className="grid gap-6 lg:grid-cols-[270px_minmax(0,1fr)] items-start">
-              {/* Desktop Categorized Sidebar */}
-              <aside className="hidden lg:block card-duo rounded-3xl p-4 space-y-5">
-                {NAV_GROUPS.map((group) => (
-                  <div key={group.groupTitle} className="space-y-1.5">
-                    <p className="px-3 text-[10px] font-black uppercase tracking-widest text-stone-400 dark:text-slate-500">
-                      {group.groupTitle}
-                    </p>
-                    {group.items.map((item) => {
-                      const active = panel === item.id;
-                      const badge = getBadgeCount(item.id);
-                      return (
-                        <button
-                          key={item.id}
-                          type="button"
-                          onClick={() => setPanel(item.id)}
-                          className={`w-full flex items-center justify-between gap-2.5 rounded-2xl px-3 py-2.5 text-left transition-all cursor-pointer ${
+              <nav
+                aria-label="Menu quản trị di động"
+                className="flex items-center gap-2 overflow-x-auto py-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              >
+                {(NAV_GROUPS.find((group) => group.groupTitle === openNavGroup)?.items ?? []).map((item) => {
+                  const active = panel === item.id;
+                  const badge = getBadgeCount(item.id);
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => setPanel(item.id)}
+                      className={`inline-flex shrink-0 items-center gap-2 rounded-xl border px-3 py-2 text-xs font-bold transition-all cursor-pointer ${
+                        active
+                          ? "border-blue-500 bg-blue-600 text-white shadow-lg shadow-blue-900/30"
+                          : "border-stone-200 dark:border-slate-800 bg-white dark:bg-[#132247] text-stone-600 dark:text-slate-300"
+                      }`}
+                    >
+                      {item.icon}
+                      <span>{item.label}</span>
+                      {badge !== null && (
+                        <span
+                          className={`rounded-full px-1.5 py-0.5 text-[10px] font-extrabold ${
                             active
-                              ? "bg-blue-600 text-white shadow-md shadow-blue-900/25"
-                              : item.highlight
-                              ? "border border-blue-500/30 bg-blue-500/5 hover:bg-blue-500/15 text-stone-800 dark:text-white"
-                              : "hover:bg-stone-100 dark:hover:bg-[#132247] text-stone-700 dark:text-slate-200"
+                              ? "bg-blue-500/40 text-white"
+                              : "bg-stone-200 dark:bg-slate-800 text-stone-500 dark:text-slate-400"
                           }`}
                         >
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <span
-                              className={`shrink-0 rounded-xl p-2 ${
-                                active
-                                  ? "bg-white/20 text-white"
-                                  : item.highlight
-                                  ? "bg-blue-500/15 text-blue-600 dark:text-sky-300"
-                                  : "bg-stone-100 dark:bg-[#132247] text-stone-500 dark:text-slate-400"
-                              }`}
-                            >
-                              {item.icon}
-                            </span>
-                            <div className="min-w-0">
-                              <p className="truncate text-xs font-extrabold">{item.label}</p>
-                              <p
-                                className={`truncate text-[10px] ${
-                                  active ? "text-blue-100" : "text-stone-400 dark:text-slate-500"
-                                }`}
-                              >
-                                {item.subtitle}
-                              </p>
-                            </div>
-                          </div>
-                          {badge !== null && (
-                            <span
-                              className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-black ${
-                                active
-                                  ? "bg-white/20 text-white"
-                                  : "bg-stone-200/80 dark:bg-slate-800 text-stone-600 dark:text-slate-300"
-                              }`}
-                            >
-                              {badge}
-                            </span>
-                          )}
+                          {badge}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
+
+            {/* Main 2-column Layout: Categorized Sidebar + Workspace */}
+            <div className="grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)] items-start">
+              {/* Desktop Categorized Sidebar (accordion theo nhóm) */}
+              <aside className="hidden lg:block card-duo rounded-3xl p-3">
+                <nav className="space-y-1">
+                  {NAV_GROUPS.map((group) => {
+                    const isOpen = openNavGroup === group.groupTitle;
+                    const hasActive = group.items.some((item) => item.id === panel);
+                    return (
+                      <div key={group.groupTitle}>
+                        <button
+                          type="button"
+                          onClick={() => setOpenNavGroup(isOpen ? "" : group.groupTitle)}
+                          className={`flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-left transition-colors cursor-pointer ${
+                            hasActive
+                              ? "bg-blue-500/10"
+                              : "hover:bg-stone-100 dark:hover:bg-[#132247]"
+                          }`}
+                        >
+                          <span
+                            className={`truncate text-[10px] font-black uppercase tracking-widest ${
+                              hasActive ? "text-blue-600 dark:text-sky-300" : "text-stone-400 dark:text-slate-500"
+                            }`}
+                          >
+                            {group.groupTitle}
+                          </span>
+                          <span className="flex shrink-0 items-center gap-1.5">
+                            {hasActive && !isOpen && <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />}
+                            <ChevronDown
+                              className={`h-3.5 w-3.5 text-stone-400 transition-transform ${isOpen ? "" : "-rotate-90"}`}
+                            />
+                          </span>
                         </button>
-                      );
-                    })}
-                  </div>
-                ))}
+
+                        {isOpen && (
+                          <div className="ml-2 mt-1 space-y-1 border-l border-stone-200 pl-2 dark:border-slate-800">
+                            {group.items.map((item) => {
+                              const active = panel === item.id;
+                              const badge = getBadgeCount(item.id);
+                              return (
+                                <button
+                                  key={item.id}
+                                  type="button"
+                                  onClick={() => setPanel(item.id)}
+                                  title={item.subtitle}
+                                  className={`flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left transition-all cursor-pointer ${
+                                    active
+                                      ? "bg-blue-600 text-white shadow-md shadow-blue-900/25"
+                                      : item.highlight
+                                      ? "border border-blue-500/30 bg-blue-500/5 hover:bg-blue-500/15 text-stone-800 dark:text-white"
+                                      : "hover:bg-stone-100 dark:hover:bg-[#132247] text-stone-700 dark:text-slate-200"
+                                  }`}
+                                >
+                                  <span
+                                    className={`shrink-0 rounded-lg p-1.5 ${
+                                      active
+                                        ? "bg-white/20 text-white"
+                                        : item.highlight
+                                        ? "bg-blue-500/15 text-blue-600 dark:text-sky-300"
+                                        : "bg-stone-100 dark:bg-[#132247] text-stone-500 dark:text-slate-400"
+                                    }`}
+                                  >
+                                    {item.icon}
+                                  </span>
+                                  <span className="min-w-0 flex-1 truncate text-xs font-extrabold">{item.label}</span>
+                                  {badge !== null && (
+                                    <span
+                                      className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-black ${
+                                        active
+                                          ? "bg-white/20 text-white"
+                                          : "bg-stone-200/80 dark:bg-slate-800 text-stone-600 dark:text-slate-300"
+                                      }`}
+                                    >
+                                      {badge}
+                                    </span>
+                                  )}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </nav>
               </aside>
 
               {/* Right Content Area */}
