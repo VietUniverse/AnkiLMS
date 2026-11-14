@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Download, X } from "lucide-react";
 import { useInstallApp, useInstallPlatform, type InstallPlatform } from "../lib/installApp";
@@ -59,12 +59,26 @@ const STEPS: Record<InstallPlatform, { title: string; steps: string[] }> = {
 
 type Variant = "sidebar" | "card";
 
+const SIDEBAR_DISMISS_KEY = "haechivn_hide_install_sidebar";
+
 export function InstallAppButton({ variant = "sidebar", onDone }: { variant?: Variant; onDone?: () => void }) {
   const { installed, canPrompt, install } = useInstallApp();
   const platform = useInstallPlatform();
   const [help, setHelp] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
+
+  useEffect(() => {
+    if (variant !== "sidebar") return;
+    try { setDismissed(window.localStorage.getItem(SIDEBAR_DISMISS_KEY) === "1"); } catch {}
+  }, [variant]);
+
+  const dismissSidebar = () => {
+    setDismissed(true);
+    try { window.localStorage.setItem(SIDEBAR_DISMISS_KEY, "1"); } catch {}
+  };
 
   if (installed) return null;
+  if (variant === "sidebar" && dismissed) return null;
 
   const handle = async () => {
     if (canPrompt) {
@@ -79,19 +93,37 @@ export function InstallAppButton({ variant = "sidebar", onDone }: { variant?: Va
 
   return (
     <>
-      <button
-        type="button"
-        onClick={handle}
-        style={variant === "card" ? { color: "#fff" } : undefined}
-        className={
-          variant === "card"
-            ? "flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-sky-500 px-5 py-3 text-sm font-black shadow-sm transition hover:bg-sky-600 active:scale-[0.99]"
-            : "flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-bold text-sky-300 transition hover:bg-[#111c38] hover:text-sky-200"
-        }
-      >
-        <Download className="h-4 w-4 shrink-0" />
-        <span>Cài ứng dụng</span>
-      </button>
+      {variant === "card" ? (
+        <button
+          type="button"
+          onClick={handle}
+          style={{ color: "#fff" }}
+          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-sky-500 px-5 py-3 text-sm font-black shadow-sm transition hover:bg-sky-600 active:scale-[0.99]"
+        >
+          <Download className="h-4 w-4 shrink-0" />
+          <span>Cài ứng dụng</span>
+        </button>
+      ) : (
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={handle}
+            className="flex min-w-0 flex-1 cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-bold text-sky-300 transition hover:bg-[#111c38] hover:text-sky-200"
+          >
+            <Download className="h-4 w-4 shrink-0" />
+            <span className="truncate">Cài ứng dụng</span>
+          </button>
+          <button
+            type="button"
+            onClick={dismissSidebar}
+            aria-label="Ẩn gợi ý cài ứng dụng"
+            title="Ẩn gợi ý này"
+            className="flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-lg text-slate-400 transition hover:bg-white/10 hover:text-slate-200"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
 
       {help && typeof document !== "undefined" && createPortal(
         <div className="fixed inset-0 z-[100] flex items-end justify-center bg-black/55 p-3 sm:items-center" onClick={() => setHelp(false)}>
