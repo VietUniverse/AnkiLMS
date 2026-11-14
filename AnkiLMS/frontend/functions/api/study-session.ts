@@ -16,9 +16,11 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
       env.DB.prepare(
         `SELECT COUNT(*) AS session_count, COALESCE(SUM(cards_reviewed), 0) AS cards_reviewed,
           COALESCE(SUM(correct_count), 0) AS correct_count,
+          COALESCE(SUM(CASE WHEN module = 'srs' THEN cards_reviewed ELSE 0 END), 0) AS srs_cards_reviewed,
+          COALESCE(SUM(CASE WHEN module = 'srs' THEN correct_count ELSE 0 END), 0) AS srs_correct_count,
           COALESCE(SUM(CASE WHEN module = 'srs' AND duration_seconds >= 14400 THEN 0 ELSE duration_seconds END), 0) AS duration_seconds
          FROM study_sessions WHERE user_id = ?`,
-      ).bind(user.id).first<{ session_count: number; cards_reviewed: number; correct_count: number; duration_seconds: number }>(),
+      ).bind(user.id).first<{ session_count: number; cards_reviewed: number; correct_count: number; srs_cards_reviewed: number; srs_correct_count: number; duration_seconds: number }>(),
       env.DB.prepare(
         `SELECT checkin_date AS day, time_spent_minutes AS minutes, cards_reviewed AS cards
          FROM checkins WHERE user_id = ? AND checkin_date >= date('now', '-90 days') ORDER BY checkin_date ASC`,
