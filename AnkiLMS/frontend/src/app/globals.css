@@ -1489,3 +1489,27 @@ html[data-theme="light"] body:not(:has(.login-page-root)) .classes-back-btn:hove
 }
 
 
+
+/* ==========================================================================
+   Leaderboard - màu điểm/huy hiệu đủ tương phản ở cả light và dark mode.
+   Dùng class riêng để tránh rule light-mode đè lên các class text-*-400.
+   ========================================================================== */
+.lb-score-xp { color: #1d4ed8; }
+.lb-score-amber { color: #b45309; }
+.lb-score-emerald { color: #047857; }
+.lb-medal-1 { color: #b45309; }
+.lb-medal-2 { color: #475569; }
+.lb-medal-3 { color: #c2410c; }
+.lb-badge-1 { color: #b45309; }
+.lb-badge-2 { color: #334155; }
+.lb-badge-3 { color: #c2410c; }
+
+html[data-theme="dark"] .lb-score-xp { color: #60a5fa; }
+html[data-theme="dark"] .lb-score-amber { color: #fbbf24; }
+html[data-theme="dark"] .lb-score-emerald { color: #34d399; }
+html[data-theme="dark"] .lb-medal-1 { color: #fbbf24; }
+html[data-theme="dark"] .lb-medal-2 { color: #cbd5e1; }
+html[data-theme="dark"] .lb-medal-3 { color: #fb923c; }
+html[data-theme="dark"] .lb-badge-1 { color: #fcd34d; }
+html[data-theme="dark"] .lb-badge-2 { color: #e2e8f0; }
+html[data-theme="dark"] .lb-badge-3 { color: #fdba74; }

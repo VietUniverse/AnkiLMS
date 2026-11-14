@@ -44,9 +44,9 @@ const TAB_ACTIVE: Record<TabKey, string> = {
 };
 
 const SCORE_COLOR: Record<TabKey, string> = {
-  xp: "text-blue-500",
-  streak: "text-amber-500",
-  vocab: "text-emerald-500",
+  xp: "lb-score-xp",
+  streak: "lb-score-amber",
+  vocab: "lb-score-emerald",
 };
 
 const METRIC_LABEL: Record<TabKey, string> = {
@@ -102,7 +102,7 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
   const gap = me && ahead ? value(ahead) - value(me) + 1 : 0;
   const unit = UNIT[tab];
   // Màu huy chương chỉ dùng cho top 3; mọi thứ khác trung tính.
-  const medal = ["text-amber-600 dark:text-amber-400", "text-slate-500 dark:text-slate-300", "text-orange-600 dark:text-orange-400"];
+  const medal = ["lb-medal-1", "lb-medal-2", "lb-medal-3"];
   const top = sortedList.slice(0, 3);
   const hasPodium = top.length >= 3;
   // Bảng bên dưới chỉ liệt kê từ hạng 4; khi chưa đủ 3 người thì giữ nguyên toàn bộ danh sách.
@@ -133,7 +133,7 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
             return (
               <button key={key} type="button" onClick={() => setPeriod(key)} aria-pressed={active}
                 className={`inline-flex min-h-8 items-center rounded-lg px-3 text-xs font-bold transition-colors duration-200 ${
-                  active ? "bg-slate-700 text-white" : "text-slate-400 hover:text-white"
+                  active ? "bg-blue-600 text-white" : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 }`}>
                 {label}
               </button>
@@ -147,9 +147,9 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
         <div aria-label="Top 3" className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
           {top.map((user, idx) => {
             const badge = [
-              "bg-amber-500/15 border-amber-400/40 text-amber-300",
-              "bg-slate-500/15 border-slate-400/40 text-slate-200",
-              "bg-orange-500/15 border-orange-400/40 text-orange-300",
+              "lb-badge-1 bg-amber-500/15 border-amber-400/40",
+              "lb-badge-2 bg-slate-500/15 border-slate-400/40",
+              "lb-badge-3 bg-orange-500/15 border-orange-400/40",
             ][idx];
             return (
               <div key={user.id || idx} className="card-duo flex flex-col items-center gap-1.5 p-5 text-center">
