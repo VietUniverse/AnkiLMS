@@ -55,8 +55,8 @@ interface SidebarProps {
 
 const mainNav = [
   { href: "/", label: "Trang chủ", icon: Home },
-  { href: "/classes", label: "Lớp học", icon: Users, feature: "classes" },
   { href: "/flashcards", label: "Từ vựng", icon: Brain, feature: "flashcards" },
+  { href: "/classes", label: "Lớp học", icon: Users, feature: "classes" },
   { href: "/explore", label: "Khám phá", icon: Layers, feature: "explore" },
   { href: "/topik/archive", label: "TOPIK", icon: GraduationCap, feature: "topik" },
   { href: "/placement-test", label: "Kiểm tra vốn từ", icon: ClipboardCheck, feature: "placementTest" },
