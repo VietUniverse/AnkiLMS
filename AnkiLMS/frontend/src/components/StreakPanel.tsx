@@ -125,7 +125,15 @@ export function StreakPanel({ data, streak, longestStreak, publicView = false }:
               style={d.done ? { color: "#fff" } : undefined}
               aria-label={`${d.label} ngày ${d.date}: ${d.done ? "đã học" : d.future ? "chưa tới" : "chưa học"}`}
             >
-              {d.done ? <Check className="h-5 w-5" strokeWidth={3.5} /> : d.date}
+              {d.done ? (
+                d.isToday ? (
+                  <Flame className="h-5 w-5 fill-orange-500 text-orange-600 drop-shadow-[0_0_8px_rgba(251,146,60,0.6)]" strokeWidth={2.5} />
+                ) : (
+                  <Check className="h-5 w-5" strokeWidth={3.5} />
+                )
+              ) : (
+                d.date
+              )}
             </span>
           </div>
         ))}
