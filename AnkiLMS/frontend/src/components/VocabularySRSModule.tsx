@@ -2462,7 +2462,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                           autoCorrect="off"
                           autoCapitalize="none"
                           spellCheck={false}
-                          className="w-full h-12 text-center text-lg font-semibold font-noto bg-stone-50 dark:bg-stone-800/80 border border-stone-300 dark:border-stone-700 rounded-xl text-stone-900 dark:text-white placeholder:font-sans placeholder:font-medium placeholder:text-stone-400 focus:outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-500/15 transition"
+                          className="study-input w-full h-12 text-center text-lg font-semibold font-noto border border-stone-300 dark:border-stone-700 rounded-xl text-stone-900 dark:text-white placeholder:font-sans placeholder:font-medium placeholder:text-stone-400 focus:outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-500/15 transition"
                         />
                       </div>}
 
