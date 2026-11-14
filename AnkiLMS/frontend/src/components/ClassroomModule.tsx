@@ -534,6 +534,16 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
       )
     : [];
 
+  const pendingClasses = currentUser
+    ? classes.filter((c) =>
+        c.members.some(
+          (m) =>
+            (m.id === currentUser.id || m.email === currentUser.email) &&
+            m.status === "pending"
+        )
+      )
+    : [];
+
   const selectedClass = classes.find((c) => c.id === selectedClassId);
   const myMemberRecord = selectedClass?.members.find(
     (m) => m.id === currentUser?.id || m.email === currentUser?.email
@@ -1391,6 +1401,53 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
           </div>
         )}
       </div>
+
+      {pendingClasses.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-3 border-b border-slate-800 pb-3">
+            <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-black">
+              <Clock className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-black text-white">Lớp Đang Chờ Duyệt ({pendingClasses.length})</h2>
+              <span className="text-xs text-slate-400">Yêu cầu tham gia của bạn đang chờ Chủ lớp phê duyệt</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {pendingClasses.map((cls) => (
+              <div key={cls.id} className="card-duo p-5 bg-[#0f1b38] border-[#1e3466] border-l-4 border-l-amber-400 space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="px-3 py-1 rounded-xl bg-[#132247] border border-[#1e3a70] font-mono text-xs font-black text-sky-400 flex items-center gap-1.5">
+                    <span>Mã: {cls.code}</span>
+                    <button
+                      onClick={() => copyToClipboard(cls.code)}
+                      className="hover:text-white"
+                      title="Sao chép mã"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                    </button>
+                  </span>
+                  <span className="px-2.5 py-1 rounded-full bg-amber-950/80 border border-amber-500/40 text-amber-300 text-[10px] font-black flex items-center gap-1 shrink-0">
+                    <Clock className="w-3 h-3 text-amber-400" />
+                    <span>⏳ Đang chờ duyệt</span>
+                  </span>
+                </div>
+                <div>
+                  <h3 className="text-base font-black text-white">{cls.name}</h3>
+                  <p className="text-xs text-slate-400 mt-1 line-clamp-2">{cls.description}</p>
+                </div>
+                <div className="flex flex-wrap items-center gap-4 text-xs font-bold text-slate-400">
+                  <span className="flex items-center gap-1 text-slate-300">
+                    <UserCheck className="w-4 h-4 text-blue-400" /> {cls.ownerName}
+                  </span>
+                  <span className="flex items-center gap-1 text-slate-500 font-mono text-[11px]">Ngày tạo: {cls.createdAt}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
         </>
       )}
 
