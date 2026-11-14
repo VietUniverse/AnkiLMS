@@ -1543,16 +1543,6 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
 
       {/* Khám phá lớp công khai & riêng tư */}
       <div className="card-duo p-6 bg-[#0f1b38] border-[#1e3466] space-y-4 shadow-xl">
-        <div className="flex items-center gap-3 border-b border-slate-800 pb-3">
-          <div className="w-10 h-10 rounded-2xl bg-sky-500/20 text-sky-400 flex items-center justify-center font-black">
-            <Globe className="w-5 h-5" />
-          </div>
-          <div>
-            <h2 className="text-base font-black text-white">Khám Phá Lớp Học</h2>
-            <p className="text-xs text-slate-400">Lớp công khai vào học ngay, lớp riêng tư cần chủ lớp duyệt. Các lớp mẫu giúp bạn xem trước giao diện lớp học.</p>
-          </div>
-        </div>
-
         {discoverLoading ? (
           <p className="text-center text-sm text-slate-400 py-6">Đang tải danh sách lớp…</p>
         ) : (
