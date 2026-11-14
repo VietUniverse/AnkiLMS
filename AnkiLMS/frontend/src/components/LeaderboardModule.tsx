@@ -94,6 +94,11 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
   // Màu huy chương chỉ dùng cho top 3; mọi thứ khác trung tính.
   const medal = ["text-amber-600 dark:text-amber-400", "text-slate-500 dark:text-slate-300", "text-orange-600 dark:text-orange-400"];
   const top = sortedList.slice(0, 3);
+  const hasPodium = top.length >= 3;
+  // Bảng bên dưới chỉ liệt kê từ hạng 4; khi chưa đủ 3 người thì giữ nguyên toàn bộ danh sách.
+  const tableOffset = hasPodium ? 3 : 0;
+  const tableList = sortedList.slice(tableOffset);
+  const showTable = loading || sortedList.length === 0 || tableList.length > 0;
 
   return (
     <div className="mx-auto max-w-3xl pb-24 animate-fadeIn motion-reduce:animate-none">
@@ -115,7 +120,7 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
       </div>
 
       {/* Top 3: ba khối riêng biệt, không dính liền với bảng bên dưới. */}
-      {!loading && top.length >= 3 && (
+      {!loading && hasPodium && (
         <div aria-label="Top 3" className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
           {top.map((user, idx) => {
             const badge = [
@@ -143,6 +148,7 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
         </div>
       )}
 
+      {showTable && (
       <div className="card-duo mt-8 overflow-hidden">
         {loading && (
           <div aria-busy="true">
@@ -168,9 +174,9 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
           </div>
         )}
 
-        {!loading && sortedList.length > 0 && (
+        {!loading && tableList.length > 0 && (
           <ol aria-label={`Xếp hạng theo ${METRIC_LABEL[tab]}`}>
-            {sortedList.map((user, idx) => {
+            {tableList.map((user, idx) => {
               const isCurrentUser = isMe(user);
               return (
                 <li
@@ -178,7 +184,7 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
                   aria-current={isCurrentUser ? "true" : undefined}
                   className={`flex items-center gap-3 border-b border-slate-700/40 px-4 py-3 last:border-0 ${isCurrentUser ? "bg-blue-500/10" : ""}`}
                 >
-                  <span className={`w-6 shrink-0 text-right text-base font-black tabular-nums ${medal[idx] ?? "text-slate-500"}`}>{idx + 1}</span>
+                  <span className={`w-6 shrink-0 text-right text-base font-black tabular-nums ${tableOffset ? "text-slate-500" : medal[idx] ?? "text-slate-500"}`}>{idx + 1 + tableOffset}</span>
                   <Link href={`/member?id=${encodeURIComponent(user.id)}`} aria-label={`Mở hồ sơ ${user.name}`} className="shrink-0">
                     {user.avatar_url ? (
                       <img src={user.avatar_url} alt="" width={36} height={36} loading="lazy" decoding="async" className="h-9 w-9 rounded-full object-cover" />
@@ -207,6 +213,7 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
           </ol>
         )}
       </div>
+      )}
     </div>
   );
 };
