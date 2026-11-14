@@ -8,7 +8,7 @@ import { OnigiriHeatmap } from "../components/OnigiriHeatmap";
 import { StreakPanel } from "../components/StreakPanel";
 import { InstallAppButton } from "../components/InstallAppButton";
 import { useApp } from "../contexts/AppProvider";
-import { Flame, Zap, Layers, X, LogIn, Play, ClipboardCheck, ArrowRight, GraduationCap } from "lucide-react";
+import { Flame, Zap, X, LogIn, Play, ClipboardCheck, ArrowRight } from "lucide-react";
 import { ApiClient } from "../lib/apiClient";
 import { getStudyRank } from "../lib/studyRanks";
 import { loadProgress, NEW_WORDS_FOR_CHECKIN, vietnamToday } from "../lib/dailyLimits";
@@ -239,22 +239,6 @@ export default function Home() {
                 <button type="button" onClick={dismissInstall} className="mx-auto block cursor-pointer text-xs font-semibold text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200">Để sau</button>
               </div>
             )}
-
-            {/* Lối tắt */}
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {isFeatureEnabled("flashcards") && (
-                <Link href="/flashcards" className="flex flex-col items-center gap-1.5 rounded-2xl border border-stone-200 bg-white px-2 py-4 text-center transition hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900/70">
-                  <Layers className="h-6 w-6 text-sky-500" />
-                  <span className="text-xs font-bold text-stone-800 dark:text-stone-200">Từ vựng</span>
-                </Link>
-              )}
-              {isFeatureEnabled("topik") && (
-                <Link href="/topik/archive" className="flex flex-col items-center gap-1.5 rounded-2xl border border-sky-200 bg-sky-50 px-2 py-4 text-center transition hover:border-sky-500 dark:border-sky-400/20 dark:bg-sky-400/10">
-                  <GraduationCap className="h-6 w-6 text-sky-600 dark:text-sky-300" />
-                  <span className="text-xs font-bold text-sky-800 dark:text-sky-200">Thi thử TOPIK</span>
-                </Link>
-              )}
-            </div>
 
             {/* Heatmap cả năm chỉ cho màn từ tablet trở lên */}
             <div className="hidden md:block">
