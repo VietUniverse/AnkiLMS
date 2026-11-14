@@ -1576,7 +1576,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
             {/* Banner tiếp tục học lượt trước + Cấu hình gộp chung một hàng trên desktop */}
             {lastStudiedDeckId && lastStudiedTitle ? (
               <div className="grid gap-3 sm:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] sm:items-stretch">
-                <div className="p-4 rounded-2xl bg-white dark:bg-[#141b2d] border border-stone-200/80 dark:border-stone-800/80 flex items-center justify-between gap-4 shadow-xs animate-reveal">
+                <div className="h-full p-4 rounded-2xl bg-white dark:bg-[#141b2d] border border-stone-200/80 dark:border-stone-800/80 flex items-center justify-between gap-4 shadow-xs animate-reveal">
                   <div className="min-w-0">
                     <h3 className="text-sm sm:text-base font-bold truncate text-stone-900 dark:text-white">
                       {lastStudiedTitle}
@@ -1590,7 +1590,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                     <Play className="w-4 h-4 ml-0.5 fill-current" />
                   </button>
                 </div>
-                <div className="flex items-center">
+                <div className="flex h-full items-stretch">
                   <DailyLimitsPanel limits={dailyLimits} progress={dailyProgress} onChange={updateLimits} />
                 </div>
               </div>

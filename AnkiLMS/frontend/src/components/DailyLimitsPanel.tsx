@@ -22,7 +22,7 @@ function GoalBar({ done, value, onOpen }: { done: number; value: number; onOpen:
       type="button"
       onClick={onOpen}
       aria-label={`Mục tiêu từ mới hôm nay: đã ${done}${value ? ` trên ${value}` : ", không giới hạn"}. Bấm để đổi`}
-      className="group flex w-full items-center gap-3 rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 px-4 py-3 text-left transition hover:border-sky-400 cursor-pointer"
+      className="group flex h-full w-full items-center gap-3 rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 px-4 py-3 text-left transition hover:border-sky-400 cursor-pointer"
     >
       <Target className={`h-5 w-5 shrink-0 ${complete ? "text-emerald-500" : "text-sky-500"}`} />
       <span className="min-w-0 flex-1 space-y-1.5">
@@ -61,7 +61,7 @@ export const DailyLimitsPanel: React.FC<Props> = ({ limits, progress, onChange }
   };
 
   return (
-    <section className="w-full">
+    <section className="h-full w-full">
       <GoalBar done={progress.newDone} value={limits.newPerDay === 0 ? 0 : limits.newPerDay + progress.extraNew} onOpen={() => open("newPerDay")} />
 
       {editing && (
