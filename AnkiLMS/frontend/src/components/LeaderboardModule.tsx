@@ -101,16 +101,6 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
     <div className="mx-auto max-w-3xl pb-24 animate-fadeIn motion-reduce:animate-none">
       {/* Không dùng <header>: globals.css tô nền trắng cho mọi header ở giao diện sáng. */}
       <div className="flex flex-col items-center gap-4 text-center">
-        <div className="min-w-0">
-          {!loading && me && (
-            <p className="mt-2 text-sm text-slate-400">
-              Bạn hạng <strong className="font-black text-white tabular-nums">{myIndex + 1}</strong> trên {sortedList.length}.{" "}
-              {ahead
-                ? <>Thêm <strong className="font-black text-blue-500 tabular-nums">{fmt(gap)} {unit}</strong> là vượt {ahead.name}.</>
-                : <>Không ai ở trên bạn cả.</>}
-            </p>
-          )}
-        </div>
         <div role="group" aria-label="Xếp hạng theo" className="flex flex-wrap justify-center rounded-xl border-2 border-slate-700 p-1">
           {TABS.map(({ key, label, icon: Icon }) => {
             const active = tab === key;
