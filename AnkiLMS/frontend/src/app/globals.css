@@ -1458,7 +1458,11 @@ html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module a.te
 html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module .btn-duo-primary,
 html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="bg-blue-600"],
 html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="bg-amber-600"],
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="bg-amber-700"],
 html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="bg-indigo-600"],
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="bg-emerald-600"],
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="bg-sky-600"],
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="bg-purple-500"],
 html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="bg-sky-500"],
 html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="bg-rose-500"],
 html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="bg-emerald-500"],
@@ -1467,6 +1471,9 @@ html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [cla
 }
 html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module input,
 html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module textarea {
+  color: #0f172a !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="hover:text-white"]:hover {
   color: #0f172a !important;
 }
 
