@@ -546,7 +546,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
     const myProgressPercent = totalAssignments > 0 ? Math.round((myCompletedCount / totalAssignments) * 100) : 0;
 
     return (
-      <div className="space-y-6 animate-fadeIn pb-24 max-w-5xl mx-auto select-none">
+      <div className="classroom-module space-y-6 animate-fadeIn pb-24 max-w-5xl mx-auto">
         {/* Top Navigation Bar */}
         <div className="flex items-center justify-between bg-[#0f1b38] border border-[#1e3466] p-4 rounded-2xl shadow-xl">
           <button
@@ -1282,7 +1282,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
   // MAIN VIEW: CLASSROOM DASHBOARD & MY CLASSES LIST
   // =========================================================================
   return (
-    <div className="space-y-8 animate-fadeIn pb-24 max-w-5xl mx-auto select-none">
+    <div className="classroom-module space-y-8 animate-fadeIn pb-24 max-w-5xl mx-auto">
       {/* Banner Top */}
       <div className="card-duo p-6 md:p-8 bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950 border-blue-500/40 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
         <div className="space-y-3 z-10 text-center md:text-left flex-1">

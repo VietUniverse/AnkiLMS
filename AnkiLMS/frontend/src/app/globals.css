@@ -1387,3 +1387,87 @@ html {
   }
 }
 
+/* ==========================================================================
+   Classroom (/classes) - Light theme readability
+   Trang lớp học dùng bảng màu tối cố định; các rule dưới đây chuyển sang
+   giao diện sáng để đồng bộ với phần còn lại của ứng dụng.
+   ========================================================================== */
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module .card-duo {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="bg-[#0f1b38]"] {
+  background-color: #ffffff !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="bg-[#132247]"] {
+  background-color: #f1f5f9 !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="bg-slate-950"] {
+  background-color: #f8fafc !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="bg-slate-900"] {
+  background-color: #f8fafc !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="bg-slate-800"] {
+  background-color: #e2e8f0 !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="border-[#1e3a70]"],
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="border-[#1e3466]"],
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="border-slate-800"],
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="border-slate-700"] {
+  border-color: #e2e8f0 !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module .text-white {
+  color: #0f172a !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module .text-slate-300 {
+  color: #475569 !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module .text-slate-400,
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module .text-slate-500 {
+  color: #64748b !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module .text-sky-300,
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module .text-sky-400 {
+  color: #0369a1 !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module .text-amber-300,
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module .text-amber-400 {
+  color: #b45309 !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module .text-emerald-300,
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module .text-emerald-400 {
+  color: #047857 !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module .text-rose-300,
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module .text-rose-400 {
+  color: #be123c !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module .text-purple-300,
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module .text-purple-400 {
+  color: #6d28d9 !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module .text-blue-300,
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module .text-blue-400 {
+  color: #1d4ed8 !important;
+}
+/* Giữ chữ trắng trên nút/nhãn có nền màu đậm */
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module button.text-white,
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module a.text-white,
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module .btn-duo-primary,
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="bg-blue-600"],
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="bg-amber-600"],
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="bg-indigo-600"],
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="bg-sky-500"],
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="bg-rose-500"],
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="bg-emerald-500"],
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [class*="bg-purple-600"] {
+  color: #ffffff !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module input,
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module textarea {
+  color: #0f172a !important;
+}
+
+
