@@ -62,7 +62,7 @@ const mainNav = [
   { href: "/topik/archive", label: "TOPIK", icon: GraduationCap, badge: "MỚI", feature: "topik" },
   { href: "/placement-test", label: "Kiểm tra vốn từ", icon: ClipboardCheck, feature: "placementTest" },
   { href: "/tools", label: "Làm giấy tờ", icon: BriefcaseBusiness },
-  { href: "/dictionary", label: "Tra từ điển", icon: Search, feature: "dictionary" },
+  { href: "/dictionary", label: "Từ điển", icon: Search, feature: "dictionary" },
 ] as const;
 
 const communityNav = [
