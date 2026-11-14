@@ -1477,4 +1477,15 @@ html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module [cla
   color: #0f172a !important;
 }
 
+/* Nút Trở về nằm ngoài .classroom-module */
+html[data-theme="light"] body:not(:has(.login-page-root)) .classes-back-btn {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #334155 !important;
+}
+html[data-theme="light"] body:not(:has(.login-page-root)) .classes-back-btn:hover {
+  color: #0f172a !important;
+  border-color: #38bdf8 !important;
+}
+
 

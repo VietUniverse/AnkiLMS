@@ -111,12 +111,17 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
   const [selectedClassId, setSelectedClassId] = useState<string | null>(initialClassId);
   useEffect(() => { onClassesChange?.(classes.map((item) => item.id)); }, [classes, onClassesChange]);
 
+  // Tab điều hướng giữa danh sách lớp và form tham gia bằng mã
+  const [mainTab, setMainTab] = useState<"mine" | "join">("mine");
   // Join Class Form State
   const [joinCodeInput, setJoinCodeInput] = useState("");
   // Link mời /classes?join=MÃ điền sẵn ô mã lớp cho người được mời.
   useEffect(() => {
     const invited = new URLSearchParams(window.location.search).get("join");
-    if (invited) setJoinCodeInput(invited.trim().toUpperCase());
+    if (invited) {
+      setJoinCodeInput(invited.trim().toUpperCase());
+      setMainTab("join");
+    }
   }, []);
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
@@ -1282,7 +1287,37 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
   // MAIN VIEW: CLASSROOM DASHBOARD & MY CLASSES LIST
   // =========================================================================
   return (
-    <div className="classroom-module space-y-8 animate-fadeIn pb-24 max-w-5xl mx-auto">
+    <div className="classroom-module space-y-6 animate-fadeIn pb-24 max-w-5xl mx-auto">
+      {/* Tabs: Lớp học của tôi / Tham gia lớp học */}
+      <div className="grid grid-cols-2 gap-2 rounded-2xl border border-[#1e3466] bg-[#0f1b38] p-1.5 shadow-xl">
+        <button
+          type="button"
+          onClick={() => setMainTab("mine")}
+          className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-xs font-black transition-all cursor-pointer ${
+            mainTab === "mine"
+              ? "bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg"
+              : "text-slate-300 hover:text-white hover:bg-white/5"
+          }`}
+        >
+          <Users className="w-4 h-4" />
+          <span>Lớp học của tôi ({myClasses.length})</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setMainTab("join")}
+          className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-xs font-black transition-all cursor-pointer ${
+            mainTab === "join"
+              ? "bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg"
+              : "text-slate-300 hover:text-white hover:bg-white/5"
+          }`}
+        >
+          <KeyRound className="w-4 h-4" />
+          <span>Tham gia lớp học</span>
+        </button>
+      </div>
+
+      {mainTab === "join" && (
+        <>
       {/* Banner Top */}
       <div className="card-duo p-6 md:p-8 bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950 border-blue-500/40 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
         <div className="space-y-3 z-10 text-center md:text-left flex-1">
@@ -1352,8 +1387,10 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
           </div>
         )}
       </div>
+        </>
+      )}
 
-      {/* List of My Classes */}
+      {mainTab === "mine" && (
       <div className="space-y-4">
         <div className="flex items-center justify-between border-b border-slate-800 pb-3">
           <div className="flex items-center gap-3">
@@ -1365,6 +1402,14 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
               <span className="text-xs text-slate-400">Các lớp học bạn đã tạo hoặc đăng ký tham gia</span>
             </div>
           </div>
+          <button
+            type="button"
+            onClick={() => (currentUser ? setShowCreateModal(true) : handleOpenAuth(false))}
+            className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs inline-flex items-center gap-2 cursor-pointer transition-all shadow-lg shrink-0"
+          >
+            <Plus className="w-4 h-4" />
+            <span className="hidden sm:inline">Tạo Lớp Học Mới</span>
+          </button>
         </div>
 
         {loading ? (
@@ -1465,7 +1510,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
             </div>
             <h3 className="text-base font-black text-white">Bạn Chưa Tham Gia Lớp Học Nào</h3>
             <p className="text-xs text-slate-400 max-w-md mx-auto">
-              Hãy nhập Mã kích hoạt lớp ở ô trên để gửi yêu cầu xin vào lớp, hoặc tự Tạo một lớp học mới cho nhóm của bạn!
+              Hãy chuyển sang tab “Tham gia lớp học” để nhập Mã kích hoạt, hoặc tự Tạo một lớp học mới cho nhóm của bạn!
             </p>
             <button
               onClick={() => (currentUser ? setShowCreateModal(true) : handleOpenAuth(false))}
@@ -1477,6 +1522,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
           </div>
         )}
       </div>
+      )}
 
       {/* Modal: Create Class */}
       {showCreateModal && (
