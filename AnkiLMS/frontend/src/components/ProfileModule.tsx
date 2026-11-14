@@ -87,7 +87,6 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
   const srsReviewed = summary?.srs_cards_reviewed || 0;
   const retention = srsReviewed > 0 ? Math.round(((summary?.srs_correct_count || 0) / srsReviewed) * 100) : null;
   const statsCards = [
-    { label: "Chuỗi hiện tại", value: `${currentUser.streak || 0} ngày`, hint: `Kỷ lục: ${currentUser.longest_streak || currentUser.streak || 0} ngày`, icon: Flame, color: "text-orange-500", bg: "bg-orange-400/10" },
     { label: "Tổng thời gian học", value: formatDuration(summary?.duration_seconds || 0), hint: `${summary?.session_count || 0} phiên học`, icon: Clock3, color: "text-sky-500", bg: "bg-sky-400/10" },
     { label: "Câu đã luyện", value: (summary?.cards_reviewed || 0).toLocaleString("vi-VN"), hint: `${accuracy}% chính xác`, icon: CheckCircle2, color: "text-emerald-500", bg: "bg-emerald-400/10" },
     { label: "Trí nhớ", value: retention === null ? "—" : `${retention}%`, hint: "Mục tiêu 90%", icon: Brain, color: "text-rose-500", bg: "bg-rose-400/10" },
@@ -145,7 +144,7 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
       </section>
 
       {/* Số liệu */}
-      <section className={`${card} grid grid-cols-2 divide-x divide-y divide-stone-200 dark:divide-stone-800 lg:grid-cols-5 lg:divide-y-0 overflow-hidden`}>
+      <section className={`${card} grid grid-cols-2 divide-x divide-y divide-stone-200 dark:divide-stone-800 lg:grid-cols-4 lg:divide-y-0 overflow-hidden`}>
         {statsCards.map(({ label, value, hint, icon: Icon, color }) => (
           <div key={label} className="p-4 text-center">
             <p className="flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400"><Icon className={`h-3.5 w-3.5 ${color}`} />{label}</p>
