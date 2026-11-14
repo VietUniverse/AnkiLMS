@@ -621,7 +621,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
       {/* --- Floating Tooltip --- */}
       {hoveredCell && typeof document !== "undefined" && createPortal(
         <div
-          className="fixed pointer-events-none z-50 transform -translate-x-1/2 -translate-y-full mb-2 bg-[#0c1017] text-white rounded-lg px-3 py-2 shadow-2xl text-xs space-y-0.5 animate-fadeIn border-0"
+          className="fixed pointer-events-none z-50 transform -translate-x-1/2 -translate-y-full mb-2 rounded-lg border border-stone-200 bg-white px-3 py-2 text-xs text-stone-900 shadow-2xl space-y-0.5 animate-fadeIn dark:border-0 dark:bg-[#0c1017] dark:text-white"
           style={{
             left: (() => {
               const viewportWidth = window.innerWidth;
@@ -632,23 +632,23 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
             width: "min(320px, calc(100vw - 24px))",
           }}
         >
-          <p className="font-bold text-sky-400 flex items-center gap-1.5 flex-wrap">
+          <p className="font-bold text-sky-600 dark:text-sky-400 flex items-center gap-1.5 flex-wrap">
             <span>{hoveredCell.dateStr}</span>
             {hoveredCell.lunarStr && (
-              <span className="text-[11px] font-normal text-slate-300">
+              <span className="text-[11px] font-normal text-stone-500 dark:text-slate-300">
                 ({hoveredCell.lunarStr})
               </span>
             )}
-            <span className="text-[10px] px-1.5 py-0.2 rounded bg-sky-500/20 text-sky-300 ml-auto">
+            <span className="text-[10px] px-1.5 py-0.2 rounded bg-sky-100 text-sky-700 ml-auto dark:bg-sky-500/20 dark:text-sky-300">
               Cấp {hoveredCell.level}/8
             </span>
           </p>
           {hoveredCell.minutes > 0 ? (
-            <p className="text-slate-200">
+            <p className="text-stone-700 dark:text-slate-200">
               <b>{hoveredCell.minutes} phút học</b> • +{hoveredCell.xp} XP • {hoveredCell.cards} thẻ
             </p>
           ) : (
-            <p className="text-slate-400 italic">Chưa có hoạt động học</p>
+            <p className="text-stone-400 italic dark:text-slate-400">Chưa có hoạt động học</p>
           )}
         </div>,
         document.body,
