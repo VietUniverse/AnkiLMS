@@ -46,11 +46,12 @@ const formatDuration = (seconds: number) => {
   return hours ? `${hours}h ${minutes}p` : `${minutes} phút`;
 };
 
-export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpenAuth }) => {
+export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpenAuth, onLogout }) => {
   const { isFeatureEnabled } = useApp();
   const [stats, setStats] = useState<StudyProfileSummary | null>(null);
   const [heatmapData, setHeatmapData] = useState<Awaited<ReturnType<typeof ApiClient.getHeatmapData>>>([]);
   const [claimedBadgeIds, setClaimedBadgeIds] = useState<Set<string>>(new Set());
+  const [confirmingLogout, setConfirmingLogout] = useState(false);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -135,6 +136,7 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
           <div className="flex justify-center gap-2 sm:flex-col">
             <Link href="/profile/settings" className="rounded-xl bg-sky-500 px-4 py-2 text-center text-xs font-bold text-white transition hover:bg-sky-600">Cài đặt</Link>
             <Link href={`/member?id=${encodeURIComponent(currentUser.id)}`} className="rounded-xl border border-stone-200 dark:border-stone-700 px-4 py-2 text-center text-xs font-bold transition hover:bg-stone-100 dark:hover:bg-stone-800">Trang công khai</Link>
+            <button type="button" onClick={() => setConfirmingLogout(true)} className="rounded-xl border border-rose-200 dark:border-rose-500/30 px-4 py-2 text-center text-xs font-bold text-rose-600 dark:text-rose-400 transition hover:bg-rose-50 dark:hover:bg-rose-500/10">Đăng xuất</button>
           </div>
         </div>
       </section>
@@ -215,6 +217,44 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
           )}
         </section>
       </div>
+
+      {confirmingLogout && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4"
+          onClick={() => setConfirmingLogout(false)}
+        >
+          <div
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="profile-logout-title"
+            className="w-full max-w-xs space-y-4 rounded-2xl border border-stone-200 bg-white p-5 text-stone-900 shadow-2xl dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="space-y-1">
+              <h2 id="profile-logout-title" className="text-base font-black">Đăng xuất?</h2>
+              <p className="text-xs text-stone-500 dark:text-stone-400">Bạn có chắc chắn muốn đăng xuất khỏi tài khoản không?</p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                autoFocus
+                onClick={() => setConfirmingLogout(false)}
+                className="flex-1 cursor-pointer rounded-xl border-0 bg-stone-100 py-2 text-xs font-bold text-stone-700 transition hover:bg-stone-200 dark:bg-stone-800 dark:text-stone-200 dark:hover:bg-stone-700"
+              >
+                Huỷ
+              </button>
+              <button
+                onClick={() => {
+                  setConfirmingLogout(false);
+                  onLogout();
+                }}
+                className="flex-1 cursor-pointer rounded-xl border-0 bg-rose-500 py-2 text-xs font-bold text-white transition hover:bg-rose-600"
+              >
+                Đăng xuất
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
