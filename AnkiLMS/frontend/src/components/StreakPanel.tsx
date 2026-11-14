@@ -127,7 +127,7 @@ export function StreakPanel({ data, streak, longestStreak, publicView = false }:
             >
               {d.done ? (
                 d.isToday ? (
-                  <Flame className="h-5 w-5 fill-orange-500 text-orange-600 drop-shadow-[0_0_8px_rgba(251,146,60,0.6)]" strokeWidth={2.5} />
+                  <Flame className="h-5 w-5 fill-white text-white drop-shadow-[0_0_8px_rgba(251,146,60,0.65)]" strokeWidth={2.5} />
                 ) : (
                   <Check className="h-5 w-5" strokeWidth={3.5} />
                 )
@@ -194,7 +194,11 @@ export function StreakPanel({ data, streak, longestStreak, publicView = false }:
                               : "text-stone-600 dark:text-stone-300"
                       }`}
                     >
-                      {cell.day}
+                      {done && isToday ? (
+                        <Flame className="h-4 w-4 fill-white text-white drop-shadow-[0_0_6px_rgba(251,146,60,0.65)]" strokeWidth={2.5} />
+                      ) : (
+                        cell.day
+                      )}
                     </span>
                   </span>
                 );
