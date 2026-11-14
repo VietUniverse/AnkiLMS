@@ -93,9 +93,7 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
   const unit = UNIT[tab];
   // Màu huy chương chỉ dùng cho top 3; mọi thứ khác trung tính.
   const medal = ["text-amber-600 dark:text-amber-400", "text-slate-500 dark:text-slate-300", "text-orange-600 dark:text-orange-400"];
-  const bar = ["bg-amber-400/90", "bg-slate-400/70", "bg-orange-400/80"];
   const top = sortedList.slice(0, 3);
-  const topMax = Math.max(1, ...top.map(value));
 
   return (
     <div className="mx-auto max-w-3xl pb-24 animate-fadeIn motion-reduce:animate-none">
@@ -116,27 +114,36 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
         </div>
       </div>
 
-      {/* Bục: chiều cao cột tỉ lệ với điểm thật, nên khoảng cách giữa top 3 nhìn là thấy. */}
+      {/* Top 3: ba khối riêng biệt, không dính liền với bảng bên dưới. */}
       {!loading && top.length >= 3 && (
-        <ol aria-label="Top 3" className="mt-10 grid grid-cols-3 items-end gap-2 sm:gap-4">
-          {[1, 0, 2].map((idx) => {
-            const user = top[idx];
-            const height = 28 + 52 * (value(user) / topMax); // 28–80px
+        <div aria-label="Top 3" className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {top.map((user, idx) => {
+            const badge = [
+              "bg-amber-500/15 border-amber-400/40 text-amber-300",
+              "bg-slate-500/15 border-slate-400/40 text-slate-200",
+              "bg-orange-500/15 border-orange-400/40 text-orange-300",
+            ][idx];
             return (
-              <li key={user.id || idx} className="flex min-w-0 flex-col items-center text-center">
+              <div key={user.id || idx} className="card-duo flex flex-col items-center gap-1.5 p-5 text-center">
+                <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-black tabular-nums ${badge}`}>
+                  #{idx + 1}
+                </span>
+                <Link href={`/member?id=${encodeURIComponent(user.id)}`} aria-label={`Mở hồ sơ ${user.name}`} className="mt-1">
+                  {user.avatar_url ? (
+                    <img src={user.avatar_url} alt="" width={48} height={48} loading="lazy" decoding="async" className="h-12 w-12 rounded-full object-cover" />
+                  ) : (
+                    <span className="grid h-12 w-12 place-items-center rounded-full bg-blue-600 text-base font-black text-white">{user.name?.charAt(0)?.toUpperCase() || "?"}</span>
+                  )}
+                </Link>
                 <p title={user.name} className="w-full truncate text-sm font-bold text-white">{user.name}</p>
-                <p className={`text-sm font-black tabular-nums ${medal[idx]}`}>{score(user)}</p>
-                <div style={{ height: `${height}px` }} className={`mt-2 flex w-full items-start justify-center rounded-t-xl pt-2 ${bar[idx]}`}>
-                  <span className="text-lg font-black text-slate-900 tabular-nums">{idx + 1}</span>
-                </div>
-              </li>
+                <p className={`text-base font-black tabular-nums ${medal[idx]}`}>{score(user)}</p>
+              </div>
             );
           })}
-        </ol>
+        </div>
       )}
 
-      {/* .card-duo đặt bo góc trong globals.css và thắng class rounded-t-none, nên vuông góc trên bằng style để cột bục ngồi khít. */}
-      <div className={`card-duo overflow-hidden ${top.length >= 3 && !loading ? "" : "mt-8"}`} style={top.length >= 3 && !loading ? { borderTopLeftRadius: 0, borderTopRightRadius: 0 } : undefined}>
+      <div className="card-duo mt-8 overflow-hidden">
         {loading && (
           <div aria-busy="true">
             <span className="sr-only" role="status">Đang tải bảng xếp hạng…</span>
