@@ -1161,7 +1161,7 @@ export default function AdminPage() {
             {/* Main 2-column Layout: Categorized Sidebar + Workspace */}
             <div className="grid gap-6 lg:grid-cols-[270px_minmax(0,1fr)] items-start">
               {/* Desktop Categorized Sidebar */}
-              <aside className="hidden lg:block card-duo rounded-3xl p-4 space-y-5 sticky top-20">
+              <aside className="hidden lg:block card-duo rounded-3xl p-4 space-y-5">
                 {NAV_GROUPS.map((group) => (
                   <div key={group.groupTitle} className="space-y-1.5">
                     <p className="px-3 text-[10px] font-black uppercase tracking-widest text-stone-400 dark:text-slate-500">
