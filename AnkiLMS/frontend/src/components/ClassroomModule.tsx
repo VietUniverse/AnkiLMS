@@ -1471,13 +1471,13 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
             <span className="hidden sm:inline">Trở về</span>
           </button>
         )}
-        <div className="grid flex-1 grid-cols-2 gap-2 rounded-2xl border border-[#1e3466] bg-[#0f1b38] p-1.5 shadow-xl">
+        <div className="grid flex-1 grid-cols-2 gap-2 rounded-2xl border border-[#1e3466] bg-[#0f1b38] p-1.5">
           <button
             type="button"
             onClick={() => setMainTab("mine")}
             className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-xs font-black transition-all cursor-pointer ${
               mainTab === "mine"
-                ? "bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg"
+                ? "bg-gradient-to-r from-sky-500 to-blue-600 text-white"
                 : "text-slate-300 hover:text-white hover:bg-white/5"
             }`}
           >
@@ -1489,7 +1489,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
             onClick={() => setMainTab("join")}
             className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-xs font-black transition-all cursor-pointer ${
               mainTab === "join"
-                ? "bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg"
+                ? "bg-gradient-to-r from-sky-500 to-blue-600 text-white"
                 : "text-slate-300 hover:text-white hover:bg-white/5"
             }`}
           >
