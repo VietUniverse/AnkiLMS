@@ -325,9 +325,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <Link
           href="/"
           title="HaechiVN"
-          className="flex items-center gap-2.5 min-w-0 rounded-xl p-1 -m-1 hover:bg-[#0b1329] transition-colors cursor-pointer"
+          className="flex items-center gap-2.5 min-w-0 p-1 -m-1 cursor-pointer"
         >
-          <div className="w-8 h-8 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
+          <div className="w-8 h-8 flex items-center justify-center shrink-0">
             <img src="/brand/haechivn-mark.webp" alt="HaechiVN" className="w-7 h-7 object-contain" />
           </div>
           {!collapsed && (
