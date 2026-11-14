@@ -1453,26 +1453,6 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
 
       {mainTab === "join" && (
         <>
-      {/* Banner Top */}
-      <div className="card-duo p-6 md:p-8 bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950 border-blue-500/40 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
-        <div className="space-y-3 z-10 text-center md:text-left flex-1">
-          <h1 className="text-2xl md:text-3xl font-black text-white">
-            Tham Gia Lớp Học <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-emerald-400">Bằng Mã Kích Hoạt</span>
-          </h1>
-          <p className="text-xs md:text-sm text-slate-300 max-w-xl leading-relaxed">
-            Nhập Mã lớp do Chủ lớp/Giáo viên cấp để gửi yêu cầu tham gia. Sau khi được phê duyệt, bạn có thể học bộ thẻ riêng và đua top bảng xếp hạng lớp.
-          </p>
-        </div>
-
-        <button
-          onClick={() => (currentUser ? setShowCreateModal(true) : handleOpenAuth(false))}
-          className="btn-duo btn-duo-primary px-6 py-3 text-xs flex items-center gap-2 shrink-0 shadow-lg cursor-pointer"
-        >
-          <Plus className="w-4 h-4 text-amber-300" />
-          <span>Tạo Lớp Học Mới</span>
-        </button>
-      </div>
-
       {/* Join Class by Code Card */}
       <div className="card-duo p-6 bg-[#0f1b38] border-[#1e3466] space-y-4 shadow-xl">
         <div className="flex items-center gap-3 border-b border-slate-800 pb-3">
