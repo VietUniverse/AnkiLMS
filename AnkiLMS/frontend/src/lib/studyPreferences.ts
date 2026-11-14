@@ -2,7 +2,9 @@ import { useSyncExternalStore } from "react";
 
 // Tùy chọn hiển thị khi học thẻ (lưu trên thiết bị này).
 const HIDE_CHATGPT_KEY = "haechivn_hide_chatgpt";
-const MUTE_SOUND_KEY = "haechivn_mute_sound";
+const MUTE_WORD_KEY = "haechivn_mute_word_audio";
+const MUTE_EXAMPLE_KEY = "haechivn_mute_example_audio";
+const LEGACY_MUTE_KEY = "haechivn_mute_sound";
 const PREF_EVENT = "haechivn-study-prefs";
 
 const readHideChatGpt = (): boolean => {
@@ -26,25 +28,40 @@ export function useHideChatGpt(): boolean {
   return useSyncExternalStore(subscribePrefs, readHideChatGpt, () => false);
 }
 
-const readMuteSound = (): boolean => {
+const readMuted = (key: string): boolean => {
   try {
-    return localStorage.getItem(MUTE_SOUND_KEY) === "1";
+    const value = localStorage.getItem(key);
+    if (value !== null) return value === "1";
+    // Tương thích công tắc "Tắt âm thanh" chung trước đây.
+    return localStorage.getItem(LEGACY_MUTE_KEY) === "1";
   } catch {
     return false;
   }
 };
 
-export function useMuteSound(): boolean {
-  return useSyncExternalStore(subscribePrefs, readMuteSound, () => false);
-}
-
-export function setMuteSound(muted: boolean): void {
+const writeMuted = (key: string, muted: boolean): void => {
   try {
-    localStorage.setItem(MUTE_SOUND_KEY, muted ? "1" : "0");
+    localStorage.setItem(key, muted ? "1" : "0");
     window.dispatchEvent(new Event(PREF_EVENT));
   } catch {
     // Bỏ qua khi trình duyệt chặn lưu trữ.
   }
+};
+
+export function useMuteWordAudio(): boolean {
+  return useSyncExternalStore(subscribePrefs, () => readMuted(MUTE_WORD_KEY), () => false);
+}
+
+export function setMuteWordAudio(muted: boolean): void {
+  writeMuted(MUTE_WORD_KEY, muted);
+}
+
+export function useMuteExampleAudio(): boolean {
+  return useSyncExternalStore(subscribePrefs, () => readMuted(MUTE_EXAMPLE_KEY), () => false);
+}
+
+export function setMuteExampleAudio(muted: boolean): void {
+  writeMuted(MUTE_EXAMPLE_KEY, muted);
 }
 
 export function setHideChatGpt(hidden: boolean): void {

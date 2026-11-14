@@ -35,7 +35,7 @@ import { DailyLimitsPanel } from "./DailyLimitsPanel";
 import { useStudyBackground } from "../lib/studyBackground";
 import { addExtraNew, DailyLimits, DEFAULT_LIMITS, effectiveNewLimit, loadLimits, loadProgress, recordCard, remaining, saveLimits } from "../lib/dailyLimits";
 import { speakKorean } from "../lib/koreanSpeech";
-import { useHideChatGpt, useMuteSound } from "../lib/studyPreferences";
+import { useHideChatGpt, useMuteExampleAudio, useMuteWordAudio } from "../lib/studyPreferences";
 import { inferTopikLevel, getCourseRank } from "../lib/studyRanks";
 import { LockKeyhole, Globe2 } from "lucide-react";
 import { VocabularySizeTest } from "./VocabularySizeTest";
@@ -293,8 +293,10 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const [modalImage, setModalImage] = useState<string | null>(null);
   const [dictPanelOpen, setDictPanelOpen] = useState(false);
   const hideChatGpt = useHideChatGpt();
-  const muteSound = useMuteSound();
-  const muteSoundRef = useRef(muteSound);
+  const muteWordAudio = useMuteWordAudio();
+  const muteExampleAudio = useMuteExampleAudio();
+  const muteWordRef = useRef(muteWordAudio);
+  const muteExampleRef = useRef(muteExampleAudio);
   const [dictQuery, setDictQuery] = useState("");
   const [dictResults, setDictResults] = useState<DictionaryEntry[]>([]);
   const [dictLoading, setDictLoading] = useState(false);
@@ -1023,12 +1025,20 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
   const currentCard = activeCardsList[currentCardIndex] || activeCardsList[0];
 
   useEffect(() => {
-    muteSoundRef.current = muteSound;
-    if (muteSound) {
+    muteWordRef.current = muteWordAudio;
+    if (muteWordAudio) {
       audioPlayerRef.current?.pause();
       audioPlayerRef.current = null;
     }
-  }, [muteSound]);
+  }, [muteWordAudio]);
+
+  useEffect(() => {
+    muteExampleRef.current = muteExampleAudio;
+    if (muteExampleAudio) {
+      audioPlayerRef.current?.pause();
+      audioPlayerRef.current = null;
+    }
+  }, [muteExampleAudio]);
   const studyMode = currentCard?.sibling ? "typing" : "flip";
   const nextReviewLabel = (rating: FSRSRating): string => {
     if (!currentCard) return "";
@@ -1040,7 +1050,6 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
   };
 
   const playAudioWithFallback = useCallback((audioField: string | undefined, fallbackText: string) => {
-    if (muteSoundRef.current) return;
     const cleanFallback = cleanTextOnly(fallbackText);
     const audioUrl = extractAudioSrc(audioField);
     if (audioPlayerRef.current) {
@@ -1066,12 +1075,12 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
 
   // Sound playback helper (plays original .apkg audio_word first, falls back to TTS)
   const playCurrentSound = useCallback(() => {
-    if (!currentCard) return;
+    if (!currentCard || muteWordRef.current) return;
     playAudioWithFallback(currentCard.audio_word, currentCard.word);
   }, [currentCard, playAudioWithFallback]);
 
   const playExampleSound = useCallback(() => {
-    if (!currentCard?.example) return;
+    if (!currentCard?.example || muteExampleRef.current) return;
     playAudioWithFallback(currentCard.audio_example, currentCard.example);
   }, [currentCard, playAudioWithFallback]);
 
@@ -1084,7 +1093,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
   const currentAudioWordField = currentCard?.audio_word || "";
   useEffect(() => {
     // Thẻ Typing: đọc to từ sẽ lộ đáp án, nên không tự phát.
-    if (viewMode === "study" && currentWordForAudio && !currentCard?.sibling) {
+    if (viewMode === "study" && currentWordForAudio && !currentCard?.sibling && !muteWordRef.current) {
       playAudioWithFallback(currentAudioWordField, currentWordForAudio);
     }
   }, [viewMode, currentCardIndex, currentWordForAudio, currentAudioWordField, currentCard?.sibling, playAudioWithFallback]);
@@ -2628,7 +2637,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                       <div className="flex shrink-0 flex-col items-center gap-1">
                         <button
                           type="button"
-                          onClick={() => { if (!muteSound) speakKorean(entry.hangul); }}
+                          onClick={() => { if (!muteWordAudio) speakKorean(entry.hangul); }}
                           aria-label={`Nghe ${entry.hangul}`}
                           title="Nghe phát âm"
                           className="rounded-lg p-1.5 text-sky-600 transition hover:bg-sky-500/10 dark:text-sky-400 cursor-pointer"

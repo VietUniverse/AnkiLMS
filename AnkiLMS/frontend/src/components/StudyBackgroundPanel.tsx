@@ -4,14 +4,15 @@ import React, { useRef, useState } from "react";
 import { ImagePlus, Settings, Trash2, X } from "lucide-react";
 import { EggThemeToggle } from "./EggThemeToggle";
 import { backgroundLayerStyle, DEFAULT_STUDY_BG, fileToDataUrl, GRADIENT_PRESETS, saveStudyBackground, useStudyBackground } from "../lib/studyBackground";
-import { setHideChatGpt, setMuteSound, useHideChatGpt, useMuteSound } from "../lib/studyPreferences";
+import { setHideChatGpt, setMuteExampleAudio, setMuteWordAudio, useHideChatGpt, useMuteExampleAudio, useMuteWordAudio } from "../lib/studyPreferences";
 
 const SAMPLE_IMAGE = "/images/login-bg.webp";
 
 export function StudyBackgroundPanel() {
   const bg = useStudyBackground();
   const hideChatGpt = useHideChatGpt();
-  const muteSound = useMuteSound();
+  const muteWordAudio = useMuteWordAudio();
+  const muteExampleAudio = useMuteExampleAudio();
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
@@ -58,16 +59,30 @@ export function StudyBackgroundPanel() {
             </div>
 
             <div className="flex items-center justify-between">
-              <p className="text-xs font-bold text-stone-500 dark:text-stone-400">Tắt âm thanh</p>
+              <p className="text-xs font-bold text-stone-500 dark:text-stone-400">Tắt âm thanh từ vựng</p>
               <button
                 type="button"
                 role="switch"
-                aria-checked={muteSound}
-                aria-label="Tắt âm thanh khi học"
-                onClick={() => setMuteSound(!muteSound)}
-                className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${muteSound ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
+                aria-checked={muteWordAudio}
+                aria-label="Tắt âm thanh từ vựng"
+                onClick={() => setMuteWordAudio(!muteWordAudio)}
+                className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${muteWordAudio ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
               >
-                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-all ${muteSound ? "left-[22px]" : "left-0.5"}`} />
+                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-all ${muteWordAudio ? "left-[22px]" : "left-0.5"}`} />
+              </button>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-bold text-stone-500 dark:text-stone-400">Tắt âm thanh ví dụ</p>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={muteExampleAudio}
+                aria-label="Tắt âm thanh câu ví dụ"
+                onClick={() => setMuteExampleAudio(!muteExampleAudio)}
+                className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${muteExampleAudio ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
+              >
+                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-all ${muteExampleAudio ? "left-[22px]" : "left-0.5"}`} />
               </button>
             </div>
 
