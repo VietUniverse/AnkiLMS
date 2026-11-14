@@ -1613,7 +1613,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
             <div className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 overflow-hidden shadow-xs">
               {/* Header 4 Cột Chuẩn */}
               <div className="hidden sm:flex items-center justify-between px-4 sm:px-5 py-3 border-b border-stone-200 dark:border-stone-800 bg-stone-100/70 dark:bg-stone-800/50 text-[11px] font-mono tracking-wider uppercase text-stone-500 dark:text-stone-400 select-none">
-                <span className="font-bold">Tên bộ thẻ / Bài học</span>
+                <span className="font-bold">Nội dung</span>
                 <div className="flex items-center gap-3 sm:gap-6 pr-1 sm:pr-2">
                   <span className="w-8 sm:w-10 text-center text-sky-600 dark:text-sky-400 font-bold" title="Thẻ mới chưa học">
                     Mới
