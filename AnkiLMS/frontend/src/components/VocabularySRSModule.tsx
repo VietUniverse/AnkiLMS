@@ -15,6 +15,7 @@ import {
   ChevronRight,
   ChevronDown,
   X,
+  Loader2,
   ExternalLink,
   ArrowLeft,
   RotateCcw,
@@ -37,6 +38,7 @@ import { speakKorean } from "../lib/koreanSpeech";
 import { inferTopikLevel, getCourseRank } from "../lib/studyRanks";
 import { LockKeyhole, Globe2 } from "lucide-react";
 import { VocabularySizeTest } from "./VocabularySizeTest";
+import { detectDictionarySearchLanguage, naverLookupUrl, searchLearningDictionary, type DictionaryEntry } from "../lib/dictionarySearch";
 
 interface VocabularySRSModuleProps {
   userDecks?: AnkiDeck[];
@@ -288,6 +290,10 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
   // Modal zoom image
   const [modalImage, setModalImage] = useState<string | null>(null);
+  const [dictPanelOpen, setDictPanelOpen] = useState(false);
+  const [dictQuery, setDictQuery] = useState("");
+  const [dictResults, setDictResults] = useState<DictionaryEntry[]>([]);
+  const [dictLoading, setDictLoading] = useState(false);
 
   // Resume banner state
   const [lastStudiedDeckId, setLastStudiedDeckId] = useState<string | null>(null);
@@ -1197,6 +1203,8 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
         return;
       }
 
+      if (dictPanelOpen) return;
+
       // If typing in input and card is not yet flipped
       if (studyMode === "typing" && document.activeElement === inputRef.current && !isFlipped) {
         if (e.key === "Enter") {
@@ -1257,7 +1265,45 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [viewMode, isFlipped, studyMode, modalImage, playCurrentSound, handleResponse, revealAnswer]);
+  }, [viewMode, isFlipped, studyMode, modalImage, playCurrentSound, handleResponse, revealAnswer, dictPanelOpen]);
+
+  // Tra từ điển trong panel bên phải
+  useEffect(() => {
+    if (!dictPanelOpen) return;
+    const q = dictQuery.trim();
+    if (!q) {
+      setDictResults([]);
+      setDictLoading(false);
+      return;
+    }
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => {
+      setDictLoading(true);
+      void searchLearningDictionary(q, 24, controller.signal, detectDictionarySearchLanguage(q))
+        .then((res) => {
+          if (!controller.signal.aborted) setDictResults(res);
+        })
+        .catch(() => {
+          if (!controller.signal.aborted) setDictResults([]);
+        })
+        .finally(() => {
+          if (!controller.signal.aborted) setDictLoading(false);
+        });
+    }, 180);
+    return () => {
+      window.clearTimeout(timer);
+      controller.abort();
+    };
+  }, [dictPanelOpen, dictQuery]);
+
+  useEffect(() => {
+    if (!dictPanelOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setDictPanelOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [dictPanelOpen]);
 
   // Auto-focus input when in typing mode and not flipped
   useEffect(() => {
@@ -1475,6 +1521,11 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     const promptText = `Giải thích chi tiết cho tôi về từ vựng tiếng Hàn ${cleanTextOnly(currentCard.word)} với nghĩa là ${cleanTextOnly(currentCard.meaning)}. Bao gồm: cách phát âm; phân tích âm Hán-Việt (nếu có); từ loại; 2-3 câu ví dụ tự nhiên kèm dịch nghĩa; collocation đi kèm và mẹo ghi nhớ cho người học.`;
     return `https://chatgpt.com/?prompt=${encodeURIComponent(promptText)}`;
   }, [currentCard]);
+
+  const openDictionary = () => {
+    setDictQuery(cleanTextOnly(currentCard?.word || "").trim());
+    setDictPanelOpen(true);
+  };
 
   const studyActions = (
     <>
@@ -2203,6 +2254,15 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
 
                     <div className="flex items-center gap-2">
                       {/* Nút ChatGPT */}
+                      <button
+                        type="button"
+                        onClick={openDictionary}
+                        className="inline-flex h-9 items-center gap-1.5 px-3 rounded-lg text-stone-500 dark:text-stone-400 hover:bg-sky-500/10 hover:text-sky-700 dark:hover:text-sky-400 transition text-sm font-medium cursor-pointer"
+                        title="Tra từ này trong từ điển"
+                      >
+                        <BookOpen aria-hidden="true" className="w-4 h-4" />
+                        <span>Từ điển</span>
+                      </button>
                       <a
                         href={chatGptUrl}
                         target="_blank"
@@ -2323,6 +2383,15 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                   <span className="text-sm font-medium text-stone-500 dark:text-stone-400">{currentCard.pos || "Từ vựng"}</span>
                   {isFlipped && (
                     <div className="flex items-center gap-2 animate-fade-only">
+                      <button
+                        type="button"
+                        onClick={openDictionary}
+                        className="inline-flex h-9 items-center gap-1.5 px-3 rounded-lg text-stone-500 dark:text-stone-400 hover:bg-sky-500/10 hover:text-sky-700 dark:hover:text-sky-400 transition text-sm font-medium cursor-pointer"
+                        title="Tra từ này trong từ điển"
+                      >
+                        <BookOpen aria-hidden="true" className="w-4 h-4" />
+                        <span>Từ điển</span>
+                      </button>
                       <a
                         href={chatGptUrl}
                         target="_blank"
@@ -2422,6 +2491,161 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
           </form>
         </div>,
         document.body
+      )}
+
+      {/* ====================================================================
+          PANEL TRA TỪ ĐIỂN (SIDEBAR PHẢI)
+          ==================================================================== */}
+      {dictPanelOpen && (
+        <div className="fixed inset-0 z-[70]" role="dialog" aria-modal="true" aria-label="Tra từ điển">
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-[1px]"
+            onClick={() => setDictPanelOpen(false)}
+          />
+          <aside className="absolute right-0 top-0 flex h-full w-full max-w-md flex-col border-l border-stone-200 bg-white shadow-2xl dark:border-stone-800 dark:bg-[#0b1329] animate-reveal">
+            <header className="flex items-center justify-between gap-3 border-b border-stone-200 px-4 py-3 dark:border-stone-800">
+              <div className="flex min-w-0 items-center gap-2.5">
+                <span className="rounded-lg bg-sky-500/10 p-2 text-sky-600 dark:text-sky-400">
+                  <BookOpen className="h-4 w-4" />
+                </span>
+                <div className="min-w-0">
+                  <h2 className="text-sm font-black text-stone-900 dark:text-white">Từ điển</h2>
+                  <p className="text-[11px] text-stone-500 dark:text-slate-400">Tra nhanh Hàn · Việt · Anh · Nhật</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setDictPanelOpen(false)}
+                aria-label="Đóng từ điển"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-stone-400 transition hover:bg-stone-100 hover:text-stone-700 dark:hover:bg-stone-800 dark:hover:text-stone-200 cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </header>
+
+            <div className="border-b border-stone-200 px-4 py-3 dark:border-stone-800">
+              <label className="flex items-center gap-2 rounded-xl border border-stone-300 bg-stone-50 px-3 py-2 transition focus-within:border-sky-500 focus-within:ring-2 focus-within:ring-sky-500/20 dark:border-stone-700 dark:bg-[#132247]">
+                <Search className="h-4 w-4 shrink-0 text-stone-400" />
+                <input
+                  autoFocus
+                  value={dictQuery}
+                  onChange={(event) => setDictQuery(event.target.value)}
+                  placeholder="Nhập từ cần tra..."
+                  lang="ko"
+                  autoComplete="off"
+                  className="admin-field-input w-full min-w-0 bg-transparent py-0.5 text-xs text-stone-900 outline-none placeholder:text-stone-400 dark:text-white"
+                />
+                {dictLoading ? (
+                  <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin text-sky-500" />
+                ) : dictQuery ? (
+                  <button
+                    type="button"
+                    onClick={() => setDictQuery("")}
+                    aria-label="Xóa từ khóa"
+                    className="shrink-0 text-stone-400 transition hover:text-stone-600 dark:hover:text-stone-200"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                ) : null}
+              </label>
+            </div>
+
+            <div className="flex-1 space-y-2.5 overflow-y-auto px-4 py-3">
+              {!dictQuery.trim() ? (
+                <p className="py-10 text-center text-xs text-stone-400 dark:text-stone-500">
+                  Nhập một từ tiếng Hàn hoặc nghĩa tiếng Việt để tra.
+                </p>
+              ) : !dictLoading && dictResults.length === 0 ? (
+                <div className="py-10 text-center">
+                  <p className="text-xs font-bold text-stone-600 dark:text-stone-300">Không tìm thấy kết quả</p>
+                  <p className="mt-1 text-[11px] text-stone-400 dark:text-stone-500">
+                    Thử tra “{dictQuery.trim()}” trên Naver bên dưới.
+                  </p>
+                  <a
+                    href={naverLookupUrl(dictQuery.trim())}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-flex items-center gap-1.5 rounded-xl border border-stone-200 px-3 py-2 text-[11px] font-bold text-stone-600 transition hover:bg-stone-100 dark:border-stone-700 dark:text-stone-300 dark:hover:bg-stone-800"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" />
+                    Tra trên Naver
+                  </a>
+                </div>
+              ) : (
+                dictResults.map((entry) => (
+                  <article
+                    key={`${entry.hangul}-${entry.source}-${entry.vietnamese}`}
+                    className="rounded-xl border border-stone-200 bg-white p-3 dark:border-stone-800 dark:bg-[#101d3d]"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="flex flex-wrap items-baseline gap-1.5">
+                          <span className="text-base font-black text-stone-900 dark:text-white">{entry.hangul}</span>
+                          {(entry.romanization || entry.pronunciation) && (
+                            <span className="text-[11px] text-stone-400 dark:text-stone-500">
+                              {entry.romanization || entry.pronunciation}
+                            </span>
+                          )}
+                        </p>
+                        <div className="mt-1 flex flex-wrap items-center gap-1">
+                          {entry.partOfSpeech && (
+                            <span className="rounded bg-stone-100 px-1.5 py-0.5 text-[10px] font-bold text-stone-600 dark:bg-stone-800 dark:text-stone-300">
+                              {entry.partOfSpeech}
+                            </span>
+                          )}
+                          {(entry.topik || entry.level) && (
+                            <span className="rounded bg-violet-500/10 px-1.5 py-0.5 text-[10px] font-bold text-violet-700 dark:text-violet-300">
+                              {entry.topik || entry.level}
+                            </span>
+                          )}
+                        </div>
+                        <p className="mt-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+                          {entry.vietnamese || "Chưa có nghĩa tiếng Việt."}
+                        </p>
+                        {entry.english && (
+                          <p className="mt-0.5 line-clamp-2 text-[11px] text-stone-500 dark:text-stone-400">
+                            {entry.english}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex shrink-0 flex-col items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => speakKorean(entry.hangul)}
+                          aria-label={`Nghe ${entry.hangul}`}
+                          title="Nghe phát âm"
+                          className="rounded-lg p-1.5 text-sky-600 transition hover:bg-sky-500/10 dark:text-sky-400 cursor-pointer"
+                        >
+                          <Volume2 className="h-4 w-4" />
+                        </button>
+                        <a
+                          href={entry.url || naverLookupUrl(entry.hangul)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`Tra ${entry.hangul} trên Naver`}
+                          title="Tra Naver"
+                          className="rounded-lg p-1.5 text-stone-400 transition hover:bg-stone-100 hover:text-stone-700 dark:hover:bg-stone-800 dark:hover:text-stone-200"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                        </a>
+                      </div>
+                    </div>
+                  </article>
+                ))
+              )}
+            </div>
+
+            <footer className="border-t border-stone-200 px-4 py-3 dark:border-stone-800">
+              <Link
+                href="/dictionary"
+                className="flex items-center justify-center gap-1.5 rounded-xl bg-stone-100 py-2.5 text-xs font-extrabold text-stone-700 transition hover:bg-stone-200 dark:bg-stone-800 dark:text-stone-200 dark:hover:bg-stone-700"
+              >
+                Mở trang Từ điển đầy đủ
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </footer>
+          </aside>
+        </div>
       )}
 
       {/* ====================================================================
