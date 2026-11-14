@@ -11,6 +11,7 @@ interface LeaderboardModuleProps {
 }
 
 type TabKey = "xp" | "streak" | "vocab";
+type PeriodKey = "day" | "week" | "month";
 
 type BoardRow = {
   id: string;
@@ -28,6 +29,12 @@ const TABS: { key: TabKey; label: string; icon: typeof Zap }[] = [
   { key: "xp", label: "XP", icon: Zap },
   { key: "streak", label: "Streak", icon: Flame },
   { key: "vocab", label: "Từ vựng", icon: BookOpen },
+];
+
+const PERIODS: { key: PeriodKey; label: string }[] = [
+  { key: "day", label: "Ngày" },
+  { key: "week", label: "Tuần" },
+  { key: "month", label: "Tháng" },
 ];
 
 const TAB_ACTIVE: Record<TabKey, string> = {
@@ -59,17 +66,20 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
   const [vocabulary, setVocabulary] = useState<VocabularyLeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<TabKey>("xp");
+  const [period, setPeriod] = useState<PeriodKey>("day");
 
   useEffect(() => {
-    async function loadData() {
-      setLoading(true);
-      const data = await ApiClient.getLeaderboard();
+    let active = true;
+    setLoading(true);
+    ApiClient.getLeaderboard(period).then((data) => {
+      if (!active) return;
       setUsers(data.users);
       setVocabulary(data.vocabulary);
-      setLoading(false);
-    }
-    loadData();
-  }, []);
+    }).finally(() => {
+      if (active) setLoading(false);
+    });
+    return () => { active = false; };
+  }, [period]);
 
   const fmt = (value: number | undefined) => (value || 0).toLocaleString("vi-VN");
   const value = (user: BoardRow) => {
@@ -113,6 +123,19 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
                   active ? TAB_ACTIVE[key] : "text-slate-400 hover:text-white"
                 }`}>
                 <Icon aria-hidden="true" className="h-4 w-4" />{label}
+              </button>
+            );
+          })}
+        </div>
+        <div role="group" aria-label="Khoảng thời gian" className="flex flex-wrap justify-center gap-1 rounded-xl border border-slate-700/70 p-1">
+          {PERIODS.map(({ key, label }) => {
+            const active = period === key;
+            return (
+              <button key={key} type="button" onClick={() => setPeriod(key)} aria-pressed={active}
+                className={`inline-flex min-h-8 items-center rounded-lg px-3 text-xs font-bold transition-colors duration-200 ${
+                  active ? "bg-slate-700 text-white" : "text-slate-400 hover:text-white"
+                }`}>
+                {label}
               </button>
             );
           })}

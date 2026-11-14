@@ -263,9 +263,9 @@ export class ApiClient {
     return data;
   }
 
-  public static async getLeaderboard(): Promise<{ users: UserProfile[]; vocabulary: VocabularyLeaderboardEntry[] }> {
+  public static async getLeaderboard(period: "day" | "week" | "month" = "day"): Promise<{ users: UserProfile[]; vocabulary: VocabularyLeaderboardEntry[] }> {
     try {
-      const res = await fetch("/api/leaderboard");
+      const res = await fetch(`/api/leaderboard?period=${period}`);
       if (res.ok) {
         const data = await res.json();
         return { users: data.leaderboard || [], vocabulary: data.vocabulary || [] };
