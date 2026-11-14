@@ -1455,16 +1455,6 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
         <>
       {/* Join Class by Code Card */}
       <div className="card-duo p-6 bg-[#0f1b38] border-[#1e3466] space-y-4 shadow-xl">
-        <div className="flex items-center gap-3 border-b border-slate-800 pb-3">
-          <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-black">
-            <KeyRound className="w-5 h-5" />
-          </div>
-          <div>
-            <h2 className="text-base font-black text-white">Gửi Yêu Cầu Xin Vào Lớp</h2>
-            <p className="text-xs text-slate-400">Nhập mã kích hoạt lớp (Ví dụ: HAECHI-8492) để gửi yêu cầu cho Chủ lớp phê duyệt</p>
-          </div>
-        </div>
-
         <form onSubmit={handleJoinRequest} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           <div className="relative flex-1">
             <KeyRound className="w-5 h-5 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
