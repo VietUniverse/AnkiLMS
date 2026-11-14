@@ -1332,9 +1332,6 @@ export default function AdminPage() {
                                 <h3 className="text-sm font-black text-stone-900 dark:text-white">
                                   {card.title}
                                 </h3>
-                                <p className="mt-2 text-xs leading-5 text-stone-500 dark:text-slate-400">
-                                  {card.desc}
-                                </p>
                               </div>
                               <button
                                 type="button"
