@@ -5,13 +5,15 @@ import { createPortal } from "react-dom";
 import { Check, ImagePlus, Settings, Trash2, X } from "lucide-react";
 import { EggThemeToggle } from "./EggThemeToggle";
 import { backgroundLayerStyle, DEFAULT_STUDY_BG, fileToDataUrl, GRADIENT_PRESETS, saveStudyBackground, STUDY_BACKGROUND_GALLERY, useStudyBackground } from "../lib/studyBackground";
-import { setHideChatGpt, setMuteExampleAudio, setMuteWordAudio, useHideChatGpt, useMuteExampleAudio, useMuteWordAudio } from "../lib/studyPreferences";
+import { setDisableAutoPronounce, setHideChatGpt, setMuteAndHideAudio, setMuteExampleAudio, setMuteWordAudio, useDisableAutoPronounce, useHideChatGpt, useMuteAndHideAudio, useMuteExampleAudio, useMuteWordAudio } from "../lib/studyPreferences";
 
 export function StudyBackgroundPanel() {
   const bg = useStudyBackground();
   const hideChatGpt = useHideChatGpt();
   const muteWordAudio = useMuteWordAudio();
   const muteExampleAudio = useMuteExampleAudio();
+  const muteAndHideAudio = useMuteAndHideAudio();
+  const disableAutoPronounce = useDisableAutoPronounce();
   const [open, setOpen] = useState(false);
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [error, setError] = useState("");
@@ -139,6 +141,34 @@ export function StudyBackgroundPanel() {
                 className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${muteExampleAudio ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
               >
                 <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-all ${muteExampleAudio ? "left-[22px]" : "left-0.5"}`} />
+              </button>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-bold text-stone-500 dark:text-stone-400">Tắt &amp; Ẩn âm thanh</p>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={muteAndHideAudio}
+                aria-label="Tắt và ẩn mọi nút phát âm trên thẻ học"
+                onClick={() => setMuteAndHideAudio(!muteAndHideAudio)}
+                className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${muteAndHideAudio ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
+              >
+                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-all ${muteAndHideAudio ? "left-[22px]" : "left-0.5"}`} />
+              </button>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-bold text-stone-500 dark:text-stone-400">Tắt phát âm thanh tự động</p>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={disableAutoPronounce}
+                aria-label="Tắt tự động phát âm khi ra thẻ hoặc lật thẻ"
+                onClick={() => setDisableAutoPronounce(!disableAutoPronounce)}
+                className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${disableAutoPronounce ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
+              >
+                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-all ${disableAutoPronounce ? "left-[22px]" : "left-0.5"}`} />
               </button>
             </div>
 

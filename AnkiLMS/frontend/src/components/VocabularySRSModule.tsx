@@ -35,7 +35,7 @@ import { DailyLimitsPanel } from "./DailyLimitsPanel";
 import { useStudyBackground } from "../lib/studyBackground";
 import { addExtraNew, DailyLimits, DEFAULT_LIMITS, effectiveNewLimit, loadLimits, loadProgress, recordCard, remaining, saveLimits } from "../lib/dailyLimits";
 import { speakKorean } from "../lib/koreanSpeech";
-import { useHideChatGpt, useMuteExampleAudio, useMuteWordAudio } from "../lib/studyPreferences";
+import { useDisableAutoPronounce, useHideChatGpt, useMuteAndHideAudio, useMuteExampleAudio, useMuteWordAudio } from "../lib/studyPreferences";
 import { inferTopikLevel, getCourseRank } from "../lib/studyRanks";
 import { LockKeyhole, Globe2 } from "lucide-react";
 import { VocabularySizeTest } from "./VocabularySizeTest";
@@ -307,6 +307,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const hideChatGpt = useHideChatGpt();
   const muteWordAudio = useMuteWordAudio();
   const muteExampleAudio = useMuteExampleAudio();
+  const muteAndHideAudio = useMuteAndHideAudio();
+  const disableAutoPronounce = useDisableAutoPronounce();
   const muteWordRef = useRef(muteWordAudio);
   const muteExampleRef = useRef(muteExampleAudio);
   const [dictQuery, setDictQuery] = useState("");
@@ -1037,20 +1039,20 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
   const currentCard = activeCardsList[currentCardIndex] || activeCardsList[0];
 
   useEffect(() => {
-    muteWordRef.current = muteWordAudio;
-    if (muteWordAudio) {
+    muteWordRef.current = muteWordAudio || muteAndHideAudio;
+    if (muteWordAudio || muteAndHideAudio) {
       audioPlayerRef.current?.pause();
       audioPlayerRef.current = null;
     }
-  }, [muteWordAudio]);
+  }, [muteWordAudio, muteAndHideAudio]);
 
   useEffect(() => {
-    muteExampleRef.current = muteExampleAudio;
-    if (muteExampleAudio) {
+    muteExampleRef.current = muteExampleAudio || muteAndHideAudio;
+    if (muteExampleAudio || muteAndHideAudio) {
       audioPlayerRef.current?.pause();
       audioPlayerRef.current = null;
     }
-  }, [muteExampleAudio]);
+  }, [muteExampleAudio, muteAndHideAudio]);
   const studyMode = currentCard?.sibling ? "typing" : "flip";
   const nextReviewLabel = (rating: FSRSRating): string => {
     if (!currentCard) return "";
@@ -1105,10 +1107,11 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
   const currentAudioWordField = currentCard?.audio_word || "";
   useEffect(() => {
     // Thẻ Typing: đọc to từ sẽ lộ đáp án, nên không tự phát.
-    if (viewMode === "study" && currentWordForAudio && !currentCard?.sibling && !muteWordRef.current) {
+    // "Tắt phát âm thanh tự động" chỉ chặn tự phát; bấm nút loa vẫn nghe được.
+    if (viewMode === "study" && currentWordForAudio && !currentCard?.sibling && !muteWordRef.current && !disableAutoPronounce) {
       playAudioWithFallback(currentAudioWordField, currentWordForAudio);
     }
-  }, [viewMode, currentCardIndex, currentWordForAudio, currentAudioWordField, currentCard?.sibling, playAudioWithFallback]);
+  }, [viewMode, currentCardIndex, currentWordForAudio, currentAudioWordField, currentCard?.sibling, playAudioWithFallback, disableAutoPronounce]);
 
   // Handle Response (Quên: false | Thuộc: true)
   const handleResponse = useCallback((isMastered: boolean, customRating?: FSRSRating) => {
@@ -2296,18 +2299,20 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                               className="text-base sm:text-lg text-stone-600 dark:text-stone-300 leading-relaxed font-noto text-pretty"
                               dangerouslySetInnerHTML={{ __html: cleanHtmlText(currentCard.example) }}
                             />
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                playExampleSound();
-                              }}
-                              className="w-8 h-8 rounded-full text-stone-400 hover:bg-sky-500/10 hover:text-sky-600 dark:hover:text-sky-400 flex items-center justify-center shrink-0 transition cursor-pointer"
-                              title="Nghe câu ví dụ"
-                              aria-label="Nghe câu ví dụ"
-                            >
-                              <Volume2 aria-hidden="true" className="w-4 h-4" />
-                            </button>
+                            {!muteAndHideAudio && (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  playExampleSound();
+                                }}
+                                className="w-8 h-8 rounded-full text-stone-400 hover:bg-sky-500/10 hover:text-sky-600 dark:hover:text-sky-400 flex items-center justify-center shrink-0 transition cursor-pointer"
+                                title="Nghe câu ví dụ"
+                                aria-label="Nghe câu ví dụ"
+                              >
+                                <Volume2 aria-hidden="true" className="w-4 h-4" />
+                              </button>
+                            )}
                           </div>
                           {isFlipped && currentCard.example_translated && (
                             <p
@@ -2349,14 +2354,16 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                       )}
 
                       {/* Nút Loa Phát Âm */}
-                      <button
-                        onClick={playCurrentSound}
-                        className="w-9 h-9 rounded-full text-stone-500 dark:text-stone-400 hover:bg-sky-500/10 hover:text-sky-600 dark:hover:text-sky-400 flex items-center justify-center transition cursor-pointer"
-                        title="Nghe phát âm (phím R)"
-                        aria-label="Nghe phát âm từ"
-                      >
-                        <Volume2 aria-hidden="true" className="w-5 h-5" />
-                      </button>
+                      {!muteAndHideAudio && (
+                        <button
+                          onClick={playCurrentSound}
+                          className="w-9 h-9 rounded-full text-stone-500 dark:text-stone-400 hover:bg-sky-500/10 hover:text-sky-600 dark:hover:text-sky-400 flex items-center justify-center transition cursor-pointer"
+                          title="Nghe phát âm (phím R)"
+                          aria-label="Nghe phát âm từ"
+                        >
+                          <Volume2 aria-hidden="true" className="w-5 h-5" />
+                        </button>
+                      )}
                     </div>
                   </div>
 
@@ -2478,15 +2485,17 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                           <span>Hỏi ChatGPT</span>
                         </a>
                       )}
-                      <button
-                        type="button"
-                        onClick={playCurrentSound}
-                        className="w-9 h-9 rounded-full text-stone-500 dark:text-stone-400 hover:bg-sky-500/10 hover:text-sky-600 dark:hover:text-sky-400 flex items-center justify-center transition cursor-pointer"
-                        title="Nghe phát âm (phím R)"
-                        aria-label="Nghe phát âm từ"
-                      >
-                        <Volume2 aria-hidden="true" className="w-5 h-5" />
-                      </button>
+                      {!muteAndHideAudio && (
+                        <button
+                          type="button"
+                          onClick={playCurrentSound}
+                          className="w-9 h-9 rounded-full text-stone-500 dark:text-stone-400 hover:bg-sky-500/10 hover:text-sky-600 dark:hover:text-sky-400 flex items-center justify-center transition cursor-pointer"
+                          title="Nghe phát âm (phím R)"
+                          aria-label="Nghe phát âm từ"
+                        >
+                          <Volume2 aria-hidden="true" className="w-5 h-5" />
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>
