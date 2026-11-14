@@ -1,0 +1,1887 @@
+[
+  {
+    "id": "wg_1",
+    "questionNo": 51,
+    "category": "Thông báo / Mời",
+    "topic": "Câu 51: Thông báo / Mời",
+    "source": "Sách tr.35–36 (전략 적용하기 1)",
+    "promptText": "스키 캠프 모집스키 캠프 회원을 모집합니다. 기간은 12월 26일부터 12월 28일까지입니다.장소는 올림픽 스키장입니다. 한국대학교 학생이면 ( ㄱ ).스키가 없으신 분은 미리 발 사이즈를 ( ㄴ ) 캠프에서 준비합니다.참가를 원하시는 분은 11월 30일까지 신청해 주시기 바랍니다.☎ 신청 및 문의: 02-597-3369",
+    "blankA": {
+      "expected": "누구든지 참가하실 수 있습니다",
+      "variants": [
+        "누구든지 참가하실 수 있습니다",
+        "누구나 참가하실 수 있습니다",
+        "누구든지 신청하실 수 있습니다",
+        "누구나 신청하실 수 있습니다"
+      ],
+      "hint1": "Ý nghĩa ㉠: Câu trước nêu điều kiện (sinh viên ĐH Hàn Quốc) nên A là thông tin về tư cách tham gia. Có điều kiện",
+      "hint2": "Ký tự đầu ㉠: '누구든' | Từ gợi ý: 참가하다: tham gia신청하다: đăng ký발 사이즈: cỡ châ",
+      "hint3": "Đáp án chuẩn ㉠: 누구든지 참가하실 수 있습니다"
+    },
+    "blankB": {
+      "expected": "알려 주시면",
+      "variants": [
+        "알려 주시면"
+      ],
+      "hint1": "Ý nghĩa ㉡: Ván trượt do trại chuẩn bị nếu người tham gia báo trước cỡ chân: 발 사이즈를 알려 주시면. Điền theo mẫu -(으)면 ",
+      "hint2": "Ký tự đầu ㉡: '알려 '",
+      "hint3": "Đáp án chuẩn ㉡: 알려 주시면"
+    },
+    "translation": "Tuyển thành viên trại trượt tuyết. Thời gian 26–28/12, địa điểm sân trượt Olympic. Nếu là sinh viên ĐH Hàn Quốc thì (A). Ai chưa có ván trượt, nếu (B) trước cỡ chân thì trại sẽ chuẩn bị. Ai muốn tham gia xin đăng ký trước 30/11.",
+    "grammar": "누구나/누구든지 + câu khẳng định (không dùng 누구도)-(으)시- giữa 알려 주시면",
+    "vocab": "참가하다: tham gia신청하다: đăng ký발 사이즈: cỡ chân미리: trước",
+    "pitfalls": "누구도 참가하실 수 있습니다 ✗: 누구도 đi với phủ định참가하실 수 있습니다 △: đúng nghĩa nhưng thiếu 누구나/누구든지 hợp điều kiện됩니다 ✗: quá đơn giản, nên dùng 참가하다/신청하다알려 주면 △: thiếu -시-, bài toàn kính ngữ",
+    "hints": [
+      "Ngữ pháp & Bối cảnh: 누구나/누구든지 + câu khẳng định (không dùng 누구도)-(으)시- giữa 알려 주시면",
+      "Từ vựng & Ký tự gợi mở:\n- ㉠: 참가하다: tham gia신청하다: đăng ký발 사이즈: cỡ chân미리: trước (Bắt đầu: 누구든...)\n- ㉡: (Bắt đầu: 알려 ...)",
+      "Đáp án mẫu chuẩn NIIED:\n- ㉠: 누구든지 참가하실 수 있습니다\n- ㉡: 알려 주시면\n\nBản dịch: Tuyển thành viên trại trượt tuyết. Thời gian 26–28/12, địa điểm sân trượt Olympic. Nếu là sinh viên ĐH Hàn Quốc thì (A). Ai chưa có ván trượt, nếu (B) trước cỡ chân thì trại sẽ chuẩn bị. Ai muốn tham gia xin đăng ký trước 30/11."
+    ]
+  },
+  {
+    "id": "wg_2",
+    "questionNo": 51,
+    "category": "Nhờ vả / Chúc mừng",
+    "topic": "Câu 51: Nhờ vả / Chúc mừng",
+    "source": "Sách tr.36–37 (전략 적용하기 2)",
+    "promptText": "E-mail안녕?이번에 ( ㄱ ) 축하해! 빅터 씨가 네가 한국어능력시험을 본 것과 3급을 딴 것을 알려 줬어. 나도 러시아에서 한국어능력시험을 보고 싶어. 네가 공부한 ( ㄴ ) 고맙겠어! 나도 그 책을 주문해서 공부하면 시험을 잘 볼 수 있을 것 같아.러시아에서 너의 친구 라리사",
+    "blankA": {
+      "expected": "한국어능력시험에서 3급을 딴 것을",
+      "variants": [
+        "한국어능력시험에서 3급을 딴 것을",
+        "3급을 딴 것을"
+      ],
+      "hint1": "Ý nghĩa ㉠: Sau 축하해 cần cái được chúc mừng; câu sau cho biết là đạt cấp 3 TOPIK. Chúc mừng việc đã đạt nên dùng ",
+      "hint2": "Ký tự đầu ㉠: '한국어' | Từ gợi ý: 급을 따다: đạt cấp자격증을 따다: lấy chứng chỉ주문하다",
+      "hint3": "Đáp án chuẩn ㉠: 한국어능력시험에서 3급을 딴 것을"
+    },
+    "blankB": {
+      "expected": "책 제목을 알려 주면",
+      "variants": [
+        "책 제목을 알려 주면",
+        "책 이름을 알려 주면",
+        "책 제목을 가르쳐 주면",
+        "책 이름을 가르쳐 주면"
+      ],
+      "hint1": "Ý nghĩa ㉡: Câu sau nói người viết cũng muốn học quyển sách đó, nên B là nhờ cho biết tên sách: 책 제목을 알려 주면 + 고맙",
+      "hint2": "Ký tự đầu ㉡: '책 제'",
+      "hint3": "Đáp án chuẩn ㉡: 책 제목을 알려 주면"
+    },
+    "translation": "Chào bạn. Lần này (A) chúc mừng! Victor nói với mình bạn đã thi TOPIK và đạt cấp 3. Mình cũng muốn thi ở Nga. Nếu bạn (B) quyển sách bạn đã học thì mình rất biết ơn. Mình cũng đặt quyển đó để học thì có lẽ sẽ thi tốt.",
+    "grammar": "N을/를 축하하다 / -ㄴ/는 것을 축하하다-아/어 주면 고맙겠다 (thân mật)시험에서 급을 따다",
+    "vocab": "급을 따다: đạt cấp자격증을 따다: lấy chứng chỉ주문하다: đặt mua가르쳐 주다: chỉ cho biết",
+    "pitfalls": "한국어능력시험을 본 것과 3급을 딴 것 ✗: việc thi không phải điều cần chúc mừng한국어능력시험에 3급을 따서 ✗: dùng 에서, và không nối -아/어서가리켜 줄 수 있어 ✗: nhầm 가리키다 với 가르치다책 이름은 뭐야 △: nên dùng ngữ pháp từ trung cấp trở lênBài này thân mật: đừng dùng -습니다",
+    "hints": [
+      "Ngữ pháp & Bối cảnh: N을/를 축하하다 / -ㄴ/는 것을 축하하다-아/어 주면 고맙겠다 (thân mật)시험에서 급을 따다",
+      "Từ vựng & Ký tự gợi mở:\n- ㉠: 급을 따다: đạt cấp자격증을 따다: lấy chứng chỉ주문하다: đặt mua가르쳐 주다: chỉ (Bắt đầu: 한국어...)\n- ㉡: (Bắt đầu: 책 제...)",
+      "Đáp án mẫu chuẩn NIIED:\n- ㉠: 한국어능력시험에서 3급을 딴 것을\n- ㉡: 책 제목을 알려 주면\n\nBản dịch: Chào bạn. Lần này (A) chúc mừng! Victor nói với mình bạn đã thi TOPIK và đạt cấp 3. Mình cũng muốn thi ở Nga. Nếu bạn (B) quyển sách bạn đã học thì mình rất biết ơn. Mình cũng đặt quyển đó để học thì có lẽ sẽ thi tốt."
+    ]
+  },
+  {
+    "id": "wg_3",
+    "questionNo": 51,
+    "category": "Xin lỗi (đổi lịch / hứa)",
+    "topic": "Câu 51: Xin lỗi (đổi lịch / hứa)",
+    "source": "Sách tr.38–39 (전략 적용하기 3)",
+    "promptText": "마이클부장님,어제는 많이 죄송했습니다. 추석 전날이라서 ( ㄱ ).늦지 않으려고 일찍 출발했는데 고향에 가는 차들이 많았습니다.다음 회의 때는 ( ㄴ ).그럼 추석 잘 보내시기 바랍니다.로버트",
+    "blankA": {
+      "expected": "길이 막혀서 늦었습니다",
+      "variants": [
+        "길이 막혀서 늦었습니다",
+        "길이 막히는 바람에 늦었습니다",
+        "차가 밀려서 늦었습니다"
+      ],
+      "hint1": "Ý nghĩa ㉠: Câu sau nói 늦지 않으려고 일찍 출발했는데 nên A phải nêu việc đã muộn và lý do (đường tắc vì Chuseok). Dùng quá k",
+      "hint2": "Ký tự đầu ㉠: '길이 ' | Từ gợi ý: 길이 막히다: tắc đường차가 밀리다: kẹt xe결코/절대로: t",
+      "hint3": "Đáp án chuẩn ㉠: 길이 막혀서 늦었습니다"
+    },
+    "blankB": {
+      "expected": "결코 늦지 않겠습니다",
+      "variants": [
+        "결코 늦지 않겠습니다",
+        "절대로 늦지 않겠습니다",
+        "결코 늦지 않도록 주의하겠습니다",
+        "절대로 늦지 않도록 주의하겠습니다"
+      ],
+      "hint1": "Ý nghĩa ㉡: Đây là lời hứa không tái phạm: dùng -겠- (quyết tâm) và phủ định nhấn mạnh 결코/절대로.",
+      "hint2": "Ký tự đầu ㉡: '결코 '",
+      "hint3": "Đáp án chuẩn ㉡: 결코 늦지 않겠습니다"
+    },
+    "translation": "Trưởng phòng, hôm qua tôi thành thật xin lỗi. Vì là hôm trước Chuseok nên (A). Tôi đã xuất phát sớm để không muộn nhưng xe về quê rất đông. Họp lần sau thì (B). Chúc anh một Chuseok vui vẻ.",
+    "grammar": "-는 바람에 (lý do dẫn tới kết quả xấu), chỉ dùng với động từ절대로/결코 + phủ định-겠- thể hiện quyết tâm",
+    "vocab": "길이 막히다: tắc đường차가 밀리다: kẹt xe결코/절대로: tuyệt đối không추석: Tết Trung thu",
+    "pitfalls": "차가 많은 바람에 늦었습니다 ✗: -는 바람에 không đi với tính từ 많다늦지 않습니다 ✗: thiếu -겠- nên không thành lời hứa꼭 늦지 않겠습니다 ✗: 꼭 không đi với phủ định, phải là 절대로/결코길이 막혀서 늦었어요 ✗: cả bài là -습니다, không dùng -요",
+    "hints": [
+      "Ngữ pháp & Bối cảnh: -는 바람에 (lý do dẫn tới kết quả xấu), chỉ dùng với động từ절대로/결코 + phủ định-겠- thể hiện quyết tâm",
+      "Từ vựng & Ký tự gợi mở:\n- ㉠: 길이 막히다: tắc đường차가 밀리다: kẹt xe결코/절대로: tuyệt đối không추석: Tế (Bắt đầu: 길이 ...)\n- ㉡: (Bắt đầu: 결코 ...)",
+      "Đáp án mẫu chuẩn NIIED:\n- ㉠: 길이 막혀서 늦었습니다\n- ㉡: 결코 늦지 않겠습니다\n\nBản dịch: Trưởng phòng, hôm qua tôi thành thật xin lỗi. Vì là hôm trước Chuseok nên (A). Tôi đã xuất phát sớm để không muộn nhưng xe về quê rất đông. Họp lần sau thì (B). Chúc anh một Chuseok vui vẻ."
+    ]
+  },
+  {
+    "id": "wg_4",
+    "questionNo": 51,
+    "category": "Thông báo tìm đồ",
+    "topic": "Câu 51: Thông báo tìm đồ",
+    "source": "Sách tr.40 (예상 문제 1)",
+    "promptText": "지갑을 찾습니다!10월 2일 학생 휴게실에서 ( ㄱ ).검은색 남자 지갑이고 크기는 어른 손바닥 정도입니다.지갑 안에 신분증이 모두 들어 있어서 꼭 찾아야 합니다. 제 연락처는 010-1234-5678입니다.지갑을 ( ㄴ ).",
+    "blankA": {
+      "expected": "지갑을 잃어버렸습니다",
+      "variants": [
+        "지갑을 잃어버렸습니다",
+        "지갑을 분실했습니다"
+      ],
+      "hint1": "Ý nghĩa ㉠: Câu nêu sự việc ở nơi và thời gian cụ thể; các câu sau tả chiếc ví → A là tôi đã làm mất ví (quá khứ",
+      "hint2": "Ký tự đầu ㉠: '지갑을' | Từ gợi ý: 잃어버리다/분실하다: làm mất줍다→주우신: nhặt보관하다: giữ",
+      "hint3": "Đáp án chuẩn ㉠: 지갑을 잃어버렸습니다"
+    },
+    "blankB": {
+      "expected": "주우신 분은 꼭 연락 주시기 바랍니다",
+      "variants": [
+        "주우신 분은 꼭 연락 주시기 바랍니다",
+        "보관하고 계신 분은 꼭 연락 주시기 바랍니다"
+      ],
+      "hint1": "Ý nghĩa ㉡: Câu cuối là lời nhắn cho người nhặt được: 주우신 분 / 보관하고 계신 분 + yêu cầu liên lạc -기 바랍니다.",
+      "hint2": "Ký tự đầu ㉡: '주우신'",
+      "hint3": "Đáp án chuẩn ㉡: 주우신 분은 꼭 연락 주시기 바랍니다"
+    },
+    "translation": "Tìm ví! Ngày 2/10 ở phòng nghỉ sinh viên, tôi (A). Ví nam màu đen, cỡ bằng bàn tay người lớn. Trong ví có đủ giấy tờ tùy thân nên nhất định phải tìm. Liên hệ 010-1234-5678. Ai (B) chiếc ví…",
+    "grammar": "-(으)신 분: vị đã…-기 바랍니다: xin hãy… (thông báo)",
+    "vocab": "잃어버리다/분실하다: làm mất줍다→주우신: nhặt보관하다: giữ연락처: số liên lạc",
+    "pitfalls": "지갑을 찾아 주세요 △: thiếu yêu cầu liên lạc, kính ngữ yếuDùng quá khứ cho việc đã mất",
+    "hints": [
+      "Ngữ pháp & Bối cảnh: -(으)신 분: vị đã…-기 바랍니다: xin hãy… (thông báo)",
+      "Từ vựng & Ký tự gợi mở:\n- ㉠: 잃어버리다/분실하다: làm mất줍다→주우신: nhặt보관하다: giữ연락처: số liên lạc (Bắt đầu: 지갑을...)\n- ㉡: (Bắt đầu: 주우신...)",
+      "Đáp án mẫu chuẩn NIIED:\n- ㉠: 지갑을 잃어버렸습니다\n- ㉡: 주우신 분은 꼭 연락 주시기 바랍니다\n\nBản dịch: Tìm ví! Ngày 2/10 ở phòng nghỉ sinh viên, tôi (A). Ví nam màu đen, cỡ bằng bàn tay người lớn. Trong ví có đủ giấy tờ tùy thân nên nhất định phải tìm. Liên hệ 010-1234-5678. Ai (B) chiếc ví…"
+    ]
+  },
+  {
+    "id": "wg_5",
+    "questionNo": 51,
+    "category": "Hỏi/Rủ đi chơi (email bạn bè lịch sự)",
+    "topic": "Câu 51: Hỏi/Rủ đi chơi (email bạn bè lịch sự)",
+    "source": "Sách tr.40 (예상 문제 2)",
+    "promptText": "E-mail안녕하세요? 신디예요.요즘 봄이라서 산에 꽃이 아주 예뻐요.경수 씨도 산을 ( ㄱ )?저는 이번 주 토요일이나 일요일에 시간이 돼요.만약 경수 씨가 이번 주말에 바쁘면 다음 주 주말도 가능할 것 같아요.저는 약속이 있지만 ( ㄴ ) 꼭 되는 시간을 미리 알려 주세요.",
+    "blankA": {
+      "expected": "좋아하니까 같이 등산갈까요",
+      "variants": [
+        "좋아하니까 같이 등산갈까요",
+        "좋아하시면 같이 등산 갈까요"
+      ],
+      "hint1": "Ý nghĩa ㉠: Có dấu ? nên A là câu hỏi/rủ rê. Câu trước nói hoa đẹp, câu sau nói em rảnh cuối tuần → rủ đi leo nú",
+      "hint2": "Ký tự đầu ㉠: '좋아하' | Từ gợi ý: 등산가다: leo núi바꾸다/변경하다: đổi약속: cuộc hẹn미리",
+      "hint3": "Đáp án chuẩn ㉠: 좋아하니까 같이 등산갈까요"
+    },
+    "blankB": {
+      "expected": "바꿀 수 있으니까",
+      "variants": [
+        "바꿀 수 있으니까",
+        "변경할 수 있으니까"
+      ],
+      "hint1": "Ý nghĩa ㉡: Câu sau nhờ báo giờ tiện. B trấn an rằng em có thể đổi lịch hẹn (약속을 bị lược): -(으)니까.",
+      "hint2": "Ký tự đầu ㉡: '바꿀 '",
+      "hint3": "Đáp án chuẩn ㉡: 바꿀 수 있으니까"
+    },
+    "translation": "Chào anh, em là Cindy. Dạo này mùa xuân hoa trên núi rất đẹp. Anh Kyungsu cũng (A)? Em rảnh thứ Bảy hoặc Chủ nhật tuần này… Em có hẹn nhưng (B), xin anh báo trước giờ anh tiện.",
+    "grammar": "-(으)니까: vì… nên (đi được với rủ rê/đề nghị)-(으)ㄹ까요?: rủ rê가능할 것 같아요: làm mềm câu",
+    "vocab": "등산가다: leo núi바꾸다/변경하다: đổi약속: cuộc hẹn미리: trước",
+    "pitfalls": "Đây là email cho bạn nhưng văn bản dùng -아/어요 (không phải 반말): nhìn đuôi câu chứ đừng đoán theo loại thư",
+    "hints": [
+      "Ngữ pháp & Bối cảnh: -(으)니까: vì… nên (đi được với rủ rê/đề nghị)-(으)ㄹ까요?: rủ rê가능할 것 같아요: làm mềm câu",
+      "Từ vựng & Ký tự gợi mở:\n- ㉠: 등산가다: leo núi바꾸다/변경하다: đổi약속: cuộc hẹn미리: trước (Bắt đầu: 좋아하...)\n- ㉡: (Bắt đầu: 바꿀 ...)",
+      "Đáp án mẫu chuẩn NIIED:\n- ㉠: 좋아하니까 같이 등산갈까요\n- ㉡: 바꿀 수 있으니까\n\nBản dịch: Chào anh, em là Cindy. Dạo này mùa xuân hoa trên núi rất đẹp. Anh Kyungsu cũng (A)? Em rảnh thứ Bảy hoặc Chủ nhật tuần này… Em có hẹn nhưng (B), xin anh báo trước giờ anh tiện."
+    ]
+  },
+  {
+    "id": "wg_6",
+    "questionNo": 51,
+    "category": "Xin lỗi / Xin phép (gửi giáo sư)",
+    "topic": "Câu 51: Xin lỗi / Xin phép (gửi giáo sư)",
+    "source": "Sách tr.41 (예상 문제 3)",
+    "promptText": "보낸 사람 eyw1@never.com받는 사람 ptoky@anmail.com교수님께안녕하세요?저는 ‘한국어 문법’ 수업을 듣고 있는 쿠사코 에미라고 합니다.제가 그동안 몸이 아파서 수업에 가지 못했습니다.그래서 지난주 ( ㄱ ). 정말 죄송합니다.제가 다음 주에 퇴원하는데 혹시 시험 대신에 ( ㄴ )?교수님께서 허락해 주시면 이번 학기가 끝나는 날까지 보고서를 제출하겠습니다.한국어교육학과 1학년쿠사코 에미 올림",
+    "blankA": {
+      "expected": "시험도 보지 못했습니다",
+      "variants": [
+        "시험도 보지 못했습니다",
+        "시험을 못 쳤습니다"
+      ],
+      "hint1": "Ý nghĩa ㉠: Câu sau là lời xin lỗi → A là điều đáng tiếc đã xảy ra: không dự được kỳ thi tuần trước. -도 못 하다 nhấ",
+      "hint2": "Ký tự đầu ㉠: '시험도' | Từ gợi ý: 퇴원하다: xuất viện허락하다: cho phép제출하다/내다: nộ",
+      "hint3": "Đáp án chuẩn ㉠: 시험도 보지 못했습니다"
+    },
+    "blankB": {
+      "expected": "보고서를 내도 됩니까",
+      "variants": [
+        "보고서를 내도 됩니까",
+        "보고서를 제출해도 됩니까"
+      ],
+      "hint1": "Ý nghĩa ㉡: Câu sau nói sẽ nộp báo cáo nếu giáo sư cho phép, nên B là xin phép nộp báo cáo thay bài thi. Có ? → ",
+      "hint2": "Ký tự đầu ㉡: '보고서'",
+      "hint3": "Đáp án chuẩn ㉡: 보고서를 내도 됩니까"
+    },
+    "translation": "Kính gửi giáo sư. Em là Kusako Emi, đang học lớp ‘Ngữ pháp tiếng Hàn’. Thời gian qua em ốm nên không đến lớp. Vì vậy tuần trước (A). Em thành thật xin lỗi. Tuần sau em xuất viện, không biết (B) thay cho bài thi? Nếu thầy cho phép em sẽ nộp báo cáo trước cuối học kỳ.",
+    "grammar": "-도 못 하다-아/어도 됩니까?: xin phép대신에: thay cho",
+    "vocab": "퇴원하다: xuất viện허락하다: cho phép제출하다/내다: nộp올림: (ký tên) kính gửi",
+    "pitfalls": "Gửi giáo sư: không dùng 돼요? mà dùng 됩니까?Hai email trong đề (never, anmail) in như vậy trong sách",
+    "hints": [
+      "Ngữ pháp & Bối cảnh: -도 못 하다-아/어도 됩니까?: xin phép대신에: thay cho",
+      "Từ vựng & Ký tự gợi mở:\n- ㉠: 퇴원하다: xuất viện허락하다: cho phép제출하다/내다: nộp올림: (ký tên) kính g (Bắt đầu: 시험도...)\n- ㉡: (Bắt đầu: 보고서...)",
+      "Đáp án mẫu chuẩn NIIED:\n- ㉠: 시험도 보지 못했습니다\n- ㉡: 보고서를 내도 됩니까\n\nBản dịch: Kính gửi giáo sư. Em là Kusako Emi, đang học lớp ‘Ngữ pháp tiếng Hàn’. Thời gian qua em ốm nên không đến lớp. Vì vậy tuần trước (A). Em thành thật xin lỗi. Tuần sau em xuất viện, không biết (B) thay cho bài thi? Nếu thầy cho phép em sẽ nộp báo cáo trước cuối học kỳ."
+    ]
+  },
+  {
+    "id": "wg_7",
+    "questionNo": 51,
+    "category": "Thông báo CLB",
+    "topic": "Câu 51: Thông báo CLB",
+    "source": "Sách tr.41 (예상 문제 4)",
+    "promptText": "동아리 알림!우리 동아리가 가을 축제에서 춤 발표를 합니다.9월부터 매주 수요일 7시부터 2시간 동안 동아리 방에서 연습합니다.모든 회원들은 한 사람도 ( ㄱ ) 연습에 참여해 주십시오.그리고 8월 31일까지 동아리 회비를 ( ㄴ ).여러분이 낸 회비로 연습 때 먹을 간식을 준비할 겁니다.",
+    "blankA": {
+      "expected": "빠지지 말고",
+      "variants": [
+        "빠지지 말고"
+      ],
+      "hint1": "Ý nghĩa ㉠: 한 사람도 + yêu cầu 참여해 주십시오 → A là đừng vắng mặt. -지 말고 nối hai mệnh lệnh.",
+      "hint2": "Ký tự đầu ㉠: '빠지지' | Từ gợi ý: 빠지다: vắng, bỏ회비를 내다: nộp hội phí간식: đồ ă",
+      "hint3": "Đáp án chuẩn ㉠: 빠지지 말고"
+    },
+    "blankB": {
+      "expected": "내 주십시오",
+      "variants": [
+        "내 주십시오",
+        "내 주시면 감사하겠습니다"
+      ],
+      "hint1": "Ý nghĩa ㉡: Có hạn chót 8월 31일까지 và đối tượng 회비를 → động từ 내다 (nộp tiền), kính ngữ -(으)십시오.",
+      "hint2": "Ký tự đầu ㉡: '내 주'",
+      "hint3": "Đáp án chuẩn ㉡: 내 주십시오"
+    },
+    "translation": "Thông báo CLB! CLB sẽ biểu diễn khiêu vũ ở lễ hội mùa thu. Từ tháng 9, thứ Tư hằng tuần 7 giờ, luyện 2 tiếng. Toàn thể thành viên, không một ai (A), hãy tham gia luyện tập. Và đến 31/8 hãy (B) hội phí. Hội phí sẽ dùng chuẩn bị đồ ăn nhẹ.",
+    "grammar": "-지 말고: đừng… mà hãy…-(으)십시오: mệnh lệnh trang trọng한 사람도 + phủ định: không một ai",
+    "vocab": "빠지다: vắng, bỏ회비를 내다: nộp hội phí간식: đồ ăn nhẹ참여하다: tham gia",
+    "pitfalls": "A phải kết thúc bằng -고 để nối với 연습에 참여해 주십시오; viết thành câu kết thúc . thì mất mạch",
+    "hints": [
+      "Ngữ pháp & Bối cảnh: -지 말고: đừng… mà hãy…-(으)십시오: mệnh lệnh trang trọng한 사람도 + phủ định: không một ai",
+      "Từ vựng & Ký tự gợi mở:\n- ㉠: 빠지다: vắng, bỏ회비를 내다: nộp hội phí간식: đồ ăn nhẹ참여하다: tham gia (Bắt đầu: 빠지지...)\n- ㉡: (Bắt đầu: 내 주...)",
+      "Đáp án mẫu chuẩn NIIED:\n- ㉠: 빠지지 말고\n- ㉡: 내 주십시오\n\nBản dịch: Thông báo CLB! CLB sẽ biểu diễn khiêu vũ ở lễ hội mùa thu. Từ tháng 9, thứ Tư hằng tuần 7 giờ, luyện 2 tiếng. Toàn thể thành viên, không một ai (A), hãy tham gia luyện tập. Và đến 31/8 hãy (B) hội phí. Hội phí sẽ dùng chuẩn bị đồ ăn nhẹ."
+    ]
+  },
+  {
+    "id": "wg_8",
+    "questionNo": 51,
+    "category": "Cảm ơn + Mời",
+    "topic": "Câu 51: Cảm ơn + Mời",
+    "source": "Sách tr.42 (예상 문제 5)",
+    "promptText": "보낸 사람 eywey5@naver.com받는 사람 poky@hanmail.com안녕하세요?지난번 저희 어머니가 돌아가셨을 때 와 주셔서 감사합니다.저에게 큰 힘이 되었습니다.감사의 마음으로 회사 근처에서 식사를 대접하고 싶습니다.( ㄱ )?바쁘시겠지만 다음 주에 되시는 시간을 알려 주시면 ( ㄴ ).",
+    "blankA": {
+      "expected": "혹시 다음 주에 시간이 괜찮으십니까",
+      "variants": [
+        "혹시 다음 주에 시간이 괜찮으십니까",
+        "다음 주에 식사 한번 하실 수 있으십니까"
+      ],
+      "hint1": "Ý nghĩa ㉠: Sau câu muốn mời ăn là hỏi xem người kia có tiện không: câu hỏi -(으)십니까?.",
+      "hint2": "Ký tự đầu ㉠: '혹시 ' | Từ gợi ý: 대접하다: thết đãi큰 힘이 되다: là nguồn động viê",
+      "hint3": "Đáp án chuẩn ㉠: 혹시 다음 주에 시간이 괜찮으십니까"
+    },
+    "blankB": {
+      "expected": "제가 식사를 대접하겠습니다",
+      "variants": [
+        "제가 식사를 대접하겠습니다",
+        "제가 모시겠습니다"
+      ],
+      "hint1": "Ý nghĩa ㉡: Sau 시간을 알려 주시면 là cam kết của người mời: tôi sẽ mời/đón. Dùng -겠습니다.",
+      "hint2": "Ký tự đầu ㉡: '제가 '",
+      "hint3": "Đáp án chuẩn ㉡: 제가 식사를 대접하겠습니다"
+    },
+    "translation": "Cảm ơn anh/chị đã đến khi mẹ tôi mất. Điều đó là sức mạnh lớn với tôi. Với lòng biết ơn tôi muốn mời anh/chị bữa ăn gần công ty. (A)? Dù anh/chị bận, nếu cho tôi biết giờ tiện tuần sau thì (B).",
+    "grammar": "돌아가시다: kính ngữ của 죽다-(으)시겠지만: chắc anh/chị bận nhưng…모시다: kính ngữ của 데리고 가다",
+    "vocab": "대접하다: thết đãi큰 힘이 되다: là nguồn động viên lớn되시는 시간: thời gian anh/chị thu xếp được",
+    "pitfalls": "⚠️ Đáp án in ở trang 190 của sách (오셔서 축하해 주시면, 대중교통을 이용하시는 게) lệch đề này, nhiều khả năng là lỗi in. Đáp án trong thẻ này do mình soạn theo mạch văn, không phải đáp án chính thức.",
+    "hints": [
+      "Ngữ pháp & Bối cảnh: 돌아가시다: kính ngữ của 죽다-(으)시겠지만: chắc anh/chị bận nhưng…모시다: kính ngữ của 데리고 가다",
+      "Từ vựng & Ký tự gợi mở:\n- ㉠: 대접하다: thết đãi큰 힘이 되다: là nguồn động viên lớn되시는 시간: thời gi (Bắt đầu: 혹시 ...)\n- ㉡: (Bắt đầu: 제가 ...)",
+      "Đáp án mẫu chuẩn NIIED:\n- ㉠: 혹시 다음 주에 시간이 괜찮으십니까\n- ㉡: 제가 식사를 대접하겠습니다\n\nBản dịch: Cảm ơn anh/chị đã đến khi mẹ tôi mất. Điều đó là sức mạnh lớn với tôi. Với lòng biết ơn tôi muốn mời anh/chị bữa ăn gần công ty. (A)? Dù anh/chị bận, nếu cho tôi biết giờ tiện tuần sau thì (B)."
+    ]
+  },
+  {
+    "id": "wg_9",
+    "questionNo": 51,
+    "category": "Đổi/trả hàng",
+    "topic": "Câu 51: Đổi/trả hàng",
+    "source": "Sách tr.42 (예상 문제 6)",
+    "promptText": "My page:교환 요청제가 주문한 사이즈보다 큰 옷이 배달되었어요.( ㄱ ) 주문한 치수가 없으면 환불해 주세요.교환이 가능하다면 상품을 ( ㄴ ).처음 주문했을 때는 이 주일 후에 받아볼 수 있었어요.그럼 빠른 처리 부탁드려요.",
+    "blankA": {
+      "expected": "맞는 치수로 교환해 주시거나",
+      "variants": [
+        "맞는 치수로 교환해 주시거나",
+        "맞는 치수로 교환해 주거나"
+      ],
+      "hint1": "Ý nghĩa ㉠: Áo giao sai cỡ nên yêu cầu đầu tiên là đổi sang đúng cỡ; câu nối 주시거나 đi với 환불해 주세요 (hoặc… hoặc hoà",
+      "hint2": "Ký tự đầu ㉠: '맞는 ' | Từ gợi ý: 교환하다: đổi환불하다: hoàn tiền치수: cỡ배송하다: giao",
+      "hint3": "Đáp án chuẩn ㉠: 맞는 치수로 교환해 주시거나"
+    },
+    "blankB": {
+      "expected": "빨리 보내 주세요",
+      "variants": [
+        "빨리 보내 주세요",
+        "배송해 주세요"
+      ],
+      "hint1": "Ý nghĩa ㉡: Câu sau nhắc lần đầu nhận sau 2 tuần và mong xử lý nhanh → B là gửi hàng đổi sớm: 빨리 보내 주세요.",
+      "hint2": "Ký tự đầu ㉡: '빨리 '",
+      "hint3": "Đáp án chuẩn ㉡: 빨리 보내 주세요"
+    },
+    "translation": "Yêu cầu đổi hàng. Áo được giao lớn hơn cỡ tôi đặt. (A) nếu không có cỡ tôi đặt thì xin hoàn tiền. Nếu đổi được thì xin (B) sản phẩm. Lần đặt đầu tôi nhận sau hai tuần. Mong xử lý nhanh.",
+    "grammar": "-거나: hoặc-아/어 주세요: xin hãy…-다면: nếu",
+    "vocab": "교환하다: đổi환불하다: hoàn tiền치수: cỡ배송하다: giao hàng",
+    "pitfalls": "Bài dùng -아/어요: đáp án cũng -아/어요/주세요, không dùng -습니다",
+    "hints": [
+      "Ngữ pháp & Bối cảnh: -거나: hoặc-아/어 주세요: xin hãy…-다면: nếu",
+      "Từ vựng & Ký tự gợi mở:\n- ㉠: 교환하다: đổi환불하다: hoàn tiền치수: cỡ배송하다: giao hàng (Bắt đầu: 맞는 ...)\n- ㉡: (Bắt đầu: 빨리 ...)",
+      "Đáp án mẫu chuẩn NIIED:\n- ㉠: 맞는 치수로 교환해 주시거나\n- ㉡: 빨리 보내 주세요\n\nBản dịch: Yêu cầu đổi hàng. Áo được giao lớn hơn cỡ tôi đặt. (A) nếu không có cỡ tôi đặt thì xin hoàn tiền. Nếu đổi được thì xin (B) sản phẩm. Lần đặt đầu tôi nhận sau hai tuần. Mong xử lý nhanh."
+    ]
+  },
+  {
+    "id": "wg_10",
+    "questionNo": 51,
+    "category": "Nhờ vả",
+    "topic": "Câu 51: Nhờ vả",
+    "source": "Kỳ 47",
+    "promptText": "[E-mail]제목: 선배님, 빅토르입니다.2016. 7. 12.선배님, 안녕하십니까? 빅토르입니다.부탁드릴 일이 있어 메일을 씁니다.제가 인터넷으로 ( ㄱ ).그런데 카메라가 이번 주 금요일에 배달된다고 합니다.제가 그날 고향에 가야 해서 카메라를 직접 받을 수 없을 것 같습니다.혹시 저 대신에 ( ㄴ )?어려운 부탁을 드려서 죄송합니다.그럼 답장 기다리겠습니다.빅토르 드림",
+    "blankA": {
+      "expected": "카메라를 주문했습니다",
+      "variants": [
+        "카메라를 주문했습니다",
+        "카메라를 구입했습니다",
+        "카메라를 샀습니다"
+      ],
+      "hint1": "Ý nghĩa ㉠: Câu sau nói máy ảnh sắp được giao → việc trước đó là em đã đặt/mua máy ảnh qua mạng: quá khứ -았/었습니다",
+      "hint2": "Ký tự đầu ㉠: '카메라' | Từ gợi ý: 주문하다/구입하다: đặt/mua배달되다: được giao직접: trự",
+      "hint3": "Đáp án chuẩn ㉠: 카메라를 주문했습니다"
+    },
+    "blankB": {
+      "expected": "카메라를 받아 주실 수 있으십니까",
+      "variants": [
+        "카메라를 받아 주실 수 있으십니까"
+      ],
+      "hint1": "Ý nghĩa ㉡: Có 혹시 저 대신에 và ? → câu nhờ dạng hỏi; người nhận là tiền bối nên dùng -(으)시-: 받아 주실 수 있으십니까.",
+      "hint2": "Ký tự đầu ㉡: '카메라'",
+      "hint3": "Đáp án chuẩn ㉡: 카메라를 받아 주실 수 있으십니까"
+    },
+    "translation": "Em có việc muốn nhờ. Em đã (A) qua mạng. Nhưng máy ảnh sẽ được giao thứ Sáu tuần này, hôm đó em về quê nên không tự nhận được. Không biết anh có thể (B) thay em không ạ?",
+    "grammar": "-아/어 주실 수 있으십니까?저 대신에: thay em-(으)ㄹ 것 같습니다",
+    "vocab": "주문하다/구입하다: đặt/mua배달되다: được giao직접: trực tiếp부탁드리다: nhờ (khiêm nhường)",
+    "pitfalls": "Thiếu -시- với hành động của tiền bốiBỏ dấu ?",
+    "hints": [
+      "Ngữ pháp & Bối cảnh: -아/어 주실 수 있으십니까?저 대신에: thay em-(으)ㄹ 것 같습니다",
+      "Từ vựng & Ký tự gợi mở:\n- ㉠: 주문하다/구입하다: đặt/mua배달되다: được giao직접: trực tiếp부탁드리다: nhờ (kh (Bắt đầu: 카메라...)\n- ㉡: (Bắt đầu: 카메라...)",
+      "Đáp án mẫu chuẩn NIIED:\n- ㉠: 카메라를 주문했습니다\n- ㉡: 카메라를 받아 주실 수 있으십니까\n\nBản dịch: Em có việc muốn nhờ. Em đã (A) qua mạng. Nhưng máy ảnh sẽ được giao thứ Sáu tuần này, hôm đó em về quê nên không tự nhận được. Không biết anh có thể (B) thay em không ạ?"
+    ]
+  },
+  {
+    "id": "wg_11",
+    "questionNo": 51,
+    "category": "Cảm ơn",
+    "topic": "Câu 51: Cảm ơn",
+    "source": "Kỳ 52",
+    "promptText": "마이클수미 씨,지난번에 책을 ( ㄱ ) 고맙습니다.수미 씨의 책 덕분에 과제를 잘할 수 있었습니다.그런데 책을 언제 ( ㄴ )?시간을 말씀해 주시면 찾아가겠습니다.그럼 답장 기다리겠습니다.",
+    "blankA": {
+      "expected": "빌려줘서",
+      "variants": [
+        "빌려줘서",
+        "빌려주셔서"
+      ],
+      "hint1": "Ý nghĩa ㉠: Chỗ trống nằm giữa câu, nối với 고맙습니다 → -아/어서. Cảm ơn vì được cho mượn → 빌려주다 (không phải 빌리다).",
+      "hint2": "Ký tự đầu ㉠: '빌려줘' | Từ gợi ý: 빌려주다: cho mượn돌려주다: trả lại과제: bài tập찾아",
+      "hint3": "Đáp án chuẩn ㉠: 빌려줘서"
+    },
+    "blankB": {
+      "expected": "돌려주면 됩니까",
+      "variants": [
+        "돌려주면 됩니까",
+        "돌려 드리면 됩니까",
+        "돌려주면 되겠습니까",
+        "돌려 드리면 되겠습니까"
+      ],
+      "hint1": "Ý nghĩa ㉡: Có dấu ? → câu hỏi. Hỏi khi nào trả lại → 돌려주다, mẫu hỏi lịch sự -(으)면 됩니까; 돌려 드리다 khiêm nhường hơn.",
+      "hint2": "Ký tự đầu ㉡: '돌려주'",
+      "hint3": "Đáp án chuẩn ㉡: 돌려주면 됩니까"
+    },
+    "translation": "Chị Su-mi, cảm ơn chị vì lần trước đã (A) sách. Nhờ sách của chị mà em làm bài tập tốt. Nhưng khi nào em (B) sách ạ? Chị cho biết thời gian thì em sẽ đến lấy.",
+    "grammar": "-아/어서 (lý do cảm ơn)-(으)면 되다드리다: kính ngữ của 주다",
+    "vocab": "빌려주다: cho mượn돌려주다: trả lại과제: bài tập찾아가다: đến lấy",
+    "pitfalls": "Nhầm 빌리다 (mượn) với 빌려주다 (cho mượn)",
+    "hints": [
+      "Ngữ pháp & Bối cảnh: -아/어서 (lý do cảm ơn)-(으)면 되다드리다: kính ngữ của 주다",
+      "Từ vựng & Ký tự gợi mở:\n- ㉠: 빌려주다: cho mượn돌려주다: trả lại과제: bài tập찾아가다: đến lấy (Bắt đầu: 빌려줘...)\n- ㉡: (Bắt đầu: 돌려주...)",
+      "Đáp án mẫu chuẩn NIIED:\n- ㉠: 빌려줘서\n- ㉡: 돌려주면 됩니까\n\nBản dịch: Chị Su-mi, cảm ơn chị vì lần trước đã (A) sách. Nhờ sách của chị mà em làm bài tập tốt. Nhưng khi nào em (B) sách ạ? Chị cho biết thời gian thì em sẽ đến lấy."
+    ]
+  },
+  {
+    "id": "wg_12",
+    "questionNo": 51,
+    "category": "Hỏi thông tin",
+    "topic": "Câu 51: Hỏi thông tin",
+    "source": "Kỳ 60",
+    "promptText": "Q &amp; A한국대학교 도서관게시판제목: 도서관을 이용하고 싶습니다.작성자: 타넷(2018-10-20)한국대학교를 졸업한 학생인데 도서관을 이용하고 싶습니다.선배에게 물어보니 졸업생이 도서관을 이용하려면 출입증이 ( ㄱ ).출입증을 만들려면 ( ㄴ )?방법을 알려 주시면 감사하겠습니다.",
+    "blankA": {
+      "expected": "필요하다고 합니다",
+      "variants": [
+        "필요하다고 합니다",
+        "있어야 한다고 합니다"
+      ],
+      "hint1": "Ý nghĩa ㉠: 선배에게 물어보니 = thông tin nghe lại → câu gián tiếp -다고 하다; 출입증이 hợp 필요하다/있어야 하다.",
+      "hint2": "Ký tự đầu ㉠: '필요하' | Từ gợi ý: 졸업생: sinh viên đã tốt nghiệp출입증: thẻ ra ",
+      "hint3": "Đáp án chuẩn ㉠: 필요하다고 합니다"
+    },
+    "blankB": {
+      "expected": "어떻게 해야 합니까",
+      "variants": [
+        "어떻게 해야 합니까",
+        "어떻게 해야 됩니까"
+      ],
+      "hint1": "Ý nghĩa ㉡: 만들려면 đi với -아/어야 하다; hỏi cách làm nên dùng 어떻게. Câu chốt 방법을 알려 주시면 xác nhận B hỏi cách.",
+      "hint2": "Ký tự đầu ㉡: '어떻게'",
+      "hint3": "Đáp án chuẩn ㉡: 어떻게 해야 합니까"
+    },
+    "translation": "Tôi đã tốt nghiệp ĐH Hàn Quốc, muốn dùng thư viện. Hỏi tiền bối thì nghe nói muốn dùng thư viện phải (A) thẻ ra vào. Muốn làm thẻ ra vào thì (B)? Nếu chỉ cách tôi rất biết ơn.",
+    "grammar": "-다고 하다 (gián tiếp)-(으)려면 -아/어야 하다",
+    "vocab": "졸업생: sinh viên đã tốt nghiệp출입증: thẻ ra vào방법: cách",
+    "pitfalls": "Không dùng gián tiếp cho A thì mất điểm hình thứcGiữ 격식체",
+    "hints": [
+      "Ngữ pháp & Bối cảnh: -다고 하다 (gián tiếp)-(으)려면 -아/어야 하다",
+      "Từ vựng & Ký tự gợi mở:\n- ㉠: 졸업생: sinh viên đã tốt nghiệp출입증: thẻ ra vào방법: cách (Bắt đầu: 필요하...)\n- ㉡: (Bắt đầu: 어떻게...)",
+      "Đáp án mẫu chuẩn NIIED:\n- ㉠: 필요하다고 합니다\n- ㉡: 어떻게 해야 합니까\n\nBản dịch: Tôi đã tốt nghiệp ĐH Hàn Quốc, muốn dùng thư viện. Hỏi tiền bối thì nghe nói muốn dùng thư viện phải (A) thẻ ra vào. Muốn làm thẻ ra vào thì (B)? Nếu chỉ cách tôi rất biết ơn."
+    ]
+  },
+  {
+    "id": "wg_13",
+    "questionNo": 51,
+    "category": "Hỏi/Góp ý (lễ hội)",
+    "topic": "Câu 51: Hỏi/Góp ý (lễ hội)",
+    "source": "Kỳ 83",
+    "promptText": "자유게시판 인주시청축제 관련 문의지난 주말 ‘인주시 별빛 축제’에 갔던 외국인입니다.지금까지 살면서 이렇게 많은 별을 ( ㄱ ) 한 번도 없었습니다.이번 축제에서 별도 보고 공연도 볼 수 있어서 정말 좋았습니다.혹시 축제가 언제 또 있습니까?있다면 이런 멋진 경험을 다시 ( ㄴ ).",
+    "blankA": {
+      "expected": "본 적이",
+      "variants": [
+        "본 적이"
+      ],
+      "hint1": "Ý nghĩa ㉠: Sau chỗ trống là 한 번도 없었습니다 → mẫu -(으)ㄴ 적이 없다 (chưa từng).",
+      "hint2": "Ký tự đầu ㉠: '본 적' | Từ gợi ý: 별: sao축제: lễ hội경험: trải nghiệm혹시: không",
+      "hint3": "Đáp án chuẩn ㉠: 본 적이"
+    },
+    "blankB": {
+      "expected": "하고 싶습니다",
+      "variants": [
+        "하고 싶습니다"
+      ],
+      "hint1": "Ý nghĩa ㉡: Kết câu bằng . và có 다시 → mong muốn -고 싶습니다, hợp với 있다면.",
+      "hint2": "Ký tự đầu ㉡: '하고 '",
+      "hint3": "Đáp án chuẩn ㉡: 하고 싶습니다"
+    },
+    "translation": "Tôi là người nước ngoài đã đến lễ hội ngắm sao Inju cuối tuần trước. Từ trước đến nay chưa bao giờ (A) nhiều sao như vậy… Khi nào lại có lễ hội ạ? Nếu có thì tôi (B) trải nghiệm tuyệt vời này.",
+    "grammar": "-(으)ㄴ 적이 있다/없다-고 싶다",
+    "vocab": "별: sao축제: lễ hội경험: trải nghiệm혹시: không biết…",
+    "pitfalls": "Viết câu hỏi thay vì mong muốn (cuối câu là .)",
+    "hints": [
+      "Ngữ pháp & Bối cảnh: -(으)ㄴ 적이 있다/없다-고 싶다",
+      "Từ vựng & Ký tự gợi mở:\n- ㉠: 별: sao축제: lễ hội경험: trải nghiệm혹시: không biết… (Bắt đầu: 본 적...)\n- ㉡: (Bắt đầu: 하고 ...)",
+      "Đáp án mẫu chuẩn NIIED:\n- ㉠: 본 적이\n- ㉡: 하고 싶습니다\n\nBản dịch: Tôi là người nước ngoài đã đến lễ hội ngắm sao Inju cuối tuần trước. Từ trước đến nay chưa bao giờ (A) nhiều sao như vậy… Khi nào lại có lễ hội ạ? Nếu có thì tôi (B) trải nghiệm tuyệt vời này."
+    ]
+  },
+  {
+    "id": "wg_14",
+    "questionNo": 51,
+    "category": "Đổi lịch",
+    "topic": "Câu 51: Đổi lịch",
+    "source": "Kỳ 91",
+    "promptText": "인주 피부과 병원입니다.11월 13일 오전 10시에 진료 예약이 되어 있습니다.안녕하세요. 제가 13일에 일이 생겨서 병원에 못 가게 되었습니다.그래서 예약을 14일 오전 10시로 ( ㄱ ).만약에 이날 예약이 ( ㄴ ) 저는 15일 오전도 괜찮습니다.예약 변경이 가능한지 확인해 주십시오.",
+    "blankA": {
+      "expected": "변경하고 싶습니다",
+      "variants": [
+        "변경하고 싶습니다",
+        "바꾸고 싶습니다"
+      ],
+      "hint1": "Ý nghĩa ㉠: 그래서 + 예약을 14일 오전 10시로 → ý muốn đổi lịch: -고 싶습니다. (으)로 chỉ đích đến.",
+      "hint2": "Ký tự đầu ㉠: '변경하' | Từ gợi ý: 진료 예약: lịch khám변경하다/바꾸다: đổi가능하다/불가능하다:",
+      "hint3": "Đáp án chuẩn ㉠: 변경하고 싶습니다"
+    },
+    "blankB": {
+      "expected": "불가능하면",
+      "variants": [
+        "불가능하면",
+        "어려우면"
+      ],
+      "hint1": "Ý nghĩa ㉡: 만약에 đi với -(으)면; sau chỗ trống là phương án dự phòng nên điều kiện là ngày đó không được.",
+      "hint2": "Ký tự đầu ㉡: '불가능'",
+      "hint3": "Đáp án chuẩn ㉡: 불가능하면"
+    },
+    "translation": "Tôi có lịch khám 10 giờ ngày 13/11 nhưng có việc không đến được. Vì vậy tôi (A) lịch sang 10 giờ ngày 14. Nếu lịch hôm đó (B) thì sáng ngày 15 tôi cũng được. Xin kiểm tra xem đổi được không.",
+    "grammar": "-고 싶습니다만약에 -(으)면",
+    "vocab": "진료 예약: lịch khám변경하다/바꾸다: đổi가능하다/불가능하다: có thể/không thể",
+    "pitfalls": "Nhầm -(으)면 với -아/어서",
+    "hints": [
+      "Ngữ pháp & Bối cảnh: -고 싶습니다만약에 -(으)면",
+      "Từ vựng & Ký tự gợi mở:\n- ㉠: 진료 예약: lịch khám변경하다/바꾸다: đổi가능하다/불가능하다: có thể/không thể (Bắt đầu: 변경하...)\n- ㉡: (Bắt đầu: 불가능...)",
+      "Đáp án mẫu chuẩn NIIED:\n- ㉠: 변경하고 싶습니다\n- ㉡: 불가능하면\n\nBản dịch: Tôi có lịch khám 10 giờ ngày 13/11 nhưng có việc không đến được. Vì vậy tôi (A) lịch sang 10 giờ ngày 14. Nếu lịch hôm đó (B) thì sáng ngày 15 tôi cũng được. Xin kiểm tra xem đổi được không."
+    ]
+  },
+  {
+    "id": "wg_15",
+    "questionNo": 51,
+    "category": "Hỏi thông tin (chỗ ở)",
+    "topic": "Câu 51: Hỏi thông tin (chỗ ở)",
+    "source": "Kỳ 96",
+    "promptText": "자유 게시판인주대학교제목: 어디로 이사하는 것이 좋을까요?작성자: 에르덴안녕하세요. 외국인 유학생입니다.기숙사 생활이 불편해서 이번 방학에 이사를 ( ㄱ ).집값이 싸고 좀 깨끗한 동네면 좋겠습니다.그런데 어느 ( ㄴ ) 잘 모르겠습니다.좋은 곳을 아시면 추천 부탁드립니다.",
+    "blankA": {
+      "expected": "하려고 합니다",
+      "variants": [
+        "하려고 합니다",
+        "하고 싶습니다"
+      ],
+      "hint1": "Ý nghĩa ㉠: 불편해서 (lý do) → kết quả là dự định -(으)려고 하다, ghép 이사를 하다.",
+      "hint2": "Ký tự đầu ㉠: '하려고' | Từ gợi ý: 이사하다: chuyển nhà동네: khu phố집값: giá nhà추천",
+      "hint3": "Đáp án chuẩn ㉠: 하려고 합니다"
+    },
+    "blankB": {
+      "expected": "동네가 좋은지",
+      "variants": [
+        "동네가 좋은지",
+        "동네가 좋을지",
+        "곳으로 갈지"
+      ],
+      "hint1": "Ý nghĩa ㉡: 어느 ( ) 잘 모르겠습니다 → mẫu -(으)ㄴ/ㄹ지 모르다: 어느 동네가 좋은지.",
+      "hint2": "Ký tự đầu ㉡: '동네가'",
+      "hint3": "Đáp án chuẩn ㉡: 동네가 좋은지"
+    },
+    "translation": "Tôi là du học sinh. Sống ký túc xá bất tiện nên kỳ nghỉ này tôi (A) chuyển nhà. Mong khu giá nhà rẻ, khá sạch. Nhưng tôi không rõ (B) nào. Nếu biết chỗ tốt xin giới thiệu.",
+    "grammar": "-(으)려고 하다-(으)ㄴ/ㄹ지 모르다",
+    "vocab": "이사하다: chuyển nhà동네: khu phố집값: giá nhà추천: giới thiệu",
+    "pitfalls": "Nối sai vĩ tố với 잘 모르겠습니다",
+    "hints": [
+      "Ngữ pháp & Bối cảnh: -(으)려고 하다-(으)ㄴ/ㄹ지 모르다",
+      "Từ vựng & Ký tự gợi mở:\n- ㉠: 이사하다: chuyển nhà동네: khu phố집값: giá nhà추천: giới thiệu (Bắt đầu: 하려고...)\n- ㉡: (Bắt đầu: 동네가...)",
+      "Đáp án mẫu chuẩn NIIED:\n- ㉠: 하려고 합니다\n- ㉡: 동네가 좋은지\n\nBản dịch: Tôi là du học sinh. Sống ký túc xá bất tiện nên kỳ nghỉ này tôi (A) chuyển nhà. Mong khu giá nhà rẻ, khá sạch. Nhưng tôi không rõ (B) nào. Nếu biết chỗ tốt xin giới thiệu."
+    ]
+  },
+  {
+    "id": "wg_16",
+    "questionNo": 51,
+    "category": "Nhờ vả / Yêu cầu",
+    "topic": "Câu 51: Nhờ vả / Yêu cầu",
+    "source": "Kỳ 102",
+    "promptText": "Email2025.10.10.(금)제목: 개인 물건 정리 요청안녕하세요. 동아리 회장 흐엉입니다.학생회관 공사 때문에 동아리 방을 옮기게 되었습니다.그런데 현재 개인 물건들이 너무 많습니다.동아리 방을 옮기려면 이 물건들부터 먼저 ( ㄱ ).방학을 하자마자 공사가 시작됩니다.방학이 ( ㄴ ) 개인 물건을 모두 가져가 주십시오.",
+    "blankA": {
+      "expected": "정리해야 합니다",
+      "variants": [
+        "정리해야 합니다"
+      ],
+      "hint1": "Ý nghĩa ㉠: 옮기려면 đi với -아/어야 하다 (phải làm).",
+      "hint2": "Ký tự đầu ㉠: '정리해' | Từ gợi ý: 동아리: CLB정리하다: sắp xếp개인 물건: đồ cá nhân공사",
+      "hint3": "Đáp án chuẩn ㉠: 정리해야 합니다"
+    },
+    "blankB": {
+      "expected": "시작되기 전에",
+      "variants": [
+        "시작되기 전에"
+      ],
+      "hint1": "Ý nghĩa ㉡: Yêu cầu có hạn chót → -기 전에; chủ ngữ là 방학이 nên dùng 시작되다 (không phải 시작하다).",
+      "hint2": "Ký tự đầu ㉡: '시작되'",
+      "hint3": "Đáp án chuẩn ㉡: 시작되기 전에"
+    },
+    "translation": "Tôi là chủ nhiệm CLB. Vì công trình hội quán nên phòng CLB phải chuyển, mà đồ cá nhân quá nhiều. Muốn chuyển phòng thì trước hết phải (A) những đồ này. Vừa nghỉ là công trình bắt đầu. Trước khi kỳ nghỉ (B), xin hãy mang hết đồ cá nhân đi.",
+    "grammar": "-(으)려면 -아/어야 하다-기 전에-자마자",
+    "vocab": "동아리: CLB정리하다: sắp xếp개인 물건: đồ cá nhân공사: công trình",
+    "pitfalls": "방학이 시작하기 전에 ✗: chủ ngữ là sự việc nên dùng dạng 시작되다",
+    "hints": [
+      "Ngữ pháp & Bối cảnh: -(으)려면 -아/어야 하다-기 전에-자마자",
+      "Từ vựng & Ký tự gợi mở:\n- ㉠: 동아리: CLB정리하다: sắp xếp개인 물건: đồ cá nhân공사: công trình (Bắt đầu: 정리해...)\n- ㉡: (Bắt đầu: 시작되...)",
+      "Đáp án mẫu chuẩn NIIED:\n- ㉠: 정리해야 합니다\n- ㉡: 시작되기 전에\n\nBản dịch: Tôi là chủ nhiệm CLB. Vì công trình hội quán nên phòng CLB phải chuyển, mà đồ cá nhân quá nhiều. Muốn chuyển phòng thì trước hết phải (A) những đồ này. Vừa nghỉ là công trình bắt đầu. Trước khi kỳ nghỉ (B), xin hãy mang hết đồ cá nhân đi."
+    ]
+  },
+  {
+    "id": "wg_17",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "Đồ miễn phí.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "무료로 드립니다\n저는 유학생인데 공부를 마치고 다음 주에 고향으로 돌아갑니다. 그래서 지금 ( ㄱ ). 책상, 의자, 컴퓨터, 경영학 전공 책 등이 있습니다. 이번 주 금요일까지 방을 비워 줘야 합니다. ( ㄴ ). 제 전화 번호는 010-1234-5678입니다.",
+    "blankA": {
+      "expected": "그동안 사용했던 제 물건들을 정리하려고 합니다.",
+      "variants": [
+        "그동안 사용했던 제 물건들을 정리하려고 합니다."
+      ],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '그동안...'",
+      "hint3": "Đáp án chuẩn (ㄱ): 그동안 사용했던 제 물건들을 정리하려고 합니다."
+    },
+    "blankB": {
+      "expected": "그러니까 물건이 필요하신 분들은 금요일 전까지 연락해 주시기 바랍니다.",
+      "variants": [
+        "그러니까 물건이 필요하신 분들은 금요일 전까지 연락해 주시기 바랍니다."
+      ],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '그러니...'",
+      "hint3": "Đáp án chuẩn (ㄴ): 그러니까 물건이 필요하신 분들은 금요일 전까지 연락해 주시기 바랍니다."
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: Đồ miễn phí.. Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '그동안...'\n- (ㄴ): '그러니...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): 그동안 사용했던 제 물건들을 정리하려고 합니다.\n- (ㄴ): 그러니까 물건이 필요하신 분들은 금요일 전까지 연락해 주시기 바랍니다."
+    ]
+  },
+  {
+    "id": "wg_18",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "Email dời lịch trình.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "Email:\n\n김영미 교수님께,\n안녕하세요? 한국어과 3학년 제니입니다.\n이번 주 금요일에 뵙기로 한 것 때문에 연락 드렸습니다.\n그런데 ( ㄱ ).\n정말 죄송합니다.\n혹시 ( ㄴ) 답장 주시면 감사하겠습니다.\n\n당장 주시면 감사하겠습니다.\n제니 올림",
+    "blankA": {
+      "expected": "금요일에 뵙기 어려울 거 같습니다.",
+      "variants": [
+        "금요일에 뵙기 어려울 거 같습니다.",
+        "금요일에 다른 일이 생겼습니다.",
+        "금요일에 사정이 생겨서 찾아뵙기가 어려울 거 같습니다."
+      ],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '금요일...'",
+      "hint3": "Đáp án chuẩn (ㄱ): 금요일에 뵙기 어려울 거 같습니다."
+    },
+    "blankB": {
+      "expected": "언제 시간이 괜찮으십니까?",
+      "variants": [
+        "언제 시간이 괜찮으십니까?",
+        "언제 시간이 되십니까?",
+        "괜찮으신 시간을 말씀해 주시겠습니까?",
+        "혹시 다음 주 금요일에 뵈러 가도 되겠습니까?"
+      ],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '언제 ...'",
+      "hint3": "Đáp án chuẩn (ㄴ): 언제 시간이 괜찮으십니까?"
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: Email dời lịch trình.. Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '금요일...'\n- (ㄴ): '언제 ...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): 금요일에 뵙기 어려울 거 같습니다.\n- (ㄴ): 언제 시간이 괜찮으십니까?"
+    ]
+  },
+  {
+    "id": "wg_19",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "Đăng tuyển.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "모집\n태권도 동아리 '태극'입니다.\n이번에 ( ㄱ ).\n신입 회원은 태권도에 관심 있는 학생이면 누구나 환영합니다.\n( ㄴ )?\n그래도 걱정하지 마십시오. 처음부터 천천히 가르쳐 드립니다.\n다음 주 금요일까지 학생 회관 201호에서 신청하십시오.",
+    "blankA": {
+      "expected": "새로 신입 회원을 모집하려고",
+      "variants": [
+        "새로 신입 회원을 모집하려고",
+        "뽑으려고 합니다"
+      ],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '새로 ...'",
+      "hint3": "Đáp án chuẩn (ㄱ): 새로 신입 회원을 모집하려고"
+    },
+    "blankB": {
+      "expected": "태권도를 처음 배우십니까",
+      "variants": [
+        "태권도를 처음 배우십니까",
+        "태권도가 처음이십니까",
+        "태권도를 잘 모르십니까"
+      ],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '태권도...'",
+      "hint3": "Đáp án chuẩn (ㄴ): 태권도를 처음 배우십니까"
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: Đăng tuyển.. Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '새로 ...'\n- (ㄴ): '태권도...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): 새로 신입 회원을 모집하려고\n- (ㄴ): 태권도를 처음 배우십니까"
+    ]
+  },
+  {
+    "id": "wg_20",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "Lời mời.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "받는 사람: 이재정(\nkorteach@hk.edu\n)\n제목: 선생님, 샤오밍입니다.\n이재정 선생님께\n안녕하세요? 샤오밍입니다.\n지난주에 댁으로 초대해 주셔서 감사합니다.\n선생님 덕분에 재미있는 시간을 보냈습니다.\n이번에는 ( ㄱ ).\n다음 주 월요일과 수요일 중에 언제가 좋으십니까?\n저는 ( ㄴ ).\n편하신 오후 시간을 말씀해 주시면 감사하겠습니다.\n샤오밍 올림",
+    "blankA": {
+      "expected": "제가 선생님을 집으로 초대하고 싶습니다.",
+      "variants": [
+        "제가 선생님을 집으로 초대하고 싶습니다."
+      ],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '제가 ...'",
+      "hint3": "Đáp án chuẩn (ㄱ): 제가 선생님을 집으로 초대하고 싶습니다."
+    },
+    "blankB": {
+      "expected": "오후에는 언제든지 다 괜찮습니다.",
+      "variants": [
+        "오후에는 언제든지 다 괜찮습니다."
+      ],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '오후에...'",
+      "hint3": "Đáp án chuẩn (ㄴ): 오후에는 언제든지 다 괜찮습니다."
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: Lời mời.. Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '제가 ...'\n- (ㄴ): '오후에...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): 제가 선생님을 집으로 초대하고 싶습니다.\n- (ㄴ): 오후에는 언제든지 다 괜찮습니다."
+    ]
+  },
+  {
+    "id": "wg_21",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "Nhờ vả.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "제목: 선배님, 빅토르입니다.\n\n2016. 7. 12.\n\n선배님, 안녕하십니까? 빅토르입니다.\n부탁드릴 일이 있어 메일을 씁니다.\n제가 인터넷으로 ( ㄱ ).\n그런데 카메라가 이번 주 금요일에 배달된다고 합니다.\n제가 그날 고향에 가야 해서 카메라를 직접 받을 수 없을 것 같습니다.\n혹시 저 대신에 ( ㄴ )?\n어려운 부탁을 드려서 죄송합니다.\n그럼 답장 기다리겠습니다.\n\n빅토르 드림",
+    "blankA": {
+      "expected": "카메라를 주문했습니다",
+      "variants": [
+        "카메라를 주문했습니다",
+        "카메라를 구입했습니다",
+        "카메라를 샀습니다."
+      ],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '카메라...'",
+      "hint3": "Đáp án chuẩn (ㄱ): 카메라를 주문했습니다"
+    },
+    "blankB": {
+      "expected": "카메라를 받아 주실 수 있으십니까",
+      "variants": [
+        "카메라를 받아 주실 수 있으십니까"
+      ],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '카메라...'",
+      "hint3": "Đáp án chuẩn (ㄴ): 카메라를 받아 주실 수 있으십니까"
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: Nhờ vả.. Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '카메라...'\n- (ㄴ): '카메라...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): 카메라를 주문했습니다\n- (ㄴ): 카메라를 받아 주실 수 있으십니까"
+    ]
+  },
+  {
+    "id": "wg_22",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "Mượn và trả đồ.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "마이클\n수미 씨,\n지난번에 책을 ( ㄱ ) 고맙습니다.\n\n수미 씨의 책 덕분에 과제를 잘할 수 있었습니다.\n그런데 책을 언제 ( ㄴ )?\n시간을 말씀해 주시면 찾아가겠습니다.\n그럼 답장 기다리겠습니다.",
+    "blankA": {
+      "expected": "빌려 줘서",
+      "variants": [
+        "빌려 줘서",
+        "주셔서"
+      ],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '빌려 ...'",
+      "hint3": "Đáp án chuẩn (ㄱ): 빌려 줘서"
+    },
+    "blankB": {
+      "expected": "돌려주면돌려 드리면 됩니까 되겠습니까",
+      "variants": [
+        "돌려주면돌려 드리면 됩니까 되겠습니까"
+      ],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '돌려주...'",
+      "hint3": "Đáp án chuẩn (ㄴ): 돌려주면돌려 드리면 됩니까 되겠습니까"
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: Mượn và trả đồ.. Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '빌려 ...'\n- (ㄴ): '돌려주...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): 빌려 줘서\n- (ㄴ): 돌려주면돌려 드리면 됩니까 되겠습니까"
+    ]
+  },
+  {
+    "id": "wg_23",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "Sử dụng thư viện.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "게시판\n제목: 도서관을 이용하고 싶습니다.\n\n작성자: 타넷(2018-10-20)\n한국대학교를 졸업한 학생인데 도서관을 이용하고 싶습니다.\n선배에게 물어보니 졸업생이 도서관을 이용하려면 출입증이 ( ㄱ ).\n출입증을 만들려면 ( ㄴ )?\n방법을 알려 주시면 감사하겠습니다.",
+    "blankA": {
+      "expected": "필요하다고 합니다",
+      "variants": [
+        "필요하다고 합니다",
+        "있어야 한다고 합니다"
+      ],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '필요하...'",
+      "hint3": "Đáp án chuẩn (ㄱ): 필요하다고 합니다"
+    },
+    "blankB": {
+      "expected": "어떻게 해야 합니까",
+      "variants": [
+        "어떻게 해야 합니까",
+        "어떻게 해야 됩니까"
+      ],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '어떻게...'",
+      "hint3": "Đáp án chuẩn (ㄴ): 어떻게 해야 합니까"
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: Sử dụng thư viện.. Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '필요하...'\n- (ㄴ): '어떻게...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): 필요하다고 합니다\n- (ㄴ): 어떻게 해야 합니까"
+    ]
+  },
+  {
+    "id": "wg_24",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "Quà tặng.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "수미 씨. 그동안 고마웠습니다.\n저는 다음 달이면 홍콩으로 일을 ( ㄱ )\n제가 원하는 회사에 취직을 해서 기쁘지만 수미 씨를 자주 못 볼 것 같아 아쉽습니다.\n선물을 준비했는데 선물이 수미 씨 마음에 ( ㄴ ).",
+    "blankA": {
+      "expected": "㉠ 하러 갑니다",
+      "variants": [
+        "㉠ 하러 갑니다"
+      ],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '㉠ 하...'",
+      "hint3": "Đáp án chuẩn (ㄱ): ㉠ 하러 갑니다"
+    },
+    "blankB": {
+      "expected": "㉡ 들면",
+      "variants": [
+        "㉡ 들면",
+        "들었으면 좋겠습니다"
+      ],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '㉡ 들...'",
+      "hint3": "Đáp án chuẩn (ㄴ): ㉡ 들면"
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: Quà tặng.. Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '㉠ 하...'\n- (ㄴ): '㉡ 들...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): ㉠ 하러 갑니다\n- (ㄴ): ㉡ 들면"
+    ]
+  },
+  {
+    "id": "wg_25",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "MỜI THAM GIA (Thôi nôi)",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "초대합니다\n\n우리 안나가 태어난 지 1년이 되었습니다.\n\n1년 동안 여러분 덕분에 건강하게 켰습니다.\n\n그래서 여러문을 모시고 [ ㄱ]\n\n[ ㄴ ]? 그 날짜가 가능하신지 연락 주시면 감사하겠습다",
+    "blankA": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄱ): "
+    },
+    "blankB": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄴ): "
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: MỜI THAM GIA (Thôi nôi). Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '...'\n- (ㄴ): '...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): \n- (ㄴ): "
+    ]
+  },
+  {
+    "id": "wg_26",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "MỜI THAM GIA (Thôi nôi)",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "초대합니다\n\n이준이가 태어난 지 1년이 되는 날\n\n감사한 여러분과 함께 [ ㄱ].\n\n장소: 웨딩아티움 1층\n\n시간: 2022.04.24  18시 바쁘시더라도 오셔서 [ ㄴ ].",
+    "blankA": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄱ): "
+    },
+    "blankB": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄴ): "
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: MỜI THAM GIA (Thôi nôi). Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '...'\n- (ㄴ): '...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): \n- (ㄴ): "
+    ]
+  },
+  {
+    "id": "wg_27",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "MỜI THAM GIA (Thôi nôi)",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "허준의 돌잔치에 초대합니다\n\n2022.03.21 14시\n\n웨딩아티움 1층\n\n바쁘실텐데 꼭 오셔서 허준의 돌잔치를 함께 [ ㄱ ].\n\n그 날에 못 오실 분이 계시면 [ ㄴ ].",
+    "blankA": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄱ): "
+    },
+    "blankB": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄴ): "
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: MỜI THAM GIA (Thôi nôi). Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '...'\n- (ㄴ): '...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): \n- (ㄴ): "
+    ]
+  },
+  {
+    "id": "wg_28",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "MỜI THAM GIA (Đám cưới)",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "우석 & 지은\n\n사랑으로 두 사람이 이제 두 사람이 아닌 하나가 [ ㄱ ].\n\n바쁘실 테데 저희 결혼식에 오셔서[ ㄴ].\n\n죄송하지만 주차 공간이 없으니까 외부 주차장을 [ ㄷ ].",
+    "blankA": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄱ): "
+    },
+    "blankB": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄴ): "
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: MỜI THAM GIA (Đám cưới). Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '...'\n- (ㄴ): '...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): \n- (ㄴ): "
+    ]
+  },
+  {
+    "id": "wg_29",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "MỜI THAM GIA (Đám cưới)",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "모시는 글\n\n마주보고 사랑을 키워 온 저희 두사람이 이제 한곳을 바라보며 평생을 [ ㄱ ].\n\n바쁘시더라도 참석해주셔서 자리를 [ ㄴ ].\n\n여려분의 축복과 격려가 새롭게 출발하는 저희 두 사람에게 [ ㄷ ].",
+    "blankA": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄱ): "
+    },
+    "blankB": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄴ): "
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: MỜI THAM GIA (Đám cưới). Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '...'\n- (ㄴ): '...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): \n- (ㄴ): "
+    ]
+  },
+  {
+    "id": "wg_30",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "MỜI THAM GIA (Đám cưới)",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "모시는 글\n\n저희 결혼해요 주님의 사랑 안에서 믿음으로 성장한 아래 두 사람이 여러 어른과 친지분들을 모시고 [ ㄱ ].\n\n마음 하나로 출발하는 두 젊음의 [ ㄴ ].",
+    "blankA": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄱ): "
+    },
+    "blankB": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄴ): "
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: MỜI THAM GIA (Đám cưới). Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '...'\n- (ㄴ): '...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): \n- (ㄴ): "
+    ]
+  },
+  {
+    "id": "wg_31",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "MỜI THAM GIA (Đám cưới)",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "초대합니다\n\n저희 두 사람이 한 가정을 [ ㄱ ].\n\n새로운 출발을 여러분과 함께 [ ㄴ ].\n\n서로 사랑하는 마음으로 열심히 살겠습니다.\n\n바쁘시더라도 참석하셔서 [ ㄷ ].",
+    "blankA": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄱ): "
+    },
+    "blankB": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄴ): "
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: MỜI THAM GIA (Đám cưới). Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '...'\n- (ㄴ): '...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): \n- (ㄴ): "
+    ]
+  },
+  {
+    "id": "wg_32",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "MỜI THAM GIA (Khác)",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "수영 동아리\n\n흐엉 씨, 이번에 현수가 대학에 합격했다는 소식을 들었습니다.\n\n그래서 우리 동아리 친구들이[ ㄱ ].\n\n제가 친구들한테 연락하고 식당도 [ ㄴ ].\n\n이번 주 토요일에 [ ㄷ ]?",
+    "blankA": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄱ): "
+    },
+    "blankB": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄴ): "
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: MỜI THAM GIA (Khác). Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '...'\n- (ㄴ): '...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): \n- (ㄴ): "
+    ]
+  },
+  {
+    "id": "wg_33",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "MỜI THAM GIA (Khác)",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "송년회에 초대합니다\n\n학생 김기란 선생님! 벌써 한 해가 끝나 가고 있습니다.\n\n우리 학생회에서는 12월에 [ ㄱ ].\n\n한 해 동안 선생님께서는 잘 가르쳐 주셔서 이번 송년회에 [ ㄴ ].\n\n특히 맛있는 음식 뿐만 아니라 다양한 [ ㄷ ].\n\n꼭 오셔서 맛있는 음식과 멋진 공연을[ ㄹ ].",
+    "blankA": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄱ): "
+    },
+    "blankB": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄴ): "
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: MỜI THAM GIA (Khác). Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '...'\n- (ㄴ): '...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): \n- (ㄴ): "
+    ]
+  },
+  {
+    "id": "wg_34",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "MỜI THAM GIA (Khác)",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "강아지 모임에 초대합니다\n\n익명 제2회 \"강아지 사랑\" 모임에 여러분을 [ ㄱ ].\n\n오실 때 간식을 따로 [ ㄴ ]\n\n저희가 많이 준비했습니다.\n\n그리고 이번 모임에 주인과 강아지 같이 춤 주는 행사도 [ ㄷ ] 원하시는 분이라면 [ ㄹ ].\n\n여러분의 많은 관심 부탁드립니다.",
+    "blankA": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄱ): "
+    },
+    "blankB": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄴ): "
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: MỜI THAM GIA (Khác). Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '...'\n- (ㄴ): '...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): \n- (ㄴ): "
+    ]
+  },
+  {
+    "id": "wg_35",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "HƯỚNG DẪN (금연)",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "건물 내 금연 안내\n\n저희 건물은 금연 건물입니다\n\n그래서 건물 천체에서 [ ㄱ ].\n\n흡연자는 지정된 흡연지역을 [ ㄴ ].\n\n여러분의 협조 부탁드립니다.",
+    "blankA": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄱ): "
+    },
+    "blankB": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄴ): "
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: HƯỚNG DẪN (금연). Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '...'\n- (ㄴ): '...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): \n- (ㄴ): "
+    ]
+  },
+  {
+    "id": "wg_36",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "HƯỚNG DẪN (금연)",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "금연 안내\n\n흡연은 흡연구역을 이용해주세요 !\n\n이 구역은 전체가 금연구역으로 지정되니 [ ㄱ ].\n\n이를 위반할 경우 10만원의 과태료가 [ ㄴ ].",
+    "blankA": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄱ): "
+    },
+    "blankB": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄴ): "
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: HƯỚNG DẪN (금연). Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '...'\n- (ㄴ): '...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): \n- (ㄴ): "
+    ]
+  },
+  {
+    "id": "wg_37",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "HƯỚNG DẪN (금연)",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "이곳은 금연시설입니다\n\n흡연은 흡연구역을 이용해주세요 !\n\n이 곳은 금연지역으로 지정된 장소 외에서 [ ㄱ ].\n\n이를 위반할 경우 10만원의 과태로가 부과되므로 여려분의 [ ㄴ ].",
+    "blankA": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄱ): "
+    },
+    "blankB": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄴ): "
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: HƯỚNG DẪN (금연). Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '...'\n- (ㄴ): '...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): \n- (ㄴ): "
+    ]
+  },
+  {
+    "id": "wg_38",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "HƯỚNG DẪN (화장실)",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "화장실 이용 안내\n\n최근 화장실이 더렵다는 의견이 많습니다\n\n그러므로 다음 사람을 위해 이용 후 [ ㄱ ].\n\n화장실은 우리 모두가 같이 사용하는 공간이므로 모두 같이 위생을 [ ㄴ ]?",
+    "blankA": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄱ): "
+    },
+    "blankB": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄴ): "
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: HƯỚNG DẪN (화장실). Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '...'\n- (ㄴ): '...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): \n- (ㄴ): "
+    ]
+  },
+  {
+    "id": "wg_39",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "HƯỚNG DẪN (화장실)",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "화장실 사용 에티켓\n\n휴지는 휴지통에 [ ㄱ ].\n\n사용후에는 반드시 물을 [ ㄴ ].\n\n변기커버를 [ ㄷ ]\n\n손을 [ ㄹ ]\n\n벽에 [ ㅁ]\n\n아름다운 사람은 머문자리도 아름답습니다 !!!",
+    "blankA": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄱ): "
+    },
+    "blankB": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄴ): "
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: HƯỚNG DẪN (화장실). Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '...'\n- (ㄴ): '...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): \n- (ㄴ): "
+    ]
+  },
+  {
+    "id": "wg_40",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "TÌM NGƯỜI, ĐỒ VẬT (무료 드림)",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "무료로 드립니다\n\n제가 부산으로 장기 출장하게 되어 쓰던 물건들을 정리해야 합니다.\n\n그 중에 산지 1달밖에 안 된 책상이 있는데 가져갈 수 없어서 [ ㄱ ].\n\n다음 주 월요일에 이사합니다. 그러니까 [ ㄴ ]\n\n제 연락처는 010-3243-4543입니다",
+    "blankA": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄱ): "
+    },
+    "blankB": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄴ): "
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: TÌM NGƯỜI, ĐỒ VẬT (무료 드림). Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '...'\n- (ㄴ): '...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): \n- (ㄴ): "
+    ]
+  },
+  {
+    "id": "wg_41",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "TÌM NGƯỜI, ĐỒ VẬT (무료 드림)",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "무료로 드립니다\n\n저는 유학생인데 공부를 마치고 다음 주에 고향으로 돌아갈 예정입니다. 그래서 [ ㄱ ].\n\n책상, 의자, 컴퓨터, 경영학 전공 책 등이 있습니다.\n\n이번 주 금용일까지 방을 비워야 하니까 [ ㄴ ].",
+    "blankA": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄱ): "
+    },
+    "blankB": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄴ): "
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: TÌM NGƯỜI, ĐỒ VẬT (무료 드림). Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '...'\n- (ㄴ): '...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): \n- (ㄴ): "
+    ]
+  },
+  {
+    "id": "wg_42",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "TÌM NGƯỜI, ĐỒ VẬT (물건 분실)",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "지갑을 찾습니다\n\n금요일 오후에 7층 남자 휴게실에서 [ ㄱ ].\n\n검은색 지갑인데 그 안에 있는 가족 사진은 저에게 [ ㄴ ] 꼭 찾고 싶습니다.\n\n혹시 지갑을 보셨거나 보관하고 계신 분이 있으면 [ ㄷ ].\n\n제 연락처는 010-999-33333입니다.\n\n찾아 주신 분께 사례하겠습니다",
+    "blankA": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄱ): "
+    },
+    "blankB": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄴ): "
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: TÌM NGƯỜI, ĐỒ VẬT (물건 분실). Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '...'\n- (ㄴ): '...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): \n- (ㄴ): "
+    ]
+  },
+  {
+    "id": "wg_43",
+    "questionNo": 51,
+    "category": "Câu 51: Điền thông báo / thư từ / email",
+    "topic": "TÌM NGƯỜI, ĐỒ VẬT (무료 드림)",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "가방을 찾습니다\n\n10월 2일 학생 휴게실에서 [ ㄱ ].\n\n검은색 가죽 가방이고 지갑 안에 신분증이 모두 들어있어서 [ ㄴ ].\n\n재 연략처는 010-1345-4343입니다.\n\n지갑을 [ ㄷ ]",
+    "blankA": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄱ): "
+    },
+    "blankB": {
+      "expected": "",
+      "variants": [],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '...'",
+      "hint3": "Đáp án chuẩn (ㄴ): "
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: TÌM NGƯỜI, ĐỒ VẬT (무료 드림). Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '...'\n- (ㄴ): '...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): \n- (ㄴ): "
+    ]
+  },
+  {
+    "id": "wg_44",
+    "questionNo": 52,
+    "category": "Câu 52: Điền đoạn văn giải thích / định nghĩa",
+    "topic": "Trò chơi.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "퍼즐은 여러 개의 조각을 모두 제 위치에 놓아야 하나의 그림이 완성된다. 그런데 만일 ( ㄱ ). 사회와 개인의 관계도 마찬가지이다. 사회를 구성하는 모든 개인도 있어야 할 자리에 있어야 한다. 그래야 ( ㄴ ).",
+    "blankA": {
+      "expected": "퍼즐 조각이 제 자리에 놓이지 않으면 그림은 완성되지 않는다.",
+      "variants": [
+        "퍼즐 조각이 제 자리에 놓이지 않으면 그림은 완성되지 않는다."
+      ],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '퍼즐 ...'",
+      "hint3": "Đáp án chuẩn (ㄱ): 퍼즐 조각이 제 자리에 놓이지 않으면 그림은 완성되지 않는다."
+    },
+    "blankB": {
+      "expected": "비로소 사회가 하나로 돌아가기 때문이다.",
+      "variants": [
+        "비로소 사회가 하나로 돌아가기 때문이다."
+      ],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '비로소...'",
+      "hint3": "Đáp án chuẩn (ㄴ): 비로소 사회가 하나로 돌아가기 때문이다."
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: Trò chơi.. Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '퍼즐 ...'\n- (ㄴ): '비로소...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): 퍼즐 조각이 제 자리에 놓이지 않으면 그림은 완성되지 않는다.\n- (ㄴ): 비로소 사회가 하나로 돌아가기 때문이다."
+    ]
+  },
+  {
+    "id": "wg_45",
+    "questionNo": 52,
+    "category": "Câu 52: Điền đoạn văn giải thích / định nghĩa",
+    "topic": "Cơ hội.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "기회는 어떤 사람에게 명예와 부를 안겨 준다. 기회를 통해서 평범한 사람이 유명해지기도 하고 ( ㄱ ). 이런 변화를 보고 사람들은 자신에게도 그런 기회가 찾아오기를 기다린다. 그러나 실제로 ( ㄴ ). 이렇게 기회를 잘 이용하지 못하는 것은 기회를 잡으려는 준비를 하지 않았기 때문이다.",
+    "blankA": {
+      "expected": "가난한 사람이 부자가 되기도 한다.",
+      "variants": [
+        "가난한 사람이 부자가 되기도 한다.",
+        "부자가 되기도 한다."
+      ],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '가난한...'",
+      "hint3": "Đáp án chuẩn (ㄱ): 가난한 사람이 부자가 되기도 한다."
+    },
+    "blankB": {
+      "expected": "기회가 와도 그 기회를 잘 이용하지 못한다.",
+      "variants": [
+        "기회가 와도 그 기회를 잘 이용하지 못한다.",
+        "찾아온 기회를 놓치는 사람들이 많다.",
+        "기회가 찾아오면 활용하지 못하는 사람들이 많다."
+      ],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '기회가...'",
+      "hint3": "Đáp án chuẩn (ㄴ): 기회가 와도 그 기회를 잘 이용하지 못한다."
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: Cơ hội.. Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '가난한...'\n- (ㄴ): '기회가...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): 가난한 사람이 부자가 되기도 한다.\n- (ㄴ): 기회가 와도 그 기회를 잘 이용하지 못한다."
+    ]
+  },
+  {
+    "id": "wg_46",
+    "questionNo": 52,
+    "category": "Câu 52: Điền đoạn văn giải thích / định nghĩa",
+    "topic": "Thời gian chiếu sáng của ngôi sao đến trái đất.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "별은 지구에서 멀리 떨어져 있다. 그래서 별빛이 지구까지 오는 데 많은 시간이 걸린다. 지구와 가장 가까운 별의 빛도 지구까지 오는 데 4억 년이 걸린다. 만약 우리가 이 별을 본다면 우리는 이 별의 현재 모습이 아니라 4억 년 전의 (ㄱ ). 이처럼 별빛은 오랜 시간이 지나야 지구에 도달한다. 그래서 어떤 별이 사라져도 우리는 그 사실을 바로 알지 못하고 아주 오랜 시간이 ( ㄴ ).",
+    "blankA": {
+      "expected": "모습을 보는 것이다.",
+      "variants": [
+        "모습을 보는 것이다."
+      ],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '모습을...'",
+      "hint3": "Đáp án chuẩn (ㄱ): 모습을 보는 것이다."
+    },
+    "blankB": {
+      "expected": "지나야 알 수 있다",
+      "variants": [
+        "지나야 알 수 있다",
+        "지난 후에야 알 수 있다."
+      ],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '지나야...'",
+      "hint3": "Đáp án chuẩn (ㄴ): 지나야 알 수 있다"
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: Thời gian chiếu sáng của ngôi sao đến trái đất.. Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '모습을...'\n- (ㄴ): '지나야...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): 모습을 보는 것이다.\n- (ㄴ): 지나야 알 수 있다"
+    ]
+  },
+  {
+    "id": "wg_47",
+    "questionNo": 52,
+    "category": "Câu 52: Điền đoạn văn giải thích / định nghĩa",
+    "topic": "Thái độ trong tình huống thử thách.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "어려운 일이 생겼을 때 그 일을 대하는 우리의 태도는 크게 두 가지이다. ( ㄱ ). 다른 하나는 어려워서 불가능하다고 포기하는 것이다. 그런데 긍정적인 결과를 기대할수록 좋은 결과를 얻을 확률이 높다. 반대로 ( ㄴ ). 그러므로 우리는 시련이나 고난이 닥쳤을 때일수록 더욱 긍정적으로 생각할 필요가 있다.",
+    "blankA": {
+      "expected": "하나는 아무리 어려워도 절대 포기하지 않는 것이다",
+      "variants": [
+        "하나는 아무리 어려워도 절대 포기하지 않는 것이다",
+        "하나는 가능하다는 믿음을 가지고 긍정적인 결과를 기대하는 것이다"
+      ],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '하나는...'",
+      "hint3": "Đáp án chuẩn (ㄱ): 하나는 아무리 어려워도 절대 포기하지 않는 것이다"
+    },
+    "blankB": {
+      "expected": "부정적으로 생각하면 좋은 결과를 얻기 어렵다",
+      "variants": [
+        "부정적으로 생각하면 좋은 결과를 얻기 어렵다",
+        "부정적인 생각을 하면 좋은 결과를 얻을 확률이 낮다"
+      ],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '부정적...'",
+      "hint3": "Đáp án chuẩn (ㄴ): 부정적으로 생각하면 좋은 결과를 얻기 어렵다"
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: Thái độ trong tình huống thử thách.. Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '하나는...'\n- (ㄴ): '부정적...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): 하나는 아무리 어려워도 절대 포기하지 않는 것이다\n- (ㄴ): 부정적으로 생각하면 좋은 결과를 얻기 어렵다"
+    ]
+  },
+  {
+    "id": "wg_48",
+    "questionNo": 52,
+    "category": "Câu 52: Điền đoạn văn giải thích / định nghĩa",
+    "topic": "Vệ sinh cá nhân.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "머리는 언제 감는 것이 좋을까? 사람들은 보통 아침에 머리를 감는다. 그러나 더러워진 머리는 감고 자야 머릿결에 좋기 때문에 ( ㄱ ). 그런데 젖은 머리로 자면 머릿결이 상하기 쉽다. 따라서 ( ㄴ ) 만약 머리를 말리기 어려우면 아침에 감는 것이 더 낫다.",
+    "blankA": {
+      "expected": "머리는 저녁에 감는 것이 좋다",
+      "variants": [
+        "머리는 저녁에 감는 것이 좋다"
+      ],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '머리는...'",
+      "hint3": "Đáp án chuẩn (ㄱ): 머리는 저녁에 감는 것이 좋다"
+    },
+    "blankB": {
+      "expected": "자기 전에 머리를 말리고 자야 한다",
+      "variants": [
+        "자기 전에 머리를 말리고 자야 한다"
+      ],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '자기 ...'",
+      "hint3": "Đáp án chuẩn (ㄴ): 자기 전에 머리를 말리고 자야 한다"
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: Vệ sinh cá nhân.. Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '머리는...'\n- (ㄴ): '자기 ...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): 머리는 저녁에 감는 것이 좋다\n- (ㄴ): 자기 전에 머리를 말리고 자야 한다"
+    ]
+  },
+  {
+    "id": "wg_49",
+    "questionNo": 52,
+    "category": "Câu 52: Điền đoạn văn giải thích / định nghĩa",
+    "topic": "Lời khuyên khi rửa tay.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "사람의 손에는 눈에 보이지 않는 세균이 많다. 그래서 병을 예방하기 위해서는 자주( ㄱ ). 그런데 전문가들은 손을 씻을 때 꼭 ( ㄴ ). 비누 없이 물로만 씻으면 손에 있는 세균을 제대로 없애기 어렵기 때문이다.",
+    "blankA": {
+      "expected": "손을 씻어야 한다",
+      "variants": [
+        "손을 씻어야 한다"
+      ],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '손을 ...'",
+      "hint3": "Đáp án chuẩn (ㄱ): 손을 씻어야 한다"
+    },
+    "blankB": {
+      "expected": "비누를 사용하라고 한다",
+      "variants": [
+        "비누를 사용하라고 한다",
+        "비누로 씻으라고 한다"
+      ],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '비누를...'",
+      "hint3": "Đáp án chuẩn (ㄴ): 비누를 사용하라고 한다"
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: Lời khuyên khi rửa tay.. Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '손을 ...'\n- (ㄴ): '비누를...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): 손을 씻어야 한다\n- (ㄴ): 비누를 사용하라고 한다"
+    ]
+  },
+  {
+    "id": "wg_50",
+    "questionNo": 52,
+    "category": "Câu 52: Điền đoạn văn giải thích / định nghĩa",
+    "topic": "Mối quan hệ cảm xúc và nét mặt.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "우리는 기분이 좋으면 밝은 표정을 짓는다. 그리고 기분이 좋지 않으면 표정이 어두워진다. 왜냐하면( ㄱ ). 그런데 이와 반대로 표정이 우리의 감정에 영향을 주기도 한다. 그래서 기분이 안 좋을 때 밝은 표정을 지으면 기분도 따라서 좋아진다. 그러므로 우울할 때일수록 (ㄴ ) 것이 좋다.",
+    "blankA": {
+      "expected": "감정이 표정에 영향을 주기 때문이다.",
+      "variants": [
+        "감정이 표정에 영향을 주기 때문이다."
+      ],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '감정이...'",
+      "hint3": "Đáp án chuẩn (ㄱ): 감정이 표정에 영향을 주기 때문이다."
+    },
+    "blankB": {
+      "expected": "밝은 표정을 짓는 하는 표정을 밝게 짓는",
+      "variants": [
+        "밝은 표정을 짓는 하는 표정을 밝게 짓는",
+        "하는"
+      ],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '밝은 ...'",
+      "hint3": "Đáp án chuẩn (ㄴ): 밝은 표정을 짓는 하는 표정을 밝게 짓는"
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: Mối quan hệ cảm xúc và nét mặt.. Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '감정이...'\n- (ㄴ): '밝은 ...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): 감정이 표정에 영향을 주기 때문이다.\n- (ㄴ): 밝은 표정을 짓는 하는 표정을 밝게 짓는"
+    ]
+  },
+  {
+    "id": "wg_51",
+    "questionNo": 52,
+    "category": "Câu 52: Điền đoạn văn giải thích / định nghĩa",
+    "topic": "Trị liệu bằng âm nhạc.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "사람들은 음악 치료를 할 때 환자에게 주로 밝은 분위기의 음악을 들려 줄 것이라고 생각한다. 그러나 환자에게 항상 밝은 분위기의 음악을 ( ㄱ ). 치료 초기에는 환자가 편안한 감정을 느끼는 것이 중요하다. 그래서 환자의 심리 상태와 비슷한 분위기의 음악을 들려준다. 그 이후에는 환자에게 다양한 분위기의 음악을 들려줌으로써 환자가 다양한 감정을 ( ㄴ ).",
+    "blankA": {
+      "expected": "들려주는 것은 아니다",
+      "variants": [
+        "들려주는 것은 아니다",
+        "사용하는 것은 아니다"
+      ],
+      "hint1": "Ý nghĩa (ㄱ): Điền ý kết nối phù hợp với câu trước.",
+      "hint2": "Gợi mở (ㄱ): Bắt đầu bằng '들려주...'",
+      "hint3": "Đáp án chuẩn (ㄱ): 들려주는 것은 아니다"
+    },
+    "blankB": {
+      "expected": "느끼도록 한다",
+      "variants": [
+        "느끼도록 한다",
+        "느끼게 한다."
+      ],
+      "hint1": "Ý nghĩa (ㄴ): Điền ý kết thúc phù hợp với đại từ / ngữ cảnh câu sau.",
+      "hint2": "Gợi mở (ㄴ): Bắt đầu bằng '느끼도...'",
+      "hint3": "Đáp án chuẩn (ㄴ): 느끼도록 한다"
+    },
+    "hints": [
+      "Ngữ cảnh đề thi: Trị liệu bằng âm nhạc.. Chú ý mạch ý trước sau của các câu chứa (ㄱ) và (ㄴ).",
+      "Gợi ý ký tự đầu:\n- (ㄱ): '들려주...'\n- (ㄴ): '느끼도...'",
+      "Đáp án mẫu chính thức NIIED:\n- (ㄱ): 들려주는 것은 아니다\n- (ㄴ): 느끼도록 한다"
+    ]
+  },
+  {
+    "id": "wg_52",
+    "questionNo": 53,
+    "category": "Câu 53: Viết phân tích biểu đồ (200~300 chữ)",
+    "topic": "Cơ sở công cộng.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "다음 그래프를 보고, 연령대에 따라 필요하다고 생각하는 공공시설이 무엇인지 비교하여 그에 대한 자신의 생각을 200~300자로 쓰십시오. (30점)",
+    "minChars": 200,
+    "maxChars": 300,
+    "modelEssay": "30대와 60대 성인 남녀를 대상으로 필요하다고 생각하는 공공시설에 대한 설문조사를 실시하였다. 조사 결과 30대의 경우 공연장 문화센터가 40%로 가장 높게 나타났으며 병원 약국이 28%로 그 뒤를 이었다. 반면에 60대는 병원 약국이 전체의 절반 수준인 50%로 가장 높게 나타났으며 공연장 문화센터가 239%로 조사되었다. 공원 시설의 필요성에 대한 견해는 30대와 60 대가 22%로 동일하게 나타났다. 이상의 설문 조사 결과를 통해 자신의 나이 와 직접적으로 관계가 있는 공공시설에 대한 요구가 상대적으로 크다는 사실을 알 수 있다.",
+    "hints": [
+      "Dàn bài chuẩn: Cơ sở công cộng.. Cần mở bài nêu chủ đề, thân bài phân tích số liệu/nguyên nhân, kết bài nêu triển vọng. Độ dài: 200~300 chữ.",
+      "Cụm từ then chốt: Sử dụng các liên từ nối ('조사 결과에 따르면', '반면에', '이러한 원인은...'). Đoạn mở đầu: '30대와 60대 성인 남녀를 대상으로 필요하다...'",
+      "Bài mẫu hoàn chỉnh NIIED (303 chữ):\n\n30대와 60대 성인 남녀를 대상으로 필요하다고 생각하는 공공시설에 대한 설문조사를 실시하였다. 조사 결과 30대의 경우 공연장 문화센터가 40%로 가장 높게 나타났으며 병원 약국이 28%로 그 뒤를 이었다. 반면에 60대는 병원 약국이 전체의 절반 수준인 50%로 가장 높게 나타났으며 공연장 문화센터가 239%로 조사되었다. 공원 시설의 필요성에 대한 견해는 30대와 60 대가 22%로 동일하게 나타났다. 이상의 설문 조사 결과를 통해 자신의 나이 와 직접적으로 관계가 있는 공공시설에 대한 요구가 상대적으로 크다는 사실을 알 수 있다."
+    ]
+  },
+  {
+    "id": "wg_53",
+    "questionNo": 53,
+    "category": "Câu 53: Viết phân tích biểu đồ (200~300 chữ)",
+    "topic": "Gia đình 1 thành viên.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "최근 한국 사회에서는 1인 가구가 계속 증가하고 있습니다. 다음 자료를 참고하여 1인 가구 증가의 원인과 현황을 설명하는 글을 200~300자로 쓰십시오. (30점)",
+    "minChars": 200,
+    "maxChars": 300,
+    "modelEssay": "최근 한국 사회에서는 1인 가구가 계속 증가하고 있다. 2000년 전체 가구 수의 16%에 불과했던 1인 가구는 꾸준히 증가하여 2012년에는 26%에 도달했다. 12년 사이에 106가 증가한 것이다. 이러한 증가의 원인은 다음과 같다. 첫째, 결혼관의 변화로 인한 독신자 수의 증가이다. 둘째, 노인 인구가 증가하면서 1인 가구도 증가하게 되었다. 셋째, 여성의 사회 진출도 1인 가구가 증가하는 데 영향을 주었다. 이러한 원인으로 1인 가구 수는 앞으로도 지속적으로 증가할 전망이다.\n최근 한국 사회에서는 1인 가구가 계속 증가하고 있다. 2000년 전체 가구 수의 16%에 불과했던 1인 가구는 꾸준히 증가하여 2012년에는 26%에 도달했다. 12년 사이에 106가 증가한 것이다. 이러한 증가의 원인은 다음과 같다. 첫째, 결혼관의 변화로 인한 독신자 수의 증가이다. 둘째, 노인 인구가 증가하면서 1인 가구도 증가하게 되었다. 셋째, 여성의 사회 진출도 1인 가구가 증가하는 데 영향을 주었다. 이러한 원인으로 1인 가구 수는 앞으로도 지속적으로 증가할 전망이다.",
+    "hints": [
+      "Dàn bài chuẩn: Gia đình 1 thành viên.. Cần mở bài nêu chủ đề, thân bài phân tích số liệu/nguyên nhân, kết bài nêu triển vọng. Độ dài: 200~300 chữ.",
+      "Cụm từ then chốt: Sử dụng các liên từ nối ('조사 결과에 따르면', '반면에', '이러한 원인은...'). Đoạn mở đầu: '최근 한국 사회에서는 1인 가구가 계속 증가하...'",
+      "Bài mẫu hoàn chỉnh NIIED (545 chữ):\n\n최근 한국 사회에서는 1인 가구가 계속 증가하고 있다. 2000년 전체 가구 수의 16%에 불과했던 1인 가구는 꾸준히 증가하여 2012년에는 26%에 도달했다. 12년 사이에 106가 증가한 것이다. 이러한 증가의 원인은 다음과 같다. 첫째, 결혼관의 변화로 인한 독신자 수의 증가이다. 둘째, 노인 인구가 증가하면서 1인 가구도 증가하게 되었다. 셋째, 여성의 사회 진출도 1인 가구가 증가하는 데 영향을 주었다. 이러한 원인으로 1인 가구 수는 앞으로도 지속적으로 증가할 전망이다.\n최근 한국 사회에서는 1인 가구가 계속 증가하고 있다. 2000년 전체 가구 수의 16%에 불과했던 1인 가구는 꾸준히 증가하여 2012년에는 26%에 도달했다. 12년 사이에 106가 증가한 것이다. 이러한 증가의 원인은 다음과 같다. 첫째, 결혼관의 변화로 인한 독신자 수의 증가이다. 둘째, 노인 인구가 증가하면서 1인 가구도 증가하게 되었다. 셋째, 여성의 사회 진출도 1인 가구가 증가하는 데 영향을 주었다. 이러한 원인으로 1인 가구 수는 앞으로도 지속적으로 증가할 전망이다."
+    ]
+  },
+  {
+    "id": "wg_54",
+    "questionNo": 53,
+    "category": "Câu 53: Viết phân tích biểu đồ (200~300 chữ)",
+    "topic": "Phương tiện đại chúng.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "다음 그림을 보고 대중매체를 어떻게 나눌 수 있는지 200~300자로 쓰십시오. (30점)",
+    "minChars": 200,
+    "maxChars": 300,
+    "modelEssay": "대중매체란 많은 사람에게 대량으로 정보와 생각을 전달하는 수단을 말한다. 이러한 대중매체에는 다양한 양식이 있는데, 표 현 양식을 기준으로 나누면 크게 인쇄매체, 전파매체, 통신매체이다. 인쇄매체는 책이나 잡지, 신문 등으로 기록이 오래 보관되고 정보의 신뢰도가 높다는 특징이 있다. 다음으로 전파매체가 있는데 텔레비전 라디오 등이 이에 속한다. 정보를 생생하게 전달하고 오락성이 뛰어나다는 특징을 가진다. 마지막으로 인터넷 과 같은 통신매체를 들 수 있다. 쌍방향 소통이 가능하고 다량의 정보를 생산한다는 특징이 있다.",
+    "hints": [
+      "Dàn bài chuẩn: Phương tiện đại chúng.. Cần mở bài nêu chủ đề, thân bài phân tích số liệu/nguyên nhân, kết bài nêu triển vọng. Độ dài: 200~300 chữ.",
+      "Cụm từ then chốt: Sử dụng các liên từ nối ('조사 결과에 따르면', '반면에', '이러한 원인은...'). Đoạn mở đầu: '대중매체란 많은 사람에게 대량으로 정보와 생각...'",
+      "Bài mẫu hoàn chỉnh NIIED (291 chữ):\n\n대중매체란 많은 사람에게 대량으로 정보와 생각을 전달하는 수단을 말한다. 이러한 대중매체에는 다양한 양식이 있는데, 표 현 양식을 기준으로 나누면 크게 인쇄매체, 전파매체, 통신매체이다. 인쇄매체는 책이나 잡지, 신문 등으로 기록이 오래 보관되고 정보의 신뢰도가 높다는 특징이 있다. 다음으로 전파매체가 있는데 텔레비전 라디오 등이 이에 속한다. 정보를 생생하게 전달하고 오락성이 뛰어나다는 특징을 가진다. 마지막으로 인터넷 과 같은 통신매체를 들 수 있다. 쌍방향 소통이 가능하고 다량의 정보를 생산한다는 특징이 있다."
+    ]
+  },
+  {
+    "id": "wg_55",
+    "questionNo": 53,
+    "category": "Câu 53: Viết phân tích biểu đồ (200~300 chữ)",
+    "topic": "Phương pháp nâng cao năng lực viết.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "다음은 '글쓰기 능력을 향상시키는 방법'에 대해 교사와 학생을 대상으로 실시한 설문 조사입니다. 그래프를 보고, 조사 결과를 비교하여 200~300자로 쓰십시오. (30점)",
+    "minChars": 200,
+    "maxChars": 300,
+    "modelEssay": "교사와 학생 300명을 대상으로 글쓰기 능력을 향상시키는 방법에 대해 설문 조사를 실시하였다. 그 결과 교사와 학생의 생각이 다르다는 것을 알 수 있었다. 교사의 경우 글을 잘 쓰려면 책을 많이 읽어야 한다가 45%로 가장 높게 나타났지만 학생의 경우에는 다양한 주제로 연습하기가 65%로 가장 높았다. 다음으로 교사는 좋은 글을 따라 써야 한다가 30%, 다양한 주제로 연습해야 한다가 25%를 차지했다. 반면에 학생들은 책을 많이 읽어야 한다가 25%로 나타났고, 좋은 글을 따라 써야 한다는 10%에 그쳤다.",
+    "hints": [
+      "Dàn bài chuẩn: Phương pháp nâng cao năng lực viết.. Cần mở bài nêu chủ đề, thân bài phân tích số liệu/nguyên nhân, kết bài nêu triển vọng. Độ dài: 200~300 chữ.",
+      "Cụm từ then chốt: Sử dụng các liên từ nối ('조사 결과에 따르면', '반면에', '이러한 원인은...'). Đoạn mở đầu: '교사와 학생 300명을 대상으로 글쓰기 능력을...'",
+      "Bài mẫu hoàn chỉnh NIIED (287 chữ):\n\n교사와 학생 300명을 대상으로 글쓰기 능력을 향상시키는 방법에 대해 설문 조사를 실시하였다. 그 결과 교사와 학생의 생각이 다르다는 것을 알 수 있었다. 교사의 경우 글을 잘 쓰려면 책을 많이 읽어야 한다가 45%로 가장 높게 나타났지만 학생의 경우에는 다양한 주제로 연습하기가 65%로 가장 높았다. 다음으로 교사는 좋은 글을 따라 써야 한다가 30%, 다양한 주제로 연습해야 한다가 25%를 차지했다. 반면에 학생들은 책을 많이 읽어야 한다가 25%로 나타났고, 좋은 글을 따라 써야 한다는 10%에 그쳤다."
+    ]
+  },
+  {
+    "id": "wg_56",
+    "questionNo": 53,
+    "category": "Câu 53: Viết phân tích biểu đồ (200~300 chữ)",
+    "topic": "Tình hình du học sinh nước ngoài.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "다음을 참고하여 '국내 외국인 유학생 현황'에 대한 글을 200~300자로 쓰십시오. 단, 글의 제목을 쓰지 마십시오. (30점)",
+    "minChars": 200,
+    "maxChars": 300,
+    "modelEssay": "최근 국내에서 유학하는 외국인 유학생이 급증했다. 2000년에 4천 명이던 유학생이 가파른 상승세를 보이다 잠시 주춤하더니 다시 증가세를 보이며 2016년에 이르러 10만 명이 되었다. 이러한 증가의 원인으로 우선 외국인들의 한국과 한국어에 대한 관심이 증가한 것을 들 수 있다. 한국 대학에서 유학생을 유치하려는 노력도 유학생의 증가에 큰 영향을 미친 것으로 보인다. 이러한 영향이 계속 이어진다면 2023년에는 외국인 유학생이 20만 명에 이를 것으로 기대된다.",
+    "hints": [
+      "Dàn bài chuẩn: Tình hình du học sinh nước ngoài.. Cần mở bài nêu chủ đề, thân bài phân tích số liệu/nguyên nhân, kết bài nêu triển vọng. Độ dài: 200~300 chữ.",
+      "Cụm từ then chốt: Sử dụng các liên từ nối ('조사 결과에 따르면', '반면에', '이러한 원인은...'). Đoạn mở đầu: '최근 국내에서 유학하는 외국인 유학생이 급증했...'",
+      "Bài mẫu hoàn chỉnh NIIED (260 chữ):\n\n최근 국내에서 유학하는 외국인 유학생이 급증했다. 2000년에 4천 명이던 유학생이 가파른 상승세를 보이다 잠시 주춤하더니 다시 증가세를 보이며 2016년에 이르러 10만 명이 되었다. 이러한 증가의 원인으로 우선 외국인들의 한국과 한국어에 대한 관심이 증가한 것을 들 수 있다. 한국 대학에서 유학생을 유치하려는 노력도 유학생의 증가에 큰 영향을 미친 것으로 보인다. 이러한 영향이 계속 이어진다면 2023년에는 외국인 유학생이 20만 명에 이를 것으로 기대된다."
+    ]
+  },
+  {
+    "id": "wg_57",
+    "questionNo": 53,
+    "category": "Câu 53: Viết phân tích biểu đồ (200~300 chữ)",
+    "topic": "Sinh sản.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "다음을 참고하여 '아이를 꼭 낳아야 하는가'에 대한 글을 200~300자로 쓰시오. 단, 글의 제목을 쓰지 마시오. (30점)",
+    "minChars": 200,
+    "maxChars": 300,
+    "modelEssay": "결혼문화연구소에서 20대 이상 성인 남녀 3,000명을 대상으로 '아이를 꼭 낳아야 하는가'에 대해 조사하였다. 그 결과 '그렇다'라고 응답한 남자는 80%, 여자는 67%였고, '아니다'라고 응답한 남자는 20%, 여자는 33%였다. 이들이 아니다'라고 응답한 이유에 대해 남자는 양육비가 부담스러워서 여자는 자유로운 생활을 원해서라고 응답한 경우가 가장 많았다. 이어 남자는 자유로운 생활을 원해서, 여자는 직장 생활을 유지하고 싶어서라고 응답하였다.",
+    "hints": [
+      "Dàn bài chuẩn: Sinh sản.. Cần mở bài nêu chủ đề, thân bài phân tích số liệu/nguyên nhân, kết bài nêu triển vọng. Độ dài: 200~300 chữ.",
+      "Cụm từ then chốt: Sử dụng các liên từ nối ('조사 결과에 따르면', '반면에', '이러한 원인은...'). Đoạn mở đầu: '결혼문화연구소에서 20대 이상 성인 남녀 3,...'",
+      "Bài mẫu hoàn chỉnh NIIED (254 chữ):\n\n결혼문화연구소에서 20대 이상 성인 남녀 3,000명을 대상으로 '아이를 꼭 낳아야 하는가'에 대해 조사하였다. 그 결과 '그렇다'라고 응답한 남자는 80%, 여자는 67%였고, '아니다'라고 응답한 남자는 20%, 여자는 33%였다. 이들이 아니다'라고 응답한 이유에 대해 남자는 양육비가 부담스러워서 여자는 자유로운 생활을 원해서라고 응답한 경우가 가장 많았다. 이어 남자는 자유로운 생활을 원해서, 여자는 직장 생활을 유지하고 싶어서라고 응답하였다."
+    ]
+  },
+  {
+    "id": "wg_58",
+    "questionNo": 53,
+    "category": "Câu 53: Viết phân tích biểu đồ (200~300 chữ)",
+    "topic": "Sự biến chuyển người sử dụng xe đạp ở thành phố Inju.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "다음을 참고하여 '인주시의 자전거 이용자 변화'에 대한 글을 200~300자로 쓰시오. 단, 글의 제목을 쓰지 마시오. (30점)",
+    "minChars": 200,
+    "maxChars": 300,
+    "modelEssay": "인주시의 자전거 이용자 변화를 살펴보면, 자전거 이용자 수는 2007년 4만 명에서 2012년 에는 9만 명, 2017년에는 21만 명으로, 지난 10년간 약 5배 증가하였다. 특히 2012년부터 2017년까지 자전거 이용자 수가 급증한 것으로 나타났다. 이와 같이 자전거 이용자 수가 중가한 이유는 자전거 도로가 개발되고 자전거 빌리는 곳이 확대되었기 때문인 것으로 보인다. 자전거 이용 목적을 보면, 10년간 운동 및 산책은 4배, 출퇴근은 14배, 기타는 3배 늘어난 것으로 나타났으며, 출퇴근 시 이용이 가장 높은 증가율을 보였다.",
+    "hints": [
+      "Dàn bài chuẩn: Sự biến chuyển người sử dụng xe đạp ở thành phố Inju.. Cần mở bài nêu chủ đề, thân bài phân tích số liệu/nguyên nhân, kết bài nêu triển vọng. Độ dài: 200~300 chữ.",
+      "Cụm từ then chốt: Sử dụng các liên từ nối ('조사 결과에 따르면', '반면에', '이러한 원인은...'). Đoạn mở đầu: '인주시의 자전거 이용자 변화를 살펴보면, 자전...'",
+      "Bài mẫu hoàn chỉnh NIIED (301 chữ):\n\n인주시의 자전거 이용자 변화를 살펴보면, 자전거 이용자 수는 2007년 4만 명에서 2012년 에는 9만 명, 2017년에는 21만 명으로, 지난 10년간 약 5배 증가하였다. 특히 2012년부터 2017년까지 자전거 이용자 수가 급증한 것으로 나타났다. 이와 같이 자전거 이용자 수가 중가한 이유는 자전거 도로가 개발되고 자전거 빌리는 곳이 확대되었기 때문인 것으로 보인다. 자전거 이용 목적을 보면, 10년간 운동 및 산책은 4배, 출퇴근은 14배, 기타는 3배 늘어난 것으로 나타났으며, 출퇴근 시 이용이 가장 높은 증가율을 보였다."
+    ]
+  },
+  {
+    "id": "wg_59",
+    "questionNo": 53,
+    "category": "Câu 53: Viết phân tích biểu đồ (200~300 chữ)",
+    "topic": "Sự biến hóa của thị trường mua sắm online.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "다음을 참고하여 '온라인 쇼핑 시장의 변화'에 대한 글을 200~300자로 쓰시오. 단, 글의 제목을 쓰지 마시오. (30점)",
+    "minChars": 200,
+    "maxChars": 300,
+    "modelEssay": "온라인 쇼핑 시장의 변화에 대해 조사한 결과, 온라인 쇼핑 시장의 전체 매출액은 2014년에 46조 원, 2018년에 92조 원으로 4년 만에 크게 증가한 것으로 나타났다. 사용 기기에 따른 매출액은 컴퓨터의 경우 2014년에 32조 원, 2018년에 39조 원으로 소폭 증가한 반면 스마트폰은 2014년에 14조 원, 2018년에 53조 원으로 매출액이 큰 폭으로 증가하였다. 이와 같이 온라인 쇼핑 시장이 변화한 원인은 온라인으로 다양한 상품 구매가 가능해졌고 스마트폰이 컴퓨터에 비해 쇼핑 접근성이 높아졌기 때문이다.",
+    "hints": [
+      "Dàn bài chuẩn: Sự biến hóa của thị trường mua sắm online.. Cần mở bài nêu chủ đề, thân bài phân tích số liệu/nguyên nhân, kết bài nêu triển vọng. Độ dài: 200~300 chữ.",
+      "Cụm từ then chốt: Sử dụng các liên từ nối ('조사 결과에 따르면', '반면에', '이러한 원인은...'). Đoạn mở đầu: '온라인 쇼핑 시장의 변화에 대해 조사한 결과,...'",
+      "Bài mẫu hoàn chỉnh NIIED (292 chữ):\n\n온라인 쇼핑 시장의 변화에 대해 조사한 결과, 온라인 쇼핑 시장의 전체 매출액은 2014년에 46조 원, 2018년에 92조 원으로 4년 만에 크게 증가한 것으로 나타났다. 사용 기기에 따른 매출액은 컴퓨터의 경우 2014년에 32조 원, 2018년에 39조 원으로 소폭 증가한 반면 스마트폰은 2014년에 14조 원, 2018년에 53조 원으로 매출액이 큰 폭으로 증가하였다. 이와 같이 온라인 쇼핑 시장이 변화한 원인은 온라인으로 다양한 상품 구매가 가능해졌고 스마트폰이 컴퓨터에 비해 쇼핑 접근성이 높아졌기 때문이다."
+    ]
+  },
+  {
+    "id": "wg_60",
+    "questionNo": 54,
+    "category": "Câu 54: Bài luận nghị luận xã hội (600~700 chữ)",
+    "topic": "Tiêu chuẩn của hạnh phúc.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "다음을 주제로 하여 자신의 생각을 600~700자로 글을 쓰십시오. (50점)\n사람들은 다양한 경제 수준의 삶을 살고 있으며 그러한 삶에 대해 느끼는 각자의 만족도도 다양하다. 그러나 경제적 여유와 행복 만족도가 꼭 비례한다고는 할 수 없다. 경제적 여유가 행복에 미치는 영향에 대해 아래의 내용을 중심으로 자신의 생각을 쓰십시오.\n\n사람들이 생각하는 행복한 삶이란 무엇인가?\n\n경제적 조건과 행복 만족도의 관계는 어떠한가?\n\n행복 만족도를 높이기 위해 어떠한 노력이 필요한가?",
+    "minChars": 600,
+    "maxChars": 700,
+    "modelEssay": "일반적으로 사람들은 경제적으로 여유가 있으면 다른 사람들보다 더 행복할 것이라고 생각한다. 그러나 반드시 그러한 것은 아니다. 굴지의 기업 총수라고 해서 특별히 더 행복해 보이지 않는 것만 보더라도 그 사실을 잘 알 수있다. 경제적 여유가 정신적 안정과 만족을 가져오는 것은 아니다.\n\n물론 행복해지려면 어느 정도의 경제적인 조건은 요구된다. 사람에게 필수적인 의식주가 해결되지 않은 상황에서는 행복의 크기가 경제력과 비례 관계에 있다고 볼 수도 있다. 그러나 의식주가 큰 문제가 되지 않는 요즈음, '먹고 살 걱정'에서 놓여난 다음 잉여의 경제력을 어떻게 처리하느냐의 문제를 두고 고민할 필요가 있다. 배고픈 예술가가 행복할 것이라고 여기는 사람은 별로 없을 것이다. 그렇다고 해서 배만 부른 부자가 되기를 원하는 사람도 별로 없다. 결국 행복이란 안락한 생활과 스스로 만족하는 삶에서 느낄 수 있는 것이다.\n\n행복해지기 위해서는 우리 자신이 스스로 행복하다고 느낄 수 있는 환경에서 생활하는 것이 중요하므로 그런 상황을 자주 만들려고 노력하는 자세가 필요하다. 언제 행복한지. 누구와 있을 때 행복한지 그리고 무슨 일에서 행복함을 느끼는지를 잘 알게 된다면 그것이 그리 어려운 일은 아닐 것이다. 다시 말해서 약간의 '여유'가 생긴다면 그 여유를 언제, 누구와, 무엇을 하면서 쓸 것인가에 대해 가끔씩은 생각하면서 사는 것이 중요하다. 물론 그 여유를 누리는 것이 다른 사람의 행복을 방해하지는 않아야 할 것이다.",
+    "hints": [
+      "Dàn bài chuẩn: Tiêu chuẩn của hạnh phúc.. Cần mở bài nêu chủ đề, thân bài phân tích số liệu/nguyên nhân, kết bài nêu triển vọng. Độ dài: 600~700 chữ.",
+      "Cụm từ then chốt: Sử dụng các liên từ nối ('조사 결과에 따르면', '반면에', '이러한 원인은...'). Đoạn mở đầu: '일반적으로 사람들은 경제적으로 여유가 있으면 ...'",
+      "Bài mẫu hoàn chỉnh NIIED (737 chữ):\n\n일반적으로 사람들은 경제적으로 여유가 있으면 다른 사람들보다 더 행복할 것이라고 생각한다. 그러나 반드시 그러한 것은 아니다. 굴지의 기업 총수라고 해서 특별히 더 행복해 보이지 않는 것만 보더라도 그 사실을 잘 알 수있다. 경제적 여유가 정신적 안정과 만족을 가져오는 것은 아니다.\n\n물론 행복해지려면 어느 정도의 경제적인 조건은 요구된다. 사람에게 필수적인 의식주가 해결되지 않은 상황에서는 행복의 크기가 경제력과 비례 관계에 있다고 볼 수도 있다. 그러나 의식주가 큰 문제가 되지 않는 요즈음, '먹고 살 걱정'에서 놓여난 다음 잉여의 경제력을 어떻게 처리하느냐의 문제를 두고 고민할 필요가 있다. 배고픈 예술가가 행복할 것이라고 여기는 사람은 별로 없을 것이다. 그렇다고 해서 배만 부른 부자가 되기를 원하는 사람도 별로 없다. 결국 행복이란 안락한 생활과 스스로 만족하는 삶에서 느낄 수 있는 것이다.\n\n행복해지기 위해서는 우리 자신이 스스로 행복하다고 느낄 수 있는 환경에서 생활하는 것이 중요하므로 그런 상황을 자주 만들려고 노력하는 자세가 필요하다. 언제 행복한지. 누구와 있을 때 행복한지 그리고 무슨 일에서 행복함을 느끼는지를 잘 알게 된다면 그것이 그리 어려운 일은 아닐 것이다. 다시 말해서 약간의 '여유'가 생긴다면 그 여유를 언제, 누구와, 무엇을 하면서 쓸 것인가에 대해 가끔씩은 생각하면서 사는 것이 중요하다. 물론 그 여유를 누리는 것이 다른 사람의 행복을 방해하지는 않아야 할 것이다."
+    ]
+  },
+  {
+    "id": "wg_61",
+    "questionNo": 54,
+    "category": "Câu 54: Bài luận nghị luận xã hội (600~700 chữ)",
+    "topic": "Động cơ.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "다음을 주제로 하여 자신의 생각을 600~700자로 글을 쓰십시오. (50점)\n우리가 공부나 일을 할 때 동기가 분명히 있어야 더 잘 실행할 수 있습니다. 이러한 동기에는 흥미, 만족감, 자부심과 같은 내적 동기도 있고 칭찬이나 보상과 같은 외적 동기도 있습니다. '동기가 일에 미치는 영향'에 대해 아래의 내용을 중심으로 자신의 생각을 쓰십시오.\n\n동기는 일의 시작 단계에서 어떠한 역할을 합니까?\n.\n\n동기가 일의 결과에 미치는 영향은 무엇입니까?",
+    "minChars": 600,
+    "maxChars": 700,
+    "modelEssay": "우리가 어떤 일을 진행하는 데에는 동기가 중요한 역할을 한다. 동기란 어떤 일을 하게 하는 보이지 않는 힘인데 동기에는 내적 동기와 외적 동기가 있다. 내적 동기란 흥미, 만족감, 자부심과 같이 우리 마음속에서 저절로 일어나는 것이고, 외적 동기란 칭찬이나 보상과 같이 우리의 외부에서 오는 것이다. 이 두 동기는 우리가 일을 시작할 때부터 마칠 때까지 많은 영향을 미친다.\n\n만약 우리에게 동기가 없다면 일을 시작할 수 없을 것이다. 어떤 일을 시작하려면 반드시 동기가 있어야 한다는 말이다. 예를 들어, 자신의 능력을 인정받고 싶어하는 사람이라면 주변 사람들의 칭찬만큼 효과적인 동기도 없다. 또 승진이나 월급 인상과 같은 보상도 우리가 일을 시작하도록 하는 동기가 된다. 이처럼 내적 동기와 외적 동기는 일을 시작하는 단계에서부터 중요한 역할을한다.\n\n동기는 일의 결과에도 영향을 주는데 일반적으로 내적 동기는 외적 동기보다 더 강하다. 그래서 자신이 흥미가 있고 만족감을 느낄 수 있는 일을 하면 일의 진행 과정에서 어려움에 부딪힌다고 해도 더 쉽게 극복해 낼 수 있다. 그 결과 우리가 일을 완수해 내는 데에 도움을 준다. 그뿐만 아니라 스트레스를 받더라도 이겨낼 수 있는 힘을 준다. 따라서 일을 시작할 때 분명한 동기를 가지고 있어야만 원하는 결과를 얻을 수 있다. 이처럼 어떤 동기를 갖느냐가 일의 시작과 결과에 중요한 영향을 미친다.",
+    "hints": [
+      "Dàn bài chuẩn: Động cơ.. Cần mở bài nêu chủ đề, thân bài phân tích số liệu/nguyên nhân, kết bài nêu triển vọng. Độ dài: 600~700 chữ.",
+      "Cụm từ then chốt: Sử dụng các liên từ nối ('조사 결과에 따르면', '반면에', '이러한 원인은...'). Đoạn mở đầu: '우리가 어떤 일을 진행하는 데에는 동기가 중요...'",
+      "Bài mẫu hoàn chỉnh NIIED (699 chữ):\n\n우리가 어떤 일을 진행하는 데에는 동기가 중요한 역할을 한다. 동기란 어떤 일을 하게 하는 보이지 않는 힘인데 동기에는 내적 동기와 외적 동기가 있다. 내적 동기란 흥미, 만족감, 자부심과 같이 우리 마음속에서 저절로 일어나는 것이고, 외적 동기란 칭찬이나 보상과 같이 우리의 외부에서 오는 것이다. 이 두 동기는 우리가 일을 시작할 때부터 마칠 때까지 많은 영향을 미친다.\n\n만약 우리에게 동기가 없다면 일을 시작할 수 없을 것이다. 어떤 일을 시작하려면 반드시 동기가 있어야 한다는 말이다. 예를 들어, 자신의 능력을 인정받고 싶어하는 사람이라면 주변 사람들의 칭찬만큼 효과적인 동기도 없다. 또 승진이나 월급 인상과 같은 보상도 우리가 일을 시작하도록 하는 동기가 된다. 이처럼 내적 동기와 외적 동기는 일을 시작하는 단계에서부터 중요한 역할을한다.\n\n동기는 일의 결과에도 영향을 주는데 일반적으로 내적 동기는 외적 동기보다 더 강하다. 그래서 자신이 흥미가 있고 만족감을 느낄 수 있는 일을 하면 일의 진행 과정에서 어려움에 부딪힌다고 해도 더 쉽게 극복해 낼 수 있다. 그 결과 우리가 일을 완수해 내는 데에 도움을 준다. 그뿐만 아니라 스트레스를 받더라도 이겨낼 수 있는 힘을 준다. 따라서 일을 시작할 때 분명한 동기를 가지고 있어야만 원하는 결과를 얻을 수 있다. 이처럼 어떤 동기를 갖느냐가 일의 시작과 결과에 중요한 영향을 미친다."
+    ]
+  },
+  {
+    "id": "wg_62",
+    "questionNo": 54,
+    "category": "Câu 54: Bài luận nghị luận xã hội (600~700 chữ)",
+    "topic": "Nhân tài.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "다음을 주제로 하여 자신의 생각을 600~700자로 글을 쓰십시오. (50점)\n\n현대 사회는 빠르게 세계화·전문화되고 있습니다. 이러한 현대 사회의 특성을 참고하여, '현대 사회에서 필요한 인재'에 대해 아래의 내용을 중심으로 자신의 생각을 쓰십시오.\n\n현대 사회에서 필요한 인재는 어떤 사람입니까?\n\n그러한 인재가 되기 위해서 어떤 노력이 필요합니까?",
+    "minChars": 600,
+    "maxChars": 700,
+    "modelEssay": "현대 사회는 과학 기술과 교통의 발달로 많은 변화를 겪고 있다. 그 결과 세계는 점점 가까워져 소위 지구촌 시대라고 불리게 되었다. 이와 함께 지식 생산이 활발해지고 각 영역에서의 경쟁이 치열해지면서 전문화의 중요성이 강조되었다. 이러한 사회에서는 어떠한 인재가 요구될까?\n세계화가 되면서 우선 글로벌 마인드의 구축과 글로벌 인재로서의 역량을 키우는 것이 필요하다. 예전에는 국경이라는 테두리에서 국가 구성원으로서의 기본 자질을 갖추고 사회에서 요구하는 역량을 길러 사회 발전에 기여하는 인재가 요구되었다. 그러나 세계화 시대에는 기본적으로 세계 시민으로서의 역량과 자질을 갖추고 세계를 무대로 활동할 수 있는 인재가 필요하다.\n또한 과학 기술의 발달과 전문화가 심화되고 있는 상황에서각자가 가진 능력을 최대한 발휘하여 경쟁력을 갖추려고 노력해야 한다. 과거에는 단순히 지식이나 기술을 습득하여 이를 활용하는 것만으로도 인재로서의 역할이 가능하였다. 그러나 대량의 정보 속에서 이를 선택하고 활용할 수 있는 지금은 지식의 음복합이나 자신만의 특성화 등을 통화여 전문성을 인정받음으로써 상대적인 경쟁력을 갖추어야 한다. 이렇게 내적으로는 글로벌 마인드를 기르고 외적으로는 전문적인 자기 능력을 갖춰 시대의 변화에 발맞추어 나가야한다.",
+    "hints": [
+      "Dàn bài chuẩn: Nhân tài.. Cần mở bài nêu chủ đề, thân bài phân tích số liệu/nguyên nhân, kết bài nêu triển vọng. Độ dài: 600~700 chữ.",
+      "Cụm từ then chốt: Sử dụng các liên từ nối ('조사 결과에 따르면', '반면에', '이러한 원인은...'). Đoạn mở đầu: '현대 사회는 과학 기술과 교통의 발달로 많은 ...'",
+      "Bài mẫu hoàn chỉnh NIIED (633 chữ):\n\n현대 사회는 과학 기술과 교통의 발달로 많은 변화를 겪고 있다. 그 결과 세계는 점점 가까워져 소위 지구촌 시대라고 불리게 되었다. 이와 함께 지식 생산이 활발해지고 각 영역에서의 경쟁이 치열해지면서 전문화의 중요성이 강조되었다. 이러한 사회에서는 어떠한 인재가 요구될까?\n세계화가 되면서 우선 글로벌 마인드의 구축과 글로벌 인재로서의 역량을 키우는 것이 필요하다. 예전에는 국경이라는 테두리에서 국가 구성원으로서의 기본 자질을 갖추고 사회에서 요구하는 역량을 길러 사회 발전에 기여하는 인재가 요구되었다. 그러나 세계화 시대에는 기본적으로 세계 시민으로서의 역량과 자질을 갖추고 세계를 무대로 활동할 수 있는 인재가 필요하다.\n또한 과학 기술의 발달과 전문화가 심화되고 있는 상황에서각자가 가진 능력을 최대한 발휘하여 경쟁력을 갖추려고 노력해야 한다. 과거에는 단순히 지식이나 기술을 습득하여 이를 활용하는 것만으로도 인재로서의 역할이 가능하였다. 그러나 대량의 정보 속에서 이를 선택하고 활용할 수 있는 지금은 지식의 음복합이나 자신만의 특성화 등을 통화여 전문성을 인정받음으로써 상대적인 경쟁력을 갖추어야 한다. 이렇게 내적으로는 글로벌 마인드를 기르고 외적으로는 전문적인 자기 능력을 갖춰 시대의 변화에 발맞추어 나가야한다."
+    ]
+  },
+  {
+    "id": "wg_63",
+    "questionNo": 54,
+    "category": "Câu 54: Bài luận nghị luận xã hội (600~700 chữ)",
+    "topic": "Lịch sử.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "다음을 주제로 하여 600~700자로 글을 쓰십시오. (50점)\n\n세계 어느 나라에서나 역사를 가르칩니다. 이는 지나간 일을 기록한 역사가 오늘날의 우리에게 주는 가치가 분명히 있기 때문일 것입니다.여러분은 우리가 왜 역사를 알아야 하고, 그 역사를 통해서 무엇을 배울 수 있다고 생각하십니까? 이에 대해 쓰십시오.",
+    "minChars": 600,
+    "maxChars": 700,
+    "modelEssay": "대한 반성 또는 위대한 업적 등이 후대에게 지난날에 전해지기를 바라는 마음이 기록으로 이어지고 그것이 바로 우리가 지금 '역사'라고 부르는 것이다. 우리가 역사를 기록하는 이유는 지금 일어나는 사실을 다음 세대에게 전달하는 데 그 목적이 있다.\n이러한 역사는 우리에게 지금의 '나'를 이해할 수 있는 기회를 제공해 준다. 현재는 과거에서 비롯된 것이므로 과거를 살펴봄으로써 현재 일어나고 있는 일에 대해 이해하도록 돕는다. 그리고 역사는 과거에 있었던 가슴 아픈 사건이 다시 반복되지 않도록 우리에게 교훈을 주기도 한다.\n더불어 역사의 기록을 통해 우리는 앞으로 일어날 일을 예측하고 이를 준비할 수도 있다. 얼마 전 신문 기사에 따르면 한 연구자가 옛 문서에 기록된 역사적인 사실을 분석하여 오늘날의 우리가 겪고 있는 심한 가뭄을 미리 알리면서 대비를 경고한 바 있다. 이는 역사의 가치를 보여주는 한 예라 할 수 있을 것이다. 이렇듯 역사는 과거의 사실을 아는 데에서 출발하여 현재의 '나'를 이해하고 더 나은 미래를 향한 방향을 제시해 줄 수 있다는 점에서 중요하다. 결국 과거의 역사는 현재로, 현재는 다시 미래의 역사로 이어지는 연속적인 관계 속에 존재하기 때문이다.",
+    "hints": [
+      "Dàn bài chuẩn: Lịch sử.. Cần mở bài nêu chủ đề, thân bài phân tích số liệu/nguyên nhân, kết bài nêu triển vọng. Độ dài: 600~700 chữ.",
+      "Cụm từ then chốt: Sử dụng các liên từ nối ('조사 결과에 따르면', '반면에', '이러한 원인은...'). Đoạn mở đầu: '대한 반성 또는 위대한 업적 등이 후대에게 지...'",
+      "Bài mẫu hoàn chỉnh NIIED (602 chữ):\n\n대한 반성 또는 위대한 업적 등이 후대에게 지난날에 전해지기를 바라는 마음이 기록으로 이어지고 그것이 바로 우리가 지금 '역사'라고 부르는 것이다. 우리가 역사를 기록하는 이유는 지금 일어나는 사실을 다음 세대에게 전달하는 데 그 목적이 있다.\n이러한 역사는 우리에게 지금의 '나'를 이해할 수 있는 기회를 제공해 준다. 현재는 과거에서 비롯된 것이므로 과거를 살펴봄으로써 현재 일어나고 있는 일에 대해 이해하도록 돕는다. 그리고 역사는 과거에 있었던 가슴 아픈 사건이 다시 반복되지 않도록 우리에게 교훈을 주기도 한다.\n더불어 역사의 기록을 통해 우리는 앞으로 일어날 일을 예측하고 이를 준비할 수도 있다. 얼마 전 신문 기사에 따르면 한 연구자가 옛 문서에 기록된 역사적인 사실을 분석하여 오늘날의 우리가 겪고 있는 심한 가뭄을 미리 알리면서 대비를 경고한 바 있다. 이는 역사의 가치를 보여주는 한 예라 할 수 있을 것이다. 이렇듯 역사는 과거의 사실을 아는 데에서 출발하여 현재의 '나'를 이해하고 더 나은 미래를 향한 방향을 제시해 줄 수 있다는 점에서 중요하다. 결국 과거의 역사는 현재로, 현재는 다시 미래의 역사로 이어지는 연속적인 관계 속에 존재하기 때문이다."
+    ]
+  },
+  {
+    "id": "wg_64",
+    "questionNo": 54,
+    "category": "Câu 54: Bài luận nghị luận xã hội (600~700 chữ)",
+    "topic": "Lời khen.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "다음을 주제로 하여 자신의 생각을 600~700자로 글을 쓰십시오. 단, 문제를  그대로 옮겨 쓰지 마십시오. (50점)\n'칭찬은 고래도 춤추게 한다'는 말처럼 칭찬에는 강한 힘이 있습니다. 그러나 칭찬이 항상 긍정적인 영향을 주는 것은 아닙니다. 아래의 내용을 중심으로 칭찬에 대한 자신의 생각을 쓰십시오.\n\n칭찬이 미치는 긍정적인 영향은 무엇입니까?\n\n부정적인 영향은 무엇입니까?\n\n효과적인 칭찬의 방법은 무엇입니까?",
+    "minChars": 600,
+    "maxChars": 700,
+    "modelEssay": "우리는 칭찬을 들으면 일을 더 잘하고 싶어질 뿐만 아니라 좀 더 나은 사람이 되고 싶은 마음이 든다. 그리고 자신감이 생겨 공부나 일의 성과에도 긍정적인 영향을 미친다. 그래서 자신이 가진 능력 이상을 발휘하고 싶어지는 도전 정신이 생기기도 하는 것이다. 한 마디로 말해 칭찬은 사람을 한 단계 더 발전시키는 힘을 가지고 있다.\n\n그런데 이러한 칭찬이 독이 되는 경우가 있다. 바로 칭찬이 상대에게 기쁨을 주는 것이 아니라 부담을 안겨 주는 경우이다. 칭찬을 들으면 그 기대에 부응해야 한다는 압박감 때문에 자신의 실력을 제대로 발휘하지 못하게 되는 일이 생기게 된다. 칭찬의 또 다른 부정적인 면은 칭찬 받고 싶다는 생각에 결과만을 중시하게 되는 점이다. 일반적으로 칭찬이 일의 과정보다 결과에 중점을 두고 행해지는 경우가 많기 때문이다.\n\n그래서 우리가 상대를 칭찬할 때에는 그 사람이 해낸 일의 결과가 아닌, 그 일을 해내기까지의 과정과 노력에 초점을 맞추는 것이 중요하다. 그래야 칭찬을 듣는 사람도 일 그 자체를 즐길 수 있다. 또한 칭찬을 듣고 잘 해내야 한다는 부담에서도 벗어날 수 있을 것이다. 우리는 보통 칭찬을 많이 해 주는 것이 중요하다고 생각하는데 칭찬은 그 방법 역시 중요하다는 것을 잊지 말아야 할 것이다.",
+    "hints": [
+      "Dàn bài chuẩn: Lời khen.. Cần mở bài nêu chủ đề, thân bài phân tích số liệu/nguyên nhân, kết bài nêu triển vọng. Độ dài: 600~700 chữ.",
+      "Cụm từ then chốt: Sử dụng các liên từ nối ('조사 결과에 따르면', '반면에', '이러한 원인은...'). Đoạn mở đầu: '우리는 칭찬을 들으면 일을 더 잘하고 싶어질 ...'",
+      "Bài mẫu hoàn chỉnh NIIED (633 chữ):\n\n우리는 칭찬을 들으면 일을 더 잘하고 싶어질 뿐만 아니라 좀 더 나은 사람이 되고 싶은 마음이 든다. 그리고 자신감이 생겨 공부나 일의 성과에도 긍정적인 영향을 미친다. 그래서 자신이 가진 능력 이상을 발휘하고 싶어지는 도전 정신이 생기기도 하는 것이다. 한 마디로 말해 칭찬은 사람을 한 단계 더 발전시키는 힘을 가지고 있다.\n\n그런데 이러한 칭찬이 독이 되는 경우가 있다. 바로 칭찬이 상대에게 기쁨을 주는 것이 아니라 부담을 안겨 주는 경우이다. 칭찬을 들으면 그 기대에 부응해야 한다는 압박감 때문에 자신의 실력을 제대로 발휘하지 못하게 되는 일이 생기게 된다. 칭찬의 또 다른 부정적인 면은 칭찬 받고 싶다는 생각에 결과만을 중시하게 되는 점이다. 일반적으로 칭찬이 일의 과정보다 결과에 중점을 두고 행해지는 경우가 많기 때문이다.\n\n그래서 우리가 상대를 칭찬할 때에는 그 사람이 해낸 일의 결과가 아닌, 그 일을 해내기까지의 과정과 노력에 초점을 맞추는 것이 중요하다. 그래야 칭찬을 듣는 사람도 일 그 자체를 즐길 수 있다. 또한 칭찬을 듣고 잘 해내야 한다는 부담에서도 벗어날 수 있을 것이다. 우리는 보통 칭찬을 많이 해 주는 것이 중요하다고 생각하는데 칭찬은 그 방법 역시 중요하다는 것을 잊지 말아야 할 것이다."
+    ]
+  },
+  {
+    "id": "wg_65",
+    "questionNo": 54,
+    "category": "Câu 54: Bài luận nghị luận xã hội (600~700 chữ)",
+    "topic": "Phương pháp giao tiếp.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "다음을 주제로 하여 자신의 생각을 600~700자로 글을 쓰시오. 단, 문제를 그대로 옮겨 쓰지 마시오. (50점)\n우리는 살면서 서로의 생각이 달라 갈등을 겪는 경우가 많다. 이러한 갈등은 의사소통이 부족해서 생기는 경우가 대부분이다. 의사소통은 서로의 관계를 유지하고 발전시키는 데 중요한 요인이 된다. '의사소통의 중요성과 방법'에 대해 아래의 내용을 중심으로 자신의 생각을 쓰라.\n\n의사소통은 왜 중요한가?\n\n의사소통이 잘 이루어지지 않는 이유는 무엇인가?\n\n의사소통을 원활하게 하는 방법은 무엇인가?",
+    "minChars": 600,
+    "maxChars": 700,
+    "modelEssay": "어떤 일을 다른 사람들과 함께 계획하고 추진하기 위해서는 그 사람들과의 원활한 인간관계가 필 요하다. 다만 인간관계를 원활하게 하는 데에는 많은 대화가 요구되며, 이 과정에서 의사소통 능력이 중요한 역할을 한다. 일반적으로 의사소통은 타인과의 소통의 시작이어서 의사소통이 제대로 이루어지지 않는 경우 오해가 생기고 불신이 생기며 경우에 따라서는 분쟁으로까지 이어질 수 있게 된다.\n그런데 이러한 의사소통이 항상 원활히 이루어지는 것은 아니다. 사람들은 서로 다른 생활환경과 경험을 가지고 있고, 이는 사고방식의 차이로 이어지게 된다. 이러한 차이들이 의사소통을 어렵게 함과 동시에 새로운 갈등을 야기하기도 한다.\n따라서 원활한 의사소통을 위한 적극적인 노력이 필요하다. 우선 상대를 배려하는 입장에서 말을 하는 자세가 필요하다. 나의 말이 상대를 불편하게 만드는 것은 아닌지 항상 생각하며 이야기하여 야 한다. 다음으로 다른 사람의 말을 잘 듣는 자세가 필요하다. 마음을 열고 다른 사람의 이야기를 듣는 것은 상대를 이해하는 데 꼭 필요하기 때문이다. 마지막으로 서로의 입장에서 현상을 바라보는 자세가 필요하다. 이는 서로가 가질 수 있는 편견과 오해를 해결할 수 있는 역할을 하기 때문이다.",
+    "hints": [
+      "Dàn bài chuẩn: Phương pháp giao tiếp.. Cần mở bài nêu chủ đề, thân bài phân tích số liệu/nguyên nhân, kết bài nêu triển vọng. Độ dài: 600~700 chữ.",
+      "Cụm từ then chốt: Sử dụng các liên từ nối ('조사 결과에 따르면', '반면에', '이러한 원인은...'). Đoạn mở đầu: '어떤 일을 다른 사람들과 함께 계획하고 추진하...'",
+      "Bài mẫu hoàn chỉnh NIIED (611 chữ):\n\n어떤 일을 다른 사람들과 함께 계획하고 추진하기 위해서는 그 사람들과의 원활한 인간관계가 필 요하다. 다만 인간관계를 원활하게 하는 데에는 많은 대화가 요구되며, 이 과정에서 의사소통 능력이 중요한 역할을 한다. 일반적으로 의사소통은 타인과의 소통의 시작이어서 의사소통이 제대로 이루어지지 않는 경우 오해가 생기고 불신이 생기며 경우에 따라서는 분쟁으로까지 이어질 수 있게 된다.\n그런데 이러한 의사소통이 항상 원활히 이루어지는 것은 아니다. 사람들은 서로 다른 생활환경과 경험을 가지고 있고, 이는 사고방식의 차이로 이어지게 된다. 이러한 차이들이 의사소통을 어렵게 함과 동시에 새로운 갈등을 야기하기도 한다.\n따라서 원활한 의사소통을 위한 적극적인 노력이 필요하다. 우선 상대를 배려하는 입장에서 말을 하는 자세가 필요하다. 나의 말이 상대를 불편하게 만드는 것은 아닌지 항상 생각하며 이야기하여 야 한다. 다음으로 다른 사람의 말을 잘 듣는 자세가 필요하다. 마음을 열고 다른 사람의 이야기를 듣는 것은 상대를 이해하는 데 꼭 필요하기 때문이다. 마지막으로 서로의 입장에서 현상을 바라보는 자세가 필요하다. 이는 서로가 가질 수 있는 편견과 오해를 해결할 수 있는 역할을 하기 때문이다."
+    ]
+  },
+  {
+    "id": "wg_66",
+    "questionNo": 54,
+    "category": "Câu 54: Bài luận nghị luận xã hội (600~700 chữ)",
+    "topic": "Giáo dục sớm.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "다음을 주제로 하여 자신의 생각을 600~700자로 글을 쓰시오. 단, 문제 그대로 옮겨 쓰지 마시오. (50점)\n요즘은 아이가 학교에 들어가기 전 어릴 때부터 악기나 외국어 등 여러 가지를 교육하는 경우가 많다. 이러한 조기 교육은 좋은 점도 있지만 문제점도 있다. 아래의 내용을 중심으로 '조기 교육의 장점과 문제점'에 대해 자신의 의견을 쓰라.\n\n조기 교육의 장점은 무엇인가?\n\n조기 교육의 문제점은 무엇인가?\n\n조기 교육에 찬성하는가, 반대하는가? 근거를 들어 자신의 의견을 쓰라.",
+    "minChars": 600,
+    "maxChars": 700,
+    "modelEssay": "요즘은 학교에 들어가지 않은 아이들에게 다양한 교육을 실시하는 경우가 많다. 어릴 때부터 이루어지는 조기 교육은 좋은 점도 있지만 문제점도 있다.\n\n먼저 조기 교육의 가장 큰 장점은 아이의 재능을 일찍 발견하고 아이가 가진 잠재력을 극대화할 수 있다는 점이다. 예를 들어 예체능계의 유명인 중에는 어릴 때부터 체계적인 교육을 받은 경우가 많다. 또 다른 조기 교육의 장점은 아이의 학업 경쟁력을 높일 수 있다는 점이다. 이 외에도 조기 교육에서의 다양한 경험은 아이의 세계관을 넓히는 데 도움이 된다.\n\n그러나 조기 교육은 부모의 강요에 의해 이루어질 수 있다는 문제점이 있다. 이로 인해 아이는 스트레스를 받거나, 억압적인 학습 경험의 반발로 학업에 흥미를 느끼지 못할 수 있다. 또한 조기 교육이 과도하게 이루어질 경우, 아이들의 정서 발달에 부정적인 영향을 미칠 수 있다.\n\n조기 교육의 장점에도 불구하고 위의 문제점을 고려하였을 때 조기 교육을 실시하는 것이 적절하지 않다고 생각한다. 진정한 교육이란 학습자의 자발성과 내적 동기를 전제로 이루어진다고 생각하기 때문이다. 아이는 발달 중에 있고 경험이 적기 때문에 자신이 무엇을 배우고 싶은지 명확히 인지하지 못할 가능성이 크다. 이는 아이의 동기보다 보호자의 바람이 조기 교육에 더 큰 영향을 미치게 되는 이유이기도 하다. 이러한 이유로 조기 교육을 실시하는 것에 반대한다.",
+    "hints": [
+      "Dàn bài chuẩn: Giáo dục sớm.. Cần mở bài nêu chủ đề, thân bài phân tích số liệu/nguyên nhân, kết bài nêu triển vọng. Độ dài: 600~700 chữ.",
+      "Cụm từ then chốt: Sử dụng các liên từ nối ('조사 결과에 따르면', '반면에', '이러한 원인은...'). Đoạn mở đầu: '요즘은 학교에 들어가지 않은 아이들에게 다양한...'",
+      "Bài mẫu hoàn chỉnh NIIED (690 chữ):\n\n요즘은 학교에 들어가지 않은 아이들에게 다양한 교육을 실시하는 경우가 많다. 어릴 때부터 이루어지는 조기 교육은 좋은 점도 있지만 문제점도 있다.\n\n먼저 조기 교육의 가장 큰 장점은 아이의 재능을 일찍 발견하고 아이가 가진 잠재력을 극대화할 수 있다는 점이다. 예를 들어 예체능계의 유명인 중에는 어릴 때부터 체계적인 교육을 받은 경우가 많다. 또 다른 조기 교육의 장점은 아이의 학업 경쟁력을 높일 수 있다는 점이다. 이 외에도 조기 교육에서의 다양한 경험은 아이의 세계관을 넓히는 데 도움이 된다.\n\n그러나 조기 교육은 부모의 강요에 의해 이루어질 수 있다는 문제점이 있다. 이로 인해 아이는 스트레스를 받거나, 억압적인 학습 경험의 반발로 학업에 흥미를 느끼지 못할 수 있다. 또한 조기 교육이 과도하게 이루어질 경우, 아이들의 정서 발달에 부정적인 영향을 미칠 수 있다.\n\n조기 교육의 장점에도 불구하고 위의 문제점을 고려하였을 때 조기 교육을 실시하는 것이 적절하지 않다고 생각한다. 진정한 교육이란 학습자의 자발성과 내적 동기를 전제로 이루어진다고 생각하기 때문이다. 아이는 발달 중에 있고 경험이 적기 때문에 자신이 무엇을 배우고 싶은지 명확히 인지하지 못할 가능성이 크다. 이는 아이의 동기보다 보호자의 바람이 조기 교육에 더 큰 영향을 미치게 되는 이유이기도 하다. 이러한 이유로 조기 교육을 실시하는 것에 반대한다."
+    ]
+  },
+  {
+    "id": "wg_67",
+    "questionNo": 54,
+    "category": "Câu 54: Bài luận nghị luận xã hội (600~700 chữ)",
+    "topic": "Thời kì thiếu niên.",
+    "source": "Đề thi thực tế TOPIK II",
+    "promptText": "다음을 주제로 하여 자신의 생각을 600~700자로 글을 쓰시오. 단, 문제를 그대로 옮겨 쓰지 마시오. (50점)\n\n사람은 누구나 청소년기를 거쳐 어른이 된다. 아동에서 어른으로 넘어가는 이 시기에 많은 청소년들은 혼란과 방황을 겪으며 성장한다. 아래의 내용을 중심으로 '청소년기의 중요성'에 대한 자신의 생각을 쓰라.\n\n청소년기가 중요한 이유는 무엇인가?\n\n청소년들은 이 시기에 주로 어떤 특징을 보이는가?\n\n청소년의 올바른 성장을 돕기 위해 어떤 노력이 필요한가?",
+    "minChars": 600,
+    "maxChars": 700,
+    "modelEssay": "청소년기는 자아 정체성을 찾아가는 과도기라는 점에서 사람의 생애 중 중요한 시기이다. 청소년기에 형성된 자아 정체성은 진로나 인간관계뿐 아니라 삶의 전 영역에 지속적인 영향을 미친다. 또한 이 시기는 청소년이 올바른 사회 구성원이 되기 위해 준비하는 시기이기도 하다.\n그러나 청소년은 아직 자아가 형성되지 않았기 때문에 심리적으로 불안 정해지기 쉽다. 특히 가치관의 혼란, 타인의 평가, 또래 집단 내의 압박감 등은 청소년들이 불안정함을 느끼게 되는 주된 요인이다. 또한 청소년은 기존의 제도에 저항하거나 자신을 억압하는 어른에 대해 강한 반항심을 보이기도 한다. 뿐만 아니라 청소년은 아직 옳고 그름의 기준이 정립되지 않았기 때문에 주변 환경의 영향을 받기 쉽다. 이러한 특성으로 인하여 어떤 청소년은 일탈이나 돌발적인 행동을 하며 극단적인 경우 자신과 사회에 해를 끼치는 행동을 하기도 한다.\n청소년이 건강하게 청소년기를 보내고 미래의 인재로 성장하도록 돕기 위해서는 가정과 사회의 다각적인 노력이 필요하다. 가정에서는 청소년의 특성을 성장을 위한 하나의 과정으로 이해하고 청소년이 건강한 자아 정체성을 형성할 수 있도록 정서적으로 지원할 필요가 있다. 사회에서는 청소년 심리 상담 센터나 방황하는 청소년을 위한 위탁 시설을 운영하는 등의 제도적 지원을 통해 청소년의 올바른 성장을 도울 수 있을 것이다.",
+    "hints": [
+      "Dàn bài chuẩn: Thời kì thiếu niên.. Cần mở bài nêu chủ đề, thân bài phân tích số liệu/nguyên nhân, kết bài nêu triển vọng. Độ dài: 600~700 chữ.",
+      "Cụm từ then chốt: Sử dụng các liên từ nối ('조사 결과에 따르면', '반면에', '이러한 원인은...'). Đoạn mở đầu: '청소년기는 자아 정체성을 찾아가는 과도기라는 ...'",
+      "Bài mẫu hoàn chỉnh NIIED (676 chữ):\n\n청소년기는 자아 정체성을 찾아가는 과도기라는 점에서 사람의 생애 중 중요한 시기이다. 청소년기에 형성된 자아 정체성은 진로나 인간관계뿐 아니라 삶의 전 영역에 지속적인 영향을 미친다. 또한 이 시기는 청소년이 올바른 사회 구성원이 되기 위해 준비하는 시기이기도 하다.\n그러나 청소년은 아직 자아가 형성되지 않았기 때문에 심리적으로 불안 정해지기 쉽다. 특히 가치관의 혼란, 타인의 평가, 또래 집단 내의 압박감 등은 청소년들이 불안정함을 느끼게 되는 주된 요인이다. 또한 청소년은 기존의 제도에 저항하거나 자신을 억압하는 어른에 대해 강한 반항심을 보이기도 한다. 뿐만 아니라 청소년은 아직 옳고 그름의 기준이 정립되지 않았기 때문에 주변 환경의 영향을 받기 쉽다. 이러한 특성으로 인하여 어떤 청소년은 일탈이나 돌발적인 행동을 하며 극단적인 경우 자신과 사회에 해를 끼치는 행동을 하기도 한다.\n청소년이 건강하게 청소년기를 보내고 미래의 인재로 성장하도록 돕기 위해서는 가정과 사회의 다각적인 노력이 필요하다. 가정에서는 청소년의 특성을 성장을 위한 하나의 과정으로 이해하고 청소년이 건강한 자아 정체성을 형성할 수 있도록 정서적으로 지원할 필요가 있다. 사회에서는 청소년 심리 상담 센터나 방황하는 청소년을 위한 위탁 시설을 운영하는 등의 제도적 지원을 통해 청소년의 올바른 성장을 도울 수 있을 것이다."
+    ]
+  }
+]

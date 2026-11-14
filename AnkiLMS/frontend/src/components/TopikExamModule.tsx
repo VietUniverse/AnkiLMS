@@ -235,7 +235,7 @@ export const TopikExamModule: React.FC = () => {
         </div>
 
         {/* Level & Module Selector Tabs */}
-        <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="mt-6 grid grid-cols-2 md:grid-cols-5 gap-3">
           <button
             onClick={() => setLevelTab("I")}
             aria-pressed={levelTab === "I"}
@@ -271,6 +271,18 @@ export const TopikExamModule: React.FC = () => {
             <span className="mt-1 block text-sm font-bold text-white">Câu 51 – 54</span>
             <span className="mt-1 block text-[11px] text-slate-400">51 đề & bài mẫu NIIED</span>
           </button>
+
+          <a
+            href="/topik/wongoji"
+            className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 p-4 text-left transition shadow-xs group"
+          >
+            <span className="text-xs font-black uppercase tracking-widest text-emerald-400 flex items-center justify-between">
+              <span>VIẾT 원고지</span>
+              <Sparkles className="w-3.5 h-3.5 text-amber-400 group-hover:rotate-12 transition-transform" />
+            </span>
+            <span className="mt-1 block text-sm font-bold text-white">Giấy Kẻ Ô Vuông</span>
+            <span className="mt-1 block text-[11px] text-emerald-300/80">Kiểm tra đúng xanh sai đỏ</span>
+          </a>
 
           <button
             onClick={() => setLevelTab("papers")}
@@ -607,7 +619,32 @@ export const TopikExamModule: React.FC = () => {
             </div>
           ) : (
             /* Danh sách 51 đề viết */
-            <div className="space-y-4">
+            <div className="space-y-5">
+              {/* Banner Luyện Viết Giấy Kẻ Ô Nguyên Bản (원고지) */}
+              <div className="relative overflow-hidden rounded-3xl border border-emerald-500/30 bg-gradient-to-r from-emerald-950/60 via-slate-900 to-teal-950/50 p-5 sm:p-6 shadow-xl">
+                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="space-y-1.5 max-w-2xl">
+                    <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/20 border border-emerald-500/40 px-3 py-1 text-xs font-black text-emerald-300">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                      <span>PHÒNG LUYỆN VIẾT GIẤY KẺ Ô 원고지 (CHUẨN NIIED)</span>
+                    </div>
+                    <h3 className="text-lg sm:text-xl font-black text-white">
+                      Luyện viết trên giấy thi 20 ô/dòng · Tự động chấm xanh đúng đỏ sai
+                    </h3>
+                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                      Mô phỏng 100% giấy thi tự luận (주관식 답란), in sẵn nội dung cho trước, gõ trực tiếp vào ô khuyết và bấm Enter để chấm. Có trợ lý gợi ý 3 cấp hỗ trợ giải đề.
+                    </p>
+                  </div>
+                  <a
+                    href="/topik/wongoji"
+                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 px-6 py-3.5 text-sm font-black text-slate-950 shadow-lg transition-transform hover:scale-[1.02] cursor-pointer shrink-0"
+                  >
+                    <span>Vào Phòng Viết 원고지</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
+
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <h2 className="text-xl font-black text-white flex items-center gap-2">
