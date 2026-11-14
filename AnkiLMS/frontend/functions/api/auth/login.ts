@@ -10,7 +10,18 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (contentType !== "application/json") return errorResponse("Chỉ chấp nhận nội dung JSON.", 415);
   // A browser form can submit text/plain cross-site without a CORS preflight.
   // Only accept JSON from this exact origin, and reject cross-site fetches.
-  if (!origin || origin !== new URL(request.url).origin || !isSameOriginRequest(request) || request.headers.get("Sec-Fetch-Site") === "cross-site") {
+  // Khi chạy `next dev`, /api được chuyển tiếp nên host của Functions khác origin
+  // của trình duyệt; .dev.vars cục bộ đặt SITE_URL về localhost để cho phép đúng origin đó.
+  const devSiteOrigin = (() => {
+    try {
+      const siteOrigin = env.SITE_URL ? new URL(env.SITE_URL).origin : "";
+      return /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(siteOrigin) ? siteOrigin : "";
+    } catch {
+      return "";
+    }
+  })();
+  const fromLocalDevProxy = !!devSiteOrigin && origin === devSiteOrigin;
+  if (!origin || (!fromLocalDevProxy && (!isSameOriginRequest(request) || origin !== new URL(request.url).origin)) || request.headers.get("Sec-Fetch-Site") === "cross-site") {
     return errorResponse("Yêu cầu không hợp lệ.", 403);
   }
   if (Number(request.headers.get("Content-Length") || 0) > 8_192) return errorResponse("Nội dung gửi lên quá lớn.", 413);
