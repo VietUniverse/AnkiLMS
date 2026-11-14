@@ -61,7 +61,7 @@ export const DailyLimitsPanel: React.FC<Props> = ({ limits, progress, onChange }
   };
 
   return (
-    <section>
+    <section className="w-full">
       <GoalBar done={progress.newDone} value={limits.newPerDay === 0 ? 0 : limits.newPerDay + progress.extraNew} onOpen={() => open("newPerDay")} />
 
       {editing && (
