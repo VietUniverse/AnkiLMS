@@ -1286,10 +1286,6 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
       {/* Banner Top */}
       <div className="card-duo p-6 md:p-8 bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950 border-blue-500/40 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
         <div className="space-y-3 z-10 text-center md:text-left flex-1">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/40 text-xs font-bold">
-            <Lock className="w-4 h-4 text-amber-400" />
-            <span>Lớp Học Trực Tuyến & Nhóm Ôn Thẻ Riêng Tư</span>
-          </div>
           <h1 className="text-2xl md:text-3xl font-black text-white">
             Tham Gia Lớp Học <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-emerald-400">Bằng Mã Kích Hoạt</span>
           </h1>
