@@ -60,7 +60,7 @@ const mainNav = [
   { href: "/explore", label: "Khám phá", icon: Layers, feature: "explore" },
   { href: "/topik/archive", label: "TOPIK", icon: GraduationCap, feature: "topik" },
   { href: "/placement-test", label: "Kiểm tra vốn từ", icon: ClipboardCheck, feature: "placementTest" },
-  { href: "/tools", label: "Làm giấy tờ", icon: BriefcaseBusiness },
+  { href: "/tools", label: "Giấy tờ", icon: BriefcaseBusiness },
   { href: "/dictionary", label: "Từ điển", icon: Search, feature: "dictionary" },
 ] as const;
 
