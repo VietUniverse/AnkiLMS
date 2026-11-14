@@ -122,6 +122,18 @@ type DeckRow = {
   email: string;
 };
 
+type DeckUserRow = {
+  userId: string;
+  name: string;
+  email: string;
+  cards: number;
+  decks: number;
+  updatedAt: string;
+  reviewed: number;
+  correct: number;
+  retention: number | null;
+};
+
 type DeckWord = Pick<
   DictionaryEntry,
   "hangul" | "vietnamese" | "english" | "japanese" | "partOfSpeech" | "level" | "topik" | "topic"
@@ -312,8 +324,8 @@ const NAV_GROUPS: Array<{
       },
       {
         id: "decks",
-        label: "Tiến độ Anki SRS",
-        subtitle: "Đồng bộ thẻ học viên",
+        label: "Tiến độ FSRS",
+        subtitle: "Số thẻ & tỷ lệ ghi nhớ",
         icon: <Sparkles className="h-4 w-4" />,
       },
     ],
@@ -365,6 +377,8 @@ export default function AdminPage() {
   const [overview, setOverview] = useState<Overview | null>(null);
   const [users, setUsers] = useState<UserRow[]>([]);
   const [decks, setDecks] = useState<DeckRow[]>([]);
+  const [deckUsers, setDeckUsers] = useState<DeckUserRow[]>([]);
+  const [expandedDeckUser, setExpandedDeckUser] = useState("");
   const [feedback, setFeedback] = useState<FeedbackRow[]>([]);
   const [posts, setPosts] = useState<PostRow[]>([]);
   const [lessons, setLessons] = useState<LessonRow[]>([]);
@@ -474,7 +488,7 @@ export default function AdminPage() {
       ] = await Promise.all([
         adminFetch<Overview>("/api/admin/overview"),
         adminFetch<{ users: UserRow[] }>(`/api/admin/users${params.size ? `?${params}` : ""}`),
-        adminFetch<{ decks: DeckRow[] }>("/api/admin/decks"),
+        adminFetch<{ decks: DeckRow[]; users: DeckUserRow[] }>("/api/admin/decks"),
         adminFetch<{ feedback: FeedbackRow[] }>("/api/admin/feedback"),
         adminFetch<{ posts: PostRow[] }>("/api/admin/community"),
         adminFetch<{ lessons: LessonRow[]; hiddenLessonIds: string[] }>("/api/admin/lessons"),
@@ -485,6 +499,7 @@ export default function AdminPage() {
       setOverview(summary);
       setUsers(userData.users);
       setDecks(deckData.decks);
+      setDeckUsers(deckData.users || []);
       setFeedback(feedbackData.feedback);
       setPosts(postData.posts);
       setLessons(lessonData.lessons);
@@ -1013,7 +1028,7 @@ export default function AdminPage() {
       case "lessons":
         return lessons.length + builtinLessons.length;
       case "decks":
-        return decks.length;
+        return deckUsers.length || null;
       case "community":
         return posts.length;
       case "chat":
@@ -1034,6 +1049,11 @@ export default function AdminPage() {
   const filteredFeedback = feedback.filter((item) =>
     feedbackFilter === "all" ? true : item.status === feedbackFilter,
   );
+
+  const totalTrackedCards = deckUsers.reduce((sum, user) => sum + user.cards, 0);
+  const totalReviewed = deckUsers.reduce((sum, user) => sum + user.reviewed, 0);
+  const totalCorrect = deckUsers.reduce((sum, user) => sum + user.correct, 0);
+  const overallRetention = totalReviewed > 0 ? Math.round((totalCorrect / totalReviewed) * 100) : null;
 
   return (
     <AppShell>
@@ -2111,52 +2131,160 @@ export default function AdminPage() {
                       </section>
                     )}
 
-                    {/* PANEL: DECKS */}
+                    {/* PANEL: DECKS (FSRS) */}
                     {panel === "decks" && (
                       <section className="card-duo rounded-2xl overflow-hidden">
                         <div className="border-b border-stone-200 dark:border-slate-800 p-4 sm:p-5">
-                          <h2 className="text-base font-bold text-stone-900 dark:text-white">
-                            Bộ thẻ Anki có tiến độ đồng bộ ({decks.length})
+                          <h2 className="text-base font-black text-stone-900 dark:text-white">
+                            Tiến độ FSRS học viên
                           </h2>
                           <p className="mt-1 text-xs text-stone-500 dark:text-slate-400">
-                            Xem số thẻ có trạng thái SRS trên máy chủ; xóa chỉ xóa trạng thái ôn tập đồng bộ, không xóa tệp Anki trong thiết bị.
+                            Mỗi học viên hướng tới mục tiêu ghi nhớ mặc định 90%. Số thẻ là các trạng thái SRS đã đồng bộ.
                           </p>
+
+                          <div className="mt-4 grid grid-cols-3 gap-2">
+                            <div className="rounded-xl border border-stone-200/80 dark:border-slate-800 bg-stone-50/60 dark:bg-[#101d3d] px-3 py-2.5">
+                              <p className="text-base font-black leading-none text-stone-900 dark:text-white">{deckUsers.length}</p>
+                              <p className="mt-1 truncate text-[10px] font-bold uppercase tracking-wide text-stone-400 dark:text-slate-500">Học viên</p>
+                            </div>
+                            <div className="rounded-xl border border-stone-200/80 dark:border-slate-800 bg-stone-50/60 dark:bg-[#101d3d] px-3 py-2.5">
+                              <p className="text-base font-black leading-none text-stone-900 dark:text-white">{totalTrackedCards.toLocaleString("vi-VN")}</p>
+                              <p className="mt-1 truncate text-[10px] font-bold uppercase tracking-wide text-stone-400 dark:text-slate-500">Tổng thẻ</p>
+                            </div>
+                            <div className="rounded-xl border border-stone-200/80 dark:border-slate-800 bg-stone-50/60 dark:bg-[#101d3d] px-3 py-2.5">
+                              <p className="text-base font-black leading-none text-stone-900 dark:text-white">
+                                {overallRetention === null ? "—" : `${overallRetention}%`}
+                              </p>
+                              <p className="mt-1 truncate text-[10px] font-bold uppercase tracking-wide text-stone-400 dark:text-slate-500">Ghi nhớ TB</p>
+                            </div>
+                          </div>
                         </div>
+
                         <div className="divide-y divide-stone-200 dark:divide-slate-800">
-                          {decks.map((deck) => {
-                            const key = `${deck.userId}:${deck.deckId}`;
+                          {deckUsers.map((user) => {
+                            const isOpen = expandedDeckUser === user.userId;
+                            const userDecks = decks.filter((deck) => deck.userId === user.userId);
+                            const retention = user.retention;
+                            const retentionTone =
+                              retention === null
+                                ? "text-stone-400 dark:text-slate-500"
+                                : retention >= 90
+                                ? "text-emerald-600 dark:text-emerald-300"
+                                : retention >= 80
+                                ? "text-amber-600 dark:text-amber-300"
+                                : "text-rose-600 dark:text-rose-300";
+                            const barTone =
+                              retention === null
+                                ? "bg-stone-300 dark:bg-slate-600"
+                                : retention >= 90
+                                ? "bg-emerald-500"
+                                : retention >= 80
+                                ? "bg-amber-500"
+                                : "bg-rose-500";
+                            const initials = (user.name || user.email || "?")
+                              .trim()
+                              .split(/\s+/)
+                              .slice(0, 2)
+                              .map((part) => part[0])
+                              .join("")
+                              .toUpperCase();
+
                             return (
-                              <article
-                                key={key}
-                                className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between transition hover:bg-stone-50 dark:hover:bg-slate-900/40"
-                              >
-                                <div>
-                                  <h3 className="break-all font-mono text-xs sm:text-sm font-bold text-stone-900 dark:text-white">
-                                    {deck.deckId}
-                                  </h3>
-                                  <p className="mt-1 text-xs text-stone-500 dark:text-slate-400">
-                                    {deck.name} · {deck.email}
-                                  </p>
-                                  <p className="mt-1 text-[11px] text-stone-400 dark:text-slate-500">
-                                    {deck.cardCount} trạng thái thẻ · cập nhật{" "}
-                                    {String(deck.updatedAt).slice(0, 16)}
-                                  </p>
-                                </div>
+                              <article key={user.userId}>
                                 <button
-                                  disabled={busy === key}
-                                  onClick={() => deleteDeck(deck)}
-                                  className={`${dangerBtnCls} h-8 px-3 text-xs shrink-0`}
+                                  type="button"
+                                  onClick={() => setExpandedDeckUser(isOpen ? "" : user.userId)}
+                                  className="flex w-full flex-col gap-3 p-4 text-left transition hover:bg-stone-50 dark:hover:bg-slate-900/40 sm:flex-row sm:items-center"
                                 >
-                                  <Trash2 className="h-3.5 w-3.5" />
-                                  Xóa tiến độ SRS
+                                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-stone-100 text-[11px] font-black text-stone-600 dark:bg-slate-800 dark:text-slate-200">
+                                    {initials}
+                                  </span>
+
+                                  <div className="min-w-0 flex-1">
+                                    <p className="truncate text-xs font-black text-stone-900 dark:text-white sm:text-sm">
+                                      {user.name}
+                                    </p>
+                                    <p className="truncate text-[11px] text-stone-500 dark:text-slate-400">
+                                      {user.email}
+                                    </p>
+                                    <p className="mt-1 text-[11px] text-stone-400 dark:text-slate-500">
+                                      {user.cards.toLocaleString("vi-VN")} thẻ · {user.decks} bộ · cập nhật {String(user.updatedAt).slice(0, 16)}
+                                    </p>
+                                  </div>
+
+                                  <div className="w-full shrink-0 sm:w-56">
+                                    <div className="flex items-center justify-between text-[11px]">
+                                      <span className="font-bold text-stone-500 dark:text-slate-400">Tỷ lệ ghi nhớ</span>
+                                      <span className={`font-black ${retentionTone}`}>
+                                        {retention === null ? "—" : `${retention}%`}
+                                      </span>
+                                    </div>
+                                    <div className="relative mt-1.5 h-1.5 rounded-full bg-stone-200 dark:bg-slate-800">
+                                      <div
+                                        className={`h-full rounded-full transition-all ${barTone}`}
+                                        style={{ width: `${Math.min(100, Math.max(0, retention ?? 0))}%` }}
+                                      />
+                                      <span
+                                        title="Mục tiêu 90%"
+                                        className="absolute -top-0.5 bottom-[-2px] left-[90%] w-px bg-stone-400 dark:bg-slate-500"
+                                      />
+                                    </div>
+                                    <p className="mt-1 text-[10px] text-stone-400 dark:text-slate-500">
+                                      Mục tiêu 90% · {user.reviewed.toLocaleString("vi-VN")} lượt ôn
+                                    </p>
+                                  </div>
+
+                                  <ChevronDown
+                                    className={`h-4 w-4 shrink-0 text-stone-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                                  />
                                 </button>
+
+                                {isOpen && (
+                                  <div className="border-t border-stone-200 bg-stone-50/70 px-4 py-3 dark:border-slate-800 dark:bg-slate-950/50">
+                                    {userDecks.length === 0 ? (
+                                      <p className="text-xs text-stone-400 dark:text-slate-500">Không có bộ thẻ chi tiết.</p>
+                                    ) : (
+                                      <div className="divide-y divide-stone-200 dark:divide-slate-800">
+                                        {userDecks.map((deck) => (
+                                          <div
+                                            key={deck.deckId}
+                                            className="flex flex-wrap items-center justify-between gap-2 py-2"
+                                          >
+                                            <div className="min-w-0">
+                                              <p className="truncate font-mono text-[11px] font-bold text-stone-700 dark:text-slate-200">
+                                                {deck.deckId}
+                                              </p>
+                                              <p className="text-[10px] text-stone-400 dark:text-slate-500">
+                                                {deck.cardCount.toLocaleString("vi-VN")} thẻ · cập nhật {String(deck.updatedAt).slice(0, 16)}
+                                              </p>
+                                            </div>
+                                            <button
+                                              disabled={busy === `${deck.userId}:${deck.deckId}`}
+                                              onClick={() => deleteDeck(deck)}
+                                              className={`${dangerBtnCls} h-7 px-2.5 text-[11px] shrink-0`}
+                                            >
+                                              <Trash2 className="h-3 w-3" />
+                                              Xóa tiến độ
+                                            </button>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
                               </article>
                             );
                           })}
-                          {decks.length === 0 && (
-                            <p className="p-5 text-sm text-stone-500 dark:text-slate-400">
-                              Chưa có bộ thẻ nào có tiến độ SRS đồng bộ.
-                            </p>
+
+                          {deckUsers.length === 0 && (
+                            <div className="p-10 text-center">
+                              <p className="text-sm font-bold text-stone-600 dark:text-slate-300">
+                                Chưa có học viên nào đồng bộ tiến độ SRS
+                              </p>
+                              <p className="mt-1 text-xs text-stone-400 dark:text-slate-500">
+                                Số liệu sẽ xuất hiện khi học viên ôn thẻ trên máy chủ.
+                              </p>
+                            </div>
                           )}
                         </div>
                       </section>
