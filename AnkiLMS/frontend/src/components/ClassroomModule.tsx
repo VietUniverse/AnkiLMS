@@ -127,9 +127,11 @@ interface ClassroomModuleProps {
   onClassesChange?: (classIds: string[]) => void;
   /** Mở sẵn lớp này khi hiện module (nút "Vào học" của lớp mở). */
   initialClassId?: string | null;
+  /** Nút "Trở về" hiển thị cùng hàng với hai tab chính. */
+  onBack?: () => void;
 }
 
-export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, onClassesChange, initialClassId = null }) => {
+export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, onClassesChange, initialClassId = null, onBack }) => {
   const { handleOpenAuth, userDecks } = useApp();
   const [courseDeckGroups, setCourseDeckGroups] = useState<TopikDeck[]>([]);
   const [adminThthDecks, setAdminThthDecks] = useState<any[]>([]);
@@ -1409,31 +1411,44 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
   return (
     <div className="classroom-module space-y-6 animate-fadeIn pb-24 max-w-5xl mx-auto">
       {/* Tabs: Lớp học của tôi / Tham gia lớp học */}
-      <div className="grid grid-cols-2 gap-2 rounded-2xl border border-[#1e3466] bg-[#0f1b38] p-1.5 shadow-xl">
-        <button
-          type="button"
-          onClick={() => setMainTab("mine")}
-          className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-xs font-black transition-all cursor-pointer ${
-            mainTab === "mine"
-              ? "bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg"
-              : "text-slate-300 hover:text-white hover:bg-white/5"
-          }`}
-        >
-          <Users className="w-4 h-4" />
-          <span>Lớp học của tôi ({myClasses.length})</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setMainTab("join")}
-          className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-xs font-black transition-all cursor-pointer ${
-            mainTab === "join"
-              ? "bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg"
-              : "text-slate-300 hover:text-white hover:bg-white/5"
-          }`}
-        >
-          <KeyRound className="w-4 h-4" />
-          <span>Tham gia lớp học</span>
-        </button>
+      <div className="flex items-stretch gap-2">
+        {onBack && (
+          <button
+            type="button"
+            onClick={onBack}
+            aria-label="Trở về"
+            className="classes-back-btn inline-flex shrink-0 items-center justify-center gap-1.5 rounded-2xl border border-[#1e3466] bg-[#0f1b38] px-3 text-xs font-bold text-slate-200 transition-colors hover:border-sky-400/60 hover:text-white cursor-pointer"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            <span className="hidden sm:inline">Trở về</span>
+          </button>
+        )}
+        <div className="grid flex-1 grid-cols-2 gap-2 rounded-2xl border border-[#1e3466] bg-[#0f1b38] p-1.5 shadow-xl">
+          <button
+            type="button"
+            onClick={() => setMainTab("mine")}
+            className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-xs font-black transition-all cursor-pointer ${
+              mainTab === "mine"
+                ? "bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg"
+                : "text-slate-300 hover:text-white hover:bg-white/5"
+            }`}
+          >
+            <Users className="w-4 h-4" />
+            <span>Lớp học của tôi ({myClasses.length})</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setMainTab("join")}
+            className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-xs font-black transition-all cursor-pointer ${
+              mainTab === "join"
+                ? "bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg"
+                : "text-slate-300 hover:text-white hover:bg-white/5"
+            }`}
+          >
+            <KeyRound className="w-4 h-4" />
+            <span>Tham gia lớp học</span>
+          </button>
+        </div>
       </div>
 
       {mainTab === "join" && (
