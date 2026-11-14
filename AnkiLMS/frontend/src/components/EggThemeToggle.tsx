@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 
 const STORAGE_KEY = "haechivn_theme";
 
-export function EggThemeToggle() {
+export function EggThemeToggle({ compact = false }: { compact?: boolean } = {}) {
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
   useEffect(() => {
@@ -56,7 +56,7 @@ export function EggThemeToggle() {
 
   return (
     <div
-      className="egg-toggle-container relative flex items-center select-none"
+      className={`egg-toggle-container relative flex items-center select-none ${compact ? "egg-toggle-compact" : ""}`}
       suppressHydrationWarning
       title={isLight ? "Đang bật chế độ Sáng (Bấm để chuyển Tối)" : "Đang bật chế độ Tối (Bấm để chuyển Sáng)"}
     >

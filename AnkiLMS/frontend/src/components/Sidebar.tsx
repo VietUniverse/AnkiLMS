@@ -203,7 +203,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </div>
               </Link>
               <div className="flex items-center gap-1.5 shrink-0">
-                <EggThemeToggle />
+                <EggThemeToggle compact />
                 <button
                   onClick={onCloseMobile}
                   className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
@@ -360,7 +360,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
         ) : (
           <div className="flex items-center gap-1.5 shrink-0">
-            <EggThemeToggle />
+            <EggThemeToggle compact />
             <button
               onClick={() => setCollapsed(true)}
               title="Thu gọn"

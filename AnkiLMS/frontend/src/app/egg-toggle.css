@@ -192,3 +192,8 @@
   border-radius: 50%;
   opacity: 0.65;
 }
+
+/* Bản thu nhỏ dùng trong sidebar để tiết kiệm không gian */
+.egg-toggle-compact {
+  zoom: 0.62;
+}
