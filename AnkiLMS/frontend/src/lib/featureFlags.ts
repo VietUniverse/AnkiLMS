@@ -49,6 +49,7 @@ export const BETA_FEATURE_KEYS: readonly FeatureKey[] = [
   "listen",
   "books",
   "dictation",
+  "shadowing",
   "games",
   "ankiImport",
 ] as const;

@@ -9,6 +9,7 @@ import { getStudyRank } from "../lib/studyRanks";
 import { OnigiriHeatmap } from "./OnigiriHeatmap";
 import { StreakPanel } from "./StreakPanel";
 import { TestHistory } from "./TestHistory";
+import { useApp } from "../contexts/AppProvider";
 
 interface ProfileModuleProps {
   currentUser: UserProfile | null;
@@ -43,6 +44,7 @@ const formatDuration = (seconds: number) => {
 };
 
 export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpenAuth }) => {
+  const { isFeatureEnabled } = useApp();
   const [stats, setStats] = useState<StudyProfileSummary | null>(null);
   const [heatmapData, setHeatmapData] = useState<Awaited<ReturnType<typeof ApiClient.getHeatmapData>>>([]);
   const [claimedBadgeIds, setClaimedBadgeIds] = useState<Set<string>>(new Set());
@@ -203,7 +205,7 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
             <div className="rounded-xl border border-dashed border-stone-300 dark:border-stone-700 p-6 text-center">
               <p className="text-sm font-bold">Chưa có phiên học nào</p>
               <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">Bắt đầu luyện tập để xây dựng lịch sử học của bạn.</p>
-              <a href="/shadowing" className="mt-3 inline-flex items-center gap-2 rounded-xl bg-sky-500 px-4 py-2 text-xs font-bold text-white hover:bg-sky-600"><Play className="h-4 w-4" />Bắt đầu học</a>
+              <a href={isFeatureEnabled("shadowing") ? "/shadowing" : "/flashcards"} className="mt-3 inline-flex items-center gap-2 rounded-xl bg-sky-500 px-4 py-2 text-xs font-bold text-white hover:bg-sky-600"><Play className="h-4 w-4" />Bắt đầu học</a>
             </div>
           )}
         </section>
