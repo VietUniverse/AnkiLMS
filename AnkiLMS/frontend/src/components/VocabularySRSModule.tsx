@@ -263,10 +263,16 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   // Trang đã mở màn học (Trang chủ, chi tiết bộ thẻ...): bấm Trở về thì quay lại đó thay vì ở lại danh sách Từ vựng.
   const returnToRef = useRef<string | null>(null);
   const autoResumedRef = useRef(false);
-  // Chế độ tối: nút "Hiện đáp án" màu xám như nút Trở về; nếu đang dùng nền gradient thì nút đi theo màu gradient đó.
+  // Nút "Hiện đáp án": khi có nền gradient thì dùng chính gradient đó nhưng pha tối để chữ trắng đạt tương phản ≥ 4.5:1.
+  const revealHasGradient = studyBg.kind === "gradient";
   const revealStyle = {
     color: "#fff",
-    ...(studyBg.kind === "gradient" ? { "--reveal-bg": `linear-gradient(90deg, ${studyBg.from}, ${studyBg.to})` } : {}),
+    ...(revealHasGradient
+      ? {
+          "--reveal-bg-light": `linear-gradient(90deg, color-mix(in srgb, ${studyBg.from} 45%, #000), color-mix(in srgb, ${studyBg.to} 45%, #000))`,
+          "--reveal-bg-dark": `linear-gradient(90deg, color-mix(in srgb, ${studyBg.from} 35%, #000), color-mix(in srgb, ${studyBg.to} 35%, #000))`,
+        }
+      : {}),
   } as React.CSSProperties;
   // Bề rộng thanh bên (0 khi ẩn trên điện thoại) để canh thanh Quên/Thuộc vào giữa vùng nội dung.
   const [sidebarWidth, setSidebarWidth] = useState(0);
@@ -1599,7 +1605,11 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                     inputRef.current?.blur();
                   }}
                   style={revealStyle}
-                  className="w-full h-12 rounded-xl bg-sky-500 hover:bg-sky-600 dark:bg-stone-800 dark:hover:bg-stone-700 dark:border dark:border-stone-700 dark:bg-[image:var(--reveal-bg)] dark:hover:brightness-110 font-bold text-sm flex items-center justify-center gap-2 transition cursor-pointer"
+                  className={`w-full h-12 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition cursor-pointer ${
+                    revealHasGradient
+                      ? "bg-[image:var(--reveal-bg-light)] hover:brightness-95 dark:bg-[image:var(--reveal-bg-dark)]"
+                      : "bg-sky-700 hover:bg-sky-800 dark:bg-stone-800 dark:hover:bg-stone-700 dark:border dark:border-stone-700"
+                  }`}
                 >
                   <span className="font-extrabold">Hiện đáp án</span>
                   <kbd className="hidden sm:inline font-sans text-[11px] font-semibold px-1.5 py-0.5 rounded-md bg-white/20">
