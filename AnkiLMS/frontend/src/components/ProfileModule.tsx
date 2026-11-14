@@ -139,8 +139,8 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
       {/* Số liệu */}
       <section className={`${card} grid grid-cols-2 divide-x divide-y divide-stone-200 dark:divide-stone-800 lg:grid-cols-4 lg:divide-y-0 overflow-hidden`}>
         {statsCards.map(({ label, value, hint, icon: Icon, color }) => (
-          <div key={label} className="p-4">
-            <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400"><Icon className={`h-3.5 w-3.5 ${color}`} />{label}</p>
+          <div key={label} className="p-4 text-center">
+            <p className="flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400"><Icon className={`h-3.5 w-3.5 ${color}`} />{label}</p>
             <p className="mt-1.5 text-xl font-black tabular-nums">{value}</p>
             <p className="text-[11px] text-stone-500 dark:text-stone-400">{hint}</p>
           </div>
