@@ -82,7 +82,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       />
 
       {/* Nền tùy chỉnh khi học thẻ (gradient hoặc ảnh), nằm dưới nội dung */}
-      {studyBackgroundStyle && <div aria-hidden className="pointer-events-none fixed inset-0 z-0 transition-opacity" style={studyBackgroundStyle} />}
+      {studyBackgroundStyle && <div aria-hidden className={`pointer-events-none fixed inset-0 z-0 transition-opacity ${studyBackground.kind === "animated" ? "study-bg-animated" : ""}`} style={studyBackgroundStyle} />}
 
       {/* Main Content View */}
       <div className={`${studyBackgroundStyle ? "relative z-10 " : ""}flex-1 flex flex-col min-w-0 overflow-y-auto`}>

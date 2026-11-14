@@ -27,7 +27,7 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onToggl
       const [r, g, b] = [0, 2, 4].map((i) => parseInt(m[1].slice(i, i + 2), 16) / 255);
       return 0.2126 * r + 0.7152 * g + 0.0722 * b;
     };
-    const light = studyBg.kind === "gradient" ? (lum(studyBg.from) + lum(studyBg.to)) / 2 > 0.6 : false;
+    const light = studyBg.kind === "gradient" || studyBg.kind === "animated" ? (lum(studyBg.from) + lum(studyBg.to)) / 2 > 0.6 : false;
     return light
       ? { fill: "rgba(20, 32, 46, 0.85)", track: "rgba(20, 32, 46, 0.18)", glow: "none" }
       : { fill: "rgba(255, 255, 255, 0.95)", track: "rgba(0, 0, 0, 0.22)", glow: "0 0 8px rgba(255, 255, 255, 0.55)" };

@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { Check, ImagePlus, Settings, Trash2, X } from "lucide-react";
 import { EggThemeToggle } from "./EggThemeToggle";
 import { backgroundLayerStyle, DEFAULT_STUDY_BG, fileToDataUrl, GRADIENT_PRESETS, saveStudyBackground, STUDY_BACKGROUND_GALLERY, useStudyBackground } from "../lib/studyBackground";
-import { setDisableAutoPronounce, setHideChatGpt, setMuteAndHideAudio, setMuteExampleAudio, setMuteWordAudio, useDisableAutoPronounce, useHideChatGpt, useMuteAndHideAudio, useMuteExampleAudio, useMuteWordAudio } from "../lib/studyPreferences";
+import { setDisableAutoPronounce, setHideChatGpt, setMuteAndHideAudio, setMuteExampleAudio, setMuteWordAudio, setRandomStudyBgEvery10, useDisableAutoPronounce, useHideChatGpt, useMuteAndHideAudio, useMuteExampleAudio, useMuteWordAudio, useRandomStudyBgEvery10 } from "../lib/studyPreferences";
 
 export function StudyBackgroundPanel() {
   const bg = useStudyBackground();
@@ -14,6 +14,7 @@ export function StudyBackgroundPanel() {
   const muteExampleAudio = useMuteExampleAudio();
   const muteAndHideAudio = useMuteAndHideAudio();
   const disableAutoPronounce = useDisableAutoPronounce();
+  const randomBgEvery10 = useRandomStudyBgEvery10();
   const [open, setOpen] = useState(false);
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [error, setError] = useState("");
@@ -114,6 +115,34 @@ export function StudyBackgroundPanel() {
             <div className="flex items-center justify-between">
               <p className="text-xs font-bold text-stone-500 dark:text-stone-400">Giao diện sáng / tối</p>
               <EggThemeToggle />
+            </div>
+
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-xs font-bold text-stone-500 dark:text-stone-400">Nền động (gradient chuyển màu chậm)</p>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={bg.kind === "animated"}
+                aria-label="Bật nền động"
+                onClick={() => update({ kind: bg.kind === "animated" ? "gradient" : "animated" })}
+                className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${bg.kind === "animated" ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
+              >
+                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-all ${bg.kind === "animated" ? "left-[22px]" : "left-0.5"}`} />
+              </button>
+            </div>
+
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-xs font-bold text-stone-500 dark:text-stone-400">Tự đổi nền ngẫu nhiên sau mỗi 10 thẻ</p>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={randomBgEvery10}
+                aria-label="Tự đổi nền ngẫu nhiên sau mỗi 10 thẻ"
+                onClick={() => setRandomStudyBgEvery10(!randomBgEvery10)}
+                className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${randomBgEvery10 ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
+              >
+                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-all ${randomBgEvery10 ? "left-[22px]" : "left-0.5"}`} />
+              </button>
             </div>
 
             <div className="flex items-center justify-between">

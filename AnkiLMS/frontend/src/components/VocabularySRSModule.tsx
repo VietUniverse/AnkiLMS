@@ -32,10 +32,10 @@ import {
 import { ankiScheduleToFSRSState, calculateFSRS45, formatLocalDate, isFSRSCardDue, FSRSRating, FSRSState } from "../lib/fsrs45";
 import { ApiClient } from "../lib/apiClient";
 import { DailyLimitsPanel } from "./DailyLimitsPanel";
-import { useStudyBackground } from "../lib/studyBackground";
+import { GRADIENT_PRESETS, saveStudyBackground, STUDY_BACKGROUND_GALLERY, useStudyBackground } from "../lib/studyBackground";
 import { addExtraNew, DailyLimits, DEFAULT_LIMITS, effectiveNewLimit, loadLimits, loadProgress, recordCard, remaining, saveLimits } from "../lib/dailyLimits";
 import { speakKorean } from "../lib/koreanSpeech";
-import { useDisableAutoPronounce, useHideChatGpt, useMuteAndHideAudio, useMuteExampleAudio, useMuteWordAudio } from "../lib/studyPreferences";
+import { useDisableAutoPronounce, useHideChatGpt, useMuteAndHideAudio, useMuteExampleAudio, useMuteWordAudio, useRandomStudyBgEvery10 } from "../lib/studyPreferences";
 import { inferTopikLevel, getCourseRank } from "../lib/studyRanks";
 import { LockKeyhole, Globe2 } from "lucide-react";
 import { VocabularySizeTest } from "./VocabularySizeTest";
@@ -264,7 +264,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const returnToRef = useRef<string | null>(null);
   const autoResumedRef = useRef(false);
   // Nút "Hiện đáp án": khi có nền gradient thì dùng chính gradient đó nhưng pha tối để chữ trắng đạt tương phản ≥ 4.5:1.
-  const revealHasGradient = studyBg.kind === "gradient";
+  const revealHasGradient = studyBg.kind === "gradient" || studyBg.kind === "animated";
   const revealStyle = {
     color: "#fff",
     ...(revealHasGradient
@@ -309,6 +309,21 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const muteExampleAudio = useMuteExampleAudio();
   const muteAndHideAudio = useMuteAndHideAudio();
   const disableAutoPronounce = useDisableAutoPronounce();
+  const randomBgEvery10 = useRandomStudyBgEvery10();
+  const answeredCountRef = useRef(0);
+  // Mỗi 10 lượt trả lời: đổi sang một nền khác trong preset gradient hoặc thư viện ảnh.
+  const rotateRandomBackground = useCallback(() => {
+    const preferImage = Math.random() < 0.5 && STUDY_BACKGROUND_GALLERY.length > 0;
+    if (preferImage) {
+      const pool = STUDY_BACKGROUND_GALLERY.filter((src) => !(studyBg.kind === "image" && studyBg.image === src));
+      const image = pool[Math.floor(Math.random() * pool.length)] ?? STUDY_BACKGROUND_GALLERY[0];
+      saveStudyBackground({ ...studyBg, kind: "image", image });
+      return;
+    }
+    const pool = GRADIENT_PRESETS.filter((preset) => preset.from !== studyBg.from || preset.to !== studyBg.to);
+    const preset = pool[Math.floor(Math.random() * pool.length)] ?? GRADIENT_PRESETS[0];
+    saveStudyBackground({ ...studyBg, kind: studyBg.kind === "animated" ? "animated" : "gradient", from: preset.from, to: preset.to });
+  }, [studyBg]);
   const muteWordRef = useRef(muteWordAudio);
   const muteExampleRef = useRef(muteExampleAudio);
   const [dictQuery, setDictQuery] = useState("");
@@ -1121,6 +1136,10 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     const activeKey = stateKeyOf(currentCard);
     if (lastRatedCardRef.current === activeKey || Date.now() - answerShownAtRef.current < 450) return;
     lastRatedCardRef.current = activeKey;
+    if (randomBgEvery10) {
+      answeredCountRef.current += 1;
+      if (answeredCountRef.current % 10 === 0) rotateRandomBackground();
+    }
     srsActivityRef.current.reviewed += 1;
     if (isMastered) srsActivityRef.current.correct += 1;
 
@@ -1209,7 +1228,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
       finishSrsActivity();
       setViewMode("dashboard");
     }
-  }, [currentCard, cardStateMap, currentUser, activeDeckTitle, currentCardIndex, activeCardsList.length, finishSrsActivity, ownedDecks, setUserDecks, studyMode, typedInput]);
+  }, [currentCard, cardStateMap, currentUser, activeDeckTitle, currentCardIndex, activeCardsList.length, finishSrsActivity, ownedDecks, setUserDecks, studyMode, typedInput, randomBgEvery10, rotateRandomBackground]);
 
   // Give typing hint
   const handleGiveHint = () => {

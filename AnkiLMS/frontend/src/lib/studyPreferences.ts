@@ -8,6 +8,8 @@ const MUTE_EXAMPLE_KEY = "haechivn_mute_example_audio";
 const MUTE_HIDE_KEY = "haechivn_mute_hide_audio";
 // Chỉ chặn tự phát khi ra thẻ/lật thẻ; bấm nút loa vẫn phát.
 const DISABLE_AUTO_PRONOUNCE_KEY = "haechivn_disable_auto_pronounce";
+// Tự đổi nền ngẫu nhiên sau mỗi 10 lượt trả lời.
+const RANDOM_BG_KEY = "haechivn_random_bg_every_10";
 const LEGACY_MUTE_KEY = "haechivn_mute_sound";
 const PREF_EVENT = "haechivn-study-prefs";
 
@@ -82,6 +84,24 @@ export function useDisableAutoPronounce(): boolean {
 
 export function setDisableAutoPronounce(disabled: boolean): void {
   writeMuted(DISABLE_AUTO_PRONOUNCE_KEY, disabled);
+}
+
+export function useRandomStudyBgEvery10(): boolean {
+  return useSyncExternalStore(
+    subscribePrefs,
+    () => {
+      try {
+        return localStorage.getItem(RANDOM_BG_KEY) === "1";
+      } catch {
+        return false;
+      }
+    },
+    () => false,
+  );
+}
+
+export function setRandomStudyBgEvery10(enabled: boolean): void {
+  writeMuted(RANDOM_BG_KEY, enabled);
 }
 
 export function setHideChatGpt(hidden: boolean): void {

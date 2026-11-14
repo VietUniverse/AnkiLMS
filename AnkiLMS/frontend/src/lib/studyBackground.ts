@@ -2,7 +2,7 @@ import { useSyncExternalStore } from "react";
 
 // Nền tùy chỉnh khi học thẻ (lưu trên thiết bị này).
 export type StudyBackground = {
-  kind: "none" | "gradient" | "image";
+  kind: "none" | "gradient" | "image" | "animated";
   from: string;
   to: string;
   angle: number;
@@ -39,7 +39,7 @@ const parse = (raw: string): StudyBackground => {
   try {
     const value = JSON.parse(raw) as Partial<StudyBackground>;
     return {
-      kind: value.kind === "gradient" || value.kind === "image" ? value.kind : "none",
+      kind: value.kind === "gradient" || value.kind === "image" || value.kind === "animated" ? value.kind : "none",
       from: typeof value.from === "string" ? value.from : DEFAULT_STUDY_BG.from,
       to: typeof value.to === "string" ? value.to : DEFAULT_STUDY_BG.to,
       angle: Number.isFinite(value.angle) ? Number(value.angle) : DEFAULT_STUDY_BG.angle,
@@ -75,7 +75,7 @@ export function saveStudyBackground(next: StudyBackground): boolean {
 }
 
 export function backgroundLayerStyle(bg: StudyBackground): React.CSSProperties | null {
-  if (bg.kind === "gradient") return { backgroundImage: `linear-gradient(${bg.angle}deg, ${bg.from}, ${bg.to})`, opacity: bg.opacity / 100 };
+  if (bg.kind === "gradient" || bg.kind === "animated") return { backgroundImage: `linear-gradient(${bg.angle}deg, ${bg.from}, ${bg.to})`, opacity: bg.opacity / 100 };
   if (bg.kind === "image" && bg.image) return { backgroundImage: `url(${bg.image})`, backgroundSize: "cover", backgroundPosition: "center", opacity: bg.opacity / 100 };
   return null;
 }

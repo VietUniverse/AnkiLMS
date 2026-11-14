@@ -1341,6 +1341,23 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
   animation: fadeOnly 0.15s ease-out forwards;
 }
 
+/* Nền động: gradient chuyển màu chậm, tắt khi người dùng giảm chuyển động. */
+@keyframes studyBgShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.study-bg-animated {
+  background-size: 220% 220%;
+  animation: studyBgShift 24s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .study-bg-animated {
+    animation: none;
+  }
+}
+
 .hint-display {
   display: flex;
   align-items: center;
