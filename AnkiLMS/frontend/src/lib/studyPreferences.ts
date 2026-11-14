@@ -2,6 +2,7 @@ import { useSyncExternalStore } from "react";
 
 // Tùy chọn hiển thị khi học thẻ (lưu trên thiết bị này).
 const HIDE_CHATGPT_KEY = "haechivn_hide_chatgpt";
+const HIDE_DICTIONARY_KEY = "haechivn_hide_dictionary";
 const MUTE_WORD_KEY = "haechivn_mute_word_audio";
 const MUTE_EXAMPLE_KEY = "haechivn_mute_example_audio";
 // Tắt và ẩn toàn bộ nút loa/phát âm trên thẻ học.
@@ -32,6 +33,18 @@ const subscribePrefs = (callback: () => void) => {
 
 export function useHideChatGpt(): boolean {
   return useSyncExternalStore(subscribePrefs, readHideChatGpt, () => false);
+}
+
+const readHideDictionary = (): boolean => {
+  try {
+    return localStorage.getItem(HIDE_DICTIONARY_KEY) === "1";
+  } catch {
+    return false;
+  }
+};
+
+export function useHideDictionary(): boolean {
+  return useSyncExternalStore(subscribePrefs, readHideDictionary, () => false);
 }
 
 const readMuted = (key: string): boolean => {
@@ -107,6 +120,15 @@ export function setRandomStudyBgEvery10(enabled: boolean): void {
 export function setHideChatGpt(hidden: boolean): void {
   try {
     localStorage.setItem(HIDE_CHATGPT_KEY, hidden ? "1" : "0");
+    window.dispatchEvent(new Event(PREF_EVENT));
+  } catch {
+    // Bỏ qua khi trình duyệt chặn lưu trữ.
+  }
+}
+
+export function setHideDictionary(hidden: boolean): void {
+  try {
+    localStorage.setItem(HIDE_DICTIONARY_KEY, hidden ? "1" : "0");
     window.dispatchEvent(new Event(PREF_EVENT));
   } catch {
     // Bỏ qua khi trình duyệt chặn lưu trữ.

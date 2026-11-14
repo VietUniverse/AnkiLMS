@@ -35,7 +35,7 @@ import { DailyLimitsPanel } from "./DailyLimitsPanel";
 import { GRADIENT_PRESETS, saveStudyBackground, STUDY_BACKGROUND_GALLERY, useStudyBackground } from "../lib/studyBackground";
 import { addExtraNew, DailyLimits, DEFAULT_LIMITS, effectiveNewLimit, loadLimits, loadProgress, recordCard, remaining, saveLimits } from "../lib/dailyLimits";
 import { speakKorean } from "../lib/koreanSpeech";
-import { useStudyCardOpacity, useDisableAutoPronounce, useHideChatGpt, useMuteAndHideAudio, useMuteExampleAudio, useMuteWordAudio, useRandomStudyBgEvery10 } from "../lib/studyPreferences";
+import { useStudyCardOpacity, useDisableAutoPronounce, useHideChatGpt, useHideDictionary, useMuteAndHideAudio, useMuteExampleAudio, useMuteWordAudio, useRandomStudyBgEvery10 } from "../lib/studyPreferences";
 import { inferTopikLevel, getCourseRank } from "../lib/studyRanks";
 import { LockKeyhole, Globe2 } from "lucide-react";
 import { VocabularySizeTest } from "./VocabularySizeTest";
@@ -306,6 +306,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const [dictPanelOpen, setDictPanelOpen] = useState(false);
   const [dictPanelWidth, setDictPanelWidth] = useState(DICT_PANEL_DEFAULT_WIDTH);
   const hideChatGpt = useHideChatGpt();
+  const hideDictionary = useHideDictionary();
   const muteWordAudio = useMuteWordAudio();
   const muteExampleAudio = useMuteExampleAudio();
   const muteAndHideAudio = useMuteAndHideAudio();
@@ -1614,6 +1615,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
   }, [currentCard]);
 
   const openDictionary = () => {
+    if (hideDictionary) return;
     setDictQuery(cleanTextOnly(currentCard?.word || "").trim());
     setDictPanelOpen(true);
   };
@@ -2351,15 +2353,17 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
 
                     <div className="flex items-center gap-2">
                       {/* Nút ChatGPT */}
-                      <button
-                        type="button"
-                        onClick={openDictionary}
-                        className="inline-flex h-9 items-center gap-1.5 px-3 rounded-lg text-stone-500 dark:text-stone-400 hover:bg-sky-500/10 hover:text-sky-700 dark:hover:text-sky-400 transition text-sm font-medium cursor-pointer"
-                        title="Tra từ này trong từ điển"
-                      >
-                        <BookOpen aria-hidden="true" className="w-4 h-4" />
-                        <span>Từ điển</span>
-                      </button>
+                      {!hideDictionary && (
+                        <button
+                          type="button"
+                          onClick={openDictionary}
+                          className="inline-flex h-9 items-center gap-1.5 px-3 rounded-lg text-stone-500 dark:text-stone-400 hover:bg-sky-500/10 hover:text-sky-700 dark:hover:text-sky-400 transition text-sm font-medium cursor-pointer"
+                          title="Tra từ này trong từ điển"
+                        >
+                          <BookOpen aria-hidden="true" className="w-4 h-4" />
+                          <span>Từ điển</span>
+                        </button>
+                      )}
                       {!hideChatGpt && (
                         <a
                           href={chatGptUrl}
@@ -2484,15 +2488,17 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                   <span className="text-sm font-medium text-stone-500 dark:text-stone-400">{currentCard.pos || "Từ vựng"}</span>
                   {isFlipped && (
                     <div className="flex items-center gap-2 animate-fade-only">
-                      <button
-                        type="button"
-                        onClick={openDictionary}
-                        className="inline-flex h-9 items-center gap-1.5 px-3 rounded-lg text-stone-500 dark:text-stone-400 hover:bg-sky-500/10 hover:text-sky-700 dark:hover:text-sky-400 transition text-sm font-medium cursor-pointer"
-                        title="Tra từ này trong từ điển"
-                      >
-                        <BookOpen aria-hidden="true" className="w-4 h-4" />
-                        <span>Từ điển</span>
-                      </button>
+                      {!hideDictionary && (
+                        <button
+                          type="button"
+                          onClick={openDictionary}
+                          className="inline-flex h-9 items-center gap-1.5 px-3 rounded-lg text-stone-500 dark:text-stone-400 hover:bg-sky-500/10 hover:text-sky-700 dark:hover:text-sky-400 transition text-sm font-medium cursor-pointer"
+                          title="Tra từ này trong từ điển"
+                        >
+                          <BookOpen aria-hidden="true" className="w-4 h-4" />
+                          <span>Từ điển</span>
+                        </button>
+                      )}
                       {!hideChatGpt && (
                         <a
                           href={chatGptUrl}
@@ -2601,7 +2607,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
       {/* ====================================================================
           PANEL TRA TỪ ĐIỂN (SIDEBAR PHẢI)
           ==================================================================== */}
-      {dictPanelOpen && (
+      {dictPanelOpen && !hideDictionary && (
         <>
           <div
             className="fixed inset-0 z-[70] bg-black/40 backdrop-blur-[1px] lg:hidden"
