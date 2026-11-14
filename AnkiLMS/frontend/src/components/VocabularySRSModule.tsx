@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import DOMPurify from "dompurify";
 import { VOCABULARY_DATA } from "../data/koreanData";
-import { loadAdminThthCurriculum } from "../lib/privateLearningContent";
+import { loadAdminThthCurriculum, loadAdminWritingCurriculum } from "../lib/privateLearningContent";
 import { AnkiDeck, AnkiReviewEvent, AnkiScheduleMetadata } from "../lib/ankiParser";
 import { useApp } from "../contexts/AppProvider";
 import {
@@ -44,6 +44,36 @@ interface VocabularySRSModuleProps {
 }
 
 export interface VocabularyCard {
+  writingData?: {
+    cardType: "fill_blank" | "essay" | "choice" | "cloze" | "generic";
+    questionNo: number;
+    qid?: string;
+    source?: string;
+    category?: string;
+    levelStyle?: string;
+    promptHtml?: string;
+    blankA_answer?: string;
+    blankB_answer?: string;
+    blankA_variants?: string[];
+    blankB_variants?: string[];
+    translationHtml?: string;
+    explainA_Html?: string;
+    explainB_Html?: string;
+    grammarHtml?: string;
+    vocabHtml?: string;
+    pitfallsHtml?: string;
+    notesHtml?: string;
+    figureSvg?: string;
+    modelEssay?: string;
+    minChars?: number;
+    maxChars?: number;
+    choiceOpts?: string[];
+    choiceCorrect?: number;
+    keyPhrasesHtml?: string;
+    explainHtml?: string;
+    backHtml?: string;
+    extraDe?: string;
+  };
   id: number | string;
   /** Thẻ anh em của cùng một note: "typing" = nhìn nghĩa gõ chữ, có lịch ôn riêng. Không có = thẻ Review (nhìn chữ đoán nghĩa). */
   sibling?: "typing";
@@ -81,6 +111,36 @@ export interface DeckTreeNode {
 
 // Clean image string helper
 const stateKeyOf = (c: VocabularyCard) => `${c.deckName || "deck"}_${c.id}${c.sibling ? "_typing" : ""}`;
+
+const normalizeKoreanText = (str?: string): string => {
+  if (!str) return "";
+  return str
+    .normalize("NFC")
+    .replace(/[.,?!~'"·\s]/g, "")
+    .trim()
+    .toLowerCase();
+};
+
+const checkWritingVariantMatch = (typed: string, variants: string[]): boolean => {
+  const normTyped = normalizeKoreanText(typed);
+  if (!normTyped) return false;
+  return variants.some((v) => {
+    const normV = normalizeKoreanText(v);
+    return normV === normTyped || (normTyped.length >= 4 && (normV.includes(normTyped) || normTyped.includes(normV)));
+  });
+};
+
+const isCardAWritingCard = (c?: VocabularyCard | null) => Boolean(
+  c && (
+    c.writingData ||
+    c.deckName?.toLowerCase().includes("writing") ||
+    c.pos?.toLowerCase().includes("viết") ||
+    c.word?.startsWith("Câu 51") ||
+    c.word?.startsWith("Câu 52") ||
+    c.word?.startsWith("Câu 53") ||
+    c.word?.startsWith("Câu 54")
+  )
+);
 // Lịch Anki cũ chỉ thuộc thẻ Review; thẻ Typing luôn bắt đầu từ mới.
 const cardStateFor = (map: Record<string, FSRSState>, key: string, card: VocabularyCard): FSRSState =>
   map[key] || (card.ankiSchedule && !card.sibling ? ankiScheduleToFSRSState(card.ankiSchedule) : undefined) || {
@@ -182,6 +242,12 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const { currentUser, isAuthReady, setActiveStudySession, removedBuiltInDeckIds, userDecks: ownedDecks, setUserDecks, handleOpenAuth } = useApp();
   const isAdmin = currentUser?.role === "admin";
   const [adminThthDecks, setAdminThthDecks] = useState<any[]>([]);
+  const [adminWritingDecks, setAdminWritingDecks] = useState<any[]>([]);
+  const [writingInputA, setWritingInputA] = useState<string>("");
+  const [writingInputB, setWritingInputB] = useState<string>("");
+  const [writingEssay, setWritingEssay] = useState<string>("");
+  const [writingChoice, setWritingChoice] = useState<number | null>(null);
+  const [writingCloze, setWritingCloze] = useState<string>("");
   // Cây bộ thẻ phụ thuộc người dùng và kho thẻ đọc từ localStorage: chỉ dựng sau khi hydrate để HTML tĩnh khớp bản client.
   const hydrated = useSyncExternalStore(() => () => {}, () => true, () => false);
   const studyBg = useStudyBackground();
@@ -249,11 +315,27 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
   useEffect(() => {
     let active = true;
-    if (currentUser) {
+    if (currentUser && currentUser.role === "admin") {
       void loadAdminThthCurriculum().then((decks) => { if (active) setAdminThthDecks(decks || []); });
-    } else setAdminThthDecks([]);
+      void loadAdminWritingCurriculum().then((decks) => { if (active) setAdminWritingDecks(decks || []); });
+    } else if (currentUser) {
+      void loadAdminThthCurriculum().then((decks) => { if (active) setAdminThthDecks(decks || []); });
+      setAdminWritingDecks([]);
+    } else {
+      setAdminThthDecks([]);
+      setAdminWritingDecks([]);
+    }
     return () => { active = false; };
   }, [currentUser?.id, currentUser?.role]);
+
+  // Reset writing input state on card switch
+  useEffect(() => {
+    setWritingInputA("");
+    setWritingInputB("");
+    setWritingEssay("");
+    setWritingChoice(null);
+    setWritingCloze("");
+  }, [currentCardIndex]);
 
   const updateLimits = useCallback((next: DailyLimits) => {
     setDailyLimits(next);
@@ -584,15 +666,72 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       }
 
       rootNodes.push(...otherUserRoots);
+
+    // Xây dựng cây bộ thẻ TOPIK II Writing bảo mật (Chỉ hiển thị cho Quản trị viên)
+    if (isAdmin && adminWritingDecks && adminWritingDecks.length > 0) {
+      type WritingBranch = {
+        title: string;
+        path: string;
+        cards: VocabularyCard[];
+        children: Map<string, WritingBranch>;
+      };
+      const writingRoot: WritingBranch = {
+        title: "Cracking the TOPIK II Writing",
+        path: "",
+        cards: [],
+        children: new Map(),
+      };
+
+      for (const d of adminWritingDecks) {
+        const rawParts = (d.name || "").split("::").map((p: string) => p.trim()).filter(Boolean);
+        const parts = rawParts[0]?.toLowerCase().includes("cracking") ? rawParts.slice(1) : rawParts;
+        let branch = writingRoot;
+        const dCards = (d.cards || []) as VocabularyCard[];
+        writingRoot.cards.push(...dCards);
+        const pathParts: string[] = [];
+
+        for (const part of parts) {
+          pathParts.push(part);
+          let child = branch.children.get(part);
+          if (!child) {
+            child = { title: part, path: pathParts.join("::"), cards: [], children: new Map() };
+            branch.children.set(part, child);
+          }
+          branch = child;
+          branch.cards.push(...dCards);
+        }
+      }
+
+      const buildWritingChildren = (branch: WritingBranch): DeckTreeNode[] => [...branch.children.values()]
+        .sort((a, b) => a.title.localeCompare(b.title, "vi", { numeric: true }))
+        .map((child) => ({
+          id: `admin-writing-${toSlug(child.path || child.title)}`,
+          title: child.title,
+          cards: child.cards,
+          children: buildWritingChildren(child).length ? buildWritingChildren(child) : undefined,
+        }));
+
+      rootNodes.push({
+        id: "admin-cracking-topik-writing",
+        title: "✍️ Cracking the TOPIK II Writing (Admin)",
+        subtitle: `${writingRoot.cards.length} thẻ · Luyện viết Câu 51, 53, 54 & Mẫu đề chuẩn`,
+        cards: writingRoot.cards,
+        children: buildWritingChildren(writingRoot),
+      });
+    }
     }
 
     return rootNodes;
-  }, [hydrated, userDecks, isAdmin, adminThthDecks, removedBuiltInDeckIds]);
+  }, [hydrated, userDecks, isAdmin, adminThthDecks, adminWritingDecks, removedBuiltInDeckIds]);
 
   // Đếm trạng thái theo cùng nguồn FSRS dùng khi mở lượt học, không dùng danh sách legacy theo tên từ.
   const getDeckStats = useCallback((cards: VocabularyCard[]) => {
     const now = new Date();
-    const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).flatMap((card) => [card, { ...card, sibling: "typing" as const }]);
+    
+const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).flatMap((card) => {
+  if (isCardAWritingCard(card)) return [card];
+  return [card, { ...card, sibling: "typing" as const }];
+});
     const total = playableCards.length;
     if (total === 0) return { total: 0, mastered: 0, percent: 0, newCount: 0, reviewCount: 0 };
     let mastered = 0;
@@ -648,8 +787,10 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
         (state && state.state !== "new" ? dueCards : newCards).push(c);
       }
     };
-    queue();
-    queue("typing");
+        queue();
+    if (!cards.some(isCardAWritingCard)) {
+      queue("typing");
+    }
     const activeList = [...dueCards.slice(0, reviewLeft), ...newCards.slice(0, newLeft)];
     setDailyProgress(progress);
     if (newLeft === 0 && newCards.length > 0 && !options?.skipMorePrompt) {
@@ -1073,7 +1214,21 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
         return;
       }
 
-      // Flip: Space or Enter (when not flipped)
+      // Prevent Space or normal Enter inside input or textarea from flipping the card
+      const isInputFocused =
+        document.activeElement?.tagName === "INPUT" ||
+        document.activeElement?.tagName === "TEXTAREA";
+
+      if (isInputFocused && !isFlipped) {
+        if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+          e.preventDefault();
+          revealAnswer();
+          (document.activeElement as HTMLElement)?.blur();
+        }
+        return;
+      }
+
+      // Flip: Space or Enter (when not flipped and not typing in text field)
       if (!isFlipped && (e.key === " " || e.key === "Enter")) {
         e.preventDefault();
         revealAnswer();
@@ -1521,7 +1676,414 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
               <div className="flex-1 flex flex-col">
 
             {/* CHẾ ĐỘ 1: THẺ NHẬN DIỆN PHẲNG REVEAL (2 CỘT DESKTOP) */}
-            {studyMode === "flip" && (
+            
+            {/* CHẾ ĐỘ THẺ LUYỆN VIẾT TOPIK II (CÂU 51~54) VỚI Ô GÕ TỰ ĐỘNG CHẤM */}
+            {studyMode === "flip" && isCardAWritingCard(currentCard) && (
+              <div className="mx-auto w-full max-w-3xl mb-5 select-text">
+                <div className="relative w-full rounded-3xl bg-white dark:bg-[#141b2d] border border-stone-200/80 dark:border-stone-800/80 p-5 sm:p-8 shadow-sm">
+                  {/* Top Meta Chips */}
+                  <div className="flex flex-wrap items-center justify-between gap-2.5 pb-4 border-b border-stone-100 dark:border-stone-800">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="px-3 py-1 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 font-black text-xs border border-rose-500/20">
+                        {currentCard.writingData?.questionNo ? `Câu ${currentCard.writingData.questionNo}` : (currentCard.word.match(/Câu\s*\d+/i)?.[0] || "TOPIK II Viết")}
+                      </span>
+                      {(currentCard.writingData?.category || currentCard.word) && (
+                        <span className="px-2.5 py-0.5 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-bold text-xs">
+                          {currentCard.writingData?.category || currentCard.word}
+                        </span>
+                      )}
+                      {currentCard.writingData?.levelStyle && (
+                        <span className="px-2.5 py-0.5 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-400 font-medium text-xs border border-sky-500/20">
+                          {currentCard.writingData.levelStyle}
+                        </span>
+                      )}
+                    </div>
+                    {currentCard.writingData?.source && (
+                      <span className="text-[11px] font-mono text-stone-400">
+                        {currentCard.writingData.source}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* TH1: DẠNG ĐIỀN ㉠ ㉡ (CÂU 51 & 52) */}
+                  {(currentCard.writingData?.cardType === "fill_blank" || (!currentCard.writingData?.cardType && (currentCard.word.includes("51") || currentCard.word.includes("52") || /㉠|㉡|\[\[A\]\]|\[\[B\]\]|\(\s*ㄱ\s*\)|\(\s*ㄴ\s*\)/i.test(currentCard.example || "")))) && (() => {
+                    const promptRaw = currentCard.writingData?.promptHtml || currentCard.example || currentCard.word;
+                    const cleanPrompt = promptRaw
+                      .replace(/\[\[A\]\]/g, " <span class='inline-flex items-center px-2 py-0.5 rounded bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold border border-amber-500/40 text-sm'>㉠</span> ")
+                      .replace(/\[\[B\]\]/g, " <span class='inline-flex items-center px-2 py-0.5 rounded bg-sky-500/20 text-sky-600 dark:text-sky-400 font-bold border border-sky-500/40 text-sm'>㉡</span> ")
+                      .replace(/\(\s*ㄱ\s*\)|\[\s*ㄱ\s*\]/g, " <span class='inline-flex items-center px-2 py-0.5 rounded bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold border border-amber-500/40 text-sm'>ㄱ</span> ")
+                      .replace(/\(\s*ㄴ\s*\)|\[\s*ㄴ\s*\]/g, " <span class='inline-flex items-center px-2 py-0.5 rounded bg-sky-500/20 text-sky-600 dark:text-sky-400 font-bold border border-sky-500/40 text-sm'>ㄴ</span> ");
+
+                    // Lấy biến thể đáp án A và B
+                    let varA: string[] = currentCard.writingData?.blankA_variants || [];
+                    let varB: string[] = currentCard.writingData?.blankB_variants || [];
+                    if (varA.length === 0 && currentCard.meaning) {
+                      const m = currentCard.meaning;
+                      const idxA = m.search(/[ㄱ㉠]\s*[:.]/);
+                      const idxB = m.search(/[ㄴ㉡]\s*[:.]/);
+                      if (idxA !== -1 && idxB !== -1 && idxA < idxB) {
+                        const rawA = m.slice(idxA, idxB).replace(/^[ㄱ㉠]\s*[:.]\s*/, "").trim();
+                        const rawB = m.slice(idxB).replace(/^[ㄴ㉡]\s*[:.]\s*/, "").trim();
+                        varA = rawA.split(/[/|\n]+/).map(s => s.trim()).filter(Boolean);
+                        varB = rawB.split(/[/|\n]+/).map(s => s.trim()).filter(Boolean);
+                      }
+                    }
+
+                    const isMatchA = checkWritingVariantMatch(writingInputA, varA);
+                    const isMatchB = checkWritingVariantMatch(writingInputB, varB);
+
+                    return (
+                      <div className="space-y-6 pt-5">
+                        {/* Đoạn văn đề bài tiếng Hàn */}
+                        <div className="rounded-2xl border border-stone-200/80 dark:border-stone-800 bg-stone-50/80 dark:bg-stone-900/60 p-4 sm:p-6 font-noto text-base sm:text-lg leading-relaxed text-stone-900 dark:text-stone-100 shadow-inner">
+                          <div dangerouslySetInnerHTML={{ __html: cleanPrompt }} />
+                        </div>
+
+                        {/* 2 Ô gõ đáp án tiếng Hàn */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-bold text-amber-600 dark:text-amber-400 flex items-center justify-between">
+                              <span className="flex items-center gap-1.5">
+                                <span className="inline-flex w-4 h-4 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 items-center justify-center text-[10px]">㉠</span>
+                                <span>Đáp án cho vị trí ㉠ (A):</span>
+                              </span>
+                              {isFlipped && (
+                                writingInputA.trim() ? (
+                                  isMatchA ? (
+                                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold text-[10px]">✓ Khớp mẫu</span>
+                                  ) : (
+                                    <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 font-medium text-[10px]">≈ Khác mẫu</span>
+                                  )
+                                ) : (
+                                  <span className="text-stone-400 text-[10px]">(chưa điền)</span>
+                                )
+                              )}
+                            </label>
+                            <input
+                              type="text"
+                              value={writingInputA}
+                              onChange={(e) => setWritingInputA(e.target.value)}
+                              placeholder="Gõ đáp án tiếng Hàn cho ㉠..."
+                              className="w-full h-11 px-3.5 rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 font-noto text-sm sm:text-base text-stone-900 dark:text-stone-100 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition"
+                            />
+                            {isFlipped && varA.length > 0 && (
+                              <div className="pt-1 text-xs text-stone-600 dark:text-stone-300 font-noto">
+                                <span className="text-stone-400 text-[11px] font-sans">Mẫu chuẩn: </span>
+                                <span className="font-bold text-emerald-600 dark:text-emerald-400">{varA.join(" · ")}</span>
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-bold text-sky-600 dark:text-sky-400 flex items-center justify-between">
+                              <span className="flex items-center gap-1.5">
+                                <span className="inline-flex w-4 h-4 rounded-full bg-sky-500/20 text-sky-600 dark:text-sky-400 items-center justify-center text-[10px]">㉡</span>
+                                <span>Đáp án cho vị trí ㉡ (B):</span>
+                              </span>
+                              {isFlipped && (
+                                writingInputB.trim() ? (
+                                  isMatchB ? (
+                                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold text-[10px]">✓ Khớp mẫu</span>
+                                  ) : (
+                                    <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 font-medium text-[10px]">≈ Khác mẫu</span>
+                                  )
+                                ) : (
+                                  <span className="text-stone-400 text-[10px]">(chưa điền)</span>
+                                )
+                              )}
+                            </label>
+                            <input
+                              type="text"
+                              value={writingInputB}
+                              onChange={(e) => setWritingInputB(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter" && !e.nativeEvent.isComposing) {
+                                  e.preventDefault();
+                                  revealAnswer();
+                                }
+                              }}
+                              placeholder="Gõ đáp án tiếng Hàn cho ㉡..."
+                              className="w-full h-11 px-3.5 rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 font-noto text-sm sm:text-base text-stone-900 dark:text-stone-100 focus:border-sky-500 focus:ring-1 focus:ring-sky-500 outline-none transition"
+                            />
+                            {isFlipped && varB.length > 0 && (
+                              <div className="pt-1 text-xs text-stone-600 dark:text-stone-300 font-noto">
+                                <span className="text-stone-400 text-[11px] font-sans">Mẫu chuẩn: </span>
+                                <span className="font-bold text-emerald-600 dark:text-emerald-400">{varB.join(" · ")}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Nút bấm Hiện đáp án khi chưa lật */}
+                        {!isFlipped && (
+                          <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+                            <button
+                              type="button"
+                              onClick={revealAnswer}
+                              className="px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-stone-950 font-bold text-xs sm:text-sm flex items-center gap-2 cursor-pointer shadow-xs transition"
+                            >
+                              <CheckCircle2 className="w-4 h-4" />
+                              <span>Hiện đáp án & Chấm đối chiếu</span>
+                            </button>
+                            <span className="text-[11px] text-stone-400">
+                              Phím tắt: Nhấn Enter tại ô ㉡ hoặc Ctrl+Enter để chấm ngay
+                            </span>
+                          </div>
+                        )}
+
+                        {/* Chi tiết phân tích bài thi sau khi lật */}
+                        {isFlipped && (
+                          <div className="space-y-3.5 pt-3 border-t border-stone-200/80 dark:border-stone-800 animate-fade-only">
+                            {/* Dịch nghĩa */}
+                            {currentCard.writingData?.translationHtml && (
+                              <div className="p-3.5 rounded-xl bg-amber-500/5 dark:bg-amber-500/10 border border-amber-500/20 text-xs sm:text-sm leading-relaxed text-stone-700 dark:text-stone-300">
+                                <span className="font-bold text-amber-600 dark:text-amber-400 block mb-1">📖 Bản dịch tiếng Việt:</span>
+                                <div dangerouslySetInnerHTML={{ __html: currentCard.writingData.translationHtml }} />
+                              </div>
+                            )}
+
+                            {/* Phân tích đáp án ㉠ & ㉡ */}
+                            {(currentCard.writingData?.explainA_Html || currentCard.writingData?.explainB_Html) && (
+                              <div className="p-3.5 rounded-xl bg-sky-500/5 dark:bg-sky-500/10 border border-sky-500/20 text-xs sm:text-sm leading-relaxed text-stone-700 dark:text-stone-300 space-y-2">
+                                <span className="font-bold text-sky-600 dark:text-sky-400 block">💡 Phân tích chiến thuật & Logic điền:</span>
+                                {currentCard.writingData?.explainA_Html && (
+                                  <div>
+                                    <span className="font-bold text-amber-500 mr-1.5">Vị trí ㉠:</span>
+                                    <span dangerouslySetInnerHTML={{ __html: currentCard.writingData.explainA_Html }} />
+                                  </div>
+                                )}
+                                {currentCard.writingData?.explainB_Html && (
+                                  <div>
+                                    <span className="font-bold text-sky-500 mr-1.5">Vị trí ㉡:</span>
+                                    <span dangerouslySetInnerHTML={{ __html: currentCard.writingData.explainB_Html }} />
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
+                            {/* Ngữ pháp & Từ vựng */}
+                            {(currentCard.writingData?.grammarHtml || currentCard.writingData?.vocabHtml) && (
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+                                {currentCard.writingData?.grammarHtml && (
+                                  <div className="p-3.5 rounded-xl bg-stone-100/90 dark:bg-stone-900/90 border border-stone-200 dark:border-stone-800">
+                                    <span className="font-bold text-stone-900 dark:text-stone-100 block mb-1.5">⚡ Ngữ pháp trọng tâm:</span>
+                                    <div className="text-stone-600 dark:text-stone-400 [&_ul]:pl-4 [&_ul]:list-disc space-y-1" dangerouslySetInnerHTML={{ __html: currentCard.writingData.grammarHtml }} />
+                                  </div>
+                                )}
+                                {currentCard.writingData?.vocabHtml && (
+                                  <div className="p-3.5 rounded-xl bg-stone-100/90 dark:bg-stone-900/90 border border-stone-200 dark:border-stone-800">
+                                    <span className="font-bold text-stone-900 dark:text-stone-100 block mb-1.5">📝 Từ vựng then chốt:</span>
+                                    <div className="text-stone-600 dark:text-stone-400 [&_ul]:pl-4 [&_ul]:list-disc space-y-1" dangerouslySetInnerHTML={{ __html: currentCard.writingData.vocabHtml }} />
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
+                            {/* Bẫy & Lỗi thường gặp */}
+                            {currentCard.writingData?.pitfallsHtml && (
+                              <div className="p-3.5 rounded-xl bg-rose-500/5 dark:bg-rose-500/10 border border-rose-500/20 text-xs sm:text-sm leading-relaxed text-stone-700 dark:text-stone-300">
+                                <span className="font-bold text-rose-600 dark:text-rose-400 block mb-1">⚠️ Lỗi sai thường gặp & Bẫy thí sinh:</span>
+                                <div className="[&_ul]:pl-4 [&_ul]:list-disc space-y-1" dangerouslySetInnerHTML={{ __html: currentCard.writingData.pitfallsHtml }} />
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
+
+                  {/* TH2: DẠNG VIẾT BÀI LUẬN (CÂU 53 & 54) */}
+                  {(currentCard.writingData?.cardType === "essay" || (!currentCard.writingData?.cardType && (currentCard.word.includes("53") || currentCard.word.includes("54")))) && (() => {
+                    const qno = currentCard.writingData?.questionNo || (currentCard.word.includes("54") ? 54 : 53);
+                    const minChars = currentCard.writingData?.minChars || (qno === 53 ? 200 : 600);
+                    const maxChars = currentCard.writingData?.maxChars || (qno === 53 ? 300 : 700);
+                    const prompt = currentCard.writingData?.promptHtml || currentCard.example || currentCard.word;
+                    const model = currentCard.writingData?.modelEssay || currentCard.meaning;
+                    const charCount = writingEssay.trim().length;
+
+                    return (
+                      <div className="space-y-5 pt-5">
+                        {/* Đề bài */}
+                        <div className="rounded-2xl border border-stone-200/80 dark:border-stone-800 bg-stone-50/80 dark:bg-stone-900/60 p-4 sm:p-5 text-sm sm:text-base leading-relaxed text-stone-900 dark:text-stone-100">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-rose-500 mb-1.5">YÊU CẦU ĐỀ BÀI</p>
+                          <div className="font-noto whitespace-pre-line" dangerouslySetInnerHTML={{ __html: prompt }} />
+                        </div>
+
+                        {/* Hình ảnh biểu đồ SVG (nếu có) */}
+                        {currentCard.writingData?.figureSvg && (
+                          <div className="p-3 rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/90 overflow-x-auto flex justify-center">
+                            <div className="max-w-full" dangerouslySetInnerHTML={{ __html: currentCard.writingData.figureSvg }} />
+                          </div>
+                        )}
+
+                        {/* Khung gõ tiếng Hàn */}
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-xs font-bold">
+                            <span className="text-stone-700 dark:text-stone-300 flex items-center gap-1.5">
+                              <span>✍️ Bài làm của bạn (gõ tiếng Hàn):</span>
+                            </span>
+                            <span className={`font-mono font-bold ${
+                              charCount >= minChars && charCount <= maxChars
+                                ? "text-emerald-500"
+                                : "text-amber-500"
+                            }`}>
+                              Số chữ: {charCount} / {minChars}~{maxChars}자 {charCount >= minChars && charCount <= maxChars ? "✓ Đạt chuẩn" : ""}
+                            </span>
+                          </div>
+                          <textarea
+                            value={writingEssay}
+                            onChange={(e) => setWritingEssay(e.target.value)}
+                            rows={8}
+                            placeholder="Nhập bài viết bằng tiếng Hàn tại đây (hệ thống tự động đếm số chữ chuẩn 원고지)..."
+                            className="w-full p-4 rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 font-noto text-sm sm:text-base leading-relaxed text-stone-900 dark:text-stone-100 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition"
+                          />
+                        </div>
+
+                        {!isFlipped && (
+                          <div className="flex justify-end pt-2">
+                            <button
+                              type="button"
+                              onClick={revealAnswer}
+                              className="px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-stone-950 font-bold text-xs sm:text-sm flex items-center gap-2 cursor-pointer shadow-xs transition"
+                            >
+                              <CheckCircle2 className="w-4 h-4" />
+                              <span>Hiện bài mẫu chuẩn NIIED & Chấm đối chiếu</span>
+                            </button>
+                          </div>
+                        )}
+
+                        {isFlipped && (
+                          <div className="space-y-4 pt-4 border-t border-stone-200/80 dark:border-stone-800 animate-fade-only">
+                            <div className="p-4 sm:p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 space-y-2">
+                              <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block">
+                                Bài mẫu chuẩn NIIED (Điểm tối đa)
+                              </span>
+                              <div className="font-noto text-sm sm:text-base leading-relaxed whitespace-pre-line text-emerald-950 dark:text-emerald-100 font-medium">
+                                {model}
+                              </div>
+                            </div>
+                            {currentCard.writingData?.notesHtml && (
+                              <div className="p-3.5 rounded-xl bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 text-xs sm:text-sm text-stone-600 dark:text-stone-400">
+                                <span className="font-bold text-stone-900 dark:text-stone-200 block mb-1">💡 Ghi chú cấu trúc:</span>
+                                <div dangerouslySetInnerHTML={{ __html: currentCard.writingData.notesHtml }} />
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
+
+                  {/* TH3: DẠNG TRẮC NGHIỆM TỪ KHÓA */}
+                  {currentCard.writingData?.cardType === "choice" && (() => {
+                    const opts = currentCard.writingData.choiceOpts || [];
+                    const correctIdx = currentCard.writingData.choiceCorrect || 1;
+                    return (
+                      <div className="space-y-5 pt-5">
+                        <div className="rounded-2xl border border-stone-200/80 dark:border-stone-800 bg-stone-50/80 dark:bg-stone-900/60 p-4 sm:p-5 font-noto text-base sm:text-lg leading-relaxed text-stone-900 dark:text-stone-100">
+                          <div dangerouslySetInnerHTML={{ __html: currentCard.writingData.promptHtml || currentCard.example || "" }} />
+                        </div>
+                        <p className="text-xs font-bold text-stone-500">Đọc lướt và chọn từ khóa chủ đề chính xác:</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {opts.map((opt, idx) => {
+                            const optNum = idx + 1;
+                            const isChosen = writingChoice === optNum;
+                            const isAnswer = optNum === correctIdx;
+                            let btnStyle = "border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-amber-400";
+                            if (isFlipped) {
+                              if (isAnswer) btnStyle = "border-emerald-500 bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold";
+                              else if (isChosen) btnStyle = "border-rose-500 bg-rose-500/20 text-rose-600 dark:text-rose-400";
+                            }
+                            return (
+                              <button
+                                key={idx}
+                                type="button"
+                                onClick={() => {
+                                  if (!isFlipped) {
+                                    setWritingChoice(optNum);
+                                    revealAnswer();
+                                  }
+                                }}
+                                className={`p-3.5 rounded-xl border text-left font-noto text-sm transition cursor-pointer flex items-center gap-3 ${btnStyle}`}
+                              >
+                                <span className="w-6 h-6 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-xs font-bold shrink-0">
+                                  {["①", "②", "③", "④"][idx] || idx + 1}
+                                </span>
+                                <span dangerouslySetInnerHTML={{ __html: opt }} />
+                              </button>
+                            );
+                          })}
+                        </div>
+                        {isFlipped && (
+                          <div className="space-y-3 pt-3 border-t border-stone-200 dark:border-stone-800 animate-fade-only text-xs sm:text-sm">
+                            {currentCard.writingData.keyPhrasesHtml && (
+                              <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30">
+                                <span className="font-bold text-amber-500 block mb-1">🔑 Từ khóa then chốt:</span>
+                                <div dangerouslySetInnerHTML={{ __html: currentCard.writingData.keyPhrasesHtml }} />
+                              </div>
+                            )}
+                            {currentCard.writingData.explainHtml && (
+                              <div className="p-3 rounded-xl bg-sky-500/10 border border-sky-500/30">
+                                <span className="font-bold text-sky-500 block mb-1">💡 Giải thích:</span>
+                                <div dangerouslySetInnerHTML={{ __html: currentCard.writingData.explainHtml }} />
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
+
+                  {/* TH4: DẠNG ĐIỀN CLOZE (ANKIVN CLOZE) */}
+                  {currentCard.writingData?.cardType === "cloze" && (() => {
+                    const prompt = currentCard.writingData.promptHtml || currentCard.example || "";
+                    const back = currentCard.writingData.backHtml || currentCard.meaning || "";
+                    return (
+                      <div className="space-y-5 pt-5">
+                        <div className="rounded-2xl border border-stone-200/80 dark:border-stone-800 bg-stone-50/80 dark:bg-stone-900/60 p-5 font-noto text-base sm:text-lg leading-relaxed text-stone-900 dark:text-stone-100">
+                          <div dangerouslySetInnerHTML={{ __html: isFlipped ? prompt.replace(/\{\{c\d+::(.*?)\}\}/g, "<b class='text-emerald-500 underline'>$1</b>") : prompt.replace(/\{\{c\d+::.*?\}\}/g, "<span class='px-3 py-1 rounded bg-amber-500/20 text-amber-600 font-bold'>[...]</span>") }} />
+                        </div>
+                        {!isFlipped && (
+                          <div className="space-y-3">
+                            <input
+                              type="text"
+                              value={writingCloze}
+                              onChange={(e) => setWritingCloze(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter" && !e.nativeEvent.isComposing) {
+                                  e.preventDefault();
+                                  revealAnswer();
+                                }
+                              }}
+                              placeholder="Gõ từ/cụm từ còn thiếu..."
+                              className="w-full h-11 px-3.5 rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 font-noto text-sm sm:text-base text-stone-900 dark:text-stone-100 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none transition"
+                            />
+                            <div className="flex justify-end">
+                              <button
+                                type="button"
+                                onClick={revealAnswer}
+                                className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-stone-950 font-bold text-xs flex items-center gap-2 cursor-pointer shadow-xs transition"
+                              >
+                                <CheckCircle2 className="w-4 h-4" />
+                                <span>Hiện đáp án</span>
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                        {isFlipped && back && (
+                          <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs sm:text-sm text-stone-800 dark:text-stone-200 font-noto">
+                            <span className="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">Ghi chú & Đáp án:</span>
+                            <div dangerouslySetInnerHTML={{ __html: back }} />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
+                </div>
+              </div>
+            )}
+
+            {studyMode === "flip" && !isCardAWritingCard(currentCard) && (
               <div className={`mx-auto w-full mb-5 select-text ${activeImageSrc ? "max-w-4xl" : "max-w-2xl"}`}>
                 <div className="relative w-full min-h-[22rem] rounded-2xl bg-white dark:bg-[#141b2d] dark:border dark:border-stone-800/80 px-6 pt-10 pb-5 sm:px-10 sm:pt-14 flex flex-col justify-between shadow-[0_1px_2px_rgba(28,25,23,0.05),0_12px_32px_-16px_rgba(28,25,23,0.18)] dark:shadow-none">
                   {/* Body 2 Cột Desktop: Trái Ảnh - Phải Chữ */}

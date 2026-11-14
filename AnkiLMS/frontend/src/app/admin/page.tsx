@@ -1288,6 +1288,31 @@ export default function AdminPage() {
                           </div>
                         </section>
 
+                        {/* Highlight Banner for TOPIK II Writing Curriculum */}
+                        <section className="card-duo rounded-3xl border-2 border-rose-500/30 bg-gradient-to-r from-rose-500/10 via-amber-500/5 to-transparent p-5 sm:p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                          <div className="space-y-1.5">
+                            <div className="inline-flex items-center gap-2 rounded-full bg-rose-500/15 px-3 py-1 text-[11px] font-extrabold text-rose-600 dark:text-rose-300">
+                              <Pencil className="h-3.5 w-3.5" />
+                              Bộ thẻ Cracking the TOPIK II Writing · Độc quyền Admin (Bảo mật)
+                            </div>
+                            <h2 className="text-lg sm:text-xl font-black text-stone-900 dark:text-white">
+                              728 thẻ luyện viết Câu 51, 53, 54 & Đề thi thật kèm cơ chế gõ tự chấm
+                            </h2>
+                            <p className="text-xs sm:text-sm text-stone-600 dark:text-slate-300 max-w-3xl">
+                              Toàn bộ hệ thống thẻ điền ㉠ ㉡, chọn từ khóa, phân tích biểu đồ và viết luận đã được tích hợp ô gõ tiếng Hàn trực tiếp, so sánh biến thể đáp án chuẩn NIIED. Bộ thẻ này không công khai ra production, chỉ tài khoản Admin mới có quyền truy cập học.
+                            </p>
+                          </div>
+                          <div className="flex flex-wrap gap-2 shrink-0">
+                            <a
+                              href="/flashcards"
+                              className="btn-duo btn-duo-primary inline-flex items-center gap-2 px-5 py-3 text-xs font-bold"
+                            >
+                              <BookOpen className="h-4 w-4" />
+                              Mở học trên /flashcards →
+                            </a>
+                          </div>
+                        </section>
+
                         {/* Quick Action Cards Grid */}
                         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                           {[

@@ -99,6 +99,8 @@ export const TopikExamModule: React.FC = () => {
   const [writingFilter, setWritingFilter] = useState<number | "all">("all");
   const [selectedWritingPrompt, setSelectedWritingPrompt] = useState<WritingItem | null>(null);
   const [writingDraft, setWritingDraft] = useState<string>("");
+  const [writingDraftA, setWritingDraftA] = useState<string>("");
+  const [writingDraftB, setWritingDraftB] = useState<string>("");
   const [showModelAnswer, setShowModelAnswer] = useState<boolean>(false);
 
   // State cho phần Tài liệu gốc
@@ -479,6 +481,8 @@ export const TopikExamModule: React.FC = () => {
                   onClick={() => {
                     setSelectedWritingPrompt(null);
                     setWritingDraft("");
+                    setWritingDraftA("");
+                    setWritingDraftB("");
                     setShowModelAnswer(false);
                   }}
                   className="inline-flex items-center gap-2 rounded-xl bg-slate-800 hover:bg-slate-700 px-3.5 py-2 text-xs font-bold text-slate-300 hover:text-white cursor-pointer"
@@ -513,36 +517,67 @@ export const TopikExamModule: React.FC = () => {
               </div>
 
               {/* Khung luyện viết trực tiếp */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs">
-                  <label className="font-bold text-slate-300 flex items-center gap-1.5">
-                    <Pencil className="w-3.5 h-3.5 text-sky-400" />
-                    <span>Bài làm của bạn (gõ tiếng Hàn):</span>
-                  </label>
-                  <span className={`font-mono font-bold ${
-                    selectedWritingPrompt.questionNo === 53 && (writingDraft.length < 200 || writingDraft.length > 300)
-                      ? "text-amber-400"
-                      : selectedWritingPrompt.questionNo === 54 && (writingDraft.length < 600 || writingDraft.length > 700)
-                      ? "text-amber-400"
-                      : "text-emerald-400"
-                  }`}>
-                    {writingDraft.length} ký tự
-                    {selectedWritingPrompt.questionNo === 53 && " (chuẩn: 200~300 chữ)"}
-                    {selectedWritingPrompt.questionNo === 54 && " (chuẩn: 600~700 chữ)"}
-                  </span>
+              {selectedWritingPrompt.questionNo <= 52 ? (
+                /* Dạng điền khuyết Câu 51 & 52: 2 ô gõ riêng biệt cho ㄱ và ㄴ */
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+                        <span className="w-4 h-4 rounded-full bg-amber-500/20 text-amber-300 flex items-center justify-center text-[10px]">ㄱ</span>
+                        <span>Đáp án điền cho vị trí (ㄱ):</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={writingDraftA}
+                        onChange={(e) => setWritingDraftA(e.target.value)}
+                        placeholder="Gõ đáp án tiếng Hàn cho (ㄱ)..."
+                        className="w-full h-11 px-3.5 rounded-xl border border-slate-700 bg-slate-950/90 font-noto text-sm sm:text-base text-white focus:border-amber-400 focus:ring-1 focus:ring-amber-400 outline-none transition"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold text-sky-400 flex items-center gap-1.5">
+                        <span className="w-4 h-4 rounded-full bg-sky-500/20 text-sky-300 flex items-center justify-center text-[10px]">ㄴ</span>
+                        <span>Đáp án điền cho vị trí (ㄴ):</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={writingDraftB}
+                        onChange={(e) => setWritingDraftB(e.target.value)}
+                        placeholder="Gõ đáp án tiếng Hàn cho (ㄴ)..."
+                        className="w-full h-11 px-3.5 rounded-xl border border-slate-700 bg-slate-950/90 font-noto text-sm sm:text-base text-white focus:border-sky-400 focus:ring-1 focus:ring-sky-400 outline-none transition"
+                      />
+                    </div>
+                  </div>
                 </div>
-                <textarea
-                  rows={selectedWritingPrompt.questionNo >= 53 ? 8 : 4}
-                  value={writingDraft}
-                  onChange={(e) => setWritingDraft(e.target.value)}
-                  placeholder={
-                    selectedWritingPrompt.questionNo <= 52
-                      ? "Gõ câu trả lời cho (ㄱ) và (ㄴ)... Ví dụ:\nㄱ: ...\nㄴ: ..."
-                      : "Nhập bài viết phân tích / bài luận của bạn..."
-                  }
-                  className="w-full rounded-2xl border border-slate-700 bg-slate-950/90 p-4 font-noto text-sm leading-relaxed text-white outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500"
-                />
-              </div>
+              ) : (
+                /* Dạng bài luận Câu 53 & 54: khung soạn thảo kèm đếm ký tự 원고지 */
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <label className="font-bold text-slate-300 flex items-center gap-1.5">
+                      <Pencil className="w-3.5 h-3.5 text-sky-400" />
+                      <span>Bài làm của bạn (gõ tiếng Hàn):</span>
+                    </label>
+                    <span className={`font-mono font-bold ${
+                      selectedWritingPrompt.questionNo === 53 && (writingDraft.length < 200 || writingDraft.length > 300)
+                        ? "text-amber-400"
+                        : selectedWritingPrompt.questionNo === 54 && (writingDraft.length < 600 || writingDraft.length > 700)
+                        ? "text-amber-400"
+                        : "text-emerald-400"
+                    }`}>
+                      {writingDraft.length} ký tự
+                      {selectedWritingPrompt.questionNo === 53 && " (chuẩn: 200~300 chữ)"}
+                      {selectedWritingPrompt.questionNo === 54 && " (chuẩn: 600~700 chữ)"}
+                    </span>
+                  </div>
+                  <textarea
+                    rows={8}
+                    value={writingDraft}
+                    onChange={(e) => setWritingDraft(e.target.value)}
+                    placeholder="Nhập bài viết phân tích / bài luận của bạn bằng tiếng Hàn..."
+                    className="w-full rounded-2xl border border-slate-700 bg-slate-950/90 p-4 font-noto text-sm leading-relaxed text-white outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500"
+                  />
+                </div>
+              )}
 
               {/* Toggle Đáp án mẫu */}
               <div className="pt-2">
@@ -657,6 +692,8 @@ export const TopikExamModule: React.FC = () => {
                       onClick={() => {
                         setSelectedWritingPrompt(item);
                         setWritingDraft("");
+                        setWritingDraftA("");
+                        setWritingDraftB("");
                         setShowModelAnswer(false);
                       }}
                       className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 py-2 px-3 text-xs font-bold text-rose-200 transition cursor-pointer"

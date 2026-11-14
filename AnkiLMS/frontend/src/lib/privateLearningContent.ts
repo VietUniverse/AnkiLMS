@@ -1,3 +1,5 @@
+import crackingTopikWritingFallback from "../data/crackingTopikWriting.json";
+
 export type PrivateLearningContent = {
   topikLessons: any[];
   passiveListeningVideos?: any[];
@@ -14,6 +16,7 @@ export type PrivateLearningContentResult =
 
 let contentPromise: Promise<PrivateLearningContent | null> | null = null;
 let ththPromise: Promise<any[] | null> | null = null;
+let writingPromise: Promise<any[] | null> | null = null;
 
 export async function fetchPrivateLearningContent(): Promise<PrivateLearningContentResult> {
   try {
@@ -49,3 +52,20 @@ export function loadAdminThthCurriculum(forceRefresh = false): Promise<any[] | n
 export function clearAdminThthCurriculumCache() {
   ththPromise = null;
 }
+
+export function loadAdminWritingCurriculum(forceRefresh = false): Promise<any[] | null> {
+  if (forceRefresh) writingPromise = null;
+  writingPromise ??= fetch("/api/learning-data?name=cracking-topik-writing.json", { credentials: "same-origin", cache: "no-store" })
+    .then(async (response) => response.ok ? await response.json() as any[] : null)
+    .then((data) => {
+      if (!data) return (crackingTopikWritingFallback as any[]) || null;
+      return data;
+    })
+    .catch(() => (crackingTopikWritingFallback as any[]) || null);
+  return writingPromise;
+}
+
+export function clearAdminWritingCurriculumCache() {
+  writingPromise = null;
+}
+

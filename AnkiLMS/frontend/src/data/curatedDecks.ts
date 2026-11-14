@@ -33,7 +33,11 @@ export interface CuratedDeckItem {
   estimatedMinutes: number;
 }
 
-export const CURATED_DECKS: CuratedDeckItem[] = (topikCuratedDecksRaw as unknown as CuratedDeckItem[]);
+// Các bộ thẻ công khai trên /explore: Chỉ bao gồm từ vựng và ngữ pháp.
+// Bộ thẻ luyện viết (Câu 51~54) được bảo mật dành riêng cho Admin, không công khai ra production.
+export const CURATED_DECKS: CuratedDeckItem[] = (topikCuratedDecksRaw as unknown as CuratedDeckItem[]).filter(
+  (deck) => !deck.id.toLowerCase().includes("writing")
+);
 
 export function curatedDeckToAnkiDeck(deck: CuratedDeckItem): AnkiDeck {
   const isCommunityDeck = deck.id.startsWith("shared-");

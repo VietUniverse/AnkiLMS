@@ -8,6 +8,7 @@ const PRIVATE_FILES = new Set([
   "thth-1.json",
   "thth-curriculum.json",
   "dictation-learning-content.json",
+  "cracking-topik-writing.json",
 ]);
 // Mở cho khách: dữ liệu bài kiểm tra và từ điển NIKL (CC BY-SA, xem THIRD_PARTY_DATA.md).
 // course-vocabulary.json chưa có giấy phép tái bản nên vẫn bắt đăng nhập.
@@ -35,6 +36,21 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   // distinguish existing private learning files from arbitrary names.
   if (!user && !PUBLIC_FILES.has(name)) return errorResponse("Đăng nhập để xem học liệu.", 401);
   if (!PRIVATE_FILES.has(name)) return errorResponse("Không tìm thấy học liệu.", 404);
+
+  // Bộ thẻ Cracking the TOPIK II Writing: bảo mật chỉ dành riêng cho Admin
+  if (name === "cracking-topik-writing.json") {
+    if (!user || user.role !== "admin") return errorResponse("Chỉ quản trị viên mới được xem bộ thẻ này.", 403);
+    const object = await env.MEDIA.get(`private-learning-data/${name}`);
+    if (!object) return errorResponse("Học liệu chưa sẵn sàng trên R2.", 503);
+    return new Response(object.body, {
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        "Cache-Control": "private, no-store",
+        "X-Content-Type-Options": "nosniff",
+        "X-Robots-Tag": "noindex, nofollow, noarchive",
+      },
+    });
+  }
 
   // Tiếng Hàn Tổng Hợp collection is managed by admins and shared via admin grants / classes.
   if (name === "thth-curriculum.json") {

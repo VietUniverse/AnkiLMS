@@ -204006,7 +204006,7 @@
   },
   {
     "id": "topik-writing-51",
-    "title": "51 Đề Luyện Viết & Bài Mẫu TOPIK II (Câu 51~54)",
+    "title": "51 Đề Luyện Viết TOPIK II (Câu 51~54) · Admin Only",
     "category": "topik",
     "categoryLabel": "Viết TOPIK II",
     "level": "Trung cấp",
@@ -204052,7 +204052,31 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W1",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: Đồ miễn phí.",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "무료로 드립니다<br>저는 유학생인데 공부를 마치고 다음 주에 고향으로 돌아갑니다. 그래서 지금 ( ㄱ ). 책상, 의자, 컴퓨터, 경영학 전공 책 등이 있습니다. 이번 주 금요일까지 방을 비워 줘야 합니다. ( ㄴ ). 제 전화 번호는 010-1234-5678입니다.",
+          "blankA_answer": "그동안 사용했던 제 물건들을 정리하려고 합니다.",
+          "blankB_answer": "그러니까 물건이 필요하신 분들은 금요일 전까지 연락해 주시기 바랍니다.",
+          "blankA_variants": [
+            "그동안 사용했던 제 물건들을 정리하려고 합니다."
+          ],
+          "blankB_variants": [
+            "그러니까 물건이 필요하신 분들은 금요일 전까지 연락해 주시기 바랍니다."
+          ],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 2,
@@ -204084,7 +204108,36 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W2",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: Email dời lịch trình.",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "Email:<br><br>김영미 교수님께,<br>안녕하세요? 한국어과 3학년 제니입니다.<br>이번 주 금요일에 뵙기로 한 것 때문에 연락 드렸습니다.<br>그런데 ( ㄱ ).<br>정말 죄송합니다.<br>혹시 ( ㄴ) 답장 주시면 감사하겠습니다.<br><br>당장 주시면 감사하겠습니다.<br>제니 올림",
+          "blankA_answer": "금요일에 뵙기 어려울 거 같습니다.\n금요일에 다른 일이 생겼습니다.\n금요일에 사정이 생겨서 찾아뵙기가 어려울 거 같습니다.",
+          "blankB_answer": "언제 시간이 괜찮으십니까?\n언제 시간이 되십니까?\n괜찮으신 시간을 말씀해 주시겠습니까?\n혹시 다음 주 금요일에 뵈러 가도 되겠습니까?",
+          "blankA_variants": [
+            "금요일에 뵙기 어려울 거 같습니다.",
+            "금요일에 다른 일이 생겼습니다.",
+            "금요일에 사정이 생겨서 찾아뵙기가 어려울 거 같습니다."
+          ],
+          "blankB_variants": [
+            "언제 시간이 괜찮으십니까?",
+            "언제 시간이 되십니까?",
+            "괜찮으신 시간을 말씀해 주시겠습니까?",
+            "혹시 다음 주 금요일에 뵈러 가도 되겠습니까?"
+          ],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 3,
@@ -204116,7 +204169,34 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W3",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: Đăng tuyển.",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "모집<br>태권도 동아리 '태극'입니다.<br>이번에 ( ㄱ ).<br>신입 회원은 태권도에 관심 있는 학생이면 누구나 환영합니다.<br>( ㄴ )?<br>그래도 걱정하지 마십시오. 처음부터 천천히 가르쳐 드립니다.<br>다음 주 금요일까지 학생 회관 201호에서 신청하십시오.",
+          "blankA_answer": "새로 신입 회원을 모집하려고/뽑으려고 합니다",
+          "blankB_answer": "태권도를 처음 배우십니까/태권도가 처음이십니까\n태권도를 잘 모르십니까",
+          "blankA_variants": [
+            "새로 신입 회원을 모집하려고",
+            "뽑으려고 합니다"
+          ],
+          "blankB_variants": [
+            "태권도를 처음 배우십니까",
+            "태권도가 처음이십니까",
+            "태권도를 잘 모르십니까"
+          ],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 4,
@@ -204148,7 +204228,31 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W4",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: Lời mời.",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "받는 사람: 이재정(<br>korteach@hk.edu<br>)<br>제목: 선생님, 샤오밍입니다.<br>이재정 선생님께<br>안녕하세요? 샤오밍입니다.<br>지난주에 댁으로 초대해 주셔서 감사합니다.<br>선생님 덕분에 재미있는 시간을 보냈습니다.<br>이번에는 ( ㄱ ).<br>다음 주 월요일과 수요일 중에 언제가 좋으십니까?<br>저는 ( ㄴ ).<br>편하신 오후 시간을 말씀해 주시면 감사하겠습니다.<br>샤오밍 올림",
+          "blankA_answer": "제가 선생님을 집으로 초대하고 싶습니다.",
+          "blankB_answer": "오후에는 언제든지 다 괜찮습니다.",
+          "blankA_variants": [
+            "제가 선생님을 집으로 초대하고 싶습니다."
+          ],
+          "blankB_variants": [
+            "오후에는 언제든지 다 괜찮습니다."
+          ],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 5,
@@ -204180,7 +204284,33 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W5",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: Nhờ vả.",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "제목: 선배님, 빅토르입니다.<br><br>2016. 7. 12.<br><br>선배님, 안녕하십니까? 빅토르입니다.<br>부탁드릴 일이 있어 메일을 씁니다.<br>제가 인터넷으로 ( ㄱ ).<br>그런데 카메라가 이번 주 금요일에 배달된다고 합니다.<br>제가 그날 고향에 가야 해서 카메라를 직접 받을 수 없을 것 같습니다.<br>혹시 저 대신에 ( ㄴ )?<br>어려운 부탁을 드려서 죄송합니다.<br>그럼 답장 기다리겠습니다.<br><br>빅토르 드림",
+          "blankA_answer": "카메라를 주문했습니다/카메라를 구입했습니다/카메라를 샀습니다.",
+          "blankB_answer": "카메라를 받아 주실 수 있으십니까",
+          "blankA_variants": [
+            "카메라를 주문했습니다",
+            "카메라를 구입했습니다",
+            "카메라를 샀습니다."
+          ],
+          "blankB_variants": [
+            "카메라를 받아 주실 수 있으십니까"
+          ],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 6,
@@ -204212,7 +204342,32 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W6",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: Mượn và trả đồ.",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "마이클<br>수미 씨,<br>지난번에 책을 ( ㄱ ) 고맙습니다.<br><br>수미 씨의 책 덕분에 과제를 잘할 수 있었습니다.<br>그런데 책을 언제 ( ㄴ )?<br>시간을 말씀해 주시면 찾아가겠습니다.<br>그럼 답장 기다리겠습니다.",
+          "blankA_answer": "빌려 줘서/주셔서",
+          "blankB_answer": "돌려주면돌려 드리면 됩니까 되겠습니까",
+          "blankA_variants": [
+            "빌려 줘서",
+            "주셔서"
+          ],
+          "blankB_variants": [
+            "돌려주면돌려 드리면 됩니까 되겠습니까"
+          ],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 7,
@@ -204244,7 +204399,33 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W7",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: Sử dụng thư viện.",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "게시판<br>제목: 도서관을 이용하고 싶습니다.<br><br>작성자: 타넷(2018-10-20)<br>한국대학교를 졸업한 학생인데 도서관을 이용하고 싶습니다.<br>선배에게 물어보니 졸업생이 도서관을 이용하려면 출입증이 ( ㄱ ).<br>출입증을 만들려면 ( ㄴ )?<br>방법을 알려 주시면 감사하겠습니다.",
+          "blankA_answer": "필요하다고 합니다/있어야 한다고 합니다",
+          "blankB_answer": "어떻게 해야 합니까/어떻게 해야 됩니까",
+          "blankA_variants": [
+            "필요하다고 합니다",
+            "있어야 한다고 합니다"
+          ],
+          "blankB_variants": [
+            "어떻게 해야 합니까",
+            "어떻게 해야 됩니까"
+          ],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 8,
@@ -204276,7 +204457,27 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W8",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: Quà tặng.",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "수미 씨. 그동안 고마웠습니다.<br>저는 다음 달이면 홍콩으로 일을 ( ㄱ )<br>제가 원하는 회사에 취직을 해서 기쁘지만 수미 씨를 자주 못 볼 것 같아 아쉽습니다.<br>선물을 준비했는데 선물이 수미 씨 마음에 ( ㄴ ).",
+          "blankA_answer": "",
+          "blankB_answer": "",
+          "blankA_variants": [],
+          "blankB_variants": [],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 9,
@@ -204308,7 +204509,27 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W9",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: MỜI THAM GIA (Thôi nôi)",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "초대합니다<br><br>우리 안나가 태어난 지 1년이 되었습니다.<br><br>1년 동안 여러분 덕분에 건강하게 켰습니다.<br><br>그래서 여러문을 모시고 [ ㄱ]<br><br>[ ㄴ ]? 그 날짜가 가능하신지 연락 주시면 감사하겠습다",
+          "blankA_answer": "",
+          "blankB_answer": "",
+          "blankA_variants": [],
+          "blankB_variants": [],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 10,
@@ -204340,7 +204561,27 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W10",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: MỜI THAM GIA (Thôi nôi)",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "초대합니다<br><br>이준이가 태어난 지 1년이 되는 날<br><br>감사한 여러분과 함께 [ ㄱ].<br><br>장소: 웨딩아티움 1층<br><br>시간: 2022.04.24  18시 바쁘시더라도 오셔서 [ ㄴ ].",
+          "blankA_answer": "",
+          "blankB_answer": "",
+          "blankA_variants": [],
+          "blankB_variants": [],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 11,
@@ -204372,7 +204613,27 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W11",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: MỜI THAM GIA (Thôi nôi)",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "허준의 돌잔치에 초대합니다<br><br>2022.03.21 14시<br><br>웨딩아티움 1층<br><br>바쁘실텐데 꼭 오셔서 허준의 돌잔치를 함께 [ ㄱ ].<br><br>그 날에 못 오실 분이 계시면 [ ㄴ ].",
+          "blankA_answer": "",
+          "blankB_answer": "",
+          "blankA_variants": [],
+          "blankB_variants": [],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 12,
@@ -204404,7 +204665,27 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W12",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: MỜI THAM GIA (Đám cưới)",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "우석 & 지은<br><br>사랑으로 두 사람이 이제 두 사람이 아닌 하나가 [ ㄱ ].<br><br>바쁘실 테데 저희 결혼식에 오셔서[ ㄴ].<br><br>죄송하지만 주차 공간이 없으니까 외부 주차장을 [ ㄷ ].",
+          "blankA_answer": "",
+          "blankB_answer": "",
+          "blankA_variants": [],
+          "blankB_variants": [],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 13,
@@ -204436,7 +204717,27 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W13",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: MỜI THAM GIA (Đám cưới)",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "모시는 글<br><br>마주보고 사랑을 키워 온 저희 두사람이 이제 한곳을 바라보며 평생을 [ ㄱ ].<br><br>바쁘시더라도 참석해주셔서 자리를 [ ㄴ ].<br><br>여려분의 축복과 격려가 새롭게 출발하는 저희 두 사람에게 [ ㄷ ].",
+          "blankA_answer": "",
+          "blankB_answer": "",
+          "blankA_variants": [],
+          "blankB_variants": [],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 14,
@@ -204468,7 +204769,27 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W14",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: MỜI THAM GIA (Đám cưới)",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "모시는 글<br><br>저희 결혼해요 주님의 사랑 안에서 믿음으로 성장한 아래 두 사람이 여러 어른과 친지분들을 모시고 [ ㄱ ].<br><br>마음 하나로 출발하는 두 젊음의 [ ㄴ ].",
+          "blankA_answer": "",
+          "blankB_answer": "",
+          "blankA_variants": [],
+          "blankB_variants": [],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 15,
@@ -204500,7 +204821,27 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W15",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: MỜI THAM GIA (Đám cưới)",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "초대합니다<br><br>저희 두 사람이 한 가정을 [ ㄱ ].<br><br>새로운 출발을 여러분과 함께 [ ㄴ ].<br><br>서로 사랑하는 마음으로 열심히 살겠습니다.<br><br>바쁘시더라도 참석하셔서 [ ㄷ ].",
+          "blankA_answer": "",
+          "blankB_answer": "",
+          "blankA_variants": [],
+          "blankB_variants": [],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 16,
@@ -204532,7 +204873,27 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W16",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: MỜI THAM GIA (Khác)",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "수영 동아리<br><br>흐엉 씨, 이번에 현수가 대학에 합격했다는 소식을 들었습니다.<br><br>그래서 우리 동아리 친구들이[ ㄱ ].<br><br>제가 친구들한테 연락하고 식당도 [ ㄴ ].<br><br>이번 주 토요일에 [ ㄷ ]?",
+          "blankA_answer": "",
+          "blankB_answer": "",
+          "blankA_variants": [],
+          "blankB_variants": [],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 17,
@@ -204564,7 +204925,27 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W17",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: MỜI THAM GIA (Khác)",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "송년회에 초대합니다<br><br>학생 김기란 선생님! 벌써 한 해가 끝나 가고 있습니다.<br><br>우리 학생회에서는 12월에 [ ㄱ ].<br><br>한 해 동안 선생님께서는 잘 가르쳐 주셔서 이번 송년회에 [ ㄴ ].<br><br>특히 맛있는 음식 뿐만 아니라 다양한 [ ㄷ ].<br><br>꼭 오셔서 맛있는 음식과 멋진 공연을[ ㄹ ].",
+          "blankA_answer": "",
+          "blankB_answer": "",
+          "blankA_variants": [],
+          "blankB_variants": [],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 18,
@@ -204596,7 +204977,27 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W18",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: MỜI THAM GIA (Khác)",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "강아지 모임에 초대합니다<br><br>익명 제2회 \"강아지 사랑\" 모임에 여러분을 [ ㄱ ].<br><br>오실 때 간식을 따로 [ ㄴ ]<br><br>저희가 많이 준비했습니다.<br><br>그리고 이번 모임에 주인과 강아지 같이 춤 주는 행사도 [ ㄷ ] 원하시는 분이라면 [ ㄹ ].<br><br>여러분의 많은 관심 부탁드립니다.",
+          "blankA_answer": "",
+          "blankB_answer": "",
+          "blankA_variants": [],
+          "blankB_variants": [],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 19,
@@ -204628,7 +205029,27 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W19",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: HƯỚNG DẪN (금연)",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "건물 내 금연 안내<br><br>저희 건물은 금연 건물입니다<br><br>그래서 건물 천체에서 [ ㄱ ].<br><br>흡연자는 지정된 흡연지역을 [ ㄴ ].<br><br>여러분의 협조 부탁드립니다.",
+          "blankA_answer": "",
+          "blankB_answer": "",
+          "blankA_variants": [],
+          "blankB_variants": [],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 20,
@@ -204660,7 +205081,27 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W20",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: HƯỚNG DẪN (금연)",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "금연 안내<br><br>흡연은 흡연구역을 이용해주세요 !<br><br>이 구역은 전체가 금연구역으로 지정되니 [ ㄱ ].<br><br>이를 위반할 경우 10만원의 과태료가 [ ㄴ ].",
+          "blankA_answer": "",
+          "blankB_answer": "",
+          "blankA_variants": [],
+          "blankB_variants": [],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 21,
@@ -204692,7 +205133,27 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W21",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: HƯỚNG DẪN (금연)",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "이곳은 금연시설입니다<br><br>흡연은 흡연구역을 이용해주세요 !<br><br>이 곳은 금연지역으로 지정된 장소 외에서 [ ㄱ ].<br><br>이를 위반할 경우 10만원의 과태로가 부과되므로 여려분의 [ ㄴ ].",
+          "blankA_answer": "",
+          "blankB_answer": "",
+          "blankA_variants": [],
+          "blankB_variants": [],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 22,
@@ -204724,7 +205185,27 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W22",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: HƯỚNG DẪN (화장실)",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "화장실 이용 안내<br><br>최근 화장실이 더렵다는 의견이 많습니다<br><br>그러므로 다음 사람을 위해 이용 후 [ ㄱ ].<br><br>화장실은 우리 모두가 같이 사용하는 공간이므로 모두 같이 위생을 [ ㄴ ]?",
+          "blankA_answer": "",
+          "blankB_answer": "",
+          "blankA_variants": [],
+          "blankB_variants": [],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 23,
@@ -204756,7 +205237,27 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W23",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: HƯỚNG DẪN (화장실)",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "화장실 사용 에티켓<br><br>휴지는 휴지통에 [ ㄱ ].<br><br>사용후에는 반드시 물을 [ ㄴ ].<br><br>변기커버를 [ ㄷ ]<br><br>손을 [ ㄹ ]<br><br>벽에 [ ㅁ]<br><br>아름다운 사람은 머문자리도 아름답습니다 !!!",
+          "blankA_answer": "",
+          "blankB_answer": "",
+          "blankA_variants": [],
+          "blankB_variants": [],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 24,
@@ -204788,7 +205289,27 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W24",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: TÌM NGƯỜI, ĐỒ VẬT (무료 드림)",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "무료로 드립니다<br><br>제가 부산으로 장기 출장하게 되어 쓰던 물건들을 정리해야 합니다.<br><br>그 중에 산지 1달밖에 안 된 책상이 있는데 가져갈 수 없어서 [ ㄱ ].<br><br>다음 주 월요일에 이사합니다. 그러니까 [ ㄴ ]<br><br>제 연락처는 010-3243-4543입니다",
+          "blankA_answer": "",
+          "blankB_answer": "",
+          "blankA_variants": [],
+          "blankB_variants": [],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 25,
@@ -204820,7 +205341,27 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W25",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: TÌM NGƯỜI, ĐỒ VẬT (무료 드림)",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "무료로 드립니다<br><br>저는 유학생인데 공부를 마치고 다음 주에 고향으로 돌아갈 예정입니다. 그래서 [ ㄱ ].<br><br>책상, 의자, 컴퓨터, 경영학 전공 책 등이 있습니다.<br><br>이번 주 금용일까지 방을 비워야 하니까 [ ㄴ ].",
+          "blankA_answer": "",
+          "blankB_answer": "",
+          "blankA_variants": [],
+          "blankB_variants": [],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 26,
@@ -204852,7 +205393,27 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W26",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: TÌM NGƯỜI, ĐỒ VẬT (물건 분실)",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "지갑을 찾습니다<br><br>금요일 오후에 7층 남자 휴게실에서 [ ㄱ ].<br><br>검은색 지갑인데 그 안에 있는 가족 사진은 저에게 [ ㄴ ] 꼭 찾고 싶습니다.<br><br>혹시 지갑을 보셨거나 보관하고 계신 분이 있으면 [ ㄷ ].<br><br>제 연락처는 010-999-33333입니다.<br><br>찾아 주신 분께 사례하겠습니다",
+          "blankA_answer": "",
+          "blankB_answer": "",
+          "blankA_variants": [],
+          "blankB_variants": [],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 27,
@@ -204884,7 +205445,27 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 51,
+          "qid": "W27",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 51: TÌM NGƯỜI, ĐỒ VẬT (무료 드림)",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "가방을 찾습니다<br><br>10월 2일 학생 휴게실에서 [ ㄱ ].<br><br>검은색 가죽 가방이고 지갑 안에 신분증이 모두 들어있어서 [ ㄴ ].<br><br>재 연략처는 010-1345-4343입니다.<br><br>지갑을 [ ㄷ ]",
+          "blankA_answer": "",
+          "blankB_answer": "",
+          "blankA_variants": [],
+          "blankB_variants": [],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 28,
@@ -204916,7 +205497,31 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 52,
+          "qid": "W28",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 52: Trò chơi.",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "퍼즐은 여러 개의 조각을 모두 제 위치에 놓아야 하나의 그림이 완성된다. 그런데 만일 ( ㄱ ). 사회와 개인의 관계도 마찬가지이다. 사회를 구성하는 모든 개인도 있어야 할 자리에 있어야 한다. 그래야 ( ㄴ ).",
+          "blankA_answer": "퍼즐 조각이 제 자리에 놓이지 않으면 그림은 완성되지 않는다.",
+          "blankB_answer": "비로소 사회가 하나로 돌아가기 때문이다.",
+          "blankA_variants": [
+            "퍼즐 조각이 제 자리에 놓이지 않으면 그림은 완성되지 않는다."
+          ],
+          "blankB_variants": [
+            "비로소 사회가 하나로 돌아가기 때문이다."
+          ],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 29,
@@ -204948,7 +205553,34 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 52,
+          "qid": "W29",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 52: Cơ hội.",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "기회는 어떤 사람에게 명예와 부를 안겨 준다. 기회를 통해서 평범한 사람이 유명해지기도 하고 ( ㄱ ). 이런 변화를 보고 사람들은 자신에게도 그런 기회가 찾아오기를 기다린다. 그러나 실제로 ( ㄴ ). 이렇게 기회를 잘 이용하지 못하는 것은 기회를 잡으려는 준비를 하지 않았기 때문이다.",
+          "blankA_answer": "가난한 사람이 부자가 되기도 한다.\n부자가 되기도 한다.",
+          "blankB_answer": "기회가 와도 그 기회를 잘 이용하지 못한다.\n찾아온 기회를 놓치는 사람들이 많다.\n기회가 찾아오면 활용하지 못하는 사람들이 많다.",
+          "blankA_variants": [
+            "가난한 사람이 부자가 되기도 한다.",
+            "부자가 되기도 한다."
+          ],
+          "blankB_variants": [
+            "기회가 와도 그 기회를 잘 이용하지 못한다.",
+            "찾아온 기회를 놓치는 사람들이 많다.",
+            "기회가 찾아오면 활용하지 못하는 사람들이 많다."
+          ],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 30,
@@ -204980,7 +205612,32 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 52,
+          "qid": "W30",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 52: Thời gian chiếu sáng của ngôi sao đến trái đất.",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "별은 지구에서 멀리 떨어져 있다. 그래서 별빛이 지구까지 오는 데 많은 시간이 걸린다. 지구와 가장 가까운 별의 빛도 지구까지 오는 데 4억 년이 걸린다. 만약 우리가 이 별을 본다면 우리는 이 별의 현재 모습이 아니라 4억 년 전의 (ㄱ ). 이처럼 별빛은 오랜 시간이 지나야 지구에 도달한다. 그래서 어떤 별이 사라져도 우리는 그 사실을 바로 알지 못하고 아주 오랜 시간이 ( ㄴ ).",
+          "blankA_answer": "모습을 보는 것이다.",
+          "blankB_answer": "지나야 알 수 있다/지난 후에야 알 수 있다.",
+          "blankA_variants": [
+            "모습을 보는 것이다."
+          ],
+          "blankB_variants": [
+            "지나야 알 수 있다",
+            "지난 후에야 알 수 있다."
+          ],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 31,
@@ -205012,7 +205669,33 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 52,
+          "qid": "W31",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 52: Thái độ trong tình huống thử thách.",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "어려운 일이 생겼을 때 그 일을 대하는 우리의 태도는 크게 두 가지이다. ( ㄱ ). 다른 하나는 어려워서 불가능하다고 포기하는 것이다. 그런데 긍정적인 결과를 기대할수록 좋은 결과를 얻을 확률이 높다. 반대로 ( ㄴ ). 그러므로 우리는 시련이나 고난이 닥쳤을 때일수록 더욱 긍정적으로 생각할 필요가 있다.",
+          "blankA_answer": "하나는 아무리 어려워도 절대 포기하지 않는 것이다\n하나는 가능하다는 믿음을 가지고 긍정적인 결과를 기대하는 것이다",
+          "blankB_answer": "부정적으로 생각하면 좋은 결과를 얻기 어렵다\n부정적인 생각을 하면 좋은 결과를 얻을 확률이 낮다",
+          "blankA_variants": [
+            "하나는 아무리 어려워도 절대 포기하지 않는 것이다",
+            "하나는 가능하다는 믿음을 가지고 긍정적인 결과를 기대하는 것이다"
+          ],
+          "blankB_variants": [
+            "부정적으로 생각하면 좋은 결과를 얻기 어렵다",
+            "부정적인 생각을 하면 좋은 결과를 얻을 확률이 낮다"
+          ],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 32,
@@ -205044,7 +205727,31 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 52,
+          "qid": "W32",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 52: Vệ sinh cá nhân.",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "머리는 언제 감는 것이 좋을까? 사람들은 보통 아침에 머리를 감는다. 그러나 더러워진 머리는 감고 자야 머릿결에 좋기 때문에 ( ㄱ ). 그런데 젖은 머리로 자면 머릿결이 상하기 쉽다. 따라서 ( ㄴ ) 만약 머리를 말리기 어려우면 아침에 감는 것이 더 낫다.",
+          "blankA_answer": "머리는 저녁에 감는 것이 좋다",
+          "blankB_answer": "자기 전에 머리를 말리고 자야 한다",
+          "blankA_variants": [
+            "머리는 저녁에 감는 것이 좋다"
+          ],
+          "blankB_variants": [
+            "자기 전에 머리를 말리고 자야 한다"
+          ],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 33,
@@ -205076,7 +205783,32 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 52,
+          "qid": "W33",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 52: Lời khuyên khi rửa tay.",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "사람의 손에는 눈에 보이지 않는 세균이 많다. 그래서 병을 예방하기 위해서는 자주( ㄱ ). 그런데 전문가들은 손을 씻을 때 꼭 ( ㄴ ). 비누 없이 물로만 씻으면 손에 있는 세균을 제대로 없애기 어렵기 때문이다.",
+          "blankA_answer": "손을 씻어야 한다",
+          "blankB_answer": "비누를 사용하라고 한다/비누로 씻으라고 한다",
+          "blankA_variants": [
+            "손을 씻어야 한다"
+          ],
+          "blankB_variants": [
+            "비누를 사용하라고 한다",
+            "비누로 씻으라고 한다"
+          ],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 34,
@@ -205108,7 +205840,32 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 52,
+          "qid": "W34",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 52: Mối quan hệ cảm xúc và nét mặt.",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "우리는 기분이 좋으면 밝은 표정을 짓는다. 그리고 기분이 좋지 않으면 표정이 어두워진다. 왜냐하면( ㄱ ). 그런데 이와 반대로 표정이 우리의 감정에 영향을 주기도 한다. 그래서 기분이 안 좋을 때 밝은 표정을 지으면 기분도 따라서 좋아진다. 그러므로 우울할 때일수록 (ㄴ ) 것이 좋다.",
+          "blankA_answer": "감정이 표정에 영향을 주기 때문이다.",
+          "blankB_answer": "밝은 표정을 짓는 하는 표정을 밝게 짓는/하는",
+          "blankA_variants": [
+            "감정이 표정에 영향을 주기 때문이다."
+          ],
+          "blankB_variants": [
+            "밝은 표정을 짓는 하는 표정을 밝게 짓는",
+            "하는"
+          ],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 35,
@@ -205140,7 +205897,33 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "fill_blank",
+          "questionNo": 52,
+          "qid": "W35",
+          "source": "Đề thi thực tế TOPIK II",
+          "category": "Câu 52: Trị liệu bằng âm nhạc.",
+          "levelStyle": "Trang trọng / Thân mật theo đề",
+          "promptHtml": "사람들은 음악 치료를 할 때 환자에게 주로 밝은 분위기의 음악을 들려 줄 것이라고 생각한다. 그러나 환자에게 항상 밝은 분위기의 음악을 ( ㄱ ). 치료 초기에는 환자가 편안한 감정을 느끼는 것이 중요하다. 그래서 환자의 심리 상태와 비슷한 분위기의 음악을 들려준다. 그 이후에는 환자에게 다양한 분위기의 음악을 들려줌으로써 환자가 다양한 감정을 ( ㄴ ).",
+          "blankA_answer": "들려주는 것은 아니다/사용하는 것은 아니다",
+          "blankB_answer": "느끼도록 한다/느끼게 한다.",
+          "blankA_variants": [
+            "들려주는 것은 아니다",
+            "사용하는 것은 아니다"
+          ],
+          "blankB_variants": [
+            "느끼도록 한다",
+            "느끼게 한다."
+          ],
+          "translationHtml": "",
+          "explainA_Html": "",
+          "explainB_Html": "",
+          "grammarHtml": "",
+          "vocabHtml": "",
+          "pitfallsHtml": "",
+          "notesHtml": ""
+        }
       },
       {
         "id": 36,
@@ -205172,7 +205955,17 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "essay",
+          "questionNo": 53,
+          "qid": "W36",
+          "source": "Đề thi thực tế TOPIK II",
+          "promptHtml": "다음 그래프를 보고, 연령대에 따라 필요하다고 생각하는 공공시설이 무엇인지 비교하여 그에 대한 자신의 생각을 200~300자로 쓰십시오. (30점)",
+          "modelEssay": "30대와 60대 성인 남녀를 대상으로 필요하다고 생각하는 공공시설에 대한 설문조사를 실시하였다. 조사 결과 30대의 경우 공연장 문화센터가 40%로 가장 높게 나타났으며 병원 약국이 28%로 그 뒤를 이었다. 반면에 60대는 병원 약국이 전체의 절반 수준인 50%로 가장 높게 나타났으며 공연장 문화센터가 239%로 조사되었다. 공원 시설의 필요성에 대한 견해는 30대와 60 대가 22%로 동일하게 나타났다. 이상의 설문 조사 결과를 통해 자신의",
+          "minChars": 200,
+          "maxChars": 300
+        }
       },
       {
         "id": 37,
@@ -205204,7 +205997,17 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "essay",
+          "questionNo": 53,
+          "qid": "W37",
+          "source": "Đề thi thực tế TOPIK II",
+          "promptHtml": "최근 한국 사회에서는 1인 가구가 계속 증가하고 있습니다. 다음 자료를 참고하여 1인 가구 증가의 원인과 현황을 설명하는 글을 200~300자로 쓰십시오. (30점)",
+          "modelEssay": "최근 한국 사회에서는 1인 가구가 계속 증가하고 있다. 2000년 전체 가구 수의 16%에 불과했던 1인 가구는 꾸준히 증가하여 2012년에는 26%에 도달했다. 12년 사이에 106가 증가한 것이다. 이러한 증가의 원인은 다음과 같다. 첫째, 결혼관의 변화로 인한 독신자 수의 증가이다. 둘째, 노인 인구가 증가하면서 1인 가구도 증가하게 되었다. 셋째, 여성의 사회 진출도 1인 가구가 증가하는 데 영향을 주었다. 이러한 원인으로 1인 가구 수",
+          "minChars": 200,
+          "maxChars": 300
+        }
       },
       {
         "id": 38,
@@ -205236,7 +206039,17 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "essay",
+          "questionNo": 53,
+          "qid": "W38",
+          "source": "Đề thi thực tế TOPIK II",
+          "promptHtml": "다음 그림을 보고 대중매체를 어떻게 나눌 수 있는지 200~300자로 쓰십시오. (30점)",
+          "modelEssay": "대중매체란 많은 사람에게 대량으로 정보와 생각을 전달하는 수단을 말한다. 이러한 대중매체에는 다양한 양식이 있는데, 표 현 양식을 기준으로 나누면 크게 인쇄매체, 전파매체, 통신매체이다. 인쇄매체는 책이나 잡지, 신문 등으로 기록이 오래 보관되고 정보의 신뢰도가 높다는 특징이 있다. 다음으로 전파매체가 있는데 텔레비전 라디오 등이 이에 속한다. 정보를 생생하게 전달하고 오락성이 뛰어나다는 특징을 가진다. 마지막으로 인터넷 과 같은 통신매체를 들",
+          "minChars": 200,
+          "maxChars": 300
+        }
       },
       {
         "id": 39,
@@ -205268,7 +206081,17 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "essay",
+          "questionNo": 53,
+          "qid": "W39",
+          "source": "Đề thi thực tế TOPIK II",
+          "promptHtml": "다음은 '글쓰기 능력을 향상시키는 방법'에 대해 교사와 학생을 대상으로 실시한 설문 조사입니다. 그래프를 보고, 조사 결과를 비교하여 200~300자로 쓰십시오. (30점)",
+          "modelEssay": "교사와 학생 300명을 대상으로 글쓰기 능력을 향상시키는 방법에 대해 설문 조사를 실시하였다. 그 결과 교사와 학생의 생각이 다르다는 것을 알 수 있었다. 교사의 경우 글을 잘 쓰려면 책을 많이 읽어야 한다가 45%로 가장 높게 나타났지만 학생의 경우에는 다양한 주제로 연습하기가 65%로 가장 높았다. 다음으로 교사는 좋은 글을 따라 써야 한다가 30%, 다양한 주제로 연습해야 한다가 25%를 차지했다. 반면에 학생들은 책을 많이 읽어야 한다가",
+          "minChars": 200,
+          "maxChars": 300
+        }
       },
       {
         "id": 40,
@@ -205300,7 +206123,17 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "essay",
+          "questionNo": 53,
+          "qid": "W40",
+          "source": "Đề thi thực tế TOPIK II",
+          "promptHtml": "다음을 참고하여 '국내 외국인 유학생 현황'에 대한 글을 200~300자로 쓰십시오. 단, 글의 제목을 쓰지 마십시오. (30점)",
+          "modelEssay": "최근 국내에서 유학하는 외국인 유학생이 급증했다. 2000년에 4천 명이던 유학생이 가파른 상승세를 보이다 잠시 주춤하더니 다시 증가세를 보이며 2016년에 이르러 10만 명이 되었다. 이러한 증가의 원인으로 우선 외국인들의 한국과 한국어에 대한 관심이 증가한 것을 들 수 있다. 한국 대학에서 유학생을 유치하려는 노력도 유학생의 증가에 큰 영향을 미친 것으로 보인다. 이러한 영향이 계속 이어진다면 2023년에는 외국인 유학생이 20만 명에 이를",
+          "minChars": 200,
+          "maxChars": 300
+        }
       },
       {
         "id": 41,
@@ -205332,7 +206165,17 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "essay",
+          "questionNo": 53,
+          "qid": "W41",
+          "source": "Đề thi thực tế TOPIK II",
+          "promptHtml": "다음을 참고하여 '아이를 꼭 낳아야 하는가'에 대한 글을 200~300자로 쓰시오. 단, 글의 제목을 쓰지 마시오. (30점)",
+          "modelEssay": "결혼문화연구소에서 20대 이상 성인 남녀 3,000명을 대상으로 '아이를 꼭 낳아야 하는가'에 대해 조사하였다. 그 결과 '그렇다'라고 응답한 남자는 80%, 여자는 67%였고, '아니다'라고 응답한 남자는 20%, 여자는 33%였다. 이들이 아니다'라고 응답한 이유에 대해 남자는 양육비가 부담스러워서 여자는 자유로운 생활을 원해서라고 응답한 경우가 가장 많았다. 이어 남자는 자유로운 생활을 원해서, 여자는 직장 생활을 유지하고 싶어서라고 응답",
+          "minChars": 200,
+          "maxChars": 300
+        }
       },
       {
         "id": 42,
@@ -205364,7 +206207,17 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "essay",
+          "questionNo": 53,
+          "qid": "W42",
+          "source": "Đề thi thực tế TOPIK II",
+          "promptHtml": "다음을 참고하여 '인주시의 자전거 이용자 변화'에 대한 글을 200~300자로 쓰시오. 단, 글의 제목을 쓰지 마시오. (30점)",
+          "modelEssay": "인주시의 자전거 이용자 변화를 살펴보면, 자전거 이용자 수는 2007년 4만 명에서 2012년 에는 9만 명, 2017년에는 21만 명으로, 지난 10년간 약 5배 증가하였다. 특히 2012년부터 2017년까지 자전거 이용자 수가 급증한 것으로 나타났다. 이와 같이 자전거 이용자 수가 중가한 이유는 자전거 도로가 개발되고 자전거 빌리는 곳이 확대되었기 때문인 것으로 보인다. 자전거 이용 목적을 보면, 10년간 운동 및 산책은 4배, 출퇴근은 1",
+          "minChars": 200,
+          "maxChars": 300
+        }
       },
       {
         "id": 43,
@@ -205396,7 +206249,17 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "essay",
+          "questionNo": 53,
+          "qid": "W43",
+          "source": "Đề thi thực tế TOPIK II",
+          "promptHtml": "다음을 참고하여 '온라인 쇼핑 시장의 변화'에 대한 글을 200~300자로 쓰시오. 단, 글의 제목을 쓰지 마시오. (30점)",
+          "modelEssay": "온라인 쇼핑 시장의 변화에 대해 조사한 결과, 온라인 쇼핑 시장의 전체 매출액은 2014년에 46조 원, 2018년에 92조 원으로 4년 만에 크게 증가한 것으로 나타났다. 사용 기기에 따른 매출액은 컴퓨터의 경우 2014년에 32조 원, 2018년에 39조 원으로 소폭 증가한 반면 스마트폰은 2014년에 14조 원, 2018년에 53조 원으로 매출액이 큰 폭으로 증가하였다. 이와 같이 온라인 쇼핑 시장이 변화한 원인은 온라인으로 다양한 상품 ",
+          "minChars": 200,
+          "maxChars": 300
+        }
       },
       {
         "id": 44,
@@ -205428,7 +206291,17 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "essay",
+          "questionNo": 54,
+          "qid": "W44",
+          "source": "Đề thi thực tế TOPIK II",
+          "promptHtml": "다음을 주제로 하여 자신의 생각을 600~700자로 글을 쓰십시오. (50점)<br>사람들은 다양한 경제 수준의 삶을 살고 있으며 그러한 삶에 대해 느끼는 각자의 만족도도 다양하다. 그러나 경제적 여유와 행복 만족도가 꼭 비례한다고는 할 수 없다. 경제적 여유가 행복에 미치는 영향에 대해 아래의 내용을 중심으로 자신의 생각을 쓰십시오.<br><br>사람들이 생각하는 행복한 삶이란 무엇인가?<br><br>경제적 조건과 행복 만족도의 관계는 어떠한가?<br><br>행복 만족도를 높이기",
+          "modelEssay": "일반적으로 사람들은 경제적으로 여유가 있으면 다른 사람들보다 더 행복할 것이라고 생각한다. 그러나 반드시 그러한 것은 아니다. 굴지의 기업 총수라고 해서 특별히 더 행복해 보이지 않는 것만 보더라도 그 사실을 잘 알 수있다. 경제적 여유가 정신적 안정과 만족을 가져오는 것은 아니다.\n\n물론 행복해지려면 어느 정도의 경제적인 조건은 요구된다. 사람에게 필수적인 의식주가 해결되지 않은 상황에서는 행복의 크기가 경제력과 비례 관계에 있다고 볼 수도 ",
+          "minChars": 600,
+          "maxChars": 700
+        }
       },
       {
         "id": 45,
@@ -205460,7 +206333,17 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "essay",
+          "questionNo": 54,
+          "qid": "W45",
+          "source": "Đề thi thực tế TOPIK II",
+          "promptHtml": "다음을 주제로 하여 자신의 생각을 600~700자로 글을 쓰십시오. (50점)<br>우리가 공부나 일을 할 때 동기가 분명히 있어야 더 잘 실행할 수 있습니다. 이러한 동기에는 흥미, 만족감, 자부심과 같은 내적 동기도 있고 칭찬이나 보상과 같은 외적 동기도 있습니다. '동기가 일에 미치는 영향'에 대해 아래의 내용을 중심으로 자신의 생각을 쓰십시오.<br><br>동기는 일의 시작 단계에서 어떠한 역할을 합니까?<br>.<br><br>동기가 일의 결과에 미치는 영향은 무엇입니",
+          "modelEssay": "우리가 어떤 일을 진행하는 데에는 동기가 중요한 역할을 한다. 동기란 어떤 일을 하게 하는 보이지 않는 힘인데 동기에는 내적 동기와 외적 동기가 있다. 내적 동기란 흥미, 만족감, 자부심과 같이 우리 마음속에서 저절로 일어나는 것이고, 외적 동기란 칭찬이나 보상과 같이 우리의 외부에서 오는 것이다. 이 두 동기는 우리가 일을 시작할 때부터 마칠 때까지 많은 영향을 미친다.\n\n만약 우리에게 동기가 없다면 일을 시작할 수 없을 것이다. 어떤 일을 ",
+          "minChars": 600,
+          "maxChars": 700
+        }
       },
       {
         "id": 46,
@@ -205492,7 +206375,17 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "essay",
+          "questionNo": 54,
+          "qid": "W46",
+          "source": "Đề thi thực tế TOPIK II",
+          "promptHtml": "다음을 주제로 하여 자신의 생각을 600~700자로 글을 쓰십시오. (50점)<br><br>현대 사회는 빠르게 세계화·전문화되고 있습니다. 이러한 현대 사회의 특성을 참고하여, '현대 사회에서 필요한 인재'에 대해 아래의 내용을 중심으로 자신의 생각을 쓰십시오.<br><br>현대 사회에서 필요한 인재는 어떤 사람입니까?<br><br>그러한 인재가 되기 위해서 어떤 노력이 필요합니까?",
+          "modelEssay": "현대 사회는 과학 기술과 교통의 발달로 많은 변화를 겪고 있다. 그 결과 세계는 점점 가까워져 소위 지구촌 시대라고 불리게 되었다. 이와 함께 지식 생산이 활발해지고 각 영역에서의 경쟁이 치열해지면서 전문화의 중요성이 강조되었다. 이러한 사회에서는 어떠한 인재가 요구될까?\n세계화가 되면서 우선 글로벌 마인드의 구축과 글로벌 인재로서의 역량을 키우는 것이 필요하다. 예전에는 국경이라는 테두리에서 국가 구성원으로서의 기본 자질을 갖추고 사회에서 요",
+          "minChars": 600,
+          "maxChars": 700
+        }
       },
       {
         "id": 47,
@@ -205524,7 +206417,17 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "essay",
+          "questionNo": 54,
+          "qid": "W47",
+          "source": "Đề thi thực tế TOPIK II",
+          "promptHtml": "다음을 주제로 하여 600~700자로 글을 쓰십시오. (50점)<br><br>세계 어느 나라에서나 역사를 가르칩니다. 이는 지나간 일을 기록한 역사가 오늘날의 우리에게 주는 가치가 분명히 있기 때문일 것입니다.여러분은 우리가 왜 역사를 알아야 하고, 그 역사를 통해서 무엇을 배울 수 있다고 생각하십니까? 이에 대해 쓰십시오.",
+          "modelEssay": "대한 반성 또는 위대한 업적 등이 후대에게 지난날에 전해지기를 바라는 마음이 기록으로 이어지고 그것이 바로 우리가 지금 '역사'라고 부르는 것이다. 우리가 역사를 기록하는 이유는 지금 일어나는 사실을 다음 세대에게 전달하는 데 그 목적이 있다.\n이러한 역사는 우리에게 지금의 '나'를 이해할 수 있는 기회를 제공해 준다. 현재는 과거에서 비롯된 것이므로 과거를 살펴봄으로써 현재 일어나고 있는 일에 대해 이해하도록 돕는다. 그리고 역사는 과거에 있",
+          "minChars": 600,
+          "maxChars": 700
+        }
       },
       {
         "id": 48,
@@ -205556,7 +206459,17 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "essay",
+          "questionNo": 54,
+          "qid": "W48",
+          "source": "Đề thi thực tế TOPIK II",
+          "promptHtml": "다음을 주제로 하여 자신의 생각을 600~700자로 글을 쓰십시오. 단, 문제를  그대로 옮겨 쓰지 마십시오. (50점)<br>'칭찬은 고래도 춤추게 한다'는 말처럼 칭찬에는 강한 힘이 있습니다. 그러나 칭찬이 항상 긍정적인 영향을 주는 것은 아닙니다. 아래의 내용을 중심으로 칭찬에 대한 자신의 생각을 쓰십시오.<br><br>칭찬이 미치는 긍정적인 영향은 무엇입니까?<br><br>부정적인 영향은 무엇입니까?<br><br>효과적인 칭찬의 방법은 무엇입니까?",
+          "modelEssay": "우리는 칭찬을 들으면 일을 더 잘하고 싶어질 뿐만 아니라 좀 더 나은 사람이 되고 싶은 마음이 든다. 그리고 자신감이 생겨 공부나 일의 성과에도 긍정적인 영향을 미친다. 그래서 자신이 가진 능력 이상을 발휘하고 싶어지는 도전 정신이 생기기도 하는 것이다. 한 마디로 말해 칭찬은 사람을 한 단계 더 발전시키는 힘을 가지고 있다.\n\n그런데 이러한 칭찬이 독이 되는 경우가 있다. 바로 칭찬이 상대에게 기쁨을 주는 것이 아니라 부담을 안겨 주는 경우이",
+          "minChars": 600,
+          "maxChars": 700
+        }
       },
       {
         "id": 49,
@@ -205588,7 +206501,17 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "essay",
+          "questionNo": 54,
+          "qid": "W49",
+          "source": "Đề thi thực tế TOPIK II",
+          "promptHtml": "다음을 주제로 하여 자신의 생각을 600~700자로 글을 쓰시오. 단, 문제를 그대로 옮겨 쓰지 마시오. (50점)<br>우리는 살면서 서로의 생각이 달라 갈등을 겪는 경우가 많다. 이러한 갈등은 의사소통이 부족해서 생기는 경우가 대부분이다. 의사소통은 서로의 관계를 유지하고 발전시키는 데 중요한 요인이 된다. '의사소통의 중요성과 방법'에 대해 아래의 내용을 중심으로 자신의 생각을 쓰라.<br><br>의사소통은 왜 중요한가?<br><br>의사소통이 잘 이루어지지 않는 ",
+          "modelEssay": "어떤 일을 다른 사람들과 함께 계획하고 추진하기 위해서는 그 사람들과의 원활한 인간관계가 필 요하다. 다만 인간관계를 원활하게 하는 데에는 많은 대화가 요구되며, 이 과정에서 의사소통 능력이 중요한 역할을 한다. 일반적으로 의사소통은 타인과의 소통의 시작이어서 의사소통이 제대로 이루어지지 않는 경우 오해가 생기고 불신이 생기며 경우에 따라서는 분쟁으로까지 이어질 수 있게 된다.\n그런데 이러한 의사소통이 항상 원활히 이루어지는 것은 아니다. 사람",
+          "minChars": 600,
+          "maxChars": 700
+        }
       },
       {
         "id": 50,
@@ -205620,7 +206543,17 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "essay",
+          "questionNo": 54,
+          "qid": "W50",
+          "source": "Đề thi thực tế TOPIK II",
+          "promptHtml": "다음을 주제로 하여 자신의 생각을 600~700자로 글을 쓰시오. 단, 문제 그대로 옮겨 쓰지 마시오. (50점)<br>요즘은 아이가 학교에 들어가기 전 어릴 때부터 악기나 외국어 등 여러 가지를 교육하는 경우가 많다. 이러한 조기 교육은 좋은 점도 있지만 문제점도 있다. 아래의 내용을 중심으로 '조기 교육의 장점과 문제점'에 대해 자신의 의견을 쓰라.<br><br>조기 교육의 장점은 무엇인가?<br><br>조기 교육의 문제점은 무엇인가?<br><br>조기 교육에 찬성하는가, 반대",
+          "modelEssay": "요즘은 학교에 들어가지 않은 아이들에게 다양한 교육을 실시하는 경우가 많다. 어릴 때부터 이루어지는 조기 교육은 좋은 점도 있지만 문제점도 있다.\n\n먼저 조기 교육의 가장 큰 장점은 아이의 재능을 일찍 발견하고 아이가 가진 잠재력을 극대화할 수 있다는 점이다. 예를 들어 예체능계의 유명인 중에는 어릴 때부터 체계적인 교육을 받은 경우가 많다. 또 다른 조기 교육의 장점은 아이의 학업 경쟁력을 높일 수 있다는 점이다. 이 외에도 조기 교육에서의 ",
+          "minChars": 600,
+          "maxChars": 700
+        }
       },
       {
         "id": 51,
@@ -205652,7 +206585,17 @@
         "interval": 0,
         "reps": 0,
         "lapses": 0,
-        "state": "new"
+        "state": "new",
+        "writingData": {
+          "cardType": "essay",
+          "questionNo": 54,
+          "qid": "W51",
+          "source": "Đề thi thực tế TOPIK II",
+          "promptHtml": "다음을 주제로 하여 자신의 생각을 600~700자로 글을 쓰시오. 단, 문제를 그대로 옮겨 쓰지 마시오. (50점)<br><br>사람은 누구나 청소년기를 거쳐 어른이 된다. 아동에서 어른으로 넘어가는 이 시기에 많은 청소년들은 혼란과 방황을 겪으며 성장한다. 아래의 내용을 중심으로 '청소년기의 중요성'에 대한 자신의 생각을 쓰라.<br><br>청소년기가 중요한 이유는 무엇인가?<br><br>청소년들은 이 시기에 주로 어떤 특징을 보이는가?<br><br>청소년의 올바른 성장을 돕기 위해 ",
+          "modelEssay": "청소년기는 자아 정체성을 찾아가는 과도기라는 점에서 사람의 생애 중 중요한 시기이다. 청소년기에 형성된 자아 정체성은 진로나 인간관계뿐 아니라 삶의 전 영역에 지속적인 영향을 미친다. 또한 이 시기는 청소년이 올바른 사회 구성원이 되기 위해 준비하는 시기이기도 하다.\n그러나 청소년은 아직 자아가 형성되지 않았기 때문에 심리적으로 불안 정해지기 쉽다. 특히 가치관의 혼란, 타인의 평가, 또래 집단 내의 압박감 등은 청소년들이 불안정함을 느끼게 되",
+          "minChars": 600,
+          "maxChars": 700
+        }
       }
     ],
     "author": {
