@@ -146,7 +146,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <>
       {/* Mobile Navigation Drawer */}
       {isOpenMobile && (
-        <div className="fixed inset-0 z-50 md:hidden flex animate-fadeIn">
+        <div className="fixed inset-0 z-50 lg:hidden flex animate-fadeIn">
           <div
             className="fixed inset-0 bg-black/70 backdrop-blur-sm"
             onClick={onCloseMobile}
@@ -166,7 +166,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <span className="font-black text-lg text-white tracking-tight block leading-none">
                     Haechi<span className="text-blue-400">VN</span>
                   </span>
-                  <span className="text-[9px] font-semibold text-slate-400 tracking-wider">Tiếng Hàn & Anki LMS</span>
                 </div>
               </Link>
               <button
@@ -278,7 +277,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Desktop Aside Sidebar */}
       <aside
-        className={`${hideDesktop ? "hidden" : "hidden md:flex"} flex-col border-r border-[#111c38]/70 bg-[#090f1e] text-white h-screen sticky top-0 justify-between z-30 select-none transition-all duration-300 ${
+        className={`${hideDesktop ? "hidden" : "hidden lg:flex"} flex-col border-r border-[#111c38]/70 bg-[#090f1e] text-white h-screen sticky top-0 justify-between z-30 select-none transition-all duration-300 ${
           collapsed ? "w-16" : "w-64"
         }`}
       >
@@ -296,7 +295,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <span className="font-black text-lg text-white tracking-tight block leading-none">
                 Haechi<span className="text-blue-400">VN</span>
               </span>
-              <span className="text-[9px] font-semibold text-slate-400 tracking-wider">Tiếng Hàn & Anki LMS</span>
             </div>
           )}
         </div>
