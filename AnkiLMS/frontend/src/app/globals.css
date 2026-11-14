@@ -871,6 +871,24 @@ html {
   background: #2b437e;
 }
 
+/* Light mode: thanh cuộn sáng, đồng bộ với sidebar và nền trắng */
+html[data-theme="light"] {
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+html[data-theme="light"] ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
 /* Noto Sans KR font for Korean text */
 .font-noto {
   font-family: 'Noto Sans KR', sans-serif;
