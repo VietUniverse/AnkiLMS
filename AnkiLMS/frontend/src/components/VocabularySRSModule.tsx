@@ -1655,7 +1655,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
 
                     <button
                       onClick={() => handleResponse(true)}
-                      disabled={studyMode === "typing" && typedInput.trim().normalize("NFC") !== cleanTextOnly(currentCard?.word).normalize("NFC")}
+                      disabled={studyMode === "typing" && !isTypedCorrect(typedInput)}
                       style={{ color: "#fff" }}
                       className="h-12 rounded-xl bg-emerald-500 hover:bg-emerald-600 font-bold text-sm flex items-center justify-center gap-2 transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                     >
