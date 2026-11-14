@@ -35,7 +35,7 @@ import { DailyLimitsPanel } from "./DailyLimitsPanel";
 import { GRADIENT_PRESETS, saveStudyBackground, STUDY_BACKGROUND_GALLERY, useStudyBackground } from "../lib/studyBackground";
 import { addExtraNew, DailyLimits, DEFAULT_LIMITS, effectiveNewLimit, loadLimits, loadProgress, recordCard, remaining, saveLimits } from "../lib/dailyLimits";
 import { speakKorean } from "../lib/koreanSpeech";
-import { useDisableAutoPronounce, useHideChatGpt, useMuteAndHideAudio, useMuteExampleAudio, useMuteWordAudio, useRandomStudyBgEvery10 } from "../lib/studyPreferences";
+import { useStudyCardOpacity, useDisableAutoPronounce, useHideChatGpt, useMuteAndHideAudio, useMuteExampleAudio, useMuteWordAudio, useRandomStudyBgEvery10 } from "../lib/studyPreferences";
 import { inferTopikLevel, getCourseRank } from "../lib/studyRanks";
 import { LockKeyhole, Globe2 } from "lucide-react";
 import { VocabularySizeTest } from "./VocabularySizeTest";
@@ -265,6 +265,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const autoResumedRef = useRef(false);
   // Nút "Hiện đáp án": khi có nền gradient thì dùng chính gradient đó nhưng pha tối để chữ trắng đạt tương phản ≥ 4.5:1.
   const revealHasGradient = studyBg.kind === "gradient" || studyBg.kind === "animated";
+  const cardStyle = { "--study-card-alpha": `${useStudyCardOpacity()}%` } as React.CSSProperties;
   const revealStyle = {
     color: "#fff",
     ...(revealHasGradient
@@ -1818,7 +1819,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
             {/* CHẾ ĐỘ THẺ LUYỆN VIẾT TOPIK II (CÂU 51~54) VỚI Ô GÕ TỰ ĐỘNG CHẤM */}
             {studyMode === "flip" && isCardAWritingCard(currentCard) && (
               <div className="mx-auto w-full max-w-3xl mb-5 select-text">
-                <div className="relative w-full rounded-3xl bg-white dark:bg-[#141b2d] border border-stone-200/80 dark:border-stone-800/80 p-5 sm:p-8 shadow-sm">
+                <div style={cardStyle} className="relative w-full rounded-3xl study-card border border-stone-200/80 dark:border-stone-800/80 p-5 sm:p-8 shadow-sm">
                   {/* Top Meta Chips */}
                   <div className="flex flex-wrap items-center justify-between gap-2.5 pb-4 border-b border-stone-100 dark:border-stone-800">
                     <div className="flex flex-wrap items-center gap-2">
@@ -2223,7 +2224,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
 
             {studyMode === "flip" && !isCardAWritingCard(currentCard) && (
               <div className={`mx-auto w-full mb-5 select-text ${activeImageSrc ? "max-w-4xl" : "max-w-2xl"}`}>
-                <div className="relative w-full min-h-[22rem] rounded-2xl bg-white dark:bg-[#141b2d] dark:border dark:border-stone-800/80 px-6 pt-10 pb-5 sm:px-10 sm:pt-14 flex flex-col justify-between shadow-[0_1px_2px_rgba(28,25,23,0.05),0_12px_32px_-16px_rgba(28,25,23,0.18)] dark:shadow-none">
+                <div style={cardStyle} className="relative w-full min-h-[22rem] rounded-2xl study-card dark:border dark:border-stone-800/80 px-6 pt-10 pb-5 sm:px-10 sm:pt-14 flex flex-col justify-between shadow-[0_1px_2px_rgba(28,25,23,0.05),0_12px_32px_-16px_rgba(28,25,23,0.18)] dark:shadow-none">
                   {/* Body 2 Cột Desktop: Trái Ảnh - Phải Chữ */}
                   <div className="my-auto pb-8 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
                     {/* Cột Trái: Ảnh Minh Họa Cỡ Lớn */}
@@ -2392,7 +2393,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
 
             {/* CHẾ ĐỘ 2: THẺ GÕ TỪ (TYPING - 2 CỘT DESKTOP) */}
             {studyMode === "typing" && (
-              <div className={`mx-auto w-full mb-5 rounded-2xl bg-white dark:bg-[#141b2d] dark:border dark:border-stone-800/80 px-6 py-10 sm:px-10 sm:py-12 shadow-[0_1px_2px_rgba(28,25,23,0.05),0_12px_32px_-16px_rgba(28,25,23,0.18)] dark:shadow-none ${activeImageSrc ? "max-w-4xl" : "max-w-2xl"}`}>
+              <div style={cardStyle} className={`mx-auto w-full mb-5 rounded-2xl study-card dark:border dark:border-stone-800/80 px-6 py-10 sm:px-10 sm:py-12 shadow-[0_1px_2px_rgba(28,25,23,0.05),0_12px_32px_-16px_rgba(28,25,23,0.18)] dark:shadow-none ${activeImageSrc ? "max-w-4xl" : "max-w-2xl"}`}>
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
                   {/* Cột Trái: Ảnh Gợi Ý */}
                   {activeImageSrc && (

@@ -112,3 +112,28 @@ export function setHideChatGpt(hidden: boolean): void {
     // Bỏ qua khi trình duyệt chặn lưu trữ.
   }
 }
+
+// Độ đục nền khối thẻ học (30-100%); chữ không mờ theo.
+const CARD_OPACITY_KEY = "haechivn_study_card_opacity";
+
+const readCardOpacity = (): number => {
+  try {
+    const n = Number(localStorage.getItem(CARD_OPACITY_KEY));
+    return n >= 30 && n <= 100 ? n : 100;
+  } catch {
+    return 100;
+  }
+};
+
+export function useStudyCardOpacity(): number {
+  return useSyncExternalStore(subscribePrefs, readCardOpacity, () => 100);
+}
+
+export function setStudyCardOpacity(value: number): void {
+  try {
+    localStorage.setItem(CARD_OPACITY_KEY, String(value));
+    window.dispatchEvent(new Event(PREF_EVENT));
+  } catch {
+    // Bỏ qua khi trình duyệt chặn lưu trữ.
+  }
+}

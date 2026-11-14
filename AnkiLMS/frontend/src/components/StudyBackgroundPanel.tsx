@@ -5,12 +5,13 @@ import { createPortal } from "react-dom";
 import { Check, ImagePlus, Settings, Trash2, X } from "lucide-react";
 import { EggThemeToggle } from "./EggThemeToggle";
 import { backgroundLayerStyle, DEFAULT_STUDY_BG, fileToDataUrl, GRADIENT_PRESETS, saveStudyBackground, STUDY_BACKGROUND_GALLERY, useStudyBackground } from "../lib/studyBackground";
-import { setDisableAutoPronounce, setHideChatGpt, setMuteAndHideAudio, setMuteExampleAudio, setMuteWordAudio, setRandomStudyBgEvery10, useDisableAutoPronounce, useHideChatGpt, useMuteAndHideAudio, useMuteExampleAudio, useMuteWordAudio, useRandomStudyBgEvery10 } from "../lib/studyPreferences";
+import { setDisableAutoPronounce, setHideChatGpt, setMuteAndHideAudio, setMuteExampleAudio, setMuteWordAudio, setRandomStudyBgEvery10, setStudyCardOpacity, useStudyCardOpacity, useDisableAutoPronounce, useHideChatGpt, useMuteAndHideAudio, useMuteExampleAudio, useMuteWordAudio, useRandomStudyBgEvery10 } from "../lib/studyPreferences";
 
 export function StudyBackgroundPanel() {
   const bg = useStudyBackground();
   const hideChatGpt = useHideChatGpt();
   const muteWordAudio = useMuteWordAudio();
+  const cardOpacity = useStudyCardOpacity();
   const muteExampleAudio = useMuteExampleAudio();
   const muteAndHideAudio = useMuteAndHideAudio();
   const disableAutoPronounce = useDisableAutoPronounce();
@@ -322,6 +323,23 @@ export function StudyBackgroundPanel() {
                 step={5}
                 value={bg.opacity}
                 onChange={(e) => update({ opacity: Number(e.target.value) })}
+                className="w-full cursor-pointer accent-sky-500"
+              />
+            </div>
+
+            <div>
+              <div className="mb-2 flex items-center justify-between text-xs font-bold text-stone-500 dark:text-stone-400">
+                <label htmlFor="study-card-opacity">Độ đục khối học</label>
+                <span className="tabular-nums text-stone-900 dark:text-stone-100">{cardOpacity}%</span>
+              </div>
+              <input
+                id="study-card-opacity"
+                type="range"
+                min={30}
+                max={100}
+                step={5}
+                value={cardOpacity}
+                onChange={(e) => setStudyCardOpacity(Number(e.target.value))}
                 className="w-full cursor-pointer accent-sky-500"
               />
             </div>

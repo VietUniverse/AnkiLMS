@@ -1553,3 +1553,7 @@ html[data-theme="dark"] .lb-medal-3 { color: #fb923c; }
 html[data-theme="dark"] .lb-badge-1 { color: #fcd34d; }
 html[data-theme="dark"] .lb-badge-2 { color: #e2e8f0; }
 html[data-theme="dark"] .lb-badge-3 { color: #fdba74; }
+
+/* Khối thẻ học: chỉ nền trong suốt dần theo Cài đặt học, chữ giữ nguyên. */
+.study-card { background-color: color-mix(in srgb, #fff var(--study-card-alpha, 100%), transparent); }
+:where([data-theme="dark"], .dark) .study-card { background-color: color-mix(in srgb, #141b2d var(--study-card-alpha, 100%), transparent); }
