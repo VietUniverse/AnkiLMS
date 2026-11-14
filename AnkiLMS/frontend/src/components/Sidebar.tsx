@@ -99,9 +99,43 @@ export const Sidebar: React.FC<SidebarProps> = ({
   hideDesktop = false,
 }) => {
   const [collapsed, setCollapsed] = useState(false);
+  const [sidebarWidth, setSidebarWidth] = useState(256);
+  const [resizing, setResizing] = useState(false);
   const [confirmLogout, setConfirmLogout] = useState(false);
   const pathname = usePathname();
   const { isFeatureEnabled } = useApp();
+
+  React.useEffect(() => {
+    try {
+      const saved = Number(localStorage.getItem("haechivn_sidebar_width"));
+      if (saved >= 200 && saved <= 360) setSidebarWidth(saved);
+    } catch { /* bỏ qua */ }
+  }, []);
+
+  React.useEffect(() => {
+    try { localStorage.setItem("haechivn_sidebar_width", String(sidebarWidth)); } catch { /* bỏ qua */ }
+  }, [sidebarWidth]);
+
+  const startResize = (event: React.PointerEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const startX = event.clientX;
+    const startWidth = sidebarWidth;
+    setResizing(true);
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+    const onMove = (e: PointerEvent) => {
+      setSidebarWidth(Math.min(360, Math.max(200, startWidth + e.clientX - startX)));
+    };
+    const onUp = () => {
+      setResizing(false);
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+  };
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -277,10 +311,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Desktop Aside Sidebar */}
       <aside
-        className={`${hideDesktop ? "hidden" : "hidden lg:flex"} flex-col border-r border-[#111c38]/70 bg-[#090f1e] text-white h-screen sticky top-0 justify-between z-30 select-none transition-all duration-300 ${
-          collapsed ? "w-16" : "w-64"
-        }`}
+        className={`${hideDesktop ? "hidden" : "hidden lg:flex"} relative flex-col border-r border-[#111c38]/70 bg-[#090f1e] text-white h-screen sticky top-0 justify-between z-30 select-none ${
+          resizing ? "" : "transition-all duration-300"
+        } ${collapsed ? "w-16" : ""}`}
+        style={collapsed ? undefined : { width: `${sidebarWidth}px` }}
       >
+        {!collapsed && (
+          <div
+            onPointerDown={startResize}
+            role="separator"
+            aria-orientation="vertical"
+            aria-label="Kéo để chỉnh độ rộng thanh bên"
+            title="Kéo để chỉnh độ rộng"
+            className="absolute right-0 top-0 z-40 h-full w-1.5 cursor-col-resize bg-transparent hover:bg-blue-500/40 transition-colors"
+          />
+        )}
       {/* HaechiVN Brand Header */}
       <div
         className={`flex h-16 items-center border-b border-[#111c38]/70 shrink-0 ${
