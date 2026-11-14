@@ -8,12 +8,8 @@ import { OnigiriHeatmap } from "../components/OnigiriHeatmap";
 import { StreakPanel } from "../components/StreakPanel";
 import { InstallAppButton } from "../components/InstallAppButton";
 import { useApp } from "../contexts/AppProvider";
-import { Flame, Zap, Layers, CheckCircle2, X, LogIn, Search, Volume2, Play, ClipboardCheck, ArrowRight, GraduationCap } from "lucide-react";
-import { VOCABULARY_DATA } from "../data/koreanData";
-import { speakKorean } from "../lib/koreanSpeech";
+import { Flame, Zap, Layers, CheckCircle2, X, LogIn, Play, ClipboardCheck, ArrowRight, GraduationCap } from "lucide-react";
 import { ApiClient } from "../lib/apiClient";
-import { detectDictionarySearchLanguage, matchesDictionarySearchText, searchLearningDictionary } from "../lib/dictionarySearch";
-import { useTranslationLanguage } from "../lib/translationPreference";
 import { getStudyRank } from "../lib/studyRanks";
 import { loadProgress, NEW_WORDS_FOR_CHECKIN, vietnamToday } from "../lib/dailyLimits";
 
@@ -23,9 +19,6 @@ export default function Home() {
   const [newWordsToday, setNewWordsToday] = React.useState(0);
   const [showWelcome, setShowWelcome] = React.useState(false);
   const [showPlacementPrompt, setShowPlacementPrompt] = React.useState(false);
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [searchResults, setSearchResults] = React.useState<Array<{ korean: string; meaning: string; language: string; example?: string; translation?: string }>>([]);
-  const [translationLanguage] = useTranslationLanguage();
   const [lastLessonTitle, setLastLessonTitle] = React.useState<string | null>(null);
   const [installDismissed, setInstallDismissed] = React.useState(true);
   React.useEffect(() => {
@@ -42,51 +35,6 @@ export default function Home() {
       setLastLessonTitle(savedTitle);
     }
   }, []);
-
-  const searchPool = React.useMemo(() => {
-    const list = [
-      ...VOCABULARY_DATA.map((item) => ({
-        korean: item.hangul,
-        meaning: item.vietnamese,
-        example: item.exampleSentence,
-        translation: item.exampleTranslation,
-      })),
-    ];
-    const unique = new Map<string, { korean: string; meaning: string; example?: string; translation?: string }>();
-    list.forEach((item) => {
-      const key = item.korean.trim().toLowerCase();
-      if (!unique.has(key)) unique.set(key, item);
-    });
-    return Array.from(unique.values());
-  }, []);
-
-  React.useEffect(() => {
-    const query = searchQuery.trim();
-    if (!query) { setSearchResults([]); return; }
-    let cancelled = false;
-    const controller = new AbortController();
-    const timer = window.setTimeout(() => {
-      const searchLanguage = detectDictionarySearchLanguage(query, translationLanguage);
-      void searchLearningDictionary(query, 30, controller.signal, searchLanguage).then((entries) => {
-        if (cancelled) return;
-        if (entries.length) {
-          setSearchResults(entries.slice(0, 5).map((entry) => {
-            const selectedMeaning = searchLanguage === "vi" ? entry.vietnamese : searchLanguage === "en" ? entry.english : entry.japanese;
-            const fallbackMeaning = entry.vietnamese || entry.english || entry.japanese;
-            const language = selectedMeaning ? searchLanguage.toUpperCase() : entry.vietnamese ? "VI" : entry.english ? "EN" : "JA";
-            return { korean: entry.hangul, meaning: selectedMeaning || fallbackMeaning || "Chưa có nghĩa trong dữ liệu", language };
-          }));
-          return;
-        }
-        setSearchResults(searchLanguage === "vi" ? searchPool.filter((item) => matchesDictionarySearchText(item.korean, query) || matchesDictionarySearchText(item.meaning, query)).slice(0, 5).map((item) => ({ ...item, language: "VI" })) : []);
-      }).catch(() => {
-        if (!cancelled) {
-          setSearchResults(searchLanguage === "vi" ? searchPool.filter((item) => matchesDictionarySearchText(item.korean, query) || matchesDictionarySearchText(item.meaning, query)).slice(0, 5).map((item) => ({ ...item, language: "VI" })) : []);
-        }
-      });
-    }, 180);
-    return () => { cancelled = true; controller.abort(); window.clearTimeout(timer); };
-  }, [searchQuery, searchPool, translationLanguage]);
 
   // Nếu chưa đăng nhập thì tự động chuyển hướng sang trang đăng nhập /login
   React.useEffect(() => {
@@ -322,77 +270,6 @@ export default function Home() {
             </div>
           </section>
         )}
-
-        {/* Khối Tra Từ Vựng - Căn giữa, ngay trên khối tiến độ */}
-        <div className="rounded-3xl bg-[#090f1e] text-white p-5 sm:p-6 shadow-2xl border-0 space-y-3.5 animate-fadeIn text-center">
-          <div className="space-y-1 text-center">
-            <h3 className="text-base sm:text-lg font-black tracking-tight text-white flex items-center justify-center gap-2">
-              <Search className="w-5 h-5 text-blue-400" />
-              <span>Tra Từ Vựng</span>
-            </h3>
-            <p className="text-xs text-slate-400 font-medium max-w-md mx-auto">
-              Tra từ và xem nghĩa {translationLanguage === "vi" ? "tiếng Việt" : translationLanguage === "en" ? "tiếng Anh" : "tiếng Nhật"}, phát âm chuẩn giọng Seoul
-            </p>
-          </div>
-
-          <div className="max-w-xl mx-auto relative">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Nhập từ tiếng Hàn hoặc nghĩa tiếng Việt (VD: 행복, yêu, học)..."
-              className="w-full px-5 py-3 pr-12 rounded-2xl bg-[#0b1329] text-white text-xs sm:text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all border-0 shadow-inner"
-            />
-            {searchQuery ? (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-white transition-colors cursor-pointer border-0"
-                title="Xóa tìm kiếm"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            ) : (
-              <Search className="w-4 h-4 text-slate-500 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
-            )}
-          </div>
-
-          {/* Kết quả tra cứu nhanh (Chỉ hiển thị tiếng Hàn và nghĩa tiếng Việt, TUYỆT ĐỐI KHÔNG hiển thị phiên âm La-tinh) */}
-          {searchQuery.trim() && (
-            <div className="max-w-xl mx-auto space-y-2 pt-1 animate-fadeIn">
-              {searchResults.length > 0 ? (
-                searchResults.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="p-3.5 rounded-2xl bg-[#0b1329] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-left border-0 shadow-md"
-                  >
-                    <div className="space-y-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-base sm:text-lg font-black text-white">{item.korean}</span>
-                        <button
-                          onClick={() => speakKorean(item.korean)}
-                          className="p-1.5 rounded-lg bg-[#132247] hover:bg-[#1a2f60] text-blue-400 hover:text-blue-300 transition-colors cursor-pointer border-0"
-                          title="Phát âm tiếng Hàn"
-                        >
-                          <Volume2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                      <p className="text-xs sm:text-sm font-semibold text-blue-300"><span className="mr-1 text-[10px]">{item.language} ·</span>{item.meaning}</p>
-                      {item.example && (
-                        <p className="text-[11px] text-slate-400 font-normal">
-                          {item.example} {item.translation ? `— ${item.translation}` : ""}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-xs text-slate-400 italic py-2">
-                  Không tìm thấy từ vựng nào khớp với &quot;{searchQuery}&quot;
-                </p>
-              )}
-            </div>
-          )}
-        </div>
       </div>
     </AppShell>
   );
