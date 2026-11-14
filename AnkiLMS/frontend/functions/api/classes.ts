@@ -1,10 +1,38 @@
 import { Env, authenticateRequest, errorResponse, isSameOriginRequest, jsonResponse } from "./_utils";
 
 type ClassRole = "owner" | "admin" | "staff" | "student";
+type ClassVisibility = "public" | "private" | "secret";
+
+const CLASS_VISIBILITIES: ClassVisibility[] = ["public", "private", "secret"];
+
+async function getDiscoverClasses(env: Env, userId: string) {
+  const rows = await env.DB.prepare(
+    `SELECT c.id, c.name, c.description, c.visibility, c.created_at AS createdAt,
+            owner.name AS ownerName,
+            (SELECT COUNT(*) FROM classroom_members cm WHERE cm.class_id = c.id AND cm.status = 'approved') AS memberCount,
+            mine.status AS myStatus
+     FROM classrooms c
+     JOIN users owner ON owner.id = c.owner_id
+     LEFT JOIN classroom_members mine ON mine.class_id = c.id AND mine.user_id = ?
+     WHERE c.visibility IN ('public', 'private')
+     ORDER BY CASE c.visibility WHEN 'public' THEN 0 ELSE 1 END, memberCount DESC, c.created_at DESC
+     LIMIT 100`,
+  ).bind(userId).all<any>();
+  return (rows.results || []).map((row: any) => ({
+    id: row.id,
+    name: row.name,
+    description: row.description,
+    visibility: row.visibility as ClassVisibility,
+    createdAt: row.createdAt,
+    ownerName: row.ownerName,
+    memberCount: row.memberCount || 0,
+    myStatus: (row.myStatus || null) as "approved" | "pending" | null,
+  }));
+}
 
 async function getClasses(env: Env, userId: string) {
   const memberships = await env.DB.prepare(
-    `SELECT c.id, c.code, c.name, c.description, c.owner_id AS ownerId, owner.name AS ownerName,
+    `SELECT c.id, c.code, c.name, c.description, c.visibility, c.owner_id AS ownerId, owner.name AS ownerName,
             c.created_at AS createdAt, mine.status AS myStatus, mine.role AS myRole
      FROM classroom_members mine
      JOIN classrooms c ON c.id = mine.class_id
@@ -54,6 +82,7 @@ async function getClasses(env: Env, userId: string) {
     }));
     classes.push({
       id: cls.id, code: cls.code, name: cls.name, description: cls.description,
+      visibility: (cls.visibility || "secret") as ClassVisibility,
       ownerId: cls.ownerId, ownerName: cls.ownerName, createdAt: cls.createdAt,
       members, assignments: (assignmentsResult.results || []).map((a: any) => ({
         id: a.id, title: a.title, deckName: a.deckName, dueDate: a.dueDate,
@@ -82,6 +111,9 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   if (!user) return errorResponse("Vui lòng đăng nhập để xem lớp học.", 401);
   try {
     const url = new URL(request.url);
+    if (url.searchParams.get("discover") === "1") {
+      return jsonResponse({ classes: await getDiscoverClasses(env, user.id) });
+    }
     const mediaAssignmentId = url.searchParams.get("media");
     const assetId = url.searchParams.get("asset");
     if (mediaAssignmentId || assetId) {
@@ -148,6 +180,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   try {
     const body = await request.json() as {
       action?: string; name?: string; description?: string; code?: string; classId?: string; level?: string;
+      visibility?: string;
       memberId?: string; role?: string; title?: string; deckName?: string; dueDate?: string;
       assignmentId?: string; xpEarned?: number; cardId?: number; correct?: boolean;
       deckCards?: { id: number; korean: string; meaning: string; example?: string; pronunciation?: string; mediaAssetIds?: string[] }[];
@@ -158,11 +191,14 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     if (body.action === "create") {
       const name = typeof body.name === "string" ? body.name.trim() : "";
       const description = typeof body.description === "string" ? body.description.trim() : "";
+      const visibility: ClassVisibility = CLASS_VISIBILITIES.includes(body.visibility as ClassVisibility)
+        ? (body.visibility as ClassVisibility)
+        : "private";
       if (name.length < 2 || name.length > 80 || description.length > 500) return errorResponse("Tên lớp hoặc mô tả không hợp lệ.");
       const id = `cls_${crypto.randomUUID()}`;
       const code = crypto.randomUUID().replace(/-/g, "").slice(0, 8).toUpperCase();
       await env.DB.batch([
-        env.DB.prepare("INSERT INTO classrooms (id, code, name, description, owner_id) VALUES (?, ?, ?, ?, ?)").bind(id, code, name, description, user.id),
+        env.DB.prepare("INSERT INTO classrooms (id, code, name, description, owner_id, visibility) VALUES (?, ?, ?, ?, ?, ?)").bind(id, code, name, description, user.id, visibility),
         env.DB.prepare("INSERT INTO classroom_members (class_id, user_id, role, status) VALUES (?, ?, 'owner', 'approved')").bind(id, user.id),
       ]);
       return jsonResponse({ success: true, classes: await getClasses(env, user.id) }, 201);
@@ -170,12 +206,36 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
 
     if (body.action === "join") {
       const code = typeof body.code === "string" ? body.code.trim().toUpperCase() : "";
-      if (!/^[A-F0-9]{8}$/.test(code)) return errorResponse("Mã lớp không hợp lệ.");
-      const classroom = await env.DB.prepare("SELECT id FROM classrooms WHERE code = ?").bind(code).first<{ id: string }>();
-      if (!classroom) return errorResponse("Không tìm thấy lớp học với mã này.", 404);
+      const requestedClassId = typeof body.classId === "string" ? body.classId.trim() : "";
+      let classroom: { id: string; visibility: ClassVisibility } | null = null;
+      if (code) {
+        if (!/^[A-F0-9]{8}$/.test(code)) return errorResponse("Mã lớp không hợp lệ.");
+        classroom = await env.DB.prepare("SELECT id, visibility FROM classrooms WHERE code = ?").bind(code).first<{ id: string; visibility: ClassVisibility }>();
+        if (!classroom) return errorResponse("Không tìm thấy lớp học với mã này.", 404);
+      } else if (requestedClassId) {
+        classroom = await env.DB.prepare("SELECT id, visibility FROM classrooms WHERE id = ? AND visibility IN ('public', 'private')")
+          .bind(requestedClassId).first<{ id: string; visibility: ClassVisibility }>();
+        if (!classroom) return errorResponse("Không tìm thấy lớp học công khai hoặc riêng tư này.", 404);
+      } else {
+        return errorResponse("Vui lòng nhập mã lớp hoặc chọn lớp để tham gia.");
+      }
       const existing = await getMembership(env, classroom.id, user.id);
       if (existing) return errorResponse(existing.status === "approved" ? "Bạn đã tham gia lớp này." : "Yêu cầu tham gia đang chờ duyệt.", 409);
-      await env.DB.prepare("INSERT INTO classroom_members (class_id, user_id, role, status) VALUES (?, ?, 'student', 'pending')").bind(classroom.id, user.id).run();
+      const nextStatus = classroom.visibility === "public" ? "approved" : "pending";
+      await env.DB.prepare("INSERT INTO classroom_members (class_id, user_id, role, status) VALUES (?, ?, 'student', ?)")
+        .bind(classroom.id, user.id, nextStatus).run();
+      return jsonResponse({ success: true, status: nextStatus, classes: await getClasses(env, user.id) });
+    }
+
+    if (body.action === "set_visibility") {
+      const targetClassId = typeof body.classId === "string" ? body.classId.trim() : "";
+      const visibility = body.visibility as ClassVisibility;
+      if (!targetClassId || !CLASS_VISIBILITIES.includes(visibility)) return errorResponse("Chế độ hiển thị lớp không hợp lệ.");
+      const owner = await env.DB.prepare("SELECT owner_id AS ownerId FROM classrooms WHERE id = ?")
+        .bind(targetClassId).first<{ ownerId: string }>();
+      if (!owner) return errorResponse("Không tìm thấy lớp học.", 404);
+      if (owner.ownerId !== user.id && user.role !== "admin") return errorResponse("Chỉ chủ lớp mới được đổi chế độ hiển thị.", 403);
+      await env.DB.prepare("UPDATE classrooms SET visibility = ? WHERE id = ?").bind(visibility, targetClassId).run();
       return jsonResponse({ success: true, classes: await getClasses(env, user.id) });
     }
 

@@ -313,6 +313,24 @@ export class ApiClient {
     const data = await res.json();
     return data.classes || [];
   }
+  public static async getDiscoverClasses(): Promise<any[]> {
+    const res = await fetch("/api/classes?discover=1", { credentials: "same-origin" });
+    if (!res.ok) throw new Error("Không tải được danh sách lớp học.");
+    const data = await res.json();
+    return data.classes || [];
+  }
+
+  public static async joinClass(payload: Record<string, unknown>): Promise<{ classes: any[]; status: "approved" | "pending" }> {
+    const res = await fetch("/api/classes", {
+      method: "POST", credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...payload, action: "join" }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || "Không thể tham gia lớp học.");
+    return { classes: data.classes || [], status: data.status === "approved" ? "approved" : "pending" };
+  }
+
 
   public static async classAction(payload: Record<string, unknown>): Promise<any[]> {
     const res = await fetch("/api/classes", {

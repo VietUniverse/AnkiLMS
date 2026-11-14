@@ -32,6 +32,8 @@ import {
   UserCheck2,
   Search,
   X,
+  Globe,
+  EyeOff,
 } from "lucide-react";
 import { ApiClient, UserProfile } from "../lib/apiClient";
 import { useApp } from "../contexts/AppProvider";
@@ -80,16 +82,43 @@ export interface ClassAssignment {
   progress?: StudentAssignmentProgress[];
 }
 
+export type ClassVisibility = "public" | "private" | "secret";
+
+export const CLASS_VISIBILITY_OPTIONS: {
+  value: ClassVisibility;
+  label: string;
+  description: string;
+}[] = [
+  { value: "public", label: "Công khai", description: "Hiện ở trang Tham gia lớp học, ai cũng vào học được ngay." },
+  { value: "private", label: "Riêng tư", description: "Hiện ở trang Tham gia lớp học, cần chủ lớp duyệt yêu cầu." },
+  { value: "secret", label: "Bí mật", description: "Ẩn khỏi trang Tham gia lớp học, chỉ vào được bằng mã lớp." },
+];
+
+const visibilityLabel = (visibility: ClassVisibility) =>
+  CLASS_VISIBILITY_OPTIONS.find((option) => option.value === visibility)?.label || "Bí mật";
+
 export interface Classroom {
   id: string;
   code: string;
   name: string;
   description: string;
+  visibility: ClassVisibility;
   ownerId: string;
   ownerName: string;
   createdAt: string;
   members: ClassMember[];
   assignments: ClassAssignment[];
+}
+
+export interface DiscoverClass {
+  id: string;
+  name: string;
+  description: string;
+  visibility: ClassVisibility;
+  ownerName: string;
+  memberCount: number;
+  myStatus: "approved" | "pending" | null;
+  createdAt: string;
 }
 
 interface ClassroomModuleProps {
@@ -113,6 +142,9 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
 
   // Tab điều hướng giữa danh sách lớp và form tham gia bằng mã
   const [mainTab, setMainTab] = useState<"mine" | "join">("mine");
+  // Danh sách lớp công khai / riêng tư để khám phá ở tab Tham gia
+  const [discoverClasses, setDiscoverClasses] = useState<DiscoverClass[]>([]);
+  const [discoverLoading, setDiscoverLoading] = useState(true);
   // Join Class Form State
   const [joinCodeInput, setJoinCodeInput] = useState("");
   // Link mời /classes?join=MÃ điền sẵn ô mã lớp cho người được mời.
@@ -130,6 +162,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
   const [creating, setCreating] = useState(false);
   const [newClassName, setNewClassName] = useState("");
   const [newClassDesc, setNewClassDesc] = useState("");
+  const [newClassVisibility, setNewClassVisibility] = useState<ClassVisibility>("private");
 
   // Assign Deck Modal
   const [showAssignModal, setShowAssignModal] = useState(false);
@@ -326,16 +359,26 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
     let active = true;
     if (!currentUser) {
       setClasses([]);
+      setDiscoverClasses([]);
       setLoading(false);
+      setDiscoverLoading(false);
       return () => { active = false; };
     }
     setLoading(true);
+    setDiscoverLoading(true);
     ApiClient.getClasses().then((result) => {
       if (active) setClasses(result);
     }).catch((error) => {
       if (active) setMsg({ type: "error", text: error.message || "Không tải được lớp học." });
     }).finally(() => {
       if (active) setLoading(false);
+    });
+    ApiClient.getDiscoverClasses().then((result) => {
+      if (active) setDiscoverClasses(result as DiscoverClass[]);
+    }).catch(() => {
+      if (active) setDiscoverClasses([]);
+    }).finally(() => {
+      if (active) setDiscoverLoading(false);
     });
     return () => { active = false; };
   }, [currentUser?.id]);
@@ -366,10 +409,50 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
       return;
     }
 
-    const joined = await runClassAction({ action: "join", code: trimmedCode });
-    if (!joined) return;
-    setJoinCodeInput("");
-    setMsg({ type: "success", text: "Đã gửi yêu cầu tham gia lớp. Chủ lớp sẽ duyệt yêu cầu của bạn." });
+    try {
+      const result = await ApiClient.joinClass({ code: trimmedCode });
+      setClasses(result.classes);
+      setJoinCodeInput("");
+      setMsg({
+        type: "success",
+        text: result.status === "approved"
+          ? "Bạn đã tham gia lớp học công khai này."
+          : "Đã gửi yêu cầu tham gia lớp. Chủ lớp sẽ duyệt yêu cầu của bạn.",
+      });
+    } catch (error) {
+      setMsg({ type: "error", text: error instanceof Error ? error.message : "Không thể tham gia lớp học." });
+    }
+  };
+
+  // 1b. Join a discovered public/private class without typing its code
+  const handleJoinDiscoveredClass = async (cls: DiscoverClass) => {
+    setMsg(null);
+    try {
+      const result = await ApiClient.joinClass({ classId: cls.id });
+      setClasses(result.classes);
+      setDiscoverClasses((prev) => prev.map((item) => item.id === cls.id
+        ? { ...item, myStatus: result.status, memberCount: result.status === "approved" ? item.memberCount + 1 : item.memberCount }
+        : item));
+      setMsg({
+        type: "success",
+        text: result.status === "approved"
+          ? `Bạn đã tham gia lớp “${cls.name}”.`
+          : `Đã gửi yêu cầu tham gia lớp “${cls.name}”. Chủ lớp sẽ duyệt yêu cầu của bạn.`,
+      });
+    } catch (error) {
+      setMsg({ type: "error", text: error instanceof Error ? error.message : "Không thể tham gia lớp học." });
+    }
+  };
+
+  // 1c. Change who can see this class (owner only)
+  const handleVisibilityChange = async (visibility: ClassVisibility) => {
+    if (!selectedClassId) return;
+    try {
+      setClasses(await ApiClient.classAction({ action: "set_visibility", classId: selectedClassId, visibility }));
+      ApiClient.getDiscoverClasses().then((result) => setDiscoverClasses(result as DiscoverClass[])).catch(() => {});
+    } catch (error) {
+      setMsg({ type: "error", text: error instanceof Error ? error.message : "Không thể đổi chế độ hiển thị lớp." });
+    }
   };
 
   // 2. Create Private Class
@@ -385,12 +468,14 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
     if (!newClassName.trim()) return;
 
     setCreating(true);
-    const created = await runClassAction({ action: "create", name: newClassName, description: newClassDesc });
+    const created = await runClassAction({ action: "create", name: newClassName, description: newClassDesc, visibility: newClassVisibility });
     setCreating(false);
     if (!created) return;
     setShowCreateModal(false);
     setNewClassName("");
     setNewClassDesc("");
+    setNewClassVisibility("private");
+    ApiClient.getDiscoverClasses().then((result) => setDiscoverClasses(result as DiscoverClass[])).catch(() => {});
     setMsg({
       type: "success",
       text: "Tạo lớp học thành công. Mã mời nằm trong trang lớp để bạn sao chép và gửi cho học viên.",
@@ -576,15 +661,36 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
             <span>Danh Sách Lớp Học</span>
           </button>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap justify-end">
             <span className="px-3 py-1 rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/40 text-xs font-mono font-bold flex items-center gap-2">
               <span>Mã Lớp: {selectedClass.code}</span>
               <button onClick={() => copyToClipboard(selectedClass.code)} className="hover:text-white" title="Sao chép mã">
                 <Copy className="w-3.5 h-3.5" />
               </button>
             </span>
+            {isClassOwner ? (
+              <select
+                value={selectedClass.visibility}
+                onChange={(e) => handleVisibilityChange(e.target.value as ClassVisibility)}
+                title="Chế độ hiển thị của lớp"
+                className="px-2.5 py-1 rounded-full bg-[#132247] border border-[#1e3a70] text-xs font-bold text-slate-200 focus:outline-none focus:border-sky-400 cursor-pointer"
+              >
+                {CLASS_VISIBILITY_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </select>
+            ) : (
+              <span className="px-3 py-1 rounded-full bg-[#132247] border border-[#1e3a70] text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                {selectedClass.visibility === "public" ? <Globe className="w-3.5 h-3.5 text-emerald-400" /> : selectedClass.visibility === "private" ? <Lock className="w-3.5 h-3.5 text-sky-400" /> : <EyeOff className="w-3.5 h-3.5 text-slate-400" />}
+                <span>{visibilityLabel(selectedClass.visibility)}</span>
+              </span>
+            )}
           </div>
         </div>
+
+        {msg?.type === "error" && (
+          <p className="text-xs font-bold text-rose-400">{msg.text}</p>
+        )}
 
         {/* =========================================================================
             HEADER BANNER TYPE 1: OWNER & ADMIN INTERFACE (GOLD ROYAL MANAGEMENT THEME)
@@ -1402,6 +1508,85 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
         )}
       </div>
 
+      {/* Khám phá lớp công khai & riêng tư */}
+      <div className="card-duo p-6 bg-[#0f1b38] border-[#1e3466] space-y-4 shadow-xl">
+        <div className="flex items-center gap-3 border-b border-slate-800 pb-3">
+          <div className="w-10 h-10 rounded-2xl bg-sky-500/20 text-sky-400 flex items-center justify-center font-black">
+            <Globe className="w-5 h-5" />
+          </div>
+          <div>
+            <h2 className="text-base font-black text-white">Khám Phá Lớp Học</h2>
+            <p className="text-xs text-slate-400">Lớp công khai vào học ngay, lớp riêng tư cần chủ lớp duyệt. Lớp bí mật không hiển thị ở đây.</p>
+          </div>
+        </div>
+
+        {discoverLoading ? (
+          <p className="text-center text-sm text-slate-400 py-6">Đang tải danh sách lớp…</p>
+        ) : discoverClasses.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {discoverClasses.map((cls) => {
+              const isPublic = cls.visibility === "public";
+              return (
+                <div key={cls.id} className="rounded-2xl border border-[#1e3466] bg-[#132247]/50 p-4 space-y-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-black border flex items-center gap-1 ${
+                      isPublic
+                        ? "bg-emerald-950/80 border-emerald-500/40 text-emerald-300"
+                        : "bg-sky-950/80 border-sky-500/40 text-sky-300"
+                    }`}>
+                      {isPublic ? <Globe className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
+                      <span>{isPublic ? "Công khai" : "Riêng tư"}</span>
+                    </span>
+                    <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
+                      <Users className="w-3.5 h-3.5 text-amber-400" /> {cls.memberCount} thành viên
+                    </span>
+                  </div>
+
+                  <div>
+                    <h3 className="text-sm font-black text-white">{cls.name}</h3>
+                    <p className="text-xs text-slate-400 mt-1 line-clamp-2">{cls.description || "Lớp học chưa có mô tả."}</p>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-bold text-slate-400 flex items-center gap-1">
+                      <UserCheck className="w-4 h-4 text-blue-400" /> {cls.ownerName}
+                    </span>
+                    {cls.myStatus === "approved" ? (
+                      <button
+                        type="button"
+                        onClick={() => setSelectedClassId(cls.id)}
+                        className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-[11px] flex items-center gap-1.5 cursor-pointer transition-all"
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>Vào lớp</span>
+                      </button>
+                    ) : cls.myStatus === "pending" ? (
+                      <span className="px-3 py-2 rounded-xl bg-amber-950/80 border border-amber-500/40 text-amber-300 text-[11px] font-black flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5" />
+                        <span>Đang chờ duyệt</span>
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => handleJoinDiscoveredClass(cls)}
+                        className={`px-3.5 py-2 rounded-xl text-white font-black text-[11px] flex items-center gap-1.5 cursor-pointer transition-all ${
+                          isPublic ? "bg-emerald-600 hover:bg-emerald-500" : "bg-blue-600 hover:bg-blue-500"
+                        }`}
+                      >
+                        {isPublic ? <UserPlus className="w-3.5 h-3.5" /> : <KeyRound className="w-3.5 h-3.5" />}
+                        <span>{isPublic ? "Tham gia ngay" : "Gửi yêu cầu"}</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="text-center text-xs text-slate-400 py-6">Chưa có lớp công khai hoặc riêng tư nào để tham gia.</p>
+        )}
+      </div>
+
       {pendingClasses.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center gap-3 border-b border-slate-800 pb-3">
@@ -1538,6 +1723,10 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
                       <span className="flex items-center gap-1 text-purple-400">
                         <Layers className="w-4 h-4" /> {cls.assignments.length} Bài tập
                       </span>
+                      <span className="flex items-center gap-1 text-slate-300" title="Chế độ hiển thị">
+                        {cls.visibility === "public" ? <Globe className="w-4 h-4 text-emerald-400" /> : cls.visibility === "private" ? <Lock className="w-4 h-4 text-sky-400" /> : <EyeOff className="w-4 h-4 text-slate-400" />}
+                        {visibilityLabel(cls.visibility)}
+                      </span>
                     </div>
                   </div>
 
@@ -1591,7 +1780,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
           <div className="card-duo p-6 bg-[#0f1b38] border-[#1e3466] max-w-md w-full space-y-4 shadow-2xl animate-scaleUp">
             <h3 className="text-lg font-black text-white flex items-center gap-2">
               <Plus className="w-5 h-5 text-amber-400" />
-              <span>Tạo Lớp Học Riêng Tư Mới</span>
+              <span>Tạo Lớp Học Mới</span>
             </h3>
 
             {msg?.type === "error" && <p className="rounded-xl border border-rose-500/40 bg-rose-500/10 p-3 text-xs font-bold text-rose-300">{msg.text}</p>}
@@ -1607,6 +1796,33 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
                   onChange={(e) => setNewClassName(e.target.value)}
                   className="w-full px-3.5 py-2.5 rounded-xl bg-[#132247] border border-[#1e3a70] text-white text-xs font-bold focus:outline-none focus:border-sky-400"
                 />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-300 block mb-1">Chế độ hiển thị *</label>
+                <div className="space-y-2">
+                  {CLASS_VISIBILITY_OPTIONS.map((option) => {
+                    const selected = newClassVisibility === option.value;
+                    return (
+                      <button
+                        type="button"
+                        key={option.value}
+                        onClick={() => setNewClassVisibility(option.value)}
+                        className={`w-full text-left rounded-xl border p-3 transition-all cursor-pointer ${
+                          selected
+                            ? "border-sky-400 bg-sky-500/10"
+                            : "border-[#1e3a70] bg-[#132247] hover:border-sky-500/40"
+                        }`}
+                      >
+                        <span className="flex items-center gap-2 text-xs font-black text-white">
+                          {option.value === "public" ? <Globe className="w-4 h-4 text-emerald-400" /> : option.value === "private" ? <Lock className="w-4 h-4 text-sky-400" /> : <EyeOff className="w-4 h-4 text-slate-400" />}
+                          <span>{option.label}</span>
+                        </span>
+                        <span className="block text-[11px] text-slate-400 mt-0.5 leading-relaxed">{option.description}</span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               <div>
