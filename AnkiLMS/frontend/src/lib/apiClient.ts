@@ -22,6 +22,15 @@ export interface UserProfile {
   created_at?: string;
 }
 
+export interface VocabularyLeaderboardEntry {
+  id: string;
+  name: string;
+  avatar_url?: string | null;
+  level: number;
+  vocab_total: number;
+  vocab_today: number;
+}
+
 export interface RegistrationResult {
   user?: UserProfile;
   verificationRequired: boolean;
@@ -254,16 +263,16 @@ export class ApiClient {
     return data;
   }
 
-  public static async getLeaderboard(): Promise<UserProfile[]> {
+  public static async getLeaderboard(): Promise<{ users: UserProfile[]; vocabulary: VocabularyLeaderboardEntry[] }> {
     try {
       const res = await fetch("/api/leaderboard");
       if (res.ok) {
         const data = await res.json();
-        return data.leaderboard || [];
+        return { users: data.leaderboard || [], vocabulary: data.vocabulary || [] };
       }
     } catch (e) {}
     // Trả mảng rỗng – không dùng dữ liệu giả
-    return [];
+    return { users: [], vocabulary: [] };
   }
 
   public static async getHeatmapData(): Promise<{ checkin_date: string; time_spent_minutes: number; xp_earned: number }[]> {

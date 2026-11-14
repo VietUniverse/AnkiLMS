@@ -2,43 +2,95 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Flame, Zap, Users } from "lucide-react";
-import { ApiClient, UserProfile } from "../lib/apiClient";
+import { BookOpen, Flame, Zap, Users } from "lucide-react";
+import { ApiClient, UserProfile, VocabularyLeaderboardEntry } from "../lib/apiClient";
 import { getStudyRank } from "../lib/studyRanks";
 
 interface LeaderboardModuleProps {
   currentUser: UserProfile | null;
 }
 
+type TabKey = "xp" | "streak" | "vocab";
+
+type BoardRow = {
+  id: string;
+  name: string;
+  email?: string;
+  avatar_url?: string | null;
+  level?: number;
+  xp?: number;
+  streak?: number;
+  vocab_total?: number;
+  vocab_today?: number;
+};
+
+const TABS: { key: TabKey; label: string; icon: typeof Zap }[] = [
+  { key: "xp", label: "XP", icon: Zap },
+  { key: "streak", label: "Streak", icon: Flame },
+  { key: "vocab", label: "Từ vựng", icon: BookOpen },
+];
+
+const TAB_ACTIVE: Record<TabKey, string> = {
+  xp: "bg-blue-600 text-white",
+  streak: "bg-amber-600 text-white",
+  vocab: "bg-emerald-600 text-white",
+};
+
+const SCORE_COLOR: Record<TabKey, string> = {
+  xp: "text-blue-500",
+  streak: "text-amber-500",
+  vocab: "text-emerald-500",
+};
+
+const METRIC_LABEL: Record<TabKey, string> = {
+  xp: "XP",
+  streak: "Streak",
+  vocab: "Từ vựng",
+};
+
+const UNIT: Record<TabKey, string> = {
+  xp: "XP",
+  streak: "ngày streak",
+  vocab: "từ",
+};
+
 export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUser }) => {
-  const [leaderboard, setLeaderboard] = useState<UserProfile[]>([]);
+  const [users, setUsers] = useState<UserProfile[]>([]);
+  const [vocabulary, setVocabulary] = useState<VocabularyLeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<"xp" | "streak">("xp");
+  const [tab, setTab] = useState<TabKey>("xp");
 
   useEffect(() => {
     async function loadData() {
       setLoading(true);
       const data = await ApiClient.getLeaderboard();
-      setLeaderboard(data);
+      setUsers(data.users);
+      setVocabulary(data.vocabulary);
       setLoading(false);
     }
     loadData();
   }, []);
 
-  const sortedList = [...leaderboard].sort((a, b) =>
-    tab === "xp" ? (b.xp || 0) - (a.xp || 0) : (b.streak || 0) - (a.streak || 0)
-  );
   const fmt = (value: number | undefined) => (value || 0).toLocaleString("vi-VN");
-  const score = (user: UserProfile) => (tab === "xp" ? `${fmt(user.xp)} XP` : `${fmt(user.streak)} ngày`);
-  const isMe = (user: UserProfile) => !!currentUser && (currentUser.id === user.id || currentUser.email === user.email);
+  const value = (user: BoardRow) => {
+    if (tab === "vocab") return user.vocab_total || 0;
+    if (tab === "streak") return user.streak || 0;
+    return user.xp || 0;
+  };
+  const score = (user: BoardRow) =>
+    tab === "vocab" ? `${fmt(user.vocab_total)} từ` : tab === "xp" ? `${fmt(user.xp)} XP` : `${fmt(user.streak)} ngày`;
+
+  const rows: BoardRow[] = tab === "vocab" ? vocabulary : users;
+  const sortedList = [...rows].sort((a, b) => value(b) - value(a));
+
+  const isMe = (user: BoardRow) =>
+    !!currentUser && (currentUser.id === user.id || (!!user.email && currentUser.email === user.email));
   const myIndex = sortedList.findIndex(isMe);
 
-  const metricLabel = tab === "xp" ? "XP" : "Streak";
-  const value = (user: UserProfile) => (tab === "xp" ? user.xp || 0 : user.streak || 0);
   const me = myIndex >= 0 ? sortedList[myIndex] : null;
   const ahead = myIndex > 0 ? sortedList[myIndex - 1] : null;
   const gap = me && ahead ? value(ahead) - value(me) + 1 : 0;
-  const unit = tab === "xp" ? "XP" : "ngày streak";
+  const unit = UNIT[tab];
   // Màu huy chương chỉ dùng cho top 3; mọi thứ khác trung tính.
   const medal = ["text-amber-600 dark:text-amber-400", "text-slate-500 dark:text-slate-300", "text-orange-600 dark:text-orange-400"];
   const bar = ["bg-amber-400/90", "bg-slate-400/70", "bg-orange-400/80"];
@@ -60,16 +112,15 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
             </p>
           )}
         </div>
-        <div role="group" aria-label="Xếp hạng theo" className="flex rounded-xl border-2 border-slate-700 p-1">
-          {(["xp", "streak"] as const).map((key) => {
+        <div role="group" aria-label="Xếp hạng theo" className="flex flex-wrap justify-center rounded-xl border-2 border-slate-700 p-1">
+          {TABS.map(({ key, label, icon: Icon }) => {
             const active = tab === key;
-            const Icon = key === "xp" ? Zap : Flame;
             return (
               <button key={key} type="button" onClick={() => setTab(key)} aria-pressed={active}
-                className={`inline-flex min-h-10 items-center gap-1.5 rounded-lg px-4 text-sm font-bold transition-colors duration-200 ${
-                  active ? (key === "xp" ? "bg-blue-600 text-white" : "bg-amber-600 text-white") : "text-slate-400 hover:text-white"
+                className={`inline-flex min-h-10 items-center gap-1.5 rounded-lg px-3.5 text-sm font-bold transition-colors duration-200 ${
+                  active ? TAB_ACTIVE[key] : "text-slate-400 hover:text-white"
                 }`}>
-                <Icon aria-hidden="true" className="h-4 w-4" />{key === "xp" ? "XP" : "Streak"}
+                <Icon aria-hidden="true" className="h-4 w-4" />{label}
               </button>
             );
           })}
@@ -115,12 +166,14 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
           <div className="px-6 py-14 text-center">
             <Users aria-hidden="true" className="mx-auto h-8 w-8 text-slate-500" />
             <p className="mt-3 font-bold text-white">Bảng còn trống</p>
-            <p className="mt-1 text-sm text-slate-400">Ai học bài đầu tiên sẽ đứng hạng 1.</p>
+            <p className="mt-1 text-sm text-slate-400">
+              {tab === "vocab" ? "Học flashcard hôm nay để ghi tên mình lên bảng từ vựng." : "Ai học bài đầu tiên sẽ đứng hạng 1."}
+            </p>
           </div>
         )}
 
         {!loading && sortedList.length > 0 && (
-          <ol aria-label={`Xếp hạng theo ${metricLabel}`}>
+          <ol aria-label={`Xếp hạng theo ${METRIC_LABEL[tab]}`}>
             {sortedList.map((user, idx) => {
               const isCurrentUser = isMe(user);
               return (
@@ -142,14 +195,14 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
                       <Link href={`/member?id=${encodeURIComponent(user.id)}`} className="truncate text-sm font-bold text-white underline-offset-2 hover:underline">{user.name}</Link>
                       {isCurrentUser && <span className="shrink-0 text-xs font-bold text-blue-600 dark:text-blue-400">(bạn)</span>}
                     </p>
-                    <p className="truncate text-xs text-slate-400">{getStudyRank(user.level)} · cấp {user.level || 1}</p>
+                    <p className="truncate text-xs text-slate-400">{getStudyRank(user.level || 1)} · cấp {user.level || 1}</p>
                   </div>
                   <div className="shrink-0 text-right tabular-nums">
-                    <p className={`text-base font-black ${tab === "xp" ? "text-blue-500" : "text-amber-500"}`}>{score(user)}</p>
+                    <p className={`text-base font-black ${SCORE_COLOR[tab]}`}>{score(user)}</p>
                     <p className="flex items-center justify-end gap-1 text-xs text-slate-400">
-                      {tab === "xp"
-                        ? <><Flame aria-hidden="true" className="h-3 w-3" />{fmt(user.streak)} ngày</>
-                        : <><Zap aria-hidden="true" className="h-3 w-3" />{fmt(user.xp)} XP</>}
+                      {tab === "xp" && <><Flame aria-hidden="true" className="h-3 w-3" />{fmt(user.streak)} ngày</>}
+                      {tab === "streak" && <><Zap aria-hidden="true" className="h-3 w-3" />{fmt(user.xp)} XP</>}
+                      {tab === "vocab" && <><BookOpen aria-hidden="true" className="h-3 w-3" />{fmt(user.vocab_today)} từ hôm nay</>}
                     </p>
                   </div>
                 </li>
