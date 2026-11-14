@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Noto_Sans_KR } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { AppProvider } from "../contexts/AppProvider";
 
@@ -41,24 +42,34 @@ export default function RootLayout({
   return (
     <html lang="vi" data-theme="light" suppressHydrationWarning>
       <head>
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "WebSite", name: "HaechiVN", url: "https://lms.ankivn.com", inLanguage: "vi", description: "Nền tảng học tiếng Hàn với flashcard SRS, từ điển, dictation và shadowing." }) }} />
         <link rel="icon" type="image/png" href="/brand/haechivn-mark.png?v=20261028" />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
-        <script
+        <Script
+          id="theme-init"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `try{var p=new URLSearchParams(window.location.search);var t=p.get('theme')||localStorage.getItem('haechivn_theme')||'light';document.documentElement.dataset.theme=t;if(t==='dark'){document.documentElement.classList.add('dark');}else{document.documentElement.classList.remove('dark');}}catch(e){}`,
           }}
         />
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-EMV6CCJTG1" />
-        <script
-          type="module"
-          src="https://static.cloudflareinsights.com/beacon.min.js"
-          data-cf-beacon='{"token": "f1d955afc7004b55a5774b8325214afd"}'
+        <Script
+          id="ld-json"
+          type="application/ld+json"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "WebSite", name: "HaechiVN", url: "https://lms.ankivn.com", inLanguage: "vi", description: "Nền tảng học tiếng Hàn với flashcard SRS, từ điển, dictation và shadowing." }) }}
         />
-        <script
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-EMV6CCJTG1" strategy="afterInteractive" />
+        <Script
+          id="ga-init"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-EMV6CCJTG1');`,
           }}
+        />
+        <Script
+          id="cf-beacon"
+          strategy="afterInteractive"
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon='{"token": "f1d955afc7004b55a5774b8325214afd"}'
         />
       </head>
       <body
