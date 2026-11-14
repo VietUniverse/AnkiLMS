@@ -131,9 +131,11 @@ export function StreakPanel({ data, streak, longestStreak, publicView = false }:
         ))}
       </div>
 
-      {!publicView && <p className={`text-center text-xs font-semibold ${learnedToday ? "text-emerald-600 dark:text-emerald-400" : "text-stone-500 dark:text-stone-400"}`}>
-        {learnedToday ? "Hôm nay bạn đã học rồi, chuỗi được giữ." : "Hôm nay chưa học. Học một lượt để giữ chuỗi."}
-      </p>}
+      {!publicView && !learnedToday && (
+        <p className="text-center text-xs font-semibold text-stone-500 dark:text-stone-400">
+          Hôm nay chưa học. Học một lượt để giữ chuỗi.
+        </p>
+      )}
 
       {/* Lịch tháng */}
       <div className="border-t border-stone-100 dark:border-stone-800 pt-3">
