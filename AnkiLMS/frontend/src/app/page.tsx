@@ -8,7 +8,7 @@ import { OnigiriHeatmap } from "../components/OnigiriHeatmap";
 import { StreakPanel } from "../components/StreakPanel";
 import { InstallAppButton } from "../components/InstallAppButton";
 import { useApp } from "../contexts/AppProvider";
-import { Flame, Zap, Layers, CheckCircle2, X, LogIn, Play, ClipboardCheck, ArrowRight, GraduationCap } from "lucide-react";
+import { Flame, Zap, Layers, X, LogIn, Play, ClipboardCheck, ArrowRight, GraduationCap } from "lucide-react";
 import { ApiClient } from "../lib/apiClient";
 import { getStudyRank } from "../lib/studyRanks";
 import { loadProgress, NEW_WORDS_FOR_CHECKIN, vietnamToday } from "../lib/dailyLimits";
@@ -184,7 +184,7 @@ export default function Home() {
             <StreakPanel data={heatmapData} streak={currentUser.streak || 0} longestStreak={currentUser.longest_streak || 0} />
 
             {/* Hành động chính */}
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className={`grid gap-3 ${hasCheckedInToday ? "" : "sm:grid-cols-2"}`}>
               {isFeatureEnabled("flashcards") && (
                 <Link
                   href="/flashcards?resume=true&from=%2F"
@@ -199,15 +199,7 @@ export default function Home() {
                   </span>
                 </Link>
               )}
-              {hasCheckedInToday ? (
-                <div className="flex min-h-16 items-center gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-5 py-3 text-emerald-700 dark:text-emerald-300">
-                  <CheckCircle2 className="h-6 w-6 shrink-0" />
-                  <span className="min-w-0">
-                    <span className="block text-sm font-black">Đã điểm danh hôm nay</span>
-                    <span className="block text-xs opacity-80">Học 10 từ mới mỗi ngày để giữ chuỗi</span>
-                  </span>
-                </div>
-              ) : (
+              {!hasCheckedInToday && (
                 <div className="flex min-h-16 flex-col justify-center gap-2 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-5 py-3 text-amber-700 dark:text-amber-300">
                   <div className="flex items-center gap-2">
                     <Flame className="h-5 w-5 shrink-0 fill-current" />
