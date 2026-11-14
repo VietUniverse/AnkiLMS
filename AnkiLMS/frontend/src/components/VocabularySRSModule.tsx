@@ -1562,18 +1562,8 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
               </div>
             )}
 
-            {/* Tiêu đề trang & Nút chuyển sang Khám phá */}
+            {/* Thanh công cụ tìm kiếm và chuyển sang Khám phá */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <h1 className="text-2xl font-extrabold text-stone-900 dark:text-white tracking-tight">
-                  Lộ trình học
-                </h1>
-                <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
-                  Đã thuộc {masteredWords.length} từ vựng trong hệ thống
-                </p>
-              </div>
-
-              {/* Thanh công cụ tìm kiếm và thu gọn */}
               <div className="flex items-center gap-2 flex-wrap">
                 <div className="relative flex-1 sm:w-56">
                   <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
