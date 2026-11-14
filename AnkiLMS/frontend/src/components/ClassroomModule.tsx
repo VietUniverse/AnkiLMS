@@ -526,7 +526,11 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
 
   const myClasses = currentUser
     ? classes.filter((c) =>
-        c.members.some((m) => m.id === currentUser.id || m.email === currentUser.email)
+        c.members.some(
+          (m) =>
+            (m.id === currentUser.id || m.email === currentUser.email) &&
+            m.status === "approved"
+        )
       )
     : [];
 
