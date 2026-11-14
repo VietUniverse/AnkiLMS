@@ -78,20 +78,20 @@ export function StreakPanel({ data, streak, longestStreak, publicView = false }:
             <span className={`text-[11px] font-bold ${d.isToday ? "text-orange-600 dark:text-orange-400" : "text-stone-400"}`}>{d.label}</span>
             <span
               className={`flex h-9 w-9 items-center justify-center rounded-full text-xs font-black transition sm:h-10 sm:w-10 ${
-                d.done
-                  ? "bg-orange-400 shadow-sm"
-                  : d.isToday
-                    ? "border-2 border-orange-400 text-orange-500"
+                d.isToday
+                  ? "border-2 border-white bg-red-500 shadow-sm"
+                  : d.done
+                    ? "bg-orange-400 shadow-sm"
                     : d.future
                       ? "border border-dashed border-stone-200 text-stone-300 dark:border-stone-800 dark:text-stone-700"
                       : "bg-stone-100 text-stone-400 dark:bg-stone-800 dark:text-stone-600"
               }`}
-              style={d.done ? { color: "#fff" } : undefined}
+              style={d.done || d.isToday ? { color: "#fff" } : undefined}
               aria-label={`${d.label} ngày ${d.date}: ${d.done ? "đã học" : d.future ? "chưa tới" : "chưa học"}`}
             >
               {d.done ? (
                 d.isToday ? (
-                  <Flame className="h-5 w-5 fill-white text-white drop-shadow-[0_0_8px_rgba(251,146,60,0.65)]" strokeWidth={2.5} />
+                  <Flame className="h-5 w-5 drop-shadow-[0_0_8px_rgba(255,255,255,0.55)]" fill="#fff" stroke="#fff" strokeWidth={2.5} />
                 ) : (
                   <Check className="h-5 w-5" strokeWidth={3.5} />
                 )
@@ -147,19 +147,19 @@ export function StreakPanel({ data, streak, longestStreak, publicView = false }:
                 return (
                   <span key={cell.key} className="flex justify-center">
                     <span
-                      style={done ? { color: "#fff" } : undefined}
+                      style={done || isToday ? { color: "#fff" } : undefined}
                       className={`flex h-9 w-full items-center justify-center text-xs font-bold ${
-                        done
-                          ? `bg-orange-400 ${prevDone ? "rounded-l-none" : "rounded-l-full"} ${nextDone ? "rounded-r-none" : "rounded-r-full"}`
-                          : isToday
-                            ? "rounded-full border-2 border-orange-400 text-orange-500"
+                        isToday
+                          ? "rounded-full border-2 border-white bg-red-500 shadow-sm"
+                          : done
+                            ? `bg-orange-400 ${prevDone ? "rounded-l-none" : "rounded-l-full"} ${nextDone ? "rounded-r-none" : "rounded-r-full"}`
                             : cell.key > todayKey
                               ? "text-stone-300 dark:text-stone-700"
                               : "text-stone-600 dark:text-stone-300"
                       }`}
                     >
                       {done && isToday ? (
-                        <Flame className="h-4 w-4 fill-white text-white drop-shadow-[0_0_6px_rgba(251,146,60,0.65)]" strokeWidth={2.5} />
+                        <Flame className="h-4 w-4" fill="#fff" stroke="#fff" strokeWidth={2.5} />
                       ) : (
                         cell.day
                       )}
