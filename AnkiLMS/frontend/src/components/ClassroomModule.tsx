@@ -121,6 +121,53 @@ export interface DiscoverClass {
   createdAt: string;
 }
 
+const DEMO_DISCOVER_CLASSES: (DiscoverClass & { isDemo: true })[] = [
+  {
+    id: "demo-tieng-han-nhap-mon",
+    name: "Tiếng Hàn Nhập Môn – Lớp Cô Mai",
+    description: "Bảng chữ cái Hangul, phát âm chuẩn và 500 từ vựng nền tảng dành cho người mới bắt đầu.",
+    visibility: "public",
+    ownerName: "HaechiVN Academy",
+    memberCount: 128,
+    myStatus: null,
+    createdAt: "",
+    isDemo: true,
+  },
+  {
+    id: "demo-topik-2",
+    name: "TOPIK II – Luyện Đề Cấp Tốc",
+    description: "Chinh phục TOPIK II cấp 4–5 với đề thi thật, chữa chi tiết và chiến lược làm bài từng phần.",
+    visibility: "public",
+    ownerName: "Thầy Minh",
+    memberCount: 86,
+    myStatus: null,
+    createdAt: "",
+    isDemo: true,
+  },
+  {
+    id: "demo-giao-tiep-toi",
+    name: "Giao Tiếp Hàn – Lớp Tối",
+    description: "Luyện hội thoại theo chủ đề đời sống, sửa phát âm trực tiếp trong mỗi buổi học tối.",
+    visibility: "private",
+    ownerName: "Cô Hana",
+    memberCount: 42,
+    myStatus: null,
+    createdAt: "",
+    isDemo: true,
+  },
+  {
+    id: "demo-shadowing",
+    name: "Luyện Nghe – Shadowing 30 Ngày",
+    description: "30 ngày luyện nghe và nhại giọng người bản xứ, kèm phụ đề và bài tập phản xạ mỗi ngày.",
+    visibility: "public",
+    ownerName: "HaechiVN",
+    memberCount: 215,
+    myStatus: null,
+    createdAt: "",
+    isDemo: true,
+  },
+];
+
 interface ClassroomModuleProps {
   currentUser: UserProfile | null;
   /** Báo danh sách lớp hiện tại (để mục lớp mở biết người học đã vào lớp nào). */
@@ -147,6 +194,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
   // Danh sách lớp công khai / riêng tư để khám phá ở tab Tham gia
   const [discoverClasses, setDiscoverClasses] = useState<DiscoverClass[]>([]);
   const [discoverLoading, setDiscoverLoading] = useState(true);
+  const [demoPreview, setDemoPreview] = useState<string | null>(null);
   // Join Class Form State
   const [joinCodeInput, setJoinCodeInput] = useState("");
   // Link mời /classes?join=MÃ điền sẵn ô mã lớp cho người được mời.
@@ -1501,26 +1549,29 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
           </div>
           <div>
             <h2 className="text-base font-black text-white">Khám Phá Lớp Học</h2>
-            <p className="text-xs text-slate-400">Lớp công khai vào học ngay, lớp riêng tư cần chủ lớp duyệt. Lớp bí mật không hiển thị ở đây.</p>
+            <p className="text-xs text-slate-400">Lớp công khai vào học ngay, lớp riêng tư cần chủ lớp duyệt. Các lớp mẫu giúp bạn xem trước giao diện lớp học.</p>
           </div>
         </div>
 
         {discoverLoading ? (
           <p className="text-center text-sm text-slate-400 py-6">Đang tải danh sách lớp…</p>
-        ) : discoverClasses.length > 0 ? (
+        ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {discoverClasses.map((cls) => {
+            {[...discoverClasses, ...DEMO_DISCOVER_CLASSES].map((cls) => {
               const isPublic = cls.visibility === "public";
+              const isDemo = "isDemo" in cls;
               return (
                 <div key={cls.id} className="rounded-2xl border border-[#1e3466] bg-[#132247]/50 p-4 space-y-3">
                   <div className="flex items-center justify-between gap-2">
                     <span className={`px-2.5 py-1 rounded-full text-[10px] font-black border flex items-center gap-1 ${
-                      isPublic
-                        ? "bg-emerald-950/80 border-emerald-500/40 text-emerald-300"
-                        : "bg-sky-950/80 border-sky-500/40 text-sky-300"
+                      isDemo
+                        ? "bg-amber-950/80 border-amber-500/40 text-amber-300"
+                        : isPublic
+                          ? "bg-emerald-950/80 border-emerald-500/40 text-emerald-300"
+                          : "bg-sky-950/80 border-sky-500/40 text-sky-300"
                     }`}>
-                      {isPublic ? <Globe className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
-                      <span>{isPublic ? "Công khai" : "Riêng tư"}</span>
+                      {isDemo ? <Sparkles className="w-3 h-3" /> : isPublic ? <Globe className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
+                      <span>{isDemo ? "Lớp mẫu" : isPublic ? "Công khai" : "Riêng tư"}</span>
                     </span>
                     <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
                       <Users className="w-3.5 h-3.5 text-amber-400" /> {cls.memberCount} thành viên
@@ -1536,7 +1587,16 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
                     <span className="text-xs font-bold text-slate-400 flex items-center gap-1">
                       <UserCheck className="w-4 h-4 text-blue-400" /> {cls.ownerName}
                     </span>
-                    {cls.myStatus === "approved" ? (
+                    {isDemo ? (
+                      <button
+                        type="button"
+                        onClick={() => setDemoPreview(cls.name)}
+                        className="px-3.5 py-2 rounded-xl border border-amber-500/40 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 font-black text-[11px] flex items-center gap-1.5 cursor-pointer transition-all"
+                      >
+                        <Sparkles className="w-3.5 h-3.5" />
+                        <span>Xem trước</span>
+                      </button>
+                    ) : cls.myStatus === "approved" ? (
                       <button
                         type="button"
                         onClick={() => setSelectedClassId(cls.id)}
@@ -1567,8 +1627,13 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, o
               );
             })}
           </div>
-        ) : (
-          <p className="text-center text-xs text-slate-400 py-6">Chưa có lớp công khai hoặc riêng tư nào để tham gia.</p>
+        )}
+
+        {demoPreview && (
+          <div className="rounded-xl border border-amber-500/30 bg-amber-950/30 px-3 py-2 text-[11px] font-bold text-amber-200 flex items-start gap-2">
+            <Sparkles className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+            <span>“{demoPreview}” là lớp mẫu để xem trước giao diện. Nhập mã lớp thật do giáo viên cấp ở phía trên để tham gia.</span>
+          </div>
         )}
       </div>
 
