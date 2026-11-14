@@ -4,11 +4,13 @@ import React, { useRef, useState } from "react";
 import { ImagePlus, Settings, Trash2, X } from "lucide-react";
 import { EggThemeToggle } from "./EggThemeToggle";
 import { backgroundLayerStyle, DEFAULT_STUDY_BG, fileToDataUrl, GRADIENT_PRESETS, saveStudyBackground, useStudyBackground } from "../lib/studyBackground";
+import { setHideChatGpt, useHideChatGpt } from "../lib/studyPreferences";
 
 const SAMPLE_IMAGE = "/images/login-bg.webp";
 
 export function StudyBackgroundPanel() {
   const bg = useStudyBackground();
+  const hideChatGpt = useHideChatGpt();
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
@@ -52,6 +54,20 @@ export function StudyBackgroundPanel() {
             <div className="flex items-center justify-between">
               <p className="text-xs font-bold text-stone-500 dark:text-stone-400">Giao diện sáng / tối</p>
               <EggThemeToggle />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-bold text-stone-500 dark:text-stone-400">Ẩn nút Hỏi ChatGPT</p>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={hideChatGpt}
+                aria-label="Ẩn nút Hỏi ChatGPT khi học"
+                onClick={() => setHideChatGpt(!hideChatGpt)}
+                className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${hideChatGpt ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
+              >
+                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-all ${hideChatGpt ? "left-[22px]" : "left-0.5"}`} />
+              </button>
             </div>
 
             <div>

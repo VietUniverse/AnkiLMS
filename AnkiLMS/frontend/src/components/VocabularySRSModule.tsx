@@ -35,6 +35,7 @@ import { DailyLimitsPanel } from "./DailyLimitsPanel";
 import { useStudyBackground } from "../lib/studyBackground";
 import { addExtraNew, DailyLimits, DEFAULT_LIMITS, effectiveNewLimit, loadLimits, loadProgress, recordCard, remaining, saveLimits } from "../lib/dailyLimits";
 import { speakKorean } from "../lib/koreanSpeech";
+import { useHideChatGpt } from "../lib/studyPreferences";
 import { inferTopikLevel, getCourseRank } from "../lib/studyRanks";
 import { LockKeyhole, Globe2 } from "lucide-react";
 import { VocabularySizeTest } from "./VocabularySizeTest";
@@ -291,6 +292,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   // Modal zoom image
   const [modalImage, setModalImage] = useState<string | null>(null);
   const [dictPanelOpen, setDictPanelOpen] = useState(false);
+  const hideChatGpt = useHideChatGpt();
   const [dictQuery, setDictQuery] = useState("");
   const [dictResults, setDictResults] = useState<DictionaryEntry[]>([]);
   const [dictLoading, setDictLoading] = useState(false);
@@ -2263,16 +2265,18 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                         <BookOpen aria-hidden="true" className="w-4 h-4" />
                         <span>Từ điển</span>
                       </button>
-                      <a
-                        href={chatGptUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex h-9 items-center gap-1.5 px-3 rounded-lg text-stone-500 dark:text-stone-400 hover:bg-emerald-500/10 hover:text-emerald-700 dark:hover:text-emerald-400 transition text-sm font-medium"
-                        title="Hỏi ChatGPT về từ này (mở tab mới)"
-                      >
-                        <Sparkles aria-hidden="true" className="w-4 h-4" />
-                        <span>Hỏi ChatGPT</span>
-                      </a>
+                      {!hideChatGpt && (
+                        <a
+                          href={chatGptUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex h-9 items-center gap-1.5 px-3 rounded-lg text-stone-500 dark:text-stone-400 hover:bg-emerald-500/10 hover:text-emerald-700 dark:hover:text-emerald-400 transition text-sm font-medium"
+                          title="Hỏi ChatGPT về từ này (mở tab mới)"
+                        >
+                          <Sparkles aria-hidden="true" className="w-4 h-4" />
+                          <span>Hỏi ChatGPT</span>
+                        </a>
+                      )}
 
                       {/* Nút Loa Phát Âm */}
                       <button
@@ -2392,16 +2396,18 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                         <BookOpen aria-hidden="true" className="w-4 h-4" />
                         <span>Từ điển</span>
                       </button>
-                      <a
-                        href={chatGptUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex h-9 items-center gap-1.5 px-3 rounded-lg text-stone-500 dark:text-stone-400 hover:bg-emerald-500/10 hover:text-emerald-700 dark:hover:text-emerald-400 transition text-sm font-medium"
-                        title="Hỏi ChatGPT về từ này (mở tab mới)"
-                      >
-                        <Sparkles aria-hidden="true" className="w-4 h-4" />
-                        <span>Hỏi ChatGPT</span>
-                      </a>
+                      {!hideChatGpt && (
+                        <a
+                          href={chatGptUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex h-9 items-center gap-1.5 px-3 rounded-lg text-stone-500 dark:text-stone-400 hover:bg-emerald-500/10 hover:text-emerald-700 dark:hover:text-emerald-400 transition text-sm font-medium"
+                          title="Hỏi ChatGPT về từ này (mở tab mới)"
+                        >
+                          <Sparkles aria-hidden="true" className="w-4 h-4" />
+                          <span>Hỏi ChatGPT</span>
+                        </a>
+                      )}
                       <button
                         type="button"
                         onClick={playCurrentSound}
