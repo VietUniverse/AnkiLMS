@@ -41,11 +41,11 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onToggl
           <div className="flex items-center gap-2 min-w-0 animate-reveal">
             <button
               onClick={activeStudySession.onExit}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 text-xs font-bold transition-all shadow-xs cursor-pointer border border-stone-200 dark:border-stone-700 shrink-0"
+              className="flex h-9 w-9 items-center justify-center shrink-0 rounded-full bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 transition-all shadow-xs cursor-pointer border border-stone-200 dark:border-stone-700"
               title={activeStudySession.backLabel || "Trở về danh sách bài học"}
+              aria-label={activeStudySession.backLabel || "Trở về danh sách bài học"}
             >
-              <ArrowLeft className="w-4 h-4 text-stone-600 dark:text-stone-300" />
-              <span>{activeStudySession.backLabel || "Trở về"}</span>
+              <ArrowLeft className="w-4 h-4 text-stone-600 dark:text-stone-300" aria-hidden="true" />
             </button>
           </div>
         ) : (
