@@ -584,13 +584,13 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-sky-400" />
             <span>
-              Tổng số: <b>{activeDaysCount}</b> ngày học
+              <b>{activeDaysCount}</b> ngày học,
             </span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-400" />
             <span>
-              Chuỗi dài nhất: <b>{longestStreak}</b> ngày
+              Dài nhất: <b>{longestStreak}</b> ngày
             </span>
           </div>
           <div className="flex items-center gap-1.5">
