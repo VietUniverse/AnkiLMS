@@ -19,6 +19,8 @@ import {
   Trash2,
   ArrowUp,
   ArrowDown,
+  List,
+  LayoutGrid,
 } from "lucide-react";
 
 // Điều hướng dùng <a> thay vì next/link vì app build static export.
@@ -40,6 +42,7 @@ export default function ExplorePage() {
   const [sort, setSort] = useState<{ key: SortKey; dir: "asc" | "desc" } | null>(null);
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const [addedNotice, setAddedNotice] = useState<string | null>(null);
+  const [view, setView] = useState<"list" | "bento">("list");
   const [courseDecks, setCourseDecks] = useState<TopikDeck[]>([]);
   const [seoul1ADeck, setSeoul1ADeck] = useState<CuratedDeckItem | null>(null);
   const [sharedDecks, setSharedDecks] = useState<CuratedDeckItem[]>([]);
@@ -70,6 +73,18 @@ export default function ExplorePage() {
       .then((data) => { if (mounted) setDeckOverrides(data?.overrides || []); }).catch(() => undefined);
     return () => { mounted = false; };
   }, []);
+
+  // Ghi nhớ kiểu hiển thị người dùng đã chọn (danh sách hoặc bento).
+  useEffect(() => {
+    try {
+      if (window.localStorage.getItem("haechivn_explore_view") === "bento") setView("bento");
+    } catch {}
+  }, []);
+
+  const changeView = (next: "list" | "bento") => {
+    setView(next);
+    try { window.localStorage.setItem("haechivn_explore_view", next); } catch {}
+  };
 
   const baseDecks = useMemo(() => [
     ...CURATED_DECKS,
@@ -297,6 +312,32 @@ export default function ExplorePage() {
               className="w-full h-10 text-sm pl-9 pr-3 rounded-xl bg-transparent border border-stone-200 dark:border-stone-800 text-stone-900 dark:text-stone-100 placeholder:text-stone-400 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition"
             />
           </div>
+          <div role="group" aria-label="Kiểu hiển thị" className="ml-auto flex items-center gap-0.5 rounded-xl border border-stone-200 dark:border-stone-800 p-0.5">
+            <button
+              type="button"
+              onClick={() => changeView("list")}
+              aria-pressed={view === "list"}
+              title="Hiển thị dạng danh sách"
+              aria-label="Hiển thị dạng danh sách"
+              className={`inline-flex h-8 w-8 items-center justify-center rounded-lg transition cursor-pointer ${
+                view === "list" ? "bg-stone-900 text-white dark:bg-white dark:text-stone-900" : "text-stone-500 hover:text-stone-700 dark:text-stone-400 dark:hover:text-stone-200"
+              }`}
+            >
+              <List className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => changeView("bento")}
+              aria-pressed={view === "bento"}
+              title="Hiển thị dạng bento"
+              aria-label="Hiển thị dạng bento"
+              className={`inline-flex h-8 w-8 items-center justify-center rounded-lg transition cursor-pointer ${
+                view === "bento" ? "bg-stone-900 text-white dark:bg-white dark:text-stone-900" : "text-stone-500 hover:text-stone-700 dark:text-stone-400 dark:hover:text-stone-200"
+              }`}
+            >
+              <LayoutGrid className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
         {exploreDecks.length === 0 ? (
@@ -320,6 +361,41 @@ export default function ExplorePage() {
             >
               Xóa tìm kiếm
             </button>
+          </div>
+        ) : view === "bento" ? (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:auto-rows-[7.5rem]">
+            {sortedDecks.map((deck, idx) => {
+              const big = idx % 7 === 0;
+              return (
+                <a
+                  key={deck.id}
+                  href={deckHref(deck)}
+                  className={`group relative flex flex-col justify-between gap-3 overflow-hidden rounded-2xl border border-stone-200 bg-white p-4 transition-colors hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900 ${
+                    big ? "sm:col-span-2 sm:row-span-2" : ""
+                  }`}
+                >
+                  <DeckIcon
+                    name={deck.iconName}
+                    className={`pointer-events-none absolute -right-3 -bottom-3 transition-colors ${
+                      big ? "h-24 w-24 text-sky-500/10" : "h-16 w-16 text-stone-400/10 dark:text-stone-500/10"
+                    } group-hover:text-sky-500/20`}
+                  />
+                  <h3 className={`relative z-10 font-bold text-stone-900 dark:text-white line-clamp-2 group-hover:text-sky-500 ${
+                    big ? "text-base sm:text-lg" : "text-sm"
+                  }`}>
+                    {deck.title}
+                  </h3>
+                  <div className="relative z-10 flex flex-wrap items-center gap-2">
+                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${LEVEL_PILL[deck.level] || "bg-stone-500/10 text-stone-500"}`}>
+                      {deck.level}
+                    </span>
+                    <span className="text-xs font-semibold text-stone-500 tabular-nums dark:text-stone-400">
+                      {deckCardCount(deck).toLocaleString("vi-VN")} thẻ
+                    </span>
+                  </div>
+                </a>
+              );
+            })}
           </div>
         ) : (
           <div className="space-y-1">
