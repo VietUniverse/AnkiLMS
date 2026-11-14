@@ -1,12 +1,11 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { ImagePlus, Settings, Trash2, X } from "lucide-react";
+import { createPortal } from "react-dom";
+import { Check, ImagePlus, Settings, Trash2, X } from "lucide-react";
 import { EggThemeToggle } from "./EggThemeToggle";
-import { backgroundLayerStyle, DEFAULT_STUDY_BG, fileToDataUrl, GRADIENT_PRESETS, saveStudyBackground, useStudyBackground } from "../lib/studyBackground";
+import { backgroundLayerStyle, DEFAULT_STUDY_BG, fileToDataUrl, GRADIENT_PRESETS, saveStudyBackground, STUDY_BACKGROUND_GALLERY, useStudyBackground } from "../lib/studyBackground";
 import { setHideChatGpt, setMuteExampleAudio, setMuteWordAudio, useHideChatGpt, useMuteExampleAudio, useMuteWordAudio } from "../lib/studyPreferences";
-
-const SAMPLE_IMAGE = "/images/login-bg.webp";
 
 export function StudyBackgroundPanel() {
   const bg = useStudyBackground();
@@ -14,6 +13,7 @@ export function StudyBackgroundPanel() {
   const muteWordAudio = useMuteWordAudio();
   const muteExampleAudio = useMuteExampleAudio();
   const [open, setOpen] = useState(false);
+  const [galleryOpen, setGalleryOpen] = useState(false);
   const [error, setError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -43,6 +43,62 @@ export function StudyBackgroundPanel() {
       >
         <Settings className="h-5 w-5" />
       </button>
+
+      {galleryOpen && createPortal(
+        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/60 p-4" onClick={() => setGalleryOpen(false)}>
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Thư viện ảnh nền"
+            className="w-full max-w-lg rounded-2xl border border-stone-200 bg-white p-4 shadow-2xl dark:border-stone-700 dark:bg-stone-900"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h2 className="text-sm font-black text-stone-900 dark:text-stone-100">Thư viện ảnh nền</h2>
+                <p className="mt-0.5 text-[11px] text-stone-500 dark:text-stone-400">
+                  {STUDY_BACKGROUND_GALLERY.length} ảnh có sẵn · bấm để chọn
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setGalleryOpen(false)}
+                aria-label="Đóng thư viện ảnh"
+                className="rounded-lg p-1.5 text-stone-400 transition hover:text-stone-700 dark:hover:text-stone-200 cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="mt-3 grid max-h-[60vh] grid-cols-3 gap-2 overflow-y-auto pr-1">
+              {STUDY_BACKGROUND_GALLERY.map((src, index) => {
+                const active = bg.kind === "image" && bg.image === src;
+                return (
+                  <button
+                    key={src}
+                    type="button"
+                    onClick={() => {
+                      update({ kind: "image", image: src });
+                      setGalleryOpen(false);
+                    }}
+                    aria-pressed={active}
+                    aria-label={`Chọn ảnh nền ${index + 1}`}
+                    className={`relative h-24 overflow-hidden rounded-xl border-2 bg-cover bg-center transition cursor-pointer ${active ? "border-sky-500" : "border-transparent hover:border-stone-300 dark:hover:border-stone-600"}`}
+                    style={{ backgroundImage: `url(${src})` }}
+                  >
+                    {active && (
+                      <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-sky-500 text-white">
+                        <Check className="h-2.5 w-2.5" strokeWidth={3.5} />
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>,
+        document.body,
+      )}
 
       {open && (
         <>
@@ -128,16 +184,35 @@ export function StudyBackgroundPanel() {
             <div>
               <p className="mb-2 text-xs font-bold text-stone-500 dark:text-stone-400">Ảnh nền</p>
               <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => { void pickImage(e.target.files?.[0]); e.target.value = ""; }} />
+              <div className="grid grid-cols-3 gap-2">
+                {STUDY_BACKGROUND_GALLERY.slice(0, 3).map((src, index) => {
+                  const active = bg.kind === "image" && bg.image === src;
+                  return (
+                    <button
+                      key={src}
+                      type="button"
+                      onClick={() => update({ kind: "image", image: src })}
+                      aria-pressed={active}
+                      aria-label={`Chọn ảnh nền ${index + 1}`}
+                      title={`Ảnh nền ${index + 1}`}
+                      className={`relative h-16 overflow-hidden rounded-xl border-2 bg-cover bg-center transition cursor-pointer ${active ? "border-sky-500" : "border-transparent hover:border-stone-300"}`}
+                      style={{ backgroundImage: `url(${src})` }}
+                    >
+                      {active && (
+                        <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-sky-500 text-white">
+                          <Check className="h-2.5 w-2.5" strokeWidth={3.5} />
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
               <button
                 type="button"
-                onClick={() => update({ kind: "image", image: SAMPLE_IMAGE })}
-                aria-pressed={bg.kind === "image" && bg.image === SAMPLE_IMAGE}
-                title="Ảnh mẫu (nền trang đăng nhập)"
-                aria-label="Dùng ảnh mẫu"
-                className={`mb-2 flex h-16 w-full items-end overflow-hidden rounded-xl border-2 bg-cover bg-center p-2 text-left text-xs font-bold text-white transition cursor-pointer ${bg.kind === "image" && bg.image === SAMPLE_IMAGE ? "border-sky-500" : "border-transparent hover:border-stone-300"}`}
-                style={{ backgroundImage: `linear-gradient(to top, rgba(0,0,0,.55), transparent), url(${SAMPLE_IMAGE})`, color: "#fff" }}
+                onClick={() => setGalleryOpen(true)}
+                className="mb-2 mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border border-stone-200 py-2 text-xs font-bold transition hover:bg-stone-100 dark:border-stone-700 dark:hover:bg-stone-800 cursor-pointer"
               >
-                Ảnh mẫu
+                Xem tất cả {STUDY_BACKGROUND_GALLERY.length} ảnh nền
               </button>
               <div className="flex gap-2">
                 <button type="button" onClick={() => fileRef.current?.click()} className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-stone-200 py-2 text-xs font-bold hover:bg-stone-100 dark:border-stone-700 dark:hover:bg-stone-800 cursor-pointer">

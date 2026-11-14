@@ -21,6 +21,12 @@ export const GRADIENT_PRESETS: { name: string; from: string; to: string }[] = [
   { name: "Đêm", from: "#1e293b", to: "#0f172a" },
 ];
 
+/** Thư viện ảnh nền có sẵn trong frontend (public/images/study-backgrounds). */
+export const STUDY_BACKGROUND_GALLERY: string[] = Array.from(
+  { length: 25 },
+  (_, index) => `/images/study-backgrounds/bg-${String(index + 1).padStart(2, "0")}.jpg`,
+);
+
 const KEY = "haechivn_study_bg";
 const EVENT = "haechivn-study-bg";
 
