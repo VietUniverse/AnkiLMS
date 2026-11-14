@@ -10,6 +10,8 @@ import {
   Check,
   CheckCircle2,
   ChevronRight,
+  Eye,
+  EyeOff,
   HelpCircle,
   Lightbulb,
   Pencil,
@@ -22,6 +24,9 @@ import {
   Lock,
   Unlock,
   ExternalLink,
+  FileText,
+  BarChart2,
+  Layers,
 } from "lucide-react";
 import rawWongojiBank from "../../../data/topikWongojiBank.json";
 import { speakKorean } from "../../../lib/koreanSpeech";
@@ -36,6 +41,9 @@ export interface WongojiItem {
   topic: string;
   source: string;
   promptText: string;
+  promptHtml?: string;
+  figureSvg?: string;
+  dataHtml?: string;
   blankA?: {
     expected: string;
     variants: string[];
@@ -70,6 +78,7 @@ interface GridCell {
   blankIndex?: number;
   status?: "correct" | "wrong" | "empty";
   expectedChar?: string;
+  ghostChar?: string;
   isFocused?: boolean;
 }
 
@@ -89,6 +98,9 @@ export default function WongojiPracticePage() {
   const [typedA, setTypedA] = useState("");
   const [typedB, setTypedB] = useState("");
   const [typedEssay, setTypedEssay] = useState("");
+
+  // Ghost text (chữ mờ watermark gợi ý của bài mẫu để giấy không bị trống trơn)
+  const [showGhostText, setShowGhostText] = useState(true);
 
   // Submitted & Graded state
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -181,6 +193,7 @@ export default function WongojiPracticePage() {
               blankIndex: i,
               status,
               expectedChar: eChar,
+              ghostChar: eChar,
             });
           }
         } else if (/(\(\s*[ㄴ㉡]\s*\)|\[\s*[ㄴ㉡]\s*\]|\[\[B\]\])/.test(part)) {
@@ -215,6 +228,7 @@ export default function WongojiPracticePage() {
               blankIndex: i,
               status,
               expectedChar: eChar,
+              ghostChar: eChar,
             });
           }
         } else {
@@ -307,6 +321,7 @@ export default function WongojiPracticePage() {
           blankIndex: i,
           status,
           expectedChar: mChar,
+          ghostChar: mChar,
         });
       }
 
@@ -326,6 +341,14 @@ export default function WongojiPracticePage() {
     }
   }, [currentItem, typedA, typedB, typedEssay, isSubmitted, bestVariantA, bestVariantB]);
 
+  // Action: Điền toàn bộ bài mẫu vào ô gõ (để người học thấy bài mẫu hoàn chỉnh trên giấy ô)
+  const handleFillModelAnswer = () => {
+    if (currentItem.blankA) setTypedA(bestVariantA || currentItem.blankA.expected);
+    if (currentItem.blankB) setTypedB(bestVariantB || currentItem.blankB.expected);
+    if (currentItem.modelEssay) setTypedEssay(currentItem.modelEssay);
+    setIsSubmitted(false);
+  };
+
   // Trigger hint step
   const handleCallHint = () => {
     if (hintLevel < 3) {
@@ -342,21 +365,18 @@ export default function WongojiPracticePage() {
           const expB = bestVariantB || currentItem.blankB.expected;
           setTypedB(expB.slice(0, 3));
         }
+        if (currentItem.modelEssay && !typedEssay) {
+          setTypedEssay(currentItem.modelEssay.slice(0, 40));
+        }
       }
       // Level 3: Fill entire model answer
       if (nextLevel === 3) {
-        if (currentItem.blankA) {
-          setTypedA(bestVariantA || currentItem.blankA.expected);
-        }
-        if (currentItem.blankB) {
-          setTypedB(bestVariantB || currentItem.blankB.expected);
-        }
-        if (currentItem.modelEssay && !typedEssay) {
-          setTypedEssay(currentItem.modelEssay);
-        }
+        handleFillModelAnswer();
       }
     }
   };
+
+  const isBlankType = currentItem.questionNo <= 52 && Boolean(currentItem.blankA || currentItem.blankB);
 
   return (
     <AppShell>
@@ -384,11 +404,11 @@ export default function WongojiPracticePage() {
             {/* Selector filter: Câu 51, 52, 53, 54 */}
             <div className="flex flex-wrap items-center gap-1.5 bg-stone-100 dark:bg-stone-900 p-1 rounded-xl border border-stone-200 dark:border-stone-800">
               {[
-                { id: "all", label: "Tất cả (67)" },
-                { id: 51, label: "Câu 51 (Điền thông báo)" },
-                { id: 52, label: "Câu 52 (Giải thích)" },
-                { id: 53, label: "Câu 53 (Biểu đồ)" },
-                { id: 54, label: "Câu 54 (Nghị luận)" },
+                { id: "all", label: `Tất cả (${WONGOJI_BANK.length})` },
+                { id: 51, label: `Câu 51 (Điền thông báo)` },
+                { id: 52, label: `Câu 52 (Giải thích)` },
+                { id: 53, label: `Câu 53 (Biểu đồ)` },
+                { id: 54, label: `Câu 54 (Nghị luận)` },
               ].map((f) => (
                 <button
                   key={f.id}
@@ -443,36 +463,235 @@ export default function WongojiPracticePage() {
             </div>
           </div>
 
-          {/* MAIN LAYOUT: WON-GO-JI PAPER (LEFT 8 COLS) + HINTS & TOOLS (RIGHT 4 COLS) */}
+          {/* MAIN LAYOUT: CONTENT & PAPER (LEFT 8 COLS) + HINTS & TOOLS (RIGHT 4 COLS) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* CỘT TRÁI: GIẤY KẺ Ô NGUYÊN BẢN (원고지) */}
-            <div className="lg:col-span-8 space-y-4">
-              {/* Vỏ Tờ Giấy Thi Chính Thức NIIED */}
+            {/* CỘT TRÁI: ĐỀ BÀI + KHUNG GÕ + GIẤY KẺ Ô NGUYÊN BẢN (원고지) */}
+            <div className="lg:col-span-8 space-y-5">
+              
+              {/* 1. HỘP ĐỀ BÀI CHÍNH THỨC & BIỂU ĐỒ (OFFICIAL PROMPT & CHART BOX) */}
+              <div className="rounded-3xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/90 p-5 sm:p-6 space-y-4 shadow-xs">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 dark:border-stone-800 pb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-1 rounded-lg bg-rose-600 text-white font-black text-xs uppercase tracking-wider">
+                      ĐỀ BÀI CÂU {currentItem.questionNo}
+                    </span>
+                    <span className="text-xs font-bold text-stone-500">
+                      {currentItem.questionNo === 51 && "Điền hai vế câu phù hợp với bối cảnh thông báo, thư từ"}
+                      {currentItem.questionNo === 52 && "Điền hai vế câu theo logic giải thích, khoa học"}
+                      {currentItem.questionNo === 53 && "Viết đoạn văn 200~300 chữ phân tích biểu đồ số liệu"}
+                      {currentItem.questionNo === 54 && "Viết bài luận nghị luận xã hội 600~700 chữ"}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => speakKorean(currentItem.promptText)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 text-xs font-bold transition cursor-pointer"
+                  >
+                    <Volume2 className="w-4 h-4" />
+                    <span>Nghe đọc đề</span>
+                  </button>
+                </div>
+
+                {/* Nội dung đề bài tiếng Hàn */}
+                <div className="font-noto text-sm sm:text-base leading-relaxed text-stone-900 dark:text-stone-100 whitespace-pre-line bg-stone-50 dark:bg-stone-950/70 p-4 sm:p-5 rounded-2xl border border-stone-200 dark:border-stone-800/80 shadow-2xs">
+                  {currentItem.promptText}
+                </div>
+
+                {/* Biểu đồ SVG vector sắc nét (dành cho Câu 53 thi thật) */}
+                {currentItem.figureSvg && (
+                  <div className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950 p-4 sm:p-5 overflow-x-auto flex flex-col items-center justify-center">
+                    <p className="text-[11px] font-black uppercase tracking-wider text-rose-500 mb-2 self-start flex items-center gap-1.5">
+                      <BarChart2 className="w-3.5 h-3.5" />
+                      <span>BIỂU ĐỒ SỐ LIỆU ĐỀ THI</span>
+                    </p>
+                    <div
+                      className="w-full flex justify-center [&_svg]:max-w-full [&_svg]:h-auto text-stone-900 dark:text-stone-100"
+                      dangerouslySetInnerHTML={{ __html: currentItem.figureSvg }}
+                    />
+                  </div>
+                )}
+
+                {/* Bảng số liệu khảo sát (nếu có dataHtml) */}
+                {currentItem.dataHtml && (
+                  <div
+                    className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-950/40 p-4 text-xs font-noto leading-relaxed text-stone-700 dark:text-stone-300"
+                    dangerouslySetInnerHTML={{ __html: currentItem.dataHtml }}
+                  />
+                )}
+              </div>
+
+              {/* 2. KHU VỰC GÕ BÀI LÀM (TYPING INPUT AREA) - ĐẶT NGAY TRÊN GIẤY THI */}
+              <div className="rounded-3xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-5 sm:p-6 space-y-4 shadow-xs">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <Pencil className="w-4 h-4 text-rose-500" />
+                    <h3 className="text-sm font-black text-stone-900 dark:text-white">
+                      Khung gõ bài làm (tự động điền vào giấy kẻ ô):
+                    </h3>
+                  </div>
+
+                  {/* Thanh công cụ tiện ích */}
+                  <div className="flex flex-wrap items-center gap-2">
+                    {/* Nút Điền bài mẫu chuẩn NIIED */}
+                    <button
+                      type="button"
+                      onClick={handleFillModelAnswer}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-bold transition cursor-pointer"
+                      title="Điền ngay toàn bộ bài mẫu chuẩn vào giấy ô để xem cách trình bày"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                      <span>Điền bài mẫu lên giấy</span>
+                    </button>
+
+                    {/* Toggle Hiện/Ẩn chữ mờ gợi ý (Ghost Text) */}
+                    <button
+                      type="button"
+                      onClick={() => setShowGhostText((v) => !v)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white text-xs font-bold transition cursor-pointer"
+                    >
+                      {showGhostText ? <Eye className="w-3.5 h-3.5 text-sky-500" /> : <EyeOff className="w-3.5 h-3.5" />}
+                      <span>{showGhostText ? "Chữ mờ gợi ý: BẬT" : "Chữ mờ gợi ý: TẮT"}</span>
+                    </button>
+                  </div>
+                </div>
+
+                {isBlankType ? (
+                  /* Dạng Điền 2 vị trí ㉠ và ㉡ (Câu 51 & 52) */
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {currentItem.blankA && (
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-bold text-amber-600 dark:text-amber-400 flex items-center justify-between">
+                          <span className="flex items-center gap-1.5">
+                            <span className="w-4 h-4 rounded-full bg-amber-500/20 flex items-center justify-center text-[10px] font-black">㉠</span>
+                            <span>Gõ đáp án cho ô khuyết ㉠:</span>
+                          </span>
+                        </label>
+                        <input
+                          type="text"
+                          value={typedA}
+                          onChange={(e) => setTypedA(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" && !e.nativeEvent.isComposing) {
+                              e.preventDefault();
+                              setIsSubmitted(true);
+                            }
+                          }}
+                          placeholder="Gõ tiếng Hàn cho ㉠..."
+                          className="w-full h-11 px-3.5 rounded-xl border border-stone-300 dark:border-stone-700 bg-stone-50 dark:bg-stone-950 font-noto text-sm sm:text-base text-stone-900 dark:text-stone-100 focus:border-amber-500 focus:bg-white dark:focus:bg-stone-900 outline-none transition"
+                        />
+                      </div>
+                    )}
+
+                    {currentItem.blankB && (
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-bold text-sky-600 dark:text-sky-400 flex items-center justify-between">
+                          <span className="flex items-center gap-1.5">
+                            <span className="w-4 h-4 rounded-full bg-sky-500/20 flex items-center justify-center text-[10px] font-black">㉡</span>
+                            <span>Gõ đáp án cho ô khuyết ㉡:</span>
+                          </span>
+                        </label>
+                        <input
+                          type="text"
+                          value={typedB}
+                          onChange={(e) => setTypedB(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" && !e.nativeEvent.isComposing) {
+                              e.preventDefault();
+                              setIsSubmitted(true);
+                            }
+                          }}
+                          placeholder="Gõ tiếng Hàn cho ㉡..."
+                          className="w-full h-11 px-3.5 rounded-xl border border-stone-300 dark:border-stone-700 bg-stone-50 dark:bg-stone-950 font-noto text-sm sm:text-base text-stone-900 dark:text-stone-100 focus:border-sky-500 focus:bg-white dark:focus:bg-stone-900 outline-none transition"
+                        />
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  /* Dạng Viết bài luận Câu 53 & 54 */
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-stone-400">
+                        Gõ bài viết tiếng Hàn tại đây (từng chữ sẽ lập tức nhảy vào giấy ô bên dưới):
+                      </span>
+                      <span className={`font-mono font-bold ${
+                        currentItem.questionNo === 53 && (typedEssay.length < 200 || typedEssay.length > 300)
+                          ? "text-amber-500"
+                          : currentItem.questionNo === 54 && (typedEssay.length < 600 || typedEssay.length > 700)
+                          ? "text-amber-500"
+                          : "text-emerald-500"
+                      }`}>
+                        {typedEssay.length} / {currentItem.questionNo === 53 ? "200~300 ký tự" : "600~700 ký tự"}
+                      </span>
+                    </div>
+                    <textarea
+                      rows={5}
+                      value={typedEssay}
+                      onChange={(e) => setTypedEssay(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+                          e.preventDefault();
+                          setIsSubmitted(true);
+                        }
+                      }}
+                      placeholder="Gõ bài viết bằng tiếng Hàn... (Chữ sẽ tự động dàn đều vào từng ô vuông 20 ký tự/dòng của tờ giấy thi bên dưới)"
+                      className="w-full p-4 rounded-xl border border-stone-300 dark:border-stone-700 bg-stone-50 dark:bg-stone-950 font-noto text-sm sm:text-base leading-relaxed text-stone-900 dark:text-stone-100 focus:border-rose-500 focus:bg-white dark:focus:bg-stone-900 outline-none transition"
+                    />
+                  </div>
+                )}
+
+                {/* Các nút hành động chính */}
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsSubmitted(true)}
+                      className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs sm:text-sm flex items-center gap-2 shadow-sm cursor-pointer transition"
+                    >
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>Kiểm tra & Chấm bài (Enter)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setTypedA("");
+                        setTypedB("");
+                        setTypedEssay("");
+                        setIsSubmitted(false);
+                      }}
+                      className="px-4 py-2.5 rounded-xl border border-stone-200 dark:border-stone-700 hover:bg-stone-100 dark:hover:bg-stone-800 text-xs font-bold text-stone-600 dark:text-stone-300 flex items-center gap-1.5 cursor-pointer transition"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      <span>Làm lại</span>
+                    </button>
+                  </div>
+
+                  <span className="text-[11px] text-stone-400">
+                    Ô đúng: <b className="text-emerald-500">Tô Xanh</b> · Ô sai: <b className="text-rose-500">Tô Đỏ</b>
+                  </span>
+                </div>
+              </div>
+
+              {/* 3. TỜ GIẤY THI CHÍNH THỨC NGUYÊN BẢN (원고지 - 20 Ô / DÒNG) */}
               <div className="rounded-3xl border-2 border-stone-300 dark:border-stone-700/80 bg-[#fffdfa] dark:bg-[#121724] p-4 sm:p-7 shadow-[0_4px_24px_rgba(0,0,0,0.06)] relative overflow-hidden">
                 {/* Header Giấy Thi Gốc */}
-                <div className="border-b-2 border-stone-300 dark:border-stone-700 pb-3 mb-5 flex flex-wrap items-center justify-between text-xs text-stone-600 dark:text-stone-400">
+                <div className="border-b-2 border-stone-300 dark:border-stone-700 pb-3 mb-4 flex flex-wrap items-center justify-between text-xs text-stone-600 dark:text-stone-400">
                   <div className="flex items-center gap-2 font-serif font-black tracking-widest uppercase text-sm sm:text-base text-stone-800 dark:text-stone-200">
                     <span>주 관 식 답 란</span>
                     <span className="text-[11px] font-sans font-normal text-stone-400">(Answer sheet for composition)</span>
                   </div>
-                  <div className="font-mono text-[11px]">
+                  <div className="font-mono text-[11px] font-bold">
                     Câu {currentItem.questionNo} · {currentItem.category}
                   </div>
                 </div>
 
-                {/* Hướng dẫn đề thi */}
+                {/* Hướng dẫn giấy thi */}
                 <div className="mb-4 text-xs font-serif italic text-stone-500 dark:text-stone-400 border-b border-dashed border-stone-200 dark:border-stone-800 pb-2 flex items-center justify-between">
                   <span>
                     ※ 아래 빈칸에 규정에 맞게 작성하십시오 (띄어쓰기 포함).
                   </span>
-                  <button
-                    type="button"
-                    onClick={() => speakKorean(currentItem.promptText)}
-                    className="inline-flex items-center gap-1 text-[11px] font-sans not-italic text-sky-600 dark:text-sky-400 hover:underline cursor-pointer"
-                  >
-                    <Volume2 className="w-3.5 h-3.5" />
-                    <span>Nghe đọc đề</span>
-                  </button>
+                  <span className="text-[11px] font-mono not-italic text-stone-400">
+                    20 ô vuông / dòng · Đếm mốc 20, 40, 60...
+                  </span>
                 </div>
 
                 {/* KHUNG LƯỚI Ô VUÔNG WON-GO-JI (20 Ô / DÒNG) */}
@@ -486,13 +705,17 @@ export default function WongojiPracticePage() {
                             {/* 20 ô vuông trên dòng */}
                             <div className="flex-1 grid grid-cols-[repeat(20,minmax(0,1fr))] gap-0 border-t border-b border-l border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900/60 shadow-2xs">
                               {row.map((cell, colIdx) => {
+                                // Phân tích ký tự hiển thị: Chữ thật vs Chữ mờ gợi ý
+                                const displayChar = cell.char || (showGhostText && cell.ghostChar ? cell.ghostChar : "");
+                                const isGhost = !cell.char && Boolean(showGhostText && cell.ghostChar);
+
                                 // Styling cho từng ô
                                 let cellStyle = "border-r border-stone-300 dark:border-stone-700 text-stone-900 dark:text-stone-100";
                                 let bgStyle = "bg-white dark:bg-stone-900/60";
 
                                 if (cell.isPreFilled) {
-                                  // Nội dung cho trước: màu mực xám đen rõ ràng
-                                  cellStyle += " font-medium text-stone-700 dark:text-stone-300";
+                                  // Nội dung cho trước: màu mực rõ ràng
+                                  cellStyle += " font-medium text-stone-800 dark:text-stone-200";
                                 } else if (cell.isBlank) {
                                   // Ô cần nhập chữ: tô đậm viền và màu nền gợi mở
                                   if (cell.blankType === "A") {
@@ -502,12 +725,17 @@ export default function WongojiPracticePage() {
                                     bgStyle = "bg-sky-500/10 dark:bg-sky-500/15";
                                     cellStyle = "border-r border-sky-400 dark:border-sky-600/60 font-black text-sky-700 dark:text-sky-300";
                                   } else {
-                                    bgStyle = "bg-rose-500/5 dark:bg-rose-500/10";
-                                    cellStyle = "border-r border-rose-300 dark:border-rose-700 font-bold text-stone-900 dark:text-white";
+                                    bgStyle = "bg-stone-50 dark:bg-stone-900/80";
+                                    cellStyle = "border-r border-stone-300 dark:border-stone-700 font-bold text-stone-900 dark:text-white";
+                                  }
+
+                                  // Chữ mờ gợi mở: hiển thị mờ nhạt làm mẫu để không bị trống trơn
+                                  if (isGhost) {
+                                    cellStyle += " text-stone-300 dark:text-stone-600 select-none opacity-40 font-normal italic";
                                   }
 
                                   // Đã bấm Enter kiểm tra: Đúng tô xanh, sai tô đỏ!
-                                  if (isSubmitted) {
+                                  if (isSubmitted && cell.char) {
                                     if (cell.status === "correct") {
                                       bgStyle = "bg-emerald-500 text-white";
                                       cellStyle = "border-r border-emerald-600 font-black text-white shadow-2xs";
@@ -521,10 +749,10 @@ export default function WongojiPracticePage() {
                                 return (
                                   <div
                                     key={colIdx}
-                                    title={cell.status === "wrong" && cell.expectedChar ? `Đáp án chuẩn ô này: "${cell.expectedChar}"` : undefined}
+                                    title={isSubmitted && cell.status === "wrong" && cell.expectedChar ? `Đáp án chuẩn ô này: "${cell.expectedChar}"` : undefined}
                                     className={`aspect-square flex items-center justify-center font-noto text-xs sm:text-sm transition-colors relative group ${bgStyle} ${cellStyle}`}
                                   >
-                                    <span>{cell.char || ""}</span>
+                                    <span>{displayChar}</span>
                                     {/* Tooltip khi rê vào ô bị tô đỏ */}
                                     {isSubmitted && cell.status === "wrong" && cell.expectedChar && (
                                       <div className="absolute -top-7 left-1/2 -translate-x-1/2 hidden group-hover:flex px-1.5 py-0.5 rounded bg-stone-900 text-[10px] text-amber-300 font-mono shadow-md whitespace-nowrap z-30">
@@ -568,119 +796,6 @@ export default function WongojiPracticePage() {
                 </div>
               </div>
 
-              {/* KHU VỰC GÕ TIẾNG HÀN CHUYÊN DỤNG (TYPING AREA) */}
-              <div className="rounded-3xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-5 sm:p-6 space-y-4 shadow-xs">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-black text-stone-900 dark:text-white flex items-center gap-2">
-                    <Pencil className="w-4 h-4 text-rose-500" />
-                    <span>Khung gõ tiếng Hàn (tự động điền vào giấy kẻ ô):</span>
-                  </h3>
-                  <span className="text-[11px] text-stone-400">
-                    Phím tắt: Bấm <kbd className="px-1.5 py-0.5 rounded bg-stone-100 dark:bg-stone-800 font-mono text-xs">Enter</kbd> để kiểm tra
-                  </span>
-                </div>
-
-                {currentItem.questionNo <= 52 && (currentItem.blankA || currentItem.blankB) ? (
-                  /* Dạng Điền 2 vị trí ㉠ và ㉡ */
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {currentItem.blankA && (
-                      <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-amber-600 dark:text-amber-400 flex items-center justify-between">
-                          <span className="flex items-center gap-1.5">
-                            <span className="w-4 h-4 rounded-full bg-amber-500/20 flex items-center justify-center text-[10px] font-black">㉠</span>
-                            <span>Nhập nội dung cho ô khuyết ㉠ (ㄱ):</span>
-                          </span>
-                        </label>
-                        <input
-                          type="text"
-                          value={typedA}
-                          onChange={(e) => setTypedA(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" && !e.nativeEvent.isComposing) {
-                              e.preventDefault();
-                              setIsSubmitted(true);
-                            }
-                          }}
-                          placeholder="Gõ tiếng Hàn cho ㉠..."
-                          className="w-full h-11 px-3.5 rounded-xl border border-stone-300 dark:border-stone-700 bg-stone-50 dark:bg-stone-950 font-noto text-sm sm:text-base text-stone-900 dark:text-stone-100 focus:border-amber-500 focus:bg-white dark:focus:bg-stone-900 outline-none transition"
-                        />
-                      </div>
-                    )}
-
-                    {currentItem.blankB && (
-                      <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-sky-600 dark:text-sky-400 flex items-center justify-between">
-                          <span className="flex items-center gap-1.5">
-                            <span className="w-4 h-4 rounded-full bg-sky-500/20 flex items-center justify-center text-[10px] font-black">㉡</span>
-                            <span>Nhập nội dung cho ô khuyết ㉡ (ㄴ):</span>
-                          </span>
-                        </label>
-                        <input
-                          type="text"
-                          value={typedB}
-                          onChange={(e) => setTypedB(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" && !e.nativeEvent.isComposing) {
-                              e.preventDefault();
-                              setIsSubmitted(true);
-                            }
-                          }}
-                          placeholder="Gõ tiếng Hàn cho ㉡..."
-                          className="w-full h-11 px-3.5 rounded-xl border border-stone-300 dark:border-stone-700 bg-stone-50 dark:bg-stone-950 font-noto text-sm sm:text-base text-stone-900 dark:text-stone-100 focus:border-sky-500 focus:bg-white dark:focus:bg-stone-900 outline-none transition"
-                        />
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  /* Dạng Viết bài luận Câu 53 & 54 */
-                  <div className="space-y-2">
-                    <textarea
-                      rows={6}
-                      value={typedEssay}
-                      onChange={(e) => setTypedEssay(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
-                          e.preventDefault();
-                          setIsSubmitted(true);
-                        }
-                      }}
-                      placeholder="Gõ bài viết tiếng Hàn tại đây (chữ sẽ tự động được dàn đều vào từng ô vuông 20 ký tự/dòng)..."
-                      className="w-full p-4 rounded-xl border border-stone-300 dark:border-stone-700 bg-stone-50 dark:bg-stone-950 font-noto text-sm sm:text-base leading-relaxed text-stone-900 dark:text-stone-100 focus:border-rose-500 focus:bg-white dark:focus:bg-stone-900 outline-none transition"
-                    />
-                  </div>
-                )}
-
-                {/* Các nút hành động chính */}
-                <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setIsSubmitted(true)}
-                      className="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs sm:text-sm flex items-center gap-2 shadow-sm cursor-pointer transition"
-                    >
-                      <CheckCircle2 className="w-4 h-4" />
-                      <span>Kiểm tra & Chấm bài (Enter)</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setTypedA("");
-                        setTypedB("");
-                        setTypedEssay("");
-                        setIsSubmitted(false);
-                      }}
-                      className="px-4 py-3 rounded-xl border border-stone-200 dark:border-stone-700 hover:bg-stone-100 dark:hover:bg-stone-800 text-xs font-bold text-stone-600 dark:text-stone-300 flex items-center gap-1.5 cursor-pointer transition"
-                    >
-                      <RotateCcw className="w-3.5 h-3.5" />
-                      <span>Làm lại</span>
-                    </button>
-                  </div>
-
-                  <span className="text-[11px] text-stone-400">
-                    Ô đúng: <b className="text-emerald-500">Tô Xanh</b> · Ô sai: <b className="text-rose-500">Tô Đỏ</b>
-                  </span>
-                </div>
-              </div>
             </div>
 
             {/* CỘT PHẢI: 3 CẤP GỢI Ý & TRỢ LÝ BÀI VIẾT */}
