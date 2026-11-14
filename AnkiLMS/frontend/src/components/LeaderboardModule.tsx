@@ -113,8 +113,8 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
   return (
     <div className="mx-auto max-w-3xl pb-24 animate-fadeIn motion-reduce:animate-none">
       {/* Không dùng <header>: globals.css tô nền trắng cho mọi header ở giao diện sáng. */}
-      <div className="flex flex-col items-center gap-4 text-center">
-        <div role="group" aria-label="Xếp hạng theo" className="flex flex-wrap justify-center rounded-xl border-2 border-slate-700 p-1">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div role="group" aria-label="Xếp hạng theo" className="flex flex-wrap rounded-xl border-2 border-slate-700 p-1">
           {TABS.map(({ key, label, icon: Icon }) => {
             const active = tab === key;
             return (
@@ -127,7 +127,7 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
             );
           })}
         </div>
-        <div role="group" aria-label="Khoảng thời gian" className="flex flex-wrap justify-center gap-1 rounded-xl border border-slate-700/70 p-1">
+        <div role="group" aria-label="Khoảng thời gian" className="ml-auto flex flex-wrap justify-center gap-1 rounded-xl border border-slate-700/70 p-1">
           {PERIODS.map(({ key, label }) => {
             const active = period === key;
             return (
