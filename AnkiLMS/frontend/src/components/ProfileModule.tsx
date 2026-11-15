@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { BookOpen, Brain, CalendarDays, CheckCircle2, Clock3, Flame, Gem, Mail, Mic2, NotebookPen, Play, Trophy, User, Zap } from "lucide-react";
+import { BookOpen, Brain, Library, CalendarDays, CheckCircle2, Clock3, Flame, Gem, Mail, Mic2, NotebookPen, Play, Trophy, User, Zap } from "lucide-react";
 import { ApiClient, StudyProfileSummary, UserProfile } from "../lib/apiClient";
 import { ACHIEVEMENTS_DATA } from "../data/achievementsData";
 import { getStudyRank } from "../lib/studyRanks";
@@ -51,6 +51,8 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
   const [stats, setStats] = useState<StudyProfileSummary | null>(null);
   const [heatmapData, setHeatmapData] = useState<Awaited<ReturnType<typeof ApiClient.getHeatmapData>>>([]);
   const [claimedBadgeIds, setClaimedBadgeIds] = useState<Set<string>>(new Set());
+  // Vốn từ = số thẻ đã qua giai đoạn học (state "review", cột Due của Anki).
+  const [vocabCount, setVocabCount] = useState<number | null>(null);
   const [confirmingLogout, setConfirmingLogout] = useState(false);
 
   useEffect(() => {
@@ -60,8 +62,10 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
       ApiClient.getStudyProfileSummary(),
       ApiClient.getHeatmapData(),
       fetch("/api/achievements", { credentials: "same-origin", cache: "no-store" }).then((response) => response.ok ? response.json() : null).catch(() => null),
-    ]).then(([summary, heatmap, achievementData]) => {
+      ApiClient.getCardStates().catch(() => null),
+    ]).then(([summary, heatmap, achievementData, cardStates]) => {
       if (!active) return;
+      setVocabCount(cardStates ? Object.values(cardStates).filter((item) => item.state === "review").length : null);
       setStats(summary);
       setHeatmapData(heatmap);
       setClaimedBadgeIds(new Set((achievementData?.achievements || []).filter((item: { claimed?: boolean }) => item.claimed).map((item: { id: string }) => item.id)));
@@ -89,6 +93,7 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
   const statsCards = [
     { label: "Tổng thời gian học", value: formatDuration(summary?.duration_seconds || 0), hint: `${summary?.session_count || 0} phiên học`, icon: Clock3, color: "text-sky-500", bg: "bg-sky-400/10" },
     { label: "Câu đã luyện", value: (summary?.cards_reviewed || 0).toLocaleString("vi-VN"), hint: `${accuracy}% chính xác`, icon: CheckCircle2, color: "text-emerald-500", bg: "bg-emerald-400/10" },
+    { label: "Vốn từ", value: vocabCount === null ? "—" : vocabCount.toLocaleString("vi-VN"), hint: "thẻ đã thuộc", icon: Library, color: "text-amber-500", bg: "bg-amber-400/10" },
     { label: "Trí nhớ", value: retention === null ? "—" : `${retention}%`, hint: "Mục tiêu 90%", icon: Brain, color: "text-rose-500", bg: "bg-rose-400/10" },
   ];
 
@@ -143,7 +148,7 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
       </section>
 
       {/* Số liệu */}
-      <section className={`${card} grid grid-cols-2 divide-x divide-y divide-stone-200 dark:divide-stone-800 lg:grid-cols-3 lg:divide-y-0 overflow-hidden`}>
+      <section className={`${card} grid grid-cols-2 divide-x divide-y divide-stone-200 dark:divide-stone-800 lg:grid-cols-4 lg:divide-y-0 overflow-hidden`}>
         {statsCards.map(({ label, value, hint, icon: Icon, color }) => (
           <div key={label} className="p-4 text-center">
             <p className="flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400"><Icon className={`h-3.5 w-3.5 ${color}`} />{label}</p>
