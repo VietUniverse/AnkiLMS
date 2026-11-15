@@ -38,7 +38,6 @@ import { speakKorean } from "../lib/koreanSpeech";
 import { useStudyCardOpacity, useDisableAutoPronounce, useHideChatGpt, useHideDictionary, useMuteAndHideAudio, useMuteExampleAudio, useMuteWordAudio, useRandomStudyBgEvery10 } from "../lib/studyPreferences";
 import { inferTopikLevel, getCourseRank } from "../lib/studyRanks";
 import { LockKeyhole, Globe2 } from "lucide-react";
-import { VocabularySizeTest } from "./VocabularySizeTest";
 import { detectDictionarySearchLanguage, naverLookupUrl, searchLearningDictionary, type DictionaryEntry } from "../lib/dictionarySearch";
 
 interface VocabularySRSModuleProps {
@@ -1751,8 +1750,6 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                 {limitNotice}
               </div>
             )}
-
-            <VocabularySizeTest />
 
             {/* BẢNG ANKI ĐỒNG NHẤT TOÀN TRANG (DECK TREE) */}
             <div className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 overflow-hidden shadow-xs">
