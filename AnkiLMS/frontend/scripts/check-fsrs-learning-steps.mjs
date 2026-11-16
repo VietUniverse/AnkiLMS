@@ -8,6 +8,7 @@ let now = new Date("2026-11-11T07:00:00Z");
 let state = calculateFSRS45("good", newCard, now);
 assert.equal(state.state, "learning");
 assert.equal(state.learningSteps, 1);
+assert.equal(state.fsrsVersion, "ts-fsrs@6.0.0");
 
 // Round-trip through JSON like the API/localStorage does, then Good again 10 minutes later.
 state = JSON.parse(JSON.stringify(state));

@@ -23,10 +23,13 @@ export interface FSRSState {
 }
 
 export const FSRS45_DEFAULTS = {
-  version: "ts-fsrs@5.4.2",
+  version: "ts-fsrs@6.0.0",
   desiredRetention: 0.9,
   maxInterval: 36_500,
 } as const;
+
+/** Alias for FSRS-6 default settings */
+export const FSRS6_DEFAULTS = FSRS45_DEFAULTS;
 
 const scheduler = fsrs({
   request_retention: FSRS45_DEFAULTS.desiredRetention,
@@ -164,17 +167,18 @@ export function ankiScheduleToFSRSState(schedule: AnkiScheduleMetadata, now = ne
   const history = (schedule as AnkiScheduleMetadata & { lastReview?: string }).lastReview;
   const retention = Number(nestedFsrs?.desired_retention ?? nestedFsrs?.desiredRetention ?? nestedFsrs?.requestRetention ?? nestedFsrs?.request_retention ?? preset?.desiredRetention ?? preset?.request_retention);
   const maxInterval = presetNumber(presetConfig, ["maximum_review_interval", "maximum_interval", "maxInterval"], presetNumber(presetConfig?.rev as Record<string, unknown> | undefined, ["maxIvl"], FSRS45_DEFAULTS.maxInterval));
-  const params = nestedFsrs?.fsrs_params_5 ?? nestedFsrs?.fsrs_params_4 ?? nestedFsrs?.fsrs_params_6 ?? nestedFsrs?.parameters ?? nestedFsrs?.params ?? nestedFsrs?.w;
+  const params = nestedFsrs?.fsrs_params_6 ?? nestedFsrs?.fsrs_params_5 ?? nestedFsrs?.fsrs_params_4 ?? nestedFsrs?.parameters ?? nestedFsrs?.params ?? nestedFsrs?.w;
   const learningSteps = Array.isArray(presetConfig?.learn_steps)
     ? presetConfig.learn_steps.map((step) => `${Math.max(1, Number(step) || 1)}m`)
     : presetSteps(presetConfig, "new");
   const relearningSteps = Array.isArray(presetConfig?.relearn_steps)
     ? presetConfig.relearn_steps.map((step) => `${Math.max(1, Number(step) || 1)}m`)
     : presetSteps(presetConfig, "lapse");
+  const isValidParams = Array.isArray(params) && (params.length === default_w.length || params.length === 19 || params.length === 17);
   const schedulerConfig: Record<string, unknown> = {
     ...(Number.isFinite(retention) && retention > 0 ? { desiredRetention: retention } : {}),
     maximum_interval: maxInterval,
-    ...(Array.isArray(params) && params.length === default_w.length ? { w: params } : {}),
+    ...(isValidParams ? { w: params } : {}),
     ...(learningSteps ? { learning_steps: learningSteps } : {}),
     ...(relearningSteps ? { relearning_steps: relearningSteps } : {}),
   };
@@ -215,7 +219,7 @@ function parseFsrsData(raw: string): string | undefined {
   return undefined;
 }
 
-/** Schedule the next review using the official ts-fsrs 5.4.2 scheduler. */
+/** Schedule the next review using the official ts-fsrs 6.0.0 (FSRS-6) scheduler. */
 export function calculateFSRS45(
   rating: FSRSRating,
   current: Partial<FSRSState> = {},
@@ -259,3 +263,7 @@ export function calculateFSRS45(
     ...(importedConfig ? { schedulerConfig: importedConfig } : {}),
   };
 }
+
+/** Aliases for FSRS-6 scheduler */
+export const calculateFSRS6 = calculateFSRS45;
+export const calculateFSRS = calculateFSRS45;
