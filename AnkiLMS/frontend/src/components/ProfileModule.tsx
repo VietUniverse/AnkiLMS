@@ -51,7 +51,7 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
   const [stats, setStats] = useState<StudyProfileSummary | null>(null);
   const [heatmapData, setHeatmapData] = useState<Awaited<ReturnType<typeof ApiClient.getHeatmapData>>>([]);
   const [claimedBadgeIds, setClaimedBadgeIds] = useState<Set<string>>(new Set());
-  // Vốn từ = số thẻ đã qua giai đoạn học (state "review", cột Due của Anki).
+  // Vốn từ = số thẻ trưởng thành (Mature cards: state "review" và interval >= 21 ngày theo chuẩn Anki).
   const [vocabCount, setVocabCount] = useState<number | null>(null);
   const [confirmingLogout, setConfirmingLogout] = useState(false);
 
@@ -65,7 +65,7 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
       ApiClient.getCardStates().catch(() => null),
     ]).then(([summary, heatmap, achievementData, cardStates]) => {
       if (!active) return;
-      setVocabCount(cardStates ? Object.values(cardStates).filter((item) => item.state === "review").length : null);
+      setVocabCount(cardStates ? Object.values(cardStates).filter((item) => item.state === "review" && (item.interval || 0) >= 21).length : null);
       setStats(summary);
       setHeatmapData(heatmap);
       setClaimedBadgeIds(new Set((achievementData?.achievements || []).filter((item: { claimed?: boolean }) => item.claimed).map((item: { id: string }) => item.id)));
@@ -93,7 +93,7 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
   const statsCards = [
     { label: "Tổng thời gian học", value: formatDuration(summary?.duration_seconds || 0), hint: `${summary?.session_count || 0} phiên học`, icon: Clock3, color: "text-sky-500", bg: "bg-sky-400/10" },
     { label: "Câu đã luyện", value: (summary?.cards_reviewed || 0).toLocaleString("vi-VN"), hint: `${accuracy}% chính xác`, icon: CheckCircle2, color: "text-emerald-500", bg: "bg-emerald-400/10" },
-    { label: "Vốn từ", value: vocabCount === null ? "—" : vocabCount.toLocaleString("vi-VN"), hint: "thẻ đã thuộc", icon: Library, color: "text-amber-500", bg: "bg-amber-400/10" },
+    { label: "Vốn từ", value: vocabCount === null ? "—" : vocabCount.toLocaleString("vi-VN"), hint: "thẻ trưởng thành (≥ 21 ngày)", icon: Library, color: "text-amber-500", bg: "bg-amber-400/10" },
     { label: "Trí nhớ", value: retention === null ? "—" : `${retention}%`, hint: "Mục tiêu 90%", icon: Brain, color: "text-rose-500", bg: "bg-rose-400/10" },
   ];
 

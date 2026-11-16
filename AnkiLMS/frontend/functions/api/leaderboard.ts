@@ -64,14 +64,14 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
        LIMIT 20`,
     ).bind(...(period === "day" ? [start, start] : [start, start, start, start])).all();
 
-    // Xếp hạng Từ vựng: số thẻ đã ôn trong kỳ và số thẻ ôn trong hôm nay.
+    // Xếp hạng Từ vựng: chỉ tính thẻ trưởng thành (Mature cards: state 'review' và interval >= 21 ngày theo chuẩn Anki).
     const vocabulary = await env.DB.prepare(
       `SELECT u.id, u.name, u.avatar_url, u.level,
-              SUM(CASE WHEN cs.last_review >= ? THEN 1 ELSE 0 END) AS vocab_total,
-              SUM(CASE WHEN cs.last_review = date('now', '+7 hours') THEN 1 ELSE 0 END) AS vocab_today
+              SUM(CASE WHEN cs.state = 'review' AND cs.interval >= 21 AND cs.last_review >= ? THEN 1 ELSE 0 END) AS vocab_total,
+              SUM(CASE WHEN cs.state = 'review' AND cs.interval >= 21 AND cs.last_review = date('now', '+7 hours') THEN 1 ELSE 0 END) AS vocab_today
        FROM card_states cs
        JOIN users u ON u.id = cs.user_id
-       WHERE cs.reps > 0
+       WHERE cs.state = 'review' AND cs.interval >= 21
        GROUP BY u.id
        HAVING vocab_total > 0
        ORDER BY vocab_total DESC, vocab_today DESC, u.name ASC

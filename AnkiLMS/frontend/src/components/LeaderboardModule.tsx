@@ -192,7 +192,7 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
             <Users aria-hidden="true" className="mx-auto h-8 w-8 text-slate-500" />
             <p className="mt-3 font-bold text-white">Bảng còn trống</p>
             <p className="mt-1 text-sm text-slate-400">
-              {tab === "vocab" ? "Học flashcard hôm nay để ghi tên mình lên bảng từ vựng." : "Ai học bài đầu tiên sẽ đứng hạng 1."}
+              {tab === "vocab" ? "Học đều đặn để đưa thẻ lên mức trưởng thành (khoảng cách ôn ≥ 21 ngày)." : "Ai học bài đầu tiên sẽ đứng hạng 1."}
             </p>
           </div>
         )}
