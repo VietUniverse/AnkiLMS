@@ -2318,6 +2318,7 @@ html[data-theme="dark"] .classroom-module.cm-page .cm-note { color: #fcd34d; }
   font-family: var(--font-geist, var(--font-inter, ui-sans-serif, system-ui, sans-serif));
   color: var(--rd-ink);
   max-width: 1180px;
+  padding-inline: 28px;
   padding-bottom: 96px;
   gap: 0;
   background: transparent;
@@ -2350,7 +2351,7 @@ html[data-theme="dark"] .classroom-module.cm-page.rd {
   display: flex;
   align-items: center;
   gap: 10px;
-  width: min(720px, 100%);
+  width: min(700px, 100%);
   padding: 6px;
   border-radius: 999px;
   background: var(--rd-glass);
@@ -2361,8 +2362,8 @@ html[data-theme="dark"] .classroom-module.cm-page.rd {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border: 0;
   border-radius: 999px;
   background: transparent;
@@ -2407,25 +2408,25 @@ html[data-theme="dark"] .classroom-module.cm-page.rd {
 
 .classroom-module.cm-page.rd .rd-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+  grid-template-columns: minmax(0, 1.35fr) minmax(330px, 0.65fr);
   gap: 44px;
   align-items: center;
-  padding-top: 54px;
-  padding-bottom: 30px;
+  padding-top: 64px;
+  padding-bottom: 34px;
 }
 .classroom-module.cm-page.rd .rd-hero h1 {
-  margin: 0;
-  font-size: clamp(40px, 5.4vw, 68px);
+  margin: 22px 0 0;
+  font-size: clamp(46px, 6.2vw, 80px);
   font-weight: 700;
-  line-height: 0.99;
+  line-height: 0.98;
   letter-spacing: -0.04em;
 }
 .classroom-module.cm-page.rd .rd-hero h1 .soft { color: var(--rd-muted); font-weight: 500; }
 .classroom-module.cm-page.rd .rd-lede {
   max-width: 50ch;
-  margin: 20px 0 0;
+  margin: 22px 0 0;
   color: var(--rd-muted);
-  font-size: 15.5px;
+  font-size: 17px;
   line-height: 1.6;
 }
 .classroom-module.cm-page.rd .rd-overview {
@@ -2433,7 +2434,7 @@ html[data-theme="dark"] .classroom-module.cm-page.rd {
   max-width: 400px;
   justify-self: end;
   padding: 22px 24px 24px;
-  border-radius: 30px;
+  border-radius: 40px;
   background: var(--rd-surface);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 0 0 1px var(--rd-line), 0 26px 60px -38px rgba(13, 23, 42, 0.4);
 }
@@ -2458,7 +2459,7 @@ html[data-theme="dark"] .classroom-module.cm-page.rd {
 .classroom-module.cm-page.rd .rd-metric + .rd-metric { padding-left: 16px; border-left: 1px solid var(--rd-line); }
 .classroom-module.cm-page.rd .rd-metric-value {
   display: block;
-  font-size: clamp(32px, 3.2vw, 42px);
+  font-size: clamp(32px, 3.2vw, 44px);
   font-weight: 700;
   line-height: 0.95;
   letter-spacing: -0.04em;
@@ -2515,7 +2516,7 @@ html[data-theme="dark"] .classroom-module.cm-page.rd {
 
 @media (orientation: landscape) and (min-width: 900px) {
   .classroom-module.cm-page.rd:not(.cd) {
-    padding-left: max(0px, calc(88px - max(0px, (100vw - 1120px) / 2)));
+    padding-left: max(28px, calc(88px - max(0px, (100vw - 1180px) / 2)));
   }
   .classroom-module.cm-page.rd .rd-nav-shell--rail { position: static; pointer-events: none; }
   .classroom-module.cm-page.rd .rd-nav-shell--rail .rd-nav {
@@ -2538,7 +2539,7 @@ html[data-theme="dark"] .classroom-module.cm-page.rd {
   .classroom-module.cm-page.rd .rd-nav-shell--rail .rd-user-copy { display: none; }
   .classroom-module.cm-page.rd .rd-nav-shell--rail .rd-nav-divider { width: 20px; height: 1px; }
   .classroom-module.cm-page.rd .rd-nav-shell--rail .rd-nav-brand img { width: 24px; height: 24px; }
-  .classroom-module.cm-page.rd .rd-nav-shell--rail .rd-nav-segmented { margin: 0; padding: 4px; }
+  .classroom-module.cm-page.rd .rd-nav-shell--rail .rd-nav-segmented { flex-direction: column; gap: 4px; margin: 0; padding: 4px; }
   .classroom-module.cm-page.rd .rd-nav-shell--rail .rd-nav-segmented .rd-tab {
     width: 38px;
     min-height: 38px;
@@ -2558,24 +2559,24 @@ html[data-theme="dark"] .classroom-module.cm-page.rd {
   grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: end;
   gap: 16px;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 .classroom-module.cm-page.rd .rd-section-head h2 {
   margin: 0;
-  font-size: 30px;
+  font-size: 34px;
   font-weight: 700;
   line-height: 1.05;
   letter-spacing: -0.035em;
 }
 .classroom-module.cm-page.rd .rd-section-head--tight { grid-template-columns: minmax(0, 1fr) auto; }
-.classroom-module.cm-page.rd .rd-section-head--tight h2 { font-size: 24px; }
+.classroom-module.cm-page.rd .rd-section-head--tight h2 { font-size: 26px; }
 .classroom-module.cm-page.rd .rd-section-note {
   margin: 0;
-  padding-bottom: 4px;
+  padding-bottom: 7px;
   color: var(--rd-muted);
   font-family: var(--font-geist-mono, ui-monospace, Menlo, monospace);
   font-size: 11px;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
   text-align: right;
 }
 .classroom-module.cm-page.rd .rd-orb-btn {
@@ -2607,7 +2608,7 @@ html[data-theme="dark"] .classroom-module.cm-page.rd {
 }
 
 .classroom-module.cm-page.rd .rd-panel {
-  padding: 6px;
+  padding: 0;
   border-radius: 34px;
   background: var(--rd-glass);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 0 0 1px var(--rd-line), 0 20px 50px -28px rgba(13, 23, 42, 0.3);
@@ -2615,15 +2616,15 @@ html[data-theme="dark"] .classroom-module.cm-page.rd {
 }
 .classroom-module.cm-page.rd .rd-ledger {
   overflow: hidden;
-  border-radius: 28px;
+  border-radius: 34px;
   background: var(--rd-surface);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 .classroom-module.cm-page.rd .rd-row {
   display: grid;
-  grid-template-columns: 40px minmax(0, 1fr) 272px;
+  grid-template-columns: 42px minmax(0, 1fr) 280px;
   gap: 24px;
-  padding: 24px 26px;
+  padding: 26px 28px;
   cursor: pointer;
   transition: background-color 0.18s ease;
 }
@@ -2631,7 +2632,7 @@ html[data-theme="dark"] .classroom-module.cm-page.rd {
 .classroom-module.cm-page.rd .rd-row:hover { background: var(--rd-surface-soft); }
 .classroom-module.cm-page.rd .rd-row:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--rd-accent); }
 .classroom-module.cm-page.rd .rd-index {
-  padding-top: 6px;
+  padding-top: 5px;
   color: var(--rd-muted);
   font-family: var(--font-geist-mono, ui-monospace, Menlo, monospace);
   font-size: 10px;
@@ -2642,14 +2643,15 @@ html[data-theme="dark"] .classroom-module.cm-page.rd {
 .classroom-module.cm-page.rd .rd-tag {
   display: inline-flex;
   align-items: center;
-  height: 28px;
-  padding: 0 11px;
+  height: 32px;
+  padding: 0 12px;
   border-radius: 999px;
   background: linear-gradient(180deg, #fbfcfe 0%, #edf1f7 100%);
   box-shadow: inset 0 1px 0 #ffffff, 0 1px 2px rgba(13, 23, 42, 0.07), 0 6px 14px -9px rgba(13, 23, 42, 0.26);
   color: var(--rd-ink-2);
-  font-size: 10.5px;
+  font-size: 11.5px;
   font-weight: 500;
+  line-height: 1;
   white-space: nowrap;
 }
 .classroom-module.cm-page.rd .rd-tag--strong {
@@ -2664,43 +2666,44 @@ html[data-theme="dark"] .classroom-module.cm-page.rd {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  height: 28px;
-  padding: 0 10px;
+  height: 32px;
+  padding: 0 12px;
   border: 0;
   border-radius: 999px;
   background: transparent;
   color: var(--rd-muted);
   font-family: var(--font-geist-mono, ui-monospace, Menlo, monospace);
-  font-size: 10.5px;
+  font-size: 11px;
+  letter-spacing: 0.03em;
   cursor: pointer;
   box-shadow: inset 0 0 0 1px var(--rd-line);
 }
 .classroom-module.cm-page.rd .rd-code:hover { color: var(--rd-ink); background: var(--rd-surface-soft); }
 .classroom-module.cm-page.rd .rd-row-title {
-  margin: 12px 0 0;
-  font-size: 23px;
+  margin: 13px 0 0;
+  font-size: 25px;
   font-weight: 600;
   line-height: 1.15;
   letter-spacing: -0.03em;
 }
-.classroom-module.cm-page.rd .rd-row-desc { max-width: 480px; margin: 7px 0 0; color: var(--rd-muted); font-size: 13px; line-height: 1.6; }
+.classroom-module.cm-page.rd .rd-row-desc { max-width: 470px; margin: 7px 0 0; color: var(--rd-muted); font-size: 13.5px; line-height: 1.65; }
 .classroom-module.cm-page.rd .rd-row-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin: 14px 0 0;
+  gap: 14px;
+  margin: 16px 0 0;
   padding: 0;
   list-style: none;
   color: var(--rd-muted);
   font-family: var(--font-geist-mono, ui-monospace, Menlo, monospace);
-  font-size: 10.5px;
+  font-size: 11px;
   letter-spacing: 0.03em;
 }
 .classroom-module.cm-page.rd .rd-row-meta li + li { padding-left: 12px; border-left: 1px solid var(--rd-line); }
 .classroom-module.cm-page.rd .rd-side {
   display: flex;
   flex-direction: column;
-  padding-left: 22px;
+  padding-left: 24px;
   border-left: 1px solid var(--rd-line);
 }
 .classroom-module.cm-page.rd .rd-side--action { justify-content: center; gap: 10px; }
@@ -2731,14 +2734,16 @@ html[data-theme="dark"] .classroom-module.cm-page.rd {
   justify-content: center;
   gap: 8px;
   width: 100%;
-  min-height: 40px;
-  margin-top: 14px;
+  min-height: 44px;
+  margin-top: 16px;
+  padding: 0 18px;
   border-radius: 999px;
   background: var(--rd-glass-strong);
-  box-shadow: inset 0 0 0 1px var(--rd-line-strong);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 0 0 1px var(--rd-line-strong);
   color: var(--rd-ink);
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
 }
 
 .classroom-module.cm-page.rd .rd-btn {
@@ -2896,6 +2901,7 @@ html[data-theme="dark"] .classroom-module.cm-page.rd .rd-note { color: #fcd34d; 
   .classroom-module.cm-page.rd .rd-empty { padding: 38px 18px; }
 }
 @media (max-width: 700px) {
+  .classroom-module.cm-page.rd { padding-inline: 16px; }
   .classroom-module.cm-page.rd .rd-nav { flex-wrap: wrap; border-radius: 28px; }
   .classroom-module.cm-page.rd .rd-nav-segmented { order: 3; flex: 1 0 100%; margin: 2px 0 0; }
   .classroom-module.cm-page.rd .rd-nav-segmented .rd-tab { flex: 1; min-height: 40px; padding: 0 10px; font-size: 12px; }
@@ -2906,11 +2912,11 @@ html[data-theme="dark"] .classroom-module.cm-page.rd .rd-note { color: #fcd34d; 
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(330px, 0.7fr);
+  grid-template-columns: minmax(0, 1.32fr) minmax(330px, 0.68fr);
   gap: 44px;
   align-items: center;
-  padding-top: 54px;
-  padding-bottom: 38px;
+  padding-top: 60px;
+  padding-bottom: 40px;
 }
 .classroom-module.cm-page.rd.cd .cd-copy { min-width: 0; }
 .classroom-module.cm-page.rd.cd .cd-kicker { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; }
@@ -2938,16 +2944,16 @@ html[data-theme="dark"] .classroom-module.cm-page.rd .rd-note { color: #fcd34d; 
 .classroom-module.cm-page.rd.cd .cd-code { height: 30px; }
 .classroom-module.cm-page.rd.cd .cd-title {
   margin: 20px 0 0;
-  font-size: clamp(40px, 5.3vw, 64px);
+  font-size: clamp(44px, 5.6vw, 72px);
   font-weight: 700;
-  line-height: 1;
+  line-height: 0.98;
   letter-spacing: -0.045em;
 }
 .classroom-module.cm-page.rd.cd .cd-lead {
-  max-width: 56ch;
+  max-width: 54ch;
   margin: 18px 0 0;
   color: var(--rd-muted);
-  font-size: 16px;
+  font-size: 16.5px;
   line-height: 1.62;
 }
 .classroom-module.cm-page.rd.cd .cd-meta {
@@ -3084,7 +3090,7 @@ html[data-theme="dark"] .classroom-module.cm-page.rd .rd-note { color: #fcd34d; 
 }
 .classroom-module.cm-page.rd.cd .cd-note-link:hover { text-decoration: underline; }
 
-.classroom-module.cm-page.rd.cd .cd-tabs-wrap { padding-top: 4px; padding-bottom: 30px; }
+.classroom-module.cm-page.rd.cd .cd-tabs-wrap { padding-top: 4px; padding-bottom: 34px; }
 .classroom-module.cm-page.rd.cd .cd-tab-count {
   margin-left: 7px;
   font-family: var(--font-geist-mono, ui-monospace, Menlo, monospace);
@@ -3107,7 +3113,7 @@ html[data-theme="dark"] .classroom-module.cm-page.rd .rd-note { color: #fcd34d; 
 .classroom-module.cm-page.rd.cd .cd-side { position: sticky; top: 98px; display: grid; gap: 16px; }
 .classroom-module.cm-page.rd.cd .cd-panel {
   padding: 0;
-  border-radius: 26px;
+  border-radius: 40px;
   background: var(--rd-glass);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 0 0 1px var(--rd-line), 0 20px 50px -30px rgba(13, 23, 42, 0.3);
   backdrop-filter: saturate(160%) blur(22px);
