@@ -2489,6 +2489,7 @@ html[data-theme="dark"] .classroom-module.cm-page.rd {
   font-size: 13px;
   font-weight: 500;
   line-height: 1;
+  white-space: nowrap;
   cursor: pointer;
   transition: background-color 0.25s ease, color 0.25s ease;
 }
@@ -2515,7 +2516,7 @@ html[data-theme="dark"] .classroom-module.cm-page.rd {
 .classroom-module.cm-page.rd .rd-tab-icon { display: none; width: 16px; height: 16px; flex: none; }
 
 @media (orientation: landscape) and (min-width: 900px) {
-  .classroom-module.cm-page.rd:not(.cd) {
+  .classroom-module.cm-page.rd {
     padding-left: max(28px, calc(88px - max(0px, (100vw - 1180px) / 2)));
   }
   .classroom-module.cm-page.rd .rd-nav-shell--rail { position: static; pointer-events: none; }
@@ -3092,6 +3093,7 @@ html[data-theme="dark"] .classroom-module.cm-page.rd .rd-note { color: #fcd34d; 
 
 .classroom-module.cm-page.rd.cd .cd-tabs-wrap { padding-top: 4px; padding-bottom: 34px; }
 .classroom-module.cm-page.rd.cd .cd-tab-count {
+  flex: none;
   margin-left: 7px;
   font-family: var(--font-geist-mono, ui-monospace, Menlo, monospace);
   font-size: 9.5px;
@@ -3607,8 +3609,8 @@ html[data-theme="dark"] .classroom-module.cm-page.rd.cd .cd-member-tools button:
   .classroom-module.cm-page.rd.cd .cd-form-row { grid-template-columns: 1fr; }
 }
 @media (max-width: 620px) {
-  .classroom-module.cm-page.rd.cd .cd-tab-count { display: none; }
-  .classroom-module.cm-page.rd.cd .rd-tab { padding: 0 8px; font-size: 11.5px; }
+  .classroom-module.cm-page.rd.cd .cd-tab-count { margin-left: 4px; }
+  .classroom-module.cm-page.rd.cd .rd-tab { padding: 0 6px; font-size: 11.5px; }
 }
 
 .classroom-module.cm-page.rd.cd .cd-progress-kicker {

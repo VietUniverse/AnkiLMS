@@ -77,6 +77,8 @@ export interface ClassAssignment {
   lastStudiedAt?: string | null;
   progress?: StudentAssignmentProgress[];
   deckCards?: AssignmentPreviewCard[];
+  /** Danh sách học viên được giao; null/undefined nghĩa là cả lớp. */
+  assignedUserIds?: string[] | null;
 }
 
 export type ClassVisibility = "public" | "private" | "secret";
@@ -313,6 +315,7 @@ export const DEMO_CLASSES: Classroom[] = [
         dueDate: "2026-12-02",
         assignedBy: "Cô Hana",
         totalCards: 140,
+        assignedUserIds: ["u-student"],
         progress: [
           { studentId: "u-student", studentName: "Minh Anh", reviewedCards: 42, totalCards: 140, correctCards: 33, lastStudiedAt: "2026-11-19", completed: false },
           { studentId: "u-s2", studentName: "Jiwoo Park", reviewedCards: 120, totalCards: 140, correctCards: 104, lastStudiedAt: "2026-11-18", completed: false },
@@ -341,7 +344,7 @@ export const DEMO_CLASSES: Classroom[] = [
     members: DEMO_MEMBERS,
     assignments: [
       { id: "a3", title: "Chào hỏi & giới thiệu bản thân", deckName: "Giao tiếp · Bài 1", dueDate: "2026-11-28", assignedBy: "Cô Hana", totalCards: 150, completed: true, reviewedCards: 150, correctCards: 138, lastStudiedAt: "2026-11-18", progress: [] },
-      { id: "a4", title: "Mua sắm & gọi món", deckName: "Giao tiếp · Bài 2", dueDate: "2026-12-05", assignedBy: "Cô Hana", totalCards: 120, completed: false, reviewedCards: 48, correctCards: 39, lastStudiedAt: "2026-11-19", progress: [] },
+      { id: "a4", title: "Mua sắm & gọi món", deckName: "Giao tiếp · Bài 2", dueDate: "2026-12-05", assignedBy: "Cô Hana", totalCards: 120, assignedUserIds: ["u-student", "u-s2"], completed: false, reviewedCards: 48, correctCards: 39, lastStudiedAt: "2026-11-19", progress: [] },
     ],
   },
 ];
@@ -373,6 +376,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
   const [mainTab, setMainTab] = useState<"mine" | "join">("mine");
   // Thanh nav chuyển thành rail dọc khi cuộn xuống ở màn hình ngang rộng
   const [navRail, setNavRail] = useState(false);
+  const [wideLandscape, setWideLandscape] = useState(false);
   const navShellRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const shell = navShellRef.current;
@@ -387,6 +391,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
     const target: HTMLElement | Window = scrollEl ?? window;
     const update = () => {
       const top = scrollEl ? scrollEl.scrollTop : window.scrollY;
+      setWideLandscape(media.matches);
       setNavRail(media.matches && top > 80);
     };
     const raf = window.requestAnimationFrame(update);
@@ -397,6 +402,19 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
       target.removeEventListener("scroll", update);
       media.removeEventListener("change", update);
     };
+  }, [selectedClassId]);
+  // Mở lớp / quay về danh sách luôn bắt đầu từ đầu trang
+  useEffect(() => {
+    const shell = navShellRef.current;
+    if (!shell) return;
+    let scrollEl: HTMLElement | null = shell.parentElement;
+    while (scrollEl && scrollEl !== document.body) {
+      const style = window.getComputedStyle(scrollEl);
+      if (/(auto|scroll)/.test(style.overflowY)) break;
+      scrollEl = scrollEl.parentElement;
+    }
+    if (scrollEl) scrollEl.scrollTop = 0;
+    else window.scrollTo(0, 0);
   }, [selectedClassId]);
   // Danh sách lớp công khai / riêng tư để khám phá ở tab Tham gia
   const [discoverClasses, setDiscoverClasses] = useState<DiscoverClass[]>([]);
@@ -440,6 +458,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
   const [editAssignmentCards, setEditAssignmentCards] = useState<AssignmentPreviewCard[] | null>(null);
   const [editAssignmentCardsLoading, setEditAssignmentCardsLoading] = useState(false);
   const [editAssignmentCardsError, setEditAssignmentCardsError] = useState<string | null>(null);
+  const [editAssignmentRecipients, setEditAssignmentRecipients] = useState<string[] | null>(null);
   const editAssignmentCardsRequest = useRef(0);
 
   // Detail View Active Tab
@@ -822,6 +841,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
     setEditAssignmentDueMode(assignment.dueMode === "duration" ? "duration" : "date");
     setEditAssignmentDurationDays(String(assignment.durationDays || 7));
     setEditAssignmentDeckName(assignment.deckName || "");
+    setEditAssignmentRecipients(assignment.assignedUserIds?.length ? assignment.assignedUserIds : null);
     setEditAssignmentCards(null);
     setEditAssignmentCardsError(null);
     const requestId = ++editAssignmentCardsRequest.current;
@@ -866,6 +886,10 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
       setMsg({ type: "error", text: "Số ngày hoàn thành phải từ 1 đến 365." });
       return;
     }
+    if (editAssignmentRecipients !== null && editAssignmentRecipients.length === 0) {
+      setMsg({ type: "error", text: "Chọn ít nhất một học viên hoặc giao cho cả lớp." });
+      return;
+    }
     setSavingAssignmentEdit(true);
     const saved = await runClassAction({
       action: "update_assignment",
@@ -875,10 +899,20 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
       dueDate: editAssignmentDueMode === "duration" ? "" : editAssignmentDueDate,
       dueMode: editAssignmentDueMode,
       durationDays: editAssignmentDueMode === "duration" ? durationDays : 0,
+      assignedUserIds: editAssignmentRecipients,
     });
     setSavingAssignmentEdit(false);
     if (!saved) return;
     setEditAssignmentId(null);
+  };
+
+  const toggleAssignmentRecipient = (studentId: string) => {
+    setEditAssignmentRecipients((previous) => {
+      const current = previous ?? [];
+      return current.includes(studentId)
+        ? current.filter((id) => id !== studentId)
+        : [...current, studentId];
+    });
   };
 
   const copyToClipboard = (code: string) => {
@@ -908,6 +942,9 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
     : [];
 
   const selectedClass = classes.find((c) => c.id === selectedClassId);
+  const assignableStudents = (selectedClass?.members || []).filter(
+    (member) => member.role === "student" && member.status === "approved"
+  );
   const myMemberRecord = selectedClass?.members.find(
     (m) => m.id === currentUser?.id || m.email === currentUser?.email
   );
@@ -1037,8 +1074,19 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
 
     return (
       <div className="classroom-module cm-page rd cd">
-        <div className="rd-nav-shell">
-          <nav className="rd-nav" aria-label="Điều hướng lớp học">
+        <div
+          ref={navShellRef}
+          className={`rd-nav-shell${navRail ? " rd-nav-shell--rail" : ""}`}
+        >
+          <nav
+            className="rd-nav"
+            aria-label="Điều hướng lớp học"
+            style={
+              canManageClass && !navRail
+                ? { transform: wideLandscape ? "translate(-3px, -12px)" : "translate(0px, 1px)" }
+                : undefined
+            }
+          >
             <button
               type="button"
               onClick={() => setSelectedClassId(null)}
@@ -2033,6 +2081,57 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                 <div className="rounded-2xl border border-[#1e3a70] bg-[#132247]/60 p-3">
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0">
+                      <p className="text-xs font-bold text-slate-200">Giao cho</p>
+                      <p className="mt-0.5 text-[11px] text-slate-400">
+                        {editAssignmentRecipients === null
+                          ? `Cả lớp · ${assignableStudents.length} học viên`
+                          : editAssignmentRecipients.length === 0
+                            ? "Chưa chọn học viên nào"
+                            : `${editAssignmentRecipients.length} học viên được chọn`}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setEditAssignmentRecipients(null)}
+                      className={`shrink-0 rounded-full px-3 py-1.5 text-[10px] font-bold transition ${editAssignmentRecipients === null ? "bg-sky-500 text-white" : "bg-slate-800 text-slate-300 hover:text-white"}`}
+                    >
+                      Cả lớp
+                    </button>
+                  </div>
+
+                  <div className="mt-3 space-y-1.5">
+                    {assignableStudents.length === 0 && (
+                      <p className="text-[11px] text-slate-400">Lớp chưa có học viên nào được duyệt.</p>
+                    )}
+                    {assignableStudents.map((student) => {
+                      const checked = editAssignmentRecipients?.includes(student.id) ?? false;
+                      return (
+                        <label
+                          key={student.id}
+                          className={`flex cursor-pointer items-center gap-3 rounded-xl border px-3 py-2 transition ${checked ? "border-sky-400/60 bg-sky-500/10" : "border-[#1e3a70] bg-[#132247] hover:border-slate-600"}`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => toggleAssignmentRecipient(student.id)}
+                            className="h-4 w-4 shrink-0 accent-sky-500"
+                          />
+                          <span className="min-w-0">
+                            <span className="block truncate text-xs font-bold text-white">{student.name}</span>
+                            <span className="block truncate text-[10px] text-slate-400">{student.email}</span>
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                  <p className="mt-2 text-[10px] leading-relaxed text-slate-500">
+                    Chọn “Cả lớp” để học viên vào sau cũng nhận bài. Chọn từng bạn nếu chỉ giao cho một nhóm.
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-[#1e3a70] bg-[#132247]/60 p-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0">
                       <p className="text-xs font-bold text-slate-200">Bộ thẻ đã giao</p>
                       <p className="mt-0.5 truncate text-[11px] text-slate-400">
                         {editAssignmentDeckName || "Chưa có tên bộ thẻ"}
@@ -2089,6 +2188,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                     disabled={
                       savingAssignmentEdit ||
                       editAssignmentTitle.trim().length < 3 ||
+                      (editAssignmentRecipients !== null && editAssignmentRecipients.length === 0) ||
                       (editAssignmentDueMode === "duration" &&
                         (!Number.isInteger(Number(editAssignmentDurationDays)) ||
                           Number(editAssignmentDurationDays) < 1 ||
