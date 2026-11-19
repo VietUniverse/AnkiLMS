@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -20,21 +20,16 @@ import {
   XCircle,
   Loader2,
   Lock,
-  Search,
   X,
   Globe,
   EyeOff,
+  Pencil,
 } from "lucide-react";
 import { ApiClient, UserProfile } from "../lib/apiClient";
 import { useApp } from "../contexts/AppProvider";
-import { AnkiDeck, AnkiParser } from "../lib/ankiParser";
+import { AnkiDeck } from "../lib/ankiParser";
 import { loadCourseVocabulary, TopikDeck } from "../lib/courseVocabulary";
 import { loadAdminThthCurriculum } from "../lib/privateLearningContent";
-import {
-  detectDictionarySearchLanguage,
-  DictionaryEntry,
-  searchLearningDictionary,
-} from "../lib/dictionarySearch";
 
 export interface ClassMember {
   id: string;
@@ -63,6 +58,8 @@ export interface ClassAssignment {
   title: string;
   deckName: string;
   dueDate: string;
+  dueMode?: "date" | "duration";
+  durationDays?: number;
   assignedBy: string;
   completed?: boolean;
   totalCards?: number;
@@ -87,6 +84,99 @@ export const CLASS_VISIBILITY_OPTIONS: {
 const visibilityLabel = (visibility: ClassVisibility) =>
   CLASS_VISIBILITY_OPTIONS.find((option) => option.value === visibility)?.label || "Bí mật";
 
+const dueCountdownLabel = (value?: string | null) => {
+  if (!value) return "Không hạn";
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
+  if (!match) return "Không hạn";
+  const due = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const days = Math.round((due.getTime() - today.getTime()) / 86400000);
+  if (days < 0) return `Quá hạn ${Math.abs(days)} ngày`;
+  if (days === 0) return "Hết hạn hôm nay";
+  return `Còn ${days} ngày`;
+};
+
+const dueModeLabel = (
+  assignment: Pick<ClassAssignment, "dueDate" | "dueMode" | "durationDays">,
+  managerView = false,
+) => {
+  if (assignment.dueMode === "duration" && assignment.durationDays) {
+    return managerView
+      ? `${assignment.durationDays} ngày kể từ khi vào lớp`
+      : dueCountdownLabel(assignment.dueDate);
+  }
+  return assignment.dueDate ? dueCountdownLabel(assignment.dueDate) : "Không hạn";
+};
+
+type AssignmentDeckCard = {
+  id: number;
+  korean: string;
+  meaning: string;
+  example: string;
+  mediaRefs: string[];
+};
+
+type AssignmentDeckOption = {
+  id: string;
+  name: string;
+  book: number;
+  topic: string;
+  difficulty: string;
+  parentId?: string;
+  mediaAssets: NonNullable<AnkiDeck["mediaAssets"]>;
+  cards: AssignmentDeckCard[];
+};
+
+const assignmentDeckCardFromAnki = (card: AnkiDeck["cards"][number]): AssignmentDeckCard => ({
+  id: Number(card.id),
+  korean: (card.koreanText || card.frontText || "").replace(/<[^>]*>/g, "").trim(),
+  meaning: (card.vietnameseMeaning || card.backText || "").replace(/<[^>]*>/g, "").trim(),
+  example: (card.exampleSentence || "").replace(/<[^>]*>/g, "").trim(),
+  mediaRefs: card.mediaRefs || [],
+});
+
+// An imported deck can hold cards from several Anki subdecks ("A::B"). Expose
+// the parent deck plus one entry per subdeck so teachers can assign just a part.
+const buildAnkiAssignmentDecks = (
+  prefix: "anki" | "upload",
+  decks: AnkiDeck[],
+  topic: string,
+): AssignmentDeckOption[] => decks.flatMap((deck) => {
+  const parentId = `${prefix}:${deck.id}`;
+  const base = {
+    book: 0,
+    topic,
+    difficulty: "Anki cá nhân",
+    mediaAssets: deck.mediaAssets || [],
+  };
+  const sourceCards = deck.cards || [];
+  const parent: AssignmentDeckOption = {
+    ...base,
+    id: parentId,
+    name: `Anki · ${deck.name}`,
+    cards: sourceCards.map(assignmentDeckCardFromAnki),
+  };
+  const groups = new Map<string, AssignmentDeckCard[]>();
+  for (const card of sourceCards) {
+    const path = (card.deckName || deck.name).trim() || deck.name;
+    const list = groups.get(path);
+    if (list) list.push(assignmentDeckCardFromAnki(card));
+    else groups.set(path, [assignmentDeckCardFromAnki(card)]);
+  }
+  if (groups.size <= 1) return [parent];
+  const children = [...groups.entries()]
+    .sort(([a], [b]) => a.localeCompare(b, "vi"))
+    .map(([path, cards], index): AssignmentDeckOption => ({
+      ...base,
+      id: `${parentId}:sub:${index}`,
+      name: `Anki · ${path}`,
+      parentId,
+      cards,
+    }));
+  return [parent, ...children];
+});
+
 export interface Classroom {
   id: string;
   code: string;
@@ -102,6 +192,7 @@ export interface Classroom {
 
 export interface DiscoverClass {
   id: string;
+  code: string;
   name: string;
   description: string;
   visibility: ClassVisibility;
@@ -114,6 +205,7 @@ export interface DiscoverClass {
 const DEMO_DISCOVER_CLASSES: (DiscoverClass & { isDemo: true })[] = [
   {
     id: "demo-tieng-han-nhap-mon",
+    code: "HANA-MAI",
     name: "Tiếng Hàn Nhập Môn – Lớp Cô Mai",
     description: "Bảng chữ cái Hangul, phát âm chuẩn và 500 từ vựng nền tảng dành cho người mới bắt đầu.",
     visibility: "public",
@@ -125,6 +217,7 @@ const DEMO_DISCOVER_CLASSES: (DiscoverClass & { isDemo: true })[] = [
   },
   {
     id: "demo-topik-2",
+    code: "TOPIK-2",
     name: "TOPIK II – Luyện Đề Cấp Tốc",
     description: "Chinh phục TOPIK II cấp 4–5 với đề thi thật, chữa chi tiết và chiến lược làm bài từng phần.",
     visibility: "public",
@@ -136,6 +229,7 @@ const DEMO_DISCOVER_CLASSES: (DiscoverClass & { isDemo: true })[] = [
   },
   {
     id: "demo-giao-tiep-toi",
+    code: "GIAOTIEP",
     name: "Giao Tiếp Hàn – Lớp Tối",
     description: "Luyện hội thoại theo chủ đề đời sống, sửa phát âm trực tiếp trong mỗi buổi học tối.",
     visibility: "private",
@@ -147,6 +241,7 @@ const DEMO_DISCOVER_CLASSES: (DiscoverClass & { isDemo: true })[] = [
   },
   {
     id: "demo-shadowing",
+    code: "SHADO-30",
     name: "Luyện Nghe – Shadowing 30 Ngày",
     description: "30 ngày luyện nghe và nhại giọng người bản xứ, kèm phụ đề và bài tập phản xạ mỗi ngày.",
     visibility: "public",
@@ -248,6 +343,33 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
 
   // Tab điều hướng giữa danh sách lớp và form tham gia bằng mã
   const [mainTab, setMainTab] = useState<"mine" | "join">("mine");
+  // Thanh nav chuyển thành rail dọc khi cuộn xuống ở màn hình ngang rộng
+  const [navRail, setNavRail] = useState(false);
+  const navShellRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const shell = navShellRef.current;
+    if (!shell) return;
+    const media = window.matchMedia("(orientation: landscape) and (min-width: 900px)");
+    let scrollEl: HTMLElement | null = shell.parentElement;
+    while (scrollEl && scrollEl !== document.body) {
+      const style = window.getComputedStyle(scrollEl);
+      if (/(auto|scroll)/.test(style.overflowY)) break;
+      scrollEl = scrollEl.parentElement;
+    }
+    const target: HTMLElement | Window = scrollEl ?? window;
+    const update = () => {
+      const top = scrollEl ? scrollEl.scrollTop : window.scrollY;
+      setNavRail(media.matches && top > 80);
+    };
+    const raf = window.requestAnimationFrame(update);
+    target.addEventListener("scroll", update, { passive: true });
+    media.addEventListener("change", update);
+    return () => {
+      window.cancelAnimationFrame(raf);
+      target.removeEventListener("scroll", update);
+      media.removeEventListener("change", update);
+    };
+  }, [selectedClassId]);
   // Danh sách lớp công khai / riêng tư để khám phá ở tab Tham gia
   const [discoverClasses, setDiscoverClasses] = useState<DiscoverClass[]>([]);
   const [discoverLoading, setDiscoverLoading] = useState(true);
@@ -273,56 +395,40 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
 
   // Assign Deck Modal
   const [showAssignModal, setShowAssignModal] = useState(false);
-  const [assignMode, setAssignMode] = useState<"existing" | "dictionary">("existing");
   const [assignTitle, setAssignTitle] = useState("");
   const [assignDeckId, setAssignDeckId] = useState("");
   const [assignBookFilter, setAssignBookFilter] = useState("1");
   const [assignTopicFilter, setAssignTopicFilter] = useState("all");
-  const [uploadedAssignmentDecks, setUploadedAssignmentDecks] = useState<AnkiDeck[]>([]);
-  const [parsingAssignmentApkg, setParsingAssignmentApkg] = useState(false);
   const [assignDueDate, setAssignDueDate] = useState("");
-  const [dictQuery, setDictQuery] = useState("");
-  const [dictResults, setDictResults] = useState<DictionaryEntry[]>([]);
-  const [dictLoading, setDictLoading] = useState(false);
-  const [dictSelectedWords, setDictSelectedWords] = useState<
-    Array<{ korean: string; meaning: string; example: string; pos?: string }>
-  >([]);
-
-  useEffect(() => {
-    if (!showAssignModal || assignMode !== "dictionary") return;
-    const q = dictQuery.trim();
-    if (!q) {
-      setDictResults([]);
-      setDictLoading(false);
-      return;
-    }
-    const controller = new AbortController();
-    const timer = window.setTimeout(() => {
-      setDictLoading(true);
-      void searchLearningDictionary(
-        q,
-        24,
-        controller.signal,
-        detectDictionarySearchLanguage(q),
-      )
-        .then((res) => {
-          if (!controller.signal.aborted) setDictResults(res);
-        })
-        .catch(() => {
-          if (!controller.signal.aborted) setDictResults([]);
-        })
-        .finally(() => {
-          if (!controller.signal.aborted) setDictLoading(false);
-        });
-    }, 220);
-    return () => {
-      window.clearTimeout(timer);
-      controller.abort();
-    };
-  }, [showAssignModal, assignMode, dictQuery]);
+  const [assignDueMode, setAssignDueMode] = useState<"date" | "duration">("date");
+  const [assignDurationDays, setAssignDurationDays] = useState("7");
+  const [editAssignmentId, setEditAssignmentId] = useState<string | null>(null);
+  const [editAssignmentTitle, setEditAssignmentTitle] = useState("");
+  const [editAssignmentDueDate, setEditAssignmentDueDate] = useState("");
+  const [editAssignmentDueMode, setEditAssignmentDueMode] = useState<"date" | "duration">("date");
+  const [editAssignmentDurationDays, setEditAssignmentDurationDays] = useState("7");
+  const [savingAssignmentEdit, setSavingAssignmentEdit] = useState(false);
 
   // Detail View Active Tab
   const [activeTab, setActiveTab] = useState<"assignments" | "leaderboard" | "members" | "settings">("assignments");
+
+  // Per-assignment student progress modal
+  const [progressAssignmentId, setProgressAssignmentId] = useState<string | null>(null);
+
+  // Confirm remove member dialog
+  const [removeMemberTarget, setRemoveMemberTarget] = useState<{
+    id: string;
+    name: string;
+    pending: boolean;
+  } | null>(null);
+
+  // Confirm role change dialog
+  const [roleChangeTarget, setRoleChangeTarget] = useState<{
+    id: string;
+    name: string;
+    currentRole: "admin" | "staff" | "student";
+    nextRole: "admin" | "staff" | "student";
+  } | null>(null);
 
   // Copy feedback
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
@@ -443,18 +549,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
         mediaRefs: [] as string[],
       })),
     })))),
-    ...userDecks.map((deck) => ({ id: `anki:${deck.id}`, name: `Anki · ${deck.name}`, book: 0, topic: "Bộ Anki đã nhập", difficulty: "Anki cá nhân", mediaAssets: deck.mediaAssets || [], cards: deck.cards.map((card) => ({
-      id: Number(card.id), korean: (card.koreanText || card.frontText || "").replace(/<[^>]*>/g, "").trim(),
-      meaning: (card.vietnameseMeaning || card.backText || "").replace(/<[^>]*>/g, "").trim(),
-      example: (card.exampleSentence || "").replace(/<[^>]*>/g, "").trim(),
-      mediaRefs: card.mediaRefs || [],
-    })) })),
-    ...uploadedAssignmentDecks.map((deck) => ({ id: `upload:${deck.id}`, name: `Anki · ${deck.name}`, book: 0, topic: "Bộ Anki đã tải lên", difficulty: "Anki cá nhân", mediaAssets: deck.mediaAssets || [], cards: deck.cards.map((card) => ({
-      id: Number(card.id), korean: (card.koreanText || card.frontText || "").replace(/<[^>]*>/g, "").trim(),
-      meaning: (card.vietnameseMeaning || card.backText || "").replace(/<[^>]*>/g, "").trim(),
-      example: (card.exampleSentence || "").replace(/<[^>]*>/g, "").trim(),
-      mediaRefs: card.mediaRefs || [],
-    })) })),
+    ...buildAnkiAssignmentDecks("anki", userDecks, "Bộ Anki đã nhập"),
   ].filter((deck) => deck.cards.length > 0);
   const builtinAssignmentDecks = assignmentDecks.filter((deck) => deck.book > 0);
   const assignmentTopics = Array.from(new Set(builtinAssignmentDecks.filter((deck) => deck.book === Number(assignBookFilter)).map((deck) => deck.topic))).sort((a, b) => a.localeCompare(b, "vi"));
@@ -606,9 +701,21 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
     void runClassAction({ action: "remove", classId, memberId });
   };
 
+  const handleConfirmRemoveMember = () => {
+    if (!removeMemberTarget || !selectedClassId) return;
+    handleRemoveMember(selectedClassId, removeMemberTarget.id);
+    setRemoveMemberTarget(null);
+  };
+
   // 5. Change Role (Student <-> Admin)
   const handleChangeRole = (classId: string, memberId: string, newRole: "admin" | "staff" | "student") => {
     void runClassAction({ action: "role", classId, memberId, role: newRole });
+  };
+
+  const handleConfirmRoleChange = () => {
+    if (!roleChangeTarget || !selectedClassId) return;
+    handleChangeRole(selectedClassId, roleChangeTarget.id, roleChangeTarget.nextRole);
+    setRoleChangeTarget(null);
   };
 
   // 6. Assign New Deck / Assignment
@@ -621,39 +728,15 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
       due.setDate(due.getDate() + 7);
       return `${due.getFullYear()}-${String(due.getMonth() + 1).padStart(2, "0")}-${String(due.getDate()).padStart(2, "0")}`;
     })();
-    const assignmentId = `asg_${crypto.randomUUID().replace(/-/g, "")}`;
-
-    if (assignMode === "dictionary") {
-      const validWords = dictSelectedWords.filter((w) => w.korean.trim() && w.meaning.trim()).slice(0, 500);
-      if (!validWords.length) {
-        setMsg({ type: "error", text: "Hãy chọn ít nhất 1 từ vựng từ Từ điển trước khi giao bài." });
-        return;
-      }
-      const deckCards = validWords.map((w, idx) => ({
-        id: idx + 1,
-        korean: w.korean.trim(),
-        meaning: w.meaning.trim(),
-        example: w.example.trim(),
-        pos: w.pos || "",
-        mediaAssetIds: [],
-      }));
-      const saved = await runClassAction({
-        action: "assignment",
-        classId: selectedClassId,
-        assignmentId,
-        title: assignTitle.trim(),
-        deckName: `Từ điển · ${assignTitle.trim()}`,
-        dueDate,
-        deckCards,
-        mediaAssets: [],
-      });
-      if (!saved) return;
-      setShowAssignModal(false);
-      setAssignTitle("");
-      setDictSelectedWords([]);
-      setDictQuery("");
+    const durationDays = Number(assignDurationDays);
+    if (assignDueMode === "duration" && (!Number.isInteger(durationDays) || durationDays < 1 || durationDays > 365)) {
+      setMsg({ type: "error", text: "Số ngày hoàn thành phải từ 1 đến 365." });
       return;
     }
+    const duePayload = assignDueMode === "duration"
+      ? { dueMode: "duration" as const, durationDays, dueDate: "" }
+      : { dueMode: "date" as const, durationDays: 0, dueDate };
+    const assignmentId = `asg_${crypto.randomUUID().replace(/-/g, "")}`;
 
     if (!selectedAssignmentDeck?.cards.length) {
       setMsg({ type: "error", text: "Bộ thẻ này không có thẻ hợp lệ để giao." });
@@ -665,7 +748,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
       .filter((asset) => referencedFilenames.has(asset.filename))
       .map((asset) => [asset.filename, asset])).values()];
     if (referencedFilenames.size && sourceAssets.length !== referencedFilenames.size) {
-      setMsg({ type: "error", text: "Bộ thẻ có media cục bộ đã hết phiên. Hãy tải lại file .apkg tại đây để chia sẻ đủ ảnh và âm thanh." });
+      setMsg({ type: "error", text: "Bộ thẻ có ảnh/âm thanh cục bộ không còn khả dụng. Hãy nhập lại bộ thẻ rồi thử lại." });
       return;
     }
     const assetIds = new Map(sourceAssets.map((asset) => [asset.filename, crypto.randomUUID().replace(/-/g, "")]));
@@ -680,7 +763,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
       ...card,
       mediaAssetIds: (card.mediaRefs || []).map((filename) => assetIds.get(filename)).filter((id): id is string => !!id),
     }));
-    const saved = await runClassAction({ action: "assignment", classId: selectedClassId, assignmentId, title: assignTitle, deckName: selectedAssignmentDeck.name, dueDate, deckCards, mediaAssets });
+    const saved = await runClassAction({ action: "assignment", classId: selectedClassId, assignmentId, title: assignTitle, deckName: selectedAssignmentDeck.name, ...duePayload, deckCards, mediaAssets });
     if (!saved) return;
     try {
       for (let index = 0; index < sourceAssets.length; index += 8) {
@@ -695,26 +778,44 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
     if (sourceAssets.length) setClasses(await ApiClient.getClasses().catch(() => classes));
     setShowAssignModal(false);
     setAssignTitle("");
+    setAssignDueMode("date");
+    setAssignDurationDays("7");
   };
 
-  const handleAssignmentApkgUpload = async (file?: File) => {
-    if (!file) return;
-    if (!file.name.toLowerCase().endsWith(".apkg")) {
-      setMsg({ type: "error", text: "Vui lòng chọn file .apkg." });
+  const openEditAssignment = (assignment: ClassAssignment) => {
+    setEditAssignmentId(assignment.id);
+    setEditAssignmentTitle(assignment.title);
+    setEditAssignmentDueDate(assignment.dueDate || "");
+    setEditAssignmentDueMode(assignment.dueMode === "duration" ? "duration" : "date");
+    setEditAssignmentDurationDays(String(assignment.durationDays || 7));
+  };
+
+  const handleUpdateAssignment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedClassId || !editAssignmentId) return;
+    const title = editAssignmentTitle.trim();
+    if (title.length < 3 || title.length > 120) {
+      setMsg({ type: "error", text: "Tên bài tập phải từ 3 đến 120 ký tự." });
       return;
     }
-    setParsingAssignmentApkg(true);
-    setMsg(null);
-    try {
-      const decks = await AnkiParser.parseApkg(file);
-      const uniqueDecks = decks.map((deck) => ({ ...deck, id: `${Date.now()}_${deck.id}` }));
-      setUploadedAssignmentDecks((prev) => [...prev, ...uniqueDecks]);
-      if (uniqueDecks[0]) setAssignDeckId(`upload:${uniqueDecks[0].id}`);
-    } catch (error) {
-      setMsg({ type: "error", text: error instanceof Error ? error.message : "Không đọc được file Anki." });
-    } finally {
-      setParsingAssignmentApkg(false);
+    const durationDays = Number(editAssignmentDurationDays);
+    if (editAssignmentDueMode === "duration" && (!Number.isInteger(durationDays) || durationDays < 1 || durationDays > 365)) {
+      setMsg({ type: "error", text: "Số ngày hoàn thành phải từ 1 đến 365." });
+      return;
     }
+    setSavingAssignmentEdit(true);
+    const saved = await runClassAction({
+      action: "update_assignment",
+      classId: selectedClassId,
+      assignmentId: editAssignmentId,
+      title,
+      dueDate: editAssignmentDueMode === "duration" ? "" : editAssignmentDueDate,
+      dueMode: editAssignmentDueMode,
+      durationDays: editAssignmentDueMode === "duration" ? durationDays : 0,
+    });
+    setSavingAssignmentEdit(false);
+    if (!saved) return;
+    setEditAssignmentId(null);
   };
 
   const copyToClipboard = (code: string) => {
@@ -787,7 +888,11 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
       value
         ? new Date(value).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })
         : "—";
+    const memberRoleName = (role: string) =>
+      role === "admin" ? "Quản trị viên" : role === "staff" ? "Giáo vụ" : "Học sinh";
     const percentOf = (done: number, total: number) => (total > 0 ? Math.round((done / total) * 100) : 0);
+    const memoryOf = (correct: number, reviewed: number) =>
+      reviewed > 0 ? Math.round((correct / reviewed) * 100) : 0;
 
     const initialsOf = (name?: string | null) =>
       (name || "?")
@@ -819,6 +924,54 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
       : { reviewed: 0, total: 0, pct: 0 };
     const joinLink = `${typeof window !== "undefined" ? window.location.origin : ""}/classes?join=${encodeURIComponent(selectedClass.code)}`;
 
+    const progressAssignment = progressAssignmentId
+      ? selectedClass.assignments.find((asg) => asg.id === progressAssignmentId)
+      : null;
+    const progressRows = progressAssignment
+      ? studentMembers
+          .map((member) => {
+            const point = (progressAssignment.progress || []).find((p) => p.studentId === member.id);
+            const total = point?.totalCards || progressAssignment.totalCards || 0;
+            const reviewed = point?.reviewedCards || 0;
+            const correctCards = point?.correctCards || 0;
+            return {
+              id: member.id,
+              name: member.name,
+              reviewed,
+              total,
+              correctCards,
+              memory: reviewed > 0 ? memoryOf(correctCards, reviewed) : null,
+              lastStudiedAt: point?.lastStudiedAt || null,
+              completed: Boolean(point?.completed),
+              percent: percentOf(reviewed, total),
+            };
+          })
+          .sort((a, b) => b.percent - a.percent || a.name.localeCompare(b.name, "vi"))
+      : [];
+    const progressDone = progressRows.filter((row) => row.completed).length;
+    const progressAvg = progressRows.length
+      ? Math.round(progressRows.reduce((sum, row) => sum + row.percent, 0) / progressRows.length)
+      : 0;
+    const progressMemorySamples = progressRows
+      .map((row) => row.memory)
+      .filter((value): value is number => value !== null);
+    const progressMemory = progressMemorySamples.length
+      ? Math.round(
+          progressMemorySamples.reduce((sum, value) => sum + value, 0) / progressMemorySamples.length
+        )
+      : 0;
+    const memberMemoryByStudent = new Map<string, number | null>();
+    for (const member of studentMembers) {
+      let reviewed = 0;
+      let correct = 0;
+      for (const asg of selectedClass.assignments) {
+        const point = (asg.progress || []).find((p) => p.studentId === member.id);
+        reviewed += point?.reviewedCards || 0;
+        correct += point?.correctCards || 0;
+      }
+      memberMemoryByStudent.set(member.id, reviewed > 0 ? memoryOf(correct, reviewed) : null);
+    }
+
     return (
       <div className="classroom-module cm-page rd cd">
         <div className="rd-nav-shell">
@@ -830,7 +983,6 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
               aria-label="Về danh sách lớp"
             >
               <ChevronLeft className="h-4 w-4" />
-              <span className="cd-nav-back-label">Lớp học</span>
             </button>
             <span className="rd-nav-divider" aria-hidden="true" />
             <Link className="rd-nav-brand" href="/" aria-label="HaechiVN">
@@ -999,7 +1151,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                         <span>
                           <strong>{nextAgg.reviewed}</strong>/{nextAgg.total} thẻ
                         </span>
-                        <span>{nextAssignment.dueDate ? `Hạn ${shortDate(nextAssignment.dueDate)}` : `${nextAgg.pct}%`}</span>
+                        <span>{dueModeLabel(nextAssignment, true)}</span>
                       </div>
                     </>
                   ) : (
@@ -1143,7 +1295,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                             </span>
                             <span className="rd-tag">{asg.totalCards ?? 0} thẻ</span>
                             <span className="rd-tag">
-                              {asg.dueDate ? `Hạn ${shortDate(asg.dueDate)}` : "Không hạn"}
+                              {dueModeLabel(asg, canManageClass)}
                             </span>
                           </div>
 
@@ -1159,35 +1311,9 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                                 <span>
                                   <strong>{doneCount}</strong>/{rows.length} học viên hoàn thành
                                 </span>
-                                <span>{avg}%</span>
+                                <span>TB tiến độ {avg}%</span>
                               </div>
 
-                              {rows.length > 0 && (
-                                <div className="cd-students">
-                                  {rows.slice(0, 5).map((point) => (
-                                    <div key={point.studentId} className="cd-studentrow">
-                                      <span className="rd-avatar cd-avatar-xs">{initialsOf(point.studentName)}</span>
-                                      <div className="cd-student-main">
-                                        <div className="cd-student-name">
-                                          <span>{point.studentName}</span>
-                                          <small>
-                                            {point.reviewedCards}/{point.totalCards} thẻ
-                                          </small>
-                                        </div>
-                                        <div className="rd-progress cd-progress-thin" aria-hidden="true">
-                                          <span style={{ width: `${point.percent}%` }} />
-                                        </div>
-                                      </div>
-                                      <span className={`cd-pct ${point.completed ? "is-done" : ""}`}>
-                                        {point.percent}%
-                                      </span>
-                                    </div>
-                                  ))}
-                                  {rows.length > 5 && (
-                                    <p className="cd-muted">+{rows.length - 5} học viên khác trong tab Thành viên.</p>
-                                  )}
-                                </div>
-                              )}
                               {rows.length === 0 && (
                                 <p className="cd-muted">
                                   Chưa có dữ liệu tiến độ. Học viên cần mở bộ thẻ trong mục Từ vựng.
@@ -1202,7 +1328,15 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                                   <button
                                     type="button"
                                     className="rd-btn cd-btn-secondary cd-btn-sm"
-                                    onClick={() => setActiveTab("members")}
+                                    onClick={() => openEditAssignment(asg)}
+                                  >
+                                    <Pencil className="h-3.5 w-3.5" />
+                                    Sửa
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="rd-btn cd-btn-secondary cd-btn-sm"
+                                    onClick={() => setProgressAssignmentId(asg.id)}
                                   >
                                     Xem tiến độ
                                   </button>
@@ -1380,7 +1514,9 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                             <button
                               type="button"
                               className="rd-btn cd-btn-ghost cd-btn-sm"
-                              onClick={() => handleRemoveMember(selectedClass.id, member.id)}
+                              onClick={() =>
+                                setRemoveMemberTarget({ id: member.id, name: member.name, pending: true })
+                              }
                             >
                               Từ chối
                             </button>
@@ -1396,6 +1532,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                       const memberDone = member.completedAssignments?.length || 0;
                       const memberPercent = percentOf(memberDone, totalAssignments);
                       const isYou = member.id === currentUser?.id;
+                      const memberMemory = memberMemoryByStudent.get(member.id) ?? null;
                       const memberRoleText =
                         member.role === "owner"
                           ? "Giáo viên · phụ trách lớp"
@@ -1423,6 +1560,15 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                                 <div className="rd-progress" aria-hidden="true">
                                   <span style={{ width: `${memberPercent}%` }} />
                                 </div>
+                                {(canManageClass || isYou) && (
+                                  <span
+                                    className={`cd-memory-inline ${memberMemory !== null && memberMemory >= 85 ? "is-strong" : ""}`}
+                                    title="Tỷ lệ trả lời đúng trên các thẻ đã ôn trong bài tập của lớp"
+                                  >
+                                    Ghi nhớ{" "}
+                                    <strong>{memberMemory === null ? "—" : `${memberMemory}%`}</strong>
+                                  </span>
+                                )}
                               </>
                             ) : (
                               <span className="rd-tag rd-tag--strong">
@@ -1436,11 +1582,12 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                                   <select
                                     value={member.role}
                                     onChange={(e) =>
-                                      handleChangeRole(
-                                        selectedClass.id,
-                                        member.id,
-                                        e.target.value as "admin" | "staff" | "student"
-                                      )
+                                      setRoleChangeTarget({
+                                        id: member.id,
+                                        name: member.name,
+                                        currentRole: member.role as "admin" | "staff" | "student",
+                                        nextRole: e.target.value as "admin" | "staff" | "student",
+                                      })
                                     }
                                     aria-label={`Vai trò của ${member.name}`}
                                   >
@@ -1451,7 +1598,9 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                                 )}
                                 <button
                                   type="button"
-                                  onClick={() => handleRemoveMember(selectedClass.id, member.id)}
+                                  onClick={() =>
+                                    setRemoveMemberTarget({ id: member.id, name: member.name, pending: false })
+                                  }
                                   title="Xóa khỏi lớp"
                                   aria-label={`Xóa ${member.name} khỏi lớp`}
                                 >
@@ -1643,6 +1792,287 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
           </aside>
         </div>
 
+        {progressAssignment && (
+          <div
+            className="cd-modal fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Tiến độ ${progressAssignment.title}`}
+            onClick={(event) => {
+              if (event.target === event.currentTarget) setProgressAssignmentId(null);
+            }}
+          >
+            <div className="cd-modal-card cd-progress-modal card-duo p-6 bg-[#0f1b38] border-[#1e3466] max-w-2xl w-full space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="cd-progress-kicker">Tiến độ &amp; ghi nhớ</p>
+                  <h3 className="cd-progress-title">{progressAssignment.title}</h3>
+                  <p className="cd-progress-meta">
+                    {progressAssignment.deckName} · {progressAssignment.totalCards ?? 0} thẻ · {dueModeLabel(progressAssignment, true)}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setProgressAssignmentId(null)}
+                  className="cd-modal-close"
+                  aria-label="Đóng"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+
+              <div className="cd-progress-stats">
+                <span>
+                  <strong>{progressDone}</strong>/{progressRows.length} hoàn thành
+                </span>
+                <span>
+                  TB tiến độ <strong>{progressAvg}%</strong>
+                </span>
+                <span>
+                  Ghi nhớ TB{" "}
+                  <strong>{progressMemorySamples.length ? `${progressMemory}%` : "—"}</strong>
+                </span>
+              </div>
+              <div className="rd-progress cd-progress-memorybar" aria-hidden="true">
+                <span style={{ width: `${progressMemory}%` }} />
+              </div>
+
+              {progressRows.length === 0 ? (
+                <p className="cd-muted">Chưa có học viên nào trong lớp.</p>
+              ) : (
+                <div className="cd-students cd-progress-list">
+                  {progressRows.map((row) => (
+                    <div key={row.id} className="cd-studentrow">
+                      <span className="rd-avatar cd-avatar-xs">{initialsOf(row.name)}</span>
+                      <div className="cd-student-main">
+                        <div className="cd-student-name">
+                          <span>{row.name}</span>
+                          <small>
+                            {row.reviewed}/{row.total} từ
+                            {row.lastStudiedAt ? ` · ${shortDate(row.lastStudiedAt)}` : ""}
+                          </small>
+                        </div>
+                        <div className="rd-progress cd-progress-thin cd-progress-memorybar" aria-hidden="true">
+                          <span style={{ width: `${row.memory ?? 0}%` }} />
+                        </div>
+                      </div>
+                      <span
+                        className={`cd-memory ${
+                          row.memory !== null && row.memory >= 85 ? "is-strong" : ""
+                        }`}
+                        title={
+                          row.memory === null
+                            ? "Chưa có dữ liệu ghi nhớ"
+                            : `Tỷ lệ ghi nhớ: ${row.correctCards}/${row.reviewed} thẻ trả lời đúng`
+                        }
+                      >
+                        <strong>{row.memory === null ? "—" : `${row.memory}%`}</strong>
+                        <small>{row.memory === null ? "chưa học" : "ghi nhớ"}</small>
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <p className="cd-muted">
+                50/50 từ = số từ học viên đã học trên tổng số từ của bài. % ghi nhớ = số thẻ trả lời
+                đúng trên số thẻ đã học.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {editAssignmentId && (
+          <div
+            className="cd-modal fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4"
+            onClick={(event) => {
+              if (event.target === event.currentTarget) setEditAssignmentId(null);
+            }}
+          >
+            <div className="cd-modal-card card-duo p-6 bg-[#0f1b38] border-[#1e3466] max-w-md w-full space-y-4 shadow-2xl">
+              <div className="flex items-center justify-between gap-2">
+                <h3 className="text-lg font-black text-white flex items-center gap-2">
+                  <Pencil className="w-5 h-5 text-amber-400" />
+                  <span>Sửa bài tập</span>
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setEditAssignmentId(null)}
+                  className="text-slate-400 hover:text-white p-1"
+                  aria-label="Đóng"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <form onSubmit={handleUpdateAssignment} className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold text-slate-300 block mb-1">Tiêu đề bài tập</label>
+                  <input
+                    type="text"
+                    required
+                    minLength={3}
+                    maxLength={120}
+                    value={editAssignmentTitle}
+                    onChange={(e) => setEditAssignmentTitle(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#132247] border border-[#1e3a70] text-white text-xs font-bold"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-slate-300 block mb-1">Hạn nộp</label>
+                  <div className="mb-2 grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setEditAssignmentDueMode("date")}
+                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${editAssignmentDueMode === "date" ? "border-sky-500/60 bg-sky-500/20 text-sky-100" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`}
+                    >
+                      Chọn ngày cụ thể
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditAssignmentDueMode("duration")}
+                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${editAssignmentDueMode === "duration" ? "border-sky-500/60 bg-sky-500/20 text-sky-100" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`}
+                    >
+                      Số ngày hoàn thành
+                    </button>
+                  </div>
+                  {editAssignmentDueMode === "date" ? (
+                    <>
+                      <input
+                        type="date"
+                        value={editAssignmentDueDate}
+                        onChange={(e) => setEditAssignmentDueDate(e.target.value)}
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#132247] border border-[#1e3a70] text-white text-xs font-bold"
+                      />
+                      <p className="text-[11px] text-slate-400 mt-1">Để trống nếu bài tập không đặt hạn.</p>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          min={1}
+                          max={365}
+                          value={editAssignmentDurationDays}
+                          onChange={(e) => setEditAssignmentDurationDays(e.target.value)}
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-[#132247] border border-[#1e3a70] text-white text-xs font-bold"
+                        />
+                        <span className="text-xs font-bold text-slate-300">ngày</span>
+                      </div>
+                      <p className="text-[11px] text-slate-400 mt-1">
+                        Học viên vào lớp sau sẽ có đủ {Number(editAssignmentDurationDays) || 7} ngày kể từ ngày tham gia.
+                      </p>
+                    </>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-800">
+                  <button
+                    type="button"
+                    onClick={() => setEditAssignmentId(null)}
+                    className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-bold text-xs"
+                  >
+                    Hủy
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={
+                      savingAssignmentEdit ||
+                      editAssignmentTitle.trim().length < 3 ||
+                      (editAssignmentDueMode === "duration" &&
+                        (!Number.isInteger(Number(editAssignmentDurationDays)) ||
+                          Number(editAssignmentDurationDays) < 1 ||
+                          Number(editAssignmentDurationDays) > 365))
+                    }
+                    className="cm-btn cm-btn--primary text-xs disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {savingAssignmentEdit ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        Đang lưu
+                      </>
+                    ) : (
+                      "Lưu thay đổi"
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {removeMemberTarget && (
+          <div
+            className="cd-modal fixed inset-0 z-50 flex items-center justify-center p-4"
+            role="presentation"
+            onClick={(event) => {
+              if (event.target === event.currentTarget) setRemoveMemberTarget(null);
+            }}
+          >
+            <div className="cd-confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="cd-confirm-title">
+              <span className="cd-confirm-icon">
+                <Trash2 className="h-5 w-5" />
+              </span>
+              <h3 id="cd-confirm-title">
+                {removeMemberTarget.pending ? "Từ chối yêu cầu?" : "Xóa thành viên?"}
+              </h3>
+              <p>
+                {removeMemberTarget.pending
+                  ? `Bạn có chắc muốn từ chối yêu cầu tham gia lớp của ${removeMemberTarget.name}?`
+                  : `Bạn có chắc muốn xóa ${removeMemberTarget.name} khỏi lớp? Hành động này không thể hoàn tác.`}
+              </p>
+              <div className="cd-confirm-actions">
+                <button
+                  type="button"
+                  className="rd-btn cd-btn-ghost"
+                  onClick={() => setRemoveMemberTarget(null)}
+                >
+                  Hủy
+                </button>
+                <button type="button" className="rd-btn cd-btn-danger" onClick={handleConfirmRemoveMember}>
+                  {removeMemberTarget.pending ? "Từ chối" : "Xóa thành viên"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {roleChangeTarget && (
+          <div
+            className="cd-modal fixed inset-0 z-50 flex items-center justify-center p-4"
+            role="presentation"
+            onClick={(event) => {
+              if (event.target === event.currentTarget) setRoleChangeTarget(null);
+            }}
+          >
+            <div className="cd-confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="cd-role-title">
+              <span className="cd-confirm-icon cd-confirm-icon--info">
+                <Users className="h-5 w-5" />
+              </span>
+              <h3 id="cd-role-title">Đổi vai trò thành viên?</h3>
+              <p>
+                Bạn có chắc muốn đổi vai trò của <strong>{roleChangeTarget.name}</strong> từ{" "}
+                <strong>{memberRoleName(roleChangeTarget.currentRole)}</strong> sang{" "}
+                <strong>{memberRoleName(roleChangeTarget.nextRole)}</strong>? Quyền truy cập của thành viên sẽ
+                thay đổi ngay.
+              </p>
+              <div className="cd-confirm-actions">
+                <button
+                  type="button"
+                  className="rd-btn cd-btn-ghost"
+                  onClick={() => setRoleChangeTarget(null)}
+                >
+                  Hủy
+                </button>
+                <button type="button" className="rd-btn rd-btn-primary" onClick={handleConfirmRoleChange}>
+                  Đổi vai trò
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {showAssignModal && (
           <div className="cd-modal fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
             <div className="cd-modal-card card-duo p-6 bg-[#0f1b38] border-[#1e3466] max-w-xl w-full space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto">
@@ -1660,27 +2090,6 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                 </button>
               </div>
 
-              <div className="cm-mode" role="tablist" aria-label="Cách giao bài tập">
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={assignMode === "existing"}
-                  onClick={() => setAssignMode("existing")}
-                  className={`cm-mode-btn ${assignMode === "existing" ? "is-active" : ""}`}
-                >
-                  Chọn bộ thẻ có sẵn / .apkg
-                </button>
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={assignMode === "dictionary"}
-                  onClick={() => setAssignMode("dictionary")}
-                  className={`cm-mode-btn ${assignMode === "dictionary" ? "is-active" : ""}`}
-                >
-                  Soạn từ Từ điển
-                </button>
-              </div>
-
               <form onSubmit={handleAssignDeck} className="space-y-4">
                 <div>
                   <label className="text-xs font-bold text-slate-300 block mb-1">Tiêu Đề Bài Tập *</label>
@@ -1693,9 +2102,6 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                     className="w-full px-3.5 py-2.5 rounded-xl bg-[#132247] border border-[#1e3a70] text-white text-xs font-bold"
                   />
                 </div>
-
-                {assignMode === "existing" ? (
-                  <>
                     <div>
                       <label className="text-xs font-bold text-slate-300 block mb-1">Nguồn thẻ có sẵn · lọc theo quyển/độ khó</label>
                       <div className="mb-2 grid grid-cols-2 gap-2">
@@ -1747,153 +2153,56 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                       >
                         {visibleAssignmentDecks.map((deck) => (
                           <option key={deck.id} value={deck.id} disabled={deck.cards.filter((card) => card.korean && card.meaning).length === 0 || deck.cards.filter((card) => card.korean && card.meaning).length > 500}>
-                            {deck.book ? `${deck.topic} · ${deck.name.split(" · ").slice(1, 3).join(" · ")} · ${deck.difficulty}` : deck.name} · {deck.cards.filter((card) => card.korean && card.meaning).length} thẻ
+                            {("parentId" in deck && deck.parentId) || (!deck.book && deck.name.includes("::")) ? "↳ " : ""}{deck.book ? `${deck.topic} · ${deck.name.split(" · ").slice(1, 3).join(" · ")} · ${deck.difficulty}` : deck.name} · {deck.cards.filter((card) => card.korean && card.meaning).length} thẻ
                           </option>
                         ))}
                       </select>
-                      <p className="mt-2 text-[10px] leading-4 text-slate-500">Thư viện có sẵn gồm từ, nghĩa, từ loại và ví dụ theo chủ đề. Để chia sẻ ảnh/âm thanh gốc của Anki, tải file .apkg bên dưới. Mỗi bài tối đa 500 thẻ và 60 MB media.</p>
+                      <p className="mt-2 text-[10px] leading-4 text-slate-500">Thư viện có sẵn gồm từ, nghĩa, từ loại và ví dụ theo chủ đề. Mỗi bài tối đa 500 thẻ.</p>
                     </div>
-
-                    <label className="block rounded-xl border border-dashed border-sky-500/40 bg-sky-950/20 p-3 text-center text-xs font-bold text-sky-200 cursor-pointer hover:bg-sky-900/30">
-                      <input type="file" accept=".apkg,application/zip" className="hidden" disabled={parsingAssignmentApkg} onChange={(event) => { void handleAssignmentApkgUpload(event.currentTarget.files?.[0]); event.currentTarget.value = ""; }} />
-                      {parsingAssignmentApkg ? "Đang giải nén .apkg…" : "Tải .apkg lên để chia sẻ kèm hình ảnh và âm thanh"}
-                    </label>
-                  </>
-                ) : (
-                  <div className="space-y-3">
-                    <div>
-                      <label className="text-xs font-bold text-slate-300 block mb-1">
-                        Tìm từ trong Từ điển (Hangul / Tiếng Việt / Tiếng Anh)
-                      </label>
-                      <div className="flex items-center gap-2 rounded-xl bg-[#132247] border border-[#1e3a70] px-3 py-2">
-                        <Search className="w-4 h-4 text-slate-400 shrink-0" />
-                        <input
-                          value={dictQuery}
-                          onChange={(e) => setDictQuery(e.target.value)}
-                          placeholder="Gõ từ cần thêm vào bài tập lớp..."
-                          className="w-full bg-transparent text-xs text-white outline-none"
-                        />
-                        {dictQuery && (
-                          <button type="button" onClick={() => setDictQuery("")} className="text-slate-400 hover:text-white">
-                            <X className="w-3.5 h-3.5" />
-                          </button>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Search Results */}
-                    {dictQuery.trim() && (
-                      <div className="max-h-44 overflow-y-auto divide-y divide-slate-800 rounded-xl border border-[#1e3466] bg-[#0a1329]">
-                        {dictLoading && (
-                          <p className="p-3 text-xs text-slate-400">Đang tra từ điển…</p>
-                        )}
-                        {!dictLoading && dictResults.length === 0 && (
-                          <p className="p-3 text-xs text-slate-500">Không tìm thấy từ phù hợp.</p>
-                        )}
-                        {dictResults.map((entry, idx) => {
-                          const added = dictSelectedWords.some((w) => w.korean === entry.hangul);
-                          const meaning = entry.vietnamese || entry.english || entry.japanese || "";
-                          return (
-                            <div
-                              key={`${entry.hangul}-${idx}`}
-                              className="flex items-center justify-between gap-2 p-2.5 text-xs"
-                            >
-                              <div className="min-w-0">
-                                <p className="font-noto font-bold text-white truncate">
-                                  {entry.hangul}
-                                  {entry.partOfSpeech && (
-                                    <span className="ml-2 text-[10px] text-sky-400">{entry.partOfSpeech}</span>
-                                  )}
-                                </p>
-                                <p className="text-slate-300 truncate">{meaning}</p>
-                              </div>
-                              <button
-                                type="button"
-                                disabled={added || dictSelectedWords.length >= 500}
-                                onClick={() =>
-                                  setDictSelectedWords((prev) => [
-                                    ...prev,
-                                    {
-                                      korean: entry.hangul,
-                                      meaning,
-                                      example: entry.english && entry.vietnamese ? entry.english : "",
-                                      pos: entry.partOfSpeech || "",
-                                    },
-                                  ])
-                                }
-                                className="shrink-0 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 border border-sky-500/40 px-2.5 py-1 text-[11px] font-bold text-sky-200 disabled:opacity-40 cursor-pointer"
-                              >
-                                {added ? "Đã chọn" : "+ Chọn"}
-                              </button>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-
-                    {/* Selected Words List */}
-                    <div className="rounded-xl border border-[#1e3466] bg-[#0a1329] p-3 space-y-2">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="font-bold text-amber-400">
-                          Danh sách từ sẽ giao ({dictSelectedWords.length} / 500 từ)
-                        </span>
-                        {dictSelectedWords.length > 0 && (
-                          <button
-                            type="button"
-                            onClick={() => setDictSelectedWords([])}
-                            className="text-[11px] text-rose-400 hover:underline"
-                          >
-                            Xóa hết
-                          </button>
-                        )}
-                      </div>
-                      <div className="max-h-44 overflow-y-auto divide-y divide-slate-800">
-                        {dictSelectedWords.map((w, i) => (
-                          <div key={`${w.korean}-${i}`} className="flex items-center gap-2 py-2 text-xs">
-                            <span className="font-noto font-bold text-white shrink-0 w-28 truncate">
-                              {w.korean}
-                            </span>
-                            <input
-                              value={w.meaning}
-                              onChange={(e) =>
-                                setDictSelectedWords((prev) =>
-                                  prev.map((item, idx) =>
-                                    idx === i ? { ...item, meaning: e.target.value } : item,
-                                  ),
-                                )
-                              }
-                              placeholder="Nghĩa tiếng Việt..."
-                              className="flex-1 rounded-lg bg-[#132247] border border-[#1e3a70] px-2.5 py-1 text-xs text-white outline-none"
-                            />
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setDictSelectedWords((prev) => prev.filter((_, idx) => idx !== i))
-                              }
-                              className="text-slate-400 hover:text-rose-400 p-1"
-                            >
-                              <X className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        ))}
-                        {dictSelectedWords.length === 0 && (
-                          <p className="py-3 text-center text-xs text-slate-500">
-                            Chưa chọn từ nào. Hãy tìm và bấm &quot;+ Chọn&quot; phía trên.
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
 
                 <div>
                   <label className="text-xs font-bold text-slate-300 block mb-1">Hạn Nộp (Hạn Ôn)</label>
-                  <input
-                    type="date"
-                    value={assignDueDate}
-                    onChange={(e) => setAssignDueDate(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#132247] border border-[#1e3a70] text-white text-xs font-bold"
-                  />
+                  <div className="mb-2 grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setAssignDueMode("date")}
+                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${assignDueMode === "date" ? "border-sky-500/60 bg-sky-500/20 text-sky-100" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`}
+                    >
+                      Chọn ngày cụ thể
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAssignDueMode("duration")}
+                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${assignDueMode === "duration" ? "border-sky-500/60 bg-sky-500/20 text-sky-100" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`}
+                    >
+                      Số ngày hoàn thành
+                    </button>
+                  </div>
+                  {assignDueMode === "date" ? (
+                    <input
+                      type="date"
+                      value={assignDueDate}
+                      onChange={(e) => setAssignDueDate(e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#132247] border border-[#1e3a70] text-white text-xs font-bold"
+                    />
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          min={1}
+                          max={365}
+                          value={assignDurationDays}
+                          onChange={(e) => setAssignDurationDays(e.target.value)}
+                          className="w-full px-3.5 py-2.5 rounded-xl bg-[#132247] border border-[#1e3a70] text-white text-xs font-bold"
+                        />
+                        <span className="text-xs font-bold text-slate-300">ngày</span>
+                      </div>
+                      <p className="text-[11px] text-slate-400 mt-1">
+                        Học viên vào lớp sau sẽ có đủ {Number(assignDurationDays) || 7} ngày kể từ ngày tham gia.
+                      </p>
+                    </>
+                  )}
                 </div>
 
                 <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-800">
@@ -1907,12 +2216,13 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                   <button
                     type="submit"
                     disabled={
-                      assignMode === "dictionary"
-                        ? dictSelectedWords.length === 0
-                        : parsingAssignmentApkg ||
-                          !selectedAssignmentDeck ||
-                          selectedAssignmentDeck.cards.filter((card) => card.korean && card.meaning).length === 0 ||
-                          selectedAssignmentDeck.cards.filter((card) => card.korean && card.meaning).length > 500
+                      (assignDueMode === "duration" &&
+                        (!Number.isInteger(Number(assignDurationDays)) ||
+                          Number(assignDurationDays) < 1 ||
+                          Number(assignDurationDays) > 365)) ||
+                      !selectedAssignmentDeck ||
+                      selectedAssignmentDeck.cards.filter((card) => card.korean && card.meaning).length === 0 ||
+                      selectedAssignmentDeck.cards.filter((card) => card.korean && card.meaning).length > 500
                     }
                     className="cm-btn cm-btn--primary text-xs disabled:cursor-not-allowed disabled:opacity-50"
                   >
@@ -1947,7 +2257,10 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
 
   return (
     <div className="classroom-module cm-page rd">
-      <div className="rd-nav-shell">
+      <div
+        ref={navShellRef}
+        className={`rd-nav-shell${navRail ? " rd-nav-shell--rail" : ""}`}
+      >
         <nav className="rd-nav" aria-label="Điều hướng lớp học">
           {onBack && (
             <button type="button" onClick={onBack} className="rd-nav-back" aria-label="Trở về">
@@ -1959,7 +2272,30 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
             <Image src="/brand/haechivn-mark.webp" alt="" width={26} height={26} />
             <span>HaechiVN</span>
           </Link>
-          <span className="rd-nav-scope">Lớp học</span>
+          <div className="rd-segmented rd-nav-segmented" role="tablist" aria-label="Chế độ xem lớp học">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mainTab === "mine"}
+              onClick={() => setMainTab("mine")}
+              className="rd-tab"
+              title="Lớp học của tôi"
+            >
+              <Layers className="rd-tab-icon" />
+              <span className="rd-tab-label">Lớp học của tôi</span>
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mainTab === "join"}
+              onClick={() => setMainTab("join")}
+              className="rd-tab"
+              title="Tham gia lớp học"
+            >
+              <UserPlus className="rd-tab-icon" />
+              <span className="rd-tab-label">Tham gia lớp học</span>
+            </button>
+          </div>
           <div className="rd-nav-user">
             <span className="rd-avatar">{userInitials}</span>
             <span className="rd-user-copy">
@@ -2002,29 +2338,6 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
           </div>
         </aside>
       </section>
-
-      <div className="rd-tabs-wrap">
-        <div className="rd-segmented" role="tablist" aria-label="Chế độ xem lớp học">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={mainTab === "mine"}
-            onClick={() => setMainTab("mine")}
-            className="rd-tab"
-          >
-            Lớp học của tôi
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={mainTab === "join"}
-            onClick={() => setMainTab("join")}
-            className="rd-tab"
-          >
-            Tham gia lớp học
-          </button>
-        </div>
-      </div>
 
       {mainTab === "mine" && (
         <div className="rd-view">
@@ -2114,9 +2427,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                           )
                         : asg.reviewedCards || 0
                       : 0;
-                    const due = asg?.dueDate
-                      ? new Date(asg.dueDate).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" })
-                      : "";
+                    const due = asg ? dueModeLabel(asg, teacher) : "";
 
                     return (
                       <article
@@ -2180,7 +2491,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                                 <span>
                                   <strong>{reviewed}</strong>/{asg.totalCards || 0} từ
                                 </span>
-                                <span>{due ? `Hạn ${due}` : `${percent}%`}</span>
+                                <span>{due || `${percent}%`}</span>
                               </div>
                             </>
                           ) : (
@@ -2218,120 +2529,140 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
 
       {mainTab === "join" && (
         <div className="rd-view">
-          <div className="rd-section-head">
-            <h2>Tham gia lớp học</h2>
-            <p className="rd-section-note">Dùng mã giáo viên gửi</p>
-          </div>
-
-          <div className="rd-join-card">
-            <form className="rd-join-form" onSubmit={handleJoinRequest}>
-              <span className="rd-join-icon">
-                <KeyRound className="h-4 w-4" />
-              </span>
-              <input
-                type="text"
-                placeholder="Nhập mã lớp, ví dụ HAECHI-T1"
-                value={joinCodeInput}
-                onChange={(e) => setJoinCodeInput(e.target.value)}
-                autoComplete="off"
-                spellCheck={false}
-                aria-label="Mã lớp"
-                className="rd-input"
-              />
-              <button type="submit" className="rd-btn rd-btn-primary">
-                <UserPlus className="h-4 w-4" />
-                Gửi yêu cầu
-              </button>
-            </form>
-            <p className="rd-join-help">
-              Lớp công khai vào học ngay; lớp riêng tư cần chủ lớp duyệt yêu cầu của bạn.
-            </p>
-            {msg && (
-              <p className={`rd-msg ${msg.type === "error" ? "rd-msg--error" : "rd-msg--ok"}`}>
-                {msg.type === "error" ? <XCircle className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
-                {msg.text}
+          <div className="rd-join-layout">
+            <section className="rd-join-card" aria-labelledby="join-class-heading">
+              <h2 id="join-class-heading" className="rd-join-title">
+                Tham gia lớp học
+              </h2>
+              <p className="rd-join-lead">
+                Nhập mã lớp do giáo viên gửi. Lớp công khai sẽ mở ngay, lớp riêng tư cần được duyệt.
               </p>
-            )}
-          </div>
-
-          <div className="rd-section-head rd-section-head--tight">
-            <h2>Lớp đang mở</h2>
-            <p className="rd-section-note">Khám phá lớp công khai</p>
-          </div>
-
-          {discoverLoading ? (
-            <div className="rd-panel rd-loading">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Đang tải danh sách lớp…
-            </div>
-          ) : (
-            <div className="rd-panel">
-              <div className="rd-ledger">
-                {[...discoverClasses, ...DEMO_DISCOVER_CLASSES].map((cls, idx) => {
-                  const isPublic = cls.visibility === "public";
-                  const isDemo = "isDemo" in cls;
-                  return (
-                    <article key={cls.id} className="rd-row rd-row--discover">
-                      <span className="rd-index" aria-hidden="true">
-                        {String(idx + 1).padStart(2, "0")}
-                      </span>
-                      <div className="rd-main">
-                        <div className="rd-kicker">
-                          <span
-                            className={`rd-tag ${isDemo ? "rd-tag--demo" : isPublic ? "rd-tag--public" : ""}`}
-                          >
-                            {isDemo ? "Lớp mẫu" : isPublic ? "Công khai" : "Riêng tư"}
-                          </span>
-                          <span className="rd-tag">{cls.memberCount} thành viên</span>
-                        </div>
-                        <h3 className="rd-row-title">{cls.name}</h3>
-                        <p className="rd-row-desc">{cls.description || "Lớp học chưa có mô tả."}</p>
-                        <ul className="rd-row-meta">
-                          <li>{cls.ownerName}</li>
-                          <li>Tạo {cls.createdAt}</li>
-                        </ul>
-                      </div>
-                      <div className="rd-side rd-side--action">
-                        <p className="rd-side-label">
-                          {isDemo ? "Lớp mẫu" : isPublic ? "Vào học ngay" : "Cần chủ lớp duyệt"}
-                        </p>
-                        {isDemo ? (
-                          <button
-                            type="button"
-                            className="rd-btn rd-btn-block"
-                            onClick={() => setDemoPreview(cls.name)}
-                          >
-                            <Sparkles className="h-3.5 w-3.5" />
-                            Xem trước
-                          </button>
-                        ) : cls.myStatus === "approved" ? (
-                          <button
-                            type="button"
-                            className="rd-btn rd-btn-primary rd-btn-block"
-                            onClick={() => setSelectedClassId(cls.id)}
-                          >
-                            <CheckCircle2 className="h-3.5 w-3.5" />
-                            Vào lớp
-                          </button>
-                        ) : cls.myStatus === "pending" ? (
-                          <span className="rd-tag">Đang chờ duyệt</span>
-                        ) : (
-                          <button
-                            type="button"
-                            className="rd-btn rd-btn-primary rd-btn-block"
-                            onClick={() => handleJoinDiscoveredClass(cls)}
-                          >
-                            {isPublic ? <UserPlus className="h-3.5 w-3.5" /> : <KeyRound className="h-3.5 w-3.5" />}
-                            {isPublic ? "Tham gia" : "Gửi yêu cầu"}
-                          </button>
-                        )}
-                      </div>
-                    </article>
-                  );
-                })}
+              <form className="rd-join-form" onSubmit={handleJoinRequest}>
+                <label className="rd-join-label" htmlFor="join-code">
+                  Mã lớp
+                </label>
+                <input
+                  id="join-code"
+                  type="text"
+                  placeholder="VD: HAECHI-T1"
+                  value={joinCodeInput}
+                  onChange={(e) => setJoinCodeInput(e.target.value)}
+                  autoComplete="off"
+                  spellCheck={false}
+                  aria-label="Mã lớp"
+                  className="rd-join-input"
+                />
+                <p className="rd-join-help">Bạn có thể dán mã từ tin nhắn của giáo viên.</p>
+                {msg && (
+                  <p className={`rd-msg ${msg.type === "error" ? "rd-msg--error" : "rd-msg--ok"}`}>
+                    {msg.type === "error" ? <XCircle className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
+                    {msg.text}
+                  </p>
+                )}
+                <button type="submit" className="rd-btn rd-btn-primary rd-btn-block rd-join-submit">
+                  <span>Gửi yêu cầu</span>
+                  <span className="rd-orb" aria-hidden="true">
+                    <ArrowRight className="h-4 w-4" />
+                  </span>
+                </button>
+              </form>
+              <div className="rd-join-note">
+                <Lock className="h-3.5 w-3.5" />
+                <p>Yêu cầu tham gia lớp riêng tư sẽ xuất hiện trong thông báo của giáo viên phụ trách.</p>
               </div>
-            </div>
-          )}
+            </section>
+
+            <section className="rd-discover" aria-labelledby="discover-heading">
+              <div className="rd-discover-head">
+                <h2 id="discover-heading">Lớp đang mở</h2>
+                <p className="rd-section-note">{discoverClasses.length + DEMO_DISCOVER_CLASSES.length} lớp</p>
+              </div>
+
+              {discoverLoading ? (
+                <div className="rd-panel rd-loading">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Đang tải danh sách lớp…
+                </div>
+              ) : (
+                <div className="rd-discover-grid">
+                  {[...discoverClasses, ...DEMO_DISCOVER_CLASSES].map((cls) => {
+                    const isPublic = cls.visibility === "public";
+                    const isDemo = "isDemo" in cls;
+                    return (
+                      <article key={cls.id} className={`rd-discover-card ${isDemo ? "is-demo" : ""}`}>
+                        <div className="rd-discover-core">
+                          <div className="rd-discover-top">
+                            <span
+                              className={`rd-tag ${isDemo ? "rd-tag--demo" : isPublic ? "rd-tag--public" : ""}`}
+                            >
+                              {isDemo ? "Lớp mẫu" : isPublic ? "Công khai" : "Riêng tư"}
+                            </span>
+                            {isDemo ? (
+                              <span className="rd-discover-code">
+                                <span>{cls.code}</span>
+                              </span>
+                            ) : (
+                              <button
+                                type="button"
+                                className="rd-discover-code"
+                                onClick={() => copyToClipboard(cls.code)}
+                                aria-label={`Sao chép mã lớp ${cls.code}`}
+                              >
+                                <span>{cls.code}</span>
+                                {copiedCode === cls.code ? (
+                                  <CheckCircle2 className="h-3 w-3" />
+                                ) : (
+                                  <Copy className="h-3 w-3" />
+                                )}
+                              </button>
+                            )}
+                          </div>
+                          <h3 className="rd-discover-title">{cls.name}</h3>
+                          <p className="rd-discover-desc">{cls.description || "Lớp học chưa có mô tả."}</p>
+                          <div className="rd-discover-foot">
+                            <span className="rd-discover-teacher">
+                              <span>{cls.ownerName}</span>
+                              <span>{cls.memberCount} thành viên</span>
+                            </span>
+                            {isDemo ? (
+                              <button
+                                type="button"
+                                className="rd-btn rd-btn-sm"
+                                onClick={() => setDemoPreview(cls.name)}
+                              >
+                                <Sparkles className="h-3.5 w-3.5" />
+                                Xem trước
+                              </button>
+                            ) : cls.myStatus === "approved" ? (
+                              <button
+                                type="button"
+                                className="rd-btn rd-btn-primary rd-btn-sm"
+                                onClick={() => setSelectedClassId(cls.id)}
+                              >
+                                <CheckCircle2 className="h-3.5 w-3.5" />
+                                Vào lớp
+                              </button>
+                            ) : cls.myStatus === "pending" ? (
+                              <span className="rd-tag">Đang chờ duyệt</span>
+                            ) : (
+                              <button
+                                type="button"
+                                className="rd-btn rd-btn-sm"
+                                onClick={() => handleJoinDiscoveredClass(cls)}
+                              >
+                                {isPublic ? <UserPlus className="h-3.5 w-3.5" /> : <KeyRound className="h-3.5 w-3.5" />}
+                                {isPublic ? "Tham gia" : "Xin tham gia"}
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              )}
+            </section>
+          </div>
 
           {demoPreview && (
             <p className="rd-note">
