@@ -53,6 +53,15 @@ export interface StudentAssignmentProgress {
   completed: boolean;
 }
 
+export interface AssignmentPreviewCard {
+  id: number;
+  korean: string;
+  meaning: string;
+  pronunciation?: string;
+  example?: string;
+  mediaHtml?: string;
+}
+
 export interface ClassAssignment {
   id: string;
   title: string;
@@ -67,6 +76,7 @@ export interface ClassAssignment {
   correctCards?: number;
   lastStudiedAt?: string | null;
   progress?: StudentAssignmentProgress[];
+  deckCards?: AssignmentPreviewCard[];
 }
 
 export type ClassVisibility = "public" | "private" | "secret";
@@ -285,6 +295,16 @@ export const DEMO_CLASSES: Classroom[] = [
           { studentId: "u-s2", studentName: "Jiwoo Park", reviewedCards: 184, totalCards: 200, correctCards: 170, lastStudiedAt: "2026-11-18", completed: true },
           { studentId: "u-s3", studentName: "Bảo Trân", reviewedCards: 96, totalCards: 200, correctCards: 81, lastStudiedAt: "2026-11-17", completed: false },
         ],
+        deckCards: [
+          { id: 1, korean: "가족", meaning: "gia đình", pronunciation: "gajok" },
+          { id: 2, korean: "학교", meaning: "trường học", pronunciation: "hakgyo" },
+          { id: 3, korean: "친구", meaning: "bạn bè", pronunciation: "chingu" },
+          { id: 4, korean: "시간", meaning: "thời gian", pronunciation: "sigan" },
+          { id: 5, korean: "아침", meaning: "buổi sáng", pronunciation: "achim" },
+          { id: 6, korean: "습관", meaning: "thói quen", pronunciation: "seupgwan" },
+          { id: 7, korean: "이야기", meaning: "câu chuyện", pronunciation: "iyagi" },
+          { id: 8, korean: "준비하다", meaning: "chuẩn bị", pronunciation: "junbihada" },
+        ],
       },
       {
         id: "a2",
@@ -297,6 +317,14 @@ export const DEMO_CLASSES: Classroom[] = [
           { studentId: "u-student", studentName: "Minh Anh", reviewedCards: 42, totalCards: 140, correctCards: 33, lastStudiedAt: "2026-11-19", completed: false },
           { studentId: "u-s2", studentName: "Jiwoo Park", reviewedCards: 120, totalCards: 140, correctCards: 104, lastStudiedAt: "2026-11-18", completed: false },
           { studentId: "u-s3", studentName: "Bảo Trân", reviewedCards: 12, totalCards: 140, correctCards: 9, lastStudiedAt: "2026-11-16", completed: false },
+        ],
+        deckCards: [
+          { id: 1, korean: "만나다", meaning: "gặp gỡ", pronunciation: "mannada" },
+          { id: 2, korean: "기다리다", meaning: "chờ đợi", pronunciation: "gidarida" },
+          { id: 3, korean: "좋아하다", meaning: "thích", pronunciation: "joahada" },
+          { id: 4, korean: "배우다", meaning: "học", pronunciation: "baeuda" },
+          { id: 5, korean: "연습하다", meaning: "luyện tập", pronunciation: "yeonseuphada" },
+          { id: 6, korean: "천천히", meaning: "chậm rãi", pronunciation: "cheoncheonhi" },
         ],
       },
     ],
@@ -408,6 +436,11 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
   const [editAssignmentDueMode, setEditAssignmentDueMode] = useState<"date" | "duration">("date");
   const [editAssignmentDurationDays, setEditAssignmentDurationDays] = useState("7");
   const [savingAssignmentEdit, setSavingAssignmentEdit] = useState(false);
+  const [editAssignmentDeckName, setEditAssignmentDeckName] = useState("");
+  const [editAssignmentCards, setEditAssignmentCards] = useState<AssignmentPreviewCard[] | null>(null);
+  const [editAssignmentCardsLoading, setEditAssignmentCardsLoading] = useState(false);
+  const [editAssignmentCardsError, setEditAssignmentCardsError] = useState<string | null>(null);
+  const editAssignmentCardsRequest = useRef(0);
 
   // Detail View Active Tab
   const [activeTab, setActiveTab] = useState<"assignments" | "leaderboard" | "members" | "settings">("assignments");
@@ -788,6 +821,36 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
     setEditAssignmentDueDate(assignment.dueDate || "");
     setEditAssignmentDueMode(assignment.dueMode === "duration" ? "duration" : "date");
     setEditAssignmentDurationDays(String(assignment.durationDays || 7));
+    setEditAssignmentDeckName(assignment.deckName || "");
+    setEditAssignmentCards(null);
+    setEditAssignmentCardsError(null);
+    const requestId = ++editAssignmentCardsRequest.current;
+    if (assignment.deckCards?.length) {
+      setEditAssignmentCards(assignment.deckCards);
+      setEditAssignmentCardsLoading(false);
+      return;
+    }
+    if (!selectedClassId) {
+      setEditAssignmentCardsLoading(false);
+      return;
+    }
+    setEditAssignmentCardsLoading(true);
+    void ApiClient.getClassAssignment(selectedClassId, assignment.id)
+      .then((detail) => {
+        if (requestId !== editAssignmentCardsRequest.current) return;
+        setEditAssignmentDeckName(detail.deckName || assignment.deckName || "");
+        setEditAssignmentCards(detail.deckCards || []);
+      })
+      .catch((error) => {
+        if (requestId !== editAssignmentCardsRequest.current) return;
+        setEditAssignmentCardsError(
+          error instanceof Error ? error.message : "Không tải được bộ thẻ của bài tập."
+        );
+      })
+      .finally(() => {
+        if (requestId !== editAssignmentCardsRequest.current) return;
+        setEditAssignmentCardsLoading(false);
+      });
   };
 
   const handleUpdateAssignment = async (e: React.FormEvent) => {
@@ -1889,7 +1952,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
               if (event.target === event.currentTarget) setEditAssignmentId(null);
             }}
           >
-            <div className="cd-modal-card card-duo p-6 bg-[#0f1b38] border-[#1e3466] max-w-md w-full space-y-4 shadow-2xl">
+            <div className="cd-modal-card card-duo p-6 bg-[#0f1b38] border-[#1e3466] max-w-xl w-full space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto">
               <div className="flex items-center justify-between gap-2">
                 <h3 className="text-lg font-black text-white flex items-center gap-2">
                   <Pencil className="w-5 h-5 text-amber-400" />
@@ -1964,6 +2027,52 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                         Học viên vào lớp sau sẽ có đủ {Number(editAssignmentDurationDays) || 7} ngày kể từ ngày tham gia.
                       </p>
                     </>
+                  )}
+                </div>
+
+                <div className="rounded-2xl border border-[#1e3a70] bg-[#132247]/60 p-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-slate-200">Bộ thẻ đã giao</p>
+                      <p className="mt-0.5 truncate text-[11px] text-slate-400">
+                        {editAssignmentDeckName || "Chưa có tên bộ thẻ"}
+                        {editAssignmentCards ? ` · ${editAssignmentCards.length} thẻ` : ""}
+                      </p>
+                    </div>
+                    <span className="shrink-0 rounded-full bg-sky-500/15 px-2 py-1 text-[10px] font-bold text-sky-200">
+                      Chỉ xem
+                    </span>
+                  </div>
+
+                  {editAssignmentCardsLoading && (
+                    <p className="mt-3 flex items-center gap-2 text-[11px] text-slate-400">
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      Đang tải bộ thẻ…
+                    </p>
+                  )}
+                  {!editAssignmentCardsLoading && editAssignmentCardsError && (
+                    <p className="mt-3 text-[11px] text-amber-300">{editAssignmentCardsError}</p>
+                  )}
+                  {!editAssignmentCardsLoading && editAssignmentCards && editAssignmentCards.length === 0 && (
+                    <p className="mt-3 text-[11px] text-slate-400">Bài tập này chưa có thẻ.</p>
+                  )}
+                  {!editAssignmentCardsLoading && editAssignmentCards && editAssignmentCards.length > 0 && (
+                    <div className="mt-3 max-h-60 divide-y divide-[#1e3a70] overflow-y-auto rounded-xl border border-[#1e3a70] bg-[#0f1b38]">
+                      {editAssignmentCards.map((card, index) => (
+                        <div key={`${card.id}-${index}`} className="flex items-start gap-3 px-3 py-2.5">
+                          <span className="w-6 shrink-0 pt-0.5 font-mono text-[10px] text-slate-500">
+                            {String(index + 1).padStart(2, "0")}
+                          </span>
+                          <div className="min-w-0">
+                            <p className="text-xs font-bold text-white">{card.korean}</p>
+                            <p className="mt-0.5 text-[11px] text-slate-400">
+                              {card.pronunciation ? `${card.pronunciation} · ` : ""}
+                              {card.meaning}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   )}
                 </div>
 
