@@ -3716,7 +3716,7 @@ html[data-theme="dark"] .classroom-module.cm-page.rd.cd .cd-member-tools button:
 .classroom-module.cm-page.rd.cd .cd-modal { background-color: rgba(4, 10, 24, 0.62); }
 .classroom-module.cm-page.rd.cd .cd-modal-card { border-radius: 20px; }
 
-/* Giao bài tập: bộ chọn bộ thẻ có tìm kiếm */
+/* Giao bài tập: bộ chọn bộ thẻ có tìm kiếm (dùng biến --rd-* để theo theme sáng/tối) */
 .classroom-module.cm-page.rd.cd .cd-deck-picker { position: relative; display: grid; gap: 8px; }
 .classroom-module.cm-page.rd.cd .cd-deck-field {
   display: flex;
@@ -3725,12 +3725,14 @@ html[data-theme="dark"] .classroom-module.cm-page.rd.cd .cd-member-tools button:
   min-height: 44px;
   padding: 0 12px;
   border-radius: 12px;
-  background: #132247;
-  box-shadow: inset 0 0 0 1px #1e3a70;
+  background: var(--rd-surface);
+  box-shadow: inset 0 0 0 1px var(--rd-line-strong);
   transition: box-shadow 0.15s ease;
 }
-.classroom-module.cm-page.rd.cd .cd-deck-field:focus-within { box-shadow: inset 0 0 0 1px #38bdf8, 0 0 0 3px rgba(56, 189, 248, 0.16); }
-.classroom-module.cm-page.rd.cd .cd-deck-field > svg { flex: none; color: #64748b; }
+.classroom-module.cm-page.rd.cd .cd-deck-field:focus-within {
+  box-shadow: inset 0 0 0 1px var(--rd-accent), 0 0 0 3px color-mix(in srgb, var(--rd-accent) 18%, transparent);
+}
+.classroom-module.cm-page.rd.cd .cd-deck-field > svg { flex: none; color: var(--rd-muted); }
 .classroom-module.cm-page.rd.cd .cd-deck-field input {
   flex: 1;
   min-width: 0;
@@ -3740,26 +3742,26 @@ html[data-theme="dark"] .classroom-module.cm-page.rd.cd .cd-member-tools button:
   border-radius: 0;
   background: transparent;
   box-shadow: none;
-  color: #f1f5f9;
+  color: var(--rd-ink);
   font-size: 12px;
   font-weight: 700;
   outline: none;
 }
-.classroom-module.cm-page.rd.cd .cd-deck-field input::placeholder { color: #64748b; font-weight: 600; }
-.classroom-module.cm-page.rd.cd .cd-deck-count { flex: none; color: #64748b; font-size: 10px; font-weight: 700; white-space: nowrap; }
+.classroom-module.cm-page.rd.cd .cd-deck-field input::placeholder { color: var(--rd-muted); font-weight: 600; }
+.classroom-module.cm-page.rd.cd .cd-deck-count { flex: none; color: var(--rd-muted); font-size: 10px; font-weight: 700; white-space: nowrap; }
 .classroom-module.cm-page.rd.cd .cd-deck-panel {
   max-height: 280px;
   overflow-y: auto;
   padding: 6px;
   border-radius: 14px;
-  background: #0b1730;
-  box-shadow: inset 0 0 0 1px #1e3a70, 0 18px 40px -24px rgba(2, 6, 23, 0.9);
+  background: var(--rd-surface);
+  box-shadow: inset 0 0 0 1px var(--rd-line), 0 18px 40px -24px rgba(13, 23, 42, 0.35);
 }
-.classroom-module.cm-page.rd.cd .cd-deck-group + .cd-deck-group { margin-top: 4px; padding-top: 4px; border-top: 1px solid rgba(30, 58, 112, 0.65); }
+.classroom-module.cm-page.rd.cd .cd-deck-group + .cd-deck-group { margin-top: 4px; padding-top: 4px; border-top: 1px solid var(--rd-line); }
 .classroom-module.cm-page.rd.cd .cd-deck-group-label {
   margin: 0;
   padding: 7px 10px 4px;
-  color: #64748b;
+  color: var(--rd-muted);
   font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.12em;
@@ -3776,21 +3778,21 @@ html[data-theme="dark"] .classroom-module.cm-page.rd.cd .cd-member-tools button:
   border-radius: 10px;
   background: transparent;
   box-shadow: none;
-  color: #e2e8f0;
+  color: var(--rd-ink-2);
   text-align: left;
   cursor: pointer;
 }
 .classroom-module.cm-page.rd.cd .cd-deck-option:hover,
-.classroom-module.cm-page.rd.cd .cd-deck-option.is-active { background: #16294f; }
-.classroom-module.cm-page.rd.cd .cd-deck-option[aria-selected="true"] { background: rgba(56, 189, 248, 0.14); }
+.classroom-module.cm-page.rd.cd .cd-deck-option.is-active { background: var(--rd-surface-soft); }
+.classroom-module.cm-page.rd.cd .cd-deck-option[aria-selected="true"] { background: color-mix(in srgb, var(--rd-accent) 12%, transparent); }
 .classroom-module.cm-page.rd.cd .cd-deck-option:disabled { opacity: 0.45; cursor: not-allowed; }
 .classroom-module.cm-page.rd.cd .cd-deck-option:disabled:hover { background: transparent; }
 .classroom-module.cm-page.rd.cd .cd-deck-option-copy { display: grid; gap: 2px; min-width: 0; }
-.classroom-module.cm-page.rd.cd .cd-deck-option-copy strong { color: #f1f5f9; font-size: 12px; font-weight: 700; line-height: 1.3; }
-.classroom-module.cm-page.rd.cd .cd-deck-option[aria-selected="true"] .cd-deck-option-copy strong { color: #7dd3fc; }
-.classroom-module.cm-page.rd.cd .cd-deck-option-copy small { color: #64748b; font-size: 10px; line-height: 1.35; }
-.classroom-module.cm-page.rd.cd .cd-deck-option-count { flex: none; padding-top: 2px; color: #94a3b8; font-size: 10px; font-weight: 600; white-space: nowrap; }
-.classroom-module.cm-page.rd.cd .cd-deck-empty { padding: 12px 10px; color: #94a3b8; font-size: 11px; }
+.classroom-module.cm-page.rd.cd .cd-deck-option-copy strong { color: var(--rd-ink); font-size: 12px; font-weight: 700; line-height: 1.3; }
+.classroom-module.cm-page.rd.cd .cd-deck-option[aria-selected="true"] .cd-deck-option-copy strong { color: var(--rd-accent); }
+.classroom-module.cm-page.rd.cd .cd-deck-option-copy small { color: var(--rd-muted); font-size: 10px; line-height: 1.35; }
+.classroom-module.cm-page.rd.cd .cd-deck-option-count { flex: none; padding-top: 2px; color: var(--rd-muted); font-size: 10px; font-weight: 600; white-space: nowrap; }
+.classroom-module.cm-page.rd.cd .cd-deck-empty { padding: 12px 10px; color: var(--rd-muted); font-size: 11px; }
 
 
 .classroom-module.cm-page.rd.cd .cd-confirm-card {
