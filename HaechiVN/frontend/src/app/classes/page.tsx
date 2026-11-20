@@ -21,7 +21,7 @@ const DEMO_TEACHER: UserProfile = {
 };
 
 function ClassesContent() {
-  const { currentUser } = useApp();
+  const { currentUser, isAuthReady } = useApp();
   const router = useRouter();
   const demoMode = useSearchParams().get("demo") === "1";
 
@@ -37,6 +37,8 @@ function ClassesContent() {
     <AppShell>
       {currentUser || demoMode ? (
         <ClassroomModule currentUser={currentUser ?? DEMO_TEACHER} demo={demoMode} onBack={goBack} />
+      ) : !isAuthReady ? (
+        <div className="mx-auto max-w-5xl" aria-hidden />
       ) : (
         <>
           <div className="mx-auto max-w-5xl">
