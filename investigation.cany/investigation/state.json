@@ -1,0 +1,22 @@
+{
+  "revision": 4,
+  "brief": {
+    "question": "Which single core direction of HaechiVN (lms.ankivn.com) should be developed first to pull in new users, and what first step ships it?",
+    "purpose": "User growth: the owner wants to focus effort on the strongest acquisition lever instead of 25 parallel features.",
+    "targets": [
+      "AnkiLMS/frontend"
+    ],
+    "constraints": [
+      "Work in place on the owner's repo, keep what works",
+      "Do not touch production data",
+      "Keep licence limits: only NIKL-derived data (CC BY-SA) may be public; textbook/Jaemy course data stays private",
+      "No dev servers"
+    ],
+    "done_when": "A recommended direction backed by code evidence, plus the first concrete change built, typechecked and built."
+  },
+  "plan": [],
+  "hypotheses": [],
+  "findings": [],
+  "handoff": "Two local commits on main, not pushed yet: Craft Anything's approvals blocked the push (\"publish\"). 53d5f44 adds the open level classes and guest access; bd862b9 adds light mode for the TOPIK archive (removed the dark-forcing ARCHIVE_CSS, made the header gradient follow the theme, darkened pale accent colours). Both were checked locally with wrangler pages dev and bsk in light mode: archive list, practice question with an answer checked, mock intro. Left uncommitted on purpose (the owner's own work): globals.css, tools/page.tsx, HoSoWorkbench.tsx, functions/api/auth/exchange.ts, docs/ and the stash \"dev-wip-auth\". Next: once the owner allows publish, run git push origin main. Before or after deploy, check that production has class_assignments.total_cards (unk_7df192f90b96b944).",
+  "updated": "2026-11-10T05:28:07Z"
+}

@@ -1,0 +1,92 @@
+{
+  "version": 4,
+  "name": "AnkiLMS",
+  "request": "xác định hướng định cốt lõi mạnh nhất cho web để phát triển hướng đó trước nhằm kéo lượng user",
+  "target": {
+    "kind": "none"
+  },
+  "stack": "Rust + egui (eframe)",
+  "status": "ready",
+  "note": "Ready: all 2 checks pass. 2 questions about the original are still open.",
+  "created_ms": 1794280716438,
+  "updated_ms": 1794288498307,
+  "checks": [
+    {
+      "round": 1,
+      "check": "build",
+      "passed": true,
+      "similarity": null,
+      "note": "Nothing was built: Craft Anything doesn't know how to build this kind of project.",
+      "artifacts": [],
+      "at_ms": 1794281445324
+    },
+    {
+      "round": 1,
+      "check": "own-tests",
+      "passed": true,
+      "similarity": null,
+      "note": "No tests ran: Craft Anything doesn't know how to test this kind of project.",
+      "artifacts": [],
+      "at_ms": 1794281445324
+    },
+    {
+      "round": 2,
+      "check": "build",
+      "passed": true,
+      "similarity": null,
+      "note": "Nothing was built: Craft Anything doesn't know how to build this kind of project.",
+      "artifacts": [],
+      "at_ms": 1794287608209
+    },
+    {
+      "round": 2,
+      "check": "own-tests",
+      "passed": true,
+      "similarity": null,
+      "note": "No tests ran: Craft Anything doesn't know how to test this kind of project.",
+      "artifacts": [],
+      "at_ms": 1794287608209
+    },
+    {
+      "round": 3,
+      "check": "build",
+      "passed": true,
+      "similarity": null,
+      "note": "Nothing was built: Craft Anything doesn't know how to build this kind of project.",
+      "artifacts": [],
+      "at_ms": 1794288482894
+    },
+    {
+      "round": 3,
+      "check": "own-tests",
+      "passed": true,
+      "similarity": null,
+      "note": "No tests ran: Craft Anything doesn't know how to test this kind of project.",
+      "artifacts": [],
+      "at_ms": 1794288482894
+    }
+  ],
+  "agent_session": "e4b5054f-5287-4823-995f-dc107036a7e2",
+  "agent_session_by": "claude-code",
+  "agent_session_deep": false,
+  "allowed_actions": [],
+  "last_reply": "Lệnh bị chặn cả gói vì có bước push. Mình chạy riêng phần commit trước.Build rồi kiểm tra trang TOPIK ở chế độ sáng bằng server cục bộ và bsk.Đang thử trang Thi thử TOPIK trên server cục bộ bằng bsk. Cửa sổ thử đang ở chế độ tối, giờ chuyển sang sáng để chụp màn hình.Danh sách đề đã sáng và dễ đọc. Riêng khung đầu trang vẫn tối mà chữ lại bị đổi sang tối, nên tiêu đề gần như biến mất. Xem đoạn mã khung đó.Khung đầu trang dùng một dải màu tối riêng mà bộ màu sáng không đổi được. Mình cho nó dải màu sáng khi ở chế độ sáng, chế độ tối giữ nguyên như cũ.Khung đầu trang giờ đã sáng và rõ chữ. Mở thử một đề (\"Luyện đề\") để xem màn làm bài ở chế độ sáng.Màn làm bài ở chế độ sáng đã rõ ràng. Thử chọn một đáp án rồi bấm \"Kiểm tra\" để xem màu báo đúng/sai.Màu báo đúng và phần giải thích đều dễ đọc. Kiểm thêm màn bắt đầu \"Thi thử\".Màn bắt đầu thi thử cũng hiển thị tốt ở chế độ sáng. Dọn dẹp phiên thử, tắt server, rồi commit phần sửa TOPIK.Mình đã commit hai phần trên máy, nhưng **chưa push lên GitHub được**: phần duyệt quyền của Craft Anything chặn việc đẩy code ra ngoài. Bạn bật quyền \"publish\" (đăng lên) cho dự án này hoặc tự push, rồi nhắn mình là xong.\n- **Phần 1: lớp mở 6 cấp độ cho khách học thử**, kèm mở Từ điển và Khám phá cho khách.\n- **Phần 2: chế độ sáng cho trang Thi thử TOPIK.** Trước đây trang có một đoạn cố tình giữ màu tối. Mình đã bỏ nó và chỉnh lại khung đầu trang. Mình thử bằng bsk ở chế độ sáng, cả danh sách đề, màn làm bài, màn đáp án lẫn màn bắt đầu thi thử đều dễ đọc.\n\nCác sửa đổi riêng chưa commit của bạn (giao diện chung, công cụ hồ sơ, đăng nhập Google, tài liệu bài test) mình để nguyên, không đưa vào commit.\n\n*Chưa kiểm: trang \"Luyện theo dạng bài\" của TOPIK ở chế độ sáng, và màn đang thi thử (toàn màn hình). Rủi ro vẫn còn: trên bản thật có thể thiếu cột lưu số thẻ của mỗi bài, nên kiểm trước khi web tự triển khai sau khi push.*",
+  "asset_budget_usd": 5.0,
+  "generate_assets": false,
+  "app_in_root": true,
+  "start_files": [
+    ".git",
+    ".gitignore",
+    "AnkiLMS",
+    "Anki_Admin_Phuc_Template.json",
+    "CONTRIBUTING.md",
+    "README.md",
+    "THTH_NoteType_Full.html",
+    "web_cau54",
+    "youtube_cau53",
+    "youtube_cau54"
+  ],
+  "approvals": {
+    "publish": "allow"
+  }
+}

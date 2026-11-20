@@ -1,0 +1,29 @@
+{
+  "status": "done",
+  "commits": [
+    "f2c1dfa fix(explore): prevent action button overflow on mobile viewport",
+    "3300f67 feat(explore): group decks by theme and curriculum when unfiltered",
+    "b3b9d6d refactor(explore): simplify deck subtitle metadata",
+    "cd11f0f refactor(explore): improve category select contrast, touch target, and max width"
+  ],
+  "files_changed": [
+    "frontend/src/app/explore/page.tsx"
+  ],
+  "tests": {
+    "command": "cd frontend && ./node_modules/.bin/eslint src/app/explore/page.tsx && ./node_modules/.bin/tsc --noEmit --incremental false",
+    "exit": 0,
+    "log": "ESLint passed (0 errors), TypeScript typecheck passed (0 errors)."
+  },
+  "screenshots": [
+    "out/explore-minimal/explore-375-light.png",
+    "out/explore-minimal/explore-375-dark.png",
+    "out/explore-minimal/explore-768-light.png",
+    "out/explore-minimal/explore-768-dark.png",
+    "out/explore-minimal/explore-1280-light.png",
+    "out/explore-minimal/explore-1280-dark.png",
+    "out/explore-minimal/explore-768-filter-food.png"
+  ],
+  "unsure": [
+    "Mục 5 (Trang chi tiết DeckDetailClient.tsx): Bỏ qua theo hướng dẫn vì trang chi tiết hiện tại đã ổn định, phục vụ tốt quyết định xem/thêm thẻ mà không phá vỡ bố cục."
+  ]
+}

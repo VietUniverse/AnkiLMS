@@ -1,0 +1,42 @@
+{
+  "status": "done",
+  "commits": [
+    "85c3607 feat(study): thêm tùy chọn ẩn nút Từ điển",
+    "409f4f3 refactor(nav): đưa mục Từ vựng lên ngay sau Trang chủ",
+    "80038bf refactor(classes): bỏ khối tiêu đề Khám Phá Lớp Học",
+    "971ad97 style(classes): bỏ shadow ở khung và hai tab lớp học"
+  ],
+  "files_changed": [
+    "frontend/src/lib/studyPreferences.ts",
+    "frontend/src/components/StudyBackgroundPanel.tsx",
+    "frontend/src/components/VocabularySRSModule.tsx",
+    "frontend/src/components/Sidebar.tsx",
+    "frontend/src/components/BottomNav.tsx",
+    "frontend/src/components/ClassroomModule.tsx"
+  ],
+  "tests": {
+    "command": "npx tsc --noEmit",
+    "exit": 0,
+    "log": "tsc đạt (exit 0). eslint từng file: studyPreferences.ts 0 lỗi/0 cảnh báo; StudyBackgroundPanel.tsx 0/0; BottomNav.tsx 0/0; VocabularySRSModule.tsx 13 lỗi/15 cảnh báo; Sidebar.tsx 3/6; ClassroomModule.tsx 8/4. Ba file còn lỗi lint cũ đã có từ trước, số lỗi/cảnh báo trùng khớp bản trước khi sửa nên không phát sinh lỗi mới. Không có DESIGN.md hay quy chuẩn shadow trong repo."
+  },
+  "screenshots": [
+    "out/screens/01-flashcards-deck-light.png",
+    "out/screens/01b-flashcards-deck-dark.png",
+    "out/screens/02-study-dict-visible-light.png",
+    "out/screens/03-study-dict-hidden-light.png",
+    "out/screens/04-study-dict-hidden-dark.png",
+    "out/screens/05-settings-popup-light.png",
+    "out/screens/06-settings-popup-dark.png",
+    "out/screens/07-classes-mine-light.png",
+    "out/screens/08-classes-join-light.png",
+    "out/screens/09-classes-join-dark.png",
+    "out/screens/10-classes-mine-dark.png",
+    "out/screens/11-nav-mobile-light.png",
+    "out/screens/12-nav-mobile-dark.png"
+  ],
+  "unsure": [
+    "Không tìm thấy phím tắt mở panel từ điển trong VocabularySRSModule; đã chặn openDictionary và ẩn panel/nút Từ điển khi bật tùy chọn.",
+    "Số nút 'Từ điển' trên thẻ phụ thuộc trạng thái lật/kiểu học: trước khi bật thấy 1 nút, sau khi bật còn 0 nút.",
+    "Menu mobile có 5 mục sẵn có (Trang chủ, Từ vựng, Khám phá, Từ điển, Menu) nên nhãn hiển thị nhỏ; chỉ đổi thứ tự, không đổi thiết kế."
+  ]
+}

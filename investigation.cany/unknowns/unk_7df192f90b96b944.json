@@ -1,0 +1,14 @@
+{
+  "id": "unk_7df192f90b96b944",
+  "revision": 1,
+  "question": "Does the production database have the class_assignments.total_cards column? No migration creates it, but both the existing assignment feature and the new open-class lessons write to it.",
+  "severity": "high",
+  "domain": "database",
+  "status": "open",
+  "probes": [
+    "Read-only on production, with the owner's OK: PRAGMA table_info(class_assignments)",
+    "If it's missing, add a migration with ALTER TABLE class_assignments ADD COLUMN total_cards INTEGER NOT NULL DEFAULT 0 before deploying"
+  ],
+  "evidence_for": [],
+  "evidence_against": []
+}

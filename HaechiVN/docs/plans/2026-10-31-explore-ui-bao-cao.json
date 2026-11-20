@@ -1,0 +1,28 @@
+{
+  "status": "done",
+  "commits": [
+    "21a9f4c refactor(explore): compact header and remove dead preview code (muc A)",
+    "32f9c70 refactor(explore): add deck count chips and results count (muc B)",
+    "c825c5b refactor(explore): streamline deck card layout and action buttons (muc C)",
+    "74956e4 refactor(explore): update empty state, production fallback, and mobile toast (muc D)",
+    "97e2388 refactor(explore): align deck detail styling and remove dev-facing text (muc E)"
+  ],
+  "files_changed": [
+    "frontend/src/app/explore/page.tsx",
+    "frontend/src/app/explore/[id]/DeckDetailClient.tsx"
+  ],
+  "tests": {
+    "command": "cd frontend && node ./node_modules/eslint/bin/eslint.js src/app/explore && node ./node_modules/typescript/bin/tsc --noEmit --incremental false",
+    "exit": 0,
+    "log": "ESLint passed (0 errors), TypeScript typecheck passed (0 errors), Next.js SSG production build passed (38/38 pages prerendered including /explore and /explore/[id])."
+  },
+  "screenshots": [
+    "out/explore/explore-375-dark.png",
+    "out/explore/explore-375-light.png",
+    "out/explore/explore-768-dark.png",
+    "out/explore/explore-768-light.png",
+    "out/explore/explore-1280-dark.png",
+    "out/explore/explore-1280-light.png"
+  ],
+  "unsure": []
+}

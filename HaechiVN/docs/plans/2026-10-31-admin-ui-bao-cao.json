@@ -1,0 +1,24 @@
+{
+  "status": "done",
+  "commits": [
+    "0e4cee9 refactor(admin): remove stray plus characters from panels",
+    "9c38b5c refactor(admin): define theme paired constants and update base view states",
+    "992b2e4 refactor(admin): modernize header with card-duo brand styling",
+    "09ddf45 refactor(admin): replace grid navigation with horizontal scrolling pills",
+    "21f9b72 refactor(admin): update overview cards to match home metric style",
+    "01f2727 refactor(admin): update table and list views to theme-aware card-duo components",
+    "26e7ee4 refactor(admin): polish lesson and explore content builder forms",
+    "eeb3a0e refactor(admin): modernize ExploreDeckManager with theme support"
+  ],
+  "files_changed": [
+    "frontend/src/app/admin/page.tsx",
+    "frontend/src/components/admin/ExploreDeckManager.tsx"
+  ],
+  "tests": {
+    "command": "cd frontend && ./node_modules/.bin/eslint src/app/admin src/components/admin && ./node_modules/.bin/tsc --noEmit --incremental false",
+    "exit": 0,
+    "log": "TypeScript passed (0 errors); ESLint passed with 0 new errors or warnings (only pre-existing baseline issues)."
+  },
+  "screenshots": [],
+  "unsure": []
+}

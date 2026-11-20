@@ -1,0 +1,14 @@
+{
+  "id": "unk_62467322d2b2449b",
+  "revision": 1,
+  "question": "Which features do real users actually use most (usage per feature in production)? The direction was chosen from code structure, not traffic data.",
+  "severity": "medium",
+  "domain": "product",
+  "status": "open",
+  "probes": [
+    "Count study_session / activity rows per feature in production D1 (read-only, with owner's OK)",
+    "Add page-view analytics (e.g. Cloudflare Web Analytics) and compare after 2 weeks"
+  ],
+  "evidence_for": [],
+  "evidence_against": []
+}
