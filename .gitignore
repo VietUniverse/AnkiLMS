@@ -1,14 +1,21 @@
 # Local Wrangler state and generated website output
 /.wrangler/
-AnkiLMS/frontend/.wrangler/
-AnkiLMS/frontend/.next/
-AnkiLMS/frontend/out/
-AnkiLMS/frontend/node_modules/
-AnkiLMS/frontend/.env*
-AnkiLMS/frontend/.dev.vars*
-AnkiLMS/frontend/.admin-provision.cjs
-AnkiLMS/frontend/set_secrets.js
-AnkiLMS/frontend/graphify-out/
+**/.wrangler/
+**/.next
+**/frontend/out/
+**/node_modules/
+**/.env
+**/.env.local
+**/.dev.vars
+**/.admin-provision.cjs
+**/set_secrets.js
+**/graphify-out/
+.claude/
+**/*.sqlite3
+**/*.sqlite3-*
+**/*.db
+**/*.db-wal
+**/*.db-shm
 
 # Local transcription inputs, Anki packages, and scratch exports
 /Script/
