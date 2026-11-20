@@ -67,7 +67,7 @@ export interface ClassAssignment {
   title: string;
   deckName: string;
   dueDate: string;
-  dueMode?: "date" | "duration";
+  dueMode?: "date" | "duration" | "none";
   durationDays?: number;
   assignedBy: string;
   completed?: boolean;
@@ -436,12 +436,12 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
   const deckPickerRef = useRef<HTMLDivElement>(null);
   const deckOptionRefs = useRef(new Map<string, HTMLButtonElement>());
   const [assignDueDate, setAssignDueDate] = useState("");
-  const [assignDueMode, setAssignDueMode] = useState<"date" | "duration">("date");
+  const [assignDueMode, setAssignDueMode] = useState<"date" | "duration" | "none">("date");
   const [assignDurationDays, setAssignDurationDays] = useState("7");
   const [editAssignmentId, setEditAssignmentId] = useState<string | null>(null);
   const [editAssignmentTitle, setEditAssignmentTitle] = useState("");
   const [editAssignmentDueDate, setEditAssignmentDueDate] = useState("");
-  const [editAssignmentDueMode, setEditAssignmentDueMode] = useState<"date" | "duration">("date");
+  const [editAssignmentDueMode, setEditAssignmentDueMode] = useState<"date" | "duration" | "none">("date");
   const [editAssignmentDurationDays, setEditAssignmentDurationDays] = useState("7");
   const [savingAssignmentEdit, setSavingAssignmentEdit] = useState(false);
   const [editAssignmentDeckName, setEditAssignmentDeckName] = useState("");
@@ -879,9 +879,11 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
       setMsg({ type: "error", text: "Số ngày hoàn thành phải từ 1 đến 365." });
       return;
     }
-    const duePayload = assignDueMode === "duration"
-      ? { dueMode: "duration" as const, durationDays, dueDate: "" }
-      : { dueMode: "date" as const, durationDays: 0, dueDate };
+    const duePayload = assignDueMode === "none"
+      ? { dueMode: "none" as const, durationDays: 0, dueDate: "" }
+      : assignDueMode === "duration"
+        ? { dueMode: "duration" as const, durationDays, dueDate: "" }
+        : { dueMode: "date" as const, durationDays: 0, dueDate };
     const assignmentId = `asg_${crypto.randomUUID().replace(/-/g, "")}`;
 
     if (!selectedAssignmentDeck || !isAssignableAssignmentDeck(selectedAssignmentDeck)) {
@@ -932,7 +934,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
     setEditAssignmentId(assignment.id);
     setEditAssignmentTitle(assignment.title);
     setEditAssignmentDueDate(assignment.dueDate || "");
-    setEditAssignmentDueMode(assignment.dueMode === "duration" ? "duration" : "date");
+    setEditAssignmentDueMode(assignment.dueMode === "none" ? "none" : assignment.dueMode === "duration" ? "duration" : "date");
     setEditAssignmentDurationDays(String(assignment.durationDays || 7));
     setEditAssignmentDeckName(assignment.deckName || "");
     setEditAssignmentRecipients(assignment.assignedUserIds?.length ? assignment.assignedUserIds : null);
@@ -990,7 +992,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
       classId: selectedClassId,
       assignmentId: editAssignmentId,
       title,
-      dueDate: editAssignmentDueMode === "duration" ? "" : editAssignmentDueDate,
+      dueDate: editAssignmentDueMode === "date" ? editAssignmentDueDate : "",
       dueMode: editAssignmentDueMode,
       durationDays: editAssignmentDueMode === "duration" ? durationDays : 0,
       assignedUserIds: editAssignmentRecipients,
@@ -2146,7 +2148,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
 
                 <div>
                   <label className="text-xs font-bold text-slate-300 block mb-1">Hạn nộp</label>
-                  <div className="mb-2 grid grid-cols-2 gap-2">
+                  <div className="mb-2 grid grid-cols-3 gap-2">
                     <button
                       type="button"
                       onClick={() => setEditAssignmentDueMode("date")}
@@ -2161,8 +2163,17 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                     >
                       Số ngày hoàn thành
                     </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditAssignmentDueMode("none")}
+                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${editAssignmentDueMode === "none" ? "border-sky-500/60 bg-sky-500/20 text-sky-100" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`}
+                    >
+                      Không hạn
+                    </button>
                   </div>
-                  {editAssignmentDueMode === "date" ? (
+                  {editAssignmentDueMode === "none" ? (
+                    <p className="text-[11px] text-slate-400">Học viên học lúc nào cũng được, không tính hạn.</p>
+                  ) : editAssignmentDueMode === "date" ? (
                     <>
                       <input
                         type="date"
@@ -2550,7 +2561,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
 
                 <div>
                   <label className="text-xs font-bold text-slate-300 block mb-1">Hạn Nộp (Hạn Ôn)</label>
-                  <div className="mb-2 grid grid-cols-2 gap-2">
+                  <div className="mb-2 grid grid-cols-3 gap-2">
                     <button
                       type="button"
                       onClick={() => setAssignDueMode("date")}
@@ -2565,8 +2576,17 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                     >
                       Số ngày hoàn thành
                     </button>
+                    <button
+                      type="button"
+                      onClick={() => setAssignDueMode("none")}
+                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${assignDueMode === "none" ? "border-sky-500/60 bg-sky-500/20 text-sky-100" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`}
+                    >
+                      Không hạn
+                    </button>
                   </div>
-                  {assignDueMode === "date" ? (
+                  {assignDueMode === "none" ? (
+                    <p className="text-[11px] text-slate-400">Học viên học lúc nào cũng được, không tính hạn.</p>
+                  ) : assignDueMode === "date" ? (
                     <input
                       type="date"
                       value={assignDueDate}

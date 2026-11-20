@@ -20,7 +20,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
         ).bind(classId).all(),
         env.DB.prepare(
           `SELECT a.id, a.title, a.deck_name AS deckName,
-                  CASE WHEN a.due_mode = 'duration' THEN a.duration_days || ' ngày' ELSE a.due_date END AS dueDate,
+                  CASE WHEN a.due_mode = 'duration' THEN a.duration_days || ' ngày' WHEN a.due_mode = 'none' THEN 'Không hạn' ELSE a.due_date END AS dueDate,
                   a.total_cards AS totalCards, a.created_at AS createdAt,
                   u.name AS assignedBy,
                   (SELECT COUNT(*) FROM assignment_progress p WHERE p.assignment_id = a.id AND p.completed_at IS NOT NULL) AS completedCount

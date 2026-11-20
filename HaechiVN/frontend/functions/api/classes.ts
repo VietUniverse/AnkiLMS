@@ -388,13 +388,13 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       const assignmentId = String(body.assignmentId);
       if (!/^asg_[a-f0-9]{32}$/i.test(assignmentId)) return errorResponse("Bài tập không hợp lệ.");
       const title = typeof body.title === "string" ? body.title.trim() : "";
-      const dueMode = body.dueMode === "duration" ? "duration" : "date";
+      const dueMode = body.dueMode === "none" ? "none" : body.dueMode === "duration" ? "duration" : "date";
       const dueDate = typeof body.dueDate === "string" ? body.dueDate.trim() : "";
       const durationDays = dueMode === "duration" ? Number(body.durationDays) : 0;
       if (title.length < 3 || title.length > 120) return errorResponse("Tên bài tập phải từ 3 đến 120 ký tự.");
       if (dueMode === "duration") {
         if (!Number.isInteger(durationDays) || durationDays < 1 || durationDays > 365) return errorResponse("Số ngày hoàn thành phải từ 1 đến 365.");
-      } else if (dueDate && !/^\d{4}-\d{2}-\d{2}$/.test(dueDate)) {
+      } else if (dueMode === "date" && !/^\d{4}-\d{2}-\d{2}$/.test(dueDate)) {
         return errorResponse("Hạn nộp không hợp lệ.");
       }
       let assignedUserIdsJson: string | null = null;
@@ -411,9 +411,9 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       }
       const updated = hasRecipientUpdate
         ? await env.DB.prepare("UPDATE class_assignments SET title = ?, due_date = ?, due_mode = ?, duration_days = ?, assigned_user_ids = ? WHERE id = ? AND class_id = ?")
-            .bind(title, dueMode === "duration" ? "" : dueDate, dueMode, durationDays, assignedUserIdsJson, assignmentId, classId).run()
+            .bind(title, dueMode === "date" ? dueDate : "", dueMode, durationDays, assignedUserIdsJson, assignmentId, classId).run()
         : await env.DB.prepare("UPDATE class_assignments SET title = ?, due_date = ?, due_mode = ?, duration_days = ? WHERE id = ? AND class_id = ?")
-            .bind(title, dueMode === "duration" ? "" : dueDate, dueMode, durationDays, assignmentId, classId).run();
+            .bind(title, dueMode === "date" ? dueDate : "", dueMode, durationDays, assignmentId, classId).run();
       if (!updated.meta.changes) return errorResponse("Không tìm thấy bài tập.", 404);
       return jsonResponse({ success: true, classes: await getClasses(env, user.id) });
     }
@@ -452,7 +452,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       if (!isManager) return errorResponse("Chỉ quản trị lớp mới được giao bài.", 403);
       const title = typeof body.title === "string" ? body.title.trim() : "";
       const deckName = typeof body.deckName === "string" ? body.deckName.trim() : "";
-      const dueMode = body.dueMode === "duration" ? "duration" : "date";
+      const dueMode = body.dueMode === "none" ? "none" : body.dueMode === "duration" ? "duration" : "date";
       const dueDate = typeof body.dueDate === "string" ? body.dueDate.trim() : "";
       const durationDays = dueMode === "duration" ? Number(body.durationDays) : 0;
       const deckCards = Array.isArray(body.deckCards) ? body.deckCards : [];
@@ -460,7 +460,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       if (title.length < 3 || title.length > 120 || !deckName || deckName.length > 160) return errorResponse("Thông tin bài tập chưa hợp lệ.");
       if (dueMode === "duration") {
         if (!Number.isInteger(durationDays) || durationDays < 1 || durationDays > 365) return errorResponse("Số ngày hoàn thành phải từ 1 đến 365.");
-      } else if (!/^\d{4}-\d{2}-\d{2}$/.test(dueDate)) {
+      } else if (dueMode === "date" && !/^\d{4}-\d{2}-\d{2}$/.test(dueDate)) {
         return errorResponse("Thông tin bài tập chưa hợp lệ.");
       }
       if (deckCards.length < 1 || deckCards.length > 500) return errorResponse("Bộ thẻ phải có từ 1 đến 500 thẻ để giao qua lớp.");
