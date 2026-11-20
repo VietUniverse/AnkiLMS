@@ -45,6 +45,54 @@ interface VocabularySRSModuleProps {
   initialViewMode?: "dashboard" | "study";
 }
 
+type AssignedDeckItem = {
+  id: string; classId: string; className: string; title: string;
+  totalCards: number; reviewedCards: number; completed: boolean;
+  dueLabel: string;
+};
+
+type AssignmentCardJson = {
+  id?: number | string; word?: string; korean?: string; meaning?: string; pos?: string;
+  transliteration?: string; pronunciation?: string; explain?: string; image?: string; mediaHtml?: string;
+  example?: string; example_translated?: string; collocation?: string; synonym?: string; antonym?: string;
+  audio_word?: string; audio_meaning?: string; audio_example?: string;
+};
+
+type AssignmentPayload = {
+  id: string;
+  classId: string;
+  title: string;
+  deckName?: string;
+  deckCards?: AssignmentCardJson[];
+};
+
+type AssignedDeckClassJson = {
+  id: string;
+  name?: string;
+  assignments?: Array<{ id: string; title: string; totalCards?: number; reviewedCards?: number; completed?: boolean; dueDate?: string }>;
+};
+
+// Chuyển thẻ của bài tập lớp sang dạng thẻ SRS dùng chung.
+const assignmentCardsOf = (asg: AssignmentPayload): VocabularyCard[] =>
+  (asg.deckCards || []).map((c, idx: number) => ({
+    id: c.id ?? idx + 1,
+    word: c.word || c.korean || "",
+    meaning: c.meaning || "",
+    pos: c.pos || "Bài tập lớp",
+    transliteration: c.transliteration || c.pronunciation || "",
+    explain: c.explain || "",
+    image: c.image || (c.mediaHtml && c.mediaHtml.includes("<img") ? c.mediaHtml : ""),
+    example: c.example || "",
+    example_translated: c.example_translated || "",
+    collocation: c.collocation || "",
+    synonym: c.synonym || "",
+    antonym: c.antonym || "",
+    audio_word: c.audio_word || (c.mediaHtml && c.mediaHtml.includes("<audio") ? c.mediaHtml : ""),
+    audio_meaning: c.audio_meaning || "",
+    audio_example: c.audio_example || "",
+    deckName: asg.deckName || asg.title,
+  }));
+
 export interface VocabularyCard {
   writingData?: {
     cardType: "fill_blank" | "essay" | "choice" | "cloze" | "generic";
@@ -348,6 +396,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const [morePrompt, setMorePrompt] = useState<{ deckId: string; title: string; cards: VocabularyCard[]; available: number } | null>(null);
   const [moreAmount, setMoreAmount] = useState("10");
   const [activeAssignmentMeta, setActiveAssignmentMeta] = useState<{ id: string; classId: string; title: string } | null>(null);
+  const [assignedDecks, setAssignedDecks] = useState<AssignedDeckItem[]>([]);
+  const [openingAssignedId, setOpeningAssignedId] = useState<string>("");
   const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -947,24 +997,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
       window.history.replaceState(null, "", window.location.pathname);
       void ApiClient.getClassAssignment(classId, assignmentId)
         .then((asg) => {
-          const cards: VocabularyCard[] = (asg.deckCards || []).map((c: any, idx: number) => ({
-            id: c.id ?? idx + 1,
-            word: c.word || c.korean || "",
-            meaning: c.meaning || "",
-            pos: c.pos || "Bài tập lớp",
-            transliteration: c.transliteration || c.pronunciation || "",
-            explain: c.explain || "",
-            image: c.image || (c.mediaHtml && c.mediaHtml.includes("<img") ? c.mediaHtml : ""),
-            example: c.example || "",
-            example_translated: c.example_translated || "",
-            collocation: c.collocation || "",
-            synonym: c.synonym || "",
-            antonym: c.antonym || "",
-            audio_word: c.audio_word || (c.mediaHtml && c.mediaHtml.includes("<audio") ? c.mediaHtml : ""),
-            audio_meaning: c.audio_meaning || "",
-            audio_example: c.audio_example || "",
-            deckName: asg.deckName || asg.title,
-          }));
+          const cards = assignmentCardsOf(asg);
           if (cards.length > 0) {
             setActiveAssignmentMeta({ id: asg.id, classId: asg.classId, title: asg.title });
             startStudy(`assignment-${asg.id}`, asg.title, cards, { skipMorePrompt: true });
@@ -987,6 +1020,68 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
       else if (params.get("resume") === "true" || params.get("study") === "true") resumeLastLesson();
     }
   }, [isAuthReady, currentUser, resumeLastLesson, startStudy, findNodeById, deckTree]);
+  // Bộ thẻ giáo viên giao qua lớp: hiện ngay trong /flashcards để học sinh học.
+  useEffect(() => {
+    if (!isAuthReady || !currentUser) return;
+    let active = true;
+    void ApiClient.getClasses()
+      .then((classes: AssignedDeckClassJson[]) => {
+        if (!active) return;
+        const now = Date.now();
+        setAssignedDecks(
+          classes.flatMap((cls) =>
+            (cls.assignments || []).map((a) => {
+              const dueDate = a.dueDate || "";
+              const days = dueDate ? Math.ceil((new Date(`${dueDate}T23:59:59`).getTime() - now) / 86_400_000) : null;
+              const completed = Boolean(a.completed);
+              return {
+                id: a.id,
+                classId: cls.id,
+                className: cls.name || "Lớp học",
+                title: a.title,
+                totalCards: a.totalCards || 0,
+                reviewedCards: a.reviewedCards || 0,
+                completed,
+                dueLabel: completed
+                  ? "Đã xong"
+                  : days === null
+                    ? "Không hạn"
+                    : days < 0
+                      ? "Đã quá hạn"
+                      : days === 0
+                        ? "Hạn hôm nay"
+                        : `Còn ${days} ngày`,
+              };
+            }),
+          ),
+        );
+      })
+      .catch(() => {
+        if (active) setAssignedDecks([]);
+      });
+    return () => {
+      active = false;
+    };
+  }, [isAuthReady, currentUser, viewMode]);
+
+  const openAssignedDeck = useCallback(
+    async (item: AssignedDeckItem) => {
+      setOpeningAssignedId(item.id);
+      try {
+        const asg = await ApiClient.getClassAssignment(item.classId, item.id);
+        const cards = assignmentCardsOf(asg);
+        if (cards.length === 0) return;
+        setActiveAssignmentMeta({ id: asg.id, classId: asg.classId, title: asg.title });
+        startStudy(`assignment-${asg.id}`, asg.title, cards, { skipMorePrompt: true });
+      } catch {
+        // im lặng: lỗi mạng thì để học sinh bấm lại
+      } finally {
+        setOpeningAssignedId("");
+      }
+    },
+    [startStudy],
+  );
+
 
   // Collect all container ids for toggle all
   const getAllContainerIds = useCallback((nodes: DeckTreeNode[]): string[] => {
@@ -1748,6 +1843,37 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
             {limitNotice && (
               <div role="status" className="rounded-xl border border-amber-300/60 bg-amber-50 dark:bg-amber-500/10 dark:border-amber-500/30 px-4 py-3 text-xs text-amber-800 dark:text-amber-200">
                 {limitNotice}
+              </div>
+            )}
+
+            {/* BỘ THẺ GIÁO VIÊN GIAO QUA LỚP */}
+            {currentUser && assignedDecks.length > 0 && (
+              <div className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 overflow-hidden shadow-xs">
+                <div className="flex items-center justify-between px-4 sm:px-5 py-3 border-b border-stone-200 dark:border-stone-800">
+                  <h3 className="text-sm font-bold text-stone-900 dark:text-white">Bộ thẻ được giao</h3>
+                  <span className="text-[11px] font-mono text-stone-500 dark:text-stone-400">{assignedDecks.length} bài</span>
+                </div>
+                <ul className="divide-y divide-stone-200 dark:divide-stone-800">
+                  {assignedDecks.map((item) => (
+                    <li key={item.id} className="flex items-center justify-between gap-3 px-4 sm:px-5 py-3">
+                      <div className="min-w-0">
+                        <p className="truncate text-xs sm:text-sm font-bold text-stone-900 dark:text-stone-100">{item.title}</p>
+                        <p className="mt-0.5 truncate text-[11px] text-stone-500 dark:text-stone-400">
+                          {item.className} · {item.reviewedCards}/{item.totalCards} thẻ · {item.dueLabel}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => void openAssignedDeck(item)}
+                        disabled={openingAssignedId === item.id}
+                        className="shrink-0 inline-flex items-center gap-1.5 rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-[11px] font-bold text-sky-700 transition hover:bg-sky-100 disabled:opacity-60 dark:border-sky-800/80 dark:bg-sky-950/60 dark:text-sky-300 dark:hover:bg-sky-900/60"
+                      >
+                        {openingAssignedId === item.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Play className="h-3.5 w-3.5 fill-current" />}
+                        {item.completed ? "Học lại" : "Học"}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
 
