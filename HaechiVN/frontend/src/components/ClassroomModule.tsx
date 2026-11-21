@@ -2033,21 +2033,21 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                     <button
                       type="button"
                       onClick={() => setEditAssignmentDueMode("date")}
-                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${editAssignmentDueMode === "date" ? "border-sky-500/60 bg-sky-500/20" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`} style={editAssignmentDueMode === "date" ? { color: "var(--c-accent)" } : undefined}
+                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${editAssignmentDueMode === "date" ? "border-sky-500/60 bg-sky-500/20" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`} style={editAssignmentDueMode === "date" ? { color: "var(--c-ink)" } : undefined}
                     >
                       Chọn ngày cụ thể
                     </button>
                     <button
                       type="button"
                       onClick={() => setEditAssignmentDueMode("duration")}
-                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${editAssignmentDueMode === "duration" ? "border-sky-500/60 bg-sky-500/20" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`} style={editAssignmentDueMode === "duration" ? { color: "var(--c-accent)" } : undefined}
+                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${editAssignmentDueMode === "duration" ? "border-sky-500/60 bg-sky-500/20" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`} style={editAssignmentDueMode === "duration" ? { color: "var(--c-ink)" } : undefined}
                     >
                       Số ngày hoàn thành
                     </button>
                     <button
                       type="button"
                       onClick={() => setEditAssignmentDueMode("none")}
-                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${editAssignmentDueMode === "none" ? "border-sky-500/60 bg-sky-500/20" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`} style={editAssignmentDueMode === "none" ? { color: "var(--c-accent)" } : undefined}
+                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${editAssignmentDueMode === "none" ? "border-sky-500/60 bg-sky-500/20" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`} style={editAssignmentDueMode === "none" ? { color: "var(--c-ink)" } : undefined}
                     >
                       Không hạn
                     </button>
@@ -2454,21 +2454,21 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                     <button
                       type="button"
                       onClick={() => setAssignDueMode("date")}
-                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${assignDueMode === "date" ? "border-sky-500/60 bg-sky-500/20" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`} style={assignDueMode === "date" ? { color: "var(--c-accent)" } : undefined}
+                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${assignDueMode === "date" ? "border-sky-500/60 bg-sky-500/20" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`} style={assignDueMode === "date" ? { color: "var(--c-ink)" } : undefined}
                     >
                       Chọn ngày cụ thể
                     </button>
                     <button
                       type="button"
                       onClick={() => setAssignDueMode("duration")}
-                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${assignDueMode === "duration" ? "border-sky-500/60 bg-sky-500/20" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`} style={assignDueMode === "duration" ? { color: "var(--c-accent)" } : undefined}
+                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${assignDueMode === "duration" ? "border-sky-500/60 bg-sky-500/20" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`} style={assignDueMode === "duration" ? { color: "var(--c-ink)" } : undefined}
                     >
                       Số ngày hoàn thành
                     </button>
                     <button
                       type="button"
                       onClick={() => setAssignDueMode("none")}
-                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${assignDueMode === "none" ? "border-sky-500/60 bg-sky-500/20" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`} style={assignDueMode === "none" ? { color: "var(--c-accent)" } : undefined}
+                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${assignDueMode === "none" ? "border-sky-500/60 bg-sky-500/20" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`} style={assignDueMode === "none" ? { color: "var(--c-ink)" } : undefined}
                     >
                       Không hạn
                     </button>
