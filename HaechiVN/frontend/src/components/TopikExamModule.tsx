@@ -78,7 +78,14 @@ const OFFICIAL_EXAM_SESSIONS = [
   { round: 35, year: 2014 },
 ];
 
-export const TopikExamModule: React.FC = () => {
+type TopikExamModuleProps = {
+  /** Mở thẳng một bộ luyện (dùng cho trang riêng /topik/grammar). */
+  initialSetId?: string;
+  /** Rời khỏi bài luyện thì điều hướng đi đâu (mặc định: ở lại trang). */
+  onExit?: () => void;
+};
+
+export const TopikExamModule: React.FC<TopikExamModuleProps> = ({ initialSetId, onExit }) => {
   const [levelTab, setLevelTab] = useState<"I" | "II" | "writing" | "papers">("I");
   const [activeSet, setActiveSet] = useState<ExamSet | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -147,10 +154,20 @@ export const TopikExamModule: React.FC = () => {
     setShowQuestionMap(false);
   };
 
+  const initialSetStartedRef = useRef(false);
+  useEffect(() => {
+    if (initialSetStartedRef.current || !initialSetId) return;
+    const set = sets.find((item) => item.id === initialSetId);
+    if (!set) return;
+    initialSetStartedRef.current = true;
+    startSet(set);
+  }, [initialSetId, sets]);
+
   const returnToCatalog = () => {
     window.speechSynthesis?.cancel();
     setActiveSet(null);
     setIsSubmitted(false);
+    onExit?.();
   };
 
   const formatTime = (seconds: number) => `${Math.floor(seconds / 60).toString().padStart(2, "0")}:${(seconds % 60).toString().padStart(2, "0")}`;
@@ -292,8 +309,8 @@ export const TopikExamModule: React.FC = () => {
               <div className="ta-set-grid">
                 {sets.map((set) => {
                   const Icon = set.icon;
-                  return (
-                    <button key={set.id} type="button" className="ta-set-card" onClick={() => startSet(set)}>
+                  const content = (
+                    <>
                       <span className="ta-set-icon"><Icon aria-hidden="true" /></span>
                       <span>
                         <span className="ta-set-title">{set.title}</span>
@@ -301,6 +318,14 @@ export const TopikExamModule: React.FC = () => {
                         <span className="ta-set-meta">{set.questions.length} câu · {set.duration} phút</span>
                       </span>
                       <span className="ta-set-go" aria-hidden="true"><ArrowRight /></span>
+                    </>
+                  );
+                  // Bộ luyện có trang riêng thì mở bằng link để có URL chia sẻ được.
+                  return set.id === "grammar" ? (
+                    <a key={set.id} className="ta-set-card" href="/topik/grammar">{content}</a>
+                  ) : (
+                    <button key={set.id} type="button" className="ta-set-card" onClick={() => startSet(set)}>
+                      {content}
                     </button>
                   );
                 })}
