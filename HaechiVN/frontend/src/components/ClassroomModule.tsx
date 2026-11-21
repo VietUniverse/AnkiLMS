@@ -425,6 +425,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
   // Assign Deck Modal
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [assignTitle, setAssignTitle] = useState("");
+  const [assignRecipients, setAssignRecipients] = useState<string[] | null>(null);
   const [assignDeckId, setAssignDeckId] = useState("");
   const [assignDeckQuery, setAssignDeckQuery] = useState("");
   const [assignDeckOpen, setAssignDeckOpen] = useState(false);
@@ -691,9 +692,12 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
   };
 
   const openAssignModal = () => {
+    setEditAssignmentId(null);
     setAssignDeckQuery("");
     setAssignDeckActive(-1);
     setAssignDeckOpen(false);
+    setAssignTitle("");
+    setAssignRecipients(null);
     setShowAssignModal(true);
   };
 
@@ -767,6 +771,11 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
         : { dueMode: "date" as const, durationDays: 0, dueDate };
     const assignmentId = `asg_${crypto.randomUUID().replace(/-/g, "")}`;
 
+    if (assignRecipients !== null && assignRecipients.length === 0) {
+      setMsg({ type: "error", text: "Chọn ít nhất một học viên hoặc giao cho cả lớp." });
+      return;
+    }
+
     if (!selectedAssignmentDeck || !isAssignableAssignmentDeck(selectedAssignmentDeck)) {
       setMsg({ type: "error", text: "Bộ thẻ này không có thẻ hợp lệ để giao." });
       return;
@@ -792,7 +801,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
       ...card,
       mediaAssetIds: (card.mediaRefs || []).map((filename) => assetIds.get(filename)).filter((id): id is string => !!id),
     }));
-    const saved = await runClassAction({ action: "assignment", classId: selectedClassId, assignmentId, title: assignTitle, deckName: selectedAssignmentDeck.name, ...duePayload, deckCards, mediaAssets });
+    const saved = await runClassAction({ action: "assignment", classId: selectedClassId, assignmentId, title: assignTitle, deckName: selectedAssignmentDeck.name, ...duePayload, deckCards, mediaAssets, assignedUserIds: assignRecipients });
     if (!saved) return;
     try {
       for (let index = 0; index < sourceAssets.length; index += 8) {
@@ -807,11 +816,13 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
     if (sourceAssets.length) setClasses(await ApiClient.getClasses().catch(() => classes));
     setShowAssignModal(false);
     setAssignTitle("");
+    setAssignRecipients(null);
     setAssignDueMode("date");
     setAssignDurationDays("7");
   };
 
   const openEditAssignment = (assignment: ClassAssignment) => {
+    setShowAssignModal(false);
     setEditAssignmentId(assignment.id);
     setEditAssignmentTitle(assignment.title);
     setEditAssignmentDueDate(assignment.dueDate || "");
@@ -891,6 +902,40 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
         : [...current, studentId];
     });
   };
+
+  const toggleAssignRecipient = (studentId: string) => {
+    setAssignRecipients((previous) => {
+      const current = previous ?? [];
+      return current.includes(studentId)
+        ? current.filter((id) => id !== studentId)
+        : [...current, studentId];
+    });
+  };
+
+  const closeAssignmentForm = () => {
+    setShowAssignModal(false);
+    setEditAssignmentId(null);
+  };
+
+  // Một khung duy nhất cho 2 chế độ: tạo mới dùng state assign*, sửa dùng state editAssignment*.
+  const assignmentFormIsCreate = showAssignModal;
+  const assignmentForm = assignmentFormIsCreate
+    ? {
+        title: assignTitle, setTitle: setAssignTitle,
+        dueMode: assignDueMode, setDueMode: setAssignDueMode,
+        dueDate: assignDueDate, setDueDate: setAssignDueDate,
+        durationDays: assignDurationDays, setDurationDays: setAssignDurationDays,
+        recipients: assignRecipients, setRecipients: setAssignRecipients,
+        toggleRecipient: toggleAssignRecipient,
+      }
+    : {
+        title: editAssignmentTitle, setTitle: setEditAssignmentTitle,
+        dueMode: editAssignmentDueMode, setDueMode: setEditAssignmentDueMode,
+        dueDate: editAssignmentDueDate, setDueDate: setEditAssignmentDueDate,
+        durationDays: editAssignmentDurationDays, setDurationDays: setEditAssignmentDurationDays,
+        recipients: editAssignmentRecipients, setRecipients: setEditAssignmentRecipients,
+        toggleRecipient: toggleAssignmentRecipient,
+      };
 
   const copyToClipboard = (code: string) => {
     navigator.clipboard.writeText(code);
@@ -1990,22 +2035,22 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
           </div>
         )}
 
-        {editAssignmentId && (
+        {(editAssignmentId || showAssignModal) && (
           <div
             className="cd-modal fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4"
             onClick={(event) => {
-              if (event.target === event.currentTarget) setEditAssignmentId(null);
+              if (event.target === event.currentTarget) closeAssignmentForm();
             }}
           >
             <div className="cd-modal-card card-duo p-6 bg-[#0f1b38] border-[#1e3466] max-w-xl w-full space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto">
               <div className="flex items-center justify-between gap-2">
                 <h3 className="text-lg font-black text-white flex items-center gap-2">
                   <Pencil className="w-5 h-5 text-amber-400" />
-                  <span>Sửa bài tập</span>
+                  <span>{assignmentFormIsCreate ? "Giao bài tập & bộ thẻ" : "Sửa bài tập"}</span>
                 </h3>
                 <button
                   type="button"
-                  onClick={() => setEditAssignmentId(null)}
+                  onClick={() => closeAssignmentForm()}
                   className="text-slate-400 hover:text-white p-1"
                   aria-label="Đóng"
                 >
@@ -2013,7 +2058,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                 </button>
               </div>
 
-              <form onSubmit={handleUpdateAssignment} className="space-y-4">
+              <form onSubmit={assignmentFormIsCreate ? handleAssignDeck : handleUpdateAssignment} className="space-y-4">
                 <div>
                   <label className="text-xs font-bold text-slate-300 block mb-1">Tiêu đề bài tập</label>
                   <input
@@ -2021,45 +2066,133 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                     required
                     minLength={3}
                     maxLength={120}
-                    value={editAssignmentTitle}
-                    onChange={(e) => setEditAssignmentTitle(e.target.value)}
+                    placeholder={assignmentFormIsCreate ? "Ví dụ: Ôn tập Từ vựng Bài 01 - 03" : undefined}
+                    value={assignmentForm.title}
+                    onChange={(e) => assignmentForm.setTitle(e.target.value)}
                     className="w-full px-3.5 py-2.5 rounded-xl bg-[#132247] border border-[#1e3a70] text-white text-xs font-bold"
                   />
                 </div>
+
+                {assignmentFormIsCreate && (
+                <div>
+                  <label htmlFor="assignDeckSearch" className="text-xs font-bold text-slate-300 block mb-1">Bộ Thẻ *</label>
+                  <div className="cd-deck-picker" ref={deckPickerRef}>
+                    <div className="cd-deck-field">
+                      <Search className="h-4 w-4" aria-hidden="true" />
+                      <input
+                        id="assignDeckSearch"
+                        type="text"
+                        role="combobox"
+                        aria-expanded={assignDeckOpen}
+                        aria-controls="assignDeckList"
+                        aria-autocomplete="list"
+                        autoComplete="off"
+                        spellCheck={false}
+                        placeholder="Gõ tên bài, chủ đề hoặc quyển…"
+                        value={assignDeckInputValue}
+                        onFocus={() => {
+                          setAssignDeckOpen(true);
+                          setAssignDeckQuery("");
+                          setAssignDeckActive(-1);
+                        }}
+                        onChange={(event) => {
+                          setAssignDeckOpen(true);
+                          setAssignDeckQuery(event.target.value);
+                          setAssignDeckActive(-1);
+                        }}
+                        onKeyDown={handleAssignDeckKeyDown}
+                        onBlur={handleAssignDeckBlur}
+                      />
+                      <span className="cd-deck-count">
+                        {assignDeckOpen ? `${assignmentDeckFlat.length} kết quả` : `${assignmentDecks.length} bộ thẻ`}
+                      </span>
+                    </div>
+                    {assignDeckOpen && (
+                      <div className="cd-deck-panel" id="assignDeckList" role="listbox" aria-label="Danh sách bộ thẻ">
+                        {assignmentDecks.length === 0 ? (
+                          <p className="cd-deck-empty">
+                            Thư viện của bạn chưa có bộ thẻ nào.{" "}
+                            <a href="/vocabulary" target="_blank" rel="noreferrer" style={{ color: "var(--c-accent)", fontWeight: 700 }}>
+                              Thêm bộ thẻ
+                            </a>{" "}
+                            rồi quay lại giao bài.
+                          </p>
+                        ) : assignmentDeckFlat.length === 0 ? (
+                          <p className="cd-deck-empty">Không tìm thấy bộ thẻ phù hợp.</p>
+                        ) : (
+                          assignmentDeckGroupsFiltered.map((group) => (
+                            <div key={group.book} className="cd-deck-group" role="group" aria-label={group.label}>
+                              <p className="cd-deck-group-label">{group.label}</p>
+                              {group.decks.map((deck) => {
+                                const index = assignmentDeckFlat.indexOf(deck);
+                                const count = assignmentDeckCardCount(deck);
+                                const disabled = !isAssignableAssignmentDeck(deck);
+                                return (
+                                  <button
+                                    key={deck.id}
+                                    ref={(node) => {
+                                      if (node) deckOptionRefs.current.set(deck.id, node);
+                                      else deckOptionRefs.current.delete(deck.id);
+                                    }}
+                                    type="button"
+                                    role="option"
+                                    aria-selected={selectedAssignmentDeck?.id === deck.id}
+                                    disabled={disabled}
+                                    className={`cd-deck-option ${index === assignDeckActive ? "is-active" : ""}`}
+                                    onMouseDown={(event) => event.preventDefault()}
+                                    onClick={() => selectAssignmentDeck(deck)}
+                                  >
+                                    <span className="cd-deck-option-copy">
+                                      <strong>{(deck.parentId || (!deck.book && deck.name.includes("::"))) ? "↳ " : ""}{assignmentDeckLabel(deck)}</strong>
+                                      <small>{deck.book ? deck.difficulty : "Bộ thẻ cá nhân"}</small>
+                                    </span>
+                                    <span className="cd-deck-option-count">{count} thẻ</span>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <p className="mt-2 text-[10px] leading-4 text-slate-500">Tìm theo tên bài, chủ đề, quyển hoặc bộ thẻ. Mỗi bài tối đa 500 thẻ.</p>
+                </div>
+                )}
 
                 <div>
                   <label className="text-xs font-bold text-slate-300 block mb-1">Hạn nộp</label>
                   <div className="mb-2 grid grid-cols-3 gap-2">
                     <button
                       type="button"
-                      onClick={() => setEditAssignmentDueMode("date")}
-                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${editAssignmentDueMode === "date" ? "border-sky-500/60 bg-sky-500/20" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`} style={editAssignmentDueMode === "date" ? { color: "var(--c-ink)" } : undefined}
+                      onClick={() => assignmentForm.setDueMode("date")}
+                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${assignmentForm.dueMode === "date" ? "border-sky-500/60 bg-sky-500/20" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`} style={assignmentForm.dueMode === "date" ? { color: "var(--c-ink)" } : undefined}
                     >
                       Chọn ngày cụ thể
                     </button>
                     <button
                       type="button"
-                      onClick={() => setEditAssignmentDueMode("duration")}
-                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${editAssignmentDueMode === "duration" ? "border-sky-500/60 bg-sky-500/20" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`} style={editAssignmentDueMode === "duration" ? { color: "var(--c-ink)" } : undefined}
+                      onClick={() => assignmentForm.setDueMode("duration")}
+                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${assignmentForm.dueMode === "duration" ? "border-sky-500/60 bg-sky-500/20" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`} style={assignmentForm.dueMode === "duration" ? { color: "var(--c-ink)" } : undefined}
                     >
                       Số ngày hoàn thành
                     </button>
                     <button
                       type="button"
-                      onClick={() => setEditAssignmentDueMode("none")}
-                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${editAssignmentDueMode === "none" ? "border-sky-500/60 bg-sky-500/20" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`} style={editAssignmentDueMode === "none" ? { color: "var(--c-ink)" } : undefined}
+                      onClick={() => assignmentForm.setDueMode("none")}
+                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${assignmentForm.dueMode === "none" ? "border-sky-500/60 bg-sky-500/20" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`} style={assignmentForm.dueMode === "none" ? { color: "var(--c-ink)" } : undefined}
                     >
                       Không hạn
                     </button>
                   </div>
-                  {editAssignmentDueMode === "none" ? (
+                  {assignmentForm.dueMode === "none" ? (
                     <p className="text-[11px] text-slate-400">Học viên học lúc nào cũng được, không tính hạn.</p>
-                  ) : editAssignmentDueMode === "date" ? (
+                  ) : assignmentForm.dueMode === "date" ? (
                     <>
                       <input
                         type="date"
-                        value={editAssignmentDueDate}
-                        onChange={(e) => setEditAssignmentDueDate(e.target.value)}
+                        value={assignmentForm.dueDate}
+                        onChange={(e) => assignmentForm.setDueDate(e.target.value)}
                         className="w-full px-3.5 py-2.5 rounded-xl bg-[#132247] border border-[#1e3a70] text-white text-xs font-bold"
                       />
                       <p className="text-[11px] text-slate-400 mt-1">Để trống nếu bài tập không đặt hạn.</p>
@@ -2071,14 +2204,14 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                           type="number"
                           min={1}
                           max={365}
-                          value={editAssignmentDurationDays}
-                          onChange={(e) => setEditAssignmentDurationDays(e.target.value)}
+                          value={assignmentForm.durationDays}
+                          onChange={(e) => assignmentForm.setDurationDays(e.target.value)}
                           className="w-full px-3.5 py-2.5 rounded-xl bg-[#132247] border border-[#1e3a70] text-white text-xs font-bold"
                         />
                         <span className="text-xs font-bold text-slate-300">ngày</span>
                       </div>
                       <p className="text-[11px] text-slate-400 mt-1">
-                        Học viên vào lớp sau sẽ có đủ {Number(editAssignmentDurationDays) || 7} ngày kể từ ngày tham gia.
+                        Học viên vào lớp sau sẽ có đủ {Number(assignmentForm.durationDays) || 7} ngày kể từ ngày tham gia.
                       </p>
                     </>
                   )}
@@ -2089,17 +2222,17 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                     <div className="min-w-0">
                       <p className="text-xs font-bold text-slate-200">Giao cho</p>
                       <p className="mt-0.5 text-[11px] text-slate-400">
-                        {editAssignmentRecipients === null
+                        {assignmentForm.recipients === null
                           ? `Cả lớp · ${assignableStudents.length} học viên`
-                          : editAssignmentRecipients.length === 0
+                          : assignmentForm.recipients.length === 0
                             ? "Chưa chọn học viên nào"
-                            : `${editAssignmentRecipients.length} học viên được chọn`}
+                            : `${assignmentForm.recipients.length} học viên được chọn`}
                       </p>
                     </div>
                     <button
                       type="button"
-                      onClick={() => setEditAssignmentRecipients(null)}
-                      className={`shrink-0 rounded-full px-3 py-1.5 text-[10px] font-bold transition ${editAssignmentRecipients === null ? "bg-sky-500 text-white" : "bg-slate-800 text-slate-300 hover:text-white"}`}
+                      onClick={() => assignmentForm.setRecipients(null)}
+                      className={`shrink-0 rounded-full px-3 py-1.5 text-[10px] font-bold transition ${assignmentForm.recipients === null ? "bg-sky-500 text-white" : "bg-slate-800 text-slate-300 hover:text-white"}`}
                     >
                       Cả lớp
                     </button>
@@ -2110,7 +2243,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                       <p className="text-[11px] text-slate-400">Lớp chưa có học viên nào được duyệt.</p>
                     )}
                     {assignableStudents.map((student) => {
-                      const checked = editAssignmentRecipients?.includes(student.id) ?? false;
+                      const checked = assignmentForm.recipients?.includes(student.id) ?? false;
                       return (
                         <label
                           key={student.id}
@@ -2119,7 +2252,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                           <input
                             type="checkbox"
                             checked={checked}
-                            onChange={() => toggleAssignmentRecipient(student.id)}
+                            onChange={() => assignmentForm.toggleRecipient(student.id)}
                             className="h-4 w-4 shrink-0 accent-sky-500"
                           />
                           <span className="min-w-0">
@@ -2135,6 +2268,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                   </p>
                 </div>
 
+                {!assignmentFormIsCreate && (
                 <div className="rounded-2xl border border-[#1e3a70] bg-[#132247]/60 p-3">
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0">
@@ -2180,11 +2314,12 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                     </div>
                   )}
                 </div>
+                )}
 
                 <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-800">
                   <button
                     type="button"
-                    onClick={() => setEditAssignmentId(null)}
+                    onClick={() => closeAssignmentForm()}
                     className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-bold text-xs"
                   >
                     Hủy
@@ -2193,12 +2328,13 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                     type="submit"
                     disabled={
                       savingAssignmentEdit ||
-                      editAssignmentTitle.trim().length < 3 ||
-                      (editAssignmentRecipients !== null && editAssignmentRecipients.length === 0) ||
-                      (editAssignmentDueMode === "duration" &&
-                        (!Number.isInteger(Number(editAssignmentDurationDays)) ||
-                          Number(editAssignmentDurationDays) < 1 ||
-                          Number(editAssignmentDurationDays) > 365))
+                      (assignmentFormIsCreate && (!selectedAssignmentDeck || !isAssignableAssignmentDeck(selectedAssignmentDeck))) ||
+                      assignmentForm.title.trim().length < 3 ||
+                      (assignmentForm.recipients !== null && assignmentForm.recipients.length === 0) ||
+                      (assignmentForm.dueMode === "duration" &&
+                        (!Number.isInteger(Number(assignmentForm.durationDays)) ||
+                          Number(assignmentForm.durationDays) < 1 ||
+                          Number(assignmentForm.durationDays) > 365))
                     }
                     className="cm-btn cm-btn--primary text-xs disabled:cursor-not-allowed disabled:opacity-50"
                   >
@@ -2208,7 +2344,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                         Đang lưu
                       </>
                     ) : (
-                      "Lưu thay đổi"
+                      assignmentFormIsCreate ? "Giao Cho Lớp" : "Lưu thay đổi"
                     )}
                   </button>
                 </div>
@@ -2334,201 +2470,6 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
           </div>
         )}
 
-        {showAssignModal && (
-          <div className="cd-modal fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-            <div className="cd-modal-card card-duo p-6 bg-[#0f1b38] border-[#1e3466] max-w-xl w-full space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto">
-              <div className="flex items-center justify-between gap-2">
-                <h3 className="text-lg font-black text-white flex items-center gap-2">
-                  <Plus className="w-5 h-5 text-amber-400" />
-                  <span>Giao Bài Tập & Bộ Thẻ Mới</span>
-                </h3>
-                <button
-                  type="button"
-                  onClick={() => setShowAssignModal(false)}
-                  className="text-slate-400 hover:text-white p-1"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <form onSubmit={handleAssignDeck} className="space-y-4">
-                <div>
-                  <label className="text-xs font-bold text-slate-300 block mb-1">Tiêu Đề Bài Tập *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Ví dụ: Ôn tập Từ vựng Bài 01 - 03"
-                    value={assignTitle}
-                    onChange={(e) => setAssignTitle(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#132247] border border-[#1e3a70] text-white text-xs font-bold"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="assignDeckSearch" className="text-xs font-bold text-slate-300 block mb-1">Bộ Thẻ *</label>
-                  <div className="cd-deck-picker" ref={deckPickerRef}>
-                    <div className="cd-deck-field">
-                      <Search className="h-4 w-4" aria-hidden="true" />
-                      <input
-                        id="assignDeckSearch"
-                        type="text"
-                        role="combobox"
-                        aria-expanded={assignDeckOpen}
-                        aria-controls="assignDeckList"
-                        aria-autocomplete="list"
-                        autoComplete="off"
-                        spellCheck={false}
-                        placeholder="Gõ tên bài, chủ đề hoặc quyển…"
-                        value={assignDeckInputValue}
-                        onFocus={() => {
-                          setAssignDeckOpen(true);
-                          setAssignDeckQuery("");
-                          setAssignDeckActive(-1);
-                        }}
-                        onChange={(event) => {
-                          setAssignDeckOpen(true);
-                          setAssignDeckQuery(event.target.value);
-                          setAssignDeckActive(-1);
-                        }}
-                        onKeyDown={handleAssignDeckKeyDown}
-                        onBlur={handleAssignDeckBlur}
-                      />
-                      <span className="cd-deck-count">
-                        {assignDeckOpen ? `${assignmentDeckFlat.length} kết quả` : `${assignmentDecks.length} bộ thẻ`}
-                      </span>
-                    </div>
-                    {assignDeckOpen && (
-                      <div className="cd-deck-panel" id="assignDeckList" role="listbox" aria-label="Danh sách bộ thẻ">
-                        {assignmentDecks.length === 0 ? (
-                          <p className="cd-deck-empty">
-                            Thư viện của bạn chưa có bộ thẻ nào.{" "}
-                            <a href="/vocabulary" target="_blank" rel="noreferrer" style={{ color: "var(--c-accent)", fontWeight: 700 }}>
-                              Thêm bộ thẻ
-                            </a>{" "}
-                            rồi quay lại giao bài.
-                          </p>
-                        ) : assignmentDeckFlat.length === 0 ? (
-                          <p className="cd-deck-empty">Không tìm thấy bộ thẻ phù hợp.</p>
-                        ) : (
-                          assignmentDeckGroupsFiltered.map((group) => (
-                            <div key={group.book} className="cd-deck-group" role="group" aria-label={group.label}>
-                              <p className="cd-deck-group-label">{group.label}</p>
-                              {group.decks.map((deck) => {
-                                const index = assignmentDeckFlat.indexOf(deck);
-                                const count = assignmentDeckCardCount(deck);
-                                const disabled = !isAssignableAssignmentDeck(deck);
-                                return (
-                                  <button
-                                    key={deck.id}
-                                    ref={(node) => {
-                                      if (node) deckOptionRefs.current.set(deck.id, node);
-                                      else deckOptionRefs.current.delete(deck.id);
-                                    }}
-                                    type="button"
-                                    role="option"
-                                    aria-selected={selectedAssignmentDeck?.id === deck.id}
-                                    disabled={disabled}
-                                    className={`cd-deck-option ${index === assignDeckActive ? "is-active" : ""}`}
-                                    onMouseDown={(event) => event.preventDefault()}
-                                    onClick={() => selectAssignmentDeck(deck)}
-                                  >
-                                    <span className="cd-deck-option-copy">
-                                      <strong>{(deck.parentId || (!deck.book && deck.name.includes("::"))) ? "↳ " : ""}{assignmentDeckLabel(deck)}</strong>
-                                      <small>{deck.book ? deck.difficulty : "Bộ thẻ cá nhân"}</small>
-                                    </span>
-                                    <span className="cd-deck-option-count">{count} thẻ</span>
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          ))
-                        )}
-                      </div>
-                    )}
-                  </div>
-                  <p className="mt-2 text-[10px] leading-4 text-slate-500">Tìm theo tên bài, chủ đề, quyển hoặc bộ thẻ. Mỗi bài tối đa 500 thẻ.</p>
-                </div>
-
-                <div>
-                  <label className="text-xs font-bold text-slate-300 block mb-1">Hạn Nộp (Hạn Ôn)</label>
-                  <div className="mb-2 grid grid-cols-3 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setAssignDueMode("date")}
-                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${assignDueMode === "date" ? "border-sky-500/60 bg-sky-500/20" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`} style={assignDueMode === "date" ? { color: "var(--c-ink)" } : undefined}
-                    >
-                      Chọn ngày cụ thể
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setAssignDueMode("duration")}
-                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${assignDueMode === "duration" ? "border-sky-500/60 bg-sky-500/20" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`} style={assignDueMode === "duration" ? { color: "var(--c-ink)" } : undefined}
-                    >
-                      Số ngày hoàn thành
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setAssignDueMode("none")}
-                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${assignDueMode === "none" ? "border-sky-500/60 bg-sky-500/20" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`} style={assignDueMode === "none" ? { color: "var(--c-ink)" } : undefined}
-                    >
-                      Không hạn
-                    </button>
-                  </div>
-                  {assignDueMode === "none" ? (
-                    <p className="text-[11px] text-slate-400">Học viên học lúc nào cũng được, không tính hạn.</p>
-                  ) : assignDueMode === "date" ? (
-                    <input
-                      type="date"
-                      value={assignDueDate}
-                      onChange={(e) => setAssignDueDate(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#132247] border border-[#1e3a70] text-white text-xs font-bold"
-                    />
-                  ) : (
-                    <>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="number"
-                          min={1}
-                          max={365}
-                          value={assignDurationDays}
-                          onChange={(e) => setAssignDurationDays(e.target.value)}
-                          className="w-full px-3.5 py-2.5 rounded-xl bg-[#132247] border border-[#1e3a70] text-white text-xs font-bold"
-                        />
-                        <span className="text-xs font-bold text-slate-300">ngày</span>
-                      </div>
-                      <p className="text-[11px] text-slate-400 mt-1">
-                        Học viên vào lớp sau sẽ có đủ {Number(assignDurationDays) || 7} ngày kể từ ngày tham gia.
-                      </p>
-                    </>
-                  )}
-                </div>
-
-                <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-800">
-                  <button
-                    type="button"
-                    onClick={() => setShowAssignModal(false)}
-                    className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-bold text-xs"
-                  >
-                    Hủy
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={
-                      (assignDueMode === "duration" &&
-                        (!Number.isInteger(Number(assignDurationDays)) ||
-                          Number(assignDurationDays) < 1 ||
-                          Number(assignDurationDays) > 365)) ||
-                      !selectedAssignmentDeck ||
-                      !isAssignableAssignmentDeck(selectedAssignmentDeck)
-                    }
-                    className="cm-btn cm-btn--primary text-xs disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    Giao Cho Lớp
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
       </div>
     );
   }
