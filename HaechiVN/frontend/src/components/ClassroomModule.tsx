@@ -28,8 +28,6 @@ import {
 import { ApiClient, UserProfile } from "../lib/apiClient";
 import { useApp } from "../contexts/AppProvider";
 import { AnkiDeck } from "../lib/ankiParser";
-import { loadCourseVocabulary, TopikDeck } from "../lib/courseVocabulary";
-import { loadAdminThthCurriculum } from "../lib/privateLearningContent";
 
 export interface ClassMember {
   id: string;
@@ -198,14 +196,14 @@ const buildAnkiAssignmentDecks = (
   const base = {
     book: 0,
     topic,
-    difficulty: "Anki cá nhân",
+    difficulty: "Thư viện của tôi",
     mediaAssets: deck.mediaAssets || [],
   };
   const sourceCards = deck.cards || [];
   const parent: AssignmentDeckOption = {
     ...base,
     id: parentId,
-    name: `Anki · ${deck.name}`,
+    name: deck.name,
     cards: sourceCards.map(assignmentDeckCardFromAnki),
   };
   const groups = new Map<string, AssignmentDeckCard[]>();
@@ -221,7 +219,7 @@ const buildAnkiAssignmentDecks = (
     .map(([path, cards], index): AssignmentDeckOption => ({
       ...base,
       id: `${parentId}:sub:${index}`,
-      name: `Anki · ${path}`,
+      name: path,
       parentId,
       cards,
     }));
@@ -351,8 +349,6 @@ interface ClassroomModuleProps {
 
 export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, demo = false, onClassesChange, initialClassId = null, onBack }) => {
   const { handleOpenAuth, userDecks } = useApp();
-  const [courseDeckGroups, setCourseDeckGroups] = useState<TopikDeck[]>([]);
-  const [adminThthDecks, setAdminThthDecks] = useState<any[]>([]);
   const isAdmin = currentUser?.role === "admin";
 
   const [classes, setClasses] = useState<Classroom[]>([]);
@@ -479,124 +475,9 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
   // Copy feedback
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
-  useEffect(() => {
-    let active = true;
-    void loadCourseVocabulary().then((data) => {
-      if (active) setCourseDeckGroups(data?.decks || []);
-    });
-    if (isAdmin) {
-      void loadAdminThthCurriculum().then((decks) => {
-        if (active) setAdminThthDecks(decks || []);
-      });
-    } else {
-      setAdminThthDecks([]);
-    }
-    return () => { active = false; };
-  }, [isAdmin]);
-
-  const adminThthLessonDecks = React.useMemo(() => {
-    if (!isAdmin || !adminThthDecks.length) return [];
-    type RichAssignmentCard = {
-      id: number;
-      korean: string;
-      meaning: string;
-      example: string;
-      mediaRefs: string[];
-      [key: string]: unknown;
-    };
-    const byLesson = new Map<string, { id: string; name: string; book: number; topic: string; difficulty: string; cards: RichAssignmentCard[] }>();
-    for (const d of adminThthDecks) {
-      const parts = String(d.name || "").split("::");
-      const bookNum = Number(d.book || 1);
-      const lessonName = (parts[2] || d.topic || "Bài học").trim();
-      const key = `thth-lesson:${bookNum}:${lessonName}`;
-      if (!byLesson.has(key)) {
-        byLesson.set(key, {
-          id: key,
-          name: `Tiếng Hàn Tổng Hợp ${bookNum} · ${lessonName} (Trọn bài)`,
-          book: 100 + bookNum,
-          topic: lessonName,
-          difficulty: d.difficulty || `Quyển ${bookNum}`,
-          cards: [],
-        });
-      }
-      const entry = byLesson.get(key)!;
-      for (const c of d.cards || []) {
-        entry.cards.push({
-          id: Number(c.id) || entry.cards.length + 1,
-          korean: String(c.word || "").replace(/<[^>]*>/g, "").trim(),
-          meaning: String(c.meaning || "").replace(/<[^>]*>/g, "").trim(),
-          word: c.word,
-          pos: c.pos || "",
-          transliteration: c.transliteration || "",
-          explain: c.explain || "",
-          image: c.image || "",
-          example: String(c.example || ""),
-          example_translated: c.example_translated || "",
-          collocation: c.collocation || "",
-          synonym: c.synonym || "",
-          antonym: c.antonym || "",
-          audio_word: c.audio_word || "",
-          audio_meaning: c.audio_meaning || "",
-          audio_example: c.audio_example || "",
-          mediaRefs: [] as string[],
-        });
-      }
-    }
-    const subdecks = adminThthDecks.map((d: any) => {
-      const parts = String(d.name || "").split("::");
-      const bookNum = Number(d.book || 1);
-      const lessonName = (parts[2] || "Bài học").trim();
-      const subName = (parts[3] || d.topic || d.name).trim();
-      const rawCards: any[] = Array.isArray(d.cards) ? d.cards : [];
-      return {
-        id: `thth-sub:${d.id}`,
-        name: `Tiếng Hàn Tổng Hợp ${bookNum} · ${lessonName} · ${subName}`,
-        book: 100 + bookNum,
-        topic: lessonName,
-        difficulty: String(d.difficulty || `Quyển ${bookNum}`),
-        mediaAssets: [] as Array<{ filename: string; contentType: string; blob: Blob }>,
-        cards: rawCards.map((c: any, idx: number): RichAssignmentCard => ({
-          id: Number(c.id) || idx + 1,
-          korean: String(c.word || "").replace(/<[^>]*>/g, "").trim(),
-          meaning: String(c.meaning || "").replace(/<[^>]*>/g, "").trim(),
-          word: c.word,
-          pos: c.pos || "",
-          transliteration: c.transliteration || "",
-          explain: c.explain || "",
-          image: c.image || "",
-          example: String(c.example || ""),
-          example_translated: c.example_translated || "",
-          collocation: c.collocation || "",
-          synonym: c.synonym || "",
-          antonym: c.antonym || "",
-          audio_word: c.audio_word || "",
-          audio_meaning: c.audio_meaning || "",
-          audio_example: c.audio_example || "",
-          mediaRefs: [] as string[],
-        })),
-      };
-    });
-    return [...Array.from(byLesson.values()).map((x) => ({ ...x, mediaAssets: [] as Array<{ filename: string; contentType: string; blob: Blob }> })), ...subdecks];
-  }, [isAdmin, adminThthDecks]);
-
-  const assignmentDecks = [
-    ...adminThthLessonDecks,
-    ...courseDeckGroups.flatMap((group) => group.courses.flatMap((course) => course.units.map((unit) => ({
-      id: `course:${course.id}:${unit.number}`,
-      name: `${course.title} · ${unit.title}`,
-      book: Number(course.topik.match(/\d+/)?.[0] || 1),
-      topic: course.title,
-      difficulty: course.topik,
-      mediaAssets: [],
-      cards: unit.words.filter(([, korean, meaning]) => korean && meaning).map(([id, korean, meaning, , hanja, pronunciation]) => ({
-        id, korean, meaning,
-        example: [hanja, pronunciation].filter(Boolean).join(" · "),
-        mediaRefs: [] as string[],
-      })),
-    })))),
-    ...buildAnkiAssignmentDecks("anki", userDecks, "Bộ Anki đã nhập"),
-  ].filter((deck) => deck.cards.length > 0);
+  const assignmentDecks = buildAnkiAssignmentDecks("anki", userDecks, "Thư viện của tôi").filter(
+    (deck) => deck.cards.length > 0,
+  );
   const assignmentDeckGroups = ASSIGN_BOOK_ORDER.map((book) => {
     const decks = assignmentDecks.filter((deck) => deck.book === book);
     if (!decks.length) return null;
@@ -2517,7 +2398,15 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                     </div>
                     {assignDeckOpen && (
                       <div className="cd-deck-panel" id="assignDeckList" role="listbox" aria-label="Danh sách bộ thẻ">
-                        {assignmentDeckFlat.length === 0 ? (
+                        {assignmentDecks.length === 0 ? (
+                          <p className="cd-deck-empty">
+                            Thư viện của bạn chưa có bộ thẻ nào.{" "}
+                            <a href="/vocabulary" target="_blank" rel="noreferrer" style={{ color: "var(--c-accent)", fontWeight: 700 }}>
+                              Thêm bộ thẻ
+                            </a>{" "}
+                            rồi quay lại giao bài.
+                          </p>
+                        ) : assignmentDeckFlat.length === 0 ? (
                           <p className="cd-deck-empty">Không tìm thấy bộ thẻ phù hợp.</p>
                         ) : (
                           assignmentDeckGroupsFiltered.map((group) => (
