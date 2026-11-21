@@ -142,7 +142,7 @@ html[data-theme="light"] body:not(:has(.login-page-root)) [class*="border-slate-
 }
 
 /* Sidebar & Header cho Light Mode */
-html[data-theme="light"] body:not(:has(.login-page-root)) aside {
+html[data-theme="light"] body:not(:has(.login-page-root)) aside:not(.cd-side) {
   background-color: #ffffff !important;
   border-right-color: #e2e8f0 !important;
 }
