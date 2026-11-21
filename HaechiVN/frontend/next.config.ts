@@ -1,7 +1,11 @@
 import type { NextConfig } from "next";
 
+const isDev = process.env.NODE_ENV === "development";
+
 const nextConfig: NextConfig = {
-  output: "export",
+  // Dev chạy server bình thường để route động /classes/<mã lớp> hoạt động;
+  // lúc build mới export tĩnh cho Cloudflare Pages.
+  ...(isDev ? {} : { output: "export" as const }),
   images: {
     unoptimized: true,
   },
@@ -12,7 +16,9 @@ const nextConfig: NextConfig = {
   async rewrites() {
     if (process.env.NODE_ENV !== "development") return [];
     const apiOrigin = process.env.LOCAL_API_ORIGIN || "http://127.0.0.1:8788";
-    return [{ source: "/api/:path*", destination: `${apiOrigin}/api/:path*` }];
+    return [
+      { source: "/api/:path*", destination: `${apiOrigin}/api/:path*` },
+    ];
   },
 };
 

@@ -343,11 +343,15 @@ interface ClassroomModuleProps {
   onClassesChange?: (classIds: string[]) => void;
   /** Mở sẵn lớp này khi hiện module (nút "Vào học" của lớp mở). */
   initialClassId?: string | null;
+  /** Mở sẵn lớp theo mã lớp (dùng cho route /classes/<mã lớp>). */
+  initialClassCode?: string | null;
+  /** Báo mã lớp đang mở để trang cập nhật URL (/classes hoặc /classes/<mã>). */
+  onSelectedClassChange?: (code: string | null) => void;
   /** Nút "Trở về" hiển thị cùng hàng với hai tab chính. */
   onBack?: () => void;
 }
 
-export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, demo = false, onClassesChange, initialClassId = null, onBack }) => {
+export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, demo = false, onClassesChange, initialClassId = null, initialClassCode = null, onSelectedClassChange, onBack }) => {
   const { handleOpenAuth, userDecks } = useApp();
   const isAdmin = currentUser?.role === "admin";
 
@@ -964,6 +968,25 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
     : [];
 
   const selectedClass = classes.find((c) => c.id === selectedClassId);
+
+  // Deep link /classes/<mã lớp>: mở đúng lớp sau khi danh sách tải xong (một lần).
+  const appliedInitialCodeRef = useRef(false);
+  useEffect(() => {
+    if (appliedInitialCodeRef.current || !initialClassCode || classes.length === 0) return;
+    appliedInitialCodeRef.current = true;
+    const wanted = initialClassCode.trim().toLowerCase();
+    const match = classes.find((cls) => cls.code.toLowerCase() === wanted || cls.id.toLowerCase() === wanted);
+    if (match) setSelectedClassId(match.id);
+  }, [classes, initialClassCode]);
+
+  // Đồng bộ URL theo lớp đang mở: chỉ báo khi người dùng thật sự đổi lớp
+  // (bỏ qua render đầu, nếu không sẽ đẩy /classes/<mã> về /classes).
+  const prevSelectedIdRef = useRef<string | null>(selectedClassId);
+  useEffect(() => {
+    if (selectedClassId === prevSelectedIdRef.current) return;
+    prevSelectedIdRef.current = selectedClassId;
+    onSelectedClassChange?.(selectedClass?.code ?? null);
+  }, [selectedClassId, selectedClass, onSelectedClassChange]);
   const assignableStudents = (selectedClass?.members || []).filter(
     (member) => member.role === "student" && member.status === "approved"
   );
