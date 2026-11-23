@@ -1738,91 +1738,94 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
             )}
 
             {canManageClass && activeTab === "settings" && (
-              <section className="cd-panel" aria-label="Cài đặt lớp">
-                <div className="cd-core">
-                  <div className="cd-panel-head">
-                    <h2>Cài đặt lớp</h2>
-                    <p className="cd-section-note">Chỉ giáo viên</p>
-                  </div>
+              <section
+                className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-[#1e3466] dark:bg-[#0f1b38]"
+                aria-label="Cài đặt lớp"
+              >
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <h2 className="text-sm font-black text-white">Cài đặt lớp</h2>
+                  <p className="text-[11px] font-bold text-slate-700">Chỉ giáo viên</p>
+                </div>
 
-                  <div className="cd-form">
-                    <div className="cd-form-row">
-                      <div className="cd-field">
-                        <span className="cd-field-label">Tên lớp</span>
-                        <div className="cd-readonly">{selectedClass.name}</div>
-                      </div>
-                      <div className="cd-field">
-                        <label className="cd-field-label" htmlFor="cd-visibility">
-                          Quyền truy cập
-                        </label>
-                        <select
-                          id="cd-visibility"
-                          value={selectedClass.visibility}
-                          onChange={(e) => handleVisibilityChange(e.target.value as ClassVisibility)}
-                          className="cd-form-select"
-                        >
-                          {CLASS_VISIBILITY_OPTIONS.map((option) => (
-                            <option key={option.value} value={option.value}>
-                              {option.label}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-
-                    {selectedClass.description && (
-                      <div className="cd-field">
-                        <span className="cd-field-label">Mô tả</span>
-                        <div className="cd-readonly cd-readonly--area">{selectedClass.description}</div>
-                      </div>
-                    )}
-
-                    <div className="cd-form-row">
-                      <div className="cd-field">
-                        <span className="cd-field-label">Mã lớp</span>
-                        <div className="cd-code-display">
-                          <code>{selectedClass.code}</code>
-                          <button
-                            type="button"
-                            className="rd-btn cd-btn-secondary cd-btn-sm"
-                            onClick={() => copyToClipboard(selectedClass.code)}
-                          >
-                            {copiedCode === selectedClass.code ? "Đã chép" : "Sao chép"}
-                          </button>
-                        </div>
-                      </div>
-                      <div className="cd-field">
-                        <span className="cd-field-label">Thành viên</span>
-                        <div className="cd-readonly">{approvedMembers.length} thành viên đã duyệt</div>
-                      </div>
-                    </div>
-
-                    <div className="cd-form-foot">
-                      <p className="cd-soft">
-                        Quyền truy cập áp dụng ngay cho toàn bộ thành viên. Tên lớp và mô tả hiện do quản trị viên quản lý.
-                      </p>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <span className="block text-[11px] font-bold text-slate-700">Tên lớp</span>
+                    <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-800 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
+                      {selectedClass.name}
                     </div>
                   </div>
+                  <div className="space-y-1.5">
+                    <label className="block text-[11px] font-bold text-slate-700" htmlFor="cd-visibility">
+                      Quyền truy cập
+                    </label>
+                    <select
+                      id="cd-visibility"
+                      value={selectedClass.visibility}
+                      onChange={(e) => handleVisibilityChange(e.target.value as ClassVisibility)}
+                      className="w-full cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-800 outline-none focus:border-sky-600 dark:border-white/10 dark:bg-[#132247] dark:text-slate-200"
+                    >
+                      {CLASS_VISIBILITY_OPTIONS.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
-                  {canDeleteClass && (
-                    <div className="cd-danger-zone">
-                      <div>
-                        <h3>Xóa lớp học</h3>
-                        <p>
-                          Toàn bộ thành viên, bài tập và tiến độ của lớp sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác.
-                        </p>
+                  {selectedClass.description && (
+                    <div className="space-y-1.5 sm:col-span-2">
+                      <span className="block text-[11px] font-bold text-slate-700">Mô tả</span>
+                      <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold leading-5 text-slate-800 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
+                        {selectedClass.description}
                       </div>
-                      <button
-                        type="button"
-                        className="rd-btn cd-btn-danger"
-                        onClick={() => setShowDeleteClassModal(true)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        Xóa lớp
-                      </button>
                     </div>
                   )}
+
+                  <div className="space-y-1.5">
+                    <span className="block text-[11px] font-bold text-slate-700">Mã lớp</span>
+                    <div className="flex items-center gap-2">
+                      <code className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-black text-slate-800 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
+                        {selectedClass.code}
+                      </code>
+                      <button
+                        type="button"
+                        className="cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] font-black text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#1e3466] dark:bg-[#0f1b38] dark:text-slate-200"
+                        onClick={() => copyToClipboard(selectedClass.code)}
+                      >
+                        {copiedCode === selectedClass.code ? "Đã chép" : "Sao chép"}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <span className="block text-[11px] font-bold text-slate-700">Thành viên</span>
+                    <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-800 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
+                      {approvedMembers.length} thành viên đã duyệt
+                    </div>
+                  </div>
                 </div>
+
+                <p className="mt-3 text-[11px] font-semibold text-slate-700">
+                  Quyền truy cập áp dụng ngay cho toàn bộ thành viên. Tên lớp và mô tả hiện do quản trị viên quản lý.
+                </p>
+
+                {canDeleteClass && (
+                  <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-rose-200 bg-rose-50 p-4 dark:border-rose-500/30 dark:bg-rose-500/10">
+                    <div>
+                      <h3 className="text-xs font-black text-rose-800 dark:text-rose-300">Xóa lớp học</h3>
+                      <p className="mt-1 text-[11px] font-semibold leading-5 text-rose-700 dark:text-rose-200/80">
+                        Toàn bộ thành viên, bài tập và tiến độ của lớp sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-rose-700 px-4 py-2 text-xs font-black text-white transition-colors hover:bg-rose-600"
+                      onClick={() => setShowDeleteClassModal(true)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Xóa lớp
+                    </button>
+                  </div>
+                )}
               </section>
             )}
           </div>
