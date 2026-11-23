@@ -2506,6 +2506,20 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
     const teacher = record?.role === "owner" || record?.role === "admin" || record?.role === "staff";
     return cls.assignments.some((asg) => (teacher ? (asg.progress || []).some((p) => !p.completed) : !asg.completed));
   }).length;
+  // Tab "Tham gia lớp học" đếm theo danh mục lớp tìm được, không dùng số liệu lớp của mình.
+  const statTitle = mainTab === "mine" ? "Lớp học của tôi" : "Khám phá lớp học";
+  const stats =
+    mainTab === "mine"
+      ? [
+          { value: myClasses.length, label: "lớp" },
+          { value: approvedMemberTotal, label: "thành viên" },
+          { value: openAssignmentCount, label: "bài tập đang mở" },
+        ]
+      : [
+          { value: discoverClasses.length, label: "lớp tìm thấy" },
+          { value: discoverClasses.filter((c) => c.myStatus === "approved").length, label: "đã tham gia" },
+          { value: discoverClasses.filter((c) => c.myStatus === "pending").length, label: "chờ duyệt" },
+        ];
 
   return (
     <div className="classroom-module cm-page rd">
@@ -2556,20 +2570,14 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
           </div>
         </div>
         <div className="mx-auto w-fit max-w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-center dark:border-[#1e3466] dark:bg-[#0f1b38]">
-          <h1 className="text-sm font-black text-white sm:text-base">Lớp học của tôi</h1>
+          <h1 className="text-sm font-black text-white sm:text-base">{statTitle}</h1>
           <dl className="mt-3 grid grid-cols-3 divide-x divide-slate-200 dark:divide-white/10">
-            <div className="px-5 text-center">
-              <dd className="text-base font-black text-white">{myClasses.length}</dd>
-              <dt className="text-[11px] font-bold leading-tight text-slate-700">lớp</dt>
-            </div>
-            <div className="px-5 text-center">
-              <dd className="text-base font-black text-white">{approvedMemberTotal}</dd>
-              <dt className="text-[11px] font-bold leading-tight text-slate-700">thành viên</dt>
-            </div>
-            <div className="px-5 text-center">
-              <dd className="text-base font-black text-white">{openAssignmentCount}</dd>
-              <dt className="text-[11px] font-bold leading-tight text-slate-700">bài tập đang mở</dt>
-            </div>
+            {stats.map((s) => (
+              <div key={s.label} className="px-5 text-center">
+                <dd className="text-base font-black text-white">{s.value}</dd>
+                <dt className="text-[11px] font-bold leading-tight text-slate-700">{s.label}</dt>
+              </div>
+            ))}
           </dl>
         </div>
       </div>
