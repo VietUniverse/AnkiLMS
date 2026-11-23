@@ -1120,41 +1120,65 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
 
     return (
       <div className="classroom-module cm-page rd cd">
-        <div
-          ref={navShellRef}
-          className={`rd-nav-shell${navRail ? " rd-nav-shell--rail" : ""}`}
-        >
-          <nav
-            className="rd-nav"
-            aria-label="Điều hướng lớp học"
-            style={
-              canManageClass && !navRail
-                ? { transform: wideLandscape ? "translate(-3px, -12px)" : "translate(0px, 1px)" }
-                : undefined
-            }
-          >
+        <div className="mb-4 w-full space-y-3">
+          <div className="mx-auto flex w-fit max-w-full items-center gap-1.5 rounded-2xl border border-slate-200 bg-white p-1.5 dark:border-[#1e3466] dark:bg-[#0f1b38]">
             <button
               type="button"
               onClick={() => setSelectedClassId(null)}
-              className="rd-nav-back cd-nav-back"
               aria-label="Về danh sách lớp"
+              className="inline-flex shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white"
             >
               <ChevronLeft className="h-4 w-4" />
+              <span className="hidden sm:inline">Trở về</span>
             </button>
-            <span className="rd-nav-divider" aria-hidden="true" />
-            <Link className="rd-nav-brand" href="/" aria-label="HaechiVN">
-              <Image src="/brand/haechivn-mark.webp" alt="" width={26} height={26} />
-              <span>HaechiVN</span>
-            </Link>
-            <span className="rd-nav-scope">{canManageClass ? "Quản lý lớp" : selectedClass.name}</span>
-            <div className="rd-nav-user">
-              <span className="rd-avatar">{viewerInitials}</span>
-              <span className="rd-user-copy">
-                <span className="rd-user-name">{currentUser?.name}</span>
-                <span className="rd-user-role">{roleLabel}</span>
-              </span>
+            <div
+              className={`grid gap-1.5 ${canManageClass ? "grid-cols-4" : "grid-cols-3"}`}
+              role="tablist"
+              aria-label="Nội dung lớp học"
+            >
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeTab === "assignments"}
+                onClick={() => setActiveTab("assignments")}
+                className={`flex cursor-pointer items-center justify-center gap-1 rounded-xl px-3 py-2 text-xs font-black transition-all ${activeTab === "assignments" ? "bg-sky-600 text-white" : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"}`}
+              >
+                Bài tập
+                <span className="text-[10px] font-bold opacity-70">{selectedClass.assignments.length}</span>
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeTab === "leaderboard"}
+                onClick={() => setActiveTab("leaderboard")}
+                className={`flex cursor-pointer items-center justify-center gap-1 rounded-xl px-3 py-2 text-xs font-black transition-all ${activeTab === "leaderboard" ? "bg-sky-600 text-white" : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"}`}
+              >
+                Xếp hạng
+                <span className="text-[10px] font-bold opacity-70">{rankedStudents.length}</span>
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeTab === "members"}
+                onClick={() => setActiveTab("members")}
+                className={`flex cursor-pointer items-center justify-center gap-1 rounded-xl px-3 py-2 text-xs font-black transition-all ${activeTab === "members" ? "bg-sky-600 text-white" : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"}`}
+              >
+                Thành viên
+                <span className="text-[10px] font-bold opacity-70">{approvedMembers.length}</span>
+              </button>
+              {canManageClass && (
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeTab === "settings"}
+                onClick={() => setActiveTab("settings")}
+                className={`flex cursor-pointer items-center justify-center gap-1 rounded-xl px-3 py-2 text-xs font-black transition-all ${activeTab === "settings" ? "bg-sky-600 text-white" : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"}`}
+              >
+                Cài đặt
+              </button>
+              )}
             </div>
-          </nav>
+          </div>
         </div>
 
         {msg?.type === "error" && (
@@ -1352,49 +1376,6 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
             )}
           </aside>
         </section>
-
-        <div className="rd-tabs-wrap cd-tabs-wrap">
-          <div className="rd-segmented" role="tablist" aria-label="Nội dung lớp học">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={activeTab === "assignments"}
-              onClick={() => setActiveTab("assignments")}
-              className="rd-tab"
-            >
-              Bài tập<span className="cd-tab-count">{selectedClass.assignments.length}</span>
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={activeTab === "leaderboard"}
-              onClick={() => setActiveTab("leaderboard")}
-              className="rd-tab"
-            >
-              Xếp hạng<span className="cd-tab-count">{rankedStudents.length}</span>
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={activeTab === "members"}
-              onClick={() => setActiveTab("members")}
-              className="rd-tab"
-            >
-              Thành viên<span className="cd-tab-count">{approvedMembers.length}</span>
-            </button>
-            {canManageClass && (
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeTab === "settings"}
-                onClick={() => setActiveTab("settings")}
-                className="rd-tab"
-              >
-                Cài đặt
-              </button>
-            )}
-          </div>
-        </div>
 
         <div className="cd-room">
           <div className="cd-main">
