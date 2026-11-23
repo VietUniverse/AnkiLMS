@@ -2150,21 +2150,21 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                     <button
                       type="button"
                       onClick={() => assignmentForm.setDueMode("date")}
-                      className={`cursor-pointer rounded-xl border px-3 py-2 text-[11px] font-bold ${assignmentForm.dueMode === "date" ? "border-sky-600 bg-sky-50 text-sky-800 dark:border-sky-700 dark:bg-sky-900/40 dark:text-white" : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-white/10 dark:bg-[#132247] dark:text-slate-300"}`}
+                      className={`cursor-pointer rounded-xl border px-3 py-2 text-[11px] font-bold ${assignmentForm.dueMode === "date" ? "border-sky-700 bg-sky-700 text-white dark:border-sky-700 dark:bg-sky-700" : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-white/10 dark:bg-[#132247] dark:text-slate-300"}`}
                     >
                       Chọn ngày cụ thể
                     </button>
                     <button
                       type="button"
                       onClick={() => assignmentForm.setDueMode("duration")}
-                      className={`cursor-pointer rounded-xl border px-3 py-2 text-[11px] font-bold ${assignmentForm.dueMode === "duration" ? "border-sky-600 bg-sky-50 text-sky-800 dark:border-sky-700 dark:bg-sky-900/40 dark:text-white" : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-white/10 dark:bg-[#132247] dark:text-slate-300"}`}
+                      className={`cursor-pointer rounded-xl border px-3 py-2 text-[11px] font-bold ${assignmentForm.dueMode === "duration" ? "border-sky-700 bg-sky-700 text-white dark:border-sky-700 dark:bg-sky-700" : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-white/10 dark:bg-[#132247] dark:text-slate-300"}`}
                     >
                       Số ngày hoàn thành
                     </button>
                     <button
                       type="button"
                       onClick={() => assignmentForm.setDueMode("none")}
-                      className={`cursor-pointer rounded-xl border px-3 py-2 text-[11px] font-bold ${assignmentForm.dueMode === "none" ? "border-sky-600 bg-sky-50 text-sky-800 dark:border-sky-700 dark:bg-sky-900/40 dark:text-white" : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-white/10 dark:bg-[#132247] dark:text-slate-300"}`}
+                      className={`cursor-pointer rounded-xl border px-3 py-2 text-[11px] font-bold ${assignmentForm.dueMode === "none" ? "border-sky-700 bg-sky-700 text-white dark:border-sky-700 dark:bg-sky-700" : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-white/10 dark:bg-[#132247] dark:text-slate-300"}`}
                     >
                       Không hạn
                     </button>
