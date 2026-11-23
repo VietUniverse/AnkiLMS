@@ -1194,187 +1194,123 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
           </p>
         )}
 
-        <section className="cd-hero" aria-labelledby="cd-class-title">
-          <div className="cd-copy">
-            <div className="cd-kicker">
-              {canManageClass && <span className="rd-tag rd-tag--strong">Bạn phụ trách</span>}
-              {isClassOwner ? (
-                <select
-                  value={selectedClass.visibility}
-                  onChange={(e) => handleVisibilityChange(e.target.value as ClassVisibility)}
-                  title="Quyền truy cập của lớp"
-                  className="cd-select"
-                >
-                  {CLASS_VISIBILITY_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <span className="rd-tag">{visibilityLabel(selectedClass.visibility)}</span>
-              )}
-              {!canManageClass && (
-                <span className="rd-tag">
-                  {totalAssignments > 0 && myCompletedCount >= totalAssignments ? "Hoàn thành" : "Đang học"}
-                </span>
-              )}
-              <button
-                type="button"
-                onClick={() => copyToClipboard(selectedClass.code)}
-                className="rd-code cd-code"
-                title="Sao chép mã lớp"
-                aria-label={`Sao chép mã lớp ${selectedClass.code}`}
+        <section
+          className="mx-auto w-fit max-w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-center dark:border-[#1e3466] dark:bg-[#0f1b38]"
+          aria-labelledby="cd-class-title"
+        >
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            {canManageClass && (
+              <span className="rounded-full bg-sky-100 px-2.5 py-1 text-[10px] font-black text-sky-800">Bạn phụ trách</span>
+            )}
+            {isClassOwner ? (
+              <select
+                value={selectedClass.visibility}
+                onChange={(e) => handleVisibilityChange(e.target.value as ClassVisibility)}
+                title="Quyền truy cập của lớp"
+                className="cd-select cursor-pointer rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[10px] font-black text-slate-700 dark:border-white/10 dark:bg-[#132247] dark:text-slate-200"
               >
-                <span>{selectedClass.code}</span>
-                {copiedCode === selectedClass.code ? (
-                  <CheckCircle2 className="h-3.5 w-3.5" />
-                ) : (
-                  <Copy className="h-3.5 w-3.5" />
-                )}
-              </button>
-            </div>
-
-            <h1 className="cd-title" id="cd-class-title">
-              {selectedClass.name}
-            </h1>
-            {selectedClass.description && <p className="cd-lead">{selectedClass.description}</p>}
-
-            <div className="cd-meta">
-              {heroAvatars.length > 0 && (
-                <span className="cd-avatar-stack" aria-hidden="true">
-                  {heroAvatars.map((member) => (
-                    <span key={member.id} className="rd-avatar cd-avatar-sm">
-                      {initialsOf(member.name)}
-                    </span>
-                  ))}
-                </span>
-              )}
-              <span>{selectedClass.ownerName}</span>
-              <span className="cd-dot" aria-hidden="true" />
-              <span>{approvedMembers.length} thành viên</span>
-              <span className="cd-dot" aria-hidden="true" />
-              <span>{selectedClass.assignments.length} bài tập</span>
-              <span className="cd-dot cd-dot--more" aria-hidden="true" />
-              <span className="cd-dot--more">Tạo {shortDate(selectedClass.createdAt)}</span>
-            </div>
-
-            <div className="cd-actions">
-              {canManageClass ? (
-                <>
-                  <button
-                    type="button"
-                    className="rd-btn rd-btn-primary cd-btn-primary"
-                    onClick={openAssignModal}
-                  >
-                    <span>Giao bài tập</span>
-                    <span className="rd-orb" aria-hidden="true">
-                      <Plus className="h-4 w-4" />
-                    </span>
-                  </button>
-                  <button type="button" className="rd-btn cd-btn-secondary" onClick={() => setActiveTab("members")}>
-                    Mời thành viên
-                  </button>
-                </>
-              ) : (
-                <>
-                  <a className="rd-btn rd-btn-primary cd-btn-primary" href={studyHref}>
-                    <span>{nextAssignment?.completed ? "Ôn lại bài học" : "Vào học"}</span>
-                    <span className="rd-orb" aria-hidden="true">
-                      <ArrowRight className="h-4 w-4" />
-                    </span>
-                  </a>
-                  <button type="button" className="rd-btn cd-btn-secondary" onClick={() => setActiveTab("assignments")}>
-                    Xem bài tập
-                  </button>
-                </>
-              )}
-            </div>
+                {CLASS_VISIBILITY_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black text-slate-700">
+                {visibilityLabel(selectedClass.visibility)}
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={() => copyToClipboard(selectedClass.code)}
+              className="inline-flex cursor-pointer items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[10px] font-black text-slate-700 dark:border-white/10 dark:bg-[#132247] dark:text-slate-200"
+              title="Sao chép mã lớp"
+              aria-label={`Sao chép mã lớp ${selectedClass.code}`}
+            >
+              {selectedClass.code}
+              {copiedCode === selectedClass.code ? <CheckCircle2 className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+            </button>
           </div>
 
-          <aside className="cd-summary" aria-label="Tóm tắt lớp học">
-            <div className="cd-card-top">
-              <span className="cd-card-label">{canManageClass ? "Tổng quan lớp" : "Tiến độ của bạn"}</span>
-              <span className="rd-tag">
-                {canManageClass
-                  ? `${selectedClass.assignments.length} bài`
-                  : totalAssignments > 0 && myCompletedCount >= totalAssignments
-                    ? "Hoàn thành"
-                    : "Đang học"}
-              </span>
-            </div>
+          <h1 className="mt-2 text-base font-black text-white sm:text-lg" id="cd-class-title">
+            {selectedClass.name}
+          </h1>
+          {selectedClass.description && (
+            <p className="mx-auto mt-1 max-w-xl text-xs font-semibold text-slate-700">{selectedClass.description}</p>
+          )}
 
+          <dl className="mt-3 grid grid-cols-3 divide-x divide-slate-200 dark:divide-white/10">
+            <div className="px-5 text-center">
+              <dd className="text-base font-black text-white">{approvedMembers.length}</dd>
+              <dt className="text-[11px] font-bold leading-tight text-slate-700">thành viên</dt>
+            </div>
+            <div className="px-5 text-center">
+              <dd className="text-base font-black text-white">{selectedClass.assignments.length}</dd>
+              <dt className="text-[11px] font-bold leading-tight text-slate-700">bài tập</dt>
+            </div>
+            <div className="px-5 text-center">
+              <dd className="text-base font-black text-white">
+                {canManageClass ? `${classPercent}%` : `${myProgressPercent}%`}
+              </dd>
+              <dt className="text-[11px] font-bold leading-tight text-slate-700">hoàn thành</dt>
+            </div>
+          </dl>
+
+          {nextAssignment && (
+            <p className="mt-3 text-[11px] font-bold text-slate-700">
+              Đang mở: {nextAssignment.title}
+              <span className="ml-2 font-black text-slate-900 dark:text-white">
+                {nextAgg.reviewed}/{nextAgg.total} thẻ
+              </span>
+            </p>
+          )}
+
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
             {canManageClass ? (
               <>
-                <div className="cd-stats">
-                  <div className="cd-stat">
-                    <strong>{studentMembers.length}</strong>
-                    <span>học viên</span>
-                  </div>
-                  <div className="cd-stat">
-                    <strong>{selectedClass.assignments.length}</strong>
-                    <span>bài tập</span>
-                  </div>
-                  <div className="cd-stat">
-                    <strong>{classPercent}%</strong>
-                    <span>hoàn thành</span>
-                  </div>
-                </div>
-                <div className="cd-open">
-                  <p className="rd-side-label">Bài tập đang mở</p>
-                  <p className="rd-side-title">{nextAssignment ? nextAssignment.title : "Chưa giao bài tập"}</p>
-                  {nextAssignment ? (
-                    <>
-                      <div className="rd-progress" aria-hidden="true">
-                        <span style={{ width: `${nextAgg.pct}%` }} />
-                      </div>
-                      <div className="rd-progress-meta">
-                        <span>
-                          <strong>{nextAgg.reviewed}</strong>/{nextAgg.total} thẻ
-                        </span>
-                        <span>{dueModeLabel(nextAssignment, true)}</span>
-                      </div>
-                    </>
-                  ) : (
-                    <p className="rd-side-empty">Giao bộ thẻ đầu tiên để học viên bắt đầu.</p>
-                  )}
-                </div>
-                <p className="cd-note">
-                  {pendingMembers.length > 0 ? (
-                    <button type="button" className="cd-note-link" onClick={() => setActiveTab("members")}>
-                      {pendingMembers.length} yêu cầu tham gia đang chờ duyệt.
-                    </button>
-                  ) : (
-                    <>
-                      Tất cả thành viên đã được duyệt · {openAssignments} bài đang mở.
-                    </>
-                  )}
-                </p>
+                <button
+                  type="button"
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-sky-700 px-4 py-2 text-xs font-black text-white transition-colors hover:bg-sky-600"
+                  onClick={openAssignModal}
+                >
+                  <Plus className="h-4 w-4" />
+                  Giao bài tập
+                </button>
+                <button
+                  type="button"
+                  className="cursor-pointer rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-black text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#1e3466] dark:bg-[#0f1b38] dark:text-slate-200"
+                  onClick={() => setActiveTab("members")}
+                >
+                  Mời thành viên
+                </button>
               </>
             ) : (
               <>
-                <div className="cd-big">
-                  <strong>{myCompletedCount}</strong>
-                  <span>/ {totalAssignments} bài tập</span>
-                </div>
-                <p className="cd-sub">{nextAssignment ? nextAssignment.title : "Chưa có bài tập"}</p>
-                <div className="rd-progress" aria-hidden="true">
-                  <span style={{ width: `${myProgressPercent}%` }} />
-                </div>
-                <div className="rd-progress-meta">
-                  <span>
-                    <strong>{myCompletedCount}</strong> bài đã xong
-                  </span>
-                  <span>{myProgressPercent}%</span>
-                </div>
-                <p className="cd-note">
-                  {totalAssignments > 0 && myCompletedCount >= totalAssignments
-                    ? "Bạn đã hoàn thành toàn bộ bài tập của lớp. Ôn lại bất cứ lúc nào để giữ phản xạ."
-                    : "Học đều mỗi ngày để giữ phản xạ. Tiến độ được ghi nhận tự động."}
-                </p>
+                <a
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-sky-700 px-4 py-2 text-xs font-black text-white transition-colors hover:bg-sky-600"
+                  href={studyHref}
+                >
+                  {nextAssignment?.completed ? "Ôn lại bài học" : "Vào học"}
+                  <ArrowRight className="h-4 w-4" />
+                </a>
+                <button
+                  type="button"
+                  className="cursor-pointer rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-black text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#1e3466] dark:bg-[#0f1b38] dark:text-slate-200"
+                  onClick={() => setActiveTab("assignments")}
+                >
+                  Xem bài tập
+                </button>
               </>
             )}
-          </aside>
+          </div>
+
+          {pendingMembers.length > 0 && (
+            <p className="mt-2 text-[11px] font-bold text-slate-700">
+              <button type="button" className="cursor-pointer underline" onClick={() => setActiveTab("members")}>
+                {pendingMembers.length} yêu cầu tham gia đang chờ duyệt
+              </button>
+            </p>
+          )}
         </section>
 
         <div className="cd-room">
