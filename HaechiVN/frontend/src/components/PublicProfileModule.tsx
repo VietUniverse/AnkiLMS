@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Activity, ArrowLeft, Award, BookOpen, Clock3, Flame, LockKeyhole, Sparkles, Trophy, Zap } from "lucide-react";
+import { Activity, ArrowLeft, Award, BookOpen, Clock3, Flame, LockKeyhole, Trophy, Zap } from "lucide-react";
 import { useApp } from "../contexts/AppProvider";
 import { getStudyRank } from "../lib/studyRanks";
 import { OnigiriHeatmap, type HeatmapItem } from "./OnigiriHeatmap";
@@ -78,25 +78,47 @@ export function PublicProfileModule({ profileId }: { profileId: string }) {
   }));
   const isMine = currentUser?.id === profile.id;
 
-  return <div className="mx-auto max-w-5xl space-y-5 pb-24 text-slate-100">
-    <div className="flex items-center justify-between gap-3"><Link href="/leaderboard" className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-700 bg-slate-900 px-3 text-xs font-bold text-slate-200"><ArrowLeft className="h-4 w-4" />Bảng xếp hạng</Link>{isMine && <Link href="/profile/settings" className="inline-flex min-h-10 items-center rounded-xl border border-sky-400/30 bg-sky-500/10 px-3 text-xs font-bold text-sky-200">Chỉnh sửa hồ sơ</Link>}</div>
-    <section className="relative overflow-hidden rounded-3xl border border-indigo-300/20 bg-gradient-to-br from-indigo-950 via-slate-900 to-fuchsia-950 bg-cover bg-center p-5 sm:p-8" style={profile.active_background && backgrounds[profile.active_background] ? { backgroundImage: backgrounds[profile.active_background] } : undefined}>
-      <div className="absolute inset-0 bg-slate-950/20" /><div className="relative flex flex-col items-center gap-5 text-center sm:flex-row sm:text-left">
-        <div className="rounded-[28px] bg-gradient-to-br from-sky-300 via-fuchsia-400 to-indigo-400 p-1 shadow-xl" style={profile.active_frame && frames[profile.active_frame] ? { backgroundImage: frames[profile.active_frame] } : undefined}><div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-[24px] bg-slate-950 text-4xl font-black text-white">{profile.avatar_url ? <img src={profile.avatar_url} alt={profile.name} className="h-full w-full object-cover" /> : profile.name.slice(0, 1).toUpperCase()}</div></div>
-        <div className="min-w-0 flex-1"><div className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-slate-950/30 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-sky-100"><Sparkles className="h-3 w-3" />Hồ sơ học viên</div><h1 className="mt-2 break-words text-2xl font-black text-white sm:text-3xl">{profile.name}</h1>{profile.bio && <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-slate-100 sm:mx-0">{profile.bio}</p>}<div className="mt-3 flex flex-wrap justify-center gap-2 sm:justify-start"><span className="rounded-full bg-slate-950/40 px-3 py-1 text-xs font-bold text-amber-100">{getStudyRank(profile.level)} · Cấp {profile.level || 1}</span><span className="rounded-full bg-slate-950/40 px-3 py-1 text-xs font-bold text-amber-100"><Zap className="mr-1 inline h-3.5 w-3.5" />{profile.xp.toLocaleString("vi-VN")} XP</span><span className="rounded-full bg-slate-950/40 px-3 py-1 text-xs font-bold text-orange-100"><Flame className="mr-1 inline h-3.5 w-3.5" />{profile.streak} ngày liên tiếp</span>{profile.active_badge && <span className="rounded-full bg-fuchsia-950/60 px-3 py-1 text-xs font-bold text-fuchsia-100">🏅 {badgeNames[profile.active_badge] || "Huy hiệu Haechi"}</span>}</div></div>
+  return <div className="mx-auto max-w-5xl space-y-4 pb-24">
+    <div className="flex items-center justify-between gap-3">
+      <Link href="/leaderboard" className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-[#0f172a] bg-white px-3 text-xs font-bold text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#94a3b8] dark:bg-[#101a32] dark:text-slate-200"><ArrowLeft className="h-4 w-4" />Bảng xếp hạng</Link>
+      {isMine && <Link href="/profile/settings" className="inline-flex min-h-10 items-center rounded-xl bg-sky-700 px-3 text-xs font-bold text-white transition-colors hover:bg-sky-800">Chỉnh sửa hồ sơ</Link>}
+    </div>
+
+    <section className="relative overflow-hidden rounded-2xl border-[1.5px] border-[#0f172a] bg-white p-5 dark:border-[#94a3b8] dark:bg-[#101a32] sm:p-8">
+      {profile.active_background && backgrounds[profile.active_background] && <>
+        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: backgrounds[profile.active_background] }} />
+        <div className="absolute inset-0 bg-white/85" />
+      </>}
+      <div className="relative flex flex-col items-center gap-5 text-center sm:flex-row sm:text-left">
+        <div className="rounded-2xl border border-[#dbe3f0] bg-white p-1 dark:border-white/20 dark:bg-[#101a32]" style={profile.active_frame && frames[profile.active_frame] ? { backgroundImage: frames[profile.active_frame] } : undefined}>
+          <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-xl bg-slate-100 text-4xl font-black text-slate-700">{profile.avatar_url ? <img src={profile.avatar_url} alt={profile.name} className="h-full w-full object-cover" /> : profile.name.slice(0, 1).toUpperCase()}</div>
+        </div>
+        <div className="min-w-0 flex-1">
+          <h1 className="mt-2 break-words text-2xl font-black text-white sm:text-3xl">{profile.name}</h1>
+          {profile.bio && <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-slate-700 sm:mx-0">{profile.bio}</p>}
+          <div className="mt-3 flex flex-wrap justify-center gap-2 sm:justify-start">
+            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700">{getStudyRank(profile.level)}, cấp {profile.level || 1}</span>
+            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700"><Zap className="mr-1 inline h-3.5 w-3.5" />{profile.xp.toLocaleString("vi-VN")} XP</span>
+            <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-bold text-orange-800"><Flame className="mr-1 inline h-3.5 w-3.5" />{profile.streak} ngày liên tiếp</span>
+            {profile.active_badge && <span className="rounded-full bg-fuchsia-100 px-3 py-1 text-xs font-bold text-fuchsia-800">🏅 {badgeNames[profile.active_badge] || "Huy hiệu Haechi"}</span>}
+          </div>
+        </div>
       </div>
     </section>
 
-    <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">{[
-      { label: "Thời gian học", value: duration(summary.duration_seconds), icon: Clock3, color: "text-sky-300" },
-      { label: "Phiên học", value: summary.session_count.toLocaleString("vi-VN"), icon: BookOpen, color: "text-violet-300" },
-      { label: "Câu đã luyện", value: summary.cards_reviewed.toLocaleString("vi-VN"), icon: Activity, color: "text-emerald-300" },
-      { label: "Chuỗi tốt nhất", value: `${profile.longest_streak || profile.streak} ngày`, icon: Trophy, color: "text-amber-300" },
-    ].map(({ label, value, icon: Icon, color }) => <div key={label} className="rounded-2xl border border-slate-800 bg-slate-900 p-4"><Icon className={`mb-3 h-5 w-5 ${color}`} /><p className="text-lg font-black text-white">{value}</p><p className="mt-1 text-[11px] font-semibold text-slate-400">{label}</p></div>)}</section>
+    <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">{[ 
+      { label: "Thời gian học", value: duration(summary.duration_seconds), icon: Clock3 },
+      { label: "Phiên học", value: summary.session_count.toLocaleString("vi-VN"), icon: BookOpen },
+      { label: "Câu đã luyện", value: summary.cards_reviewed.toLocaleString("vi-VN"), icon: Activity },
+      { label: "Chuỗi tốt nhất", value: `${profile.longest_streak || profile.streak} ngày`, icon: Trophy },
+    ].map(({ label, value, icon: Icon }) => <div key={label} className="rounded-2xl border border-[#0f172a]/15 bg-white p-4 text-center dark:border-white/10 dark:bg-[#101a32]"><Icon className="mx-auto mb-3 h-5 w-5 text-slate-500" /><p className="text-lg font-black text-white">{value}</p><p className="mt-1 text-[11px] font-semibold text-slate-700">{label}</p></div>)}</section>
 
     <StreakPanel data={heatmap} streak={profile.streak} longestStreak={profile.longest_streak || profile.streak} publicView />
     <OnigiriHeatmap data={heatmap} streak={profile.streak} />
 
-    <section className="rounded-2xl border border-slate-800 bg-slate-900 p-4 sm:p-6"><div className="mb-3 flex items-center gap-2"><Award className="h-5 w-5 text-amber-300" /><h2 className="font-black text-white">Phiên học gần đây</h2></div>{sessions.length ? <div className="divide-y divide-slate-800">{sessions.slice(0, 6).map((session, index) => <div key={`${session.created_at}-${index}`} className="flex items-center gap-3 py-3"><div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sky-400/10 text-sky-200"><BookOpen className="h-4 w-4" /></div><div className="min-w-0 flex-1"><p className="text-xs font-bold text-white">{session.module === "dictation" ? "Nghe chép" : session.module === "shadowing" ? "Shadowing" : session.module === "srs" ? "Ôn Anki" : "Luyện tiếng Hàn"}</p><p className="text-[10px] text-slate-400">{new Date(`${session.created_at.replace(" ", "T")}Z`).toLocaleString("vi-VN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Ho_Chi_Minh" })}</p></div><span className="text-xs font-bold text-slate-300">{session.cards_reviewed} câu · {session.duration_seconds == null ? "Thời lượng chưa xác định" : duration(session.duration_seconds)}</span></div>)}</div> : <p className="rounded-xl border border-dashed border-slate-700 p-6 text-center text-xs text-slate-400">Chưa có phiên học được ghi nhận.</p>}</section>
+    <section className="rounded-2xl border border-[#0f172a]/15 bg-white p-4 dark:border-white/10 dark:bg-[#101a32] sm:p-6">
+      <div className="mb-3 flex items-center gap-2"><Award className="h-5 w-5 text-slate-500" /><h2 className="font-black text-white">Phiên học gần đây</h2></div>
+      {sessions.length ? <div className="divide-y divide-slate-200">{sessions.slice(0, 6).map((session, index) => <div key={`${session.created_at}-${index}`} className="flex items-center gap-3 py-3"><div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700"><BookOpen className="h-4 w-4" /></div><div className="min-w-0 flex-1"><p className="text-xs font-bold text-white">{session.module === "dictation" ? "Nghe chép" : session.module === "shadowing" ? "Shadowing" : session.module === "srs" ? "Ôn Anki" : "Luyện tiếng Hàn"}</p><p className="text-[10px] text-slate-700">{new Date(`${session.created_at.replace(" ", "T")}Z`).toLocaleString("vi-VN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Ho_Chi_Minh" })}</p></div><span className="text-xs font-bold text-slate-700">{session.cards_reviewed} câu, {session.duration_seconds == null ? "thời lượng chưa xác định" : duration(session.duration_seconds)}</span></div>)}</div> : <p className="rounded-xl border border-dashed border-slate-300 p-6 text-center text-xs text-slate-700">Chưa có phiên học được ghi nhận.</p>}
+    </section>
   </div>;
 }
