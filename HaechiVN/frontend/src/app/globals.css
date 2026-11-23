@@ -264,20 +264,6 @@ html[data-theme="light"] a[class*="bg-gradient-to"] [class*="text-white"] {
   color: #fff !important;
 }
 
-/* Nút/badge nền xanh dương đặc: chữ phải trắng (rule ép text-white thành chữ đen ở trên
-   có specificity cao hơn nên phải khai báo cùng cấp + đặt sau). */
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-sky-500"],
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-sky-500"] *,
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-sky-600"],
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-sky-600"] *,
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-sky-700"],
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-sky-700"] *,
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-cyan-600"],
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-cyan-600"] *,
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-cyan-700"],
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-cyan-700"] * {
-  color: #fff !important;
-}
 
 html[data-theme="light"] body:not(:has(.login-page-root)) .srs-btn-dark kbd {
   border-color: rgba(255, 255, 255, 0.4) !important;
