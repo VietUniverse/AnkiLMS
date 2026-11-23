@@ -1238,6 +1238,9 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
           {selectedClass.description && (
             <p className="mx-auto mt-1 max-w-xl text-xs font-semibold text-slate-700">{selectedClass.description}</p>
           )}
+          <p className="mt-1 text-[11px] font-bold text-slate-700">
+            {selectedClass.ownerName}, tạo {shortDate(selectedClass.createdAt)}
+          </p>
 
           <dl className="mt-3 grid grid-cols-3 divide-x divide-slate-200 dark:divide-white/10">
             <div className="px-5 text-center">
@@ -1780,109 +1783,6 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
               </section>
             )}
           </div>
-
-          <aside className="cd-side" aria-label="Thông tin lớp học">
-            <section className="cd-panel cd-side-card">
-              <div className="cd-core">
-                <p className="rd-side-label">Thông tin lớp</p>
-                <dl className="cd-info-list">
-                  <div>
-                    <dt>Giáo viên</dt>
-                    <dd>{selectedClass.ownerName}</dd>
-                  </div>
-                  <div>
-                    <dt>Mã lớp</dt>
-                    <dd>
-                      <button
-                        type="button"
-                        className="rd-code cd-code cd-code--sm"
-                        onClick={() => copyToClipboard(selectedClass.code)}
-                        title="Sao chép mã lớp"
-                      >
-                        {selectedClass.code}
-                      </button>
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>Quyền truy cập</dt>
-                    <dd>{visibilityLabel(selectedClass.visibility)}</dd>
-                  </div>
-                  <div>
-                    <dt>Thành viên</dt>
-                    <dd>{approvedMembers.length}</dd>
-                  </div>
-                  <div>
-                    <dt>Ngày tạo</dt>
-                    <dd>{shortDate(selectedClass.createdAt)}</dd>
-                  </div>
-                </dl>
-              </div>
-            </section>
-
-            <section className="cd-panel cd-side-card">
-              <div className="cd-core">
-                <p className="rd-side-label">{canManageClass ? "Cần chú ý" : "Bạn sẽ luyện"}</p>
-                {canManageClass ? (
-                  <ul className="cd-tasks">
-                    <li>
-                      <div>
-                        <strong>{selectedClass.assignments.length} bài tập</strong>
-                        <span>trong lớp</span>
-                      </div>
-                      <button
-                        type="button"
-                        className="rd-btn cd-btn-ghost cd-btn-sm"
-                        onClick={() => setActiveTab("assignments")}
-                      >
-                        Xem
-                      </button>
-                    </li>
-                    <li>
-                      <div>
-                        <strong>{pendingMembers.length} yêu cầu</strong>
-                        <span>tham gia lớp</span>
-                      </div>
-                      <button
-                        type="button"
-                        className="rd-btn cd-btn-ghost cd-btn-sm"
-                        onClick={() => setActiveTab("members")}
-                      >
-                        Duyệt
-                      </button>
-                    </li>
-                    <li>
-                      <div>
-                        <strong>{studentMembers.length} học viên</strong>
-                        <span>đang theo học</span>
-                      </div>
-                      <button
-                        type="button"
-                        className="rd-btn cd-btn-ghost cd-btn-sm"
-                        onClick={openAssignModal}
-                      >
-                        Giao bài
-                      </button>
-                    </li>
-                  </ul>
-                ) : (
-                  <ul className="cd-goals">
-                    <li>
-                      <CheckCircle2 className="h-3.5 w-3.5" />
-                      Theo dõi tiến độ từng bộ thẻ
-                    </li>
-                    <li>
-                      <CheckCircle2 className="h-3.5 w-3.5" />
-                      Học và ôn lại trong mục Từ vựng
-                    </li>
-                    <li>
-                      <CheckCircle2 className="h-3.5 w-3.5" />
-                      So sánh với các bạn trong lớp
-                    </li>
-                  </ul>
-                )}
-              </div>
-            </section>
-          </aside>
         </div>
 
         {progressAssignment && (

@@ -3153,13 +3153,12 @@ html[data-theme="dark"] .classroom-module.cm-page.rd .rd-note { color: #fcd34d; 
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 340px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 24px;
   align-items: start;
   padding-bottom: 84px;
 }
 .classroom-module.cm-page.rd.cd .cd-main { display: grid; gap: 16px; min-width: 0; }
-.classroom-module.cm-page.rd.cd .cd-side { position: sticky; top: 98px; display: grid; gap: 16px; }
 .classroom-module.cm-page.rd.cd .cd-panel {
   padding: 0;
   border-radius: 40px;
@@ -3542,7 +3541,6 @@ html[data-theme="dark"] .classroom-module.cm-page.rd.cd .cd-member-tools button:
   .classroom-module.cm-page.rd.cd .cd-hero { grid-template-columns: 1fr; gap: 30px; padding-top: 44px; }
   .classroom-module.cm-page.rd.cd .cd-summary { max-width: none; justify-self: stretch; }
   .classroom-module.cm-page.rd.cd .cd-room { grid-template-columns: 1fr; }
-  .classroom-module.cm-page.rd.cd .cd-side { position: static; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 900px) {
   .classroom-module.cm-page.rd.cd .rd-nav-scope,
@@ -3553,7 +3551,6 @@ html[data-theme="dark"] .classroom-module.cm-page.rd.cd .cd-member-tools button:
   .classroom-module.cm-page.rd.cd .cd-title { font-size: clamp(34px, 9.6vw, 50px); }
   .classroom-module.cm-page.rd.cd .cd-lead { font-size: 15px; }
   .classroom-module.cm-page.rd.cd .cd-core { padding: 22px; }
-  .classroom-module.cm-page.rd.cd .cd-side { grid-template-columns: 1fr; }
   .classroom-module.cm-page.rd.cd .cd-member { grid-template-columns: auto minmax(0, 1fr); }
   .classroom-module.cm-page.rd.cd .cd-member-data { grid-column: 1 / -1; justify-items: stretch; width: 100%; }
   .classroom-module.cm-page.rd.cd .cd-member-data > span:first-child { text-align: left; }
