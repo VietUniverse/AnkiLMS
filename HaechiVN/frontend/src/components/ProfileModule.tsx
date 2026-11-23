@@ -141,7 +141,7 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
           </div>
 
           <div className="flex justify-center gap-2 sm:flex-col">
-            <Link href="/profile/settings" className="rounded-xl bg-sky-500 px-4 py-2 text-center text-xs font-bold text-white transition hover:bg-sky-600">Cài đặt</Link>
+            <Link href="/profile/settings" className="rounded-xl bg-sky-700 px-4 py-2 text-center text-xs font-bold text-white transition hover:bg-sky-800">Cài đặt</Link>
             <button type="button" onClick={() => setConfirmingLogout(true)} className="rounded-xl border border-rose-200 dark:border-rose-500/30 px-4 py-2 text-center text-xs font-bold text-rose-600 dark:text-rose-400 transition hover:bg-rose-50 dark:hover:bg-rose-500/10">Đăng xuất</button>
           </div>
         </div>
