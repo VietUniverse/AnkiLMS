@@ -2506,280 +2506,261 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
     const teacher = record?.role === "owner" || record?.role === "admin" || record?.role === "staff";
     return cls.assignments.some((asg) => (teacher ? (asg.progress || []).some((p) => !p.completed) : !asg.completed));
   }).length;
-  const userInitials = (currentUser?.name || "?")
-    .trim()
-    .split(/\s+/)
-    .slice(-2)
-    .map((part) => part.charAt(0))
-    .join("")
-    .toUpperCase();
-  const userRoleLabel = currentUser?.role === "teacher" || currentUser?.role === "admin" ? "Giáo viên" : "Học viên";
 
   return (
     <div className="classroom-module cm-page rd">
-      <div
-        ref={navShellRef}
-        className={`rd-nav-shell${navRail ? " rd-nav-shell--rail" : ""}`}
-      >
-        <nav className="rd-nav" aria-label="Điều hướng lớp học">
+      <div className="mb-4 w-full space-y-3">
+        <div className="mx-auto flex w-fit max-w-full items-center gap-1.5 rounded-2xl border border-[#1e3466] bg-[#0f1b38] p-1.5">
           {onBack && (
-            <button type="button" onClick={onBack} className="rd-nav-back" aria-label="Trở về">
+            <button
+              type="button"
+              onClick={onBack}
+              aria-label="Trở về"
+              className="inline-flex shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold text-slate-300 transition-colors hover:bg-white/5 hover:text-white"
+            >
               <ChevronLeft className="h-4 w-4" />
+              <span className="hidden sm:inline">Trở về</span>
             </button>
           )}
-          <span className="rd-nav-divider" aria-hidden="true" />
-          <Link className="rd-nav-brand" href="/" aria-label="HaechiVN">
-            <Image src="/brand/haechivn-mark.webp" alt="" width={26} height={26} />
-            <span>HaechiVN</span>
-          </Link>
-          <div className="rd-segmented rd-nav-segmented" role="tablist" aria-label="Chế độ xem lớp học">
+          <div
+            className="grid grid-cols-2 gap-1.5"
+            role="tablist"
+            aria-label="Chế độ xem lớp học"
+          >
             <button
               type="button"
               role="tab"
               aria-selected={mainTab === "mine"}
               onClick={() => setMainTab("mine")}
-              className="rd-tab"
-              title="Lớp học của tôi"
+              className={`flex cursor-pointer items-center justify-center rounded-xl px-4 py-2 text-xs font-black transition-all ${
+                mainTab === "mine"
+                  ? "bg-sky-600 text-white"
+                  : "text-slate-300 hover:bg-white/5 hover:text-white"
+              }`}
             >
-              <Layers className="rd-tab-icon" />
-              <span className="rd-tab-label">Lớp học của tôi</span>
+              <span>Lớp học</span>
             </button>
             <button
               type="button"
               role="tab"
               aria-selected={mainTab === "join"}
               onClick={() => setMainTab("join")}
-              className="rd-tab"
-              title="Tham gia lớp học"
+              className={`flex cursor-pointer items-center justify-center rounded-xl px-4 py-2 text-xs font-black transition-all ${
+                mainTab === "join"
+                  ? "bg-sky-600 text-white"
+                  : "text-slate-300 hover:bg-white/5 hover:text-white"
+              }`}
             >
-              <UserPlus className="rd-tab-icon" />
-              <span className="rd-tab-label">Tham gia lớp học</span>
+              <span>Tham gia lớp học</span>
             </button>
           </div>
-          <div className="rd-nav-user">
-            <span className="rd-avatar">{userInitials}</span>
-            <span className="rd-user-copy">
-              <span className="rd-user-name">{currentUser?.name}</span>
-              <span className="rd-user-role">{userRoleLabel}</span>
-            </span>
-          </div>
-        </nav>
+        </div>
+        <div className="mx-auto w-fit max-w-full rounded-2xl border-[1.5px] border-[#0f172a] bg-white px-5 py-4 text-center dark:border-[#94a3b8] dark:bg-[#101a32]">
+          <h1 className="text-sm font-black text-white sm:text-base">Lớp học của tôi</h1>
+          <dl className="mt-3 grid grid-cols-3 divide-x divide-slate-200 dark:divide-white/10">
+            <div className="px-5 text-center">
+              <dd className="text-base font-black text-white">{myClasses.length}</dd>
+              <dt className="text-[11px] font-bold leading-tight text-slate-700">lớp</dt>
+            </div>
+            <div className="px-5 text-center">
+              <dd className="text-base font-black text-white">{approvedMemberTotal}</dd>
+              <dt className="text-[11px] font-bold leading-tight text-slate-700">thành viên</dt>
+            </div>
+            <div className="px-5 text-center">
+              <dd className="text-base font-black text-white">{openAssignmentCount}</dd>
+              <dt className="text-[11px] font-bold leading-tight text-slate-700">bài tập đang mở</dt>
+            </div>
+          </dl>
+        </div>
       </div>
 
-      <section className="rd-hero" aria-labelledby="classes-title">
-        <div>
-          <h1 id="classes-title">
-            Lớp học của bạn,
-            <br />
-            <span className="soft">trong một nơi.</span>
-          </h1>
-          <p className="rd-lede">
-            Theo dõi lớp đang học, bài tập còn mở và những người cùng học. Mọi thứ bạn cần, không thêm nhiễu.
-          </p>
-        </div>
-        <aside className="rd-overview" aria-label="Tóm tắt lớp học">
-          <div className="rd-overview-top">
-            <span>Tổng quan</span>
-            <span>{myClasses.length} lớp</span>
-          </div>
-          <div className="rd-metrics">
-            <div className="rd-metric">
-              <span className="rd-metric-value">{myClasses.length}</span>
-              <span className="rd-metric-label">lớp đang học</span>
-            </div>
-            <div className="rd-metric">
-              <span className="rd-metric-value">{approvedMemberTotal}</span>
-              <span className="rd-metric-label">thành viên</span>
-            </div>
-            <div className="rd-metric">
-              <span className="rd-metric-value">{openAssignmentCount}</span>
-              <span className="rd-metric-label">bài tập đang mở</span>
-            </div>
-          </div>
-        </aside>
-      </section>
-
       {mainTab === "mine" && (
-        <div className="rd-view">
-          <div className="rd-section-head">
-            <h2>Lớp của bạn</h2>
-            <p className="rd-section-note">{myClasses.length} lớp đang hoạt động</p>
-            <button
-              type="button"
-              className="rd-orb-btn"
-              onClick={() => (currentUser ? setShowCreateModal(true) : handleOpenAuth(false))}
-            >
-              <span>Tạo lớp học</span>
-              <span className="rd-orb" aria-hidden="true">
-                <Plus className="h-4 w-4" />
-              </span>
-            </button>
-          </div>
-
+        <div className="space-y-4">
           {msg && (
-            <p className={`rd-msg ${msg.type === "error" ? "rd-msg--error" : "rd-msg--ok"}`}>
-              {msg.type === "error" ? <XCircle className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
-              {msg.text}
+            <p
+              className={`flex items-center gap-2 rounded-xl p-3 text-xs font-bold ${
+                msg.type === "error"
+                  ? "border border-rose-200 bg-rose-100 text-rose-800"
+                  : "border border-emerald-200 bg-emerald-100 text-emerald-800"
+              }`}
+            >
+              {msg.type === "error" ? (
+                <XCircle className="h-4 w-4 shrink-0" />
+              ) : (
+                <CheckCircle2 className="h-4 w-4 shrink-0" />
+              )}
+              <span>{msg.text}</span>
             </p>
           )}
 
           {loading ? (
-            <div className="rd-panel rd-loading">
+            <div className="card-duo flex items-center justify-center gap-2 p-6 text-sm text-slate-700">
               <Loader2 className="h-4 w-4 animate-spin" />
               Đang tải lớp học…
             </div>
+          ) : myClasses.length === 0 ? (
+            <div className="card-duo space-y-3 p-8 text-center">
+              <p className="text-sm font-black text-white">Chưa có lớp học nào</p>
+              <p className="text-xs text-slate-700">
+                Nhập mã lớp từ giáo viên, hoặc tạo lớp mới nếu bạn là người phụ trách.
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setMainTab("join")}
+                  className="cursor-pointer rounded-2xl bg-sky-600 px-5 py-2.5 text-xs font-black text-white transition-colors hover:bg-sky-500"
+                >
+                  Tham gia bằng mã
+                </button>
+                <button
+                  type="button"
+                  onClick={() => (currentUser ? setShowCreateModal(true) : handleOpenAuth(false))}
+                  className="cursor-pointer rounded-2xl border border-[#1e3a70] bg-[#132247] px-5 py-2.5 text-xs font-black text-slate-200 transition-colors hover:border-sky-500/40"
+                >
+                  Tạo lớp học
+                </button>
+              </div>
+            </div>
           ) : (
-            <div className="rd-panel">
-              <div className="rd-ledger">
-                {myClasses.length === 0 ? (
-                  <div className="rd-empty">
-                    <span className="rd-empty-icon">
-                      <Users className="h-5 w-5" />
-                    </span>
-                    <h3>Chưa có lớp học nào</h3>
-                    <p>Nhập mã lớp từ giáo viên, hoặc tạo lớp mới nếu bạn là người phụ trách.</p>
-                    <div className="rd-empty-actions">
-                      <button type="button" className="rd-btn rd-btn-primary" onClick={() => setMainTab("join")}>
-                        Tham gia bằng mã
-                      </button>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {myClasses.map((cls) => {
+                const record = cls.members.find(
+                  (m) => m.id === currentUser?.id || m.email === currentUser?.email
+                );
+                const teacher =
+                  record?.role === "owner" || record?.role === "admin" || record?.role === "staff";
+                const approvedCount = cls.members.filter((m) => m.status === "approved").length;
+                const openAsg = cls.assignments.find((asg) =>
+                  teacher ? (asg.progress || []).some((p) => !p.completed) : !asg.completed
+                );
+                const asg = openAsg || cls.assignments[0];
+                const progressRows = asg?.progress || [];
+                const avgPercent = progressRows.length
+                  ? Math.round(
+                      progressRows.reduce(
+                        (sum, p) => sum + (p.totalCards > 0 ? (p.reviewedCards / p.totalCards) * 100 : 0),
+                        0
+                      ) / progressRows.length
+                    )
+                  : 0;
+                const percent = asg
+                  ? teacher
+                    ? avgPercent
+                    : asg.totalCards
+                      ? Math.round(((asg.reviewedCards || 0) / asg.totalCards) * 100)
+                      : 0
+                  : 0;
+                const reviewed = asg
+                  ? teacher
+                    ? Math.round(
+                        progressRows.reduce((sum, p) => sum + p.reviewedCards, 0) /
+                          Math.max(progressRows.length, 1)
+                      )
+                    : asg.reviewedCards || 0
+                  : 0;
+                const due = asg ? dueModeLabel(asg, teacher) : "";
+
+                return (
+                  <article
+                    key={cls.id}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => setSelectedClassId(cls.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setSelectedClassId(cls.id);
+                      }
+                    }}
+                    className="cursor-pointer space-y-3 rounded-2xl border-[1.5px] border-[#0f172a] bg-white p-4 transition-colors hover:border-sky-600 dark:border-[#94a3b8] dark:bg-[#101a32]"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-1.5">
+                        <span
+                          className={`rounded-full px-2.5 py-1 text-[10px] font-black ${
+                            teacher ? "bg-sky-100 text-sky-800" : "bg-emerald-100 text-emerald-800"
+                          }`}
+                        >
+                          {teacher ? "Bạn phụ trách" : "Học viên"}
+                        </span>
+                        <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black text-slate-700">
+                          {visibilityLabel(cls.visibility)}
+                        </span>
+                      </div>
+                      <span className="flex items-center gap-1 text-[11px] font-bold text-slate-700">
+                        <Users className="h-3.5 w-3.5" /> {approvedCount} thành viên
+                      </span>
+                    </div>
+                    <div className="space-y-1">
+                      <h3 className="text-sm font-black text-white">{cls.name}</h3>
+                      <p className="line-clamp-2 text-xs text-slate-700">
+                        {cls.description || "Chưa có mô tả."}
+                      </p>
+                    </div>
+                    {asg ? (
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between gap-2 text-[11px] font-bold">
+                          <span className="truncate text-slate-700">
+                            {openAsg ? "Đang mở: " : ""}
+                            {asg.title}
+                          </span>
+                          <span className="shrink-0 text-slate-700">{due || `${percent}%`}</span>
+                        </div>
+                        <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
+                          <span
+                            className="block h-full rounded-full bg-sky-600"
+                            style={{ width: `${percent}%` }}
+                          />
+                        </div>
+                        <p className="text-[11px] font-bold text-slate-700">
+                          <strong className="text-white">{reviewed}</strong>/{asg.totalCards || 0} từ
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="text-[11px] font-bold text-slate-500">Chưa giao bộ thẻ.</p>
+                    )}
+                    <div className="flex items-center justify-between gap-2 border-t border-[#e2e8f0] pt-3 dark:border-white/10">
                       <button
                         type="button"
-                        className="rd-btn"
-                        onClick={() => (currentUser ? setShowCreateModal(true) : handleOpenAuth(false))}
-                      >
-                        Tạo lớp học
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  myClasses.map((cls, idx) => {
-                    const record = cls.members.find(
-                      (m) => m.id === currentUser?.id || m.email === currentUser?.email
-                    );
-                    const teacher =
-                      record?.role === "owner" || record?.role === "admin" || record?.role === "staff";
-                    const approvedCount = cls.members.filter((m) => m.status === "approved").length;
-                    const openAsg = cls.assignments.find((asg) =>
-                      teacher ? (asg.progress || []).some((p) => !p.completed) : !asg.completed
-                    );
-                    const asg = openAsg || cls.assignments[0];
-                    const progressRows = asg?.progress || [];
-                    const avgPercent = progressRows.length
-                      ? Math.round(
-                          progressRows.reduce(
-                            (sum, p) => sum + (p.totalCards > 0 ? (p.reviewedCards / p.totalCards) * 100 : 0),
-                            0
-                          ) / progressRows.length
-                        )
-                      : 0;
-                    const percent = asg
-                      ? teacher
-                        ? avgPercent
-                        : asg.totalCards
-                          ? Math.round(((asg.reviewedCards || 0) / asg.totalCards) * 100)
-                          : 0
-                      : 0;
-                    const reviewed = asg
-                      ? teacher
-                        ? Math.round(
-                            progressRows.reduce((sum, p) => sum + p.reviewedCards, 0) /
-                              Math.max(progressRows.length, 1)
-                          )
-                        : asg.reviewedCards || 0
-                      : 0;
-                    const due = asg ? dueModeLabel(asg, teacher) : "";
-
-                    return (
-                      <article
-                        key={cls.id}
-                        className="rd-row"
-                        role="button"
-                        tabIndex={0}
-                        onClick={() => setSelectedClassId(cls.id)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            e.preventDefault();
-                            setSelectedClassId(cls.id);
-                          }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          copyToClipboard(cls.code);
                         }}
+                        aria-label={`Sao chép mã lớp ${cls.code}`}
+                        className="flex cursor-pointer items-center gap-1 font-mono text-[10px] font-bold uppercase text-slate-700 transition-colors hover:text-sky-600"
                       >
-                        <span className="rd-index" aria-hidden="true">
-                          {String(idx + 1).padStart(2, "0")}
-                        </span>
-                        <div className="rd-main">
-                          <div className="rd-kicker">
-                            <span className={`rd-tag ${teacher ? "rd-tag--strong" : ""}`}>
-                              {teacher ? "Bạn phụ trách" : "Học viên"}
-                            </span>
-                            <span className="rd-tag">{visibilityLabel(cls.visibility)}</span>
-                            <button
-                              type="button"
-                              className="rd-code"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                copyToClipboard(cls.code);
-                              }}
-                              aria-label={`Sao chép mã lớp ${cls.code}`}
-                            >
-                              <span>{cls.code}</span>
-                              {copiedCode === cls.code ? (
-                                <CheckCircle2 className="h-3.5 w-3.5" />
-                              ) : (
-                                <Copy className="h-3.5 w-3.5" />
-                              )}
-                            </button>
-                          </div>
-                          <h3 className="rd-row-title">{cls.name}</h3>
-                          <p className="rd-row-desc">{cls.description || "Chưa có mô tả cho lớp này."}</p>
-                          <ul className="rd-row-meta">
-                            <li>{approvedCount} thành viên</li>
-                            <li>{cls.assignments.length} bài tập</li>
-                            <li>Tạo {cls.createdAt}</li>
-                          </ul>
-                        </div>
-                        <div className="rd-side">
-                          <p className="rd-side-label">
-                            {asg ? (openAsg ? "Bài tập đang mở" : "Bài tập gần nhất") : "Bài tập"}
-                          </p>
-                          <p className="rd-side-title">{asg ? asg.title : "Chưa giao bài tập"}</p>
-                          {asg ? (
-                            <>
-                              <div className="rd-progress" aria-hidden="true">
-                                <span style={{ width: `${percent}%` }} />
-                              </div>
-                              <div className="rd-progress-meta">
-                                <span>
-                                  <strong>{reviewed}</strong>/{asg.totalCards || 0} từ
-                                </span>
-                                <span>{due || `${percent}%`}</span>
-                              </div>
-                            </>
-                          ) : (
-                            <p className="rd-side-empty">Giáo viên chưa giao bộ thẻ nào.</p>
-                          )}
-                          <span className="rd-row-cta">
-                            {teacher ? "Quản lý lớp" : "Vào lớp"}
-                            <ArrowRight className="h-3.5 w-3.5" />
-                          </span>
-                        </div>
-                      </article>
-                    );
-                  })
-                )}
-              </div>
+                        <span>{cls.code}</span>
+                        {copiedCode === cls.code ? (
+                          <CheckCircle2 className="h-3 w-3" />
+                        ) : (
+                          <Copy className="h-3 w-3" />
+                        )}
+                      </button>
+                      <span className="flex items-center gap-1.5 rounded-xl bg-sky-600 px-3.5 py-2 text-[11px] font-black text-white">
+                        {teacher ? "Quản lý lớp" : "Vào lớp"}
+                      </span>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
           )}
 
           {pendingClasses.length > 0 && (
-            <div className="rd-pending">
-              <h3>
-                <Clock className="h-4 w-4" />
+            <div className="space-y-2 border-t border-[#1e3466] pt-3">
+              <h3 className="flex items-center gap-2 text-xs font-black text-white">
+                <Clock className="h-4 w-4 text-amber-600" />
                 Đang chờ duyệt ({pendingClasses.length})
               </h3>
               {pendingClasses.map((cls) => (
-                <div key={cls.id} className="rd-pending-row">
-                  <span>{cls.name}</span>
-                  <span className="rd-tag">Chờ chủ lớp duyệt</span>
+                <div
+                  key={cls.id}
+                  className="flex items-center justify-between gap-2 rounded-xl border border-[#1e3466] bg-[#132247]/50 px-3 py-2"
+                >
+                  <span className="text-xs font-bold text-white">{cls.name}</span>
+                  <span className="rounded-full border border-amber-200 bg-amber-100 px-2.5 py-1 text-[10px] font-black text-amber-800">
+                    Chờ chủ lớp duyệt
+                  </span>
                 </div>
               ))}
             </div>
@@ -2788,127 +2769,127 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
       )}
 
       {mainTab === "join" && (
-        <div className="rd-view">
-          <div className="rd-join-layout">
-            <section className="rd-join-card" aria-labelledby="join-class-heading">
-              <h2 id="join-class-heading" className="rd-join-title">
-                Tham gia lớp học
-              </h2>
-              <p className="rd-join-lead">
-                Nhập mã lớp do giáo viên gửi. Lớp công khai sẽ mở ngay, lớp riêng tư cần được duyệt.
-              </p>
-              <form className="rd-join-form" onSubmit={handleJoinRequest}>
-                <label className="rd-join-label" htmlFor="join-code">
-                  Mã lớp
-                </label>
+        <div className="space-y-4">
+          <div className="card-duo space-y-4 border-[#1e3466] bg-[#0f1b38] p-6">
+            <form
+              onSubmit={handleJoinRequest}
+              className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center"
+            >
+              <div className="relative flex-1">
+                <KeyRound className="absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500" />
                 <input
-                  id="join-code"
                   type="text"
-                  placeholder="VD: HAECHI-T1"
+                  placeholder="Nhập mã kích hoạt lớp"
                   value={joinCodeInput}
                   onChange={(e) => setJoinCodeInput(e.target.value)}
+                  aria-label="Mã lớp"
                   autoComplete="off"
                   spellCheck={false}
-                  aria-label="Mã lớp"
-                  className="rd-join-input"
+                  className="w-full rounded-2xl border border-[#1e3a70] bg-[#132247] py-3 pl-11 pr-4 font-mono text-sm font-bold uppercase text-white transition-colors placeholder:text-slate-500 focus:border-sky-400 focus:outline-none"
                 />
-                <p className="rd-join-help">Bạn có thể dán mã từ tin nhắn của giáo viên.</p>
-                {msg && (
-                  <p className={`rd-msg ${msg.type === "error" ? "rd-msg--error" : "rd-msg--ok"}`}>
-                    {msg.type === "error" ? <XCircle className="h-4 w-4" /> : <CheckCircle2 className="h-4 w-4" />}
-                    {msg.text}
-                  </p>
+              </div>
+              <button
+                type="submit"
+                className="flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-sky-600 px-6 py-3 text-xs font-black text-white transition-colors hover:bg-sky-500"
+              >
+                <UserPlus className="h-4 w-4" />
+                <span>Gửi</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => (currentUser ? setShowCreateModal(true) : handleOpenAuth(false))}
+                className="shrink-0 cursor-pointer rounded-2xl border border-[#1e3a70] bg-[#132247] px-5 py-3 text-xs font-black text-slate-200 transition-colors hover:border-sky-500/40"
+              >
+                Tạo lớp học
+              </button>
+            </form>
+            {msg && (
+              <div
+                className={`flex items-center gap-2 rounded-xl p-3 text-xs font-bold ${
+                  msg.type === "error"
+                    ? "border border-rose-200 bg-rose-100 text-rose-800"
+                    : "border border-emerald-200 bg-emerald-100 text-emerald-800"
+                }`}
+              >
+                {msg.type === "error" ? (
+                  <XCircle className="h-4 w-4 shrink-0" />
+                ) : (
+                  <CheckCircle2 className="h-4 w-4 shrink-0" />
                 )}
-                <button type="submit" className="rd-btn rd-btn-primary rd-btn-block rd-join-submit">
-                  <span>Gửi yêu cầu</span>
-                  <span className="rd-orb" aria-hidden="true">
-                    <ArrowRight className="h-4 w-4" />
-                  </span>
-                </button>
-              </form>
-              <div className="rd-join-note">
-                <Lock className="h-3.5 w-3.5" />
-                <p>Yêu cầu tham gia lớp riêng tư sẽ xuất hiện trong thông báo của giáo viên phụ trách.</p>
+                <span>{msg.text}</span>
               </div>
-            </section>
-
-            <section className="rd-discover" aria-labelledby="discover-heading">
-              <div className="rd-discover-head">
-                <h2 id="discover-heading">Lớp đang mở</h2>
-                <p className="rd-section-note">{discoverClasses.length} lớp</p>
-              </div>
-
-              {discoverLoading ? (
-                <div className="rd-panel rd-loading">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Đang tải danh sách lớp…
-                </div>
-              ) : discoverClasses.length === 0 ? (
-                <p className="rd-section-note">
-                  Chưa có lớp công khai nào. Nhập mã lớp ở trên để tham gia lớp của giáo viên.
-                </p>
-              ) : (
-                <div className="rd-discover-grid">
-                  {discoverClasses.map((cls) => {
-                    const isPublic = cls.visibility === "public";
-                    return (
-                      <article key={cls.id} className="rd-discover-card">
-                        <div className="rd-discover-core">
-                          <div className="rd-discover-top">
-                            <span className={`rd-tag ${isPublic ? "rd-tag--public" : ""}`}>
-                              {isPublic ? "Công khai" : "Riêng tư"}
-                            </span>
-                            <button
-                              type="button"
-                              className="rd-discover-code"
-                              onClick={() => copyToClipboard(cls.code)}
-                              aria-label={`Sao chép mã lớp ${cls.code}`}
-                            >
-                              <span>{cls.code}</span>
-                              {copiedCode === cls.code ? (
-                                <CheckCircle2 className="h-3 w-3" />
-                              ) : (
-                                <Copy className="h-3 w-3" />
-                              )}
-                            </button>
-                          </div>
-                          <h3 className="rd-discover-title">{cls.name}</h3>
-                          <p className="rd-discover-desc">{cls.description || "Lớp học chưa có mô tả."}</p>
-                          <div className="rd-discover-foot">
-                            <span className="rd-discover-teacher">
-                              <span>{cls.ownerName}</span>
-                              <span>{cls.memberCount} thành viên</span>
-                            </span>
-                            {cls.myStatus === "approved" ? (
-                              <button
-                                type="button"
-                                className="rd-btn rd-btn-primary rd-btn-sm"
-                                onClick={() => setSelectedClassId(cls.id)}
-                              >
-                                <CheckCircle2 className="h-3.5 w-3.5" />
-                                Vào lớp
-                              </button>
-                            ) : cls.myStatus === "pending" ? (
-                              <span className="rd-tag">Đang chờ duyệt</span>
-                            ) : (
-                              <button
-                                type="button"
-                                className="rd-btn rd-btn-sm"
-                                onClick={() => handleJoinDiscoveredClass(cls)}
-                              >
-                                {isPublic ? <UserPlus className="h-3.5 w-3.5" /> : <KeyRound className="h-3.5 w-3.5" />}
-                                {isPublic ? "Tham gia" : "Xin tham gia"}
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      </article>
-                    );
-                  })}
-                </div>
-              )}
-            </section>
+            )}
           </div>
+
+          <>
+            {discoverLoading ? (
+              <p className="py-6 text-center text-sm text-slate-700">Đang tải danh sách lớp…</p>
+            ) : discoverClasses.length === 0 ? (
+              <p className="text-xs font-bold text-slate-700">
+                Chưa có lớp công khai nào. Nhập mã lớp ở trên để tham gia lớp của giáo viên.
+              </p>
+            ) : (
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                {discoverClasses.map((cls) => {
+                  const isPublic = cls.visibility === "public";
+                  return (
+                    <article
+                      key={cls.id}
+                      className="space-y-3 rounded-2xl border-[1.5px] border-[#0f172a] bg-white p-4 dark:border-[#94a3b8] dark:bg-[#101a32]"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span
+                          className={`rounded-full px-2.5 py-1 text-[10px] font-black ${
+                            isPublic ? "bg-emerald-100 text-emerald-800" : "bg-sky-100 text-sky-800"
+                          }`}
+                        >
+                          {isPublic ? <Globe className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
+                          <span>{isPublic ? "Công khai" : "Riêng tư"}</span>
+                        </span>
+                        <span className="flex items-center gap-1 text-[11px] font-bold text-slate-700">
+                          <Users className="h-3.5 w-3.5" /> {cls.memberCount} thành viên
+                        </span>
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-black text-white">{cls.name}</h3>
+                        <p className="mt-1 line-clamp-2 text-xs text-slate-700">
+                          {cls.description || "Lớp học chưa có mô tả."}
+                        </p>
+                      </div>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="flex items-center gap-1 text-xs font-bold text-slate-700">
+                          <UserPlus className="h-4 w-4" /> {cls.ownerName}
+                        </span>
+                        {cls.myStatus === "approved" ? (
+                          <button
+                            type="button"
+                            onClick={() => setSelectedClassId(cls.id)}
+                            className="flex cursor-pointer items-center gap-1.5 rounded-xl bg-sky-600 px-3.5 py-2 text-[11px] font-black text-white transition-colors hover:bg-sky-500"
+                          >
+                            <CheckCircle2 className="h-3.5 w-3.5" />
+                            <span>Vào lớp</span>
+                          </button>
+                        ) : cls.myStatus === "pending" ? (
+                          <span className="rounded-xl border border-amber-200 bg-amber-100 px-3 py-2 text-[11px] font-black text-amber-800">
+                            Đang chờ duyệt
+                          </span>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => handleJoinDiscoveredClass(cls)}
+                            className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-[#1e3a70] bg-[#132247] px-3.5 py-2 text-[11px] font-black text-slate-200 transition-colors hover:border-sky-500/40"
+                          >
+                            {isPublic ? <UserPlus className="h-3.5 w-3.5" /> : <KeyRound className="h-3.5 w-3.5" />}
+                            {isPublic ? "Tham gia" : "Xin tham gia"}
+                          </button>
+                        )}
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            )}
+          </>
         </div>
       )}
 
@@ -2916,7 +2897,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
         <div className="cd-modal fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
           <div className="cd-modal-card card-duo p-6 bg-[#0f1b38] border-[#1e3466] max-w-md w-full space-y-4 shadow-2xl animate-scaleUp">
             <h3 className="text-lg font-black text-white flex items-center gap-2">
-              <Plus className="w-5 h-5 text-amber-400" />
+              <Plus className="w-5 h-5 text-amber-600" />
               <span>Tạo Lớp Học Mới</span>
             </h3>
 
