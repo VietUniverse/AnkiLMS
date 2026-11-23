@@ -32,8 +32,9 @@ export function ClassesScreen() {
   // /classes/B79FB08A → "B79FB08A"; /classes → undefined
   const segments = (pathname || "").split("/").filter(Boolean);
   const initialCode = segments[0] === "classes" && segments[1] ? decodeURIComponent(segments[1]) : undefined;
-  // /classes/<mã>/assign là trang giao bài riêng.
+  // /classes/<mã>/assign là trang giao bài; /classes/<mã>/assign/<id> là trang sửa bài.
   const assignPage = segments[2] === "assign";
+  const assignEditId = assignPage && segments[3] ? decodeURIComponent(segments[3]) : null;
 
   const goBack = () => {
     if (assignPage && initialCode) {
@@ -69,6 +70,7 @@ export function ClassesScreen() {
           initialClassCode={initialCode}
           onSelectedClassChange={handleSelectedClassChange}
           assignPage={assignPage}
+          assignEditId={assignEditId}
         />
       ) : !isAuthReady ? (
         <div className="mx-auto max-w-5xl" aria-hidden />

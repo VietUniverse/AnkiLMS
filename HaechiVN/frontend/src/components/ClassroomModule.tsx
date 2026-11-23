@@ -352,9 +352,11 @@ interface ClassroomModuleProps {
   onBack?: () => void;
   /** Chế độ trang /classes/<mã>/assign: chỉ hiện form giao bài, không hiện panel và tab. */
   assignPage?: boolean;
+  /** Mở sẵn form sửa bài tập này (dùng cho /classes/<mã>/assign/<id>). */
+  assignEditId?: string | null;
 }
 
-export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, demo = false, onClassesChange, initialClassId = null, initialClassCode = null, onSelectedClassChange, onBack, assignPage = false }) => {
+export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, demo = false, onClassesChange, initialClassId = null, initialClassCode = null, onSelectedClassChange, onBack, assignPage = false, assignEditId = null }) => {
   const { handleOpenAuth, userDecks } = useApp();
   const router = useRouter();
   const isAdmin = currentUser?.role === "admin";
@@ -702,6 +704,18 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
   // Giữ query hiện tại (?demo=1) khi đổi route.
   const currentSearch = () => (typeof window === "undefined" ? "" : window.location.search);
 
+  const goToEditAssignmentPage = (assignmentId: string) => {
+    if (assignPage && selectedClass?.code) return;
+    if (selectedClass?.code) {
+      router.push(
+        `/classes/${encodeURIComponent(selectedClass.code)}/assign/${encodeURIComponent(assignmentId)}${currentSearch()}`
+      );
+      return;
+    }
+    const target = selectedClass?.assignments.find((asg) => asg.id === assignmentId);
+    if (target) openEditAssignment(target);
+  };
+
   const goToAssignPage = () => {
     if (!assignPage && selectedClass?.code) {
       router.push(`/classes/${encodeURIComponent(selectedClass.code)}/assign${currentSearch()}`);
@@ -1000,6 +1014,17 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
 
   // Đồng bộ URL theo lớp đang mở: chỉ báo khi người dùng thật sự đổi lớp
   // (bỏ qua render đầu, nếu không sẽ đẩy /classes/<mã> về /classes).
+  // /classes/<mã>/assign/<id>: mở form sửa đúng bài tập một lần khi dữ liệu lớp đã có.
+  const openedAssignEditRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!assignEditId || !selectedClass) return;
+    if (openedAssignEditRef.current === assignEditId) return;
+    const target = selectedClass.assignments.find((asg) => asg.id === assignEditId);
+    if (!target) return;
+    openedAssignEditRef.current = assignEditId;
+    openEditAssignment(target);
+  }, [assignEditId, selectedClass]);
+
   const prevSelectedIdRef = useRef<string | null>(selectedClassId);
   useEffect(() => {
     if (selectedClassId === prevSelectedIdRef.current) return;
@@ -1439,7 +1464,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                                   <button
                                     type="button"
                                     className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-black text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#1e3466] dark:bg-[#0f1b38] dark:text-slate-200"
-                                    onClick={() => openEditAssignment(asg)}
+                                    onClick={() => goToEditAssignmentPage(asg.id)}
                                   >
                                     <Pencil className="h-3.5 w-3.5" />
                                     Sửa
@@ -1980,6 +2005,21 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
               if (event.target === event.currentTarget) closeAssignmentForm();
             }}
           >
+            {assignPage && (
+              <div className="mb-4 flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={closeAssignmentForm}
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#1e3466] dark:bg-[#0f1b38] dark:text-slate-200"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  Trở về lớp
+                </button>
+                <h2 className="text-base font-black text-white">
+                  {assignmentFormIsCreate ? "Giao bài tập" : "Sửa bài tập"}
+                </h2>
+              </div>
+            )}
             <div
               className={
                 assignPage
@@ -1987,7 +2027,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                   : "cd-modal-card card-duo p-6 bg-[#0f1b38] border-[#1e3466] max-w-xl w-full space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto"
               }
             >
-              <div className="flex items-center justify-between gap-2">
+              <div className={assignPage ? "hidden" : "flex items-center justify-between gap-2"}>
                 <h3 className="flex items-center gap-2 text-sm font-black text-white">
                   <Pencil className="h-4 w-4 text-slate-500" />
                   <span>{assignmentFormIsCreate ? "Giao bài tập & bộ thẻ" : "Sửa bài tập"}</span>

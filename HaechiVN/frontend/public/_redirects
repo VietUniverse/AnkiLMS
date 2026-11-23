@@ -1,2 +1,3 @@
 /classes/*  /classes/_  200
 /classes/:code/assign  /classes/_/assign  200
+/classes/:code/assign/:id  /classes/_/assign/_  200
