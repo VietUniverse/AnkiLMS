@@ -440,6 +440,8 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
   const [showAssignModal, setShowAssignModal] = useState(assignPage);
   const [inviteTarget, setInviteTarget] = useState("");
   const [visibilityConfirm, setVisibilityConfirm] = useState<ClassVisibility | null>(null);
+  const [deleteAssignmentTarget, setDeleteAssignmentTarget] = useState<ClassAssignment | null>(null);
+  const [deletingAssignment, setDeletingAssignment] = useState(false);
   const [inviteBusy, setInviteBusy] = useState(false);
   const [assignTitle, setAssignTitle] = useState("");
   const [assignRecipients, setAssignRecipients] = useState<string[] | null>(null);
@@ -631,6 +633,20 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
   };
 
   // 1d. Delete this class (owner or site admin only)
+  const handleDeleteAssignment = async () => {
+    if (!deleteAssignmentTarget || !selectedClassId) return;
+    setDeletingAssignment(true);
+    try {
+      setClasses(await ApiClient.classAction({ action: "delete_assignment", classId: selectedClassId, assignmentId: deleteAssignmentTarget.id }));
+      setMsg({ type: "success", text: `Đã xoá bài tập "${deleteAssignmentTarget.title}".` });
+      setDeleteAssignmentTarget(null);
+    } catch (error) {
+      setMsg({ type: "error", text: error instanceof Error ? error.message : "Không xoá được bài tập." });
+    } finally {
+      setDeletingAssignment(false);
+    }
+  };
+
   const handleDeleteClass = async () => {
     if (!selectedClassId) return;
     const className = selectedClass?.name || "";
@@ -1507,6 +1523,16 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                                   >
                                     <Pencil className="h-3.5 w-3.5" />
                                     Sửa
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-black text-rose-600 transition-colors hover:bg-rose-50 dark:border-[#1e3466] dark:bg-[#0f1b38]"
+                                    onClick={() => setDeleteAssignmentTarget(asg)}
+                                    title="Xoá bài tập"
+                                    aria-label={`Xoá bài tập ${asg.title}`}
+                                  >
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                    Xoá
                                   </button>
                                   <button
                                     type="button"
@@ -2489,6 +2515,50 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                   ) : (
                     "Xóa lớp"
                   )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {deleteAssignmentTarget && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4"
+            role="presentation"
+            onClick={(event) => {
+              if (event.target === event.currentTarget && !deletingAssignment) setDeleteAssignmentTarget(null);
+            }}
+          >
+            <div
+              className="w-full max-w-sm space-y-3 rounded-2xl border border-slate-200 bg-white p-5 dark:border-[#1e3466] dark:bg-[#0f1b38]"
+              role="alertdialog"
+              aria-modal="true"
+              aria-labelledby="cd-delete-assignment-title"
+            >
+              <h3 id="cd-delete-assignment-title" className="text-sm font-black text-white">
+                Xoá bài tập?
+              </h3>
+              <p className="text-xs font-semibold leading-5 text-slate-700">
+                <strong className="text-white">{deleteAssignmentTarget.title}</strong> sẽ bị xoá cùng toàn bộ tiến độ học
+                viên trong bài, không hoàn tác được.
+              </p>
+              <div className="flex justify-end gap-2 pt-1">
+                <button
+                  type="button"
+                  disabled={deletingAssignment}
+                  onClick={() => setDeleteAssignmentTarget(null)}
+                  className="cursor-pointer rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-black text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-60 dark:border-[#1e3466] dark:bg-[#0f1b38] dark:text-slate-200"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="button"
+                  disabled={deletingAssignment}
+                  onClick={() => void handleDeleteAssignment()}
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-rose-700 px-4 py-2 text-xs font-black text-white transition-colors hover:bg-rose-600 disabled:opacity-60"
+                >
+                  {deletingAssignment ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+                  Xoá bài tập
                 </button>
               </div>
             </div>
