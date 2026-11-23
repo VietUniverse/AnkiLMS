@@ -26,6 +26,8 @@ export function ClassesScreen() {
   const router = useRouter();
   const pathname = usePathname();
   const demoMode = useSearchParams().get("demo") === "1";
+  // ?demo=1 phải luôn dùng dữ liệu mẫu, kể cả khi đang có phiên đăng nhập thật.
+  const viewer = demoMode ? DEMO_TEACHER : currentUser;
 
   // /classes/B79FB08A → "B79FB08A"; /classes → undefined
   const segments = (pathname || "").split("/").filter(Boolean);
@@ -51,9 +53,9 @@ export function ClassesScreen() {
 
   return (
     <AppShell>
-      {currentUser || demoMode ? (
+      {viewer ? (
         <ClassroomModule
-          currentUser={currentUser ?? DEMO_TEACHER}
+          currentUser={viewer}
           demo={demoMode}
           onBack={goBack}
           initialClassCode={initialCode}
