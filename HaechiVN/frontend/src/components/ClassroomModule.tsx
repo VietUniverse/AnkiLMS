@@ -158,9 +158,12 @@ const ASSIGN_BOOK_LABELS: Record<number, string> = {
 const assignmentDeckCardCount = (deck: AssignmentDeckOption) =>
   deck.cards.filter((card) => card.korean && card.meaning).length;
 
+/** Trần số thẻ mỗi bài giao; backend kiểm cùng con số (functions/api/classes.ts). */
+const MAX_ASSIGN_CARDS = 2000;
+
 const isAssignableAssignmentDeck = (deck: AssignmentDeckOption) => {
   const count = assignmentDeckCardCount(deck);
-  return count > 0 && count <= 500;
+  return count > 0 && count <= MAX_ASSIGN_CARDS;
 };
 
 const normalizeAssignmentSearch = (value: string) =>
@@ -836,7 +839,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
       setMsg({ type: "error", text: "Bộ thẻ này không có thẻ hợp lệ để giao." });
       return;
     }
-    const cards = selectedAssignmentDeck.cards.filter((card) => card.korean && card.meaning).slice(0, 500);
+    const cards = selectedAssignmentDeck.cards.filter((card) => card.korean && card.meaning).slice(0, MAX_ASSIGN_CARDS);
     const referencedFilenames = new Set(cards.flatMap((card) => card.mediaRefs || []));
     const sourceAssets = [...new Map((selectedAssignmentDeck.mediaAssets || [])
       .filter((asset) => referencedFilenames.has(asset.filename))
@@ -2196,7 +2199,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                       </div>
                     )}
                   </div>
-                  <p className="mt-2 text-[10px] leading-4 text-slate-500">Tìm theo tên bài, chủ đề, quyển hoặc bộ thẻ. Mỗi bài tối đa 500 thẻ.</p>
+                  <p className="mt-2 text-[10px] leading-4 text-slate-500">Tìm theo tên bài, chủ đề, quyển hoặc bộ thẻ. Mỗi bài tối đa 2000 thẻ.</p>
                 </div>
                 )}
 

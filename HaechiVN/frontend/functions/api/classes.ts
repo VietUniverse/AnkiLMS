@@ -504,7 +504,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       } else if (dueMode === "date" && !/^\d{4}-\d{2}-\d{2}$/.test(dueDate)) {
         return errorResponse("Thông tin bài tập chưa hợp lệ.");
       }
-      if (deckCards.length < 1 || deckCards.length > 500) return errorResponse("Bộ thẻ phải có từ 1 đến 500 thẻ để giao qua lớp.");
+      if (deckCards.length < 1 || deckCards.length > 2000) return errorResponse("Bộ thẻ phải có từ 1 đến 2000 thẻ để giao qua lớp.");
       if (mediaAssets.length > 2000) return errorResponse("Bộ thẻ có quá nhiều file media.");
       const assetIds = new Set<string>();
       let totalMediaBytes = 0;
