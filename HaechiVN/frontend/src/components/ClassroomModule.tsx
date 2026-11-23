@@ -436,6 +436,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
   // Assign Deck Modal
   const [showAssignModal, setShowAssignModal] = useState(assignPage);
   const [inviteTarget, setInviteTarget] = useState("");
+  const [visibilityConfirm, setVisibilityConfirm] = useState<ClassVisibility | null>(null);
   const [inviteBusy, setInviteBusy] = useState(false);
   const [assignTitle, setAssignTitle] = useState("");
   const [assignRecipients, setAssignRecipients] = useState<string[] | null>(null);
@@ -1284,7 +1285,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
             {isClassOwner ? (
               <select
                 value={selectedClass.visibility}
-                onChange={(e) => handleVisibilityChange(e.target.value as ClassVisibility)}
+                onChange={(e) => setVisibilityConfirm(e.target.value as ClassVisibility)}
                 title="Quyền truy cập của lớp"
                 className="cd-select cursor-pointer rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[10px] font-black text-slate-700 dark:border-white/10 dark:bg-[#132247] dark:text-slate-200"
               >
@@ -1887,7 +1888,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                     <select
                       id="cd-visibility"
                       value={selectedClass.visibility}
-                      onChange={(e) => handleVisibilityChange(e.target.value as ClassVisibility)}
+                      onChange={(e) => setVisibilityConfirm(e.target.value as ClassVisibility)}
                       className="w-full cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-800 outline-none focus:border-sky-600 dark:border-white/10 dark:bg-[#132247] dark:text-slate-200"
                     >
                       {CLASS_VISIBILITY_OPTIONS.map((option) => (
@@ -2468,6 +2469,59 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                   ) : (
                     "Xóa lớp"
                   )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {visibilityConfirm && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4"
+            role="presentation"
+            onClick={(event) => {
+              if (event.target === event.currentTarget) setVisibilityConfirm(null);
+            }}
+          >
+            <div
+              className="w-full max-w-sm space-y-3 rounded-2xl border border-slate-200 bg-white p-5 dark:border-[#1e3466] dark:bg-[#0f1b38]"
+              role="alertdialog"
+              aria-modal="true"
+              aria-labelledby="cd-visibility-title"
+            >
+              <h3 id="cd-visibility-title" className="text-sm font-black text-white">
+                Đổi quyền truy cập lớp?
+              </h3>
+              <p className="text-xs font-semibold leading-5 text-slate-700">
+                Chuyển lớp sang{" "}
+                <strong className="text-white">
+                  {CLASS_VISIBILITY_OPTIONS.find((option) => option.value === visibilityConfirm)?.label || visibilityConfirm}
+                </strong>
+                . {" "}
+                {visibilityConfirm === "public"
+                  ? "Học viên vào lớp ngay, không cần bạn duyệt."
+                  : visibilityConfirm === "private"
+                    ? "Học viên phải chờ bạn duyệt mới vào được."
+                    : "Lớp không hiện trong danh sách khám phá, chỉ vào được bằng mã hoặc link mời."}
+              </p>
+              <div className="flex justify-end gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setVisibilityConfirm(null)}
+                  className="cursor-pointer rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-black text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#1e3466] dark:bg-[#0f1b38] dark:text-slate-200"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const next = visibilityConfirm;
+                    setVisibilityConfirm(null);
+                    if (next) void handleVisibilityChange(next);
+                  }}
+                  className="cursor-pointer rounded-xl bg-sky-700 px-4 py-2 text-xs font-black text-white transition-colors hover:bg-sky-600"
+                >
+                  Đổi quyền
                 </button>
               </div>
             </div>
