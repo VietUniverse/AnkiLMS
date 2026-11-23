@@ -85,6 +85,18 @@ function openDeckDatabase(): Promise<IDBDatabase> {
   return deckDbPromise;
 }
 
+export type AppNotification = {
+  id: string;
+  kind: string;
+  title: string;
+  body: string | null;
+  link: string | null;
+  readAt: string | null;
+  createdAt: string;
+};
+
+type NotificationPayload = { notifications: AppNotification[]; unread: number };
+
 export class ApiClient {
   public static setSession(user: UserProfile) {
     if (typeof window === "undefined") return;
@@ -331,6 +343,24 @@ export class ApiClient {
     return { classes: data.classes || [], status: data.status === "approved" ? "approved" : "pending" };
   }
 
+
+  public static async getNotifications(): Promise<NotificationPayload> {
+    const res = await fetch("/api/notifications", { credentials: "same-origin", cache: "no-store" });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || "Không tải được thông báo.");
+    return { notifications: data.notifications || [], unread: data.unread || 0 };
+  }
+
+  public static async markNotificationsRead(payload: { id?: string; all?: boolean } = {}): Promise<NotificationPayload> {
+    const res = await fetch("/api/notifications", {
+      method: "POST", credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || "Không cập nhật được thông báo.");
+    return { notifications: data.notifications || [], unread: data.unread || 0 };
+  }
 
   public static async classAction(payload: Record<string, unknown>): Promise<any[]> {
     const res = await fetch("/api/classes", {

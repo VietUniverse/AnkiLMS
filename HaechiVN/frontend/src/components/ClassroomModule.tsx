@@ -435,6 +435,8 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
 
   // Assign Deck Modal
   const [showAssignModal, setShowAssignModal] = useState(assignPage);
+  const [inviteTarget, setInviteTarget] = useState("");
+  const [inviteBusy, setInviteBusy] = useState(false);
   const [assignTitle, setAssignTitle] = useState("");
   const [assignRecipients, setAssignRecipients] = useState<string[] | null>(null);
   const [assignDeckId, setAssignDeckId] = useState("");
@@ -670,6 +672,25 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
   };
 
   // 3. Approve Member
+  /** Mời thành viên bằng email hoặc tên hiển thị; người được mời nhận thông báo. */
+  const handleInviteMember = async () => {
+    const target = inviteTarget.trim();
+    if (!selectedClassId || target.length < 2) {
+      setMsg({ type: "error", text: "Nhập email hoặc tên hiển thị của thành viên." });
+      return;
+    }
+    setInviteBusy(true);
+    try {
+      setClasses(await ApiClient.classAction({ action: "invite", classId: selectedClassId, target }));
+      setMsg({ type: "success", text: `Đã gửi lời mời tới ${target}.` });
+      setInviteTarget("");
+    } catch (error) {
+      setMsg({ type: "error", text: error instanceof Error ? error.message : "Không gửi được lời mời." });
+    } finally {
+      setInviteBusy(false);
+    }
+  };
+
   const handleApproveMember = (classId: string, memberId: string) => {
     void runClassAction({ action: "approve", classId, memberId });
   };
@@ -1672,6 +1693,30 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                         <span>{copiedCode === selectedClass.code ? "Đã chép mã" : selectedClass.code}</span>
                       </button>
                     </div>
+                    <form
+                      className="flex w-full flex-wrap items-center gap-2"
+                      onSubmit={(event) => {
+                        event.preventDefault();
+                        void handleInviteMember();
+                      }}
+                    >
+                      <input
+                        type="text"
+                        value={inviteTarget}
+                        onChange={(event) => setInviteTarget(event.target.value)}
+                        placeholder="Email hoặc tên hiển thị của thành viên"
+                        aria-label="Email hoặc tên hiển thị của thành viên"
+                        className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-900 outline-none focus:border-sky-600 dark:border-white/10 dark:bg-[#132247] dark:text-white"
+                      />
+                      <button
+                        type="submit"
+                        disabled={inviteBusy}
+                        className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-sky-700 px-3 py-2 text-[11px] font-black text-white transition-colors hover:bg-sky-600 disabled:opacity-60"
+                      >
+                        {inviteBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <UserPlus className="h-3.5 w-3.5" />}
+                        Gửi lời mời
+                      </button>
+                    </form>
                   </div>
                 )}
 

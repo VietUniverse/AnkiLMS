@@ -9,6 +9,7 @@ import { useApp } from "../contexts/AppProvider";
 import { FeatureKey, IS_BETA_FEATURES_ENABLED } from "../lib/featureFlags";
 import { getStudyRank } from "../lib/studyRanks";
 import {
+  Bell,
   Home,
   BookOpen,
   Headphones,
@@ -57,6 +58,7 @@ const mainNav = [
   { href: "/", label: "Trang chủ", icon: Home },
   { href: "/flashcards", label: "Từ vựng", icon: Brain, feature: "flashcards" },
   { href: "/classes", label: "Lớp học", icon: Users, feature: "classes" },
+  { href: "/notifications", label: "Thông báo", icon: Bell },
   { href: "/explore", label: "Khám phá", icon: Layers, feature: "explore" },
   { href: "/topik", label: "TOPIK", icon: GraduationCap, feature: "topik" },
   { href: "/placement-test", label: "Kiểm tra vốn từ", icon: ClipboardCheck, feature: "placementTest" },

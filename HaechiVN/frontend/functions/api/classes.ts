@@ -266,6 +266,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     const body = await request.json() as {
       action?: string; name?: string; description?: string; code?: string; classId?: string; level?: string;
       visibility?: string;
+      target?: string;
       memberId?: string; role?: string; title?: string; deckName?: string; dueDate?: string;
       dueMode?: string; durationDays?: number; assignedUserIds?: string[] | null;
       assignmentId?: string; xpEarned?: number; cardId?: number; correct?: boolean;
@@ -310,6 +311,46 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       const nextStatus = classroom.visibility === "public" ? "approved" : "pending";
       await env.DB.prepare("INSERT INTO classroom_members (class_id, user_id, role, status) VALUES (?, ?, 'student', ?)")
         .bind(classroom.id, user.id, nextStatus).run();
+      return jsonResponse({ success: true, status: nextStatus, classes: await getClasses(env, user.id) });
+    }
+
+    if (body.action === "invite") {
+      const targetClassId = typeof body.classId === "string" ? body.classId.trim() : "";
+      const target = typeof body.target === "string" ? body.target.trim() : "";
+      if (!targetClassId || target.length < 2) return errorResponse("Nhập email hoặc tên hiển thị của thành viên.");
+      const me = await getMembership(env, targetClassId, user.id);
+      if (!me || (me.role !== "owner" && me.role !== "admin" && me.role !== "staff")) {
+        return errorResponse("Chỉ giáo viên của lớp mới mời được thành viên.", 403);
+      }
+      const classroom = await env.DB.prepare("SELECT code, name, visibility FROM classrooms WHERE id = ?")
+        .bind(targetClassId)
+        .first<{ code: string; name: string; visibility: ClassVisibility }>();
+      if (!classroom) return errorResponse("Không tìm thấy lớp học.", 404);
+      const invitee = await env.DB.prepare(
+        "SELECT id, name FROM users WHERE email = ? COLLATE NOCASE OR name = ? COLLATE NOCASE LIMIT 1",
+      )
+        .bind(target, target)
+        .first<{ id: string; name: string }>();
+      if (!invitee) return errorResponse("Không tìm thấy người dùng với email hoặc tên này.", 404);
+      if (invitee.id === user.id) return errorResponse("Bạn đã ở trong lớp này.");
+      const existing = await getMembership(env, targetClassId, invitee.id);
+      if (existing) {
+        return errorResponse(existing.status === "approved" ? "Người này đã ở trong lớp." : "Người này đang chờ duyệt.", 409);
+      }
+      const nextStatus = classroom.visibility === "public" ? "approved" : "pending";
+      await env.DB.batch([
+        env.DB.prepare("INSERT INTO classroom_members (class_id, user_id, role, status) VALUES (?, ?, 'student', ?)")
+          .bind(targetClassId, invitee.id, nextStatus),
+        env.DB.prepare(
+          "INSERT INTO notifications (id, user_id, kind, title, body, link) VALUES (?, ?, 'class_invite', ?, ?, ?)",
+        ).bind(
+          `ntf_${crypto.randomUUID()}`,
+          invitee.id,
+          `Lời mời vào lớp ${classroom.name}`,
+          `${user.name || "Giáo viên"} mời bạn tham gia lớp ${classroom.name}.`,
+          `/classes/${classroom.code}`,
+        ),
+      ]);
       return jsonResponse({ success: true, status: nextStatus, classes: await getClasses(env, user.id) });
     }
 
