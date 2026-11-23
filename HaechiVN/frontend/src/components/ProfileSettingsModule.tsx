@@ -120,60 +120,231 @@ export function ProfileSettingsModule() {
 
   if (!currentUser) return null;
 
-  return <div className="mx-auto max-w-3xl space-y-5 pb-24">
-    <div className="flex items-center gap-3"><Link href="/profile" aria-label="Quay lại hồ sơ" className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-700 bg-slate-900 text-slate-200"><ArrowLeft className="h-4 w-4" /></Link><div><p className="text-[10px] font-black uppercase tracking-widest text-sky-300">Tài khoản HaechiVN</p><h1 className="text-xl font-black text-white sm:text-2xl">Cài đặt hồ sơ</h1></div></div>
-
-    <form onSubmit={saveProfile} className="space-y-5 rounded-2xl border border-slate-800 bg-slate-900 p-4 sm:p-6">
-      <section className="flex flex-col gap-4 border-b border-slate-800 pb-5 sm:flex-row sm:items-center">
-        <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-slate-700 bg-slate-950 text-2xl font-black text-white">{avatar ? <img src={avatar} alt="Ảnh đại diện hiện tại" className="h-full w-full object-cover" /> : currentUser.name.slice(0, 1).toUpperCase()}</div>
-        <div className="min-w-0 flex-1"><h2 className="font-bold text-white">Ảnh đại diện</h2><p className="mt-1 text-xs text-slate-400">JPG, PNG hoặc WebP, tối đa 2 MB</p><label className="mt-3 inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border border-sky-400/30 bg-sky-500/10 px-4 text-xs font-bold text-sky-200 hover:bg-sky-500/20">{busy === "avatar" ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}Chọn ảnh<input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={(event) => { void uploadAvatar(event.target.files?.[0]); event.currentTarget.value = ""; }} /></label></div>
-      </section>
-
-      <div className="grid gap-4 sm:grid-cols-2"><label className="space-y-1.5"><span className="text-xs font-bold text-slate-300">Tên hiển thị</span><input value={name} onChange={(event) => setName(event.target.value)} maxLength={32} required minLength={2} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-sm text-white outline-none focus:border-sky-400" placeholder="Tên mọi người nhìn thấy" /></label><div className="space-y-1.5"><span className="text-xs font-bold text-slate-300">Email tài khoản</span><div className="rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-3 text-sm text-slate-400">{currentUser.email}</div></div></div>
-      <label className="block space-y-1.5"><span className="text-xs font-bold text-slate-300">Ngôn ngữ nghĩa khi học tiếng Hàn</span><select value={translationLanguage} onChange={(event) => setTranslationLanguage(event.target.value as TranslationLanguage)} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-sm text-white outline-none focus:border-sky-400"><option value="vi">Hàn – Việt</option><option value="en">Hàn – Anh</option><option value="ja">Hàn – Nhật</option></select><span className="block text-[11px] text-slate-400">Đồng bộ vào tài khoản và dùng chung Dictation, Shadowing cùng tra từ.</span></label>
-      <label className="block space-y-1.5"><span className="text-xs font-bold text-slate-300">Giới thiệu bản thân</span><textarea value={bio} onChange={(event) => setBio(event.target.value)} maxLength={300} rows={4} className="w-full resize-y rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-sm leading-6 text-white outline-none focus:border-sky-400" placeholder="Chia sẻ đôi điều về hành trình học tiếng Hàn của bạn…" /><span className="block text-right text-[10px] text-slate-500">{bio.length}/300</span></label>
-      <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-800 bg-slate-950/60 p-3"><input type="checkbox" checked={isPublic} onChange={(event) => setIsPublic(event.target.checked)} className="h-5 w-5 accent-sky-500" /><span className="flex-1"><span className="flex items-center gap-2 text-xs font-bold text-white">{isPublic ? <Users className="h-4 w-4 text-emerald-300" /> : <LockKeyhole className="h-4 w-4 text-amber-300" />}{isPublic ? "Cho phép mọi người xem hồ sơ" : "Hồ sơ riêng tư"}</span><span className="mt-1 block text-[11px] leading-5 text-slate-400">{isPublic ? "Hồ sơ và tiến độ tổng quan có thể được xem từ bảng xếp hạng." : "Chỉ bạn mới xem được hồ sơ và ảnh đại diện."}</span></span></label>
-      <button type="submit" disabled={busy === "profile"} className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-sky-600 px-4 text-sm font-black text-white hover:bg-sky-500 disabled:opacity-60">{busy === "profile" ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}Lưu hồ sơ</button>
-    </form>
-
-    <section className="space-y-4 rounded-2xl border border-slate-800 bg-slate-900 p-4 sm:p-6">
-      <div className="flex items-start gap-3">
-        <div className="rounded-xl bg-sky-400/10 p-2 text-sky-200"><Palette className="h-5 w-5" /></div>
+  return (
+    <div className="mx-auto max-w-3xl space-y-4 pb-24">
+      <div className="flex items-center gap-3">
+        <Link
+          href="/profile"
+          aria-label="Quay lại hồ sơ"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#1e3466] dark:bg-[#0f1b38] dark:text-slate-200"
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </Link>
         <div>
-          <h2 className="font-black text-white">Màu giao diện</h2>
-          <p className="mt-1 text-xs leading-5 text-slate-400">Đổi bộ màu nhấn của toàn app (nút, tab, chip, viền). Lựa chọn lưu trên thiết bị này.</p>
+          <p className="text-[11px] font-bold text-slate-500">Tài khoản HaechiVN</p>
+          <h1 className="text-xl font-black text-white">Cài đặt hồ sơ</h1>
         </div>
       </div>
-      <div className="grid gap-3 sm:grid-cols-2">
-        {ACCENT_OPTIONS.map((option) => {
-          const active = accent === option.id;
-          return (
-            <button
-              key={option.id}
-              type="button"
-              aria-pressed={active}
-              onClick={() => { setAccent(option.id); applyAccent(option.id); }}
-              className={`flex min-h-11 items-center justify-between gap-3 rounded-xl border p-3 text-left transition-colors ${active ? "border-sky-400 bg-sky-500/10" : "border-slate-700 bg-slate-950/60 hover:border-sky-400/40"}`}
-            >
-              <span className="flex items-center gap-2.5">
-                <span className="flex gap-1">
-                  {option.colors.map((color) => (
-                    <span key={color} className="h-5 w-5 rounded-full border border-black/10" style={{ backgroundColor: color }} />
-                  ))}
-                </span>
-                <span className="text-xs font-bold text-white">{option.label}</span>
-              </span>
-              {active && <Check className="h-4 w-4 shrink-0 text-sky-300" />}
-            </button>
-          );
-        })}
-      </div>
-    </section>
 
-    <section className="space-y-4 rounded-2xl border border-slate-800 bg-slate-900 p-4 sm:p-6"><div className="flex items-start gap-3"><div className="rounded-xl bg-fuchsia-400/10 p-2 text-fuchsia-200"><Palette className="h-5 w-5" /></div><div><h2 className="font-black text-white">Hiệu ứng trang cá nhân</h2><p className="mt-1 text-xs leading-5 text-slate-400">Trang bị những vật phẩm bạn đã đổi ở cửa hàng. Vật phẩm mới có thể mở khóa trong cửa hàng phần thưởng.</p></div></div>
-      <div className="grid gap-3 sm:grid-cols-3">{effects.map((effect) => { const options = groupedRewards[effect.key]; return <label key={effect.key} className="space-y-1.5"><span className="text-xs font-bold text-slate-300">{effect.title}</span><select value={effect.current || ""} disabled={busy === effect.key} onChange={(event) => void equip(effect.key, event.target.value)} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-xs text-white outline-none focus:border-fuchsia-400"><option value="">Không dùng</option>{options.map((item) => <option key={item.id} value={item.id}>{item.icon} {item.name}</option>)}</select></label>; })}</div>
-      <Link href="/rewards" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-fuchsia-300/20 bg-fuchsia-300/10 px-4 text-xs font-bold text-fuchsia-100 hover:bg-fuchsia-300/20"><UserRound className="h-4 w-4" />Tìm thêm khung và ảnh nền</Link>
-    </section>
-    {message && <p role="status" className="rounded-xl border border-sky-400/20 bg-sky-500/10 p-3 text-sm text-sky-100"><Check className="mr-2 inline h-4 w-4" />{message}</p>}
-  </div>;
+      <form
+        onSubmit={saveProfile}
+        className="space-y-4 rounded-2xl border border-slate-200 bg-white p-4 dark:border-[#1e3466] dark:bg-[#0f1b38] sm:p-6"
+      >
+        <section className="flex flex-col gap-4 border-b border-slate-200 pb-4 dark:border-white/10 sm:flex-row sm:items-center">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-50 text-xl font-black text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
+            {avatar ? (
+              <img src={avatar} alt="Ảnh đại diện hiện tại" className="h-full w-full object-cover" />
+            ) : (
+              currentUser.name.slice(0, 1).toUpperCase()
+            )}
+          </div>
+          <div className="min-w-0 flex-1">
+            <h2 className="text-xs font-black text-white">Ảnh đại diện</h2>
+            <p className="mt-1 text-[11px] font-semibold text-slate-700">JPG, PNG hoặc WebP, tối đa 2 MB</p>
+            <label className="mt-3 inline-flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] font-black text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#1e3466] dark:bg-[#0f1b38] dark:text-slate-200">
+              {busy === "avatar" ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
+              Chọn ảnh
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="sr-only"
+                onChange={(event) => {
+                  void uploadAvatar(event.target.files?.[0]);
+                  event.currentTarget.value = "";
+                }}
+              />
+            </label>
+          </div>
+        </section>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          <label className="space-y-1.5">
+            <span className="block text-[11px] font-bold text-slate-700">Tên hiển thị</span>
+            <input
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              maxLength={32}
+              required
+              minLength={2}
+              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-sky-600 dark:border-white/10 dark:bg-[#132247] dark:text-white"
+              placeholder="Tên mọi người nhìn thấy"
+            />
+          </label>
+          <div className="space-y-1.5">
+            <span className="block text-[11px] font-bold text-slate-700">Email tài khoản</span>
+            <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm font-bold text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
+              {currentUser.email}
+            </div>
+          </div>
+        </div>
+
+        <label className="block space-y-1.5">
+          <span className="block text-[11px] font-bold text-slate-700">Ngôn ngữ nghĩa khi học tiếng Hàn</span>
+          <select
+            value={translationLanguage}
+            onChange={(event) => setTranslationLanguage(event.target.value as TranslationLanguage)}
+            className="w-full cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-sky-600 dark:border-white/10 dark:bg-[#132247] dark:text-white"
+          >
+            <option value="vi">Hàn – Việt</option>
+            <option value="en">Hàn – Anh</option>
+            <option value="ja">Hàn – Nhật</option>
+          </select>
+          <span className="block text-[11px] font-semibold text-slate-700">
+            Đồng bộ vào tài khoản và dùng chung Dictation, Shadowing cùng tra từ.
+          </span>
+        </label>
+
+        <label className="block space-y-1.5">
+          <span className="block text-[11px] font-bold text-slate-700">Giới thiệu bản thân</span>
+          <textarea
+            value={bio}
+            onChange={(event) => setBio(event.target.value)}
+            maxLength={300}
+            rows={4}
+            className="w-full resize-y rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm leading-6 text-slate-900 outline-none focus:border-sky-600 dark:border-white/10 dark:bg-[#132247] dark:text-white"
+            placeholder="Chia sẻ đôi điều về hành trình học tiếng Hàn của bạn…"
+          />
+          <span className="block text-right text-[10px] font-bold text-slate-500">{bio.length}/300</span>
+        </label>
+
+        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-white/10 dark:bg-white/5">
+          <input
+            type="checkbox"
+            checked={isPublic}
+            onChange={(event) => setIsPublic(event.target.checked)}
+            className="h-5 w-5 accent-sky-600"
+          />
+          <span className="flex-1">
+            <span className="flex items-center gap-2 text-xs font-black text-white">
+              {isPublic ? <Users className="h-4 w-4 text-emerald-600" /> : <LockKeyhole className="h-4 w-4 text-amber-600" />}
+              {isPublic ? "Cho phép mọi người xem hồ sơ" : "Hồ sơ riêng tư"}
+            </span>
+            <span className="mt-1 block text-[11px] font-semibold leading-5 text-slate-700">
+              {isPublic
+                ? "Hồ sơ và tiến độ tổng quan có thể được xem từ bảng xếp hạng."
+                : "Chỉ bạn mới xem được hồ sơ và ảnh đại diện."}
+            </span>
+          </span>
+        </label>
+
+        <button
+          type="submit"
+          disabled={busy === "profile"}
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-sky-700 px-4 py-2.5 text-sm font-black text-white transition-colors hover:bg-sky-600 disabled:opacity-60"
+        >
+          {busy === "profile" ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+          Lưu hồ sơ
+        </button>
+      </form>
+
+      <section className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4 dark:border-[#1e3466] dark:bg-[#0f1b38] sm:p-6">
+        <div>
+          <h2 className="flex items-center gap-2 text-sm font-black text-white">
+            <Palette className="h-4 w-4 text-slate-500" />
+            Màu giao diện
+          </h2>
+          <p className="mt-1 text-[11px] font-semibold leading-5 text-slate-700">
+            Đổi bộ màu nhấn của toàn app (nút, tab, chip, viền). Lựa chọn lưu trên thiết bị này.
+          </p>
+        </div>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {ACCENT_OPTIONS.map((option) => {
+            const active = accent === option.id;
+            return (
+              <button
+                key={option.id}
+                type="button"
+                aria-pressed={active}
+                onClick={() => {
+                  setAccent(option.id);
+                  applyAccent(option.id);
+                }}
+                className={`flex cursor-pointer items-center justify-between gap-3 rounded-xl border p-3 text-left transition-colors ${
+                  active
+                    ? "border-sky-600 bg-sky-50 dark:border-sky-500 dark:bg-sky-500/10"
+                    : "border-slate-200 bg-white hover:bg-slate-50 dark:border-white/10 dark:bg-[#132247] dark:hover:bg-white/5"
+                }`}
+              >
+                <span className="flex items-center gap-2.5">
+                  <span className="flex gap-1">
+                    {option.colors.map((color) => (
+                      <span
+                        key={color}
+                        className="h-5 w-5 rounded-full border border-black/10"
+                        style={{ backgroundColor: color }}
+                      />
+                    ))}
+                  </span>
+                  <span className="text-xs font-black text-white">{option.label}</span>
+                </span>
+                {active && <Check className="h-4 w-4 shrink-0 text-sky-600" />}
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4 dark:border-[#1e3466] dark:bg-[#0f1b38] sm:p-6">
+        <div>
+          <h2 className="flex items-center gap-2 text-sm font-black text-white">
+            <UserRound className="h-4 w-4 text-slate-500" />
+            Hiệu ứng trang cá nhân
+          </h2>
+          <p className="mt-1 text-[11px] font-semibold leading-5 text-slate-700">
+            Trang bị những vật phẩm bạn đã đổi ở cửa hàng. Vật phẩm mới có thể mở khóa trong cửa hàng phần thưởng.
+          </p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {effects.map((effect) => {
+            const options = groupedRewards[effect.key];
+            return (
+              <label key={effect.key} className="space-y-1.5">
+                <span className="block text-[11px] font-bold text-slate-700">{effect.title}</span>
+                <select
+                  value={effect.current || ""}
+                  disabled={busy === effect.key}
+                  onChange={(event) => void equip(effect.key, event.target.value)}
+                  className="w-full cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs text-slate-900 outline-none focus:border-sky-600 dark:border-white/10 dark:bg-[#132247] dark:text-white"
+                >
+                  <option value="">Không dùng</option>
+                  {options.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.icon} {item.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            );
+          })}
+        </div>
+        <Link
+          href="/rewards"
+          className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] font-black text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#1e3466] dark:bg-[#0f1b38] dark:text-slate-200"
+        >
+          <UserRound className="h-4 w-4" />
+          Tìm thêm khung và ảnh nền
+        </Link>
+      </section>
+
+      {message && (
+        <p
+          role="status"
+          className="rounded-xl border border-sky-200 bg-sky-50 p-3 text-xs font-bold text-sky-800 dark:border-sky-500/30 dark:bg-sky-500/10 dark:text-sky-200"
+        >
+          <Check className="mr-2 inline h-4 w-4" />
+          {message}
+        </p>
+      )}
+    </div>
+  );
 }
