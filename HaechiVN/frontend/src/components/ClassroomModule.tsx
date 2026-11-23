@@ -1574,168 +1574,190 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
             )}
 
             {activeTab === "members" && (
-              <section className="cd-panel" aria-label="Thành viên lớp">
-                <div className="cd-core">
-                  <div className="cd-panel-head">
-                    <h2>Thành viên</h2>
-                    <p className="cd-section-note">{approvedMembers.length} thành viên</p>
+              <section
+                className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-[#1e3466] dark:bg-[#0f1b38]"
+                aria-label="Thành viên lớp"
+              >
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <h2 className="text-sm font-black text-white">Thành viên</h2>
+                  <p className="text-[11px] font-bold text-slate-700">{approvedMembers.length} thành viên</p>
+                </div>
+
+                {canManageClass && (
+                  <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-white/10 dark:bg-white/5">
+                    <div className="min-w-0">
+                      <strong className="block text-xs font-black text-white">Mời vào lớp</strong>
+                      <span className="mt-0.5 block text-[11px] font-semibold text-slate-700">
+                        Gửi link hoặc mã lớp, học viên tham gia rồi bạn duyệt ở danh sách chờ.
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-black text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#1e3466] dark:bg-[#0f1b38] dark:text-slate-200"
+                        onClick={() => copyToClipboard(joinLink)}
+                      >
+                        {copiedCode?.includes("?join=") ? (
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                        ) : (
+                          <Copy className="h-3.5 w-3.5" />
+                        )}
+                        <span aria-live="polite">
+                          {copiedCode?.includes("?join=") ? "Đã chép link" : "Chép link mời"}
+                        </span>
+                      </button>
+                      <button
+                        type="button"
+                        className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-black text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#1e3466] dark:bg-[#0f1b38] dark:text-slate-200"
+                        onClick={() => copyToClipboard(selectedClass.code)}
+                        title="Sao chép mã lớp"
+                      >
+                        <KeyRound className="h-3.5 w-3.5" />
+                        <span>{copiedCode === selectedClass.code ? "Đã chép mã" : selectedClass.code}</span>
+                      </button>
+                    </div>
                   </div>
+                )}
 
-                  {canManageClass && (
-                    <div className="cd-invite">
-                      <div className="cd-invite-copy">
-                        <strong>Mời vào lớp</strong>
-                        <span>Gửi link hoặc mã lớp. Học viên tham gia rồi bạn duyệt ở danh sách chờ.</span>
-                      </div>
-                      <div className="cd-invite-actions">
-                        <button
-                          type="button"
-                          className="rd-btn cd-btn-secondary cd-btn-sm"
-                          onClick={() => copyToClipboard(joinLink)}
-                        >
-                          {copiedCode?.includes("?join=") ? (
-                            <CheckCircle2 className="h-3.5 w-3.5" />
-                          ) : (
-                            <Copy className="h-3.5 w-3.5" />
-                          )}
-                          <span aria-live="polite">
-                            {copiedCode?.includes("?join=") ? "Đã chép link" : "Chép link mời"}
+                {canManageClass && pendingMembers.length > 0 && (
+                  <div className="mt-3 space-y-2 rounded-xl border border-amber-200 bg-amber-50 p-3 dark:border-amber-500/30 dark:bg-amber-500/10">
+                    <p className="text-[11px] font-black text-amber-800 dark:text-amber-300">
+                      {pendingMembers.length} yêu cầu chờ duyệt
+                    </p>
+                    {pendingMembers.map((member) => (
+                      <div key={member.id} className="flex flex-wrap items-center gap-2">
+                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-[11px] font-black text-slate-700 dark:bg-white/10 dark:text-slate-200">
+                          {initialsOf(member.name)}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <strong className="block text-xs font-black text-white">{member.name}</strong>
+                          <span className="mt-0.5 block text-[11px] font-semibold text-slate-700">
+                            {member.email}, xin vào {shortDate(member.joinedAt)}
                           </span>
-                        </button>
-                        <button
-                          type="button"
-                          className="rd-code cd-code"
-                          onClick={() => copyToClipboard(selectedClass.code)}
-                          title="Sao chép mã lớp"
-                        >
-                          <KeyRound className="h-3.5 w-3.5" />
-                          <span>{copiedCode === selectedClass.code ? "Đã chép mã" : selectedClass.code}</span>
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {canManageClass && pendingMembers.length > 0 && (
-                    <div className="cd-requests">
-                      {pendingMembers.map((member) => (
-                        <div key={member.id} className="cd-request">
-                          <span className="rd-avatar cd-avatar-md">{initialsOf(member.name)}</span>
-                          <div className="cd-request-copy">
-                            <strong>{member.name}</strong>
-                            <span>
-                              {member.email} · Xin vào {shortDate(member.joinedAt)}
-                            </span>
-                          </div>
-                          <div className="cd-inline-actions">
-                            <button
-                              type="button"
-                              className="rd-btn rd-btn-primary cd-btn-sm"
-                              onClick={() => handleApproveMember(selectedClass.id, member.id)}
-                            >
-                              Chấp nhận
-                            </button>
-                            <button
-                              type="button"
-                              className="rd-btn cd-btn-ghost cd-btn-sm"
-                              onClick={() =>
-                                setRemoveMemberTarget({ id: member.id, name: member.name, pending: true })
-                              }
-                            >
-                              Từ chối
-                            </button>
-                          </div>
                         </div>
-                      ))}
-                    </div>
-                  )}
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            className="cursor-pointer rounded-xl bg-sky-700 px-3 py-1.5 text-[11px] font-black text-white transition-colors hover:bg-sky-600"
+                            onClick={() => handleApproveMember(selectedClass.id, member.id)}
+                          >
+                            Chấp nhận
+                          </button>
+                          <button
+                            type="button"
+                            className="cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-black text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#1e3466] dark:bg-[#0f1b38] dark:text-slate-200"
+                            onClick={() =>
+                              setRemoveMemberTarget({ id: member.id, name: member.name, pending: true })
+                            }
+                          >
+                            Từ chối
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
 
-                  <p className="cd-list-label">Danh sách thành viên</p>
-                  <div className="cd-members">
-                    {approvedMembers.map((member) => {
-                      const memberDone = member.completedAssignments?.length || 0;
-                      const memberPercent = percentOf(memberDone, totalAssignments);
-                      const isYou = member.id === currentUser?.id;
-                      const memberMemory = memberMemoryByStudent.get(member.id) ?? null;
-                      const memberRoleText =
-                        member.role === "owner"
-                          ? "Giáo viên · phụ trách lớp"
-                          : member.role === "admin"
-                            ? "Quản trị viên"
-                            : member.role === "staff"
-                              ? "Giáo vụ"
-                              : `Học viên · tham gia ${shortDate(member.joinedAt)}`;
-                      return (
-                        <div key={member.id} className="cd-member">
-                          <span className="rd-avatar cd-avatar-md">{initialsOf(member.name)}</span>
-                          <div className="cd-member-copy">
-                            <span className="cd-member-name">
-                              <Link href={`/member?id=${encodeURIComponent(member.id)}`}>{member.name}</Link>
-                              {isYou && <span className="cd-you">Bạn</span>}
-                            </span>
-                            <span className="cd-member-sub">{memberRoleText}</span>
-                          </div>
-                          <div className="cd-member-data">
-                            {member.role === "student" ? (
-                              <>
-                                <span>
-                                  {memberDone}/{totalAssignments} bài
-                                </span>
-                                <div className="rd-progress" aria-hidden="true">
-                                  <span style={{ width: `${memberPercent}%` }} />
-                                </div>
-                                {(canManageClass || isYou) && (
-                                  <span
-                                    className={`cd-memory-inline ${memberMemory !== null && memberMemory >= 85 ? "is-strong" : ""}`}
-                                    title="Tỷ lệ trả lời đúng trên các thẻ đã ôn trong bài tập của lớp"
-                                  >
-                                    Ghi nhớ{" "}
-                                    <strong>{memberMemory === null ? "—" : `${memberMemory}%`}</strong>
-                                  </span>
-                                )}
-                              </>
-                            ) : (
-                              <span className="rd-tag rd-tag--strong">
-                                {member.role === "owner" ? "Quản trị" : member.role === "admin" ? "Quản trị viên" : "Giáo vụ"}
+                <p className="mt-4 text-[11px] font-black text-slate-500">Danh sách thành viên</p>
+                <div className="mt-1 divide-y divide-slate-200 dark:divide-white/10">
+                  {approvedMembers.map((member) => {
+                    const memberDone = member.completedAssignments?.length || 0;
+                    const memberPercent = percentOf(memberDone, totalAssignments);
+                    const isYou = member.id === currentUser?.id;
+                    const memberMemory = memberMemoryByStudent.get(member.id) ?? null;
+                    const memberRoleText =
+                      member.role === "owner"
+                        ? "Giáo viên, phụ trách lớp"
+                        : member.role === "admin"
+                          ? "Quản trị viên"
+                          : member.role === "staff"
+                            ? "Giáo vụ"
+                            : `Học viên, tham gia ${shortDate(member.joinedAt)}`;
+                    return (
+                      <div key={member.id} className="flex flex-wrap items-center gap-3 py-2.5">
+                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-[11px] font-black text-slate-700 dark:bg-white/10 dark:text-slate-200">
+                          {initialsOf(member.name)}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <span className="flex flex-wrap items-center gap-1.5 text-xs font-black text-white">
+                            <Link href={`/member?id=${encodeURIComponent(member.id)}`} className="truncate hover:underline">
+                              {member.name}
+                            </Link>
+                            {isYou && (
+                              <span className="rounded-full bg-sky-100 px-1.5 py-0.5 text-[10px] font-black text-sky-800">
+                                Bạn
                               </span>
                             )}
-                            {(isClassOwner && member.role !== "owner") ||
-                            (canManageClass && myMemberRecord?.role !== "staff" && member.role !== "owner") ? (
-                              <div className="cd-member-tools">
-                                {isClassOwner && (
-                                  <select
-                                    value={member.role}
-                                    onChange={(e) =>
-                                      setRoleChangeTarget({
-                                        id: member.id,
-                                        name: member.name,
-                                        currentRole: member.role as "admin" | "staff" | "student",
-                                        nextRole: e.target.value as "admin" | "staff" | "student",
-                                      })
-                                    }
-                                    aria-label={`Vai trò của ${member.name}`}
-                                  >
-                                    <option value="student">Học sinh</option>
-                                    <option value="staff">Giáo vụ</option>
-                                    <option value="admin">Quản trị viên</option>
-                                  </select>
-                                )}
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    setRemoveMemberTarget({ id: member.id, name: member.name, pending: false })
-                                  }
-                                  title="Xóa khỏi lớp"
-                                  aria-label={`Xóa ${member.name} khỏi lớp`}
-                                >
-                                  <Trash2 className="h-3.5 w-3.5" />
-                                </button>
-                              </div>
-                            ) : null}
-                          </div>
+                          </span>
+                          <span className="mt-0.5 block text-[11px] font-semibold text-slate-700">{memberRoleText}</span>
                         </div>
-                      );
-                    })}
-                  </div>
+                        <div className="flex flex-wrap items-center justify-end gap-2 text-[11px] font-bold text-slate-700">
+                          {member.role === "student" ? (
+                            <>
+                              <span>{memberDone}/{totalAssignments} bài</span>
+                              <div
+                                className="h-1.5 w-20 overflow-hidden rounded-full bg-slate-200 dark:bg-white/10"
+                                aria-hidden="true"
+                              >
+                                <span className="block h-full rounded-full bg-sky-600" style={{ width: `${memberPercent}%` }} />
+                              </div>
+                              {(canManageClass || isYou) && (
+                                <span
+                                  className={`rounded-full px-2 py-0.5 text-[10px] font-black ${
+                                    memberMemory !== null && memberMemory >= 85
+                                      ? "bg-emerald-100 text-emerald-800"
+                                      : "bg-slate-100 text-slate-700 dark:bg-white/10 dark:text-slate-200"
+                                  }`}
+                                  title="Tỷ lệ trả lời đúng trên các thẻ đã ôn trong bài tập của lớp"
+                                >
+                                  Ghi nhớ {memberMemory === null ? "—" : `${memberMemory}%`}
+                                </span>
+                              )}
+                            </>
+                          ) : (
+                            <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black text-slate-700 dark:bg-white/10 dark:text-slate-200">
+                              {member.role === "owner" ? "Quản trị" : member.role === "admin" ? "Quản trị viên" : "Giáo vụ"}
+                            </span>
+                          )}
+                          {((isClassOwner && member.role !== "owner") ||
+                            (canManageClass && myMemberRecord?.role !== "staff" && member.role !== "owner")) && (
+                            <span className="flex items-center gap-1.5">
+                              {isClassOwner && (
+                                <select
+                                  value={member.role}
+                                  onChange={(e) =>
+                                    setRoleChangeTarget({
+                                      id: member.id,
+                                      name: member.name,
+                                      currentRole: member.role as "admin" | "staff" | "student",
+                                      nextRole: e.target.value as "admin" | "staff" | "student",
+                                    })
+                                  }
+                                  aria-label={`Vai trò của ${member.name}`}
+                                  className="cursor-pointer rounded-lg border border-slate-200 bg-white px-2 py-1 text-[10px] font-black text-slate-700 dark:border-white/10 dark:bg-[#132247] dark:text-slate-200"
+                                >
+                                  <option value="student">Học sinh</option>
+                                  <option value="staff">Giáo vụ</option>
+                                  <option value="admin">Quản trị viên</option>
+                                </select>
+                              )}
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setRemoveMemberTarget({ id: member.id, name: member.name, pending: false })
+                                }
+                                title="Xóa khỏi lớp"
+                                aria-label={`Xóa ${member.name} khỏi lớp`}
+                                className="inline-flex cursor-pointer items-center justify-center rounded-lg border border-slate-200 bg-white p-1 text-rose-600 transition-colors hover:bg-rose-50 dark:border-white/10 dark:bg-[#132247]"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </button>
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </section>
             )}
