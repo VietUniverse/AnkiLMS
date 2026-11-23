@@ -1122,6 +1122,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
       <div className="classroom-module cm-page rd cd">
         <div className="mx-auto mb-4 w-full max-w-3xl space-y-3">
           <div className="flex w-full items-center gap-1.5 overflow-x-auto rounded-2xl border border-slate-200 bg-white p-1.5 dark:border-[#1e3466] dark:bg-[#0f1b38]">
+            <div className="flex flex-1 justify-start">
             <button
               type="button"
               onClick={() => setSelectedClassId(null)}
@@ -1131,8 +1132,9 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
               <ChevronLeft className="h-4 w-4" />
               <span className="hidden sm:inline">Trở về</span>
             </button>
+            </div>
             <div
-              className={`grid gap-1.5 ${canManageClass ? "grid-cols-4" : "grid-cols-3"}`}
+              className={`grid shrink-0 gap-1.5 ${canManageClass ? "grid-cols-4" : "grid-cols-3"}`}
               role="tablist"
               aria-label="Nội dung lớp học"
             >
@@ -1178,6 +1180,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
               </button>
               )}
             </div>
+            <div className="flex-1" aria-hidden="true" />
           </div>
 
         {msg?.type === "error" && (
@@ -2387,7 +2390,8 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
   return (
     <div className="classroom-module cm-page rd">
       <div className="mx-auto mb-4 w-full max-w-3xl space-y-3">
-        <div className="flex w-full items-center gap-1.5 overflow-x-auto rounded-2xl border border-slate-200 bg-white p-1.5 dark:border-[#1e3466] dark:bg-[#0f1b38]">
+        <div className="flex w-full items-center gap-1.5 rounded-2xl border border-slate-200 bg-white p-1.5 dark:border-[#1e3466] dark:bg-[#0f1b38]">
+          <div className="flex flex-1 justify-start">
           {onBack && (
             <button
               type="button"
@@ -2399,8 +2403,9 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
               <span className="hidden sm:inline">Trở về</span>
             </button>
           )}
+          </div>
           <div
-            className="grid grid-cols-2 gap-1.5"
+            className="grid shrink-0 grid-cols-2 gap-1.5"
             role="tablist"
             aria-label="Chế độ xem lớp học"
           >
@@ -2431,6 +2436,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
               <span>Tham gia lớp học</span>
             </button>
           </div>
+          <div className="flex-1" aria-hidden="true" />
         </div>
         <div className="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-center dark:border-[#1e3466] dark:bg-[#0f1b38]">
           <h1 className="text-sm font-black text-white sm:text-base">{statTitle}</h1>
