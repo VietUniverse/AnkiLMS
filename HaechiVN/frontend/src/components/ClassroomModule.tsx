@@ -2340,14 +2340,14 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
 
   return (
     <div className="classroom-module cm-page rd">
-      <div className="mb-4 w-full space-y-3">
-        <div className="mx-auto flex w-fit max-w-full items-center gap-1.5 rounded-2xl border border-[#1e3466] bg-[#0f1b38] p-1.5">
+      <div className="mx-auto mb-4 w-full max-w-3xl space-y-3">
+        <div className="flex w-full items-center gap-1.5 overflow-x-auto rounded-2xl border border-slate-200 bg-white p-1.5 dark:border-[#1e3466] dark:bg-[#0f1b38]">
           {onBack && (
             <button
               type="button"
               onClick={onBack}
               aria-label="Trở về"
-              className="inline-flex shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold text-slate-300 transition-colors hover:bg-white/5 hover:text-white"
+              className="inline-flex shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white"
             >
               <ChevronLeft className="h-4 w-4" />
               <span className="hidden sm:inline">Trở về</span>
@@ -2366,7 +2366,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
               className={`flex cursor-pointer items-center justify-center rounded-xl px-4 py-2 text-xs font-black transition-all ${
                 mainTab === "mine"
                   ? "bg-sky-600 text-white"
-                  : "text-slate-300 hover:bg-white/5 hover:text-white"
+                  : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"
               }`}
             >
               <span>Lớp học</span>
@@ -2379,14 +2379,14 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
               className={`flex cursor-pointer items-center justify-center rounded-xl px-4 py-2 text-xs font-black transition-all ${
                 mainTab === "join"
                   ? "bg-sky-600 text-white"
-                  : "text-slate-300 hover:bg-white/5 hover:text-white"
+                  : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"
               }`}
             >
               <span>Tham gia lớp học</span>
             </button>
           </div>
         </div>
-        <div className="mx-auto w-fit max-w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-center dark:border-[#1e3466] dark:bg-[#0f1b38]">
+        <div className="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-center dark:border-[#1e3466] dark:bg-[#0f1b38]">
           <h1 className="text-sm font-black text-white sm:text-base">{statTitle}</h1>
           <dl className="mt-3 grid grid-cols-3 divide-x divide-slate-200 dark:divide-white/10">
             {stats.map((s) => (
