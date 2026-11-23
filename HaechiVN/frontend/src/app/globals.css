@@ -17,7 +17,17 @@
   --color-warn: var(--c-warn);
   --color-warn-ink: var(--c-warn-ink);
   --color-warn-icon: var(--c-warn-icon);
+
+  /* Bảng màu thương hiệu bổ sung (dùng: bg-brand-coral, text-brand-ink, border-brand-teal...) */
+  --color-brand-coral: #ff653f;
+  --color-brand-teal: #76abae;
+  --color-brand-teal-deep: #6ab0af;
+  --color-brand-peach: #f5a89a;
+  --color-brand-butter: #fff2a5;
+  --color-brand-ink: #194350;
 }
+
+
 
 @layer base {
   :root {
@@ -236,6 +246,21 @@ html[data-theme="light"] a[class*="bg-gradient-to"] [class*="text-white"] {
   color: #fff !important;
 }
 
+/* Nút/badge nền xanh dương đặc: chữ phải trắng (rule ép text-white thành chữ đen ở trên
+   có specificity cao hơn nên phải khai báo cùng cấp + đặt sau). */
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-sky-500"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-sky-500"] *,
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-sky-600"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-sky-600"] *,
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-sky-700"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-sky-700"] *,
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-cyan-600"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-cyan-600"] *,
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-cyan-700"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-cyan-700"] * {
+  color: #fff !important;
+}
+
 html[data-theme="light"] body:not(:has(.login-page-root)) .srs-btn-dark kbd {
   border-color: rgba(255, 255, 255, 0.4) !important;
   color: #fff !important;
@@ -309,7 +334,7 @@ html[data-theme="light"] body:not(:has(.login-page-root)) input.admin-field-inpu
 html[data-theme="light"] .card-duo {
   background-color: #fff !important;
   border-color: #d5deeb !important;
-  box-shadow: 0 5px 0 rgb(15 23 42 / 8%) !important;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 6%), 0 6px 16px -12px rgb(15 23 42 / 18%) !important;
 }
 
 html[data-theme="light"] .card-duo[class*="bg-gradient-to"] {
@@ -796,13 +821,13 @@ html[data-theme="light"] body:not(:has(.login-page-root)) .metric-card-subtext {
   background-color: #111d38;
   border: 1.5px solid #1d2e54;
   border-radius: 1.25rem;
-  box-shadow: 0 6px 0 0 rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 20px -14px rgba(0, 0, 0, 0.55);
 }
 
 .card-duo-hover:hover {
   border-color: #3b82f6;
   transform: translateY(-2px);
-  box-shadow: 0 8px 0 0 rgba(37, 99, 235, 0.25);
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.12), 0 12px 24px -16px rgba(37, 99, 235, 0.45);
 }
 
 /* Additional Button Variants */
@@ -2133,8 +2158,12 @@ html[data-theme="dark"] .classroom-module.cm-page {
   background: var(--cm-glass);
   border: 1px solid var(--cm-line);
   border-radius: 24px;
-  box-shadow: var(--cm-shadow);
+  box-shadow: none;
   backdrop-filter: saturate(150%) blur(18px);
+}
+/* Khung phẳng: bỏ hẳn bóng đổ trong trang lớp học (kể cả rule light-mode !important) */
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module.cm-page .card-duo {
+  box-shadow: none !important;
 }
 
 html[data-theme="light"] .classroom-module.cm-page .cm-hero,
