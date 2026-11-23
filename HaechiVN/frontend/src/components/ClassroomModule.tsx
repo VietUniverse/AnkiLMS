@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   Users,
   Plus,
@@ -349,10 +350,13 @@ interface ClassroomModuleProps {
   onSelectedClassChange?: (code: string | null) => void;
   /** Nút "Trở về" hiển thị cùng hàng với hai tab chính. */
   onBack?: () => void;
+  /** Chế độ trang /classes/<mã>/assign: chỉ hiện form giao bài, không hiện panel và tab. */
+  assignPage?: boolean;
 }
 
-export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, demo = false, onClassesChange, initialClassId = null, initialClassCode = null, onSelectedClassChange, onBack }) => {
+export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, demo = false, onClassesChange, initialClassId = null, initialClassCode = null, onSelectedClassChange, onBack, assignPage = false }) => {
   const { handleOpenAuth, userDecks } = useApp();
+  const router = useRouter();
   const isAdmin = currentUser?.role === "admin";
 
   const [classes, setClasses] = useState<Classroom[]>([]);
@@ -427,7 +431,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
   const [newClassVisibility, setNewClassVisibility] = useState<ClassVisibility>("private");
 
   // Assign Deck Modal
-  const [showAssignModal, setShowAssignModal] = useState(false);
+  const [showAssignModal, setShowAssignModal] = useState(assignPage);
   const [assignTitle, setAssignTitle] = useState("");
   const [assignRecipients, setAssignRecipients] = useState<string[] | null>(null);
   const [assignDeckId, setAssignDeckId] = useState("");
@@ -695,6 +699,14 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
     setAssignDeckActive(-1);
   };
 
+  const goToAssignPage = () => {
+    if (!assignPage && selectedClass?.code) {
+      router.push(`/classes/${encodeURIComponent(selectedClass.code)}/assign`);
+      return;
+    }
+    openAssignModal();
+  };
+
   const openAssignModal = () => {
     setEditAssignmentId(null);
     setAssignDeckQuery("");
@@ -919,6 +931,8 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
   const closeAssignmentForm = () => {
     setShowAssignModal(false);
     setEditAssignmentId(null);
+    // Ở chế độ trang, đóng form = quay lại trang lớp.
+    if (assignPage && selectedClass?.code) router.push(`/classes/${encodeURIComponent(selectedClass.code)}`);
   };
 
   // Một khung duy nhất cho 2 chế độ: tạo mới dùng state assign*, sửa dùng state editAssignment*.
@@ -1120,6 +1134,8 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
 
     return (
       <div className="classroom-module cm-page rd cd">
+        {!assignPage && (
+        <>
         <div className="mx-auto mb-4 w-full max-w-3xl space-y-3">
           <div className="flex w-full items-center gap-1.5 overflow-x-auto rounded-2xl border border-slate-200 bg-white p-1.5 dark:border-[#1e3466] dark:bg-[#0f1b38]">
             <div className="flex flex-1 justify-start">
@@ -1276,7 +1292,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                 <button
                   type="button"
                   className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-sky-700 px-4 py-2 text-xs font-black text-white transition-colors hover:bg-sky-600"
-                  onClick={openAssignModal}
+                  onClick={goToAssignPage}
                 >
                   <Plus className="h-4 w-4" />
                   Giao bài tập
@@ -1346,7 +1362,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                       <button
                         type="button"
                         className="mt-4 inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-sky-700 px-4 py-2 text-xs font-black text-white transition-colors hover:bg-sky-600"
-                        onClick={openAssignModal}
+                        onClick={goToAssignPage}
                       >
                         <Plus className="h-4 w-4" />
                         Giao bộ thẻ đầu tiên
@@ -1855,6 +1871,8 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
             )}
           </div>
         </div>
+        </>
+        )}
 
         {progressAssignment && (
           <div
@@ -1948,12 +1966,22 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
 
         {(editAssignmentId || showAssignModal) && (
           <div
-            className="cd-modal fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4"
+            className={
+              assignPage
+                ? "mx-auto w-full max-w-3xl pb-24"
+                : "cd-modal fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4"
+            }
             onClick={(event) => {
               if (event.target === event.currentTarget) closeAssignmentForm();
             }}
           >
-            <div className="cd-modal-card card-duo p-6 bg-[#0f1b38] border-[#1e3466] max-w-xl w-full space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto">
+            <div
+              className={
+                assignPage
+                  ? "space-y-4 rounded-2xl border border-slate-200 bg-white p-5 dark:border-[#1e3466] dark:bg-[#0f1b38]"
+                  : "cd-modal-card card-duo p-6 bg-[#0f1b38] border-[#1e3466] max-w-xl w-full space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto"
+              }
+            >
               <div className="flex items-center justify-between gap-2">
                 <h3 className="text-lg font-black text-white flex items-center gap-2">
                   <Pencil className="w-5 h-5 text-amber-400" />

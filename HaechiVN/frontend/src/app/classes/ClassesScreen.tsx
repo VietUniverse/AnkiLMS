@@ -32,8 +32,14 @@ export function ClassesScreen() {
   // /classes/B79FB08A → "B79FB08A"; /classes → undefined
   const segments = (pathname || "").split("/").filter(Boolean);
   const initialCode = segments[0] === "classes" && segments[1] ? decodeURIComponent(segments[1]) : undefined;
+  // /classes/<mã>/assign là trang giao bài riêng.
+  const assignPage = segments[2] === "assign";
 
   const goBack = () => {
+    if (assignPage && initialCode) {
+      router.push(`/classes/${encodeURIComponent(initialCode)}`);
+      return;
+    }
     if (typeof window !== "undefined" && window.history.length > 1) {
       router.back();
       return;
@@ -44,11 +50,13 @@ export function ClassesScreen() {
   // Mỗi lớp có URL riêng: chọn lớp → /classes/<mã>, về danh sách → /classes.
   const handleSelectedClassChange = useCallback(
     (code: string | null) => {
+      // Trang giao bài giữ nguyên URL /classes/<mã>/assign.
+      if (assignPage) return;
       const target = code ? `/classes/${encodeURIComponent(code)}` : "/classes";
       if ((pathname || "").split("?")[0] === target) return;
       router.push(target);
     },
-    [pathname, router],
+    [pathname, router, assignPage],
   );
 
   return (
@@ -60,6 +68,7 @@ export function ClassesScreen() {
           onBack={goBack}
           initialClassCode={initialCode}
           onSelectedClassChange={handleSelectedClassChange}
+          assignPage={assignPage}
         />
       ) : !isAuthReady ? (
         <div className="mx-auto max-w-5xl" aria-hidden />
