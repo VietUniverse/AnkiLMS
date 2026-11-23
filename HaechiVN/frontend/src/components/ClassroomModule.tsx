@@ -1834,7 +1834,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                 </p>
 
                 {canDeleteClass && (
-                  <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-rose-200 bg-rose-50 p-4 dark:border-rose-500/30 dark:bg-rose-500/10">
+                  <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-rose-50 p-4 dark:bg-rose-500/10">
                     <div>
                       <h3 className="text-xs font-black text-rose-800 dark:text-rose-300">Xóa lớp học</h3>
                       <p className="mt-1 text-[11px] font-semibold leading-5 text-rose-700 dark:text-rose-200/80">
