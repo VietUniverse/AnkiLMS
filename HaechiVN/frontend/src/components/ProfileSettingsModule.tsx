@@ -12,6 +12,8 @@ type Reward = { id: string; name: string; description: string; icon: string; kin
 const ACCENT_OPTIONS = [
   { id: "blue", label: "Xanh dương (mặc định)", colors: ["#0284c7", "#7dd3fc", "#e0f2fe", "#f8fafc"] },
   { id: "rose", label: "Hồng", colors: ["#e36a6a", "#ffb2b2", "#fff2d0", "#fffbf1"] },
+  { id: "lavender", label: "Tím oải hương", colors: ["#9FA1FF", "#B5BAFF", "#AEE2FF", "#D9F9DF"] },
+  { id: "moss", label: "Xanh rêu", colors: ["#1B211A", "#628141", "#8BAE66", "#EBD5AB"] },
 ];
 const ACCENT_STORAGE_KEY = "haechivn_accent";
 

@@ -47,6 +47,43 @@ html[data-theme="light"][data-accent="rose"] {
   --c-accent: #c85b5b;
 }
 
+/* Tím oải hương: 4 màu người dùng đưa (9FA1FF, B5BAFF, AEE2FF, D9F9DF) đều là pastel nên
+   500 giữ đúng 9FA1FF, còn 600-900 là bản trộn đen để chữ trắng trên nút đủ tương phản. */
+html[data-accent="lavender"] {
+  --color-sky-50: #f4f9ff;
+  --color-sky-100: #aee2ff;
+  --color-sky-200: #d9f9df;
+  --color-sky-300: #b5baff;
+  --color-sky-400: #b5baff;
+  --color-sky-500: #9fa1ff;
+  --color-sky-600: #6c6eae;
+  --color-sky-700: #57598c;
+  --color-sky-800: #454770;
+  --color-sky-900: #343654;
+  --c-accent: #9fa1ff;
+}
+html[data-theme="light"][data-accent="lavender"] {
+  --c-accent: #6c6eae;
+}
+
+/* Xanh rêu: 1B211A là mực đậm, EBD5AB là nền cát, 8BAE66 là lá non, 628141 là màu nhấn. */
+html[data-accent="moss"] {
+  --color-sky-50: #f6f4ea;
+  --color-sky-100: #ebd5ab;
+  --color-sky-200: #cfdcbd;
+  --color-sky-300: #8bae66;
+  --color-sky-400: #8bae66;
+  --color-sky-500: #628141;
+  --color-sky-600: #536e37;
+  --color-sky-700: #465c2e;
+  --color-sky-800: #384a26;
+  --color-sky-900: #1b211a;
+  --c-accent: #628141;
+}
+html[data-theme="light"][data-accent="moss"] {
+  --c-accent: #465c2e;
+}
+
 @layer base {
   :root {
     --c-ink: #ffffff;
