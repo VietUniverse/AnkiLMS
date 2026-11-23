@@ -27,7 +27,25 @@
   --color-brand-ink: #194350;
 }
 
-
+/* Bộ màu giao diện chọn ở /profile/settings.
+   Ghi đè biến màu của Tailwind nên mọi class sky-* (nút, tab, chip, viền) đổi theo.
+   Thêm bộ mới = thêm 1 khối html[data-accent="<id>"] như dưới. */
+html[data-accent="rose"] {
+  --color-sky-50: #fffbf1;
+  --color-sky-100: #fff2d0;
+  --color-sky-200: #ffb2b2;
+  --color-sky-300: #f79b9b;
+  --color-sky-400: #ef8383;
+  --color-sky-500: #e87575;
+  --color-sky-600: #e36a6a;
+  --color-sky-700: #c85b5b;
+  --color-sky-800: #a34a4a;
+  --color-sky-900: #7f3a3a;
+  --c-accent: #e36a6a;
+}
+html[data-theme="light"][data-accent="rose"] {
+  --c-accent: #c85b5b;
+}
 
 @layer base {
   :root {

@@ -80,6 +80,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       const cached = localStorage.getItem("haechivn_feature_flags");
       if (cached) setFeatureFlags({ ...DEFAULT_FEATURE_FLAGS, ...JSON.parse(cached) });
+      // Bộ màu giao diện đã chọn: gán trước khi vẽ để không nháy màu mặc định.
+      const accent = localStorage.getItem("haechivn_accent");
+      if (accent && accent !== "blue") document.documentElement.dataset.accent = accent;
     } catch { /* không có cache thì dùng mặc định */ }
   }, []);
   const [activeStudySession, setActiveStudySession] = useState<StudySessionInfo | null>(null);

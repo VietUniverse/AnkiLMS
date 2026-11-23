@@ -7,6 +7,19 @@ import { useApp } from "../contexts/AppProvider";
 import { TranslationLanguage, useTranslationLanguage } from "../lib/translationPreference";
 
 type Reward = { id: string; name: string; description: string; icon: string; kind: "badge" | "frame" | "background"; visual: string };
+
+// Bộ màu giao diện: id khớp với html[data-accent="<id>"] trong globals.css
+const ACCENT_OPTIONS = [
+  { id: "blue", label: "Xanh dương (mặc định)", colors: ["#0284c7", "#7dd3fc", "#e0f2fe", "#f8fafc"] },
+  { id: "rose", label: "Hồng", colors: ["#e36a6a", "#ffb2b2", "#fff2d0", "#fffbf1"] },
+];
+const ACCENT_STORAGE_KEY = "haechivn_accent";
+
+function applyAccent(id: string) {
+  localStorage.setItem(ACCENT_STORAGE_KEY, id);
+  if (id === "blue") delete document.documentElement.dataset.accent;
+  else document.documentElement.dataset.accent = id;
+}
 type Equipped = { active_badge?: string | null; active_frame?: string | null; active_background?: string | null; gems?: number };
 
 function saveLocalUser(user: Record<string, unknown>) {
@@ -27,6 +40,11 @@ export function ProfileSettingsModule() {
   const [busy, setBusy] = useState("");
   const [message, setMessage] = useState("");
   const [translationLanguage, setTranslationLanguage] = useTranslationLanguage();
+  const [accent, setAccent] = useState("blue");
+
+  useEffect(() => {
+    setAccent(localStorage.getItem(ACCENT_STORAGE_KEY) || "blue");
+  }, []);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -106,7 +124,7 @@ export function ProfileSettingsModule() {
     <form onSubmit={saveProfile} className="space-y-5 rounded-2xl border border-slate-800 bg-slate-900 p-4 sm:p-6">
       <section className="flex flex-col gap-4 border-b border-slate-800 pb-5 sm:flex-row sm:items-center">
         <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-slate-700 bg-slate-950 text-2xl font-black text-white">{avatar ? <img src={avatar} alt="Ảnh đại diện hiện tại" className="h-full w-full object-cover" /> : currentUser.name.slice(0, 1).toUpperCase()}</div>
-        <div className="min-w-0 flex-1"><h2 className="font-bold text-white">Ảnh đại diện</h2><p className="mt-1 text-xs text-slate-400">JPG, PNG hoặc WebP · tối đa 2 MB</p><label className="mt-3 inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border border-sky-400/30 bg-sky-500/10 px-4 text-xs font-bold text-sky-200 hover:bg-sky-500/20">{busy === "avatar" ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}Chọn ảnh<input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={(event) => { void uploadAvatar(event.target.files?.[0]); event.currentTarget.value = ""; }} /></label></div>
+        <div className="min-w-0 flex-1"><h2 className="font-bold text-white">Ảnh đại diện</h2><p className="mt-1 text-xs text-slate-400">JPG, PNG hoặc WebP, tối đa 2 MB</p><label className="mt-3 inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border border-sky-400/30 bg-sky-500/10 px-4 text-xs font-bold text-sky-200 hover:bg-sky-500/20">{busy === "avatar" ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}Chọn ảnh<input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={(event) => { void uploadAvatar(event.target.files?.[0]); event.currentTarget.value = ""; }} /></label></div>
       </section>
 
       <div className="grid gap-4 sm:grid-cols-2"><label className="space-y-1.5"><span className="text-xs font-bold text-slate-300">Tên hiển thị</span><input value={name} onChange={(event) => setName(event.target.value)} maxLength={32} required minLength={2} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-sm text-white outline-none focus:border-sky-400" placeholder="Tên mọi người nhìn thấy" /></label><div className="space-y-1.5"><span className="text-xs font-bold text-slate-300">Email tài khoản</span><div className="rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-3 text-sm text-slate-400">{currentUser.email}</div></div></div>
@@ -115,6 +133,40 @@ export function ProfileSettingsModule() {
       <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-800 bg-slate-950/60 p-3"><input type="checkbox" checked={isPublic} onChange={(event) => setIsPublic(event.target.checked)} className="h-5 w-5 accent-sky-500" /><span className="flex-1"><span className="flex items-center gap-2 text-xs font-bold text-white">{isPublic ? <Users className="h-4 w-4 text-emerald-300" /> : <LockKeyhole className="h-4 w-4 text-amber-300" />}{isPublic ? "Cho phép mọi người xem hồ sơ" : "Hồ sơ riêng tư"}</span><span className="mt-1 block text-[11px] leading-5 text-slate-400">{isPublic ? "Hồ sơ và tiến độ tổng quan có thể được xem từ bảng xếp hạng." : "Chỉ bạn mới xem được hồ sơ và ảnh đại diện."}</span></span></label>
       <button type="submit" disabled={busy === "profile"} className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-sky-600 px-4 text-sm font-black text-white hover:bg-sky-500 disabled:opacity-60">{busy === "profile" ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}Lưu hồ sơ</button>
     </form>
+
+    <section className="space-y-4 rounded-2xl border border-slate-800 bg-slate-900 p-4 sm:p-6">
+      <div className="flex items-start gap-3">
+        <div className="rounded-xl bg-sky-400/10 p-2 text-sky-200"><Palette className="h-5 w-5" /></div>
+        <div>
+          <h2 className="font-black text-white">Màu giao diện</h2>
+          <p className="mt-1 text-xs leading-5 text-slate-400">Đổi bộ màu nhấn của toàn app (nút, tab, chip, viền). Lựa chọn lưu trên thiết bị này.</p>
+        </div>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {ACCENT_OPTIONS.map((option) => {
+          const active = accent === option.id;
+          return (
+            <button
+              key={option.id}
+              type="button"
+              aria-pressed={active}
+              onClick={() => { setAccent(option.id); applyAccent(option.id); }}
+              className={`flex min-h-11 items-center justify-between gap-3 rounded-xl border p-3 text-left transition-colors ${active ? "border-sky-400 bg-sky-500/10" : "border-slate-700 bg-slate-950/60 hover:border-sky-400/40"}`}
+            >
+              <span className="flex items-center gap-2.5">
+                <span className="flex gap-1">
+                  {option.colors.map((color) => (
+                    <span key={color} className="h-5 w-5 rounded-full border border-black/10" style={{ backgroundColor: color }} />
+                  ))}
+                </span>
+                <span className="text-xs font-bold text-white">{option.label}</span>
+              </span>
+              {active && <Check className="h-4 w-4 shrink-0 text-sky-300" />}
+            </button>
+          );
+        })}
+      </div>
+    </section>
 
     <section className="space-y-4 rounded-2xl border border-slate-800 bg-slate-900 p-4 sm:p-6"><div className="flex items-start gap-3"><div className="rounded-xl bg-fuchsia-400/10 p-2 text-fuchsia-200"><Palette className="h-5 w-5" /></div><div><h2 className="font-black text-white">Hiệu ứng trang cá nhân</h2><p className="mt-1 text-xs leading-5 text-slate-400">Trang bị những vật phẩm bạn đã đổi ở cửa hàng. Vật phẩm mới có thể mở khóa trong cửa hàng phần thưởng.</p></div></div>
       <div className="grid gap-3 sm:grid-cols-3">{effects.map((effect) => { const options = groupedRewards[effect.key]; return <label key={effect.key} className="space-y-1.5"><span className="text-xs font-bold text-slate-300">{effect.title}</span><select value={effect.current || ""} disabled={busy === effect.key} onChange={(event) => void equip(effect.key, event.target.value)} className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-xs text-white outline-none focus:border-fuchsia-400"><option value="">Không dùng</option>{options.map((item) => <option key={item.id} value={item.id}>{item.icon} {item.name}</option>)}</select></label>; })}</div>
