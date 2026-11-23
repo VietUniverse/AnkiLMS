@@ -2555,7 +2555,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
             </button>
           </div>
         </div>
-        <div className="mx-auto w-fit max-w-full rounded-2xl border-[1.5px] border-[#0f172a] bg-white px-5 py-4 text-center dark:border-[#94a3b8] dark:bg-[#101a32]">
+        <div className="mx-auto w-fit max-w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-center dark:border-[#1e3466] dark:bg-[#0f1b38]">
           <h1 className="text-sm font-black text-white sm:text-base">Lớp học của tôi</h1>
           <dl className="mt-3 grid grid-cols-3 divide-x divide-slate-200 dark:divide-white/10">
             <div className="px-5 text-center">
@@ -2672,7 +2672,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                         setSelectedClassId(cls.id);
                       }
                     }}
-                    className="cursor-pointer space-y-3 rounded-2xl border-[1.5px] border-[#0f172a] bg-white p-4 transition-colors hover:border-sky-600 dark:border-[#94a3b8] dark:bg-[#101a32]"
+                    className="cursor-pointer space-y-3 rounded-2xl border border-slate-200 bg-white p-4 transition-colors hover:border-sky-600 dark:border-[#1e3466] dark:bg-[#0f1b38]"
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-1.5">
@@ -2835,7 +2835,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                   return (
                     <article
                       key={cls.id}
-                      className="space-y-3 rounded-2xl border-[1.5px] border-[#0f172a] bg-white p-4 dark:border-[#94a3b8] dark:bg-[#101a32]"
+                      className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4 dark:border-[#1e3466] dark:bg-[#0f1b38]"
                     >
                       <div className="flex items-center justify-between gap-2">
                         <span
