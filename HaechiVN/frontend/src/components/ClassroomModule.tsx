@@ -1120,8 +1120,8 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
 
     return (
       <div className="classroom-module cm-page rd cd">
-        <div className="mb-4 w-full space-y-3">
-          <div className="mx-auto flex w-fit max-w-full items-center gap-1.5 rounded-2xl border border-slate-200 bg-white p-1.5 dark:border-[#1e3466] dark:bg-[#0f1b38]">
+        <div className="mx-auto mb-4 w-full max-w-3xl space-y-3">
+          <div className="flex w-full items-center gap-1.5 overflow-x-auto rounded-2xl border border-slate-200 bg-white p-1.5 dark:border-[#1e3466] dark:bg-[#0f1b38]">
             <button
               type="button"
               onClick={() => setSelectedClassId(null)}
@@ -1179,7 +1179,6 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
               )}
             </div>
           </div>
-        </div>
 
         {msg?.type === "error" && (
           <p className="rd-msg rd-msg--error">
@@ -1195,7 +1194,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
         )}
 
         <section
-          className="mx-auto w-fit max-w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-center dark:border-[#1e3466] dark:bg-[#0f1b38]"
+          className="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-center dark:border-[#1e3466] dark:bg-[#0f1b38]"
           aria-labelledby="cd-class-title"
         >
           <div className="flex flex-wrap items-center justify-center gap-2">
@@ -1315,6 +1314,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
             </p>
           )}
         </section>
+        </div>
 
         <div className="cd-room">
           <div className="cd-main">
