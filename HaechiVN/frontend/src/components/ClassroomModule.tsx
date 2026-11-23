@@ -1479,68 +1479,94 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
             )}
 
             {activeTab === "leaderboard" && (
-              <section className="cd-panel" aria-label="Bảng xếp hạng">
-                <div className="cd-core">
-                  <div className="cd-panel-head">
-                    <h2>Bảng xếp hạng</h2>
-                    <p className="cd-section-note">{rankedStudents.length} học viên</p>
-                  </div>
+              <section
+                className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-[#1e3466] dark:bg-[#0f1b38]"
+                aria-label="Bảng xếp hạng"
+              >
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <h2 className="text-sm font-black text-white">Bảng xếp hạng</h2>
+                  <p className="text-[11px] font-bold text-slate-700">{rankedStudents.length} học viên</p>
+                </div>
 
-                  {rankedStudents.length === 0 ? (
-                    <p className="cd-empty-line">Chưa có học viên nào trong bảng xếp hạng.</p>
-                  ) : (
-                    <>
-                      <div className="cd-highlight">
-                        <Trophy className="h-4 w-4" />
+                {rankedStudents.length === 0 ? (
+                  <div className="mt-4 rounded-xl border border-dashed border-slate-200 px-4 py-8 text-center dark:border-white/15">
+                    <Trophy className="mx-auto h-6 w-6 text-slate-400" />
+                    <p className="mt-2 text-xs font-semibold text-slate-700">Chưa có học viên nào trong bảng xếp hạng.</p>
+                  </div>
+                ) : (
+                  <>
+                    <p className="mt-3 flex items-start gap-2 rounded-xl bg-slate-50 px-3 py-2 text-[11px] font-bold text-slate-700 dark:bg-white/5">
+                      <Trophy className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-600" />
+                      <span>
                         {myRankIndex === 0
                           ? `Bạn đang đứng đầu lớp với ${myCompletedCount}/${totalAssignments} bài tập.`
                           : `${rankedStudents[0].name} đang dẫn đầu lớp với ${
                               rankedStudents[0].completedAssignments?.length || 0
                             }/${totalAssignments} bài tập.`}
-                      </div>
-                      <div className="cd-leaders">
-                        {rankedStudents.map((member, index) => {
-                          const done = member.completedAssignments?.length || 0;
-                          const pct = percentOf(done, totalAssignments);
-                          const isYou = member.id === currentUser?.id;
-                          return (
-                            <div key={member.id} className={`cd-leader ${isYou ? "is-you" : ""}`}>
-                              <span className="cd-rank">{String(index + 1).padStart(2, "0")}</span>
-                              <span className="rd-avatar cd-avatar-lg">{initialsOf(member.name)}</span>
-                              <div className="cd-leader-copy">
-                                <span className="cd-leader-name">
-                                  <Link href={`/member?id=${encodeURIComponent(member.id)}`}>{member.name}</Link>
-                                  {isYou && <span className="cd-you">Bạn</span>}
-                                </span>
-                                <span className="cd-leader-role">
-                                  Học viên · {member.xp} XP · {member.streak} ngày
-                                </span>
-                              </div>
-                              <div className="cd-leader-score">
-                                <strong>
-                                  {done}/{totalAssignments}
-                                </strong>
-                                <span>{pct}%</span>
-                              </div>
+                      </span>
+                    </p>
+
+                    <div className="mt-3 divide-y divide-slate-200 dark:divide-white/10">
+                      {rankedStudents.map((member, index) => {
+                        const done = member.completedAssignments?.length || 0;
+                        const pct = percentOf(done, totalAssignments);
+                        const isYou = member.id === currentUser?.id;
+                        return (
+                          <div
+                            key={member.id}
+                            className={`flex items-center gap-3 py-2.5 ${isYou ? "rounded-xl bg-sky-50 px-2 dark:bg-sky-500/10" : ""}`}
+                          >
+                            <span className="w-6 shrink-0 text-xs font-black text-slate-500">
+                              {String(index + 1).padStart(2, "0")}
+                            </span>
+                            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-[11px] font-black text-slate-700 dark:bg-white/10 dark:text-slate-200">
+                              {initialsOf(member.name)}
+                            </span>
+                            <div className="min-w-0 flex-1">
+                              <span className="flex flex-wrap items-center gap-1.5 text-xs font-black text-white">
+                                <Link href={`/member?id=${encodeURIComponent(member.id)}`} className="truncate hover:underline">
+                                  {member.name}
+                                </Link>
+                                {isYou && (
+                                  <span className="rounded-full bg-sky-100 px-1.5 py-0.5 text-[10px] font-black text-sky-800">
+                                    Bạn
+                                  </span>
+                                )}
+                              </span>
+                              <span className="mt-0.5 block text-[11px] font-semibold text-slate-700">
+                                Học viên, {member.xp} XP, {member.streak} ngày
+                              </span>
                             </div>
-                          );
-                        })}
-                        {myMemberRecord && myMemberRecord.role !== "student" && (
-                          <div className="cd-leader cd-leader--staff">
-                            <span className="cd-rank">—</span>
-                            <span className="rd-avatar cd-avatar-lg">{initialsOf(myMemberRecord.name)}</span>
-                            <div className="cd-leader-copy">
-                              <span className="cd-leader-name">{myMemberRecord.name}</span>
-                              <span className="cd-leader-role">{roleLabel}</span>
+                            <div className="shrink-0 text-right">
+                              <strong className="block text-xs font-black text-white">
+                                {done}/{totalAssignments}
+                              </strong>
+                              <span className="text-[11px] font-bold text-slate-700">{pct}%</span>
                             </div>
-                            <span className="rd-tag">Phụ trách</span>
                           </div>
-                        )}
-                      </div>
-                      <p className="cd-hint-line">Giáo viên không tham gia xếp hạng. Bảng chỉ tính học viên trong lớp.</p>
-                    </>
-                  )}
-                </div>
+                        );
+                      })}
+                      {myMemberRecord && myMemberRecord.role !== "student" && (
+                        <div className="flex items-center gap-3 py-2.5">
+                          <span className="w-6 shrink-0 text-xs font-black text-slate-500">—</span>
+                          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-[11px] font-black text-slate-700 dark:bg-white/10 dark:text-slate-200">
+                            {initialsOf(myMemberRecord.name)}
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <span className="block text-xs font-black text-white">{myMemberRecord.name}</span>
+                            <span className="mt-0.5 block text-[11px] font-semibold text-slate-700">{roleLabel}</span>
+                          </div>
+                          <span className="shrink-0 rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black text-slate-700 dark:bg-white/10 dark:text-slate-200">
+                            Phụ trách
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <p className="mt-3 text-[11px] font-semibold text-slate-700">
+                      Giáo viên không tham gia xếp hạng, bảng chỉ tính học viên trong lớp.
+                    </p>
+                  </>
+                )}
               </section>
             )}
 
