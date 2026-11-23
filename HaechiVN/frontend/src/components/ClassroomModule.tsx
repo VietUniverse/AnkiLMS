@@ -1319,39 +1319,40 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
         <div className="cd-room">
           <div className="cd-main">
             {activeTab === "assignments" && (
-              <section className="cd-panel" aria-label="Bài tập của lớp">
-                <div className="cd-core">
-                  <div className="cd-panel-head">
-                    <h2>Bài tập của lớp</h2>
-                    <p className="cd-section-note">
-                      {selectedClass.assignments.length} bài · {totalCardCount} thẻ
-                    </p>
-                  </div>
+              <section
+                className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-[#1e3466] dark:bg-[#0f1b38]"
+                aria-label="Bài tập của lớp"
+              >
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <h2 className="text-sm font-black text-white">Bài tập của lớp</h2>
+                  <p className="text-[11px] font-bold text-slate-700">
+                    {selectedClass.assignments.length} bài, {totalCardCount} thẻ
+                  </p>
+                </div>
 
-                  {selectedClass.assignments.length === 0 ? (
-                    <div className="cd-empty">
-                      <span className="cd-empty-icon">
-                        <Layers className="h-6 w-6" />
-                      </span>
-                      <h3>Chưa có bài tập nào được giao</h3>
-                      <p>
-                        {canManageClass
-                          ? "Giao một bộ thẻ Anki hoặc bài học có sẵn để học viên bắt đầu ôn luyện trong mục Từ vựng."
-                          : "Khi giáo viên giao bộ thẻ, bạn sẽ học và theo dõi tiến độ ngay trong mục Từ vựng."}
-                      </p>
-                      {canManageClass && (
-                        <button
-                          type="button"
-                          className="rd-btn rd-btn-primary"
-                          onClick={openAssignModal}
-                        >
-                          <Plus className="h-4 w-4" />
-                          Giao bộ thẻ đầu tiên
-                        </button>
-                      )}
-                    </div>
-                  ) : (
-                    selectedClass.assignments.map((asg) => {
+                {selectedClass.assignments.length === 0 ? (
+                  <div className="mt-4 rounded-xl border border-dashed border-slate-200 px-4 py-8 text-center dark:border-white/15">
+                    <Layers className="mx-auto h-6 w-6 text-slate-400" />
+                    <h3 className="mt-2 text-sm font-black text-white">Chưa có bài tập nào được giao</h3>
+                    <p className="mx-auto mt-1 max-w-md text-xs font-semibold leading-5 text-slate-700">
+                      {canManageClass
+                        ? "Giao một bộ thẻ Anki hoặc bài học có sẵn để học viên bắt đầu ôn luyện trong mục Từ vựng."
+                        : "Khi giáo viên giao bộ thẻ, bạn sẽ học và theo dõi tiến độ ngay trong mục Từ vựng."}
+                    </p>
+                    {canManageClass && (
+                      <button
+                        type="button"
+                        className="mt-4 inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-sky-700 px-4 py-2 text-xs font-black text-white transition-colors hover:bg-sky-600"
+                        onClick={openAssignModal}
+                      >
+                        <Plus className="h-4 w-4" />
+                        Giao bộ thẻ đầu tiên
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="mt-4 grid gap-3">
+                    {selectedClass.assignments.map((asg) => {
                       const myPct = percentOf(asg.reviewedCards || 0, asg.totalCards || 0);
                       const rows = (asg.progress || [])
                         .map((point) => ({ ...point, percent: percentOf(point.reviewedCards, point.totalCards) }))
@@ -1365,46 +1366,55 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                         : asg.completed;
 
                       return (
-                        <article key={asg.id} className={`cd-assignment ${isDone ? "is-done" : ""}`}>
-                          <div className="cd-assignment-top">
-                            <span className={`rd-tag ${isDone ? "cd-tag--done" : "cd-tag--open"}`}>
+                        <article key={asg.id} className="rounded-xl border border-slate-200 p-4 dark:border-white/10">
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span
+                              className={`rounded-full px-2.5 py-1 text-[10px] font-black ${
+                                isDone ? "bg-emerald-100 text-emerald-800" : "bg-sky-100 text-sky-800"
+                              }`}
+                            >
                               {isDone ? "Hoàn thành" : "Đang mở"}
                             </span>
-                            <span className="rd-tag">{asg.totalCards ?? 0} thẻ</span>
-                            <span className="rd-tag">
+                            <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black text-slate-700 dark:bg-white/10 dark:text-slate-200">
+                              {asg.totalCards ?? 0} thẻ
+                            </span>
+                            <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black text-slate-700 dark:bg-white/10 dark:text-slate-200">
                               {dueModeLabel(asg, canManageClass)}
                             </span>
                           </div>
 
-                          <h3 className="cd-assignment-title">{asg.title}</h3>
-                          <p className="cd-assignment-desc">{asg.deckName}</p>
+                          <h3 className="mt-2 text-sm font-black text-white">{asg.title}</h3>
+                          <p className="mt-0.5 text-xs font-semibold text-slate-700">{asg.deckName}</p>
 
                           {canManageClass ? (
                             <>
-                              <div className="rd-progress" aria-hidden="true">
-                                <span style={{ width: `${avg}%` }} />
+                              <div
+                                className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-200 dark:bg-white/10"
+                                aria-hidden="true"
+                              >
+                                <span className="block h-full rounded-full bg-sky-600" style={{ width: `${avg}%` }} />
                               </div>
-                              <div className="rd-progress-meta">
+                              <div className="mt-1.5 flex flex-wrap justify-between gap-2 text-[11px] font-bold text-slate-700">
                                 <span>
-                                  <strong>{doneCount}</strong>/{rows.length} học viên hoàn thành
+                                  <strong className="text-white">{doneCount}</strong>/{rows.length} học viên hoàn thành
                                 </span>
                                 <span>TB tiến độ {avg}%</span>
                               </div>
 
                               {rows.length === 0 && (
-                                <p className="cd-muted">
-                                  Chưa có dữ liệu tiến độ. Học viên cần mở bộ thẻ trong mục Từ vựng.
+                                <p className="mt-2 text-[11px] font-semibold text-slate-700">
+                                  Chưa có dữ liệu tiến độ, học viên cần mở bộ thẻ trong mục Từ vựng.
                                 </p>
                               )}
 
-                              <div className="cd-assignment-foot">
-                                <span className="cd-soft">
+                              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-slate-200 pt-3 dark:border-white/10">
+                                <span className="text-[11px] font-semibold text-slate-700">
                                   {asg.assignedBy ? `Giao bởi ${asg.assignedBy}` : `${asg.totalCards ?? 0} thẻ`}
                                 </span>
-                                <div className="cd-inline-actions">
+                                <div className="flex items-center gap-2">
                                   <button
                                     type="button"
-                                    className="rd-btn cd-btn-secondary cd-btn-sm"
+                                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-black text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#1e3466] dark:bg-[#0f1b38] dark:text-slate-200"
                                     onClick={() => openEditAssignment(asg)}
                                   >
                                     <Pencil className="h-3.5 w-3.5" />
@@ -1412,7 +1422,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                                   </button>
                                   <button
                                     type="button"
-                                    className="rd-btn cd-btn-secondary cd-btn-sm"
+                                    className="cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-black text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#1e3466] dark:bg-[#0f1b38] dark:text-slate-200"
                                     onClick={() => setProgressAssignmentId(asg.id)}
                                   >
                                     Xem tiến độ
@@ -1422,17 +1432,24 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                             </>
                           ) : (
                             <>
-                              <div className="rd-progress" aria-hidden="true">
-                                <span style={{ width: `${myPct}%` }} />
+                              <div
+                                className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-200 dark:bg-white/10"
+                                aria-hidden="true"
+                              >
+                                <span className="block h-full rounded-full bg-sky-600" style={{ width: `${myPct}%` }} />
                               </div>
-                              <div className="rd-progress-meta">
+                              <div className="mt-1.5 flex flex-wrap justify-between gap-2 text-[11px] font-bold text-slate-700">
                                 <span>
-                                  <strong>{asg.reviewedCards || 0}</strong>/{asg.totalCards || 0} thẻ
+                                  <strong className="text-white">{asg.reviewedCards || 0}</strong>/{asg.totalCards || 0} thẻ
                                 </span>
                                 <span>{myPct}%</span>
                               </div>
-                              <div className="cd-assignment-foot">
-                                <span className={`cd-done ${isDone ? "" : "is-muted"}`}>
+                              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-slate-200 pt-3 dark:border-white/10">
+                                <span
+                                  className={`inline-flex items-center gap-1.5 text-[11px] font-bold ${
+                                    isDone ? "text-emerald-700" : "text-slate-700"
+                                  }`}
+                                >
                                   {isDone ? (
                                     <>
                                       <CheckCircle2 className="h-3.5 w-3.5" />
@@ -1443,7 +1460,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                                   )}
                                 </span>
                                 <a
-                                  className="rd-btn cd-btn-secondary cd-btn-sm"
+                                  className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-black text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#1e3466] dark:bg-[#0f1b38] dark:text-slate-200"
                                   href={`/flashcards?assignment=${encodeURIComponent(asg.id)}&classId=${encodeURIComponent(
                                     selectedClass.id
                                   )}`}
@@ -1455,9 +1472,9 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                           )}
                         </article>
                       );
-                    })
-                  )}
-                </div>
+                    })}
+                  </div>
+                )}
               </section>
             )}
 
