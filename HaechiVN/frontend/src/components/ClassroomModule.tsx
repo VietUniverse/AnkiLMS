@@ -1206,7 +1206,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                 value={selectedClass.visibility}
                 onChange={(e) => handleVisibilityChange(e.target.value as ClassVisibility)}
                 title="Quyền truy cập của lớp"
-                className="cd-select cursor-pointer rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[10px] font-black text-slate-700 dark:border-white/10 dark:bg-[#132247] dark:text-slate-200"
+                className="cd-select cursor-pointer rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 font-sans text-[10px] font-black text-slate-700 dark:border-white/10 dark:bg-[#132247] dark:text-slate-200"
               >
                 {CLASS_VISIBILITY_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
