@@ -699,9 +699,12 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
     setAssignDeckActive(-1);
   };
 
+  // Giữ query hiện tại (?demo=1) khi đổi route.
+  const currentSearch = () => (typeof window === "undefined" ? "" : window.location.search);
+
   const goToAssignPage = () => {
     if (!assignPage && selectedClass?.code) {
-      router.push(`/classes/${encodeURIComponent(selectedClass.code)}/assign`);
+      router.push(`/classes/${encodeURIComponent(selectedClass.code)}/assign${currentSearch()}`);
       return;
     }
     openAssignModal();
@@ -932,7 +935,9 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
     setShowAssignModal(false);
     setEditAssignmentId(null);
     // Ở chế độ trang, đóng form = quay lại trang lớp.
-    if (assignPage && selectedClass?.code) router.push(`/classes/${encodeURIComponent(selectedClass.code)}`);
+    if (assignPage && selectedClass?.code) {
+      router.push(`/classes/${encodeURIComponent(selectedClass.code)}${currentSearch()}`);
+    }
   };
 
   // Một khung duy nhất cho 2 chế độ: tạo mới dùng state assign*, sửa dùng state editAssignment*.
