@@ -82,7 +82,11 @@ export default function NotificationsPage() {
               type="button"
               onClick={markAll}
               disabled={busy || unread === 0}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-sky-700 px-3 py-2 text-[11px] font-black text-white transition-colors hover:bg-sky-600 disabled:cursor-not-allowed disabled:opacity-50"
+              className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-[11px] font-black transition-colors ${
+                busy || unread === 0
+                  ? "cursor-not-allowed bg-slate-200 text-slate-500 dark:bg-white/10 dark:text-slate-400"
+                  : "cursor-pointer bg-sky-700 text-white hover:bg-sky-600"
+              }`}
             >
               {busy ? <LoaderCircle className="h-3.5 w-3.5 animate-spin" /> : <CheckCheck className="h-3.5 w-3.5" />}
               Đọc tất cả
