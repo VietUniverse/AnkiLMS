@@ -878,6 +878,10 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
     setAssignRecipients(null);
     setAssignDueMode("date");
     setAssignDurationDays("7");
+    // Ở chế độ trang: giao xong quay về trang lớp để thấy bài vừa giao.
+    if (assignPage && selectedClass?.code) {
+      router.push(`/classes/${encodeURIComponent(selectedClass.code)}${currentSearch()}`);
+    }
   };
 
   const openEditAssignment = (assignment: ClassAssignment) => {
@@ -2359,7 +2363,19 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                 </div>
                 )}
 
-                <div className="flex items-center justify-end gap-3 border-t border-slate-200 pt-3 dark:border-white/10">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-3 dark:border-white/10">
+                  <p className="text-[11px] font-semibold text-slate-700">
+                    {assignmentForm.title.trim().length < 3
+                      ? "Nhập tiêu đề bài tập (ít nhất 3 ký tự)."
+                      : assignmentFormIsCreate && (!selectedAssignmentDeck || !isAssignableAssignmentDeck(selectedAssignmentDeck))
+                        ? "Chọn một bộ thẻ để giao."
+                        : assignmentForm.recipients !== null && assignmentForm.recipients.length === 0
+                          ? "Chọn ít nhất một học viên hoặc giao cho cả lớp."
+                          : canManageClass && approvedMembers.filter((m) => m.role === "student").length === 0
+                            ? "Lớp chưa có học viên, bài sẽ dành cho học viên vào lớp sau."
+                            : ""}
+                  </p>
+                  <div className="flex items-center gap-3">
                   <button
                     type="button"
                     onClick={() => closeAssignmentForm()}
@@ -2390,6 +2406,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                       assignmentFormIsCreate ? "Giao Cho Lớp" : "Lưu thay đổi"
                     )}
                   </button>
+                  </div>
                 </div>
               </form>
             </div>
