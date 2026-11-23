@@ -2152,9 +2152,9 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                         {assignmentDecks.length === 0 ? (
                           <p className="cd-deck-empty">
                             Thư viện của bạn chưa có bộ thẻ nào.{" "}
-                            <a href="/vocabulary" target="_blank" rel="noreferrer" style={{ color: "var(--c-accent)", fontWeight: 700 }}>
+                            <Link href="/explore" className="font-bold text-sky-700 hover:underline dark:text-sky-300">
                               Thêm bộ thẻ
-                            </a>{" "}
+                            </Link>{" "}
                             rồi quay lại giao bài.
                           </p>
                         ) : assignmentDeckFlat.length === 0 ? (
