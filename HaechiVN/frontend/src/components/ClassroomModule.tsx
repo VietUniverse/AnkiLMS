@@ -1988,14 +1988,14 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
               }
             >
               <div className="flex items-center justify-between gap-2">
-                <h3 className="text-lg font-black text-white flex items-center gap-2">
-                  <Pencil className="w-5 h-5 text-amber-400" />
+                <h3 className="flex items-center gap-2 text-sm font-black text-white">
+                  <Pencil className="h-4 w-4 text-slate-500" />
                   <span>{assignmentFormIsCreate ? "Giao bài tập & bộ thẻ" : "Sửa bài tập"}</span>
                 </h3>
                 <button
                   type="button"
                   onClick={() => closeAssignmentForm()}
-                  className="text-slate-400 hover:text-white p-1"
+                  className="cursor-pointer rounded-lg p-1 text-slate-500 hover:bg-slate-100 dark:hover:bg-white/5"
                   aria-label="Đóng"
                 >
                   <X className="w-5 h-5" />
@@ -2004,7 +2004,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
 
               <form onSubmit={assignmentFormIsCreate ? handleAssignDeck : handleUpdateAssignment} className="space-y-4">
                 <div>
-                  <label className="text-xs font-bold text-slate-300 block mb-1">Tiêu đề bài tập</label>
+                  <label className="mb-1 block text-[11px] font-bold text-slate-700">Tiêu đề bài tập</label>
                   <input
                     type="text"
                     required
@@ -2013,13 +2013,13 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                     placeholder={assignmentFormIsCreate ? "Ví dụ: Ôn tập Từ vựng Bài 01 - 03" : undefined}
                     value={assignmentForm.title}
                     onChange={(e) => assignmentForm.setTitle(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#132247] border border-[#1e3a70] text-white text-xs font-bold"
+                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs font-bold text-slate-900 outline-none focus:border-sky-600 dark:border-white/10 dark:bg-[#132247] dark:text-white"
                   />
                 </div>
 
                 {assignmentFormIsCreate && (
                 <div>
-                  <label htmlFor="assignDeckSearch" className="text-xs font-bold text-slate-300 block mb-1">Bộ Thẻ *</label>
+                  <label htmlFor="assignDeckSearch" className="mb-1 block text-[11px] font-bold text-slate-700">Bộ Thẻ *</label>
                   <div className="cd-deck-picker" ref={deckPickerRef}>
                     <div className="cd-deck-field">
                       <Search className="h-4 w-4" aria-hidden="true" />
@@ -2105,41 +2105,41 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                 )}
 
                 <div>
-                  <label className="text-xs font-bold text-slate-300 block mb-1">Hạn nộp</label>
+                  <label className="mb-1 block text-[11px] font-bold text-slate-700">Hạn nộp</label>
                   <div className="mb-2 grid grid-cols-3 gap-2">
                     <button
                       type="button"
                       onClick={() => assignmentForm.setDueMode("date")}
-                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${assignmentForm.dueMode === "date" ? "border-sky-500/60 bg-sky-500/20" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`} style={assignmentForm.dueMode === "date" ? { color: "var(--c-ink)" } : undefined}
+                      className={`cursor-pointer rounded-xl border px-3 py-2 text-[11px] font-bold ${assignmentForm.dueMode === "date" ? "border-sky-600 bg-sky-50 text-sky-800 dark:border-sky-700 dark:bg-sky-900/40 dark:text-white" : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-white/10 dark:bg-[#132247] dark:text-slate-300"}`}
                     >
                       Chọn ngày cụ thể
                     </button>
                     <button
                       type="button"
                       onClick={() => assignmentForm.setDueMode("duration")}
-                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${assignmentForm.dueMode === "duration" ? "border-sky-500/60 bg-sky-500/20" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`} style={assignmentForm.dueMode === "duration" ? { color: "var(--c-ink)" } : undefined}
+                      className={`cursor-pointer rounded-xl border px-3 py-2 text-[11px] font-bold ${assignmentForm.dueMode === "duration" ? "border-sky-600 bg-sky-50 text-sky-800 dark:border-sky-700 dark:bg-sky-900/40 dark:text-white" : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-white/10 dark:bg-[#132247] dark:text-slate-300"}`}
                     >
                       Số ngày hoàn thành
                     </button>
                     <button
                       type="button"
                       onClick={() => assignmentForm.setDueMode("none")}
-                      className={`rounded-xl border px-3 py-2 text-[11px] font-bold ${assignmentForm.dueMode === "none" ? "border-sky-500/60 bg-sky-500/20" : "border-[#1e3a70] bg-[#132247] text-slate-300"}`} style={assignmentForm.dueMode === "none" ? { color: "var(--c-ink)" } : undefined}
+                      className={`cursor-pointer rounded-xl border px-3 py-2 text-[11px] font-bold ${assignmentForm.dueMode === "none" ? "border-sky-600 bg-sky-50 text-sky-800 dark:border-sky-700 dark:bg-sky-900/40 dark:text-white" : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-white/10 dark:bg-[#132247] dark:text-slate-300"}`}
                     >
                       Không hạn
                     </button>
                   </div>
                   {assignmentForm.dueMode === "none" ? (
-                    <p className="text-[11px] text-slate-400">Học viên học lúc nào cũng được, không tính hạn.</p>
+                    <p className="text-[11px] font-semibold text-slate-700">Học viên học lúc nào cũng được, không tính hạn.</p>
                   ) : assignmentForm.dueMode === "date" ? (
                     <>
                       <input
                         type="date"
                         value={assignmentForm.dueDate}
                         onChange={(e) => assignmentForm.setDueDate(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#132247] border border-[#1e3a70] text-white text-xs font-bold"
+                        className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs font-bold text-slate-900 outline-none focus:border-sky-600 dark:border-white/10 dark:bg-[#132247] dark:text-white"
                       />
-                      <p className="text-[11px] text-slate-400 mt-1">Để trống nếu bài tập không đặt hạn.</p>
+                      <p className="mt-1 text-[11px] font-semibold text-slate-700">Để trống nếu bài tập không đặt hạn.</p>
                     </>
                   ) : (
                     <>
@@ -2150,9 +2150,9 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                           max={365}
                           value={assignmentForm.durationDays}
                           onChange={(e) => assignmentForm.setDurationDays(e.target.value)}
-                          className="w-full px-3.5 py-2.5 rounded-xl bg-[#132247] border border-[#1e3a70] text-white text-xs font-bold"
+                          className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs font-bold text-slate-900 outline-none focus:border-sky-600 dark:border-white/10 dark:bg-[#132247] dark:text-white"
                         />
-                        <span className="text-xs font-bold text-slate-300">ngày</span>
+                        <span className="text-[11px] font-bold text-slate-700">ngày</span>
                       </div>
                       <p className="text-[11px] text-slate-400 mt-1">
                         Học viên vào lớp sau sẽ có đủ {Number(assignmentForm.durationDays) || 7} ngày kể từ ngày tham gia.
@@ -2161,10 +2161,10 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                   )}
                 </div>
 
-                <div className="rounded-2xl border border-[#1e3a70] bg-[#132247]/60 p-3">
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-white/10 dark:bg-white/5">
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="text-xs font-bold text-slate-200">Giao cho</p>
+                      <p className="text-xs font-black text-white">Giao cho</p>
                       <p className="mt-0.5 text-[11px] text-slate-400">
                         {assignmentForm.recipients === null
                           ? `Cả lớp · ${assignableStudents.length} học viên`
@@ -2176,7 +2176,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                     <button
                       type="button"
                       onClick={() => assignmentForm.setRecipients(null)}
-                      className={`shrink-0 rounded-full px-3 py-1.5 text-[10px] font-bold transition ${assignmentForm.recipients === null ? "bg-sky-500 text-white" : "bg-slate-800 text-slate-300 hover:text-white"}`}
+                      className={`shrink-0 rounded-full px-3 py-1.5 text-[10px] font-bold transition ${assignmentForm.recipients === null ? "bg-sky-700 text-white" : "bg-slate-200 text-slate-700 hover:bg-slate-300 dark:bg-white/10 dark:text-slate-200"}`}
                     >
                       Cả lớp
                     </button>
@@ -2191,13 +2191,13 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                       return (
                         <label
                           key={student.id}
-                          className={`flex cursor-pointer items-center gap-3 rounded-xl border px-3 py-2 transition ${checked ? "border-sky-400/60 bg-sky-500/10" : "border-[#1e3a70] bg-[#132247] hover:border-slate-600"}`}
+                          className={`flex cursor-pointer items-center gap-3 rounded-xl border px-3 py-2 transition ${checked ? "border-sky-600 bg-sky-50 dark:border-sky-500 dark:bg-sky-500/10" : "border-slate-200 bg-white hover:bg-slate-50 dark:border-white/10 dark:bg-[#132247] dark:hover:bg-white/5"}`}
                         >
                           <input
                             type="checkbox"
                             checked={checked}
                             onChange={() => assignmentForm.toggleRecipient(student.id)}
-                            className="h-4 w-4 shrink-0 accent-sky-500"
+                            className="h-4 w-4 shrink-0 accent-sky-600"
                           />
                           <span className="min-w-0">
                             <span className="block truncate text-xs font-bold text-white">{student.name}</span>
@@ -2213,10 +2213,10 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                 </div>
 
                 {!assignmentFormIsCreate && (
-                <div className="rounded-2xl border border-[#1e3a70] bg-[#132247]/60 p-3">
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-white/10 dark:bg-white/5">
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="text-xs font-bold text-slate-200">Bộ thẻ đã giao</p>
+                      <p className="text-xs font-black text-white">Bộ thẻ đã giao</p>
                       <p className="mt-0.5 truncate text-[11px] text-slate-400">
                         {editAssignmentDeckName || "Chưa có tên bộ thẻ"}
                         {editAssignmentCards ? ` · ${editAssignmentCards.length} thẻ` : ""}
@@ -2260,11 +2260,11 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                 </div>
                 )}
 
-                <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-800">
+                <div className="flex items-center justify-end gap-3 border-t border-slate-200 pt-3 dark:border-white/10">
                   <button
                     type="button"
                     onClick={() => closeAssignmentForm()}
-                    className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-bold text-xs"
+                    className="cursor-pointer rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-black text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#1e3466] dark:bg-[#0f1b38] dark:text-slate-200"
                   >
                     Hủy
                   </button>
@@ -2280,7 +2280,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                           Number(assignmentForm.durationDays) < 1 ||
                           Number(assignmentForm.durationDays) > 365))
                     }
-                    className="cm-btn cm-btn--primary text-xs disabled:cursor-not-allowed disabled:opacity-50"
+                    className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-sky-700 px-4 py-2 text-xs font-black text-white transition-colors hover:bg-sky-600 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {savingAssignmentEdit ? (
                       <>
@@ -2828,7 +2828,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
       {showCreateModal && (
         <div className="cd-modal fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
           <div className="cd-modal-card card-duo p-6 bg-[#0f1b38] border-[#1e3466] max-w-md w-full space-y-4 shadow-2xl animate-scaleUp">
-            <h3 className="text-lg font-black text-white flex items-center gap-2">
+            <h3 className="flex items-center gap-2 text-sm font-black text-white">
               <Plus className="w-5 h-5 text-amber-600" />
               <span>Tạo Lớp Học Mới</span>
             </h3>
@@ -2837,7 +2837,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
 
             <form onSubmit={handleCreateClass} className="space-y-4">
               <div>
-                <label className="text-xs font-bold text-slate-300 block mb-1">Tên Lớp Học *</label>
+                <label className="mb-1 block text-[11px] font-bold text-slate-700">Tên Lớp Học *</label>
                 <input
                   type="text"
                   required
@@ -2849,7 +2849,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-300 block mb-1">Chế độ hiển thị *</label>
+                <label className="mb-1 block text-[11px] font-bold text-slate-700">Chế độ hiển thị *</label>
                 <div className="space-y-2">
                   {CLASS_VISIBILITY_OPTIONS.map((option) => {
                     const selected = newClassVisibility === option.value;
@@ -2876,7 +2876,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-300 block mb-1">Mô tả Lớp Học</label>
+                <label className="mb-1 block text-[11px] font-bold text-slate-700">Mô tả Lớp Học</label>
                 <textarea
                   rows={3}
                   placeholder="Mô tả mục tiêu học tập, lịch ôn luyện..."
@@ -2886,7 +2886,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-800">
+              <div className="flex items-center justify-end gap-3 border-t border-slate-200 pt-3 dark:border-white/10">
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
