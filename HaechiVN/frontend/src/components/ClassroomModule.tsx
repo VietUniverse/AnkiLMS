@@ -1319,7 +1319,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
         </section>
         </div>
 
-        <div className="cd-room">
+        <div className="cd-room mx-auto w-full max-w-3xl">
           <div className="cd-main">
             {activeTab === "assignments" && (
               <section
