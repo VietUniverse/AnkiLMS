@@ -147,9 +147,11 @@ html[data-theme="light"] .topik-apple .ta-hero-aside { background-color: transpa
   color: #d2d2d7;
   font-size: 13px;
   text-align: left;
-  transition: color 160ms ease, padding-left 160ms ease;
+  transition: color 160ms ease;
 }
-.ta-jump:hover { color: #ffffff; padding-left: 8px; }
+.ta-jump > * { transition: transform 160ms ease; }
+.ta-jump:hover { color: #ffffff; }
+.ta-jump:hover > * { transform: translateX(4px); }
 .ta-jump .num { font-family: var(--ta-mono); font-size: 10px; color: #6e6e73; }
 .ta-jump .lbl { flex: 1 1 auto; }
 .ta-jump .time { font-family: var(--ta-mono); font-size: 10px; color: #6e6e73; }
@@ -371,7 +373,7 @@ html[data-theme="light"] .topik-apple .ta-hero-aside { background-color: transpa
   font-family: var(--ta-ko);
   font-size: 15px;
   line-height: 1.6;
-  transition: border-color 160ms ease, box-shadow 160ms ease;
+  transition: border-color 160ms ease;
 }
 .ta-input:focus,
 .ta-textarea:focus { outline: none; border-color: var(--ta-accent); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ta-accent) 22%, transparent); }
