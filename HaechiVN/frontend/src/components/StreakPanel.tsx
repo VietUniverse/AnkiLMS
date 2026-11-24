@@ -114,10 +114,10 @@ export function StreakPanel({ data, streak, longestStreak, publicView = false }:
         <button
           onClick={() => setShowMonth(!showMonth)}
           aria-expanded={showMonth}
-          className="flex w-full items-center justify-between text-sm font-bold text-stone-700 dark:text-stone-200 cursor-pointer"
+          className="group flex w-full items-center justify-between rounded-lg px-1 py-1 text-sm font-bold text-stone-700 transition-colors hover:bg-stone-100 hover:text-stone-900 dark:text-stone-200 dark:hover:bg-stone-800/60 dark:hover:text-white cursor-pointer"
         >
           Lịch tháng
-          <ChevronRight className={`h-4 w-4 text-stone-400 transition-transform ${showMonth ? "rotate-90" : ""}`} />
+          <ChevronRight className={`h-4 w-4 transition-transform group-hover:text-stone-700 dark:group-hover:text-white ${showMonth ? "rotate-90" : ""} text-stone-400`} />
         </button>
         {showMonth && (
           <div className="mt-3 space-y-3">
