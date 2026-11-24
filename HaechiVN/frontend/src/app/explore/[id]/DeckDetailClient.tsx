@@ -6,6 +6,7 @@ import Link from "next/link";
 import { AppShell } from "../../../components/AppShell";
 import { useApp } from "../../../contexts/AppProvider";
 import { CURATED_DECKS, curatedDeckToAnkiDeck, IS_DEMO_DECKS_ENABLED, sharedDeckToExploreDeck } from "../../../data/curatedDecks";
+import { activateProps } from "../../../lib/a11y";
 import { deckTransitionName } from "../../../lib/viewTransition";
 import { DeckIcon } from "../../../components/DeckIcon";
 import { speakKorean } from "../../../lib/koreanSpeech";
@@ -231,7 +232,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
 
   const authorRow = (
     <div className="flex items-center gap-3">
-      <img src={deck.author.avatar} alt={deck.author.name} className="w-9 h-9 rounded-full object-cover shrink-0" />
+      <img src={deck.author.avatar} alt={deck.author.name} width={36} height={36} loading="lazy" decoding="async" className="w-9 h-9 rounded-full object-cover shrink-0" />
       <div className="min-w-0">
         <div className="flex items-center gap-1.5">
           <span className="font-bold text-sm text-stone-900 dark:text-white truncate">{deck.author.name}</span>
@@ -348,7 +349,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
             </div>
 
             <div
-              onClick={() => setIsPreviewFlipped(!isPreviewFlipped)}
+              {...activateProps(() => setIsPreviewFlipped(!isPreviewFlipped))}
               className="relative cursor-pointer min-h-[200px] sm:min-h-[240px] rounded-2xl bg-stone-50 dark:bg-stone-800/70 px-6 py-10 flex flex-col items-center justify-center text-center gap-3 transition hover:bg-sky-50 dark:hover:bg-stone-800"
             >
               <button

@@ -269,9 +269,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     className="flex items-center gap-2.5 min-w-0"
                   >
                     {currentUser.avatar_url ? (
-                      <img src={currentUser.avatar_url} alt="" className="w-8 h-8 rounded-lg object-cover shrink-0" />
+                      <img src={currentUser.avatar_url} alt="" width={32} height={32} decoding="async" className="w-8 h-8 rounded-lg object-cover shrink-0" />
                     ) : currentUser.role === "admin" ? (
-                      <img src="/brand/haechivn-mark.webp" alt="HaechiVN admin" className="w-8 h-8 rounded-lg object-contain shrink-0" />
+                      <img src="/brand/haechivn-mark.webp" alt="HaechiVN admin" width={32} height={32} className="w-8 h-8 rounded-lg object-contain shrink-0" />
                     ) : (
                       <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-xs text-white shrink-0">
                         {currentUser.name?.[0]?.toUpperCase() || "?"}
@@ -330,7 +330,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           className="flex items-center gap-2.5 min-w-0 p-1 -m-1 cursor-pointer"
         >
           <div className="w-8 h-8 flex items-center justify-center shrink-0">
-            <img src="/brand/haechivn-mark.webp" alt="HaechiVN" className="w-7 h-7 object-contain" />
+            <img src="/brand/haechivn-mark.webp" alt="HaechiVN" width={28} height={28} className="w-7 h-7 object-contain" />
           </div>
           {!collapsed && (
             <div>
@@ -403,9 +403,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
               className="flex items-center gap-2 min-w-0 hover:opacity-85 transition-opacity"
             >
               {currentUser.avatar_url ? (
-                <img src={currentUser.avatar_url} alt={currentUser.name} className="w-8 h-8 rounded-lg object-cover shrink-0" />
+                <img src={currentUser.avatar_url} alt={currentUser.name} width={32} height={32} decoding="async" className="w-8 h-8 rounded-lg object-cover shrink-0" />
               ) : currentUser.role === "admin" ? (
-                <img src="/brand/haechivn-mark.webp" alt="HaechiVN admin" className="w-8 h-8 rounded-lg object-contain shrink-0" />
+                <img src="/brand/haechivn-mark.webp" alt="HaechiVN admin" width={32} height={32} className="w-8 h-8 rounded-lg object-contain shrink-0" />
               ) : (
                 <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-xs text-white shrink-0">
                   {currentUser.name?.[0]?.toUpperCase() || "?"}

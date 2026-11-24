@@ -114,9 +114,9 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
             style={currentUser.active_frame && frameVisuals[currentUser.active_frame] ? { backgroundImage: frameVisuals[currentUser.active_frame], padding: "4px" } : undefined}
           >
             {currentUser.avatar_url ? (
-              <img src={currentUser.avatar_url} alt={currentUser.name} className="h-20 w-20 rounded-[13px] object-cover bg-stone-100 dark:bg-stone-950" />
+              <img src={currentUser.avatar_url} alt={currentUser.name} width={80} height={80} decoding="async" className="h-20 w-20 rounded-[13px] object-cover bg-stone-100 dark:bg-stone-950" />
             ) : currentUser.role === "admin" ? (
-              <img src="/brand/haechivn-mark.webp" alt="HaechiVN admin" className="h-20 w-20 rounded-[13px] object-contain bg-stone-100 dark:bg-stone-900" />
+              <img src="/brand/haechivn-mark.webp" alt="HaechiVN admin" width={80} height={80} className="h-20 w-20 rounded-[13px] object-contain bg-stone-100 dark:bg-stone-900" />
             ) : (
               <div className="flex h-20 w-20 items-center justify-center rounded-[13px] bg-stone-100 dark:bg-stone-900 text-3xl font-black">{currentUser.name.charAt(0).toUpperCase()}</div>
             )}

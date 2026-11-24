@@ -497,7 +497,7 @@ export function KoreanVocabularyShooter({ words, learnedWords = [], initialMode 
         <span className="rounded-full border border-white/10 bg-black/45 px-3 py-1.5 text-[10px] font-bold text-slate-300">Sai: tăng tốc</span>
         {game.combo >= 3 && <span className="rounded-full border border-fuchsia-300/30 bg-fuchsia-500/20 px-3 py-1.5 text-[10px] font-black text-fuchsia-200">COMBO x{game.combo}</span>}
       </div>
-      {game.status === "paused" && <div className="absolute inset-0 z-40 flex flex-col items-center justify-center gap-3 bg-black/60 backdrop-blur-sm"><p className="font-black text-white">Đang tạm dừng</p><button onClick={togglePause} className="flex h-12 w-12 items-center justify-center rounded-full bg-cyan-500 text-white"><Play className="h-5 w-5 fill-current" /></button></div>}
+      {game.status === "paused" && <div className="absolute inset-0 z-40 flex flex-col items-center justify-center gap-3 bg-black/60 backdrop-blur-sm"><p className="font-black text-white">Đang tạm dừng</p><button onClick={togglePause} aria-label="Tiếp tục" className="flex h-12 w-12 items-center justify-center rounded-full bg-cyan-500 text-white"><Play className="h-5 w-5 fill-current" /></button></div>}
     </div>
 
     <div className="relative z-10 bg-[#0a1024] p-4 sm:px-6">

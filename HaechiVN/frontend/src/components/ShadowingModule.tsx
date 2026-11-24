@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { Headphones, Volume2, CheckCircle2, Play, RefreshCw, HelpCircle, Sparkles, Filter, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Eye, RotateCcw, Pause, Keyboard, ArrowLeft, Star, PlayCircle, Lock, AlertTriangle, Repeat, Award } from "lucide-react";
 import { ApiClient } from "../lib/apiClient";
+import { activateProps } from "../lib/a11y";
 import { useApp } from "../contexts/AppProvider";
 import { normalizeKoreanText } from "../lib/koreanText";
 import { loadLessonProgress, saveLessonProgress } from "../lib/lessonProgress";
@@ -621,7 +622,7 @@ export const ShadowingModule: React.FC = () => {
                 return (
                   <div
                     key={`${sec.id}-${lesson.id}`}
-                    onClick={() => openLessonWorkspace(lesson)}
+                    {...activateProps(() => openLessonWorkspace(lesson))}
                     className="group bg-slate-900 border border-slate-800 hover:border-rose-500 rounded-2xl overflow-hidden cursor-pointer transition duration-300 hover:-translate-y-1 shadow-lg hover:shadow-rose-900/20 flex flex-col justify-between"
                   >
                     {/* Card Thumbnail Area */}

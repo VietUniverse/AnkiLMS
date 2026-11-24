@@ -91,7 +91,7 @@ export function PublicProfileModule({ profileId }: { profileId: string }) {
       </>}
       <div className="relative flex flex-col items-center gap-5 text-center sm:flex-row sm:text-left">
         <div className="rounded-2xl border border-[#dbe3f0] bg-white p-1 dark:border-white/20 dark:bg-[#101a32]" style={profile.active_frame && frames[profile.active_frame] ? { backgroundImage: frames[profile.active_frame] } : undefined}>
-          <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-xl bg-slate-100 text-4xl font-black text-slate-700">{profile.avatar_url ? <img src={profile.avatar_url} alt={profile.name} className="h-full w-full object-cover" /> : profile.name.slice(0, 1).toUpperCase()}</div>
+          <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-xl bg-slate-100 text-4xl font-black text-slate-700">{profile.avatar_url ? <img src={profile.avatar_url} alt={profile.name} width={96} height={96} decoding="async" className="h-full w-full object-cover" /> : profile.name.slice(0, 1).toUpperCase()}</div>
         </div>
         <div className="min-w-0 flex-1">
           <h1 className="mt-2 break-words text-2xl font-black text-white sm:text-3xl">{profile.name}</h1>

@@ -44,6 +44,9 @@ export default function RootLayout({
       <head>
         <link rel="icon" type="image/png" href="/brand/haechivn-mark.png?v=20261028" />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+        {/* Ảnh thumbnail bài nghe (Shadowing, Chính tả) nằm trên img.youtube.com: mở sớm TLS. */}
+        <link rel="preconnect" href="https://img.youtube.com" />
+        <link rel="dns-prefetch" href="https://img.youtube.com" />
         <Script
           id="theme-init"
           strategy="beforeInteractive"

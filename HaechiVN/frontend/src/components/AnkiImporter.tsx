@@ -70,6 +70,7 @@ export const AnkiImporter: React.FC<AnkiImporterProps> = ({
         {/* Close Button */}
         <button
           onClick={onClose}
+          aria-label="Đóng"
           className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-full hover:bg-slate-800 transition-colors"
         >
           <X className="w-5 h-5" />

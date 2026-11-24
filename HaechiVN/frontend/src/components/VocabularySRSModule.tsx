@@ -30,6 +30,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { ankiScheduleToFSRSState, calculateFSRS45, formatLocalDate, isFSRSCardDue, FSRSRating, FSRSState } from "../lib/fsrs45";
+import { activateProps } from "../lib/a11y";
 import { ApiClient } from "../lib/apiClient";
 import { DailyLimitsPanel } from "./DailyLimitsPanel";
 import { GRADIENT_PRESETS, saveStudyBackground, STUDY_BACKGROUND_GALLERY, useStudyBackground } from "../lib/studyBackground";
@@ -1528,7 +1529,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     return (
       <div key={node.id} className="deck-group divide-y divide-stone-100 dark:divide-stone-800/60">
         <div
-          onClick={() => startStudy(node.id, node.title, node.cards)}
+          {...activateProps(() => startStudy(node.id, node.title, node.cards))}
           className={`group relative overflow-hidden flex items-center justify-between cursor-pointer hover:bg-stone-100/70 dark:hover:bg-stone-800/50 transition-colors ${indentClass}`}
           title={stats.newCount + stats.reviewCount === 0 ? "Không có thẻ đến hạn hôm nay" : `Bấm để học ${node.cards.length} từ trong ${node.title}`}
         >
@@ -2390,7 +2391,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                     {activeImageSrc && (
                       <div
                         className="md:col-span-5 flex flex-col items-center justify-center cursor-zoom-in group"
-                        onClick={() => setModalImage(activeImageSrc)}
+                        {...activateProps(() => setModalImage(activeImageSrc))}
                       >
                         <div className="w-full rounded-2xl overflow-hidden bg-stone-100 dark:bg-stone-800/60 p-1.5 border border-stone-200/60 dark:border-stone-800 transition-transform group-hover:scale-[1.01]">
                           <img
@@ -2560,7 +2561,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                   {activeImageSrc && (
                     <div
                       className="md:col-span-5 flex flex-col items-center justify-center cursor-zoom-in"
-                      onClick={() => setModalImage(activeImageSrc)}
+                      {...activateProps(() => setModalImage(activeImageSrc))}
                     >
                       <div className="w-full rounded-2xl overflow-hidden bg-stone-100 dark:bg-stone-800/60 p-1.5 border border-stone-200/60 dark:border-stone-800">
                         <img

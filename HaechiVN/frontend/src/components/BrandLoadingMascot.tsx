@@ -11,6 +11,8 @@ export function BrandLoadingMascot({ label = "Đang tải…", className = "" }:
           src="/brand/haechivn-mark.webp"
           alt=""
           aria-hidden="true"
+          width={48}
+          height={48}
           className="h-12 w-12 animate-haechi-run object-contain"
         />
       </div>
