@@ -4,6 +4,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import { AppShell } from "../../components/AppShell";
 import { useApp } from "../../contexts/AppProvider";
 import { CURATED_DECKS, curatedDeckToAnkiDeck, CuratedDeckItem, IS_DEMO_DECKS_ENABLED, sharedDeckToExploreDeck } from "../../data/curatedDecks";
+import { deckTransitionName } from "../../lib/viewTransition";
 import { DeckIcon } from "../../components/DeckIcon";
 import { courseVocabularyToExploreDecks, loadCourseVocabulary, loadSeoul1AExploreDeck } from "../../lib/courseVocabulary";
 import type { TopikDeck } from "../../lib/courseVocabulary";
@@ -370,6 +371,7 @@ export default function ExplorePage() {
                 <a
                   key={deck.id}
                   href={deckHref(deck)}
+                  style={{ viewTransitionName: deckTransitionName(deck.id) }}
                   className={`group relative flex flex-col justify-between gap-3 overflow-hidden rounded-2xl border border-stone-200 bg-white p-4 transition-colors hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900 ${
                     big ? "sm:col-span-2 sm:row-span-2" : ""
                   }`}

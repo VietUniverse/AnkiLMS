@@ -6,6 +6,7 @@ import Link from "next/link";
 import { AppShell } from "../../../components/AppShell";
 import { useApp } from "../../../contexts/AppProvider";
 import { CURATED_DECKS, curatedDeckToAnkiDeck, IS_DEMO_DECKS_ENABLED, sharedDeckToExploreDeck } from "../../../data/curatedDecks";
+import { deckTransitionName } from "../../../lib/viewTransition";
 import { DeckIcon } from "../../../components/DeckIcon";
 import { speakKorean } from "../../../lib/koreanSpeech";
 import { courseToExploreDeck, curriculumToExploreDeck, loadCourseVocabulary, loadSeoul1AExploreDeck } from "../../../lib/courseVocabulary";
@@ -261,7 +262,10 @@ export default function DeckDetailClient({ id }: { id: string }) {
         </a>
 
         {/* Tầng 1: nhận diện bộ thẻ và hành động chính, thấy ngay không cần cuộn */}
-        <div className="rounded-3xl border border-sky-200/70 dark:border-sky-900/40 bg-gradient-to-br from-sky-50 via-white to-white dark:from-sky-950/30 dark:via-stone-900/60 dark:to-stone-900/60 p-5 sm:p-8">
+        <div
+          style={{ viewTransitionName: deckTransitionName(deck.id) }}
+          className="rounded-3xl border border-sky-200/70 dark:border-sky-900/40 bg-gradient-to-br from-sky-50 via-white to-white dark:from-sky-950/30 dark:via-stone-900/60 dark:to-stone-900/60 p-5 sm:p-8"
+        >
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-center">
             <div className="space-y-4 min-w-0">
               <div className="flex items-start gap-4">
