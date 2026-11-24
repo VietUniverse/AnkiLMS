@@ -138,6 +138,15 @@ html[data-theme="light"][data-accent="moss"] {
   outline-offset: 2px;
 }
 
+/* Vài rule CSS thuần đặt `outline: none` nên lọt lưới rule [class*="outline-none"]
+   ở trên (rule đó chỉ bắt element có class, không bắt được selector CSS). */
+.onigiri-day-cell:focus-visible,
+.classroom-module.cm-page .cm-input:focus-visible,
+.classroom-module.cm-page.rd.cd .cd-deck-field input:focus-visible {
+  outline: 2px solid var(--c-accent, #0e7490) !important;
+  outline-offset: 2px;
+}
+
 /* Bỏ độ trễ ~300ms do trình duyệt chờ double-tap zoom trên mobile; vẫn cho pinch-zoom. */
 html {
   touch-action: manipulation;
