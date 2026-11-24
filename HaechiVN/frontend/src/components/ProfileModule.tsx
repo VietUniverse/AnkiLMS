@@ -54,6 +54,7 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
   // Vốn từ = số thẻ đã qua giai đoạn học (state "review", cột Due của Anki).
   const [vocabCount, setVocabCount] = useState<number | null>(null);
   const [confirmingLogout, setConfirmingLogout] = useState(false);
+  const [todayKey, setTodayKey] = useState("");
 
   useEffect(() => {
     if (!currentUser) return;
@@ -66,6 +67,7 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
     ]).then(([summary, heatmap, achievementData, cardStates]) => {
       if (!active) return;
       setVocabCount(cardStates ? Object.values(cardStates).filter((item) => item.state === "review").length : null);
+      setTodayKey(new Date(Date.now() + 7 * 3600 * 1000).toISOString().slice(0, 10));
       setStats(summary);
       setHeatmapData(heatmap);
       setClaimedBadgeIds(new Set((achievementData?.achievements || []).filter((item: { claimed?: boolean }) => item.claimed).map((item: { id: string }) => item.id)));
@@ -92,10 +94,31 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
   const retention = srsReviewed > 0 ? Math.round(((summary?.srs_correct_count || 0) / srsReviewed) * 100) : null;
   const statsCards = [
     { label: "Tổng thời gian học", value: formatDuration(summary?.duration_seconds || 0), hint: `${summary?.session_count || 0} phiên học`, icon: Clock3, color: "text-sky-500", bg: "bg-sky-400/10" },
-    { label: "Câu đã luyện", value: (summary?.cards_reviewed || 0).toLocaleString("vi-VN"), hint: `${accuracy}% chính xác`, icon: CheckCircle2, color: "text-emerald-500", bg: "bg-emerald-400/10" },
+    { label: "Thẻ", value: (summary?.cards_reviewed || 0).toLocaleString("vi-VN"), hint: `${accuracy}% chính xác`, icon: CheckCircle2, color: "text-emerald-500", bg: "bg-emerald-400/10" },
     { label: "Vốn từ", value: vocabCount === null ? "—" : vocabCount.toLocaleString("vi-VN"), hint: "thẻ đã thuộc", icon: Library, color: "text-amber-500", bg: "bg-amber-400/10" },
     { label: "Trí nhớ", value: retention === null ? "—" : `${retention}%`, hint: "Mục tiêu 90%", icon: Brain, color: "text-rose-500", bg: "bg-rose-400/10" },
   ];
+
+  // Tuần tính theo giờ VN, thứ Hai là đầu tuần. todayKey được set trong effect vì new Date() là impure.
+  const weekStartKey = (weeksAgo: number) => {
+    const start = new Date(`${todayKey}T00:00:00Z`);
+    start.setUTCDate(start.getUTCDate() - ((start.getUTCDay() + 6) % 7) - weeksAgo * 7);
+    return start.toISOString().slice(0, 10);
+  };
+  const dayLabel = (key: string) => `${key.slice(8, 10)}/${key.slice(5, 7)}`;
+  const weekTotals = (from: string, to: string) =>
+    (stats?.days || [])
+      .filter((item) => item.day >= from && item.day <= to)
+      .reduce((total, item) => ({ minutes: total.minutes + (item.minutes || 0), cards: total.cards + (item.cards || 0) }), { minutes: 0, cards: 0 });
+  const thisWeekStart = todayKey ? weekStartKey(0) : "";
+  const lastWeekStart = todayKey ? weekStartKey(1) : "";
+  const lastWeekEnd = thisWeekStart ? new Date(new Date(`${thisWeekStart}T00:00:00Z`).getTime() - 86400000).toISOString().slice(0, 10) : "";
+  const weekCards = todayKey
+    ? [
+        { label: `Tuần này (${dayLabel(thisWeekStart)}–${dayLabel(todayKey)})`, totals: weekTotals(thisWeekStart, todayKey) },
+        { label: `Tuần trước (${dayLabel(lastWeekStart)}–${dayLabel(lastWeekEnd)})`, totals: weekTotals(lastWeekStart, lastWeekEnd) },
+      ]
+    : [];
 
   const card = "rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/70";
   const rankLabel = getStudyRank(currentUser.level);
@@ -154,6 +177,17 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
             <p className="flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400"><Icon className={`h-3.5 w-3.5 ${color}`} />{label}</p>
             <p className="mt-1.5 text-xl font-black tabular-nums">{value}</p>
             <p className="text-[11px] text-stone-500 dark:text-stone-400">{hint}</p>
+          </div>
+        ))}
+      </section>
+
+      {/* Thống kê theo tuần: thời gian và số thẻ, lấy từ days của /api/study-session. */}
+      <section className={`${card} grid grid-cols-2 divide-x divide-stone-200 dark:divide-stone-800 overflow-hidden`}>
+        {weekCards.map(({ label, totals }) => (
+          <div key={label} className="p-4 text-center">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400">{label}</p>
+            <p className="mt-1.5 text-xl font-black tabular-nums">{formatDuration(totals.minutes * 60)}</p>
+            <p className="text-[11px] text-stone-500 dark:text-stone-400">{totals.cards.toLocaleString("vi-VN")} thẻ</p>
           </div>
         ))}
       </section>
