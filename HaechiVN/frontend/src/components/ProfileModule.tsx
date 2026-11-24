@@ -21,7 +21,7 @@ interface ProfileModuleProps {
 }
 
 const moduleLabels: Record<string, string> = {
-  srs: "Học từ vựng", dictation: "Nghe chép", shadowing: "Nhại theo",
+  srs: "Học bộ thẻ", dictation: "Nghe chép", shadowing: "Nhại theo",
   topik: "Luyện thi TOPIK", hangeul: "Hangeul", speaking: "Luyện nói",
 };
 
