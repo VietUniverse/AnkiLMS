@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useLayoutEffect, useCallback, useRef } from "react";
+import React, { createContext, useContext, useState, useEffect, useLayoutEffect, useMemo, useCallback, useRef } from "react";
 import { AnkiDeck } from "../lib/ankiParser";
 import { ApiClient, UserProfile } from "../lib/apiClient";
 import { BETA_FEATURE_KEYS, DEFAULT_FEATURE_FLAGS, FeatureFlags, FeatureKey, IS_BETA_FEATURES_ENABLED } from "../lib/featureFlags";
@@ -429,35 +429,46 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setHeatmapData([]);
   }, []);
 
+  const isFeatureEnabled = useCallback(
+    (key: FeatureKey | undefined) => !key || (featureFlags[key] && (IS_BETA_FEATURES_ENABLED || !BETA_FEATURE_KEYS.includes(key))),
+    [featureFlags],
+  );
+
+  // Object value memo hoá: trước đây tạo mới mỗi render nên mọi consumer re-render khi
+  // provider đổi bất kỳ state nào (mở modal auth, mở importer, thông báo checkin...).
+  const contextValue = useMemo<AppContextType>(() => ({
+    currentUser,
+    setCurrentUser,
+    userDecks,
+    setUserDecks,
+    removedBuiltInDeckIds,
+    heatmapData,
+    setHeatmapData,
+    isImporterOpen,
+    setIsImporterOpen,
+    isAuthOpen,
+    setIsAuthOpen,
+    authRegisterMode,
+    checkinMessage,
+    authErrorMessage,
+    isAuthReady,
+    featureFlags,
+    featureFlagsLoaded,
+    isFeatureEnabled,
+    handleOpenAuth,
+    handleLogout,
+    handleCheckin,
+    handleDeckImported,
+    handleRemoveDeck,
+    activeStudySession,
+    setActiveStudySession,
+  }), [currentUser, userDecks, removedBuiltInDeckIds, heatmapData, isImporterOpen, isAuthOpen, authRegisterMode,
+      checkinMessage, authErrorMessage, isAuthReady, featureFlags, featureFlagsLoaded, isFeatureEnabled,
+      handleOpenAuth, handleLogout, handleCheckin, handleDeckImported, handleRemoveDeck, activeStudySession]);
+
   return (
     <AppContext.Provider
-      value={{
-        currentUser,
-        setCurrentUser,
-        userDecks,
-        setUserDecks,
-        removedBuiltInDeckIds,
-        heatmapData,
-        setHeatmapData,
-        isImporterOpen,
-        setIsImporterOpen,
-        isAuthOpen,
-        setIsAuthOpen,
-        authRegisterMode,
-        checkinMessage,
-        authErrorMessage,
-        isAuthReady,
-        featureFlags,
-        featureFlagsLoaded,
-        isFeatureEnabled: (key) => !key || (featureFlags[key] && (IS_BETA_FEATURES_ENABLED || !BETA_FEATURE_KEYS.includes(key))),
-        handleOpenAuth,
-        handleLogout,
-        handleCheckin,
-        handleDeckImported,
-        handleRemoveDeck,
-        activeStudySession,
-        setActiveStudySession,
-      }}
+      value={contextValue}
     >
       {children}
     </AppContext.Provider>
