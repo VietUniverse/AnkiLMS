@@ -1864,36 +1864,6 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
               </div>
             )}
 
-            {/* BỘ THẺ GIÁO VIÊN GIAO QUA LỚP */}
-            {currentUser && assignedDecks.length > 0 && (
-              <div className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 overflow-hidden shadow-xs">
-                <div className="flex items-center justify-between px-4 sm:px-5 py-3 border-b border-stone-200 dark:border-stone-800">
-                  <h3 className="text-sm font-bold text-stone-900 dark:text-white">Bộ thẻ được giao</h3>
-                  <span className="text-[11px] font-mono text-stone-500 dark:text-stone-400">{assignedDecks.length} bài</span>
-                </div>
-                <ul className="divide-y divide-stone-200 dark:divide-stone-800">
-                  {assignedDecks.map((item) => (
-                    <li key={item.id} className="flex items-center justify-between gap-3 px-4 sm:px-5 py-3">
-                      <div className="min-w-0">
-                        <p className="truncate text-xs sm:text-sm font-bold text-stone-900 dark:text-stone-100">{item.title}</p>
-                        <p className="mt-0.5 truncate text-[11px] text-stone-500 dark:text-stone-400">
-                          {item.className} · {item.reviewedCards}/{item.totalCards} thẻ · {item.dueLabel}
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => void openAssignedDeck(item)}
-                        disabled={openingAssignedId === item.id}
-                        className="shrink-0 inline-flex items-center gap-1.5 rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-[11px] font-bold text-sky-700 transition hover:bg-sky-100 disabled:opacity-60 dark:border-sky-800/80 dark:bg-sky-950/60 dark:text-sky-300 dark:hover:bg-sky-900/60"
-                      >
-                        {openingAssignedId === item.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Play className="h-3.5 w-3.5 fill-current" />}
-                        {item.completed ? "Học lại" : "Học"}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
 
             {/* BẢNG ANKI ĐỒNG NHẤT TOÀN TRANG (DECK TREE) */}
             <div className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 overflow-hidden shadow-xs">
@@ -1915,6 +1885,35 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
 
               {/* Danh sách cây bộ thẻ (Tree) */}
               <div className="divide-y divide-stone-100 dark:divide-stone-800/80">
+              {/* Bộ thẻ giáo viên giao qua lớp: nằm chung bảng, gắn nhãn Lớp học */}
+              {currentUser && assignedDecks.map((item) => (
+                <div key={item.id} className="flex items-center justify-between gap-3 px-4 sm:px-5 py-3 transition-colors hover:bg-stone-50 dark:hover:bg-stone-800/40">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <span className="w-4 shrink-0 select-none text-center text-xs text-stone-300 dark:text-stone-700">└</span>
+                    <div className="min-w-0">
+                      <div className="flex min-w-0 items-center gap-2">
+                        <h3 className="truncate text-sm font-bold text-stone-900 dark:text-white">{item.title}</h3>
+                        <span className="shrink-0 rounded-full border border-sky-200 bg-sky-50 px-2 py-0.5 text-[9px] font-black uppercase tracking-wide text-sky-700 dark:border-sky-800/80 dark:bg-sky-950/60 dark:text-sky-300">
+                          Lớp học
+                        </span>
+                      </div>
+                      <p className="mt-0.5 truncate text-[11px] text-stone-500 dark:text-stone-400">
+                        {item.className} · {item.reviewedCards}/{item.totalCards} thẻ · {item.dueLabel}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => void openAssignedDeck(item)}
+                    disabled={openingAssignedId === item.id}
+                    className="inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-sky-200 bg-sky-50 px-2.5 py-1.5 text-[11px] font-bold text-sky-700 transition-colors hover:bg-sky-100 disabled:opacity-60 dark:border-sky-800/80 dark:bg-sky-950/60 dark:text-sky-300 dark:hover:bg-sky-900/60 cursor-pointer"
+                  >
+                    {openingAssignedId === item.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Play className="h-3.5 w-3.5 fill-current" />}
+                    {item.completed ? "Học lại" : "Học"}
+                  </button>
+                </div>
+              ))}
+
                 {filteredTree.map((node) => renderTreeNode(node, 0))}
 
                 {filteredTree.length === 0 && (
