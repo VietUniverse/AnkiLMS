@@ -44,11 +44,15 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (!email || !password || email.length > 254 || password.length > 128) return errorResponse(INVALID_CREDENTIALS, 401);
 
     stage = "rate-limit";
-    const clientIp = request.headers.get("CF-Connecting-IP") || "unknown";
-    const ipAttempts = await recordAttempt(env, `ip:${await rateKey(clientIp)}`, 60);
-    const accountAttempts = await recordAttempt(env, `account:${await rateKey(email)}`, 300);
-    if (ipAttempts > 20 || accountAttempts > 5) {
-      return jsonResponse({ error: "Đã thử đăng nhập quá nhiều lần. Vui lòng đợi rồi thử lại." }, 429, { "Retry-After": ipAttempts > 20 ? "60" : "300" });
+    try {
+      const clientIp = request.headers.get("CF-Connecting-IP") || "unknown";
+      const ipAttempts = await recordAttempt(env, `ip:${await rateKey(clientIp)}`, 60);
+      const accountAttempts = await recordAttempt(env, `account:${await rateKey(email)}`, 300);
+      if (ipAttempts > 20 || accountAttempts > 5) {
+        return jsonResponse({ error: "Đã thử đăng nhập quá nhiều lần. Vui lòng đợi rồi thử lại." }, 429, { "Retry-After": ipAttempts > 20 ? "60" : "300" });
+      }
+    } catch (e) {
+      console.warn("Rate limit check bypassed:", e);
     }
 
     stage = "lookup";

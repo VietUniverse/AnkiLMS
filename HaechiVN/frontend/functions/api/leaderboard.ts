@@ -81,16 +81,15 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
        LIMIT 20`,
     ).bind(...(isToday ? [from, to, from, to] : [from, to, from, to, from, to, from, to])).all();
 
-    // Xếp hạng Từ vựng: số thẻ đã ôn trong kỳ và số thẻ ôn trong hôm nay.
+    // Xếp hạng Từ vựng: chỉ quét thẻ có last_review trong khoảng thời gian đã chọn để tiết kiệm row reads
     const vocabulary = await env.DB.prepare(
       `SELECT u.id, u.name, u.avatar_url, u.level,
-              SUM(CASE WHEN cs.last_review BETWEEN ? AND ? THEN 1 ELSE 0 END) AS vocab_total,
+              COUNT(*) AS vocab_total,
               SUM(CASE WHEN cs.last_review = date('now', '+7 hours') THEN 1 ELSE 0 END) AS vocab_today
        FROM card_states cs
        JOIN users u ON u.id = cs.user_id
-       WHERE cs.reps > 0
+       WHERE cs.last_review BETWEEN ? AND ? AND cs.reps > 0
        GROUP BY u.id
-       HAVING vocab_total > 0
        ORDER BY vocab_total DESC, vocab_today DESC, u.name ASC
        LIMIT 20`,
     ).bind(from, to).all<VocabRow>();
