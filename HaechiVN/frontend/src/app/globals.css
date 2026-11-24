@@ -128,6 +128,15 @@ html[data-theme="light"][data-accent="moss"] {
   }
 }
 
+/* Focus ring khi điều hướng bằng bàn phím. Nhiều nút/input dùng `outline-none`
+   (73 chỗ trong repo) nhưng chỉ 19 chỗ có ring thay thế, nên các chỗ còn lại
+   mất dấu focus. Rule này trả lại viền cho mọi phần tử có `outline-none`;
+   đặt ngoài layer để thắng utility trong @layer utilities. */
+[class*="outline-none"]:focus-visible {
+  outline: 2px solid var(--c-accent, #0e7490);
+  outline-offset: 2px;
+}
+
 /* Smooth View Transition for Theme Toggle */
 ::view-transition-old(root),
 ::view-transition-new(root) {
