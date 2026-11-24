@@ -19,7 +19,7 @@
     "hangul-romanization": "^1.0.1",
     "jszip": "^3.10.1",
     "lucide-react": "1.59.0",
-    "next": "^16.4.2",
+    "next": "^16.4.6",
     "pdf-lib": "1.17.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
@@ -31,15 +31,15 @@
     "@capacitor/cli": "^8.5.3",
     "@cloudflare/workers-types": "^5.20261016.1",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "20.19.43",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/sql.js": "^1.4.11",
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
-    "eslint-config-next": "^16.4.2",
+    "eslint-config-next": "^16.4.6",
     "tailwindcss": "^4",
-    "typescript": "^5",
+    "typescript": "5.9.3",
     "wrangler": "^4.151.1"
   }
 }

@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   allowedDevOrigins: ["127.0.0.1", "localhost"],
+  experimental: {
+    // Đánh dấu app đã nhận bản vá bảo mật qua `next upgrade --agent=security`.
+    agentUpgrade: "security",
+  },
   // Chỉ dùng khi chạy `next dev`: chuyển tiếp /api sang máy chủ Pages local
   // (wrangler pages dev) để xem giao diện với dữ liệu D1 thật. Khi export/build
   // không có rewrite nào nên bản production giữ nguyên API cùng origin.
