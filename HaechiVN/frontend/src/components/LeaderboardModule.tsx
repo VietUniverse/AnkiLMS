@@ -39,8 +39,9 @@ const PERIODS: { key: PeriodKey; label: string }[] = [
 
 const TAB_ACTIVE: Record<TabKey, string> = {
   xp: "bg-blue-600 text-white",
-  streak: "bg-amber-600 text-white",
-  vocab: "bg-emerald-600 text-white",
+  // amber-600 với chữ trắng chỉ ~3:1 nên dùng nền sáng + chữ đậm để đủ tương phản.
+  streak: "bg-amber-400 text-amber-950",
+  vocab: "bg-emerald-700 text-white",
 };
 
 const SCORE_COLOR: Record<TabKey, string> = {
@@ -114,20 +115,20 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
     <div className="mx-auto max-w-3xl pb-24 animate-fadeIn motion-reduce:animate-none">
       {/* Không dùng <header>: globals.css tô nền trắng cho mọi header ở giao diện sáng. */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div role="group" aria-label="Xếp hạng theo" className="flex flex-wrap rounded-xl border-2 border-slate-700 p-1">
+        <div role="group" aria-label="Xếp hạng theo" className="flex flex-wrap rounded-xl border border-slate-200 bg-stone-100 p-1 dark:border-slate-700 dark:bg-transparent">
           {TABS.map(({ key, label, icon: Icon }) => {
             const active = tab === key;
             return (
               <button key={key} type="button" onClick={() => setTab(key)} aria-pressed={active}
                 className={`inline-flex min-h-10 items-center gap-1.5 rounded-lg px-3.5 text-sm font-bold transition-colors duration-200 ${
-                  active ? TAB_ACTIVE[key] : "text-slate-400 hover:text-white"
+                  active ? TAB_ACTIVE[key] : "text-slate-700 hover:bg-white hover:text-slate-900 dark:text-stone-400 dark:hover:bg-transparent dark:hover:text-white"
                 }`}>
                 <Icon aria-hidden="true" className="h-4 w-4" />{label}
               </button>
             );
           })}
         </div>
-        <div role="group" aria-label="Khoảng thời gian" className="ml-auto flex flex-wrap justify-center gap-1 rounded-xl border border-slate-700/70 p-1">
+        <div role="group" aria-label="Khoảng thời gian" className="ml-auto flex flex-wrap justify-center gap-1 rounded-xl border border-slate-200 p-1 dark:border-slate-700/70">
           {PERIODS.map(({ key, label }) => {
             const active = period === key;
             return (
