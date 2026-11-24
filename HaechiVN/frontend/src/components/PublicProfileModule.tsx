@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Activity, ArrowLeft, Award, BookOpen, Clock3, Flame, LockKeyhole, Trophy, Zap } from "lucide-react";
+import { ArrowLeft, Award, BookOpen, Brain, CheckCircle2, Clock3, Flame, Library, LockKeyhole, Zap } from "lucide-react";
 import { useApp } from "../contexts/AppProvider";
 import { getStudyRank } from "../lib/studyRanks";
 import { OnigiriHeatmap, type HeatmapItem } from "./OnigiriHeatmap";
@@ -15,7 +15,10 @@ type PublicProfile = {
 };
 type ProfileData = {
   profile: PublicProfile;
-  summary: { session_count: number; cards_reviewed: number; duration_seconds: number };
+  summary: {
+    session_count: number; cards_reviewed: number; correct_count: number; duration_seconds: number;
+    srs_cards_reviewed: number; srs_correct_count: number; vocab_count: number;
+  };
   days: { day: string; minutes: number; cards: number; xp: number }[];
   sessions: { module: string; cards_reviewed: number; duration_seconds: number | null; created_at: string }[];
 };
@@ -77,6 +80,9 @@ export function PublicProfileModule({ profileId }: { profileId: string }) {
     cards_reviewed: day.cards,
   }));
   const isMine = currentUser?.id === profile.id;
+  // correct_count có thể vượt cards_reviewed (thẻ sibling), chặn ở 100 để không hiện 113%.
+  const accuracy = summary.cards_reviewed ? Math.min(100, Math.round((summary.correct_count / summary.cards_reviewed) * 100)) : 0;
+  const retention = summary.srs_cards_reviewed > 0 ? Math.min(100, Math.round((summary.srs_correct_count / summary.srs_cards_reviewed) * 100)) : null;
 
   return <div className="mx-auto max-w-5xl space-y-4 pb-24">
     <div className="flex items-center justify-between gap-3">
@@ -106,12 +112,13 @@ export function PublicProfileModule({ profileId }: { profileId: string }) {
       </div>
     </section>
 
-    <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">{[ 
-      { label: "Thời gian học", value: duration(summary.duration_seconds), icon: Clock3 },
-      { label: "Phiên học", value: summary.session_count.toLocaleString("vi-VN"), icon: BookOpen },
-      { label: "Số thẻ", value: summary.cards_reviewed.toLocaleString("vi-VN"), icon: Activity },
-      { label: "Chuỗi tốt nhất", value: `${profile.longest_streak || profile.streak} ngày`, icon: Trophy },
-    ].map(({ label, value, icon: Icon }) => <div key={label} className="rounded-2xl border border-slate-200 bg-white p-4 text-center dark:border-[#1e3466] dark:bg-[#0f1b38]"><Icon className="mx-auto mb-3 h-5 w-5 text-slate-500" /><p className="text-lg font-black text-white">{value}</p><p className="mt-1 text-[11px] font-semibold text-slate-700">{label}</p></div>)}</section>
+    {/* Cùng bộ số liệu với trang hồ sơ cá nhân để xem người khác không bị lệch cách hiểu. */}
+    <section className="grid grid-cols-2 divide-x divide-y divide-slate-200 overflow-hidden rounded-2xl border border-slate-200 bg-white dark:divide-[#1e3466] dark:border-[#1e3466] dark:bg-[#0f1b38] sm:grid-cols-4 sm:divide-y-0">{[ 
+      { label: "Tổng thời gian học", value: duration(summary.duration_seconds), hint: `${summary.session_count.toLocaleString("vi-VN")} phiên học`, icon: Clock3, color: "text-sky-500" },
+      { label: "Thẻ", value: summary.cards_reviewed.toLocaleString("vi-VN"), hint: `${accuracy}% chính xác`, icon: CheckCircle2, color: "text-emerald-500" },
+      { label: "Vốn từ", value: summary.vocab_count.toLocaleString("vi-VN"), hint: "thẻ đã thuộc", icon: Library, color: "text-amber-500" },
+      { label: "Trí nhớ", value: retention === null ? "—" : `${retention}%`, hint: "Mục tiêu 90%", icon: Brain, color: "text-rose-500" },
+    ].map(({ label, value, hint, icon: Icon, color }) => <div key={label} className="p-4 text-center"><p className="flex items-center justify-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-700"><Icon className={`h-3.5 w-3.5 ${color}`} />{label}</p><p className="mt-1.5 text-xl font-black tabular-nums text-white">{value}</p><p className="text-[11px] text-slate-700">{hint}</p></div>)}</section>
 
     <StreakPanel data={heatmap} streak={profile.streak} longestStreak={profile.longest_streak || profile.streak} publicView />
     <OnigiriHeatmap data={heatmap} streak={profile.streak} />

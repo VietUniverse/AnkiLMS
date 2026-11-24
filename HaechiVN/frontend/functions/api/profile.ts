@@ -17,9 +17,12 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
       env.DB.prepare(
         `SELECT COUNT(*) AS session_count, COALESCE(SUM(cards_reviewed), 0) AS cards_reviewed,
                 COALESCE(SUM(correct_count), 0) AS correct_count,
-                COALESCE(SUM(CASE WHEN module = 'srs' AND duration_seconds >= 14400 THEN 0 ELSE duration_seconds END), 0) AS duration_seconds
+                COALESCE(SUM(CASE WHEN module = 'srs' THEN cards_reviewed ELSE 0 END), 0) AS srs_cards_reviewed,
+                COALESCE(SUM(CASE WHEN module = 'srs' THEN correct_count ELSE 0 END), 0) AS srs_correct_count,
+                COALESCE(SUM(CASE WHEN module = 'srs' AND duration_seconds >= 14400 THEN 0 ELSE duration_seconds END), 0) AS duration_seconds,
+                (SELECT COUNT(*) FROM card_states WHERE user_id = ? AND state = 'review') AS vocab_count
          FROM study_sessions WHERE user_id = ?`,
-      ).bind(userId).first(),
+      ).bind(userId, userId).first(),
       env.DB.prepare(
         `WITH session_days AS (
            SELECT date(created_at, '+7 hours') AS day,
