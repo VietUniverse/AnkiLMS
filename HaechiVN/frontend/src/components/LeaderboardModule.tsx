@@ -149,9 +149,9 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
 
   return (
     <div className="mx-auto max-w-3xl pb-24 animate-fadeIn motion-reduce:animate-none">
-      {/* Không dùng <header>: globals.css tô nền trắng cho mọi header ở giao diện sáng. */}
-      <h1 className="text-lg font-black text-stone-900 dark:text-white">Bảng xếp hạng</h1>
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+      {/* Không dùng <header>: globals.css tô nền trắng cho mọi header ở giao diện sáng.
+          Không có tiêu đề trang: sidebar đã chỉ rõ đang ở mục Bảng xếp hạng. */}
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <div role="group" aria-label="Xếp hạng theo" className="flex flex-wrap rounded-xl border border-stone-200 bg-stone-100 p-1 dark:border-stone-800 dark:bg-transparent">
           {TABS.map(({ key, label, icon: Icon }) => {
             const active = tab === key;
