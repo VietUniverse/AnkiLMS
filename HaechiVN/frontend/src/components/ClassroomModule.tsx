@@ -31,6 +31,7 @@ import {
 import { ApiClient, UserProfile } from "../lib/apiClient";
 import { useApp } from "../contexts/AppProvider";
 import { AnkiDeck } from "../lib/ankiParser";
+import { loadAdminThthCurriculum } from "../lib/privateLearningContent";
 
 export interface ClassMember {
   id: string;
@@ -496,9 +497,49 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
   // Copy feedback
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
-  const assignmentDecks = buildAnkiAssignmentDecks("anki", userDecks, "Thư viện của tôi").filter(
-    (deck) => deck.cards.length > 0,
-  );
+  // Giáo trình độc quyền Tiếng Hàn Tổng Hợp (Quyển 1-4): người có quyền quản lý lớp (admin/giáo
+  // viên hoặc thành viên được cấp quyền) giao thẳng bộ thẻ cho học viên. Server trả [] nếu không
+  // có quyền nên không cần đoán vai trò ở client.
+  const [ththCurriculumDecks, setThthCurriculumDecks] = useState<any[]>([]);
+  useEffect(() => {
+    if (!currentUser || (!assignPage && !showAssignModal)) return;
+    let active = true;
+    void loadAdminThthCurriculum().then((decks) => {
+      if (active) setThthCurriculumDecks(decks || []);
+    });
+    return () => { active = false; };
+  }, [currentUser, assignPage, showAssignModal]);
+
+  const ththAssignmentDecks = React.useMemo<AssignmentDeckOption[]>(() => (
+    ththCurriculumDecks.flatMap((deck) => {
+      const parts = String(deck?.name || "").split("::");
+      const bookNumber = Number((parts[1] || "").match(/\d+/)?.[0] || 0);
+      if (bookNumber < 1 || bookNumber > 4) return [];
+      const lesson = parts[2]?.trim() || "";
+      const cards: AssignmentDeckCard[] = (deck?.cards || []).map((card: any, index: number) => ({
+        id: Number(card?.id) || bookNumber * 100000 + index,
+        korean: String(card?.korean || "").trim(),
+        meaning: String(card?.vietnamese || "").trim(),
+        example: String(card?.exKorean || "").replace(/<[^>]*>/g, "").trim(),
+        mediaRefs: [],
+      })).filter((card: AssignmentDeckCard) => card.korean && card.meaning);
+      if (!cards.length) return [];
+      return [{
+        id: `thth:${deck.name}`,
+        name: String(deck.name),
+        book: 100 + bookNumber,
+        topic: parts[3]?.trim() || deck.name,
+        difficulty: lesson,
+        mediaAssets: [],
+        cards,
+      }];
+    })
+  ), [ththCurriculumDecks]);
+
+  const assignmentDecks = [
+    ...buildAnkiAssignmentDecks("anki", userDecks, "Thư viện của tôi"),
+    ...ththAssignmentDecks,
+  ].filter((deck) => deck.cards.length > 0);
   const assignmentDeckGroups = ASSIGN_BOOK_ORDER.map((book) => {
     const decks = assignmentDecks.filter((deck) => deck.book === book);
     if (!decks.length) return null;
