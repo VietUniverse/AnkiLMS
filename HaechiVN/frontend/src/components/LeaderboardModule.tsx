@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { BookOpen, Flame, Zap, Users } from "lucide-react";
+import { BookOpen, ChevronLeft, ChevronRight, Flame, Zap, Users } from "lucide-react";
 import { ApiClient, UserProfile, VocabularyLeaderboardEntry } from "../lib/apiClient";
 import { getStudyRank } from "../lib/studyRanks";
 
@@ -50,26 +50,12 @@ const METRIC_LABEL: Record<TabKey, string> = {
   vocab: "Từ vựng",
 };
 
-type PresetKey =
-  | "today"
-  | "yesterday"
-  | "week"
-  | "lastWeek"
-  | "month"
-  | "lastMonth"
-  | "year"
-  | "lastYear"
-  | "custom";
+type RangeUnit = "day" | "week" | "month";
 
-const PRESETS: { key: PresetKey; label: string }[] = [
-  { key: "today", label: "Hôm nay" },
-  { key: "yesterday", label: "Hôm qua" },
-  { key: "week", label: "7 ngày qua" },
-  { key: "lastWeek", label: "Tuần trước" },
-  { key: "month", label: "30 ngày qua" },
-  { key: "lastMonth", label: "Tháng trước" },
-  { key: "year", label: "Năm nay" },
-  { key: "lastYear", label: "Năm trước" },
+const RANGE_UNITS: { key: RangeUnit; label: string }[] = [
+  { key: "day", label: "Ngày" },
+  { key: "week", label: "Tuần" },
+  { key: "month", label: "Tháng" },
 ];
 
 /** Hôm nay theo giờ Việt Nam (UTC+7), dạng YYYY-MM-DD. */
@@ -83,36 +69,26 @@ function shiftDays(iso: string, days: number): string {
   return date.toISOString().slice(0, 10);
 }
 
-function presetRange(preset: PresetKey, customDate: string): Range {
+/** Khoảng của đơn vị đang chọn, lùi `offset` bước (0 = hiện tại, -1 = trước đó). */
+function rangeFor(unit: RangeUnit, offset: number): Range {
   const today = vnToday();
-  const [year, month] = today.split("-").map(Number);
-  switch (preset) {
-    case "yesterday": {
-      const day = shiftDays(today, -1);
-      return { from: day, to: day };
-    }
-    case "week":
-      return { from: shiftDays(today, -6), to: today };
-    case "lastWeek":
-      return { from: shiftDays(today, -13), to: shiftDays(today, -7) };
-    case "month":
-      return { from: shiftDays(today, -29), to: today };
-    case "lastMonth":
-      // Tháng dương lịch trước: ngày 1 tới ngày cuối của tháng đó.
-      // Date.UTC nhận tháng 0-based: tháng trước = index month - 2 (tháng 1 tự lùi về 12 năm trước).
-      return {
-        from: new Date(Date.UTC(year, month - 2, 1)).toISOString().slice(0, 10),
-        to: new Date(Date.UTC(year, month - 1, 1) - 86_400_000).toISOString().slice(0, 10),
-      };
-    case "year":
-      return { from: `${year}-01-01`, to: today };
-    case "lastYear":
-      return { from: `${year - 1}-01-01`, to: `${year - 1}-12-31` };
-    case "custom":
-      return { from: customDate, to: customDate };
-    default:
-      return { from: today, to: today };
+  const base = new Date(`${today}T00:00:00Z`);
+  if (unit === "day") {
+    const day = shiftDays(today, offset);
+    return { from: day, to: day };
   }
+  if (unit === "week") {
+    const monday = new Date(base.getTime() - ((base.getUTCDay() + 6) % 7) * 86_400_000 + offset * 7 * 86_400_000);
+    const sunday = new Date(monday.getTime() + 6 * 86_400_000);
+    // Tuần hiện tại chưa hết nên chặn ở hôm nay; tuần trước lấy trọn 7 ngày.
+    return { from: monday.toISOString().slice(0, 10), to: sunday.toISOString().slice(0, 10) > today ? today : sunday.toISOString().slice(0, 10) };
+  }
+  const year = base.getUTCFullYear();
+  const month = base.getUTCMonth();
+  const start = new Date(Date.UTC(year, month + offset, 1));
+  const end = new Date(Date.UTC(year, month + offset + 1, 1) - 86_400_000);
+  const endIso = end.toISOString().slice(0, 10);
+  return { from: start.toISOString().slice(0, 10), to: offset === 0 && endIso > today ? today : endIso };
 }
 
 function formatDay(iso: string): string {
@@ -125,10 +101,10 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
   const [vocabulary, setVocabulary] = useState<VocabularyLeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<TabKey>("xp");
-  const [preset, setPreset] = useState<PresetKey>("today");
-  const [customDate, setCustomDate] = useState(vnToday);
+  const [unit, setUnit] = useState<RangeUnit>("day");
+  const [offset, setOffset] = useState(0);
 
-  const range = useMemo(() => presetRange(preset, customDate), [preset, customDate]);
+  const range = useMemo(() => rangeFor(unit, offset), [unit, offset]);
 
   useEffect(() => {
     let active = true;
@@ -190,39 +166,35 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
         </div>
 
         <div role="group" aria-label="Khoảng thời gian" className="flex flex-wrap items-center gap-2">
-          <select
-            value={preset}
-            onChange={(event) => setPreset(event.target.value as PresetKey)}
-            aria-label="Chọn khoảng thời gian"
-            className="min-h-9 rounded-xl border border-stone-200 bg-white px-2.5 text-xs font-bold text-stone-800 dark:border-stone-800 dark:bg-stone-900 dark:text-stone-100"
-          >
-            {PRESETS.map((item) => (
-              <option key={item.key} value={item.key}>{item.label}</option>
-            ))}
-            <option value="custom">Ngày cụ thể…</option>
-          </select>
-          <label className="flex items-center gap-1.5 text-[11px] font-bold text-stone-500 dark:text-stone-400">
-            <span className="sr-only">Ngày cụ thể</span>
-            <input
-              type="date"
-              value={customDate}
-            max={vnToday()}
-              onChange={(event) => {
-                const next = event.target.value;
-                if (!next) return;
-                setCustomDate(next);
-                setPreset("custom");
-              }}
-              aria-label="Xem bảng xếp hạng của một ngày"
-              className="min-h-9 rounded-xl border border-stone-200 bg-white px-2.5 text-xs font-bold text-stone-800 dark:border-stone-800 dark:bg-stone-900 dark:text-stone-100"
-            />
-          </label>
+          <div className="flex rounded-xl border border-stone-200 bg-stone-100 p-1 dark:border-stone-800 dark:bg-transparent">
+            {RANGE_UNITS.map(({ key, label }) => {
+              const active = unit === key;
+              return (
+                <button key={key} type="button" aria-pressed={active}
+                  onClick={() => { setUnit(key); setOffset(0); }}
+                  className={`inline-flex min-h-9 items-center rounded-lg px-3 text-xs font-bold transition-colors duration-200 ${
+                    active ? "bg-stone-900 text-white dark:bg-white dark:text-stone-900" : "text-stone-700 hover:bg-white hover:text-stone-900 dark:text-stone-400 dark:hover:bg-transparent dark:hover:text-white"
+                  }`}>
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+          <div className="flex items-center gap-1 rounded-xl border border-stone-200 bg-white px-1 dark:border-stone-800 dark:bg-stone-900">
+            <button type="button" onClick={() => setOffset((value) => value - 1)} aria-label="Khoảng trước"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-stone-600 transition-colors hover:bg-stone-100 hover:text-stone-900 dark:text-stone-300 dark:hover:bg-white/5">
+              <ChevronLeft aria-hidden="true" className="h-4 w-4" />
+            </button>
+            <span aria-live="polite" className="min-w-[7.5rem] text-center text-xs font-bold tabular-nums text-stone-800 dark:text-stone-100">
+              {rangeLabel}
+            </span>
+            <button type="button" onClick={() => setOffset((value) => value + 1)} disabled={offset >= 0} aria-label="Khoảng sau"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-stone-600 transition-colors hover:bg-stone-100 hover:text-stone-900 disabled:opacity-30 disabled:hover:bg-transparent dark:text-stone-300 dark:hover:bg-white/5">
+              <ChevronRight aria-hidden="true" className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       </div>
-
-      <p className="mt-2 text-right text-[11px] font-bold text-stone-500 dark:text-stone-400">
-        {rangeLabel}
-      </p>
 
       {!loading && hasPodium && (
         <div aria-label="Top 3" className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
