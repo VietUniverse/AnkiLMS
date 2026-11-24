@@ -166,6 +166,19 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
         </div>
 
         <div role="group" aria-label="Khoảng thời gian" className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1 rounded-xl border border-stone-200 bg-white px-1 dark:border-stone-800 dark:bg-stone-900">
+            <button type="button" onClick={() => setOffset((value) => value - 1)} aria-label="Khoảng trước"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-stone-600 transition-colors hover:bg-stone-100 hover:text-stone-900 dark:text-stone-300 dark:hover:bg-white/5">
+              <ChevronLeft aria-hidden="true" className="h-4 w-4" />
+            </button>
+            <span aria-live="polite" className="min-w-[7.5rem] text-center text-xs font-bold tabular-nums text-stone-800 dark:text-stone-100">
+              {rangeLabel}
+            </span>
+            <button type="button" onClick={() => setOffset((value) => value + 1)} disabled={offset >= 0} aria-label="Khoảng sau"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-stone-600 transition-colors hover:bg-stone-100 hover:text-stone-900 disabled:opacity-30 disabled:hover:bg-transparent dark:text-stone-300 dark:hover:bg-white/5">
+              <ChevronRight aria-hidden="true" className="h-4 w-4" />
+            </button>
+          </div>
           <div className="flex rounded-xl border border-stone-200 bg-stone-100 p-1 dark:border-stone-800 dark:bg-transparent">
             {RANGE_UNITS.map(({ key, label }) => {
               const active = unit === key;
@@ -179,19 +192,6 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
                 </button>
               );
             })}
-          </div>
-          <div className="flex items-center gap-1 rounded-xl border border-stone-200 bg-white px-1 dark:border-stone-800 dark:bg-stone-900">
-            <button type="button" onClick={() => setOffset((value) => value - 1)} aria-label="Khoảng trước"
-              className="flex h-8 w-8 items-center justify-center rounded-lg text-stone-600 transition-colors hover:bg-stone-100 hover:text-stone-900 dark:text-stone-300 dark:hover:bg-white/5">
-              <ChevronLeft aria-hidden="true" className="h-4 w-4" />
-            </button>
-            <span aria-live="polite" className="min-w-[7.5rem] text-center text-xs font-bold tabular-nums text-stone-800 dark:text-stone-100">
-              {rangeLabel}
-            </span>
-            <button type="button" onClick={() => setOffset((value) => value + 1)} disabled={offset >= 0} aria-label="Khoảng sau"
-              className="flex h-8 w-8 items-center justify-center rounded-lg text-stone-600 transition-colors hover:bg-stone-100 hover:text-stone-900 disabled:opacity-30 disabled:hover:bg-transparent dark:text-stone-300 dark:hover:bg-white/5">
-              <ChevronRight aria-hidden="true" className="h-4 w-4" />
-            </button>
           </div>
         </div>
       </div>
