@@ -194,9 +194,9 @@ export default function ExplorePage() {
 
   const iconAction = "relative z-10 inline-flex h-8 w-8 items-center justify-center rounded-lg transition cursor-pointer shrink-0";
   const LEVEL_PILL: Record<string, string> = {
-    "Sơ cấp": "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-    "Trung cấp": "bg-amber-500/10 text-amber-600 dark:text-amber-400",
-    "Cao cấp": "bg-rose-500/10 text-rose-600 dark:text-rose-400",
+    "Sơ cấp": "bg-emerald-100 text-emerald-800",
+    "Trung cấp": "bg-amber-100 text-amber-800",
+    "Cao cấp": "bg-rose-100 text-rose-800",
   };
 
   const renderDeckRow = (deck: CuratedDeckItem) => {
@@ -212,7 +212,7 @@ export default function ExplorePage() {
             <h3 className="min-w-0 text-sm font-semibold text-stone-900 dark:text-white line-clamp-2 sm:line-clamp-1 group-hover:text-sky-500 transition">
               {deck.title}
               <span className="sm:hidden font-normal text-stone-500 dark:text-stone-400"> ({deckCardCount(deck).toLocaleString("vi-VN")})</span>
-              {showLevel && <span className={`sm:hidden ml-1.5 align-middle rounded-full px-1.5 py-0.5 text-[10px] font-bold ${LEVEL_PILL[deck.level] || "bg-stone-500/10 text-stone-500"}`}>{deck.level}</span>}
+              {showLevel && <span className={`sm:hidden ml-1.5 align-middle rounded-full px-1.5 py-0.5 text-[10px] font-bold ${LEVEL_PILL[deck.level] || "bg-stone-100 text-stone-700"}`}>{deck.level}</span>}
             </h3>
             {isCommunity && deck.author?.name && (
               <p className="mt-0.5 text-[11px] font-medium text-stone-500 dark:text-stone-400">
@@ -291,7 +291,7 @@ export default function ExplorePage() {
       <div className="max-w-3xl mx-auto space-y-5 pb-20 animate-fadeIn">
         {/* Toast thông báo khi thêm thẻ (nằm trên BottomNav ở mobile) */}
         {addedNotice && (
-          <div className="fixed bottom-24 lg:bottom-6 left-1/2 -translate-x-1/2 lg:left-auto lg:right-6 lg:translate-x-0 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-emerald-600 text-white shadow-xl shadow-emerald-900/30 font-medium text-xs animate-slideUp whitespace-nowrap">
+          <div className="fixed bottom-24 lg:bottom-6 left-1/2 -translate-x-1/2 lg:left-auto lg:right-6 lg:translate-x-0 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-emerald-600 text-white font-medium text-xs animate-slideUp whitespace-nowrap">
             <Check className="w-4 h-4 shrink-0" />
             <span>{addedNotice}</span>
             <a href="/flashcards" className="ml-2 underline font-bold hover:text-emerald-100">
@@ -364,40 +364,27 @@ export default function ExplorePage() {
             </button>
           </div>
         ) : view === "bento" ? (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:auto-rows-[7.5rem]">
-            {sortedDecks.map((deck, idx) => {
-              const big = idx % 7 === 0;
-              return (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+            {sortedDecks.map((deck) => (
                 <a
                   key={deck.id}
                   href={deckHref(deck)}
                   style={{ viewTransitionName: deckTransitionName(deck.id) }}
-                  className={`group relative flex flex-col justify-between gap-3 overflow-hidden rounded-2xl border border-stone-200 bg-white p-4 transition-colors hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900 ${
-                    big ? "sm:col-span-2 sm:row-span-2" : ""
-                  }`}
+                  className="group relative flex min-h-[6.5rem] flex-col justify-between gap-3 rounded-xl border border-stone-200 bg-white p-4 transition-colors hover:border-stone-400 dark:border-stone-800 dark:bg-stone-900 dark:hover:border-stone-600"
                 >
-                  <DeckIcon
-                    name={deck.iconName}
-                    className={`pointer-events-none absolute -right-3 -bottom-3 transition-colors ${
-                      big ? "h-24 w-24 text-sky-500/10" : "h-16 w-16 text-stone-400/10 dark:text-stone-500/10"
-                    } group-hover:text-sky-500/20`}
-                  />
-                  <h3 className={`relative z-10 font-bold text-stone-900 dark:text-white line-clamp-2 group-hover:text-sky-500 ${
-                    big ? "text-base sm:text-lg" : "text-sm"
-                  }`}>
+                  <h3 className="text-sm font-bold leading-snug text-stone-900 line-clamp-2 dark:text-white">
                     {deck.title}
                   </h3>
-                  <div className="relative z-10 flex flex-wrap items-center gap-2">
-                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${LEVEL_PILL[deck.level] || "bg-stone-500/10 text-stone-500"}`}>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${LEVEL_PILL[deck.level] || "bg-stone-100 text-stone-700"}`}>
                       {deck.level}
                     </span>
-                    <span className="text-xs font-semibold text-stone-500 tabular-nums dark:text-stone-400">
+                    <span className="text-[11px] font-semibold text-stone-600 tabular-nums dark:text-stone-300">
                       {deckCardCount(deck).toLocaleString("vi-VN")} thẻ
                     </span>
                   </div>
                 </a>
-              );
-            })}
+            ))}
           </div>
         ) : (
           <div className="space-y-1">
