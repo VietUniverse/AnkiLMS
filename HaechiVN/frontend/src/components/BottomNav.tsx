@@ -11,7 +11,7 @@ interface BottomNavProps {
 
 const items = [
   { href: "/", label: "Trang chủ", icon: Home },
-  { href: "/flashcards", label: "Từ vựng", icon: Layers, feature: "flashcards" },
+  { href: "/flashcards", label: "Học tập", icon: Layers, feature: "flashcards" },
   { href: "/explore", label: "Khám phá", icon: Compass, feature: "explore" },
   { href: "/dictionary", label: "Từ điển", icon: Search, feature: "dictionary" },
 ] as const;
