@@ -1894,7 +1894,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                       <div className="flex min-w-0 items-center gap-2">
                         <h3 className="truncate text-sm font-bold text-stone-900 dark:text-white">{item.title}</h3>
                         <span className="shrink-0 rounded-full border border-sky-200 bg-sky-50 px-2 py-0.5 text-[9px] font-black uppercase tracking-wide text-sky-700 dark:border-sky-800/80 dark:bg-sky-950/60 dark:text-sky-300">
-                          Lớp học
+                          Bài tập
                         </span>
                       </div>
                       <p className="mt-0.5 truncate text-[11px] text-stone-500 dark:text-stone-400">
