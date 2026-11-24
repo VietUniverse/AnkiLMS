@@ -210,7 +210,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
           </p>
           <a
             href="/explore"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-sky-500 text-white"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-sky-700 text-white"
           >
             <ArrowLeft className="w-4 h-4" />
             Quay lại trang Khám phá
@@ -251,7 +251,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
     <AppShell>
       <div className="mx-auto max-w-6xl space-y-5 pb-32 lg:pb-12 animate-fadeIn">
         {toastMessage && (
-          <div className="fixed bottom-40 left-3 right-3 lg:bottom-6 lg:left-auto lg:right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-emerald-600 text-white shadow-xl shadow-emerald-900/30 font-medium text-xs animate-slideUp">
+          <div className="fixed bottom-40 left-3 right-3 lg:bottom-6 lg:left-auto lg:right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-emerald-600 text-white font-medium text-xs animate-slideUp">
             <Check className="w-4 h-4 shrink-0" />
             <span>{toastMessage}</span>
             <a href="/flashcards" className="ml-2 underline font-bold hover:text-emerald-100">Học ngay →</a>
@@ -265,12 +265,12 @@ export default function DeckDetailClient({ id }: { id: string }) {
         {/* Tầng 1: nhận diện bộ thẻ và hành động chính, thấy ngay không cần cuộn */}
         <div
           style={{ viewTransitionName: deckTransitionName(deck.id) }}
-          className="rounded-3xl border border-sky-200/70 dark:border-sky-900/40 bg-gradient-to-br from-sky-50 via-white to-white dark:from-sky-950/30 dark:via-stone-900/60 dark:to-stone-900/60 p-5 sm:p-8"
+          className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 p-5 sm:p-8"
         >
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-center">
             <div className="space-y-4 min-w-0">
               <div className="flex items-start gap-4">
-                <div className="hidden sm:flex w-14 h-14 rounded-2xl bg-sky-500/10 text-sky-600 dark:text-sky-400 items-center justify-center shrink-0">
+                <div className="hidden sm:flex w-14 h-14 rounded-2xl bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 items-center justify-center shrink-0">
                   <DeckIcon name={deck.iconName} className="w-7 h-7" />
                 </div>
                 <div className="min-w-0 space-y-3">
@@ -300,7 +300,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
             </div>
 
             {/* Hộp hành động (máy tính). Trên điện thoại dùng thanh cố định ở dưới. */}
-            <div className="hidden lg:block rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-5 space-y-4 shadow-sm">
+            <div className="hidden lg:block rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-5 space-y-4">
               <div className="flex items-end justify-between">
                 <div>
                   <p className="text-3xl font-black tabular-nums text-stone-900 dark:text-white">{deck.cards.length.toLocaleString("vi-VN")}</p>
@@ -323,7 +323,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
                   </button>
                 </div>
               ) : (
-                <button onClick={handleAdd} className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-black bg-sky-500 hover:bg-sky-600 text-white transition cursor-pointer">
+                <button onClick={handleAdd} className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-black bg-sky-700 hover:bg-sky-800 text-white transition cursor-pointer">
                   <Plus className="w-4 h-4 stroke-[3]" /> Thêm vào kho thẻ
                 </button>
               )}
@@ -350,7 +350,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
 
             <div
               {...activateProps(() => setIsPreviewFlipped(!isPreviewFlipped))}
-              className="relative cursor-pointer min-h-[200px] sm:min-h-[240px] rounded-2xl bg-stone-50 dark:bg-stone-800/70 px-6 py-10 flex flex-col items-center justify-center text-center gap-3 transition hover:bg-sky-50 dark:hover:bg-stone-800"
+              className="relative cursor-pointer min-h-[200px] sm:min-h-[240px] rounded-2xl bg-stone-50 dark:bg-stone-800/70 px-6 py-10 flex flex-col items-center justify-center text-center gap-3 transition hover:bg-stone-100 dark:hover:bg-stone-800"
             >
               <button
                 onClick={(e) => {
@@ -432,7 +432,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
         {/* Thanh hành động nổi trên điện thoại/tablet, sát thanh điều hướng dưới (cao 64px); thanh bên chỉ hiện từ lg nên luôn canh giữa nội dung */}
                 {canPortal && createPortal(
 <div className="lg:hidden fixed z-30 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] inset-x-[4.25rem] sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[min(28rem,calc(100vw-2rem))]">
-          <div className="flex items-center gap-2 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white/95 dark:bg-stone-900/95 backdrop-blur p-1.5 shadow-lg">
+          <div className="flex items-center gap-2 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-1.5">
             {isAdded ? (
               <>
                 <button onClick={handleRemove} aria-label="Gỡ khỏi kho thẻ" title="Gỡ khỏi kho thẻ" className="h-11 w-11 shrink-0 rounded-xl text-rose-500 hover:bg-rose-500/10 flex items-center justify-center cursor-pointer">
@@ -443,7 +443,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
                 </Link>
               </>
             ) : (
-              <button onClick={handleAdd} style={{ color: "#fff" }} className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-sky-500 hover:bg-sky-600 px-4 text-sm font-black text-white transition cursor-pointer">
+              <button onClick={handleAdd} style={{ color: "#fff" }} className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-sky-700 hover:bg-sky-800 px-4 text-sm font-black text-white transition cursor-pointer">
                 <Plus className="w-4 h-4 stroke-[3]" /> Thêm ({deck.cards.length.toLocaleString("vi-VN")})
               </button>
             )}
