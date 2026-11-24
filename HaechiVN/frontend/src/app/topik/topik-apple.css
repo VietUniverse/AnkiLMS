@@ -299,6 +299,9 @@ html[data-theme="dark"] .topik-apple,
 /* ---------- Index rows ---------- */
 .ta-index { border-top: 1px solid var(--ta-border); }
 .ta-row {
+  /* Danh sách kỳ thi dài: bỏ qua layout/paint cho dòng ngoài viewport. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 56px;
   display: grid;
   grid-template-columns: 52px minmax(0, 1fr) auto;
   gap: 12px;
