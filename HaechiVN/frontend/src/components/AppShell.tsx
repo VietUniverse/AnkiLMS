@@ -82,7 +82,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
         onLogout={handleLogout}
         isOpenMobile={isMobileMenuOpen}
         onCloseMobile={() => setIsMobileMenuOpen(false)}
-        hideDesktop={!!activeStudySession || pathname.startsWith("/classes") || pathname === "/admin"}
+        hideDesktop={!!activeStudySession || pathname.startsWith("/classes")}
       />
 
       {/* Nền tùy chỉnh khi học thẻ (gradient hoặc ảnh), nằm dưới nội dung */}
