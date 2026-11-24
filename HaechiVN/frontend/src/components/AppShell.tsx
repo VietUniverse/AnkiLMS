@@ -12,6 +12,7 @@ import { useApp } from "../contexts/AppProvider";
 import { Sparkles } from "lucide-react";
 import { featureForPath } from "../lib/featureFlags";
 import { BrandLoadingMascot } from "./BrandLoadingMascot";
+import { installModalFocusTrap } from "../lib/modalFocusTrap";
 import { PWAInstallPrompt } from "./PWAInstallPrompt";
 
 interface AppShellProps {
@@ -26,6 +27,9 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [pathname]);
+
+  // Giữ Tab trong modal và chặn tương tác phần nền (inert) cho mọi overlay aria-modal.
+  useEffect(() => installModalFocusTrap(), []);
 
   const {
     currentUser,
