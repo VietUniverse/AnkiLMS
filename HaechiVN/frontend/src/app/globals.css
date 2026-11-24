@@ -148,6 +148,12 @@ html {
   overscroll-behavior: contain;
 }
 
+/* Modal đang mở thì khoá scroll nền. Mọi modal của app đều khai aria-modal trên
+   chính overlay nên 1 rule phủ hết, không phải gắn lock vào từng component. */
+body:has([aria-modal="true"]) {
+  overflow: hidden;
+}
+
 /* View Transition: đổi theme + điều hướng list -> detail (shared element).
    Nhịp bất đối xứng: cái cũ biến đi nhanh hơn để không "mờ mờ" nửa chừng. */
 @view-transition {
