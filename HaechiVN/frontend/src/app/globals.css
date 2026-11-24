@@ -2668,7 +2668,9 @@ html[data-theme="dark"] .classroom-module.cm-page.rd {
 .classroom-module.cm-page.rd .rd-tab-icon { display: none; width: 16px; height: 16px; flex: none; }
 
 @media (orientation: landscape) and (min-width: 900px) {
-  .classroom-module.cm-page.rd {
+  /* Chỉ chừa chỗ khi thật sự có rail nav bên trái; trang danh sách lớp không có rail
+     nên đệm 88px chỉ làm nội dung lệch phải. */
+  .classroom-module.cm-page.rd:has(.rd-nav-shell--rail) {
     padding-left: max(28px, calc(88px - max(0px, (100vw - 1180px) / 2)));
   }
   .classroom-module.cm-page.rd .rd-nav-shell--rail { position: static; pointer-events: none; }

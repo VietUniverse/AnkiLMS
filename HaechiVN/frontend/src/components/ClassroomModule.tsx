@@ -26,6 +26,7 @@ import {
   EyeOff,
   Pencil,
   Search,
+  ChevronRight,
 } from "lucide-react";
 import { ApiClient, UserProfile } from "../lib/apiClient";
 import { useApp } from "../contexts/AppProvider";
@@ -2682,7 +2683,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
 
   return (
     <div className="classroom-module cm-page rd">
-      <div className="mx-auto mb-4 w-full max-w-3xl space-y-3">
+      <div className="mx-auto mb-4 w-full space-y-3">
         <div className="flex w-full items-center gap-1.5 rounded-2xl border border-slate-200 bg-white p-1.5 dark:border-[#1e3466] dark:bg-[#0f1b38]">
           <div className="flex flex-1 justify-start">
           {onBack && (
@@ -2707,9 +2708,9 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
               role="tab"
               aria-selected={mainTab === "mine"}
               onClick={() => setMainTab("mine")}
-              className={`flex cursor-pointer items-center justify-center rounded-xl px-4 py-2 text-xs font-black transition ${
+              className={`flex cursor-pointer items-center justify-center rounded-xl px-4 py-2 text-xs font-black transition-colors ${
                 mainTab === "mine"
-                  ? "bg-sky-600 text-white"
+                  ? "bg-sky-700 text-white"
                   : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"
               }`}
             >
@@ -2720,9 +2721,9 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
               role="tab"
               aria-selected={mainTab === "join"}
               onClick={() => setMainTab("join")}
-              className={`flex cursor-pointer items-center justify-center rounded-xl px-4 py-2 text-xs font-black transition ${
+              className={`flex cursor-pointer items-center justify-center rounded-xl px-4 py-2 text-xs font-black transition-colors ${
                 mainTab === "join"
-                  ? "bg-sky-600 text-white"
+                  ? "bg-sky-700 text-white"
                   : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"
               }`}
             >
@@ -2740,12 +2741,12 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
             </Link>
           </div>
         </div>
-        <div className="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-center dark:border-[#1e3466] dark:bg-[#0f1b38]">
+        <div className="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 dark:border-[#1e3466] dark:bg-[#0f1b38]">
           <h1 className="text-sm font-black text-white sm:text-base">{statTitle}</h1>
           <dl className="mt-3 grid grid-cols-3 divide-x divide-slate-200 dark:divide-white/10">
             {stats.map((s) => (
-              <div key={s.label} className="px-5 text-center">
-                <dd className="text-base font-black text-white">{s.value}</dd>
+              <div key={s.label} className="px-5 first:pl-0">
+                <dd className="text-lg font-black tabular-nums text-white">{s.value}</dd>
                 <dt className="text-[11px] font-bold leading-tight text-slate-700">{s.label}</dt>
               </div>
             ))}
@@ -2787,7 +2788,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                 <button
                   type="button"
                   onClick={() => setMainTab("join")}
-                  className="cursor-pointer rounded-2xl bg-sky-600 px-5 py-2.5 text-xs font-black text-white transition-colors hover:bg-sky-500"
+                  className="cursor-pointer rounded-2xl bg-sky-700 px-5 py-2.5 text-xs font-black text-white transition-colors hover:bg-sky-800"
                 >
                   Tham gia bằng mã
                 </button>
@@ -2851,7 +2852,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                         setSelectedClassId(cls.id);
                       }
                     }}
-                    className="cursor-pointer space-y-3 rounded-2xl border border-slate-200 bg-white p-4 transition-colors hover:border-sky-600 dark:border-[#1e3466] dark:bg-[#0f1b38]"
+                    className="flex cursor-pointer flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 transition-colors hover:border-sky-600 dark:border-[#1e3466] dark:bg-[#0f1b38]"
                   >
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-1.5">
@@ -2871,8 +2872,8 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                       </span>
                     </div>
                     <div className="space-y-1">
-                      <h3 className="text-sm font-black text-white">{cls.name}</h3>
-                      <p className="line-clamp-2 text-xs text-slate-700">
+                      <h3 className="text-base font-black leading-snug text-white">{cls.name}</h3>
+                      <p className="line-clamp-2 text-xs leading-relaxed text-slate-700">
                         {cls.description || "Chưa có mô tả."}
                       </p>
                     </div>
@@ -2896,9 +2897,9 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                         </p>
                       </div>
                     ) : (
-                      <p className="text-[11px] font-bold text-slate-500">Chưa giao bộ thẻ.</p>
+                      <p className="text-[11px] font-bold text-slate-700">Chưa giao bộ thẻ.</p>
                     )}
-                    <div className="flex items-center justify-between gap-2 border-t border-[#e2e8f0] pt-3 dark:border-white/10">
+                    <div className="mt-auto flex items-center justify-between gap-2 border-t border-[#e2e8f0] pt-3 dark:border-white/10">
                       <button
                         type="button"
                         onClick={(e) => {
@@ -2906,7 +2907,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                           copyToClipboard(cls.code);
                         }}
                         aria-label={`Sao chép mã lớp ${cls.code}`}
-                        className="flex cursor-pointer items-center gap-1 font-mono text-[10px] font-bold uppercase text-slate-700 transition-colors hover:text-sky-600"
+                        className="flex cursor-pointer items-center gap-1.5 rounded-md bg-slate-100 px-1.5 py-0.5 font-mono text-[11px] font-bold uppercase tracking-wide text-slate-700 transition-colors hover:bg-slate-200 hover:text-sky-700 dark:bg-white/10 dark:text-slate-200"
                       >
                         <span>{cls.code}</span>
                         {copiedCode === cls.code ? (
@@ -2915,8 +2916,9 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                           <Copy className="h-3 w-3" />
                         )}
                       </button>
-                      <span className="flex items-center gap-1.5 rounded-xl bg-sky-600 px-3.5 py-2 text-[11px] font-black text-white">
+                      <span className="flex items-center gap-1 text-[11px] font-black text-sky-700">
                         {teacher ? "Quản lý lớp" : "Vào lớp"}
+                        <ChevronRight className="h-3.5 w-3.5" />
                       </span>
                     </div>
                   </article>
