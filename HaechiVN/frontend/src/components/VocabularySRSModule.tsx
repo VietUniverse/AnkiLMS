@@ -1789,6 +1789,17 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
   };
   const moreValid = Number.isInteger(Number(moreAmount)) && Number(moreAmount) >= 1 && moreAmount !== "";
 
+  const reviewButton = (
+    <button
+      onClick={startReviewAll}
+      title="Chỉ ôn lại những thẻ đã học trong thư viện của bạn"
+      className="flex h-full min-h-[74px] items-center justify-center gap-2 rounded-2xl border border-stone-200 bg-white px-5 text-sm font-black text-stone-900 transition-colors hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900/60 dark:text-white cursor-pointer"
+    >
+      <RotateCcw className="h-4 w-4 shrink-0 text-stone-500 dark:text-stone-400" />
+      Ôn tập
+    </button>
+  );
+
   return (
     <div className="flex w-full min-h-[calc(100vh-6rem)] pb-12 transition-colors lg:items-start lg:gap-4">
       {/* ====================================================================
@@ -1821,15 +1832,6 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                   />
                 </div>
 
-                <button
-                  onClick={startReviewAll}
-                  title="Chỉ ôn lại những thẻ đã học trong thư viện của bạn"
-                  className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-stone-200 px-3.5 py-2 text-xs font-bold text-stone-700 transition-colors hover:bg-stone-100 dark:border-stone-700/60 dark:text-stone-200 dark:hover:bg-stone-800/80 cursor-pointer"
-                >
-                  <RotateCcw className="h-4 w-4 text-stone-500 dark:text-stone-400" />
-                  Ôn tập
-                </button>
-
                 <Link
                   href="/explore"
                   className="inline-flex shrink-0 items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-300 border border-sky-200 dark:border-sky-800/80 hover:bg-sky-100 dark:hover:bg-sky-900/60 transition"
@@ -1841,9 +1843,10 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
               </div>
             </div>
 
-            {/* Banner tiếp tục học lượt trước + Cấu hình gộp chung một hàng trên desktop */}
+            {/* Banner tiếp tục học lượt trước + Ôn tập + Từ mới gộp chung một hàng trên desktop */}
+            <div className={`grid gap-3 sm:items-stretch ${lastStudiedDeckId && lastStudiedTitle ? "sm:grid-cols-[minmax(0,1.1fr)_auto_minmax(0,1fr)]" : "sm:grid-cols-[auto_minmax(0,1fr)]"}`}>
             {lastStudiedDeckId && lastStudiedTitle ? (
-              <div className="grid gap-3 sm:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] sm:items-stretch">
+              <>
                 <div className="h-full p-4 rounded-2xl bg-white dark:bg-[#141b2d] border border-stone-200/80 dark:border-stone-800/80 flex items-center justify-between gap-4 shadow-xs animate-reveal">
                   <div className="min-w-0">
                     <h3 className="text-sm sm:text-base font-bold truncate text-stone-900 dark:text-white">
@@ -1858,13 +1861,18 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                     <Play className="w-4 h-4 ml-0.5 fill-current" />
                   </button>
                 </div>
+                {reviewButton}
                 <div className="flex h-full items-stretch">
                   <DailyLimitsPanel limits={dailyLimits} progress={dailyProgress} onChange={updateLimits} />
                 </div>
-              </div>
+              </>
             ) : (
-              <DailyLimitsPanel limits={dailyLimits} progress={dailyProgress} onChange={updateLimits} />
+              <>
+                {reviewButton}
+                <DailyLimitsPanel limits={dailyLimits} progress={dailyProgress} onChange={updateLimits} />
+              </>
             )}
+            </div>
 
             {limitNotice && (
               <div role="status" className="rounded-xl border border-amber-300/60 bg-amber-50 dark:bg-amber-500/10 dark:border-amber-500/30 px-4 py-3 text-xs text-amber-800 dark:text-amber-200">
