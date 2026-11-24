@@ -61,7 +61,7 @@ export const DailyLimitsPanel: React.FC<Props> = ({ limits, progress, onChange }
             role="dialog"
             aria-modal="true"
             aria-labelledby="goal-title"
-            className="w-full max-w-xs rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-5 space-y-4 shadow-2xl"
+            className="w-full max-w-xs rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-5 space-y-4 text-center shadow-2xl"
             onClick={(e) => e.stopPropagation()}
             onSubmit={(e) => { e.preventDefault(); if (valid) save(parsed); }}
           >
@@ -98,7 +98,6 @@ export const DailyLimitsPanel: React.FC<Props> = ({ limits, progress, onChange }
               >
                 +
               </button>
-              <span className="shrink-0 text-sm text-stone-500 dark:text-stone-400">từ</span>
             </div>
             {draft !== "" && !valid && <p role="alert" className="text-xs text-rose-600">Nhập số nguyên từ 1 đến 9999.</p>}
             <div className="space-y-2">
