@@ -25,7 +25,6 @@ import {
   Layers,
   BookOpen,
   CheckCircle2,
-  Compass,
   ArrowRight,
 } from "lucide-react";
 import { ankiScheduleToFSRSState, calculateFSRS45, formatLocalDate, isFSRSCardDue, FSRSRating, FSRSState } from "../lib/fsrs45";
@@ -1836,11 +1835,10 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
 
                 <Link
                   href="/explore"
-                  className="inline-flex shrink-0 items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-300 border border-sky-200 dark:border-sky-800/80 hover:bg-sky-100 dark:hover:bg-sky-900/60 transition"
+                  className="inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-stone-200 bg-white px-3.5 py-2 text-xs font-bold text-stone-800 transition-colors hover:bg-stone-50 dark:border-stone-800 dark:bg-stone-900/60 dark:text-stone-100 dark:hover:bg-stone-800/80"
                 >
-                  <Compass className="w-4 h-4 text-sky-500" />
                   Khám phá
-                  <ArrowRight className="w-3.5 h-3.5 ml-0.5" />
+                  <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
             </div>
