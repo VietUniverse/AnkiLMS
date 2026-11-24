@@ -1528,13 +1528,13 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
         >
           {/* Vạch pin tiến độ xanh ngọc */}
           <div
-            className={`absolute inset-y-0 left-0 pointer-events-none transition-all duration-700 ${
+            className={`absolute inset-y-0 left-0 pointer-events-none transition duration-300 ${
               stats.percent > 0 ? "bg-emerald-500/10 dark:bg-emerald-500/15" : "bg-transparent"
             }`}
             style={{ width: `${stats.percent}%` }}
           />
           <div
-            className="absolute bottom-0 left-0 h-0.5 bg-emerald-500 transition-all duration-700 pointer-events-none"
+            className="absolute bottom-0 left-0 h-0.5 bg-emerald-500 transition duration-300 pointer-events-none"
             style={{ width: `${stats.percent}%` }}
           />
 

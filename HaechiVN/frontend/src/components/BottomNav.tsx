@@ -34,7 +34,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onOpenMobileMenu }) => {
           <a
             key={item.href}
             href={item.href}
-            className={`flex min-w-0 flex-1 flex-col items-center gap-1 px-1 py-1.5 rounded-xl transition-all ${
+            className={`flex min-w-0 flex-1 flex-col items-center gap-1 px-1 py-1.5 rounded-xl transition ${
               active ? "text-blue-400 bg-blue-500/10 font-bold" : "text-slate-400 hover:text-slate-200"
             }`}
           >
@@ -47,7 +47,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onOpenMobileMenu }) => {
       {/* Menu button to open mobile drawer */}
       <button
         onClick={onOpenMobileMenu}
-        className="flex min-w-0 flex-1 flex-col items-center gap-1 px-1 py-1.5 rounded-xl text-slate-400 hover:text-slate-200 cursor-pointer transition-all"
+        className="flex min-w-0 flex-1 flex-col items-center gap-1 px-1 py-1.5 rounded-xl text-slate-400 hover:text-slate-200 cursor-pointer transition"
         aria-label="Thêm menu"
       >
         <Menu className="w-5 h-5 text-slate-400" />

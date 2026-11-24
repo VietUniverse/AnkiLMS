@@ -71,7 +71,7 @@ export default function DailyMissionsPage() {
               <div className="mt-1 text-xl font-black text-white">{loading ? "—" : `${completedCount}/3`} <span className="text-sm font-semibold text-slate-400">nhiệm vụ</span></div>
             </div>
             <div className="h-2 min-w-40 flex-1 overflow-hidden rounded-full bg-slate-800">
-              <div className="h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-500 transition-all" style={{ width: `${(completedCount / 3) * 100}%` }} />
+              <div className="h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-500 transition" style={{ width: `${(completedCount / 3) * 100}%` }} />
             </div>
             <div className="flex items-center gap-2 rounded-xl border border-cyan-500/20 bg-cyan-500/10 px-3 py-2 text-sm font-black text-cyan-200"><Sparkles className="h-4 w-4 text-cyan-300" /> {summary?.user.gems ?? currentUser?.gems ?? 0} 💎</div>
           </div>

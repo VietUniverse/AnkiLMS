@@ -356,9 +356,9 @@ const NAV_GROUPS: Array<{
 ];
 
 const fieldCls =
-  "w-full rounded-xl border border-stone-200 dark:border-slate-700/80 bg-white dark:bg-[#132247] px-3.5 py-2.5 text-xs text-stone-900 dark:text-white placeholder:text-stone-400 dark:placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-inner";
+  "w-full rounded-xl border border-stone-200 dark:border-slate-700/80 bg-white dark:bg-[#132247] px-3.5 py-2.5 text-xs text-stone-900 dark:text-white placeholder:text-stone-400 dark:placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition shadow-inner";
 const selectCls =
-  "rounded-xl border border-stone-200 dark:border-slate-700/80 bg-white dark:bg-[#132247] px-3 py-2 text-xs font-bold text-stone-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all";
+  "rounded-xl border border-stone-200 dark:border-slate-700/80 bg-white dark:bg-[#132247] px-3 py-2 text-xs font-bold text-stone-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition";
 const labelCls = "block text-xs font-bold text-stone-700 dark:text-slate-300";
 const ghostBtnCls =
   "inline-flex items-center justify-center gap-1.5 rounded-xl border border-stone-200 dark:border-slate-700 bg-stone-100 hover:bg-stone-200 dark:bg-[#132247] dark:hover:bg-[#1a2f60] px-3 py-2 text-xs font-bold text-stone-700 dark:text-slate-200 transition-colors cursor-pointer";
@@ -1159,7 +1159,7 @@ export default function AdminPage() {
                       key={group.groupTitle}
                       type="button"
                       onClick={() => setOpenNavGroup(group.groupTitle)}
-                      className={`inline-flex shrink-0 items-center gap-1.5 rounded-xl border px-3 py-2 text-[11px] font-extrabold transition-all cursor-pointer ${
+                      className={`inline-flex shrink-0 items-center gap-1.5 rounded-xl border px-3 py-2 text-[11px] font-extrabold transition cursor-pointer ${
                         isOpen
                           ? "border-blue-500 bg-blue-600 text-white shadow-lg shadow-blue-900/30"
                           : "border-stone-200 dark:border-slate-800 bg-stone-100 dark:bg-[#132247] text-stone-600 dark:text-slate-300"
@@ -1186,7 +1186,7 @@ export default function AdminPage() {
                       key={item.id}
                       type="button"
                       onClick={() => setPanel(item.id)}
-                      className={`inline-flex shrink-0 items-center gap-2 rounded-xl border px-3 py-2 text-xs font-bold transition-all cursor-pointer ${
+                      className={`inline-flex shrink-0 items-center gap-2 rounded-xl border px-3 py-2 text-xs font-bold transition cursor-pointer ${
                         active
                           ? "border-blue-500 bg-blue-600 text-white shadow-lg shadow-blue-900/30"
                           : "border-stone-200 dark:border-slate-800 bg-white dark:bg-[#132247] text-stone-600 dark:text-slate-300"
@@ -1256,7 +1256,7 @@ export default function AdminPage() {
                                   type="button"
                                   onClick={() => setPanel(item.id)}
                                   title={item.subtitle}
-                                  className={`flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left transition-all cursor-pointer ${
+                                  className={`flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left transition cursor-pointer ${
                                     active
                                       ? "bg-blue-600 text-white shadow-md shadow-blue-900/25"
                                       : item.highlight
@@ -2221,7 +2221,7 @@ export default function AdminPage() {
                                     </div>
                                     <div className="relative mt-1.5 h-1.5 rounded-full bg-stone-200 dark:bg-slate-800">
                                       <div
-                                        className={`h-full rounded-full transition-all ${barTone}`}
+                                        className={`h-full rounded-full transition ${barTone}`}
                                         style={{ width: `${Math.min(100, Math.max(0, retention ?? 0))}%` }}
                                       />
                                       <span

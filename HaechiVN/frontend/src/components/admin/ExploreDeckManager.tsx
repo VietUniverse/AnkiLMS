@@ -10,7 +10,7 @@ type DeckRow = { sharedId: string; deckId: string; title: string; description: s
 type EditableDeck = { id: string; deckId?: string; sharedId?: string; title: string; description: string; visibility: "public" | "private"; cards: AnkiCard[]; source: "catalog" | "shared" };
 type Props = { request: <T>(path: string, init?: RequestInit) => Promise<T>; onError: (message: string) => void };
 
-const fieldCls = "w-full rounded-xl border border-stone-200 dark:border-transparent bg-white dark:bg-[#132247] px-3.5 py-2 text-xs text-stone-900 dark:text-white placeholder:text-stone-400 dark:placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-inner";
+const fieldCls = "w-full rounded-xl border border-stone-200 dark:border-transparent bg-white dark:bg-[#132247] px-3.5 py-2 text-xs text-stone-900 dark:text-white placeholder:text-stone-400 dark:placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition shadow-inner";
 const labelCls = "block text-xs font-bold text-stone-700 dark:text-slate-300";
 const ghostBtnCls = "inline-flex items-center justify-center gap-1.5 rounded-xl border border-stone-200 dark:border-slate-700 bg-stone-100 hover:bg-stone-200 dark:bg-[#132247] dark:hover:bg-[#1a2f60] px-3 py-2 text-xs font-bold text-stone-700 dark:text-slate-200 transition-colors";
 const dangerBtnCls = "inline-flex items-center justify-center gap-1.5 rounded-xl border border-rose-300 dark:border-rose-700/50 bg-rose-50/50 hover:bg-rose-100 dark:bg-transparent dark:hover:bg-rose-950/40 px-3 py-2 text-xs font-bold text-rose-600 dark:text-rose-300 transition-colors disabled:opacity-50";

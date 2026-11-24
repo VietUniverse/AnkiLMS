@@ -121,7 +121,7 @@
   position: absolute;
   inset: 0;
   border-radius: 54% 46% 48% 52% / 46% 54% 46% 54%;
-  transition: all 0.38s ease;
+  transition: background-color 0.38s ease, border-color 0.38s ease, color 0.38s ease, opacity 0.38s ease, transform 0.38s ease;
 }
 
 /* Trạng thái Trứng sống (Raw Egg - Chế độ Tối) */

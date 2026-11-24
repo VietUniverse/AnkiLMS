@@ -212,7 +212,7 @@ export default function LoginPage() {
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Họ và tên"
                     style={{ backgroundColor: "#132247", color: "#ffffff" }}
-                    className="w-full px-4 py-3.5 rounded-xl text-white text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-inner border-0"
+                    className="w-full px-4 py-3.5 rounded-xl text-white text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition shadow-inner border-0"
                   />
                 </div>
               )}
@@ -230,7 +230,7 @@ export default function LoginPage() {
                   onChange={(e) => setAccount(e.target.value)}
                   placeholder={isRegister ? "Email để nhận liên kết xác minh" : "Tài khoản hoặc email"}
                   style={{ backgroundColor: "#132247", color: "#ffffff" }}
-                  className="w-full px-4 py-3.5 rounded-xl text-white text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-inner border-0"
+                  className="w-full px-4 py-3.5 rounded-xl text-white text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition shadow-inner border-0"
                 />
               </div>
 
@@ -244,7 +244,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Mật khẩu"
                   style={{ backgroundColor: "#132247", color: "#ffffff" }}
-                  className="w-full px-4 py-3.5 rounded-xl text-white text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-inner border-0"
+                  className="w-full px-4 py-3.5 rounded-xl text-white text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition shadow-inner border-0"
                 />
               </div>
 
@@ -253,7 +253,7 @@ export default function LoginPage() {
                 type="submit"
                 disabled={loading}
                 style={{ backgroundColor: "#2563eb", color: "#ffffff" }}
-                className="w-full py-3.5 rounded-xl hover:bg-blue-500 active:scale-[0.99] text-white font-extrabold text-sm shadow-lg shadow-blue-900/40 cursor-pointer transition-all flex items-center justify-center gap-2 mt-2 border-0"
+                className="w-full py-3.5 rounded-xl hover:bg-blue-500 active:scale-[0.99] text-white font-extrabold text-sm shadow-lg shadow-blue-900/40 cursor-pointer transition flex items-center justify-center gap-2 mt-2 border-0"
               >
                 {loading ? (
                   <span>Đang xử lý...</span>

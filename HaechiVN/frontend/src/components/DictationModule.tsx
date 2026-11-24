@@ -708,7 +708,7 @@ export const DictationModule: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
           <button
             onClick={() => setSelectedUserLevel(prev => prev === "beginner" ? "all" : "beginner")}
-            className={`p-5 rounded-2xl border text-center transition-all cursor-pointer ${
+            className={`p-5 rounded-2xl border text-center transition cursor-pointer ${
               selectedUserLevel === "beginner"
                 ? "bg-purple-950/80 border-purple-500 shadow-xl shadow-purple-900/40 ring-2 ring-purple-500/50 scale-[1.02]"
                 : "bg-slate-950/60 border-slate-800 hover:bg-slate-900 hover:border-slate-700 opacity-80"
@@ -725,7 +725,7 @@ export const DictationModule: React.FC = () => {
 
           <button
             onClick={() => setSelectedUserLevel(prev => prev === "experienced" ? "all" : "experienced")}
-            className={`p-5 rounded-2xl border text-center transition-all cursor-pointer ${
+            className={`p-5 rounded-2xl border text-center transition cursor-pointer ${
               selectedUserLevel === "experienced"
                 ? "bg-purple-950/80 border-purple-500 shadow-xl shadow-purple-900/40 ring-2 ring-purple-500/50 scale-[1.02]"
                 : "bg-slate-950/60 border-slate-800 hover:bg-slate-900 hover:border-slate-700 opacity-80"
@@ -766,7 +766,7 @@ export const DictationModule: React.FC = () => {
               <button
                 key={tag}
                 onClick={() => setSelectedHashtag(tag)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold font-mono transition-all ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold font-mono transition ${
                   selectedHashtag === tag
                     ? "bg-sky-500 text-white shadow-md shadow-sky-900/40"
                     : "bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700"
@@ -803,7 +803,7 @@ export const DictationModule: React.FC = () => {
 
               <button
                 onClick={() => setExpandedSectionIds((ids) => isSectionExpanded ? ids.filter((id) => id !== sec.id) : [...ids, sec.id])}
-                className="px-4 py-1.5 rounded-full bg-slate-900 border border-slate-800 hover:border-purple-500 text-xs font-bold text-slate-300 hover:text-white transition-all flex items-center gap-1"
+                className="px-4 py-1.5 rounded-full bg-slate-900 border border-slate-800 hover:border-purple-500 text-xs font-bold text-slate-300 hover:text-white transition flex items-center gap-1"
                 aria-label={isSectionExpanded ? "Thu gọn bài học" : "Xem tất cả bài học"}
               >
                 <span>{isSectionExpanded ? "THU GỌN" : "XEM TẤT CẢ"}</span>
@@ -821,14 +821,14 @@ export const DictationModule: React.FC = () => {
                   <div
                     key={`${sec.id}-${lesson.id}`}
                     onClick={() => openLessonWorkspace(lesson)}
-                    className="group bg-slate-900 border border-slate-800 hover:border-purple-500 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-purple-900/20 flex flex-col justify-between"
+                    className="group bg-slate-900 border border-slate-800 hover:border-purple-500 rounded-2xl overflow-hidden cursor-pointer transition duration-300 hover:-translate-y-1 shadow-lg hover:shadow-purple-900/20 flex flex-col justify-between"
                   >
                     {/* Card Thumbnail Area */}
                     <div className="relative w-full pt-[56.25%] bg-slate-950 overflow-hidden">
                       {lesson.videoId ? <img
                         src={`https://img.youtube.com/vi/${lesson.videoId}/hqdefault.jpg`}
                         alt={`Thumbnail: ${lesson.title}`}
-                        className="absolute top-0 left-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80"
+                        className="absolute top-0 left-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-80"
                         loading="lazy"
                       /> : <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-fuchsia-950 via-slate-900 to-indigo-950 text-center p-4"><span className="text-4xl">{lesson.collectionId === "original-blackpink" ? "💖" : "🎬"}</span><span className="mt-2 text-xs font-black text-white">대화 연습 · 한국어</span><span className="text-[10px] text-slate-300">HaechiVN 창작 대화</span></div>}
 
@@ -901,7 +901,7 @@ export const DictationModule: React.FC = () => {
       <div className="flex items-center justify-between bg-slate-900 border border-slate-800 p-3.5 rounded-2xl">
         <button
           onClick={backToCatalog}
-          className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-2 transition-all"
+          className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold flex items-center gap-2 transition"
           aria-label="Quay lại danh sách bài học"
         >
           <ArrowLeft className="w-4 h-4" aria-hidden="true" />
@@ -971,7 +971,7 @@ export const DictationModule: React.FC = () => {
                     setScore(null);
                     setCompletedSubIds([]);
                   }}
-                  className={`px-3 py-2 rounded-xl text-xs font-bold text-left transition-all ${
+                  className={`px-3 py-2 rounded-xl text-xs font-bold text-left transition ${
                     selectedTopik === lvl
                       ? "bg-purple-600 text-white shadow-md shadow-purple-900/40"
                       : "bg-slate-950 text-slate-400 hover:bg-slate-800 hover:text-white"
@@ -995,7 +995,7 @@ export const DictationModule: React.FC = () => {
                 <button
                   key={`lesson-${l.id}`}
                   onClick={() => openLessonWorkspace(l)}
-                  className={`w-full text-left p-3.5 rounded-xl border transition-all space-y-1.5 ${
+                  className={`w-full text-left p-3.5 rounded-xl border transition space-y-1.5 ${
                     isSelected
                       ? "bg-purple-600/20 border-purple-500 text-white font-bold shadow-md shadow-purple-900/30"
                       : "bg-slate-950/60 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-white"
@@ -1038,7 +1038,7 @@ export const DictationModule: React.FC = () => {
               <div className="flex flex-wrap items-center gap-2">
                 <button
                   onClick={playFullLesson}
-                  className={`py-2.5 px-5 rounded-xl text-white font-bold text-xs flex items-center gap-2 shadow-lg transition-all ${isPlayingFull ? "bg-rose-700 hover:bg-rose-600 shadow-rose-900/40" : "bg-purple-600 hover:bg-purple-500 shadow-purple-900/40"}`}
+                  className={`py-2.5 px-5 rounded-xl text-white font-bold text-xs flex items-center gap-2 shadow-lg transition ${isPlayingFull ? "bg-rose-700 hover:bg-rose-600 shadow-rose-900/40" : "bg-purple-600 hover:bg-purple-500 shadow-purple-900/40"}`}
                   aria-label={isPlayingFull ? "Dừng phát toàn bộ bài học" : "Phát toàn bộ bài học"}
                 >
                   {isPlayingFull ? <Square className="w-4 h-4 fill-white" aria-hidden="true" /> : <Play className="w-4 h-4 fill-white" aria-hidden="true" />}
@@ -1047,7 +1047,7 @@ export const DictationModule: React.FC = () => {
 
                 {!isFreeVideoDictation && <button
                   onClick={startGuidedPlayback}
-                  className={`py-2.5 px-4 rounded-xl text-white font-bold text-xs flex items-center gap-2 shadow-lg transition-all ${isGuidedPlayback ? "bg-rose-700 hover:bg-rose-600 shadow-rose-900/40" : "bg-emerald-700 hover:bg-emerald-600 shadow-emerald-900/30"}`}
+                  className={`py-2.5 px-4 rounded-xl text-white font-bold text-xs flex items-center gap-2 shadow-lg transition ${isGuidedPlayback ? "bg-rose-700 hover:bg-rose-600 shadow-rose-900/40" : "bg-emerald-700 hover:bg-emerald-600 shadow-emerald-900/30"}`}
                   aria-label={isGuidedPlayback ? "Dừng luyện từng câu" : "Bắt đầu luyện từng câu"}
                 >
                   {isGuidedPlayback ? <Square className="w-4 h-4 fill-white" aria-hidden="true" /> : <Mic className="w-4 h-4" aria-hidden="true" />}
@@ -1056,7 +1056,7 @@ export const DictationModule: React.FC = () => {
 
                 <button
                   onClick={() => playSegment(currentSub, guidedModeRef.current ? () => { if (guidedModeRef.current) setGuidedWaiting(true); } : undefined)}
-                  className="py-2.5 px-5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs flex items-center gap-2 transition-all"
+                  className="py-2.5 px-5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs flex items-center gap-2 transition"
                   aria-label="Phát lại câu hiện tại"
                 >
                   <RotateCcw className="w-4 h-4" aria-hidden="true" />
@@ -1080,7 +1080,7 @@ export const DictationModule: React.FC = () => {
                   <button
                     key={s}
                     onClick={() => setPlaybackSpeed(Math.min(2, Math.max(0.5, s)))}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-bold font-mono transition-all ${
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold font-mono transition ${
                       playbackSpeed === s
                         ? "bg-purple-600 text-white"
                         : "text-slate-400 hover:text-slate-200"
@@ -1123,7 +1123,7 @@ export const DictationModule: React.FC = () => {
               onChange={(e) => setDictationInput(e.target.value)}
               placeholder={isFreeVideoDictation ? "Xem video và chép lại câu tiếng Hàn bạn nghe được..." : "Gõ câu trả lời tiếng Hàn của bạn ở đây..."}
               disabled={isSubmitted}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-lg font-noto font-bold text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 transition-all leading-relaxed"
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-lg font-noto font-bold text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 transition leading-relaxed"
             />
 
             {/* Interactive Word Hint Boxes (Eye Reveal) */}
@@ -1138,7 +1138,7 @@ export const DictationModule: React.FC = () => {
                     <button
                       key={`word-${wIdx}`}
                       onClick={() => toggleRevealWord(wIdx)}
-                      className={`px-3 py-2 rounded-xl border text-sm font-noto font-bold transition-all flex flex-col items-center gap-1 ${
+                      className={`px-3 py-2 rounded-xl border text-sm font-noto font-bold transition flex flex-col items-center gap-1 ${
                         isRevealed
                           ? "bg-purple-600/30 border-purple-500 text-sky-300"
                           : "bg-slate-950 border-slate-800 text-slate-400 hover:border-purple-500/50"
@@ -1170,7 +1170,7 @@ export const DictationModule: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               {!isFreeVideoDictation && <button
                 onClick={revealAllWords}
-                className="py-3 px-4 rounded-xl bg-amber-950/40 border border-amber-500/40 text-amber-400 font-bold text-xs hover:bg-amber-900/40 transition-all flex items-center justify-center gap-2"
+                className="py-3 px-4 rounded-xl bg-amber-950/40 border border-amber-500/40 text-amber-400 font-bold text-xs hover:bg-amber-900/40 transition flex items-center justify-center gap-2"
                 aria-label="Hiện tất cả từ"
               >
                 <Eye className="w-4 h-4" aria-hidden="true" /> HIỆN TẤT CẢ TỪ
@@ -1180,14 +1180,14 @@ export const DictationModule: React.FC = () => {
                 <button
                   onClick={handleCheckAnswer}
                   disabled={!dictationInput.trim()}
-                  className="py-3 px-4 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-black text-xs uppercase tracking-wider disabled:opacity-50 shadow-lg shadow-purple-900/40 transition-all"
+                  className="py-3 px-4 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-black text-xs uppercase tracking-wider disabled:opacity-50 shadow-lg shadow-purple-900/40 transition"
                 >
                   {isFreeVideoDictation ? "LƯU BẢN CHÉP" : "KIỂM TRA CÂU GÕ (ENTER)"}
                 </button>
               ) : (
                 <button
                   onClick={handleNextSub}
-                  className="py-3 px-4 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-sky-900/40 transition-all"
+                  className="py-3 px-4 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-sky-900/40 transition"
                 >
                   TIẾP THEO &gt;
                 </button>
@@ -1246,7 +1246,7 @@ export const DictationModule: React.FC = () => {
                 <button
                   key={`sub-${sub.id}`}
                   onClick={() => handleSelectSub(subIdx)}
-                  className={`w-full text-left p-3.5 rounded-xl border transition-all space-y-1.5 ${cardStyle}`}
+                  className={`w-full text-left p-3.5 rounded-xl border transition space-y-1.5 ${cardStyle}`}
                 >
                   <div className="flex items-center justify-between text-xs">
                     <span className={`font-mono font-bold ${isDone ? "text-emerald-400" : isSelected ? "text-purple-400" : "text-sky-400"}`}>

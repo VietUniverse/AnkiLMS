@@ -672,7 +672,7 @@ export const TopikExamModule: React.FC<TopikExamModuleProps> = ({ initialSetId, 
           </p>
           <div className="mt-2 h-1.5 w-40 overflow-hidden rounded-full bg-slate-800">
             <div
-              className="h-full rounded-full bg-sky-400 transition-all"
+              className="h-full rounded-full bg-sky-400 transition"
               style={{ width: `${((currentIndex + 1) / activeSet.questions.length) * 100}%` }}
             />
           </div>

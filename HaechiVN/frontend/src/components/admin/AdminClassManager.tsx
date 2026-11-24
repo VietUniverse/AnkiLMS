@@ -78,9 +78,9 @@ type Props = {
 };
 
 const fieldCls =
-  "w-full rounded-xl border border-stone-200 dark:border-slate-700/80 bg-white dark:bg-[#132247] px-3.5 py-2.5 text-xs text-stone-900 dark:text-white placeholder:text-stone-400 dark:placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-inner";
+  "w-full rounded-xl border border-stone-200 dark:border-slate-700/80 bg-white dark:bg-[#132247] px-3.5 py-2.5 text-xs text-stone-900 dark:text-white placeholder:text-stone-400 dark:placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition shadow-inner";
 const selectCls =
-  "rounded-xl border border-stone-200 dark:border-slate-700/80 bg-white dark:bg-[#132247] px-3 py-2 text-xs font-bold text-stone-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all";
+  "rounded-xl border border-stone-200 dark:border-slate-700/80 bg-white dark:bg-[#132247] px-3 py-2 text-xs font-bold text-stone-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition";
 const labelCls = "block text-xs font-bold text-stone-700 dark:text-slate-300";
 const ghostBtnCls =
   "inline-flex items-center justify-center gap-1.5 rounded-xl border border-stone-200 dark:border-slate-700 bg-stone-100 hover:bg-stone-200 dark:bg-[#132247] dark:hover:bg-[#1a2f60] px-3 py-2 text-xs font-bold text-stone-700 dark:text-slate-200 transition-colors cursor-pointer";
@@ -404,7 +404,7 @@ export function AdminClassManager({
           return (
             <article
               key={item.id}
-              className={`card-duo rounded-2xl overflow-hidden transition-all ${
+              className={`card-duo rounded-2xl overflow-hidden transition ${
                 isExpanded ? "ring-2 ring-blue-500/40" : ""
               }`}
             >

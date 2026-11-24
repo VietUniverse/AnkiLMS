@@ -41,7 +41,7 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onToggl
           <div className="flex items-center gap-2 min-w-0 animate-reveal">
             <button
               onClick={activeStudySession.onExit}
-              className="flex h-9 w-9 items-center justify-center shrink-0 rounded-full bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 transition-all shadow-xs cursor-pointer border border-stone-200 dark:border-stone-700"
+              className="flex h-9 w-9 items-center justify-center shrink-0 rounded-full bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 transition shadow-xs cursor-pointer border border-stone-200 dark:border-stone-700"
               title={activeStudySession.backLabel || "Trở về danh sách bài học"}
               aria-label={activeStudySession.backLabel || "Trở về danh sách bài học"}
             >
@@ -72,7 +72,7 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onToggl
           role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={activeStudySession.progressPercent}
         >
           <div
-            className={`h-full rounded-r-full transition-all duration-300 ${bgActive ? "" : "bg-emerald-500"}`}
+            className={`h-full rounded-r-full transition duration-300 ${bgActive ? "" : "bg-emerald-500"}`}
             style={{ width: `${activeStudySession.progressPercent}%`, ...(bgActive ? { background: progressTone.fill, boxShadow: progressTone.glow } : {}) }}
           />
         </div>

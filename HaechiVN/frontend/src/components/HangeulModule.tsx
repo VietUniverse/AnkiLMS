@@ -68,7 +68,7 @@ export const HangeulModule: React.FC = () => {
                 const firstVisible = HANGEUL_DATA.find((item) => t === "all" || item.type === t);
                 if (firstVisible) setSelectedChar(firstVisible);
               }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
                 filter === t
                   ? "bg-emerald-500 text-white shadow-md shadow-emerald-900/40"
                   : "text-slate-400 hover:text-slate-200"
@@ -93,7 +93,7 @@ export const HangeulModule: React.FC = () => {
                     setSelectedChar(item);
                     playSound(item.char);
                   }}
-                  className={`card-duo p-4 flex flex-col items-center justify-center transition-all ${
+                  className={`card-duo p-4 flex flex-col items-center justify-center transition ${
                     isSelected
                       ? "border-emerald-400 bg-emerald-950/40 scale-105 shadow-emerald-500/20"
                       : "hover:border-slate-600 bg-slate-800/80"
@@ -181,7 +181,7 @@ export const HangeulModule: React.FC = () => {
               </span>
               <button
                 onClick={() => playSound(selectedChar.char)}
-                className="p-3 rounded-2xl bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 active:scale-95 transition-all"
+                className="p-3 rounded-2xl bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 active:scale-95 transition"
               >
                 <Volume2 className="w-6 h-6" />
               </button>

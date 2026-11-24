@@ -509,7 +509,7 @@ export const ShadowingModule: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
           <button
             onClick={() => setSelectedUserLevel(prev => prev === "beginner" ? "all" : "beginner")}
-            className={`p-5 rounded-2xl border text-center transition-all cursor-pointer ${
+            className={`p-5 rounded-2xl border text-center transition cursor-pointer ${
               selectedUserLevel === "beginner"
                 ? "bg-rose-950/80 border-rose-500 shadow-xl shadow-rose-900/40 ring-2 ring-rose-500/50 scale-[1.02]"
                 : "bg-slate-950/60 border-slate-800 hover:bg-slate-900 hover:border-slate-700 opacity-80"
@@ -526,7 +526,7 @@ export const ShadowingModule: React.FC = () => {
 
           <button
             onClick={() => setSelectedUserLevel(prev => prev === "experienced" ? "all" : "experienced")}
-            className={`p-5 rounded-2xl border text-center transition-all cursor-pointer ${
+            className={`p-5 rounded-2xl border text-center transition cursor-pointer ${
               selectedUserLevel === "experienced"
                 ? "bg-rose-950/80 border-rose-500 shadow-xl shadow-rose-900/40 ring-2 ring-rose-500/50 scale-[1.02]"
                 : "bg-slate-950/60 border-slate-800 hover:bg-slate-900 hover:border-slate-700 opacity-80"
@@ -567,7 +567,7 @@ export const ShadowingModule: React.FC = () => {
               <button
                 key={tag}
                 onClick={() => setSelectedHashtag(tag)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold font-mono transition-all ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold font-mono transition ${
                   selectedHashtag === tag
                     ? "bg-rose-500 text-white shadow-md shadow-rose-900/40"
                     : "bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700"
@@ -604,7 +604,7 @@ export const ShadowingModule: React.FC = () => {
 
               <button
                 onClick={() => setExpandedSectionIds((ids) => isSectionExpanded ? ids.filter((id) => id !== sec.id) : [...ids, sec.id])}
-                className="px-4 py-1.5 rounded-full bg-slate-900 border border-slate-800 hover:border-rose-500 text-xs font-bold text-slate-300 hover:text-white transition-all flex items-center gap-1"
+                className="px-4 py-1.5 rounded-full bg-slate-900 border border-slate-800 hover:border-rose-500 text-xs font-bold text-slate-300 hover:text-white transition flex items-center gap-1"
                 aria-label={isSectionExpanded ? "Thu gọn bài học" : "Xem tất cả bài học"}
               >
                 <span>{isSectionExpanded ? "THU GỌN" : "XEM TẤT CẢ"}</span>
@@ -622,14 +622,14 @@ export const ShadowingModule: React.FC = () => {
                   <div
                     key={`${sec.id}-${lesson.id}`}
                     onClick={() => openLessonWorkspace(lesson)}
-                    className="group bg-slate-900 border border-slate-800 hover:border-rose-500 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-rose-900/20 flex flex-col justify-between"
+                    className="group bg-slate-900 border border-slate-800 hover:border-rose-500 rounded-2xl overflow-hidden cursor-pointer transition duration-300 hover:-translate-y-1 shadow-lg hover:shadow-rose-900/20 flex flex-col justify-between"
                   >
                     {/* Card Thumbnail Area */}
                     <div className="relative w-full pt-[56.25%] bg-slate-950 overflow-hidden">
                       {lesson.videoId ? <img
                         src={`https://img.youtube.com/vi/${lesson.videoId}/hqdefault.jpg`}
                         alt={`Thumbnail: ${lesson.title}`}
-                        className="absolute top-0 left-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80"
+                        className="absolute top-0 left-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-80"
                         loading="lazy"
                       /> : <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-fuchsia-950 via-slate-900 to-indigo-950 text-center p-4"><span className="text-4xl">{lesson.collectionId === "original-blackpink" ? "💖" : "🎬"}</span><span className="mt-2 text-xs font-black text-white">대화 연습 · 한국어</span><span className="text-[10px] text-slate-300">HaechiVN 창작 대화</span></div>}
 
@@ -745,7 +745,7 @@ export const ShadowingModule: React.FC = () => {
                           aria-label={`Câu ${i + 1}`}
                           aria-current={cur}
                           style={{ flexGrow: Math.max(0.3, seg.end - seg.start), flexBasis: 0 }}
-                          className={`rounded-md transition-all cursor-pointer ${zoomed ? "h-6" : cur ? "h-4" : "h-2.5 hover:h-3.5"} ${cur ? "bg-rose-500" : i < currentSubIndex ? "bg-sky-500/70" : "bg-slate-600/60"}`}
+                          className={`rounded-md transition-colors cursor-pointer ${zoomed ? "h-6" : cur ? "h-4" : "h-2.5 hover:h-3.5"} ${cur ? "bg-rose-500" : i < currentSubIndex ? "bg-sky-500/70" : "bg-slate-600/60"}`}
                         >
                         </button>
                       );
@@ -839,7 +839,7 @@ export const ShadowingModule: React.FC = () => {
                 <button
                   key={`sub-${sub.id}`}
                   onClick={() => handleSelectSub(subIdx)}
-                  className={`w-full text-left p-3.5 rounded-xl border transition-all space-y-1.5 ${cardStyle}`}
+                  className={`w-full text-left p-3.5 rounded-xl border transition space-y-1.5 ${cardStyle}`}
                 >
                   <div className="flex items-center justify-between text-xs">
                     <span className={`font-mono font-bold ${isDone ? "text-emerald-400" : isSelected ? "text-rose-400" : "text-sky-400"}`}>

@@ -114,7 +114,7 @@ export default function Home() {
           </div>
           <Link
             href="/login"
-            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-xs shadow-lg shadow-blue-900/40 active:scale-95 transition-all flex items-center justify-center gap-2"
+            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-xs shadow-lg shadow-blue-900/40 active:scale-95 transition flex items-center justify-center gap-2"
           >
             <LogIn className="w-4 h-4" />
             <span>ĐĂNG NHẬP NGAY</span>
@@ -194,7 +194,7 @@ export default function Home() {
                 <p className="flex shrink-0 items-center gap-1 text-sm font-black tabular-nums text-stone-900 dark:text-white"><Zap className="h-4 w-4 fill-amber-400 text-amber-500" />{(currentUser.xp || 0).toLocaleString("vi-VN")}</p>
               </div>
               <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-stone-200 dark:bg-stone-800" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={levelProgressPercent}>
-                <div className="h-full rounded-full bg-amber-400 transition-all duration-500" style={{ width: `${Math.max(4, levelProgressPercent || 0)}%` }} />
+                <div className="h-full w-full origin-left rounded-full bg-amber-400 transition-transform duration-300" style={{ transform: `scaleX(${Math.max(4, levelProgressPercent || 0) / 100})` }} />
               </div>
             </div>
 
@@ -224,7 +224,7 @@ export default function Home() {
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="h-2 flex-1 overflow-hidden rounded-full bg-amber-500/20" role="progressbar" aria-valuemin={0} aria-valuemax={NEW_WORDS_FOR_CHECKIN} aria-valuenow={Math.min(newWordsToday, NEW_WORDS_FOR_CHECKIN)}>
-                      <div className="h-full rounded-full bg-amber-500 transition-all duration-300" style={{ width: `${Math.min(100, (newWordsToday / NEW_WORDS_FOR_CHECKIN) * 100)}%` }} />
+                      <div className="h-full w-full origin-left rounded-full bg-amber-500 transition-transform duration-300" style={{ transform: `scaleX(${Math.min(100, (newWordsToday / NEW_WORDS_FOR_CHECKIN) * 100) / 100})` }} />
                     </div>
                     <span className="shrink-0 text-xs font-black tabular-nums">{Math.min(newWordsToday, NEW_WORDS_FOR_CHECKIN)}/{NEW_WORDS_FOR_CHECKIN}</span>
                   </div>

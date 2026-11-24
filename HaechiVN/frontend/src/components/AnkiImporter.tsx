@@ -96,7 +96,7 @@ export const AnkiImporter: React.FC<AnkiImporterProps> = ({
           <div
             onDragOver={(e) => e.preventDefault()}
             onDrop={handleDrop}
-            className="border-2 border-dashed border-purple-500/40 hover:border-purple-400 bg-purple-950/20 hover:bg-purple-900/30 rounded-2xl p-8 text-center transition-all cursor-pointer group"
+            className="border-2 border-dashed border-purple-500/40 hover:border-purple-400 bg-purple-950/20 hover:bg-purple-900/30 rounded-2xl p-8 text-center transition cursor-pointer group"
           >
             <input
               type="file"

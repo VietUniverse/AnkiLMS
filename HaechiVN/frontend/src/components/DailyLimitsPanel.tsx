@@ -34,7 +34,7 @@ function GoalBar({ done, value, onOpen }: { done: number; value: number; onOpen:
           </span>
         </span>
         <span className="block h-1.5 rounded-full bg-stone-200 dark:bg-stone-800 overflow-hidden">
-          <span className={`block h-full rounded-full transition-all ${complete ? "bg-emerald-500" : "bg-sky-500"}`} style={{ width: `${pct}%` }} />
+          <span className={`block h-full rounded-full transition ${complete ? "bg-emerald-500" : "bg-sky-500"}`} style={{ width: `${pct}%` }} />
         </span>
       </span>
       <Pencil className="h-3.5 w-3.5 shrink-0 text-stone-300 transition group-hover:text-sky-500" />

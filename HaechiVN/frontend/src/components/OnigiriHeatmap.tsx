@@ -329,7 +329,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
           <div className="flex items-center p-0.5 rounded-lg bg-stone-100 text-xs dark:bg-stone-800">
             <button
               onClick={() => setView("year")}
-              className={`px-2.5 py-1 rounded-md font-semibold transition-all border-0 ${
+              className={`px-2.5 py-1 rounded-md font-semibold transition border-0 ${
                 view === "year"
                   ? "bg-sky-500 text-white"
                   : "text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-200"
@@ -339,7 +339,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
             </button>
             <button
               onClick={() => setView("month")}
-              className={`px-2.5 py-1 rounded-md font-semibold transition-all border-0 ${
+              className={`px-2.5 py-1 rounded-md font-semibold transition border-0 ${
                 view === "month"
                   ? "bg-sky-500 text-white"
                   : "text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-200"
@@ -349,7 +349,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
             </button>
             <button
               onClick={() => setView("week")}
-              className={`px-2.5 py-1 rounded-md font-semibold transition-all border-0 ${
+              className={`px-2.5 py-1 rounded-md font-semibold transition border-0 ${
                 view === "week"
                   ? "bg-sky-500 text-white"
                   : "text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-200"
@@ -363,7 +363,7 @@ export const OnigiriHeatmap: React.FC<OnigiriHeatmapProps> = ({
           {onToggleDemo && (
             <button
               onClick={onToggleDemo}
-              className="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-600 dark:text-stone-300 transition-all flex items-center gap-1.5"
+              className="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-600 dark:text-stone-300 transition flex items-center gap-1.5"
               title="Bật/Tắt dữ liệu demo"
             >
               <span

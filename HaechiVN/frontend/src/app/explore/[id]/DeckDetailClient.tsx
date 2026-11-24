@@ -380,7 +380,7 @@ export default function DeckDetailClient({ id }: { id: string }) {
                     key={c.id}
                     onClick={() => { setActivePreviewIndex(i); setRequestedPreviewCardId(null); setIsPreviewFlipped(false); }}
                     aria-label={`Xem thẻ ${i + 1}`}
-                    className={`h-2 rounded-full transition-all cursor-pointer ${activePreviewIndex === i ? "w-6 bg-sky-500" : "w-2 bg-stone-300 dark:bg-stone-700 hover:bg-stone-400"}`}
+                    className={`h-2 rounded-full transition cursor-pointer ${activePreviewIndex === i ? "w-6 bg-sky-500" : "w-2 bg-stone-300 dark:bg-stone-700 hover:bg-stone-400"}`}
                   />
                 ))}
               </div>

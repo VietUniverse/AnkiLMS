@@ -1235,7 +1235,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                 role="tab"
                 aria-selected={activeTab === "assignments"}
                 onClick={() => setActiveTab("assignments")}
-                className={`flex cursor-pointer items-center justify-center gap-1 rounded-xl px-3 py-2 text-xs font-black transition-all ${activeTab === "assignments" ? "bg-sky-600 text-white" : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"}`}
+                className={`flex cursor-pointer items-center justify-center gap-1 rounded-xl px-3 py-2 text-xs font-black transition ${activeTab === "assignments" ? "bg-sky-600 text-white" : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"}`}
               >
                 Bài tập
                 <span className="text-[10px] font-bold opacity-70">{selectedClass.assignments.length}</span>
@@ -1245,7 +1245,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                 role="tab"
                 aria-selected={activeTab === "leaderboard"}
                 onClick={() => setActiveTab("leaderboard")}
-                className={`flex cursor-pointer items-center justify-center gap-1 rounded-xl px-3 py-2 text-xs font-black transition-all ${activeTab === "leaderboard" ? "bg-sky-600 text-white" : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"}`}
+                className={`flex cursor-pointer items-center justify-center gap-1 rounded-xl px-3 py-2 text-xs font-black transition ${activeTab === "leaderboard" ? "bg-sky-600 text-white" : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"}`}
               >
                 Xếp hạng
                 <span className="text-[10px] font-bold opacity-70">{rankedStudents.length}</span>
@@ -1255,7 +1255,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                 role="tab"
                 aria-selected={activeTab === "members"}
                 onClick={() => setActiveTab("members")}
-                className={`flex cursor-pointer items-center justify-center gap-1 rounded-xl px-3 py-2 text-xs font-black transition-all ${activeTab === "members" ? "bg-sky-600 text-white" : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"}`}
+                className={`flex cursor-pointer items-center justify-center gap-1 rounded-xl px-3 py-2 text-xs font-black transition ${activeTab === "members" ? "bg-sky-600 text-white" : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"}`}
               >
                 Thành viên
                 <span className="text-[10px] font-bold opacity-70">{approvedMembers.length}</span>
@@ -1266,7 +1266,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                 role="tab"
                 aria-selected={activeTab === "settings"}
                 onClick={() => setActiveTab("settings")}
-                className={`flex cursor-pointer items-center justify-center gap-1 rounded-xl px-3 py-2 text-xs font-black transition-all ${activeTab === "settings" ? "bg-sky-600 text-white" : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"}`}
+                className={`flex cursor-pointer items-center justify-center gap-1 rounded-xl px-3 py-2 text-xs font-black transition ${activeTab === "settings" ? "bg-sky-600 text-white" : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"}`}
               >
                 Cài đặt
               </button>
@@ -2707,7 +2707,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
               role="tab"
               aria-selected={mainTab === "mine"}
               onClick={() => setMainTab("mine")}
-              className={`flex cursor-pointer items-center justify-center rounded-xl px-4 py-2 text-xs font-black transition-all ${
+              className={`flex cursor-pointer items-center justify-center rounded-xl px-4 py-2 text-xs font-black transition ${
                 mainTab === "mine"
                   ? "bg-sky-600 text-white"
                   : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"
@@ -2720,7 +2720,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
               role="tab"
               aria-selected={mainTab === "join"}
               onClick={() => setMainTab("join")}
-              className={`flex cursor-pointer items-center justify-center rounded-xl px-4 py-2 text-xs font-black transition-all ${
+              className={`flex cursor-pointer items-center justify-center rounded-xl px-4 py-2 text-xs font-black transition ${
                 mainTab === "join"
                   ? "bg-sky-600 text-white"
                   : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"
@@ -3105,7 +3105,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                         type="button"
                         key={option.value}
                         onClick={() => setNewClassVisibility(option.value)}
-                        className={`w-full text-left rounded-xl border p-3 transition-all cursor-pointer ${
+                        className={`w-full text-left rounded-xl border p-3 transition cursor-pointer ${
                           selected
                             ? "border-sky-400 bg-sky-500/10"
                             : "border-[#1e3a70] bg-[#132247] hover:border-sky-500/40"

@@ -291,7 +291,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     onCloseMobile?.();
                     onOpenAuth(false);
                   }}
-                  className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider transition-all cursor-pointer shadow-md"
+                  className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider transition cursor-pointer shadow-md"
                 >
                   ĐĂNG NHẬP
                 </button>
@@ -304,7 +304,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Desktop Aside Sidebar */}
       <aside
         className={`${hideDesktop ? "hidden" : "hidden lg:flex"} relative flex-col border-r border-[#111c38]/70 bg-[#090f1e] text-white h-screen sticky top-0 justify-between z-30 select-none ${
-          resizing ? "" : "transition-all duration-300"
+          resizing ? "" : "transition duration-300"
         } ${collapsed ? "w-16" : ""}`}
         style={collapsed ? undefined : { width: `${sidebarWidth}px` }}
       >
@@ -434,7 +434,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         ) : (
           <button
             onClick={() => onOpenAuth(false)}
-            className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider transition-all cursor-pointer border-0 shadow-md shadow-blue-900/30"
+            className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs uppercase tracking-wider transition cursor-pointer border-0 shadow-md shadow-blue-900/30"
           >
             {collapsed ? <User className="w-4 h-4 mx-auto" /> : "ĐĂNG NHẬP"}
           </button>

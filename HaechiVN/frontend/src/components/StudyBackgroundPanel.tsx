@@ -152,7 +152,7 @@ export function StudyBackgroundPanel() {
                 onClick={() => update({ kind: bg.kind === "animated" ? "gradient" : "animated" })}
                 className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${bg.kind === "animated" ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
               >
-                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-all ${bg.kind === "animated" ? "left-[22px]" : "left-0.5"}`} />
+                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${bg.kind === "animated" ? "translate-x-[22px]" : "translate-x-0.5"}`} />
               </button>
             </div>
 
@@ -166,7 +166,7 @@ export function StudyBackgroundPanel() {
                 onClick={() => setRandomStudyBgEvery10(!randomBgEvery10)}
                 className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${randomBgEvery10 ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
               >
-                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-all ${randomBgEvery10 ? "left-[22px]" : "left-0.5"}`} />
+                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${randomBgEvery10 ? "translate-x-[22px]" : "translate-x-0.5"}`} />
               </button>
             </div>
 
@@ -180,7 +180,7 @@ export function StudyBackgroundPanel() {
                 onClick={() => setMuteWordAudio(!muteWordAudio)}
                 className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${muteWordAudio ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
               >
-                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-all ${muteWordAudio ? "left-[22px]" : "left-0.5"}`} />
+                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${muteWordAudio ? "translate-x-[22px]" : "translate-x-0.5"}`} />
               </button>
             </div>
 
@@ -194,7 +194,7 @@ export function StudyBackgroundPanel() {
                 onClick={() => setMuteExampleAudio(!muteExampleAudio)}
                 className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${muteExampleAudio ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
               >
-                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-all ${muteExampleAudio ? "left-[22px]" : "left-0.5"}`} />
+                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${muteExampleAudio ? "translate-x-[22px]" : "translate-x-0.5"}`} />
               </button>
             </div>
 
@@ -208,7 +208,7 @@ export function StudyBackgroundPanel() {
                 onClick={() => setMuteAndHideAudio(!muteAndHideAudio)}
                 className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${muteAndHideAudio ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
               >
-                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-all ${muteAndHideAudio ? "left-[22px]" : "left-0.5"}`} />
+                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${muteAndHideAudio ? "translate-x-[22px]" : "translate-x-0.5"}`} />
               </button>
             </div>
 
@@ -222,7 +222,7 @@ export function StudyBackgroundPanel() {
                 onClick={() => setDisableAutoPronounce(!disableAutoPronounce)}
                 className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${disableAutoPronounce ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
               >
-                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-all ${disableAutoPronounce ? "left-[22px]" : "left-0.5"}`} />
+                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${disableAutoPronounce ? "translate-x-[22px]" : "translate-x-0.5"}`} />
               </button>
             </div>
 
@@ -236,7 +236,7 @@ export function StudyBackgroundPanel() {
                 onClick={() => setHideChatGpt(!hideChatGpt)}
                 className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${hideChatGpt ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
               >
-                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-all ${hideChatGpt ? "left-[22px]" : "left-0.5"}`} />
+                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${hideChatGpt ? "translate-x-[22px]" : "translate-x-0.5"}`} />
               </button>
             </div>
 
@@ -250,7 +250,7 @@ export function StudyBackgroundPanel() {
                 onClick={() => setHideDictionary(!hideDictionary)}
                 className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${hideDictionary ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
               >
-                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-all ${hideDictionary ? "left-[22px]" : "left-0.5"}`} />
+                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${hideDictionary ? "translate-x-[22px]" : "translate-x-0.5"}`} />
               </button>
             </div>
 

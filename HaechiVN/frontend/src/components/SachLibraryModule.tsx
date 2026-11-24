@@ -915,8 +915,8 @@ export function SachLibraryModule({ initialBook }: { initialBook?: "so-cap-1" | 
 
             <div className="h-2.5 w-full overflow-hidden rounded-full bg-panel border border-line">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-sky-500 to-emerald-400 transition-all duration-500"
-                style={{ width: `${Math.max(activeStats.percent, activeStats.inProgressCount > 0 ? 4 : 0)}%` }}
+                className="h-full w-full origin-left rounded-full bg-gradient-to-r from-sky-500 to-emerald-400 transition-transform duration-300"
+                style={{ transform: `scaleX(${Math.max(activeStats.percent, activeStats.inProgressCount > 0 ? 4 : 0) / 100})` }}
               />
             </div>
 
@@ -974,7 +974,7 @@ export function SachLibraryModule({ initialBook }: { initialBook?: "so-cap-1" | 
                     setSelectedBookId(book.id as "so-cap-1" | "so-cap-2");
                   }
                 }}
-                className={`card-duo relative flex flex-col justify-between overflow-hidden p-4 transition-all ${
+                className={`card-duo relative flex flex-col justify-between overflow-hidden p-4 transition ${
                   isReady ? "cursor-pointer hover:-translate-y-0.5" : "opacity-75"
                 } ${
                   isSelected
@@ -1198,7 +1198,7 @@ export function SachLibraryModule({ initialBook }: { initialBook?: "so-cap-1" | 
                     return (
                       <article
                         key={lesson.id}
-                        className={`rounded-2xl border p-4 transition-all flex flex-col justify-between gap-3 ${
+                        className={`rounded-2xl border p-4 transition flex flex-col justify-between gap-3 ${
                           !lesson.available
                             ? "border-line bg-field/50 opacity-65"
                             : done

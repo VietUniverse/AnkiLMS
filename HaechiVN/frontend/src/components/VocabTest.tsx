@@ -122,7 +122,7 @@ export function VocabTest({ test }: { test: VocabTestDef }) {
                 <span>{test.lessonLabel(question.lesson)}</span>
               </div>
               <div className="h-1.5 rounded-full bg-stone-200 dark:bg-stone-800 overflow-hidden">
-                <div className="h-full rounded-full bg-sky-500 transition-all" style={{ width: `${(index / questions.length) * 100}%` }} />
+                <div className="h-full rounded-full bg-sky-500 transition" style={{ width: `${(index / questions.length) * 100}%` }} />
               </div>
             </div>
             <div className="py-4 text-center space-y-2">

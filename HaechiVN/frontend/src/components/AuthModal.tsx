@@ -103,7 +103,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         <button
           onClick={handleGoogleLogin}
           type="button"
-          className="w-full py-3 px-4 rounded-2xl bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs flex items-center justify-center gap-3 shadow-md border border-slate-200 transition-all mb-4"
+          className="w-full py-3 px-4 rounded-2xl bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs flex items-center justify-center gap-3 shadow-md border border-slate-200 transition mb-4"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path
