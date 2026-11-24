@@ -648,38 +648,40 @@ export const TopikExamModule: React.FC<TopikExamModuleProps> = ({ initialSetId, 
   const currentCorrect = currentQ ? selectedAnswers[currentQ.id] === currentQ.correctAnswer : false;
 
   return <main className="mx-auto max-w-3xl space-y-4 pb-24 animate-fadeIn select-none">
-    <header className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-800 bg-slate-900/80 p-4">
-      <button onClick={returnToCatalog} className="inline-flex items-center gap-2 text-xs font-bold text-slate-300 hover:text-white cursor-pointer">
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-3 dark:border-[#1e3466] dark:bg-[#0d1730]">
+      <button onClick={returnToCatalog} className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-sky-700 dark:text-slate-300 dark:hover:text-white cursor-pointer">
         <ArrowLeft className="h-4 w-4" /> Chọn bộ khác
       </button>
       <div className="text-center">
-        <p className="text-xs font-black text-white">{activeSet.title}</p>
+        <p className="text-xs font-black text-slate-900 dark:text-white">{activeSet.title}</p>
         <p className="text-[10px] text-slate-500">HaechiVN · Luyện thi chuẩn TOPIK</p>
       </div>
-      <span className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 font-mono text-xs font-bold ${
-        timeLeft < 120 ? "border-rose-400/30 bg-rose-400/10 text-rose-200" : "border-slate-700 bg-slate-950 text-amber-200"
+      <span className={`inline-flex items-center gap-1.5 rounded-xl border px-2.5 py-1.5 font-mono text-xs font-bold ${
+        timeLeft < 120
+          ? "border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-500/40 dark:bg-rose-500/10 dark:text-rose-200"
+          : "border-slate-200 bg-slate-50 text-slate-900 dark:border-[#1e3466] dark:bg-white/5 dark:text-slate-100"
       }`}>
         <Clock3 className="h-3.5 w-3.5" />
         {formatTime(timeLeft)}
       </span>
-    </header>
+    </div>
 
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 sm:p-6">
+    <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 dark:border-[#1e3466] dark:bg-[#0d1730]">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="text-xs font-bold text-sky-300">
+          <p className="text-[11px] font-bold text-sky-700 dark:text-sky-300">
             Câu {currentIndex + 1} / {activeSet.questions.length}
           </p>
-          <div className="mt-2 h-1.5 w-40 overflow-hidden rounded-full bg-slate-800">
+          <div className="mt-2 h-1.5 w-40 overflow-hidden rounded-full bg-slate-200 dark:bg-white/10">
             <div
-              className="h-full rounded-full bg-sky-400 transition"
-              style={{ width: `${((currentIndex + 1) / activeSet.questions.length) * 100}%` }}
+              className="h-full w-full origin-left rounded-full bg-sky-600 transition-transform"
+              style={{ transform: `scaleX(${(currentIndex + 1) / activeSet.questions.length})` }}
             />
           </div>
         </div>
         <button
           onClick={() => setShowQuestionMap((value) => !value)}
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-700 px-3 py-2 text-[11px] font-bold text-slate-300 cursor-pointer"
+          className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-2.5 py-1.5 text-[11px] font-bold text-slate-700 hover:bg-slate-50 dark:border-[#1e3466] dark:text-slate-300 dark:hover:bg-white/5 cursor-pointer"
         >
           <ListChecks className="h-4 w-4" />
           {Object.keys(selectedAnswers).length}/{activeSet.questions.length}
@@ -697,10 +699,10 @@ export const TopikExamModule: React.FC<TopikExamModuleProps> = ({ initialSetId, 
               }}
               className={`h-9 rounded-lg border text-xs font-bold cursor-pointer ${
                 index === currentIndex
-                  ? "border-sky-400 bg-sky-400/15 text-sky-200"
+                  ? "border-sky-700 bg-sky-700 text-white"
                   : selectedAnswers[question.id] !== undefined
-                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-200"
-                  : "border-slate-700 text-slate-400"
+                  ? "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-500/40 dark:bg-emerald-500/10 dark:text-emerald-200"
+                  : "border-slate-200 text-slate-600 hover:bg-slate-50 dark:border-[#1e3466] dark:text-slate-400 dark:hover:bg-white/5"
               }`}
             >
               {index + 1}
@@ -710,37 +712,37 @@ export const TopikExamModule: React.FC<TopikExamModuleProps> = ({ initialSetId, 
       )}
 
       {currentQ && (
-        <div className="mt-5 border-t border-slate-800 pt-5">
+        <div className="mt-4 border-t border-slate-200 pt-4 dark:border-white/10">
           {activeSet.instruction && (
-            <div className="mb-4 rounded-xl border border-emerald-400/20 bg-emerald-400/[0.05] px-4 py-3">
-              <p className="text-[10px] font-black uppercase tracking-wider text-emerald-300">Hướng dẫn làm bài</p>
-              <p className="mt-1 text-xs text-slate-300">{activeSet.instruction}</p>
+            <div className="mb-3 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2.5 dark:border-emerald-500/30 dark:bg-emerald-500/[0.06]">
+              <p className="text-[10px] font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-300">Hướng dẫn làm bài</p>
+              <p className="mt-1 text-xs text-slate-700 dark:text-slate-300">{activeSet.instruction}</p>
             </div>
           )}
 
           {currentQ.passage && currentQ.section !== "listening" && (
-            <div className="mb-4 whitespace-pre-line rounded-xl border border-slate-800 bg-slate-950/70 p-4 font-noto text-sm leading-7 text-slate-200">
+            <div className="mb-3 whitespace-pre-line rounded-xl border border-slate-200 bg-slate-50 p-3.5 font-noto text-sm leading-7 text-slate-800 dark:border-[#1e3466] dark:bg-white/5 dark:text-slate-200">
               <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">Đoạn văn đọc hiểu</p>
               {currentQ.passage}
             </div>
           )}
 
           {currentQ.section === "listening" && currentQ.passage && (
-            <div className="mb-4 flex items-center justify-between gap-3 rounded-xl border border-sky-400/20 bg-sky-400/[0.04] p-4">
+            <div className="mb-3 flex items-center justify-between gap-3 rounded-xl border border-sky-200 bg-sky-50 p-3.5 dark:border-sky-500/30 dark:bg-sky-500/[0.06]">
               <div>
-                <p className="text-xs font-bold text-white">Nghe hội thoại</p>
-                <p className="mt-1 text-[10px] text-slate-400">Giọng đọc tiếng Hàn chuẩn</p>
+                <p className="text-xs font-bold text-slate-900 dark:text-white">Nghe hội thoại</p>
+                <p className="mt-1 text-[10px] text-slate-500">Giọng đọc tiếng Hàn chuẩn</p>
               </div>
               <button
                 onClick={playListeningPassage}
-                className="inline-flex items-center gap-2 rounded-lg bg-sky-400/15 px-3 py-2 text-xs font-bold text-sky-200 cursor-pointer"
+                className="inline-flex items-center gap-2 rounded-lg bg-sky-700 px-2.5 py-1.5 text-xs font-bold text-white hover:bg-sky-800 cursor-pointer"
               >
                 <Volume2 className="h-4 w-4" /> Phát
               </button>
             </div>
           )}
 
-          <h2 className="font-noto text-base font-black leading-7 text-white">{currentQ.question}</h2>
+          <h2 className="font-noto text-base font-black leading-7 text-slate-900 dark:text-white">{currentQ.question}</h2>
 
           <div className="mt-4 space-y-2">
             {currentQ.options.map((option, optionIndex) => {
@@ -748,44 +750,44 @@ export const TopikExamModule: React.FC<TopikExamModuleProps> = ({ initialSetId, 
               const correct = currentQ.correctAnswer === optionIndex;
               const color = isSubmitted
                 ? correct
-                  ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-100"
+                  ? "border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-emerald-500/50 dark:bg-emerald-500/10 dark:text-emerald-100"
                   : selected
-                  ? "border-rose-500/50 bg-rose-500/10 text-rose-100"
-                  : "border-slate-800 bg-slate-950/40 text-slate-400"
+                  ? "border-rose-300 bg-rose-50 text-rose-800 dark:border-rose-500/50 dark:bg-rose-500/10 dark:text-rose-100"
+                  : "border-slate-200 bg-white text-slate-500 dark:border-[#1e3466] dark:bg-transparent dark:text-slate-400"
                 : selected
-                ? "border-sky-400/50 bg-sky-400/10 text-white"
-                : "border-slate-800 bg-slate-950/40 text-slate-200 hover:border-slate-600";
+                ? "border-sky-700 bg-sky-700 text-white"
+                : "border-slate-200 bg-white text-slate-800 hover:border-slate-300 dark:border-[#1e3466] dark:bg-transparent dark:text-slate-200 dark:hover:border-slate-600";
 
               return (
                 <button
                   key={optionIndex}
                   disabled={isSubmitted}
                   onClick={() => setSelectedAnswers((answers) => ({ ...answers, [currentQ.id]: optionIndex }))}
-                  className={`flex w-full items-center gap-3 rounded-xl border p-3.5 text-left text-sm transition cursor-pointer ${color}`}
+                  className={`flex w-full items-center gap-3 rounded-xl border p-3 text-left text-sm transition-colors cursor-pointer ${color}`}
                 >
-                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-800 text-xs font-black">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-slate-100 text-xs font-black text-slate-700 dark:bg-white/10 dark:text-slate-200">
                     {optionIndex + 1}
                   </span>
                   <span className="flex-1 font-noto">{option}</span>
-                  {isSubmitted && correct && <CheckCircle2 className="h-4 w-4 text-emerald-300" />}
-                  {isSubmitted && selected && !correct && <XCircle className="h-4 w-4 text-rose-300" />}
+                  {isSubmitted && correct && <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-300" />}
+                  {isSubmitted && selected && !correct && <XCircle className="h-4 w-4 text-rose-600 dark:text-rose-300" />}
                 </button>
               );
             })}
           </div>
 
           {isSubmitted && (
-            <div className="mt-4 rounded-xl border border-indigo-400/20 bg-indigo-400/[0.05] p-4">
-              <p className="text-[10px] font-black uppercase tracking-wider text-indigo-300">Giải thích chi tiết</p>
-              <p className="mt-1 text-sm text-slate-200">{currentQ.explanation}</p>
+            <div className="mt-3 rounded-xl border border-indigo-200 bg-indigo-50 p-3.5 dark:border-indigo-500/30 dark:bg-indigo-500/[0.06]">
+              <p className="text-[10px] font-black uppercase tracking-wider text-indigo-700 dark:text-indigo-300">Giải thích chi tiết</p>
+              <p className="mt-1 text-sm text-slate-700 dark:text-slate-200">{currentQ.explanation}</p>
             </div>
           )}
 
-          <div className="sticky bottom-0 z-20 mt-6 flex flex-wrap items-center justify-between gap-2 border-t border-slate-800 bg-slate-900/95 backdrop-blur-md p-3.5 -mx-4 -mb-4 sm:-mx-6 sm:-mb-6 rounded-b-2xl shadow-xl">
+          <div className="sticky bottom-0 z-20 mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-slate-200 bg-white p-3 -mx-4 -mb-4 sm:-mx-6 sm:-mb-6 rounded-b-2xl dark:border-white/10 dark:bg-[#0d1730]">
             <button
               onClick={() => setCurrentIndex((index) => Math.max(0, index - 1))}
               disabled={currentIndex === 0}
-              className="rounded-lg border border-slate-700 px-3.5 py-2 text-xs font-bold text-slate-300 hover:bg-slate-800 disabled:opacity-40 transition cursor-pointer"
+              className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 disabled:opacity-40 transition-colors dark:border-[#1e3466] dark:text-slate-300 dark:hover:bg-white/5 cursor-pointer"
             >
               ← Trước
             </button>
@@ -793,7 +795,7 @@ export const TopikExamModule: React.FC<TopikExamModuleProps> = ({ initialSetId, 
               {!isSubmitted && (
                 <button
                   onClick={handleSubmit}
-                  className="rounded-lg border border-amber-400/30 px-4 py-2 text-xs font-black text-amber-200 hover:bg-amber-400/10 cursor-pointer"
+                  className="rounded-lg border border-amber-300 px-3 py-1.5 text-xs font-black text-amber-800 hover:bg-amber-50 dark:border-amber-500/40 dark:text-amber-200 dark:hover:bg-amber-500/10 cursor-pointer"
                 >
                   Nộp bộ luyện
                 </button>
@@ -806,7 +808,7 @@ export const TopikExamModule: React.FC<TopikExamModuleProps> = ({ initialSetId, 
                       : handleSubmit()
                     : setCurrentIndex((index) => Math.min(activeSet.questions.length - 1, index + 1))
                 }
-                className="inline-flex items-center gap-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 px-4 py-2 text-xs font-black text-white shadow-md shadow-sky-500/20 transition active:scale-95 cursor-pointer"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-sky-700 hover:bg-sky-800 px-3 py-1.5 text-xs font-black text-white transition-colors active:scale-95 cursor-pointer"
               >
                 {currentIndex === activeSet.questions.length - 1 ? (isSubmitted ? "Xong" : "Nộp bài") : "Tiếp"}
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -818,24 +820,24 @@ export const TopikExamModule: React.FC<TopikExamModuleProps> = ({ initialSetId, 
     </div>
 
     {isSubmitted && finalScore !== null && (
-      <section className="rounded-2xl border border-emerald-400/20 bg-emerald-400/[0.04] p-5 text-center">
-        <p className="text-xs font-bold text-slate-300">Kết quả · {activeSet.title}</p>
-        <p className="mt-1 text-3xl font-black text-emerald-300">
+      <section className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-center dark:border-emerald-500/30 dark:bg-emerald-500/[0.06]">
+        <p className="text-xs font-bold text-slate-700 dark:text-slate-300">Kết quả · {activeSet.title}</p>
+        <p className="mt-1 text-2xl font-black text-emerald-700 dark:text-emerald-300">
           {finalScore} / {activeSet.questions.length}
         </p>
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-slate-500">
           {Math.round((finalScore / activeSet.questions.length) * 100)}% chính xác · Đây là điểm bài luyện tập kiến thức.
         </p>
         <button
           onClick={() => startSet(activeSet)}
-          className="mt-3 inline-flex items-center gap-2 rounded-lg border border-slate-700 px-3 py-2 text-xs font-bold text-slate-200 cursor-pointer"
+          className="mt-3 inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-white/60 dark:border-[#1e3466] dark:text-slate-200 cursor-pointer"
         >
           <RotateCcw className="h-3.5 w-3.5" /> Làm lại
         </button>
       </section>
     )}
 
-    <p className="text-center text-[10px] text-slate-600">
+    <p className="text-center text-[10px] text-slate-500">
       Bài luyện nội bộ do HaechiVN biên soạn · Đề thi chính thức mở từ cổng kho 24 đề TOPIK.
     </p>
   </main>;
