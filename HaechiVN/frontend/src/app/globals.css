@@ -1451,9 +1451,17 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
   animation: studyBgShift 24s ease-in-out infinite;
 }
 
+/* Tắt toàn bộ animation/chuyển động khi người dùng yêu cầu giảm chuyển động.
+   ponytail: reset toàn cục bằng !important thay vì liệt kê từng keyframe/utility;
+   nâng cấp sang rule riêng nếu có chỗ cần giữ chuyển động. */
 @media (prefers-reduced-motion: reduce) {
-  .study-bg-animated {
-    animation: none;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
@@ -1518,12 +1526,6 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
 .animate-haechi-run {
   animation: haechiRun 1.15s ease-in-out infinite;
   will-change: transform;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-haechi-run {
-    animation-duration: 3s;
-  }
 }
 
 /* ==========================================================================
