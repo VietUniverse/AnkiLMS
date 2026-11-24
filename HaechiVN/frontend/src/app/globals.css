@@ -267,18 +267,19 @@ html[data-theme="light"] body:not(:has(.login-page-root)) aside:not(.cd-side) {
   border-right-color: #e2e8f0 !important;
 }
 
-html[data-theme="light"] body:not(:has(.login-page-root)) aside a:not([class*="bg-blue-600"]) {
+html[data-theme="light"] body:not(:has(.login-page-root)) aside a {
   color: #475569 !important;
 }
 
-html[data-theme="light"] body:not(:has(.login-page-root)) aside a:not([class*="bg-blue-600"]):hover {
+html[data-theme="light"] body:not(:has(.login-page-root)) aside a:hover {
   background-color: #f1f5f9 !important;
   color: #0f172a !important;
 }
 
-html[data-theme="light"] body:not(:has(.login-page-root)) aside a[class*="bg-blue-600"] {
-  background-color: #2563eb !important;
-  color: #ffffff !important;
+/* Mục đang mở: nền xám đậm vừa, không dùng xanh đậm chói. Sidebar tự đánh aria-current. */
+html[data-theme="light"] body:not(:has(.login-page-root)) aside a[aria-current="page"] {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
 }
 
 html[data-theme="light"] body:not(:has(.login-page-root)) header {

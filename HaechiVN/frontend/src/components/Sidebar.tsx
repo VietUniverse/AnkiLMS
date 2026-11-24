@@ -149,10 +149,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
         key={item.href}
         href={item.href}
         onClick={isMobile ? onCloseMobile : undefined}
-        className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-colors border-0 ${
+        aria-current={active ? "page" : undefined}
+        className={`w-full flex items-center justify-center py-2.5 rounded-xl text-xs transition-colors border-0 ${
+          collapsed && !isMobile ? "px-0" : "justify-between px-3"
+        } ${
           active
-            ? "bg-blue-600 text-white font-extrabold shadow-md shadow-blue-900/30"
-            : "text-slate-400 hover:text-white hover:bg-[#111c38] font-medium"
+            ? "bg-[#1b2740] text-white font-extrabold"
+            : "text-slate-400 hover:text-white hover:bg-[#131d33] font-medium"
         }`}
         title={!isMobile && collapsed ? item.label : undefined}
       >
