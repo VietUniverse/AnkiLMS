@@ -912,11 +912,14 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
       progressText: activeList.length > 0 ? `1 / ${activeList.length}` : "Hoàn thành",
     });
 
-    setLastStudiedDeckId(deckId);
-    setLastStudiedTitle(title);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("haechivn_last_lesson_id", deckId);
-      localStorage.setItem("haechivn_last_lesson_title", title);
+    // Phiên ôn tập không phải "bài đang học" nên không ghi đè thẻ Học tiếp.
+    if (!options?.reviewOnly) {
+      setLastStudiedDeckId(deckId);
+      setLastStudiedTitle(title);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("haechivn_last_lesson_id", deckId);
+        localStorage.setItem("haechivn_last_lesson_title", title);
+      }
     }
   }, [cardStateMap, currentUser, dailyLimits, exitStudy, setActiveStudySession]);
 
@@ -1843,7 +1846,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
             </div>
 
             {/* Banner tiếp tục học lượt trước + Ôn tập + Từ mới gộp chung một hàng trên desktop */}
-            <div className={`grid gap-3 sm:items-stretch ${lastStudiedDeckId && lastStudiedTitle ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
+            <div className={`grid gap-3 sm:items-stretch ${lastStudiedDeckId && lastStudiedTitle ? "sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]" : "sm:grid-cols-[minmax(0,1fr)_auto]"}`}>
             {lastStudiedDeckId && lastStudiedTitle ? (
               <>
                 <button

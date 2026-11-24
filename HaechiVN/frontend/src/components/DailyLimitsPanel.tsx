@@ -19,10 +19,10 @@ function GoalBar({ done, value, onOpen }: { done: number; value: number; onOpen:
       type="button"
       onClick={onOpen}
       aria-label={`Mục tiêu từ mới hôm nay: đã ${done}${value ? ` trên ${value}` : ", không giới hạn"}. Bấm để đổi`}
-      className="flex h-full w-full flex-col items-start justify-center rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 px-4 py-3 text-left transition-colors hover:border-sky-400 cursor-pointer"
+      className="flex h-full w-full flex-col items-center justify-center rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 px-6 py-3 text-center transition-colors hover:border-sky-400 cursor-pointer"
     >
       <span className="text-xs font-bold text-stone-500 dark:text-stone-400">Từ mới</span>
-      <span className="mt-0.5 text-lg font-black tabular-nums text-stone-900 dark:text-white">
+      <span className="mt-0.5 whitespace-nowrap text-xl font-black tabular-nums text-stone-900 dark:text-white">
         {done}
         <span className="font-bold text-stone-400">{value === 0 ? "/không giới hạn" : `/${value}`}</span>
       </span>
