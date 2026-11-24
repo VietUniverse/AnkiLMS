@@ -137,6 +137,16 @@ html[data-theme="light"][data-accent="moss"] {
   outline-offset: 2px;
 }
 
+/* Bỏ độ trễ ~300ms do trình duyệt chờ double-tap zoom trên mobile; vẫn cho pinch-zoom. */
+html {
+  touch-action: manipulation;
+}
+
+/* Modal overlay: cuộn hết nội dung modal thì dừng, không kéo trang phía sau. */
+[class*="fixed"][class*="inset-0"] {
+  overscroll-behavior: contain;
+}
+
 /* Smooth View Transition for Theme Toggle */
 ::view-transition-old(root),
 ::view-transition-new(root) {
