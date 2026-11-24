@@ -1,4 +1,4 @@
-import { AnkiCard, AnkiDeck } from "../lib/ankiParser";
+import { AnkiCard } from "../lib/ankiParser";
 import topikCuratedDecksRaw from "./topikCuratedDecks.json";
 
 export interface DeckAuthor {
@@ -39,24 +39,7 @@ export const CURATED_DECKS: CuratedDeckItem[] = (topikCuratedDecksRaw as unknown
   (deck) => !deck.id.toLowerCase().includes("writing")
 );
 
-export function curatedDeckToAnkiDeck(deck: CuratedDeckItem): AnkiDeck {
-  const isCommunityDeck = deck.id.startsWith("shared-");
-  const sharedId = deck.sharedId || (isCommunityDeck ? deck.id.slice("shared-".length) : undefined);
-  return {
-    id: isCommunityDeck ? `community-copy-${sharedId}` : `curated-${deck.id}`,
-    name: deck.title,
-    cardCount: deck.cardCount || deck.cards.length,
-    cards: deck.cards,
-    visibility: isCommunityDeck ? "private" : deck.visibility || "public",
-    sharedId: isCommunityDeck ? undefined : deck.sharedId,
-    author: isCommunityDeck ? undefined : {
-      userId: deck.author.userId,
-      name: deck.author.name,
-      avatar: deck.author.avatar,
-      bio: deck.author.bio,
-    },
-  };
-}
+export { curatedDeckToAnkiDeck } from "./curatedDeckRuntime";
 
 export type SharedDeckRecord = {
   sharedId: string;

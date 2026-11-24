@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useLayoutEffect,
 import { AnkiDeck } from "../lib/ankiParser";
 import { ApiClient, UserProfile } from "../lib/apiClient";
 import { BETA_FEATURE_KEYS, DEFAULT_FEATURE_FLAGS, FeatureFlags, FeatureKey, IS_BETA_FEATURES_ENABLED } from "../lib/featureFlags";
-import { CURATED_DECKS, curatedDeckToAnkiDeck } from "../data/curatedDecks";
+import { curatedDeckToAnkiDeck, loadCuratedDecks } from "../data/curatedDeckRuntime";
 import { courseToExploreDeck, loadCourseVocabulary, loadSeoul1AExploreDeck } from "../lib/courseVocabulary";
 import { syncManagedDecks } from "../lib/deckSync";
 import { loadProgress, NEW_WORDS_FOR_CHECKIN, vietnamToday } from "../lib/dailyLimits";
@@ -225,10 +225,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     if (!isAuthReady || !currentUser) return;
     let active = true;
-    void Promise.all([loadCourseVocabulary(), loadSeoul1AExploreDeck()]).then(([courseData, seoul1ADeck]) => {
+    void Promise.all([loadCourseVocabulary(), loadSeoul1AExploreDeck(), loadCuratedDecks()]).then(([courseData, seoul1ADeck, curatedDecks]) => {
       if (!active) return;
       const decks = [
-        ...CURATED_DECKS.map(curatedDeckToAnkiDeck),
+        ...curatedDecks.map(curatedDeckToAnkiDeck),
         ...(courseData?.decks.flatMap((group) => group.courses.map(courseToExploreDeck)) || []).map(curatedDeckToAnkiDeck),
         ...(seoul1ADeck ? [curatedDeckToAnkiDeck(seoul1ADeck)] : []),
       ];
