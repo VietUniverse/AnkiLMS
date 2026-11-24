@@ -2470,27 +2470,28 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
 
                       {/* Hộp Ví dụ: Tiếng Hàn luôn hiện, khi lật hiện thêm tiếng Việt */}
                       {currentCard.example && (
-                        <div className="mx-auto max-w-prose pt-2 text-center">
-                          <div className="flex items-center justify-center gap-2">
-                            <p
-                              className="text-base sm:text-lg text-stone-600 dark:text-stone-300 leading-relaxed font-noto text-pretty"
-                              dangerouslySetInnerHTML={{ __html: cleanHtmlText(currentCard.example) }}
-                            />
-                            {!muteAndHideAudio && (
+                        <div className="relative mx-auto max-w-prose pt-2 text-center">
+                          <p
+                            className="text-base sm:text-lg text-stone-600 dark:text-stone-300 leading-relaxed font-noto text-pretty"
+                            dangerouslySetInnerHTML={{ __html: cleanHtmlText(currentCard.example) }}
+                          />
+                          {/* Nút nghe nằm dưới câu để không đẩy câu ví dụ lệch khỏi tâm thẻ. */}
+                          {!muteAndHideAudio && (
+                            <div className="mt-1 flex justify-center">
                               <button
                                 type="button"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   playExampleSound();
                                 }}
-                                className="w-8 h-8 rounded-full text-stone-400 hover:bg-sky-500/10 hover:text-sky-600 dark:hover:text-sky-400 flex items-center justify-center shrink-0 transition cursor-pointer"
+                                className="flex h-8 w-8 items-center justify-center rounded-full text-stone-400 transition-colors hover:bg-sky-500/10 hover:text-sky-600 dark:hover:text-sky-400 cursor-pointer"
                                 title="Nghe câu ví dụ"
                                 aria-label="Nghe câu ví dụ"
                               >
                                 <Volume2 aria-hidden="true" className="w-4 h-4" />
                               </button>
-                            )}
-                          </div>
+                            </div>
+                          )}
                           {isFlipped && currentCard.example_translated && (
                             <p
                               className="text-sm text-stone-500 dark:text-stone-400 mt-1 animate-fade-only"
