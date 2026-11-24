@@ -410,6 +410,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const [activeAssignmentMeta, setActiveAssignmentMeta] = useState<{ id: string; classId: string; title: string } | null>(null);
   const [assignedDecks, setAssignedDecks] = useState<AssignedDeckItem[]>([]);
   const [openingAssignedId, setOpeningAssignedId] = useState<string>("");
+  // Mới/Ôn/% cho bộ thẻ lớp giao, tính bằng chính getDeckStats như các bộ khác (nạp thẻ 1 lần).
+  const [assignedStats, setAssignedStats] = useState<Record<string, { newCount: number; reviewCount: number; percent: number }>>({});
   const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -1089,6 +1091,30 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     [startStudy],
   );
 
+
+  // Mới/Ôn/% của bộ thẻ lớp giao: nạp thẻ một lượt rồi tính bằng getDeckStats giống bộ thẻ thường.
+  useEffect(() => {
+    if (!currentUser || assignedDecks.length === 0) return;
+    let active = true;
+    void Promise.all(
+      assignedDecks.map(async (item) => {
+        try {
+          const asg = await ApiClient.getClassAssignment(item.classId, item.id);
+          return [item.id, getDeckStats(assignmentCardsOf(asg))] as const;
+        } catch {
+          return null;
+        }
+      }),
+    ).then((rows) => {
+      if (!active) return;
+      const next: Record<string, { newCount: number; reviewCount: number; percent: number }> = {};
+      for (const row of rows) if (row) next[row[0]] = row[1];
+      setAssignedStats(next);
+    });
+    return () => {
+      active = false;
+    };
+  }, [assignedDecks, currentUser, getDeckStats]);
 
   // Collect all container ids for toggle all
   const getAllContainerIds = useCallback((nodes: DeckTreeNode[]): string[] => {
@@ -1926,7 +1952,13 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
               <div className="divide-y divide-stone-100 dark:divide-stone-800/80">
               {/* Bộ thẻ giáo viên giao qua lớp: nằm chung bảng, gắn nhãn Lớp học */}
               {currentUser && assignedDecks.map((item) => (
-                <div key={item.id} className="flex items-center justify-between gap-3 px-4 sm:px-5 py-3 transition-colors hover:bg-stone-50 dark:hover:bg-stone-800/40">
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => void openAssignedDeck(item)}
+                  disabled={openingAssignedId === item.id}
+                  className="group flex w-full items-center justify-between gap-3 px-4 sm:px-5 py-3 text-left transition-colors hover:bg-stone-50 disabled:opacity-70 dark:hover:bg-stone-800/40 cursor-pointer"
+                >
                   <div className="flex min-w-0 items-center gap-2">
                     <span className="w-4 shrink-0 select-none text-center text-xs text-stone-300 dark:text-stone-700">└</span>
                     <div className="min-w-0">
@@ -1939,18 +1971,29 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                       <p className="mt-0.5 truncate text-[11px] text-stone-500 dark:text-stone-400">
                         {item.className} · {item.reviewedCards}/{item.totalCards} thẻ · {item.dueLabel}
                       </p>
+                      <p className="sm:hidden mt-0.5 text-[11px] text-stone-500 dark:text-stone-400">
+                        <span className="font-bold text-sky-600 dark:text-sky-400">{assignedStats[item.id]?.newCount ?? 0}</span> mới, <span className="font-bold text-rose-500 dark:text-rose-400">{assignedStats[item.id]?.reviewCount ?? 0}</span> ôn, <span className={(assignedStats[item.id]?.percent ?? 0) > 0 ? "font-bold text-emerald-600 dark:text-emerald-400" : ""}>{assignedStats[item.id]?.percent ?? 0}%</span>
+                      </p>
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => void openAssignedDeck(item)}
-                    disabled={openingAssignedId === item.id}
-                    className="inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-sky-200 bg-sky-50 px-2.5 py-1.5 text-[11px] font-bold text-sky-700 transition-colors hover:bg-sky-100 disabled:opacity-60 dark:border-sky-800/80 dark:bg-sky-950/60 dark:text-sky-300 dark:hover:bg-sky-900/60 cursor-pointer"
-                  >
-                    {openingAssignedId === item.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Play className="h-3.5 w-3.5 fill-current" />}
-                    {item.completed ? "Học lại" : "Học"}
-                  </button>
-                </div>
+                  <div className="flex items-center gap-3 sm:gap-6 pr-1 sm:pr-2 shrink-0 font-mono text-xs">
+                    {openingAssignedId === item.id ? (
+                      <Loader2 className="h-4 w-4 animate-spin text-stone-400" />
+                    ) : (
+                      <>
+                        <div className="hidden sm:block w-10 text-center font-bold text-sky-600 dark:text-sky-400">
+                          {(assignedStats[item.id]?.newCount ?? 0) > 0 ? assignedStats[item.id].newCount : <span className="text-stone-300 dark:text-stone-700 font-normal">0</span>}
+                        </div>
+                        <div className="hidden sm:block w-10 text-center font-bold text-rose-500 dark:text-rose-400">
+                          {(assignedStats[item.id]?.reviewCount ?? 0) > 0 ? assignedStats[item.id].reviewCount : <span className="text-stone-300 dark:text-stone-700 font-normal">0</span>}
+                        </div>
+                        <div className={`hidden sm:block w-12 text-right font-bold ${(assignedStats[item.id]?.percent ?? 0) > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-stone-400"}`}>
+                          {assignedStats[item.id]?.percent ?? 0}%
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </button>
               ))}
 
                 {filteredTree.map((node) => renderTreeNode(node, 0))}
