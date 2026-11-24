@@ -150,8 +150,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         href={item.href}
         onClick={isMobile ? onCloseMobile : undefined}
         aria-current={active ? "page" : undefined}
-        className={`w-full flex items-center justify-center py-2.5 rounded-xl text-xs transition-colors border-0 ${
-          collapsed && !isMobile ? "px-0" : "justify-between px-3"
+        className={`w-full flex items-center py-2.5 rounded-xl text-xs transition-colors border-0 ${
+          collapsed && !isMobile ? "justify-center px-0" : "justify-between px-3"
         } ${
           active
             ? "bg-[#1b2740] text-white font-extrabold"
