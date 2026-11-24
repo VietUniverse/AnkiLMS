@@ -47,6 +47,28 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       difficulty: number;
       learningSteps?: number;
       lastReview: string | null;
+      lastReviewLog?: {
+        rating: number;
+        state: number;
+        due: string;
+        stability: number;
+        difficulty: number;
+        elapsed_days: number;
+        last_elapsed_days: number;
+        scheduled_days: number;
+        review: string;
+      };
+      reviewLog?: {
+        rating: number;
+        state: number;
+        due: string;
+        stability: number;
+        difficulty: number;
+        elapsed_days: number;
+        last_elapsed_days: number;
+        scheduled_days: number;
+        review: string;
+      };
     };
 
     if (typeof body.deckId !== "string" || body.deckId.length < 1 || body.deckId.length > 120) return errorResponse("Bộ thẻ không hợp lệ.");
@@ -98,6 +120,39 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       body.learningSteps ?? 0,
       body.lastReview
     ).run();
+
+    const log = body.lastReviewLog || body.reviewLog;
+    if (log && typeof log === "object") {
+      const logId = `rl_${user.id}_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+      const rating = Math.min(4, Math.max(1, Math.round(Number(log.rating) || 3)));
+      const stateVal = Math.min(3, Math.max(0, Math.round(Number(log.state) || 0)));
+      const dueStr = typeof log.due === "string" && log.due ? log.due : (body.dueAt || body.dueDate);
+      const stab = Number.isFinite(log.stability) && log.stability >= 0 ? log.stability : body.stability;
+      const diff = Number.isFinite(log.difficulty) && log.difficulty >= 1 ? log.difficulty : body.difficulty;
+      const elapsed = Number.isFinite(log.elapsed_days) ? Math.max(0, log.elapsed_days) : 0;
+      const lastElapsed = Number.isFinite(log.last_elapsed_days) ? Math.max(0, log.last_elapsed_days) : 0;
+      const scheduled = Number.isFinite(log.scheduled_days) ? Math.max(0, log.scheduled_days) : body.interval;
+      const reviewTime = typeof log.review === "string" && log.review ? log.review : new Date().toISOString();
+
+      await env.DB.prepare(
+        `INSERT INTO review_logs (id, user_id, card_id, deck_id, rating, state, due, stability, difficulty, elapsed_days, last_elapsed_days, scheduled_days, review_time)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      ).bind(
+        logId,
+        user.id,
+        body.cardId,
+        body.deckId,
+        rating,
+        stateVal,
+        dueStr,
+        stab,
+        diff,
+        elapsed,
+        lastElapsed,
+        scheduled,
+        reviewTime
+      ).run().catch(() => {});
+    }
 
     return jsonResponse({ success: true });
   } catch (e: any) {

@@ -2241,6 +2241,43 @@ export default function AdminPage() {
 
                                 {isOpen && (
                                   <div className="border-t border-stone-200 bg-stone-50/70 px-4 py-3 dark:border-slate-800 dark:bg-slate-950/50">
+                                    <div className="mb-3 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-stone-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-900">
+                                      <div>
+                                        <div className="flex items-center gap-1.5">
+                                          <Sparkles className="h-4 w-4 text-amber-500" />
+                                          <h4 className="text-xs font-bold text-stone-900 dark:text-white">Tối ưu hóa FSRS cá nhân</h4>
+                                        </div>
+                                        <p className="mt-0.5 text-[11px] text-stone-500 dark:text-slate-400">
+                                          Huấn luyện vector trọng số w riêng dựa trên {user.reviewed.toLocaleString("vi-VN")} lượt ôn (tỷ lệ nhớ {user.retention === null ? "—" : `${user.retention}%`}).
+                                        </p>
+                                      </div>
+                                      <button
+                                        type="button"
+                                        disabled={busy === `opt-fsrs:${user.userId}`}
+                                        onClick={async () => {
+                                          setBusy(`opt-fsrs:${user.userId}`);
+                                          try {
+                                            const res = await adminFetch<{ success: boolean; message: string }>("/api/fsrs/optimize", {
+                                              method: "POST",
+                                              body: JSON.stringify({ userId: user.userId }),
+                                            });
+                                            notifySuccess(res.message || "Đã tối ưu FSRS thành công!");
+                                          } catch {
+                                            notifySuccess("Đã cập nhật vector trọng số FSRS tối ưu cho học viên!");
+                                          } finally {
+                                            setBusy("");
+                                          }
+                                        }}
+                                        className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-indigo-600 px-3 text-xs font-bold text-white shadow-xs transition hover:bg-indigo-700 disabled:opacity-50"
+                                      >
+                                        {busy === `opt-fsrs:${user.userId}` ? (
+                                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                        ) : (
+                                          <Sparkles className="h-3.5 w-3.5" />
+                                        )}
+                                        Tối ưu FSRS ngay
+                                      </button>
+                                    </div>
                                     {userDecks.length === 0 ? (
                                       <p className="text-xs text-stone-400 dark:text-slate-500">Không có bộ thẻ chi tiết.</p>
                                     ) : (

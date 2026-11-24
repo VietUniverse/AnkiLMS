@@ -3,6 +3,18 @@ import type { AnkiScheduleMetadata } from "./ankiParser";
 
 export type FSRSRating = "again" | "hard" | "good" | "easy";
 
+export interface FSRSReviewLog {
+  rating: number;
+  state: number;
+  due: string;
+  stability: number;
+  difficulty: number;
+  elapsed_days: number;
+  last_elapsed_days: number;
+  scheduled_days: number;
+  review: string;
+}
+
 /** Persisted adapter shape kept stable so existing local and server review data migrates in place. */
 export interface FSRSState {
   interval: number;
@@ -20,6 +32,8 @@ export interface FSRSState {
   fsrsVersion?: string;
   /** Original Anki preset retained for subsequent scheduling after import. */
   schedulerConfig?: Record<string, unknown>;
+  /** Review log generated on the latest rating, used for FSRS training/optimization. */
+  lastReviewLog?: FSRSReviewLog;
 }
 
 export const FSRS45_DEFAULTS = {
@@ -220,7 +234,7 @@ export function calculateFSRS45(
   rating: FSRSRating,
   current: Partial<FSRSState> = {},
   now = new Date(),
-  desiredRetention = FSRS45_DEFAULTS.desiredRetention,
+  desiredRetention: number = FSRS45_DEFAULTS.desiredRetention,
 ): FSRSState {
   const retention = Math.min(0.99, Math.max(0.7, desiredRetention));
   const importedConfig = current.schedulerConfig;
@@ -240,8 +254,20 @@ export function calculateFSRS45(
   const activeScheduler = !importedConfig && effectiveRetention === FSRS45_DEFAULTS.desiredRetention
     ? scheduler
     : fsrs(schedulerOptions as Parameters<typeof fsrs>[0]);
-  const { card } = activeScheduler.next(toFsrsCard(current, now), now, ratingMap[rating]);
+  const { card, log } = activeScheduler.next(toFsrsCard(current, now), now, ratingMap[rating]);
   const interval = Math.max(0, card.scheduled_days);
+
+  const lastReviewLog: FSRSReviewLog = {
+    rating: log.rating,
+    state: log.state,
+    due: log.due.toISOString(),
+    stability: Number(log.stability.toFixed(4)),
+    difficulty: Number(log.difficulty.toFixed(4)),
+    elapsed_days: log.elapsed_days,
+    last_elapsed_days: log.last_elapsed_days,
+    scheduled_days: log.scheduled_days,
+    review: log.review.toISOString(),
+  };
 
   return {
     interval,
@@ -257,5 +283,6 @@ export function calculateFSRS45(
     lastReview: formatLocalDate(now),
     fsrsVersion: FSRS45_DEFAULTS.version,
     ...(importedConfig ? { schedulerConfig: importedConfig } : {}),
+    lastReviewLog,
   };
 }

@@ -27,7 +27,7 @@ import {
   CheckCircle2,
   ArrowRight,
 } from "lucide-react";
-import { ankiScheduleToFSRSState, calculateFSRS45, formatLocalDate, isFSRSCardDue, FSRSRating, FSRSState } from "../lib/fsrs45";
+import { ankiScheduleToFSRSState, calculateFSRS45, formatLocalDate, isFSRSCardDue, FSRSRating, FSRSState, FSRS45_DEFAULTS } from "../lib/fsrs45";
 import { activateProps } from "../lib/a11y";
 import { ApiClient } from "../lib/apiClient";
 import { DailyLimitsPanel } from "./DailyLimitsPanel";
@@ -300,6 +300,21 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const [writingEssay, setWritingEssay] = useState<string>("");
   const [writingChoice, setWritingChoice] = useState<number | null>(null);
   const [writingCloze, setWritingCloze] = useState<string>("");
+  const [userFsrsConfig, setUserFsrsConfig] = useState<{ weights: number[] | null; desiredRetention: number } | null>(null);
+
+  useEffect(() => {
+    if (!currentUser) {
+      setUserFsrsConfig(null);
+      return;
+    }
+    let active = true;
+    void ApiClient.getFsrsSettings().then((settings) => {
+      if (active && settings) {
+        setUserFsrsConfig({ weights: settings.weights, desiredRetention: settings.desiredRetention });
+      }
+    }).catch(() => {});
+    return () => { active = false; };
+  }, [currentUser?.id]);
   // Cây bộ thẻ phụ thuộc người dùng và kho thẻ đọc từ localStorage: chỉ dựng sau khi hydrate để HTML tĩnh khớp bản client.
   const hydrated = useSyncExternalStore(() => () => {}, () => true, () => false);
   const studyBg = useStudyBackground();
@@ -1160,7 +1175,12 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
   const nextReviewLabel = (rating: FSRSRating): string => {
     if (!currentCard) return "";
     try {
-      return ` (${formatNextReview(calculateFSRS45(rating, cardStateFor(cardStateMap, stateKeyOf(currentCard), currentCard)))})`;
+      const curState = cardStateFor(cardStateMap, stateKeyOf(currentCard), currentCard);
+      const effectiveState = userFsrsConfig?.weights && !curState.schedulerConfig?.w
+        ? { ...curState, schedulerConfig: { ...curState.schedulerConfig, w: userFsrsConfig.weights } }
+        : curState;
+      const effectiveRetention = userFsrsConfig?.desiredRetention || FSRS45_DEFAULTS.desiredRetention;
+      return ` (${formatNextReview(calculateFSRS45(rating, effectiveState, new Date(), effectiveRetention))})`;
     } catch {
       return "";
     }
@@ -1260,7 +1280,11 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     // Official ts-fsrs scheduler; calculateFSRS45 remains as a compatibility adapter name.
     const rating: FSRSRating = customRating || (isMastered ? "good" : "again");
     const curState = cardStateFor(cardStateMap, activeKey, currentCard);
-    const newState = calculateFSRS45(rating, curState);
+    const effectiveState = userFsrsConfig?.weights && !curState.schedulerConfig?.w
+      ? { ...curState, schedulerConfig: { ...curState.schedulerConfig, w: userFsrsConfig.weights } }
+      : curState;
+    const effectiveRetention = userFsrsConfig?.desiredRetention || FSRS45_DEFAULTS.desiredRetention;
+    const newState = calculateFSRS45(rating, effectiveState, new Date(), effectiveRetention);
     if (curState.reps === 0 || curState.state === "new") setDailyProgress(recordCard(true));
     else setDailyProgress(recordCard(false));
     setCardStateMap((prev) => {

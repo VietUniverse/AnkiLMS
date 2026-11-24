@@ -310,13 +310,80 @@ export class ApiClient {
     ]));
   }
 
-  public static async saveCardState(deckId: string, cardId: number, state: { interval: number; easeFactor: number; reps: number; lapses: number; state: string; dueDate: string; dueAt?: string; stability: number; difficulty: number; learningSteps?: number; lastReview: string | null }): Promise<void> {
+  public static async saveCardState(deckId: string, cardId: number, state: { interval: number; easeFactor: number; reps: number; lapses: number; state: string; dueDate: string; dueAt?: string; stability: number; difficulty: number; learningSteps?: number; lastReview: string | null; lastReviewLog?: any }): Promise<void> {
     const res = await fetch("/api/card-states", {
       method: "POST", credentials: "same-origin",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ deckId, cardId, interval: state.interval, easeFactor: state.easeFactor, reps: state.reps, lapses: state.lapses, state: state.state, dueDate: state.dueDate, dueAt: state.dueAt, stability: state.stability, difficulty: state.difficulty, learningSteps: state.learningSteps ?? 0, lastReview: state.lastReview }),
+      body: JSON.stringify({
+        deckId,
+        cardId,
+        interval: state.interval,
+        easeFactor: state.easeFactor,
+        reps: state.reps,
+        lapses: state.lapses,
+        state: state.state,
+        dueDate: state.dueDate,
+        dueAt: state.dueAt,
+        stability: state.stability,
+        difficulty: state.difficulty,
+        learningSteps: state.learningSteps ?? 0,
+        lastReview: state.lastReview,
+        lastReviewLog: state.lastReviewLog,
+      }),
     });
     if (!res.ok) throw new Error("Không lưu được tiến độ ôn tập.");
+  }
+
+  public static async getFsrsSettings(userId?: string): Promise<{
+    userId: string;
+    weights: number[] | null;
+    desiredRetention: number;
+    maximumInterval: number;
+    enableShortTerm: boolean;
+    optimizedAt: string | null;
+    logCountAtOptimize: number;
+  }> {
+    const query = userId ? `?userId=${encodeURIComponent(userId)}` : "";
+    const res = await fetch(`/api/fsrs/settings${query}`, { credentials: "same-origin" });
+    if (!res.ok) throw new Error("Không tải được cài đặt FSRS.");
+    const data = await res.json();
+    return data.settings;
+  }
+
+  public static async saveFsrsSettings(settings: { userId?: string; weights?: number[]; desiredRetention?: number; maximumInterval?: number; enableShortTerm?: boolean }): Promise<void> {
+    const res = await fetch("/api/fsrs/settings", {
+      method: "POST", credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(settings),
+    });
+    if (!res.ok) throw new Error("Không lưu được cài đặt FSRS.");
+  }
+
+  public static async getFsrsOptimizeStatus(userId?: string): Promise<{
+    userId: string;
+    totalLogs: number;
+    minimumRequiredLogs: number;
+    isEligible: boolean;
+    hasOptimized: boolean;
+    optimizedAt: string | null;
+    logCountAtOptimize: number;
+    weights: number[] | null;
+    desiredRetention: number;
+  }> {
+    const query = userId ? `?userId=${encodeURIComponent(userId)}` : "";
+    const res = await fetch(`/api/fsrs/optimize${query}`, { credentials: "same-origin" });
+    if (!res.ok) throw new Error("Không tải được trạng thái tối ưu FSRS.");
+    return await res.json();
+  }
+
+  public static async saveOptimizedFsrsWeights(payload: { userId?: string; weights: number[] }): Promise<{ success: boolean; message: string }> {
+    const res = await fetch("/api/fsrs/optimize", {
+      method: "POST", credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error("Không lưu được vector trọng số tối ưu.");
+    return await res.json();
   }
 
   public static async getClasses(): Promise<any[]> {
