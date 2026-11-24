@@ -357,6 +357,18 @@ html[data-theme="light"] a[class*="bg-gradient-to"] [class*="text-white"] {
   color: #fff !important;
 }
 
+/* Drawer mobile: trong light theme nền bị ép trắng nhưng pill active vẫn #1b2740,
+   nên chữ trắng bị rule phía trên ép thành đen → tối trên tối. Cho pill active
+   dùng đúng tông xám nhạt như sidebar desktop. */
+html[data-theme="light"] body:not(:has(.login-page-root)) .mobile-drawer a[aria-current="page"] {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] body:not(:has(.login-page-root)) .mobile-drawer a[aria-current="page"] svg {
+  color: #0f172a !important;
+}
+
 /* Nút/badge nền xanh dương đặc: chữ phải trắng (rule ép text-white thành chữ đen ở trên
    có specificity cao hơn nên phải khai báo cùng cấp + đặt sau). */
 html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-sky-500"],

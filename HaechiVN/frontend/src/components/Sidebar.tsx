@@ -187,7 +187,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             className="fixed inset-0 bg-black/70 backdrop-blur-sm"
             onClick={onCloseMobile}
           />
-          <div className="relative w-72 max-w-[85vw] h-full bg-[#090f1e] text-white flex flex-col justify-between shadow-2xl z-10 border-r border-[#19284d]">
+          <div className="mobile-drawer relative w-72 max-w-[85vw] h-full bg-[#090f1e] text-white flex flex-col justify-between shadow-2xl z-10 border-r border-[#19284d]">
             {/* Mobile Header with Close button */}
             <div className="flex h-16 items-center justify-between border-b border-[#111c38]/70 px-4 shrink-0">
               <Link
