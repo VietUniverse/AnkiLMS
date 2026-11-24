@@ -18,7 +18,6 @@ import {
   Loader2,
   ExternalLink,
   ArrowLeft,
-  RotateCcw,
   Search,
   Zap,
   Play,
@@ -1777,9 +1776,8 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     <button
       onClick={startReviewAll}
       title="Chỉ ôn lại những thẻ đã học trong thư viện của bạn"
-      className="flex h-full min-h-[74px] w-full items-center justify-center gap-2 rounded-2xl border border-stone-200 bg-white px-5 text-sm font-black text-stone-900 transition-colors hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900/60 dark:text-white cursor-pointer"
+      className="flex h-full min-h-[74px] w-full items-center justify-center rounded-2xl border border-stone-200 bg-white px-5 text-xl font-black text-stone-900 transition-colors hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900/60 dark:text-white cursor-pointer"
     >
-      <RotateCcw className="h-4 w-4 shrink-0 text-stone-500 dark:text-stone-400" />
       Ôn tập
     </button>
   );
