@@ -166,32 +166,33 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
         </div>
 
         <div role="group" aria-label="Khoảng thời gian" className="flex flex-wrap items-center gap-2">
+          <span aria-live="polite" className="text-xs font-bold tabular-nums text-stone-700 dark:text-stone-300">
+            {rangeLabel}
+          </span>
+          {/* Mũi tên bao quanh cụm Ngày/Tuần/Tháng: ‹ [Ngày|Tuần|Tháng] › */}
           <div className="flex items-center gap-1 rounded-xl border border-stone-200 bg-white px-1 dark:border-stone-800 dark:bg-stone-900">
             <button type="button" onClick={() => setOffset((value) => value - 1)} aria-label="Khoảng trước"
               className="flex h-8 w-8 items-center justify-center rounded-lg text-stone-600 transition-colors hover:bg-stone-100 hover:text-stone-900 dark:text-stone-300 dark:hover:bg-white/5">
               <ChevronLeft aria-hidden="true" className="h-4 w-4" />
             </button>
-            <span aria-live="polite" className="min-w-[7.5rem] text-center text-xs font-bold tabular-nums text-stone-800 dark:text-stone-100">
-              {rangeLabel}
-            </span>
+            <div className="flex rounded-lg bg-stone-100 p-0.5 dark:bg-white/5">
+              {RANGE_UNITS.map(({ key, label }) => {
+                const active = unit === key;
+                return (
+                  <button key={key} type="button" aria-pressed={active}
+                    onClick={() => { setUnit(key); setOffset(0); }}
+                    className={`inline-flex min-h-8 items-center rounded-md px-3 text-xs font-bold transition-colors duration-200 ${
+                      active ? "bg-stone-900 text-white dark:bg-white dark:text-stone-900" : "text-stone-700 hover:bg-white hover:text-stone-900 dark:text-stone-400 dark:hover:bg-transparent dark:hover:text-white"
+                    }`}>
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
             <button type="button" onClick={() => setOffset((value) => value + 1)} disabled={offset >= 0} aria-label="Khoảng sau"
               className="flex h-8 w-8 items-center justify-center rounded-lg text-stone-600 transition-colors hover:bg-stone-100 hover:text-stone-900 disabled:opacity-30 disabled:hover:bg-transparent dark:text-stone-300 dark:hover:bg-white/5">
               <ChevronRight aria-hidden="true" className="h-4 w-4" />
             </button>
-          </div>
-          <div className="flex rounded-xl border border-stone-200 bg-stone-100 p-1 dark:border-stone-800 dark:bg-transparent">
-            {RANGE_UNITS.map(({ key, label }) => {
-              const active = unit === key;
-              return (
-                <button key={key} type="button" aria-pressed={active}
-                  onClick={() => { setUnit(key); setOffset(0); }}
-                  className={`inline-flex min-h-9 items-center rounded-lg px-3 text-xs font-bold transition-colors duration-200 ${
-                    active ? "bg-stone-900 text-white dark:bg-white dark:text-stone-900" : "text-stone-700 hover:bg-white hover:text-stone-900 dark:text-stone-400 dark:hover:bg-transparent dark:hover:text-white"
-                  }`}>
-                  {label}
-                </button>
-              );
-            })}
           </div>
         </div>
       </div>
