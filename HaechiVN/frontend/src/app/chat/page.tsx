@@ -13,9 +13,11 @@ type ChatMessage = {
   created_at: string;
 };
 
+const TIME_FORMAT = new Intl.DateTimeFormat("vi-VN", { hour: "2-digit", minute: "2-digit" });
+
 function formatTime(value: string): string {
   const date = new Date(value.includes("T") ? value : `${value.replace(" ", "T")}Z`);
-  return Number.isNaN(date.getTime()) ? "" : new Intl.DateTimeFormat("vi-VN", { hour: "2-digit", minute: "2-digit" }).format(date);
+  return Number.isNaN(date.getTime()) ? "" : TIME_FORMAT.format(date);
 }
 
 export default function ChatPage() {

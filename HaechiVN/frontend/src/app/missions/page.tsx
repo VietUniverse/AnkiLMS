@@ -8,6 +8,9 @@ import { ApiClient, DailyMissionsSummary } from "../../lib/apiClient";
 import { ArrowRight, BookOpen, CheckCircle2, Headphones, LockKeyhole, Mic2, RefreshCw, Sparkles, Target, Users, Zap } from "lucide-react";
 import { DailyShadowingChallenge } from "../../components/DailyShadowingChallenge";
 
+const WEEKDAY_DATE_FORMAT = new Intl.DateTimeFormat("vi-VN", { weekday: "long", day: "numeric", month: "long" });
+const ISO_DATE_FORMAT = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ho_Chi_Minh" });
+
 const missionIcons = {
   shadowing: Mic2,
   vocabulary: BookOpen,
@@ -45,10 +48,8 @@ export default function DailyMissionsPage() {
     { id: "vocabulary", title: "Ôn từ vựng", description: "Ôn ít nhất một thẻ Anki và chọn mức độ nhớ.", href: "/flashcards", completed: false, sessions: 0, gemsAwarded: 0, gemReward: 1, learnersToday: 0 },
     { id: "dictation", title: "Nghe chép chính tả", description: "Nghe và chép đúng ít nhất một câu.", href: "/dictation", completed: false, sessions: 0, gemsAwarded: 0, gemReward: 1, learnersToday: 0 },
   ];
-  const dateLabel = summary?.date
-    ? new Date(`${summary.date}T12:00:00+07:00`).toLocaleDateString("vi-VN", { weekday: "long", day: "numeric", month: "long" })
-    : new Date().toLocaleDateString("vi-VN", { weekday: "long", day: "numeric", month: "long" });
-  const challengeDate = summary?.date || new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ho_Chi_Minh" }).format(new Date());
+  const dateLabel = WEEKDAY_DATE_FORMAT.format(new Date(summary?.date ? `${summary.date}T12:00:00+07:00` : Date.now()));
+  const challengeDate = summary?.date || ISO_DATE_FORMAT.format(new Date());
 
   return (
     <AppShell>

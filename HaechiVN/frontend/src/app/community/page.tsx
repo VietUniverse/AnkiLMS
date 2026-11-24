@@ -23,9 +23,11 @@ const categoryNames: Record<string, string> = {
   conversation: "Giao lưu",
 };
 
+const POST_DATE_FORMAT = new Intl.DateTimeFormat("vi-VN", { dateStyle: "medium", timeStyle: "short" });
+
 function formatDate(value: string): string {
   const parsed = new Date(value.includes("T") ? value : `${value.replace(" ", "T")}Z`);
-  return Number.isNaN(parsed.getTime()) ? "Vừa xong" : new Intl.DateTimeFormat("vi-VN", { dateStyle: "medium", timeStyle: "short" }).format(parsed);
+  return Number.isNaN(parsed.getTime()) ? "Vừa xong" : POST_DATE_FORMAT.format(parsed);
 }
 
 export default function CommunityPage() {

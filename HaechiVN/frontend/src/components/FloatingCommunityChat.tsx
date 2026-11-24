@@ -7,9 +7,11 @@ import { MessageCircle, MessagesSquare, Minimize2, RefreshCw, Send, Trash2, X } 
 
 type ChatMessage = { id: string; body: string; author_id: string; author_name: string; created_at: string };
 
+const TIME_FORMAT = new Intl.DateTimeFormat("vi-VN", { hour: "2-digit", minute: "2-digit" });
+
 function formatTime(value: string) {
   const date = new Date(value.includes("T") ? value : `${value.replace(" ", "T")}Z`);
-  return Number.isNaN(date.getTime()) ? "" : new Intl.DateTimeFormat("vi-VN", { hour: "2-digit", minute: "2-digit" }).format(date);
+  return Number.isNaN(date.getTime()) ? "" : TIME_FORMAT.format(date);
 }
 
 export function FloatingCommunityChat() {
