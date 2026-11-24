@@ -2782,11 +2782,11 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
             </Link>
           </div>
         </div>
-        <div className="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 dark:border-[#1e3466] dark:bg-[#0f1b38]">
+        <div className="w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-center dark:border-[#1e3466] dark:bg-[#0f1b38]">
           <h1 className="text-sm font-black text-white sm:text-base">{statTitle}</h1>
           <dl className="mt-3 grid grid-cols-3 divide-x divide-slate-200 dark:divide-white/10">
             {stats.map((s) => (
-              <div key={s.label} className="px-5 first:pl-0">
+              <div key={s.label} className="px-2 text-center">
                 <dd className="text-lg font-black tabular-nums text-white">{s.value}</dd>
                 <dt className="text-[11px] font-bold leading-tight text-slate-700">{s.label}</dt>
               </div>
