@@ -1793,7 +1793,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     <button
       onClick={startReviewAll}
       title="Chỉ ôn lại những thẻ đã học trong thư viện của bạn"
-      className="flex h-full min-h-[74px] items-center justify-center gap-2 rounded-2xl border border-stone-200 bg-white px-5 text-sm font-black text-stone-900 transition-colors hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900/60 dark:text-white cursor-pointer"
+      className="flex h-full min-h-[74px] w-full items-center justify-center gap-2 rounded-2xl border border-stone-200 bg-white px-5 text-sm font-black text-stone-900 transition-colors hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900/60 dark:text-white cursor-pointer"
     >
       <RotateCcw className="h-4 w-4 shrink-0 text-stone-500 dark:text-stone-400" />
       Ôn tập
@@ -1844,7 +1844,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
             </div>
 
             {/* Banner tiếp tục học lượt trước + Ôn tập + Từ mới gộp chung một hàng trên desktop */}
-            <div className={`grid gap-3 sm:items-stretch ${lastStudiedDeckId && lastStudiedTitle ? "sm:grid-cols-[minmax(0,1.1fr)_auto_minmax(0,1fr)]" : "sm:grid-cols-[auto_minmax(0,1fr)]"}`}>
+            <div className={`grid gap-3 sm:items-stretch ${lastStudiedDeckId && lastStudiedTitle ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
             {lastStudiedDeckId && lastStudiedTitle ? (
               <>
                 <div className="h-full p-4 rounded-2xl bg-white dark:bg-[#141b2d] border border-stone-200/80 dark:border-stone-800/80 flex items-center justify-between gap-4 shadow-xs animate-reveal">
