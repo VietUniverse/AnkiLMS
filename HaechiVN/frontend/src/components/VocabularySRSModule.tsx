@@ -1827,6 +1827,18 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     return due;
   }, [deckTree, cardStateMap]);
 
+  // Vào /flashcards?review=true (nút Ôn tập ở trang chủ): chờ thẻ đến hạn nạp xong rồi mở phiên ôn,
+  // sau đó xoá param để reload không mở lại.
+  useEffect(() => {
+    if (!isAuthReady || !currentUser) return;
+    if (new URLSearchParams(window.location.search).get("review") !== "true") return;
+    if (libraryDue === 0) return;
+    startReviewAll();
+    const url = new URL(window.location.href);
+    url.searchParams.delete("review");
+    window.history.replaceState(null, "", url.pathname + url.search);
+  }, [isAuthReady, currentUser, libraryDue, startReviewAll]);
+
   const confirmMore = () => {
     if (!morePrompt) return;
     const amount = Math.floor(Number(moreAmount));

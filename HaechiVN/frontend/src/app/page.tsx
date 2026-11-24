@@ -8,7 +8,7 @@ import { OnigiriHeatmap } from "../components/OnigiriHeatmap";
 import { StreakPanel } from "../components/StreakPanel";
 import { InstallAppButton } from "../components/InstallAppButton";
 import { useApp } from "../contexts/AppProvider";
-import { Zap, X, LogIn, Play, ClipboardCheck, ArrowRight } from "lucide-react";
+import { Zap, X, LogIn, Play, RotateCcw, ClipboardCheck, ArrowRight } from "lucide-react";
 import { ApiClient } from "../lib/apiClient";
 import { getStudyRank } from "../lib/studyRanks";
 import { vietnamToday } from "../lib/dailyLimits";
@@ -188,19 +188,29 @@ export default function Home() {
             <StreakPanel data={heatmapData} streak={currentUser.streak || 0} longestStreak={currentUser.longest_streak || 0} />
 
             {/* Hành động chính */}
-            <div className="grid gap-3">
+            <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
               {isFeatureEnabled("flashcards") && (
                 <Link
                   href="/flashcards?resume=true&from=%2F"
                   title={lastLessonTitle ? `Học tiếp: ${lastLessonTitle}` : "Tiếp tục học từ vựng"}
                   style={{ color: "#fff" }}
-                  className="flex min-h-16 items-center gap-3 rounded-2xl bg-sky-500 px-5 py-3 shadow-sm transition hover:bg-sky-600 active:scale-[0.99]"
+                  className="flex min-h-16 items-center gap-3 rounded-2xl bg-sky-700 px-5 py-3 transition-colors hover:bg-sky-800 active:scale-[0.99]"
                 >
                   <Play className="h-6 w-6 shrink-0 fill-current" />
                   <span className="min-w-0">
                     <span className="block text-base font-black">Học tiếp</span>
                     {lastLessonTitle && <span className="block truncate text-xs opacity-90">{lastLessonTitle.split(":")[0]}</span>}
                   </span>
+                </Link>
+              )}
+              {isFeatureEnabled("flashcards") && (
+                <Link
+                  href="/flashcards?review=true&from=%2F"
+                  title="Ôn tập các thẻ đến hạn trong thư viện"
+                  className="flex min-h-16 items-center justify-center gap-2 rounded-2xl border border-stone-200 bg-white px-5 text-sm font-bold text-stone-800 transition-colors hover:bg-stone-50 dark:border-stone-800 dark:bg-stone-900 dark:text-stone-100 dark:hover:bg-stone-800"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                  Ôn tập
                 </Link>
               )}
             </div>
