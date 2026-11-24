@@ -124,7 +124,8 @@ html[data-theme="light"][data-accent="moss"] {
     font-family: 'Inter', 'Noto Sans KR', system-ui, -apple-system, sans-serif;
     -webkit-tap-highlight-color: transparent;
     overflow-x: hidden;
-    transition: background-color 0.3s ease, color 0.25s ease, border-color 0.3s ease;
+    /* Ngắn thôi: khi có View Transition thì transition màu body chạy chồng lên nhau. */
+    transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
   }
 }
 
@@ -147,16 +148,36 @@ html {
   overscroll-behavior: contain;
 }
 
-/* Smooth View Transition for Theme Toggle */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 0.35s;
+/* View Transition: đổi theme + điều hướng list -> detail (shared element).
+   Nhịp bất đối xứng: cái cũ biến đi nhanh hơn để không "mờ mờ" nửa chừng. */
+@view-transition {
+  navigation: auto;
+}
+::view-transition-old(root) {
+  animation-duration: 120ms;
   animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
-
-header, aside, main {
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.25s ease;
+::view-transition-new(root) {
+  animation-duration: 200ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
+/* Shared element card -> header của bộ thẻ: 220ms, easing ease-out. */
+::view-transition-group(*) {
+  animation-duration: 220ms;
+  animation-timing-function: cubic-bezier(0.21, 0.61, 0.35, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
+/* Bỏ transition màu trên khung lớn: nó chạy song song với View Transition khi đổi theme,
+   làm 2 lớp animate chồng nhau và paint lại toàn bộ header/aside/main. */
 
 /* User-selectable appearance. Keep contrast predictable across Tailwind utility colors. */
 html[data-theme="light"] {
