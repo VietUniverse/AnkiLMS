@@ -200,9 +200,12 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
             <a href="/lessons" className="inline-flex items-center gap-1 text-xs font-bold text-sky-600 dark:text-sky-400 hover:underline"><BookOpen className="h-3.5 w-3.5" />Tiếp tục học</a>
           </div>
           {stats?.sessions.length ? (
-            <div className="divide-y divide-stone-200 dark:divide-stone-800">
+            <div className="space-y-2">
               {stats.sessions.slice(0, 8).map((session, index) => (
-                <div key={`${session.created_at}-${index}`} className="flex items-center gap-3 py-2.5">
+                <div
+                  key={`${session.created_at}-${index}`}
+                  className="flex items-center gap-3 rounded-xl border border-stone-200 bg-white px-3 py-2.5 dark:border-stone-800 dark:bg-stone-900/40"
+                >
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-sky-500/10 text-sky-600 dark:text-sky-300">
                     {session.module === "dictation" ? <NotebookPen className="h-4 w-4" /> : session.module === "shadowing" || session.module === "speaking" ? <Mic2 className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                   </div>
