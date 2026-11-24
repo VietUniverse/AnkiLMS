@@ -8,7 +8,8 @@ const PROGRESS_KEY = "haechivn_daily_progress";
 // Chỉ giới hạn từ mới. Từ đến hạn ôn lại luôn không giới hạn (0): có bao nhiêu phải ôn hết bấy nhiêu.
 export const DEFAULT_LIMITS: DailyLimits = { newPerDay: 20, reviewPerDay: 0 };
 /** Học đủ số từ mới này trong ngày mới được tính điểm danh. */
-export const NEW_WORDS_FOR_CHECKIN = 10;
+// Học 1 từ mới là đủ điều kiện điểm danh.
+export const NEW_WORDS_FOR_CHECKIN = 1;
 
 /** Ngày hiện tại theo múi giờ Việt Nam (GMT+7), khớp với API điểm danh. */
 export const vietnamToday = () => new Date(Date.now() + 7 * 60 * 60 * 1000).toISOString().slice(0, 10);
