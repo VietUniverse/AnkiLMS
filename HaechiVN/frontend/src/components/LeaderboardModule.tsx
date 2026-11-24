@@ -31,11 +31,12 @@ const TABS: { key: TabKey; label: string; icon: typeof Zap }[] = [
   { key: "vocab", label: "Từ vựng", icon: BookOpen },
 ];
 
+// Dùng class .lb-tab-* trong globals.css thay vì bg-*/text-white: theme sáng có rule ép
+// [class*="text-white"] thành chữ đen, nên chữ trắng trên nền màu phải khai báo riêng.
 const TAB_ACTIVE: Record<TabKey, string> = {
-  xp: "bg-blue-600 text-white",
-  // amber-600 với chữ trắng chỉ ~3:1 nên dùng nền sáng + chữ đậm để đủ tương phản.
-  streak: "bg-amber-400 text-amber-950",
-  vocab: "bg-emerald-700 text-white",
+  xp: "lb-tab-active lb-tab-xp",
+  streak: "lb-tab-active lb-tab-streak",
+  vocab: "lb-tab-active lb-tab-vocab",
 };
 
 const SCORE_COLOR: Record<TabKey, string> = {

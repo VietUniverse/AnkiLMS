@@ -1683,6 +1683,15 @@ html[data-theme="light"] body:not(:has(.login-page-root)) .classes-back-btn:hove
    Leaderboard - màu điểm/huy hiệu đủ tương phản ở cả light và dark mode.
    Dùng class riêng để tránh rule light-mode đè lên các class text-*-400.
    ========================================================================== */
+/* Tab đang chọn của bảng xếp hạng: nền đặc + chữ tương phản >= 5:1 (xem contrast đã đo). */
+.lb-tab-active, .lb-tab-active * { color: #ffffff !important; }
+.lb-tab-xp { background-color: #2563eb; }
+.lb-tab-streak { background-color: #fbbf24; }
+.lb-tab-streak, .lb-tab-streak * { color: #451a03 !important; }
+.lb-tab-vocab { background-color: #047857; }
+html[data-theme="dark"] .lb-tab-xp { background-color: #2563eb; }
+html[data-theme="dark"] .lb-tab-streak { background-color: #fbbf24; }
+html[data-theme="dark"] .lb-tab-vocab { background-color: #047857; }
 .lb-score-xp { color: #1d4ed8; }
 .lb-score-amber { color: #b45309; }
 .lb-score-emerald { color: #047857; }
