@@ -37,7 +37,6 @@ import { GRADIENT_PRESETS, saveStudyBackground, STUDY_BACKGROUND_GALLERY, useStu
 import { addExtraNew, DailyLimits, DEFAULT_LIMITS, effectiveNewLimit, loadLimits, loadProgress, recordCard, remaining, saveLimits } from "../lib/dailyLimits";
 import { speakKorean } from "../lib/koreanSpeech";
 import { useStudyCardOpacity, useDisableAutoPronounce, useHideChatGpt, useHideDictionary, useMuteAndHideAudio, useMuteExampleAudio, useMuteWordAudio, useRandomStudyBgEvery10 } from "../lib/studyPreferences";
-import { inferTopikLevel, getCourseRank } from "../lib/studyRanks";
 import { LockKeyhole, Globe2 } from "lucide-react";
 import { detectDictionarySearchLanguage, naverLookupUrl, searchLearningDictionary, type DictionaryEntry } from "../lib/dictionarySearch";
 
@@ -155,7 +154,6 @@ export interface VocabularyCard {
 export interface DeckTreeNode {
   id: string;
   title: string;
-  subtitle?: string;
   cards: VocabularyCard[];
   children?: DeckTreeNode[];
 }
@@ -562,7 +560,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
 
     // Build Book Nodes -> Lesson Nodes -> Sub-deck Nodes
     booksMap.forEach((lessonsMap, bookTitle) => {
-      const rootBookNumber = Number(bookTitle.match(/\d+$/)?.[0] || 1);
       const lessonNodes: DeckTreeNode[] = [];
       const allBookCards: VocabularyCard[] = [];
 
@@ -586,16 +583,9 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       });
 
       const bookId = toSlug(bookTitle);
-      const subtitleByBook: Record<number, string> = {
-        1: "Sơ cấp 1 · TOPIK 1 · Âm thanh gốc",
-        2: "Sơ cấp 2 · TOPIK 2 · Âm thanh gốc",
-        3: "Trung cấp 3 · TOPIK 3 · Âm thanh gốc",
-        4: "Trung cấp 4 · TOPIK 4 · Âm thanh gốc",
-      };
       rootNodes.push({
         id: bookId,
         title: bookTitle,
-        subtitle: subtitleByBook[rootBookNumber] || `Quyển ${rootBookNumber} · Âm thanh gốc`,
         cards: allBookCards,
         children: lessonNodes,
       });
@@ -636,8 +626,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     // as the curriculum decks. Do not hide them inside an aggregate parent.
     if (userDecks && userDecks.length > 0) {
       const userNodes: DeckTreeNode[] = userDecks.map((ud) => {
-        const isTopicVocabularyDeck = ud.id === "curated-course-topic-vocabulary";
-        const detectedTopik = isTopicVocabularyDeck ? undefined : inferTopikLevel(ud.name, ...ud.cards.flatMap((card) => card.tags || []));
         const toVocabularyCard = (c: AnkiDeck["cards"][number], idx: number): VocabularyCard => ({
           id: c.id || `custom-${idx}`,
           word: c.koreanText || c.frontText || "",
@@ -685,7 +673,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
         return ({
         id: `user-${ud.id}`,
         title: ud.name,
-        subtitle: isTopicVocabularyDeck ? "TOPIK 1–6, chọn chủ đề để học" : detectedTopik ? `${getCourseRank(detectedTopik)}, TOPIK ${detectedTopik}` : "Chưa gán cấp độ",
         cards,
         children: subdeckChildren.length ? subdeckChildren : undefined,
       });
@@ -739,7 +726,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
             return {
               id: child.source?.id || `user-thth-${toSlug(child.path)}`,
               title: child.title,
-              subtitle: child.source?.subtitle,
               cards: child.cards,
               children: children.length > 0 ? children : undefined,
             };
@@ -749,7 +735,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
         rootNodes.push({
           id: ththSource?.id || "user-thth-root",
           title: "Tiếng Hàn Tổng Hợp",
-          subtitle: "Giáo trình · chọn quyển và bài để học",
           cards: ththRoot.cards,
           children: [
             ...(ththSource?.children || []),
@@ -807,7 +792,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
       rootNodes.push({
         id: "admin-cracking-topik-writing",
         title: "✍️ Cracking the TOPIK II Writing (Admin)",
-        subtitle: `${writingRoot.cards.length} thẻ · Luyện viết Câu 51, 53, 54 & Mẫu đề chuẩn`,
         cards: writingRoot.cards,
         children: buildWritingChildren(writingRoot),
       });
@@ -1579,7 +1563,6 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                 }`}
               >
                 <span>{node.title}</span>
-                {node.subtitle && <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[9px] font-bold text-sky-800 dark:bg-sky-950/60 dark:text-sky-300">{node.subtitle}</span>}
               </h3>
               <p className="sm:hidden mt-0.5 text-[11px] text-stone-500 dark:text-stone-400">
                 <span className="font-bold text-sky-600 dark:text-sky-400">{stats.newCount}</span> mới, <span className="font-bold text-rose-500 dark:text-rose-400">{stats.reviewCount}</span> ôn, <span className={stats.percent > 0 ? "font-bold text-emerald-600 dark:text-emerald-400" : ""}>{stats.percent}%</span>
