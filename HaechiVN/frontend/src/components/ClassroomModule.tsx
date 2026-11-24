@@ -510,31 +510,84 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
     return () => { active = false; };
   }, [currentUser, assignPage, showAssignModal]);
 
-  const ththAssignmentDecks = React.useMemo<AssignmentDeckOption[]>(() => (
-    ththCurriculumDecks.flatMap((deck) => {
+  const ththAssignmentDecks = React.useMemo<AssignmentDeckOption[]>(() => {
+    if (!ththCurriculumDecks.length) return [];
+    const byLesson = new Map<string, { id: string; name: string; book: number; topic: string; difficulty: string; cards: AssignmentDeckCard[] }>();
+    const subdecks: AssignmentDeckOption[] = [];
+
+    for (const deck of ththCurriculumDecks) {
       const parts = String(deck?.name || "").split("::");
-      const bookNumber = Number((parts[1] || "").match(/\d+/)?.[0] || 0);
-      if (bookNumber < 1 || bookNumber > 4) return [];
-      const lesson = parts[2]?.trim() || "";
+      const bookNumber = Number(
+        deck?.book ||
+        (parts[1] && parts[1].toLowerCase().includes("quyển") ? parts[1].match(/\d+/)?.[0] : null) ||
+        (parts[0] ? parts[0].match(/\d+/)?.[0] : null) ||
+        1,
+      );
+      if (bookNumber < 1 || bookNumber > 4) continue;
+
+      const lessonName = (parts[2] || parts[1] || deck?.topic || "Bài học").trim();
+      const subName = (parts[3] || parts[2] || deck?.topic || deck?.name || "").trim();
+
       const cards: AssignmentDeckCard[] = (deck?.cards || []).map((card: any, index: number) => ({
         id: Number(card?.id) || bookNumber * 100000 + index,
-        korean: String(card?.korean || "").trim(),
-        meaning: String(card?.vietnamese || "").trim(),
-        example: String(card?.exKorean || "").replace(/<[^>]*>/g, "").trim(),
+        korean: String(card?.word || card?.korean || "").trim(),
+        meaning: String(card?.meaning || card?.vietnamese || "").trim(),
+        word: card?.word || card?.korean,
+        pos: card?.pos || "",
+        transliteration: card?.transliteration || "",
+        explain: card?.explain || "",
+        image: card?.image || "",
+        example: String(card?.example || card?.exKorean || "").replace(/<[^>]*>/g, "").trim(),
+        example_translated: card?.example_translated || card?.exViet || "",
+        collocation: card?.collocation || "",
+        synonym: card?.synonym || "",
+        antonym: card?.antonym || "",
+        audio_word: card?.audio_word || "",
+        audio_meaning: card?.audio_meaning || "",
+        audio_example: card?.audio_example || "",
         mediaRefs: [],
       })).filter((card: AssignmentDeckCard) => card.korean && card.meaning);
-      if (!cards.length) return [];
-      return [{
-        id: `thth:${deck.name}`,
-        name: String(deck.name),
+
+      if (!cards.length) continue;
+
+      // Gom theo bài (Trọn bài)
+      const lessonKey = `thth-lesson:${bookNumber}:${lessonName}`;
+      if (!byLesson.has(lessonKey)) {
+        byLesson.set(lessonKey, {
+          id: lessonKey,
+          name: `Tiếng Hàn Tổng Hợp ${bookNumber} · ${lessonName} (Trọn bài)`,
+          book: 100 + bookNumber,
+          topic: lessonName,
+          difficulty: `Quyển ${bookNumber}`,
+          cards: [],
+        });
+      }
+      const lessonEntry = byLesson.get(lessonKey)!;
+      for (const card of cards) {
+        if (!lessonEntry.cards.some((c) => c.korean === card.korean)) {
+          lessonEntry.cards.push({ ...card, id: lessonEntry.cards.length + 1 });
+        }
+      }
+
+      // Từng chủ đề con
+      subdecks.push({
+        id: `thth-sub:${deck.id || deck.name}`,
+        name: `Tiếng Hàn Tổng Hợp ${bookNumber} · ${lessonName} · ${subName}`,
         book: 100 + bookNumber,
-        topic: parts[3]?.trim() || deck.name,
-        difficulty: lesson,
+        topic: subName || lessonName,
+        difficulty: lessonName,
         mediaAssets: [],
         cards,
-      }];
-    })
-  ), [ththCurriculumDecks]);
+      });
+    }
+
+    const trons = Array.from(byLesson.values()).map((item): AssignmentDeckOption => ({
+      ...item,
+      mediaAssets: [],
+    }));
+
+    return [...trons, ...subdecks];
+  }, [ththCurriculumDecks]);
 
   const assignmentDecks = [
     ...buildAnkiAssignmentDecks("anki", userDecks, "Thư viện của tôi"),
