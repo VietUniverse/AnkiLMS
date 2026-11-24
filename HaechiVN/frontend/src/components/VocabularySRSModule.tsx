@@ -858,7 +858,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
   }, [finishSrsActivity, setActiveStudySession, router]);
 
   // Start study session (Filter only unlearned / review cards via FSRS state)
-  const startStudy = useCallback((deckId: string, title: string, cards: VocabularyCard[], options?: { skipMorePrompt?: boolean }) => {
+  const startStudy = useCallback((deckId: string, title: string, cards: VocabularyCard[], options?: { skipMorePrompt?: boolean; reviewOnly?: boolean }) => {
     if (!cards || cards.length === 0) return;
 
     // Lọc thẻ: chỉ lấy thẻ mới hoặc đến hạn, rồi áp giới hạn mỗi ngày (ôn lại trước, từ mới sau).
@@ -883,15 +883,21 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     if (!cards.some(isCardAWritingCard)) {
       queue("typing");
     }
-    const activeList = [...dueCards.slice(0, reviewLeft), ...newCards.slice(0, newLeft)];
+    // Ôn tập là phiên riêng: không tính vào hạn mức từ mới, và không cắt theo reviewPerDay
+    // (mặc định 0 nên nếu cắt thì luôn ra rỗng). Chỉ lấy thẻ đã đến hạn.
+    const activeList = options?.reviewOnly
+      ? dueCards
+      : [...dueCards.slice(0, reviewLeft), ...newCards.slice(0, newLeft)];
     setDailyProgress(progress);
-    if (newLeft === 0 && newCards.length > 0 && !options?.skipMorePrompt) {
+    if (!options?.reviewOnly && newLeft === 0 && newCards.length > 0 && !options?.skipMorePrompt) {
       setMoreAmount(String(Math.min(5, newCards.length)));
       setMorePrompt({ deckId, title, cards, available: newCards.length });
       return;
     }
     if (activeList.length === 0) {
-      setLimitNotice(dueCards.length + newCards.length > 0
+      setLimitNotice(options?.reviewOnly
+        ? "Không còn thẻ nào đến hạn ôn hôm nay. FSRS sẽ đưa thẻ trở lại khi tới hạn."
+        : dueCards.length + newCards.length > 0
         ? "Bạn đã đạt giới hạn học hôm nay. Phần còn lại sẽ chuyển sang ngày mai, hoặc tăng giới hạn ở mục tiêu hôm nay."
         : "Bộ thẻ này đã hết thẻ cần học hôm nay. FSRS sẽ đưa thẻ trở lại khi đến hạn ôn.");
       return;
@@ -1761,6 +1767,17 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     </>
   );
 
+  // Ôn tập: chỉ lấy thẻ đã học và đang đến hạn trong thư viện của user (không thẻ mới).
+  const startReviewAll = useCallback(() => {
+    const unique = new Map<string, VocabularyCard>();
+    for (const node of deckTree) for (const card of node.cards) unique.set(stateKeyOf(card), card);
+    if (unique.size === 0) {
+      setLimitNotice("Thư viện của bạn chưa có thẻ nào. Hãy thêm bộ thẻ hoặc học bài mới trước.");
+      return;
+    }
+    startStudy("review-all", "Ôn tập thư viện", Array.from(unique.values()), { reviewOnly: true, skipMorePrompt: true });
+  }, [deckTree, startStudy]);
+
   const confirmMore = () => {
     if (!morePrompt) return;
     const amount = Math.floor(Number(moreAmount));
@@ -1803,6 +1820,15 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                     className="w-full text-xs pl-8 pr-3 py-2 rounded-xl bg-stone-100 dark:bg-stone-800/80 border border-stone-200 dark:border-stone-700/60 text-stone-900 dark:text-stone-100 focus:outline-none focus:border-stone-400 transition"
                   />
                 </div>
+
+                <button
+                  onClick={startReviewAll}
+                  title="Chỉ ôn lại những thẻ đã học trong thư viện của bạn"
+                  className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-stone-200 px-3.5 py-2 text-xs font-bold text-stone-700 transition-colors hover:bg-stone-100 dark:border-stone-700/60 dark:text-stone-200 dark:hover:bg-stone-800/80 cursor-pointer"
+                >
+                  <RotateCcw className="h-4 w-4 text-stone-500 dark:text-stone-400" />
+                  Ôn tập
+                </button>
 
                 <Link
                   href="/explore"
