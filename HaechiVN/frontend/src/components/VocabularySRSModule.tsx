@@ -1761,6 +1761,20 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     startStudy("review-all", "Ôn tập thư viện", Array.from(unique.values()), { reviewOnly: true, skipMorePrompt: true });
   }, [deckTree, startStudy]);
 
+  // Thẻ đã học và đang đến hạn trong thư viện: cùng nguồn với startReviewAll để số khớp phiên ôn.
+  const libraryDue = useMemo(() => {
+    const unique = new Map<string, VocabularyCard>();
+    for (const node of deckTree) for (const card of node.cards) unique.set(stateKeyOf(card), card);
+    const now = new Date();
+    let due = 0;
+    for (const card of unique.values()) {
+      if (card.ankiSchedule?.queue === -1) continue;
+      const state = cardStateMap[stateKeyOf(card)] || (!card.sibling && card.ankiSchedule ? ankiScheduleToFSRSState(card.ankiSchedule) : undefined);
+      if (state && state.state !== "new" && isFSRSCardDue(state, now)) due += 1;
+    }
+    return due;
+  }, [deckTree, cardStateMap]);
+
   const confirmMore = () => {
     if (!morePrompt) return;
     const amount = Math.floor(Number(moreAmount));
@@ -1776,9 +1790,12 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     <button
       onClick={startReviewAll}
       title="Chỉ ôn lại những thẻ đã học trong thư viện của bạn"
-      className="flex h-full min-h-[74px] w-full items-center justify-center rounded-2xl border border-stone-200 bg-white px-5 text-xl font-black text-stone-900 transition-colors hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900/60 dark:text-white cursor-pointer"
+      className="flex h-full min-h-[74px] w-full flex-col justify-center rounded-2xl border border-stone-200 bg-white px-4 text-left transition-colors hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900/60 cursor-pointer"
     >
-      Ôn tập
+      <span className="text-[11px] font-bold text-stone-500 dark:text-stone-400">Ôn tập</span>
+      <span className="mt-0.5 text-lg font-black text-stone-900 dark:text-white">
+        {libraryDue} thẻ đến hạn
+      </span>
     </button>
   );
 
@@ -1829,20 +1846,19 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
             <div className={`grid gap-3 sm:items-stretch ${lastStudiedDeckId && lastStudiedTitle ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
             {lastStudiedDeckId && lastStudiedTitle ? (
               <>
-                <div className="h-full p-4 rounded-2xl bg-white dark:bg-[#141b2d] border border-stone-200/80 dark:border-stone-800/80 flex items-center justify-between gap-4 shadow-xs animate-reveal">
-                  <div className="min-w-0">
-                    <h3 className="text-sm sm:text-base font-bold truncate text-stone-900 dark:text-white">
+                <button
+                  onClick={resumeLastLesson}
+                  title="Học tiếp ngay"
+                  className="group flex h-full w-full items-center justify-between gap-3 rounded-2xl border border-stone-200 bg-white px-4 py-3 text-left transition-colors hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900/60 cursor-pointer"
+                >
+                  <span className="min-w-0">
+                    <span className="block text-[11px] font-bold text-stone-500 dark:text-stone-400">Học tiếp</span>
+                    <span className="mt-0.5 block truncate text-base font-black text-stone-900 dark:text-white">
                       {lastStudiedTitle}
-                    </h3>
-                  </div>
-                  <button
-                    onClick={resumeLastLesson}
-                    className="w-10 h-10 rounded-full bg-stone-900 text-white hover:bg-stone-800 dark:bg-emerald-500 dark:text-stone-950 dark:hover:bg-emerald-400 flex items-center justify-center shrink-0 transition-transform active:scale-95 cursor-pointer shadow-sm"
-                    title="Học tiếp ngay"
-                  >
-                    <Play className="w-4 h-4 ml-0.5 fill-current" />
-                  </button>
-                </div>
+                    </span>
+                  </span>
+                  <ChevronRight className="h-5 w-5 shrink-0 text-stone-400 transition-transform group-hover:translate-x-0.5 group-hover:text-sky-600 dark:group-hover:text-sky-400" />
+                </button>
                 {reviewButton}
                 <div className="flex h-full items-stretch">
                   <DailyLimitsPanel limits={dailyLimits} progress={dailyProgress} onChange={updateLimits} />
