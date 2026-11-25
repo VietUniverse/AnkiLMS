@@ -72,7 +72,7 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onToggl
           role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={activeStudySession.progressPercent}
         >
           <div
-            className={`h-full rounded-r-full transition duration-300 ${bgActive ? "" : "bg-emerald-500"}`}
+            className={`h-full rounded-r-full transition-[width] duration-500 ease-out motion-reduce:transition-none ${bgActive ? "" : "bg-emerald-500"}`}
             style={{ width: `${activeStudySession.progressPercent}%`, ...(bgActive ? { background: progressTone.fill, boxShadow: progressTone.glow } : {}) }}
           />
         </div>
