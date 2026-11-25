@@ -171,7 +171,7 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
             {rangeLabel}
           </span>
           {/* Mũi tên bao quanh cụm Ngày/Tuần/Tháng: ‹ [Ngày|Tuần|Tháng] › */}
-          <div className="flex items-center gap-1 rounded-xl border border-stone-200 bg-white px-1 dark:border-stone-800 dark:bg-stone-900">
+          <div className="flex items-center gap-1 rounded-xl border border-stone-200 px-1 dark:border-stone-800">
             <button type="button" onClick={() => setOffset((value) => value - 1)} aria-label="Khoảng trước"
               className="flex h-8 w-8 items-center justify-center rounded-lg text-stone-600 transition-colors hover:bg-stone-100 hover:text-stone-900 dark:text-stone-300 dark:hover:bg-white/5">
               <ChevronLeft aria-hidden="true" className="h-4 w-4" />
