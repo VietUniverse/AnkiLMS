@@ -1,6 +1,7 @@
 // Self-check: `node scripts/check-study-queue.mjs` — thứ tự Review/Typing và hạn mức từ mới đếm theo từ.
 import assert from "node:assert/strict";
 import { buildStudyQueue } from "../src/lib/studyQueue.ts";
+import { filterTree, findNodeById } from "../src/lib/vocabCards.ts";
 
 const now = new Date("2026-11-25T07:00:00Z");
 const card = (id, extra = {}) => ({ id, word: `w${id}`, meaning: `m${id}`, deckName: "d", ...extra });
@@ -35,5 +36,12 @@ assert.equal(q.newWords, 1);
 // Bộ writing không có thẻ Typing; thẻ bị tạm hoãn (queue -1) bị bỏ.
 assert.equal(label(buildStudyQueue([card(1, { pos: "Viết" }), card(2, { pos: "Viết" })], {}, opts)), "R1 R2");
 assert.equal(label(buildStudyQueue([card(1, { ankiSchedule: { queue: -1 } }), card(2)], {}, opts)), "R2 T2");
+
+// Cây bộ thẻ: tìm node theo id ở mọi tầng; lọc giữ nhánh cha khi con khớp.
+const tree = [{ id: "a", title: "Quyển 1", cards: [], children: [{ id: "a1", title: "Bài 1", cards: [card(1, { word: "사과", meaning: "táo" })] }, { id: "a2", title: "Bài 2", cards: [card(2)] }] }];
+assert.equal(findNodeById(tree, "a2")?.title, "Bài 2");
+assert.equal(findNodeById(tree, "x"), null);
+assert.deepEqual(filterTree(tree, "táo").map((n) => n.children.map((c) => c.id)), [["a1"]]);
+assert.equal(filterTree(tree, "không có").length, 0);
 
 console.log("ok: study queue counts new words per word and orders Review before Typing");

@@ -46,7 +46,7 @@ interface VocabularySRSModuleProps {
 }
 
 import type { AssignedDeckClassJson, AssignedDeckItem, AssignmentPayload, DeckTreeNode, VocabularyCard } from "../lib/vocabCards";
-import { assignmentCardsOf, stateKeyOf, checkWritingVariantMatch, isCardAWritingCard, cardStateFor, formatNextReview, extractImageSrc, extractAudioSrc, cleanHtmlText, TYPING_PUNCTUATION, stripTypingPunctuation, cleanTextOnly, toSlug } from "../lib/vocabCards";
+import { findNodeById, filterTree, assignmentCardsOf, stateKeyOf, checkWritingVariantMatch, isCardAWritingCard, cardStateFor, formatNextReview, extractImageSrc, extractAudioSrc, cleanHtmlText, TYPING_PUNCTUATION, stripTypingPunctuation, cleanTextOnly, toSlug } from "../lib/vocabCards";
 export type { VocabularyCard, DeckTreeNode } from "../lib/vocabCards";
 
 const DICT_PANEL_WIDTH_KEY = "haechi.dictionaryPanelWidth";
@@ -694,17 +694,6 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     }
   }, [cardStateMap, currentUser, dailyLimits, exitStudy, setActiveStudySession]);
 
-  // Recursive search for node by id
-  const findNodeById = useCallback((nodes: DeckTreeNode[], id: string): DeckTreeNode | null => {
-    for (const node of nodes) {
-      if (node.id === id) return node;
-      if (node.children) {
-        const found = findNodeById(node.children, id);
-        if (found) return found;
-      }
-    }
-    return null;
-  }, []);
 
   // Resume last lesson (fallback to first available subdeck/lesson)
   const resumeLastLesson = useCallback(() => {
@@ -720,7 +709,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     // keep the learner on the deck list instead of starting an unrelated deck.
     setViewMode("dashboard");
     setActiveStudySession(null);
-  }, [lastStudiedDeckId, deckTree, findNodeById, startStudy]);
+  }, [lastStudiedDeckId, deckTree, startStudy]);
 
   // Số thẻ còn lại trong lượt học: thẻ mới (chưa có lịch ôn) và thẻ ôn lại, tính từ thẻ đang học trở đi.
   const remainingCounts = useMemo(() => {
@@ -783,7 +772,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
       if (requestedDeck) startStudy(requestedDeck.id, requestedDeck.title, requestedDeck.cards);
       else if (params.get("resume") === "true" || params.get("study") === "true") resumeLastLesson();
     }
-  }, [isAuthReady, currentUser, resumeLastLesson, startStudy, findNodeById, deckTree]);
+  }, [isAuthReady, currentUser, resumeLastLesson, startStudy, deckTree]);
   // Bộ thẻ giáo viên giao qua lớp: hiện ngay trong /flashcards để học sinh học.
   useEffect(() => {
     if (!isAuthReady || !currentUser) return;
@@ -877,50 +866,15 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     return next;
   }, [assignedPayloads, getDeckStats]);
 
-  // Collect all container ids for toggle all
-  const getAllContainerIds = useCallback((nodes: DeckTreeNode[]): string[] => {
-    let ids: string[] = [];
-    nodes.forEach((n) => {
-      if (n.children && n.children.length > 0) {
-        ids.push(n.id);
-        ids = ids.concat(getAllContainerIds(n.children));
-      }
-    });
-    return ids;
-  }, []);
 
   const toggleGroup = (id: string) => {
     setExpandedDecks((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  // Filter tree recursively for search query
-  const filterTree = useCallback((nodes: DeckTreeNode[], q: string): DeckTreeNode[] => {
-    return nodes
-      .map((node) => {
-        const matchSelf =
-          node.title.toLowerCase().includes(q) ||
-          (!node.children?.length && node.cards.some(
-            (c) =>
-              c.word.toLowerCase().includes(q) ||
-              c.meaning.toLowerCase().includes(q)
-          ));
-
-        if (node.children && node.children.length > 0) {
-          const filteredChildren = filterTree(node.children, q);
-          if (filteredChildren.length > 0 || matchSelf) {
-            return { ...node, children: filteredChildren };
-          }
-          return null;
-        }
-
-        return matchSelf ? node : null;
-      })
-      .filter(Boolean) as DeckTreeNode[];
-  }, []);
 
   const filteredTree = useMemo(() => {
     return searchQuery.trim() ? filterTree(deckTree, searchQuery.toLowerCase()) : deckTree;
-  }, [deckTree, searchQuery, filterTree]);
+  }, [deckTree, searchQuery]);
 
   // Sync active study session to global Navbar
   useEffect(() => {

@@ -244,3 +244,40 @@ export const toSlug = (str: string): string => {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 };
+
+// Recursive search for node by id
+export const findNodeById = (nodes: DeckTreeNode[], id: string): DeckTreeNode | null => {
+  for (const node of nodes) {
+    if (node.id === id) return node;
+    if (node.children) {
+      const found = findNodeById(node.children, id);
+      if (found) return found;
+    }
+  }
+  return null;
+};
+
+// Filter tree recursively for search query
+export const filterTree = (nodes: DeckTreeNode[], q: string): DeckTreeNode[] => {
+  return nodes
+    .map((node) => {
+      const matchSelf =
+        node.title.toLowerCase().includes(q) ||
+        (!node.children?.length && node.cards.some(
+          (c) =>
+            c.word.toLowerCase().includes(q) ||
+            c.meaning.toLowerCase().includes(q)
+        ));
+
+      if (node.children && node.children.length > 0) {
+        const filteredChildren = filterTree(node.children, q);
+        if (filteredChildren.length > 0 || matchSelf) {
+          return { ...node, children: filteredChildren };
+        }
+        return null;
+      }
+
+      return matchSelf ? node : null;
+    })
+    .filter(Boolean) as DeckTreeNode[];
+};
