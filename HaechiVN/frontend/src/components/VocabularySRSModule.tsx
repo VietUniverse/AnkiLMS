@@ -404,14 +404,18 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const [dailyLimits, setDailyLimits] = useState<DailyLimits>(DEFAULT_LIMITS);
   const [dailyProgress, setDailyProgress] = useState(() => ({ newDone: 0, reviewDone: 0, extraNew: 0 }));
   const [limitNotice, setLimitNotice] = useState<string | null>(null);
+  const [goalPromptSeq, setGoalPromptSeq] = useState(0);
+  const [goalPromptLeft, setGoalPromptLeft] = useState<{ words: number; cards: number } | null>(null);
   // Đã chạm giới hạn từ mới mà người học bấm vào một bộ: hỏi muốn học thêm bao nhiêu từ mới.
-  const [morePrompt, setMorePrompt] = useState<{ deckId: string; title: string; cards: VocabularyCard[]; available: number } | null>(null);
+  const [morePrompt, setMorePrompt] = useState<{ deckId: string; title: string; cards: VocabularyCard[]; available: number; availableCards: number } | null>(null);
   const [moreAmount, setMoreAmount] = useState("10");
   const [activeAssignmentMeta, setActiveAssignmentMeta] = useState<{ id: string; classId: string; title: string } | null>(null);
   const [assignedDecks, setAssignedDecks] = useState<AssignedDeckItem[]>([]);
   const [openingAssignedId, setOpeningAssignedId] = useState<string>("");
   // Mới/Ôn/% cho bộ thẻ lớp giao, tính bằng chính getDeckStats như các bộ khác (nạp thẻ 1 lần).
-  const [assignedStats, setAssignedStats] = useState<Record<string, { newCount: number; reviewCount: number; percent: number }>>({});
+  // Thẻ của từng bài tập, tải một lần rồi dùng lại cho số liệu Mới/Ôn/% và lúc mở bài.
+  // shortcut: không tải lại trong lúc trang còn mở, giáo viên sửa bộ thẻ thì học sinh tải lại trang mới thấy.
+  const [assignedPayloads, setAssignedPayloads] = useState<Record<string, AssignmentPayload>>({});
   const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -452,6 +456,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const inputRef = useRef<HTMLInputElement>(null);
   const answerShownAtRef = useRef(0);
   const lastRatedCardRef = useRef<string | null>(null);
+  const countedNewWordsRef = useRef<Set<string>>(new Set());
   const srsActivityRef = useRef({ reviewed: 0, correct: 0, activeSeconds: 0, lastTickAt: 0, lastInteractionAt: 0, submitted: false });
 
   const tickSrsActivity = useCallback(() => {
@@ -867,38 +872,49 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     const newLeft = remaining(effectiveNewLimit(dailyLimits, progress), progress.newDone);
     const reviewLeft = remaining(dailyLimits.reviewPerDay, progress.reviewDone);
     const dueCards: VocabularyCard[] = [];
-    const newCards: VocabularyCard[] = [];
-    // Mỗi từ có 2 thẻ: Review (nhìn chữ đoán nghĩa) rồi Typing (nhìn nghĩa gõ chữ), lịch ôn riêng từng thẻ.
-    const queue = (kind?: "typing") => {
-      for (const base of cards) {
-        // Anki's suspended queue is intentional; keep it out of the review queue.
-        if (base.ankiSchedule?.queue === -1) continue;
+    // Mỗi từ có 2 thẻ: Review (nhìn chữ đoán nghĩa) và Typing (nhìn nghĩa gõ chữ), lịch ôn riêng từng thẻ.
+    // Hạn mức từ mới đếm theo TỪ: mỗi phần tử là các thẻ mới của một từ, theo thứ tự bộ thẻ.
+    const newCards: VocabularyCard[][] = [];
+    const kinds: (undefined | "typing")[] = cards.some(isCardAWritingCard) ? [undefined] : [undefined, "typing"];
+    for (const base of cards) {
+      // Anki's suspended queue is intentional; keep it out of the review queue.
+      if (base.ankiSchedule?.queue === -1) continue;
+      const fresh: VocabularyCard[] = [];
+      for (const kind of kinds) {
         const c = kind ? { ...base, sibling: kind } : base;
         const state = cardStateMap[stateKeyOf(c)] || (!kind && c.ankiSchedule ? ankiScheduleToFSRSState(c.ankiSchedule) : undefined);
         if (state && state.state !== "new" && !isFSRSCardDue(state, now)) continue;
-        (state && state.state !== "new" ? dueCards : newCards).push(c);
+        (state && state.state !== "new" ? dueCards : fresh).push(c);
       }
-    };
-        queue();
-    if (!cards.some(isCardAWritingCard)) {
-      queue("typing");
+      if (fresh.length) newCards.push(fresh);
     }
+    // Đợt từ mới: hết Review của cả đợt rồi mới tới Typing, để không gõ ngay sau khi vừa thấy đáp án.
+    const newBatch = newCards.slice(0, newLeft);
+    const newSession = [...newBatch.flatMap((g) => g.filter((c) => !c.sibling)), ...newBatch.flatMap((g) => g.filter((c) => c.sibling))];
+    countedNewWordsRef.current = new Set();
     // Ôn tập là phiên riêng: không tính vào hạn mức từ mới, và không cắt theo reviewPerDay
     // (mặc định 0 nên nếu cắt thì luôn ra rỗng). Chỉ lấy thẻ đã đến hạn.
+    // Thẻ đến hạn cũng xếp hết Review rồi mới tới Typing, tránh gõ ngay sau thẻ Review của cùng từ.
+    const dueSession = [...dueCards.filter((c) => !c.sibling), ...dueCards.filter((c) => c.sibling)];
     const activeList = options?.reviewOnly
-      ? dueCards
-      : [...dueCards.slice(0, reviewLeft), ...newCards.slice(0, newLeft)];
+      ? dueSession
+      : [...dueSession.slice(0, reviewLeft), ...newSession];
     setDailyProgress(progress);
     if (!options?.reviewOnly && newLeft === 0 && newCards.length > 0 && !options?.skipMorePrompt) {
       setMoreAmount(String(Math.min(5, newCards.length)));
-      setMorePrompt({ deckId, title, cards, available: newCards.length });
+      setMorePrompt({ deckId, title, cards, available: newCards.length, availableCards: newCards.flat().length });
       return;
     }
     if (activeList.length === 0) {
+      // Hết hạn mức mà bộ vẫn còn thẻ: mở luôn hộp "Từ mới mỗi ngày" để người học tăng mục tiêu.
+      if (!options?.reviewOnly && dueCards.length + newCards.length > 0) {
+        setLimitNotice(null);
+        setGoalPromptLeft({ words: newCards.length, cards: newCards.flat().length });
+        setGoalPromptSeq((n) => n + 1);
+        return;
+      }
       setLimitNotice(options?.reviewOnly
         ? "Không còn thẻ nào đến hạn ôn hôm nay. FSRS sẽ đưa thẻ trở lại khi tới hạn."
-        : dueCards.length + newCards.length > 0
-        ? "Bạn đã đạt giới hạn học hôm nay. Phần còn lại sẽ chuyển sang ngày mai, hoặc tăng giới hạn ở mục tiêu hôm nay."
         : "Bộ thẻ này đã hết thẻ cần học hôm nay. FSRS sẽ đưa thẻ trở lại khi đến hạn ôn.");
       return;
     }
@@ -1077,7 +1093,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     async (item: AssignedDeckItem) => {
       setOpeningAssignedId(item.id);
       try {
-        const asg = await ApiClient.getClassAssignment(item.classId, item.id);
+        const asg = assignedPayloads[item.id] || await ApiClient.getClassAssignment(item.classId, item.id);
         const cards = assignmentCardsOf(asg);
         if (cards.length === 0) return;
         setActiveAssignmentMeta({ id: asg.id, classId: asg.classId, title: asg.title });
@@ -1088,33 +1104,39 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
         setOpeningAssignedId("");
       }
     },
-    [startStudy],
+    [startStudy, assignedPayloads],
   );
 
 
-  // Mới/Ôn/% của bộ thẻ lớp giao: nạp thẻ một lượt rồi tính bằng getDeckStats giống bộ thẻ thường.
+  // Mới/Ôn/% của bộ thẻ lớp giao: chỉ tải thẻ của bài chưa có trong cache, rồi tính bằng getDeckStats giống bộ thẻ thường.
   useEffect(() => {
-    if (!currentUser || assignedDecks.length === 0) return;
+    if (!currentUser) return;
+    const missing = assignedDecks.filter((item) => !assignedPayloads[item.id]);
+    if (missing.length === 0) return;
     let active = true;
     void Promise.all(
-      assignedDecks.map(async (item) => {
+      missing.map(async (item) => {
         try {
-          const asg = await ApiClient.getClassAssignment(item.classId, item.id);
-          return [item.id, getDeckStats(assignmentCardsOf(asg))] as const;
+          return [item.id, await ApiClient.getClassAssignment(item.classId, item.id)] as const;
         } catch {
           return null;
         }
       }),
     ).then((rows) => {
       if (!active) return;
-      const next: Record<string, { newCount: number; reviewCount: number; percent: number }> = {};
-      for (const row of rows) if (row) next[row[0]] = row[1];
-      setAssignedStats(next);
+      const loaded = rows.filter((row): row is NonNullable<typeof row> => row !== null);
+      if (loaded.length) setAssignedPayloads((prev) => ({ ...prev, ...Object.fromEntries(loaded) }));
     });
     return () => {
       active = false;
     };
-  }, [assignedDecks, currentUser, getDeckStats]);
+  }, [assignedDecks, currentUser, assignedPayloads]);
+
+  const assignedStats = useMemo(() => {
+    const next: Record<string, { newCount: number; reviewCount: number; percent: number }> = {};
+    for (const [id, asg] of Object.entries(assignedPayloads)) next[id] = getDeckStats(assignmentCardsOf(asg));
+    return next;
+  }, [assignedPayloads, getDeckStats]);
 
   // Collect all container ids for toggle all
   const getAllContainerIds = useCallback((nodes: DeckTreeNode[]): string[] => {
@@ -1311,8 +1333,15 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
       : curState;
     const effectiveRetention = userFsrsConfig?.desiredRetention || FSRS45_DEFAULTS.desiredRetention;
     const newState = calculateFSRS45(rating, effectiveState, new Date(), effectiveRetention);
-    if (curState.reps === 0 || curState.state === "new") setDailyProgress(recordCard(true));
-    else setDailyProgress(recordCard(false));
+    if (curState.reps === 0 || curState.state === "new") {
+      // Hạn mức từ mới đếm theo từ: thẻ Review và Typing của cùng một từ chỉ tính 1 lần.
+      // shortcut: chỉ nhớ trong phiên, bỏ dở phiên rồi học Typing ở phiên sau trong ngày thì từ đó bị tính lần nữa.
+      const wordId = `${currentCard.deckName || "deck"}_${currentCard.id}`;
+      if (!countedNewWordsRef.current.has(wordId)) {
+        countedNewWordsRef.current.add(wordId);
+        setDailyProgress(recordCard(true));
+      }
+    } else setDailyProgress(recordCard(false));
     setCardStateMap((prev) => {
       const updated = { ...prev, [activeKey]: newState };
       const srsKey = currentUser ? `haechivn_srs_state_${currentUser.id}` : "haechivn_srs_state_guest";
@@ -1924,13 +1953,13 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                 </button>
                 {reviewButton}
                 <div className="flex h-full items-stretch">
-                  <DailyLimitsPanel limits={dailyLimits} progress={dailyProgress} onChange={updateLimits} />
+                  <DailyLimitsPanel limits={dailyLimits} progress={dailyProgress} onChange={updateLimits} openRequest={goalPromptSeq} remainingNew={goalPromptLeft} />
                 </div>
               </>
             ) : (
               <>
                 {reviewButton}
-                <DailyLimitsPanel limits={dailyLimits} progress={dailyProgress} onChange={updateLimits} />
+                <DailyLimitsPanel limits={dailyLimits} progress={dailyProgress} onChange={updateLimits} openRequest={goalPromptSeq} remainingNew={goalPromptLeft} />
               </>
             )}
             </div>
@@ -2794,8 +2823,8 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
             onSubmit={(e) => { e.preventDefault(); confirmMore(); }}
           >
             <div>
-              <h2 id="more-new-title" className="text-base font-black">Bạn muốn học thêm bao nhiêu từ MỚI vậy dạ?</h2>
-              <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">Hôm nay bạn đã học đủ từ mới. Bộ này còn {morePrompt.available} từ mới.</p>
+              <h2 id="more-new-title" className="text-base font-black">Nhập số từ mới</h2>
+              <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">Hôm nay bạn đã học đủ từ mới.<br />Số từ mới còn lại: {morePrompt.available} ({morePrompt.availableCards} thẻ)</p>
             </div>
             <div className="flex items-center gap-2">
               <button

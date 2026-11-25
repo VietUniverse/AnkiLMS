@@ -7,6 +7,10 @@ interface Props {
   limits: DailyLimits;
   progress: DailyProgress;
   onChange: (limits: DailyLimits) => void;
+  /** Tăng số này để mở hộp "Từ mới mỗi ngày" từ bên ngoài (khi hết hạn mức). */
+  openRequest?: number;
+  /** Số từ/thẻ mới còn lại của bộ vừa mở, hiện khi hộp được mở do hết hạn mức. */
+  remainingNew?: { words: number; cards: number } | null;
 }
 
 type Field = keyof DailyLimits;
@@ -30,14 +34,23 @@ function GoalBar({ done, value, onOpen }: { done: number; value: number; onOpen:
   );
 }
 
-export const DailyLimitsPanel: React.FC<Props> = ({ limits, progress, onChange }) => {
+export const DailyLimitsPanel: React.FC<Props> = ({ limits, progress, onChange, openRequest = 0, remainingNew = null }) => {
   const [editing, setEditing] = useState<Field | null>(null);
+  const [showRemaining, setShowRemaining] = useState(false);
   const [draft, setDraft] = useState("");
 
-  const open = (field: Field) => {
+  const open = (field: Field, fromLimit = false) => {
     setEditing(field);
+    setShowRemaining(fromLimit);
     setDraft(limits[field] > 0 ? String(limits[field]) : "");
   };
+
+  // Có yêu cầu mở mới từ bên ngoài: mở hộp ngay trong lúc render (không cần effect).
+  const [handledRequest, setHandledRequest] = useState(openRequest);
+  if (openRequest !== handledRequest) {
+    setHandledRequest(openRequest);
+    if (openRequest > 0) open("newPerDay", true);
+  }
 
   const parsed = Number(draft);
   const valid = draft === "" ? false : Number.isInteger(parsed) && parsed >= 1 && parsed <= 9999;
@@ -68,6 +81,9 @@ export const DailyLimitsPanel: React.FC<Props> = ({ limits, progress, onChange }
             <div>
               <h3 id="goal-title" className="text-base font-black text-stone-900 dark:text-white">{FIELD_LABEL[editing]} mỗi ngày</h3>
               <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">Nhập số từ bạn muốn học tối đa mỗi ngày.</p>
+              {showRemaining && remainingNew && (
+                <p className="mt-1 text-xs font-bold text-sky-600 dark:text-sky-400">Số từ mới còn lại: {remainingNew.words} ({remainingNew.cards} thẻ)</p>
+              )}
             </div>
             <div className="flex items-center gap-2">
               <button
