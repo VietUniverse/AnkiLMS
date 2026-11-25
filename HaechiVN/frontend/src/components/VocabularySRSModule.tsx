@@ -1249,7 +1249,15 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     return (
       <div key={node.id} className="deck-group divide-y divide-stone-100 dark:divide-stone-800/60">
         <div
-          {...activateProps(() => startStudy(node.id, node.title, node.cards))}
+          role="button"
+          tabIndex={0}
+          onClick={() => startStudy(node.id, node.title, node.cards)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              startStudy(node.id, node.title, node.cards);
+            }
+          }}
           className={`group relative overflow-hidden flex items-center justify-between cursor-pointer hover:bg-stone-100/70 dark:hover:bg-stone-800/50 transition-colors ${indentClass}`}
           title={stats.newCount + stats.reviewCount === 0 ? "Không có thẻ đến hạn hôm nay" : `Bấm để học ${node.cards.length} từ trong ${node.title}`}
         >
