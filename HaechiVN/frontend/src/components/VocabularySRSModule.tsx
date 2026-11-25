@@ -31,10 +31,10 @@ import { activateProps } from "../lib/a11y";
 import { ApiClient } from "../lib/apiClient";
 import { DailyLimitsPanel } from "./DailyLimitsPanel";
 import { GRADIENT_PRESETS, saveStudyBackground, STUDY_BACKGROUND_GALLERY, useStudyBackground } from "../lib/studyBackground";
-import { addExtraNew, DailyLimits, effectiveNewLimit, loadProgress, recordCard, remaining, saveLimits, useDailyLimits, useDailyProgress } from "../lib/dailyLimits";
+import { addExtraNew, DailyLimits, effectiveNewLimit, loadProgress, recordCard, recordNewWord, remaining, saveLimits, useDailyLimits, useDailyProgress } from "../lib/dailyLimits";
 import { parseJson, useLocalState } from "../lib/localStore";
 import { speakKorean } from "../lib/koreanSpeech";
-import { buildStudyQueue, learnAheadCards, sessionProgress } from "../lib/studyQueue";
+import { buildStudyQueue, LEARN_AHEAD_MINUTES, learnAheadCards, sessionProgress } from "../lib/studyQueue";
 import { useStudyCardOpacity, useDisableAutoPronounce, useHideChatGpt, useHideDictionary, useMuteAndHideAudio, useMuteExampleAudio, useMuteWordAudio, useRandomStudyBgEvery10 } from "../lib/studyPreferences";
 import { LockKeyhole, Globe2 } from "lucide-react";
 import { detectDictionarySearchLanguage, naverLookupUrl, searchLearningDictionary, type DictionaryEntry } from "../lib/dictionarySearch";
@@ -234,7 +234,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const inputRef = useRef<HTMLInputElement>(null);
   const answerShownAtRef = useRef(0);
   const lastRatedCardRef = useRef<string | null>(null);
-  const countedNewWordsRef = useRef<Set<string>>(new Set());
   const srsActivityRef = useRef({ reviewed: 0, correct: 0, activeSeconds: 0, lastTickAt: 0, lastInteractionAt: 0, submitted: false });
 
   const tickSrsActivity = useCallback(() => {
@@ -627,9 +626,11 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     const progress = loadProgress();
     const newLeft = remaining(effectiveNewLimit(dailyLimits, progress), progress.newDone);
     const reviewLeft = remaining(dailyLimits.reviewPerDay, progress.reviewDone);
-    const { activeList, newWords, newWordCards, dueCount } = buildStudyQueue(cards, cardStateMap, { now, newLeft, reviewLeft, reviewOnly: options?.reviewOnly });
-    countedNewWordsRef.current = new Set();
-    if (!options?.reviewOnly && newLeft === 0 && newWords > 0 && !options?.skipMorePrompt) {
+    const { activeList, newWords, newWordCards, dueCount } = buildStudyQueue(cards, cardStateMap, {
+      now, newLeft, reviewLeft, reviewOnly: options?.reviewOnly, countedToday: new Set(progress.newWordIds),
+    });
+    // Hết hạn mức từ mới: chỉ hỏi học thêm khi không còn thẻ ôn đến hạn, để thẻ ôn không bị chặn.
+    if (!options?.reviewOnly && newLeft === 0 && newWords > 0 && activeList.length === 0 && !options?.skipMorePrompt) {
       setMoreAmount(String(Math.min(5, newWords)));
       setMorePrompt({ deckId, title, cards, available: newWords, availableCards: newWordCards });
       return;
@@ -1011,15 +1012,9 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
       : curState;
     const effectiveRetention = userFsrsConfig?.desiredRetention || FSRS45_DEFAULTS.desiredRetention;
     const newState = calculateFSRS45(rating, effectiveState, new Date(), effectiveRetention);
-    if (curState.reps === 0 || curState.state === "new") {
-      // Hạn mức từ mới đếm theo từ: thẻ Review và Typing của cùng một từ chỉ tính 1 lần.
-      // shortcut: chỉ nhớ trong phiên, bỏ dở phiên rồi học Typing ở phiên sau trong ngày thì từ đó bị tính lần nữa.
-      const wordId = `${currentCard.deckName || "deck"}_${currentCard.id}`;
-      if (!countedNewWordsRef.current.has(wordId)) {
-        countedNewWordsRef.current.add(wordId);
-        recordCard(true);
-      }
-    } else recordCard(false);
+    // Hạn mức từ mới đếm theo từ: thẻ Review và Typing của cùng một từ chỉ tính 1 lần trong ngày.
+    if (curState.reps === 0 || curState.state === "new") recordNewWord(stateKeyOf({ ...currentCard, sibling: undefined }));
+    else recordCard(false);
     setCardStateMap((prev) => ({ ...prev, [activeKey]: newState }));
 
     if (currentUser) {
@@ -1066,7 +1061,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
       return;
     }
     // Hết thẻ: thẻ học dở đến hạn trong 20 phút nữa thì học luôn, không bắt đợi (learn ahead của Anki).
-    const ahead = learnAheadCards(activeCardsList, { ...cardStateMap, [activeKey]: newState }, new Date());
+    const ahead = learnAheadCards(activeCardsList, { ...cardStateMap, [activeKey]: newState }, new Date(), LEARN_AHEAD_MINUTES, activeKey);
     if (ahead.length > 0) {
       setProgressSegment({ index: currentCardIndex + 1, percent: sessionProgress(currentCardIndex, activeCardsList.length, progressSegment) });
       setActiveCardsList((list) => [...list, ...ahead]);

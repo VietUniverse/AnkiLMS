@@ -14,12 +14,15 @@ export type StudyQueue = {
 export function buildStudyQueue(
   cards: VocabularyCard[],
   cardStateMap: Record<string, FSRSState>,
-  opts: { now: Date; newLeft: number; reviewLeft: number; reviewOnly?: boolean },
+  /** countedToday: id từ (stateKeyOf thẻ Review) đã trừ hạn mức hôm nay, học tiếp không trừ thêm. */
+  opts: { now: Date; newLeft: number; reviewLeft: number; reviewOnly?: boolean; countedToday?: ReadonlySet<string> },
 ): StudyQueue {
   const dueCards: VocabularyCard[] = [];
   // Mỗi từ có 2 thẻ: Review (nhìn chữ đoán nghĩa) và Typing (nhìn nghĩa gõ chữ), lịch ôn riêng từng thẻ.
   // Hạn mức từ mới đếm theo TỪ: mỗi phần tử là các thẻ mới của một từ, theo thứ tự bộ thẻ.
   const newCards: VocabularyCard[][] = [];
+  // Từ đã bắt đầu hôm nay (vd đã học Review, còn Typing): không tốn thêm suất.
+  const continuing: VocabularyCard[][] = [];
   const kinds: (undefined | "typing")[] = cards.some(isCardAWritingCard) ? [undefined] : [undefined, "typing"];
   for (const base of cards) {
     // Anki's suspended queue is intentional; keep it out of the review queue.
@@ -31,10 +34,10 @@ export function buildStudyQueue(
       if (state && state.state !== "new" && !isFSRSCardDue(state, opts.now)) continue;
       (state && state.state !== "new" ? dueCards : fresh).push(c);
     }
-    if (fresh.length) newCards.push(fresh);
+    if (fresh.length) (opts.countedToday?.has(stateKeyOf(base)) ? continuing : newCards).push(fresh);
   }
   // Đợt từ mới: hết Review của cả đợt rồi mới tới Typing, để không gõ ngay sau khi vừa thấy đáp án.
-  const newBatch = newCards.slice(0, opts.newLeft);
+  const newBatch = [...continuing, ...newCards.slice(0, opts.newLeft)];
   const newSession = [...newBatch.flatMap((g) => g.filter((c) => !c.sibling)), ...newBatch.flatMap((g) => g.filter((c) => c.sibling))];
   // Thẻ đến hạn cũng xếp hết Review rồi mới tới Typing, tránh gõ ngay sau thẻ Review của cùng từ.
   const dueSession = [...dueCards.filter((c) => !c.sibling), ...dueCards.filter((c) => c.sibling)];
@@ -61,6 +64,8 @@ export function learnAheadCards(
   cardStateMap: Record<string, FSRSState>,
   now: Date,
   limitMinutes = LEARN_AHEAD_MINUTES,
+  /** Thẻ vừa chấm: nếu còn thẻ khác thì xếp nó sau cùng, tránh gặp lại ngay lập tức. */
+  justAnsweredKey?: string,
 ): VocabularyCard[] {
   const limit = now.getTime() + limitMinutes * 60_000;
   const seen = new Set<string>();
@@ -75,5 +80,8 @@ export function learnAheadCards(
     const due = new Date(state.dueAt).getTime();
     if (due <= limit) ahead.push({ card, due });
   }
-  return ahead.sort((a, b) => a.due - b.due).map((x) => x.card);
+  const ordered = ahead.sort((a, b) => a.due - b.due).map((x) => x.card);
+  const justIdx = justAnsweredKey ? ordered.findIndex((c) => stateKeyOf(c) === justAnsweredKey) : -1;
+  if (justIdx >= 0 && ordered.length > 1) ordered.push(...ordered.splice(justIdx, 1));
+  return ordered;
 }

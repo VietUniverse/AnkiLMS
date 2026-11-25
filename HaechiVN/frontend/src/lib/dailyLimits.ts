@@ -4,7 +4,8 @@ import { readLocal, useLocalRaw, writeLocal } from "./localStore";
 // Giới hạn số thẻ học mỗi ngày (lưu cục bộ trên thiết bị). 0 = không giới hạn.
 export type DailyLimits = { newPerDay: number; reviewPerDay: number };
 // extraNew: số từ mới người học xin học thêm trong hôm nay (cộng vào giới hạn, hết ngày thì mất).
-export type DailyProgress = { newDone: number; reviewDone: number; extraNew: number };
+// newWordIds: từ mới đã tính hôm nay, để thẻ Review và Typing của cùng một từ chỉ trừ 1 suất kể cả khi học ở 2 lượt khác nhau.
+export type DailyProgress = { newDone: number; reviewDone: number; extraNew: number; newWordIds?: string[] };
 
 const LIMITS_KEY = "haechivn_daily_limits";
 const PROGRESS_KEY = "haechivn_daily_progress";
@@ -39,7 +40,10 @@ const parseLimits = (text: string | null): DailyLimits => {
 const parseProgress = (text: string | null): DailyProgress => {
   try {
     const raw = JSON.parse(text || "null");
-    if (raw?.date === today()) return { newDone: clamp(raw.newDone, 0), reviewDone: clamp(raw.reviewDone, 0), extraNew: clamp(raw.extraNew, 0) };
+    if (raw?.date === today()) {
+      const newWordIds = Array.isArray(raw.newWordIds) ? raw.newWordIds.filter((id: unknown): id is string => typeof id === "string") : [];
+      return { newDone: clamp(raw.newDone, 0), reviewDone: clamp(raw.reviewDone, 0), extraNew: clamp(raw.extraNew, 0), newWordIds };
+    }
   } catch { /* dùng giá trị mặc định */ }
   return { newDone: 0, reviewDone: 0, extraNew: 0 };
 };
@@ -60,6 +64,17 @@ export function useDailyLimits(): DailyLimits {
 export function useDailyProgress(): DailyProgress {
   const raw = useLocalRaw(PROGRESS_KEY);
   return useMemo(() => parseProgress(raw), [raw]);
+}
+
+/** Ghi một từ mới (theo id từ); từ đã tính hôm nay thì bỏ qua. */
+export function recordNewWord(wordId: string): DailyProgress {
+  const p = loadProgress();
+  const ids = p.newWordIds || [];
+  if (ids.includes(wordId)) return p;
+  const next = { ...p, newDone: p.newDone + 1, newWordIds: [...ids, wordId] };
+  writeLocal(PROGRESS_KEY, JSON.stringify({ date: today(), ...next }));
+  if (typeof window !== "undefined") window.dispatchEvent(new Event("haechivn:daily-progress-updated"));
+  return next;
 }
 
 export function recordCard(isNew: boolean): DailyProgress {

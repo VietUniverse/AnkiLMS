@@ -21,6 +21,11 @@ assert.equal(label(q), "R2 T1 T2");
 assert.equal(q.newWords, 2);
 assert.equal(q.newWordCards, 3);
 
+// Từ đã trừ suất hôm nay (đã học Review ở lượt trước, còn Typing): học tiếp dù hết hạn mức, không tốn suất.
+q = buildStudyQueue([card(1), card(2)], { d_1: learned("2026-12-30") }, { ...opts, newLeft: 0, countedToday: new Set(["d_1"]) });
+assert.equal(label(q), "T1");
+assert.equal(q.newWords, 1);
+
 // Thẻ đến hạn: Review trước Typing, đứng trước thẻ mới; reviewOnly bỏ thẻ mới.
 const due = { d_1: learned("2026-11-24"), d_1_typing: learned("2026-11-24"), d_2: learned("2026-11-24"), d_2_typing: learned("2026-11-24") };
 q = buildStudyQueue([card(1), card(2), card(3)], due, opts);
@@ -49,6 +54,9 @@ const at = (min) => ({ ...learned("2026-11-25"), state: "learning", dueAt: new D
 const ahead = learnAheadCards([card(1), card(2), card(3), card(1)], { d_1: at(15), d_2: at(1), d_3: at(30) }, now);
 assert.deepEqual(ahead.map((c) => c.id), [2, 1]);
 assert.equal(learnAheadCards([card(1)], { d_1: learned("2026-11-30") }, now).length, 0);
+// Thẻ vừa chấm (d_2, đến hạn sớm nhất) xếp cuối nếu còn thẻ khác; chỉ còn nó thì vẫn học.
+assert.deepEqual(learnAheadCards([card(1), card(2)], { d_1: at(15), d_2: at(1) }, now, 20, "d_2").map((c) => c.id), [1, 2]);
+assert.deepEqual(learnAheadCards([card(2)], { d_2: at(1) }, now, 20, "d_2").map((c) => c.id), [2]);
 
 // Thanh tiến độ: nối thêm 10 thẻ ở thẻ cuối (95%) thì chạy tiếp từ 95% lên, không tụt về 50%.
 const seg = { index: 10, percent: sessionProgress(9, 10, { index: 0, percent: 0 }) };
