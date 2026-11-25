@@ -33,6 +33,7 @@ import { DailyLimitsPanel } from "./DailyLimitsPanel";
 import { GRADIENT_PRESETS, saveStudyBackground, STUDY_BACKGROUND_GALLERY, useStudyBackground } from "../lib/studyBackground";
 import { addExtraNew, DailyLimits, DEFAULT_LIMITS, effectiveNewLimit, loadLimits, loadProgress, recordCard, remaining, saveLimits } from "../lib/dailyLimits";
 import { speakKorean } from "../lib/koreanSpeech";
+import { buildStudyQueue } from "../lib/studyQueue";
 import { useStudyCardOpacity, useDisableAutoPronounce, useHideChatGpt, useHideDictionary, useMuteAndHideAudio, useMuteExampleAudio, useMuteWordAudio, useRandomStudyBgEvery10 } from "../lib/studyPreferences";
 import { LockKeyhole, Globe2 } from "lucide-react";
 import { detectDictionarySearchLanguage, naverLookupUrl, searchLearningDictionary, type DictionaryEntry } from "../lib/dictionarySearch";
@@ -632,45 +633,19 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     const progress = loadProgress();
     const newLeft = remaining(effectiveNewLimit(dailyLimits, progress), progress.newDone);
     const reviewLeft = remaining(dailyLimits.reviewPerDay, progress.reviewDone);
-    const dueCards: VocabularyCard[] = [];
-    // Mỗi từ có 2 thẻ: Review (nhìn chữ đoán nghĩa) và Typing (nhìn nghĩa gõ chữ), lịch ôn riêng từng thẻ.
-    // Hạn mức từ mới đếm theo TỪ: mỗi phần tử là các thẻ mới của một từ, theo thứ tự bộ thẻ.
-    const newCards: VocabularyCard[][] = [];
-    const kinds: (undefined | "typing")[] = cards.some(isCardAWritingCard) ? [undefined] : [undefined, "typing"];
-    for (const base of cards) {
-      // Anki's suspended queue is intentional; keep it out of the review queue.
-      if (base.ankiSchedule?.queue === -1) continue;
-      const fresh: VocabularyCard[] = [];
-      for (const kind of kinds) {
-        const c = kind ? { ...base, sibling: kind } : base;
-        const state = cardStateMap[stateKeyOf(c)] || (!kind && c.ankiSchedule ? ankiScheduleToFSRSState(c.ankiSchedule) : undefined);
-        if (state && state.state !== "new" && !isFSRSCardDue(state, now)) continue;
-        (state && state.state !== "new" ? dueCards : fresh).push(c);
-      }
-      if (fresh.length) newCards.push(fresh);
-    }
-    // Đợt từ mới: hết Review của cả đợt rồi mới tới Typing, để không gõ ngay sau khi vừa thấy đáp án.
-    const newBatch = newCards.slice(0, newLeft);
-    const newSession = [...newBatch.flatMap((g) => g.filter((c) => !c.sibling)), ...newBatch.flatMap((g) => g.filter((c) => c.sibling))];
+    const { activeList, newWords, newWordCards, dueCount } = buildStudyQueue(cards, cardStateMap, { now, newLeft, reviewLeft, reviewOnly: options?.reviewOnly });
     countedNewWordsRef.current = new Set();
-    // Ôn tập là phiên riêng: không tính vào hạn mức từ mới, và không cắt theo reviewPerDay
-    // (mặc định 0 nên nếu cắt thì luôn ra rỗng). Chỉ lấy thẻ đã đến hạn.
-    // Thẻ đến hạn cũng xếp hết Review rồi mới tới Typing, tránh gõ ngay sau thẻ Review của cùng từ.
-    const dueSession = [...dueCards.filter((c) => !c.sibling), ...dueCards.filter((c) => c.sibling)];
-    const activeList = options?.reviewOnly
-      ? dueSession
-      : [...dueSession.slice(0, reviewLeft), ...newSession];
     setDailyProgress(progress);
-    if (!options?.reviewOnly && newLeft === 0 && newCards.length > 0 && !options?.skipMorePrompt) {
-      setMoreAmount(String(Math.min(5, newCards.length)));
-      setMorePrompt({ deckId, title, cards, available: newCards.length, availableCards: newCards.flat().length });
+    if (!options?.reviewOnly && newLeft === 0 && newWords > 0 && !options?.skipMorePrompt) {
+      setMoreAmount(String(Math.min(5, newWords)));
+      setMorePrompt({ deckId, title, cards, available: newWords, availableCards: newWordCards });
       return;
     }
     if (activeList.length === 0) {
       // Hết hạn mức mà bộ vẫn còn thẻ: mở luôn hộp "Từ mới mỗi ngày" để người học tăng mục tiêu.
-      if (!options?.reviewOnly && dueCards.length + newCards.length > 0) {
+      if (!options?.reviewOnly && dueCount + newWords > 0) {
         setLimitNotice(null);
-        setGoalPromptLeft({ words: newCards.length, cards: newCards.flat().length });
+        setGoalPromptLeft({ words: newWords, cards: newWordCards });
         setGoalPromptSeq((n) => n + 1);
         return;
       }
