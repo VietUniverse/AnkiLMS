@@ -382,7 +382,9 @@ html[data-theme="light"] body:not(:has(.login-page-root)) [class~="bg-sky-700"] 
 html[data-theme="light"] body:not(:has(.login-page-root)) [class~="bg-cyan-600"],
 html[data-theme="light"] body:not(:has(.login-page-root)) [class~="bg-cyan-600"] *,
 html[data-theme="light"] body:not(:has(.login-page-root)) [class~="bg-cyan-700"],
-html[data-theme="light"] body:not(:has(.login-page-root)) [class~="bg-cyan-700"] * {
+html[data-theme="light"] body:not(:has(.login-page-root)) [class~="bg-cyan-700"] *,
+html[data-theme="light"] body:not(:has(.login-page-root)) [class~="bg-emerald-600"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class~="bg-emerald-600"] * {
   color: #fff !important;
 }
 

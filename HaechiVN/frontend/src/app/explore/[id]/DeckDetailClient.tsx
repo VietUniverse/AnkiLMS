@@ -120,6 +120,8 @@ export default function DeckDetailClient({ id }: { id: string }) {
   // Thanh nổi vẽ thẳng vào <body> để không bị ảnh hưởng bởi transform của hiệu ứng fadeIn bên trong trang.
   const canPortal = useSyncExternalStore(() => () => {}, () => true, () => false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  // Thêm/gỡ bộ thẻ phải xác nhận, tránh lỡ tay 1 click là mất.
+  const [confirmAction, setConfirmAction] = useState<"add" | "remove" | null>(null);
 
   useEffect(() => {
     if (!deck) return;
@@ -175,10 +177,15 @@ export default function DeckDetailClient({ id }: { id: string }) {
   }, [deck]);
   const currentPreviewCard = deckCards[activePreviewIndex] || deckCards[0];
 
-  const handleAdd = () => {
+  const requestAdd = () => {
     if (!deck) return;
     // Khách xem bộ thẻ thoải mái; muốn lưu để ôn thì mời đăng ký.
     if (!currentUser) return handleOpenAuth(true);
+    setConfirmAction("add");
+  };
+
+  const handleAdd = () => {
+    if (!deck || !currentUser) return;
     const ankiDeck = curatedDeckToAnkiDeck(deck);
     handleDeckImported(ankiDeck);
     setToastMessage(`Đã thêm bộ thẻ "${deck.title}" vào Kho thẻ thành công!`);
@@ -301,13 +308,13 @@ export default function DeckDetailClient({ id }: { id: string }) {
 
             {/* Hộp hành động (máy tính). Trên điện thoại dùng thanh cố định ở dưới. */}
             <div className="hidden lg:block rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-5 space-y-4">
-              <div className="flex items-end justify-between">
+              <div className="flex items-end justify-center gap-10 text-center">
                 <div>
                   <p className="text-3xl font-black tabular-nums text-stone-900 dark:text-white">{deck.cards.length.toLocaleString("vi-VN")}</p>
                   <p className="text-xs text-stone-500 dark:text-stone-400">thẻ từ vựng</p>
                 </div>
                 {curriculumSections.length > 0 && (
-                  <div className="text-right">
+                  <div>
                     <p className="text-xl font-black tabular-nums text-stone-900 dark:text-white">{curriculumSections.length}</p>
                     <p className="text-xs text-stone-500 dark:text-stone-400">{deck.id === "course-topic-vocabulary" ? "chủ đề" : "mục"}</p>
                   </div>
@@ -315,15 +322,15 @@ export default function DeckDetailClient({ id }: { id: string }) {
               </div>
               {isAdded ? (
                 <div className="space-y-1">
-                  <Link href={studyHref} className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-black bg-emerald-500 hover:bg-emerald-600 text-white transition">
+                  <Link href={studyHref} className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-black bg-emerald-600 hover:bg-emerald-700 text-white transition">
                     <BookOpen className="w-4 h-4" /> Học ngay
                   </Link>
-                  <button onClick={handleRemove} className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-xl text-xs font-semibold text-rose-500 hover:bg-rose-500/10 transition cursor-pointer">
+                  <button onClick={() => setConfirmAction("remove")} className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-xl text-xs font-semibold text-rose-500 hover:bg-rose-500/10 transition cursor-pointer">
                     <Trash2 className="w-3.5 h-3.5" /> Gỡ khỏi kho thẻ
                   </button>
                 </div>
               ) : (
-                <button onClick={handleAdd} className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-black bg-sky-700 hover:bg-sky-800 text-white transition cursor-pointer">
+                <button onClick={requestAdd} className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-black bg-sky-700 hover:bg-sky-800 text-white transition cursor-pointer">
                   <Plus className="w-4 h-4 stroke-[3]" /> Thêm vào kho thẻ
                 </button>
               )}
@@ -430,20 +437,52 @@ export default function DeckDetailClient({ id }: { id: string }) {
         </div>
 
         {/* Thanh hành động nổi trên điện thoại/tablet, sát thanh điều hướng dưới (cao 64px); thanh bên chỉ hiện từ lg nên luôn canh giữa nội dung */}
+        {confirmAction && deck && canPortal && createPortal(
+          <div
+            className="fixed inset-0 z-[110] flex items-center justify-center bg-black/50 p-4"
+            role="presentation"
+            onClick={(e) => { if (e.target === e.currentTarget) setConfirmAction(null); }}
+            onKeyDown={(e) => { if (e.key === "Escape") setConfirmAction(null); }}
+          >
+            <div role="alertdialog" aria-modal="true" aria-labelledby="deck-confirm-title" className="w-full max-w-sm rounded-2xl border border-stone-200 bg-white p-5 text-center shadow-2xl dark:border-stone-700 dark:bg-stone-900">
+              <h3 id="deck-confirm-title" className="text-base font-black text-stone-900 dark:text-white">
+                {confirmAction === "add" ? "Thêm bộ thẻ vào kho?" : "Gỡ bộ thẻ khỏi kho?"}
+              </h3>
+              <p className="mt-2 text-sm text-stone-600 dark:text-stone-300">
+                {confirmAction === "add"
+                  ? <>Thêm <strong>{deck.title}</strong> ({deck.cards.length.toLocaleString("vi-VN")} thẻ) vào Kho thẻ để học trong mục Học tập.</>
+                  : <>Gỡ <strong>{deck.title}</strong> khỏi Kho thẻ. Bộ thẻ sẽ không còn trong mục Học tập; bạn có thể thêm lại sau.</>}
+              </p>
+              <div className="mt-5 flex gap-2">
+                <button type="button" autoFocus onClick={() => setConfirmAction(null)} className="flex-1 rounded-xl border border-stone-200 py-2.5 text-sm font-bold text-stone-700 hover:bg-stone-50 dark:border-stone-700 dark:text-stone-200 dark:hover:bg-stone-800 cursor-pointer">
+                  Hủy
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { const action = confirmAction; setConfirmAction(null); if (action === "add") handleAdd(); else handleRemove(); }}
+                  className={`flex-1 rounded-xl py-2.5 text-sm font-black text-white cursor-pointer ${confirmAction === "add" ? "bg-sky-700 hover:bg-sky-800" : "bg-rose-600 hover:bg-rose-700"}`}
+                >
+                  {confirmAction === "add" ? "Thêm" : "Gỡ bộ thẻ"}
+                </button>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
                 {canPortal && createPortal(
 <div className="lg:hidden fixed z-30 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] inset-x-[4.25rem] sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-[min(28rem,calc(100vw-2rem))]">
           <div className="flex items-center gap-2 rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-1.5">
             {isAdded ? (
               <>
-                <button onClick={handleRemove} aria-label="Gỡ khỏi kho thẻ" title="Gỡ khỏi kho thẻ" className="h-11 w-11 shrink-0 rounded-xl text-rose-500 hover:bg-rose-500/10 flex items-center justify-center cursor-pointer">
+                <button onClick={() => setConfirmAction("remove")} aria-label="Gỡ khỏi kho thẻ" title="Gỡ khỏi kho thẻ" className="h-11 w-11 shrink-0 rounded-xl text-rose-500 hover:bg-rose-500/10 flex items-center justify-center cursor-pointer">
                   <Trash2 className="w-4 h-4" />
                 </button>
-                <Link href={studyHref} style={{ color: "#fff" }} className="flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 px-4 text-sm font-black text-white transition">
+                <Link href={studyHref} style={{ color: "#fff" }} className="flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 px-4 text-sm font-black text-white transition">
                   <BookOpen className="w-4 h-4" /> Học ngay ({deck.cards.length.toLocaleString("vi-VN")} thẻ)
                 </Link>
               </>
             ) : (
-              <button onClick={handleAdd} style={{ color: "#fff" }} className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-sky-700 hover:bg-sky-800 px-4 text-sm font-black text-white transition cursor-pointer">
+              <button onClick={requestAdd} style={{ color: "#fff" }} className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-sky-700 hover:bg-sky-800 px-4 text-sm font-black text-white transition cursor-pointer">
                 <Plus className="w-4 h-4 stroke-[3]" /> Thêm ({deck.cards.length.toLocaleString("vi-VN")})
               </button>
             )}
