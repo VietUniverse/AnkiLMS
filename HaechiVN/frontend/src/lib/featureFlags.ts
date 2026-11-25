@@ -6,6 +6,7 @@ export const FEATURE_CATALOG = [
   { key: "explore", label: "Khám phá bộ thẻ", description: "Kho bộ thẻ tuyển chọn để thêm vào Flashcards.", route: "/explore" },
   { key: "placementTest", label: "Kiểm tra vốn từ", description: "Đánh giá trình độ và nhận lộ trình bộ thẻ phù hợp.", route: "/placement-test" },
   { key: "flashcards", label: "Từ vựng SRS / Ôn Anki", description: "Ôn tập thẻ Anki theo lịch SRS.", route: "/flashcards" },
+  { key: "tools", label: "Giấy tờ du học", description: "Công cụ làm hồ sơ, giấy tờ du học.", route: "/tools" },
   { key: "dictionary", label: "Từ điển Hàn–Việt–Anh", description: "Tra cứu từ vựng trong bộ NIKL.", route: "/dictionary" },
   { key: "topics", label: "Học theo chủ đề", description: "Từ vựng và câu mẫu theo chủ đề.", route: "/topics" },
   { key: "dictation", label: "Luyện nghe chính tả", description: "Nghe video/âm thanh và chép lại.", route: "/dictation" },
@@ -53,6 +54,7 @@ export const BETA_FEATURE_KEYS: readonly FeatureKey[] = [
   "feedback",
   "games",
   "ankiImport",
+  "tools",
 ] as const;
 
 /**

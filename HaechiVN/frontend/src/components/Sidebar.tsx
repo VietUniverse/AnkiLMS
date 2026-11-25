@@ -62,7 +62,6 @@ const mainNav = [
   { href: "/explore", label: "Khám phá", icon: Layers, feature: "explore" },
   { href: "/topik", label: "TOPIK", icon: GraduationCap, feature: "topik" },
   { href: "/placement-test", label: "Kiểm tra vốn từ", icon: ClipboardCheck, feature: "placementTest" },
-  { href: "/tools", label: "Giấy tờ", icon: BriefcaseBusiness },
   { href: "/dictionary", label: "Từ điển", icon: Search, feature: "dictionary" },
 ] as const;
 
@@ -72,6 +71,7 @@ const communityNav = [
 
 // LƯU Ý BACKEND: Các tính năng Beta đang thử nghiệm UX/UI, không đưa lên production
 const betaNav = [
+  { href: "/tools", label: "Giấy tờ", icon: BriefcaseBusiness, feature: "tools", badge: "BETA" },
   { href: "/dictation", label: "Luyện nghe chính tả", icon: Headphones, feature: "dictation", badge: "BETA" },
   { href: "/shadowing", label: "Shadowing", icon: Repeat, feature: "shadowing", badge: "BETA" },
   { href: "/feedback", label: "Góp ý & Đánh giá", icon: MessageSquareHeart, feature: "feedback", badge: "BETA" },
