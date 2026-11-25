@@ -31,7 +31,8 @@ import { activateProps } from "../lib/a11y";
 import { ApiClient } from "../lib/apiClient";
 import { DailyLimitsPanel } from "./DailyLimitsPanel";
 import { GRADIENT_PRESETS, saveStudyBackground, STUDY_BACKGROUND_GALLERY, useStudyBackground } from "../lib/studyBackground";
-import { addExtraNew, DailyLimits, DEFAULT_LIMITS, effectiveNewLimit, loadLimits, loadProgress, recordCard, remaining, saveLimits } from "../lib/dailyLimits";
+import { addExtraNew, DailyLimits, effectiveNewLimit, loadProgress, recordCard, remaining, saveLimits, useDailyLimits, useDailyProgress } from "../lib/dailyLimits";
+import { parseJson, useLocalState } from "../lib/localStore";
 import { speakKorean } from "../lib/koreanSpeech";
 import { buildStudyQueue } from "../lib/studyQueue";
 import { useStudyCardOpacity, useDisableAutoPronounce, useHideChatGpt, useHideDictionary, useMuteAndHideAudio, useMuteExampleAudio, useMuteWordAudio, useRandomStudyBgEvery10 } from "../lib/studyPreferences";
@@ -39,6 +40,12 @@ import { LockKeyhole, Globe2 } from "lucide-react";
 import { detectDictionarySearchLanguage, naverLookupUrl, searchLearningDictionary, type DictionaryEntry } from "../lib/dictionarySearch";
 
 type AdminCurriculumDeck = { id: string; name: string; cards?: VocabularyCard[] };
+
+// Bộ đọc localStorage khai báo ngoài component để ổn định (xem useLocalState).
+const parseWordList = parseJson<string[]>([]);
+const parseCardStateMap = parseJson<Record<string, FSRSState>>({});
+const parseText = (raw: string | null) => raw;
+const serializeText = (value: string | null) => value ?? "";
 
 interface VocabularySRSModuleProps {
   userDecks?: AnkiDeck[];
@@ -53,6 +60,12 @@ const DICT_PANEL_WIDTH_KEY = "haechi.dictionaryPanelWidth";
 const DICT_PANEL_DEFAULT_WIDTH = 420;
 const DICT_PANEL_MIN_WIDTH = 320;
 const DICT_PANEL_MAX_WIDTH = 720;
+// Nhớ kích thước panel từ điển người học đã kéo.
+const parseDictPanelWidth = (raw: string | null) => {
+  const saved = Number(raw);
+  return raw && Number.isFinite(saved) && saved >= DICT_PANEL_MIN_WIDTH && saved <= DICT_PANEL_MAX_WIDTH ? saved : DICT_PANEL_DEFAULT_WIDTH;
+};
+const serializeDictPanelWidth = (value: number) => String(Math.round(value));
 
 export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDecks = [], initialViewMode = "dashboard" }) => {
   const { currentUser, isAuthReady, setActiveStudySession, removedBuiltInDeckIds, userDecks: ownedDecks, setUserDecks, handleOpenAuth } = useApp();
@@ -128,7 +141,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   // Modal zoom image
   const [modalImage, setModalImage] = useState<string | null>(null);
   const [dictPanelOpen, setDictPanelOpen] = useState(false);
-  const [dictPanelWidth, setDictPanelWidth] = useState(DICT_PANEL_DEFAULT_WIDTH);
+  const [dictPanelWidth, setDictPanelWidth] = useLocalState(DICT_PANEL_WIDTH_KEY, parseDictPanelWidth, serializeDictPanelWidth);
   const hideChatGpt = useHideChatGpt();
   const hideDictionary = useHideDictionary();
   const muteWordAudio = useMuteWordAudio();
@@ -157,17 +170,17 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const [dictLoading, setDictLoading] = useState(false);
 
   // Resume banner state
-  const [lastStudiedDeckId, setLastStudiedDeckId] = useState<string | null>(null);
-  const [lastStudiedTitle, setLastStudiedTitle] = useState<string | null>(null);
+  const [lastStudiedDeckId, setLastStudiedDeckId] = useLocalState("haechivn_last_lesson_id", parseText, serializeText);
+  const [lastStudiedTitle, setLastStudiedTitle] = useLocalState("haechivn_last_lesson_title", parseText, serializeText);
 
   // FSRS & Local Storage Card Memory
-  const [masteredWords, setMasteredWords] = useState<string[]>([]);
-  const [reviewList, setReviewList] = useState<string[]>([]);
+  const [masteredWords, setMasteredWords] = useLocalState("haechivn_mastered", parseWordList);
+  const [reviewList, setReviewList] = useLocalState("haechivn_reviews_list", parseWordList);
   const masteredWordSet = useMemo(() => new Set(masteredWords), [masteredWords]);
   const reviewWordSet = useMemo(() => new Set(reviewList), [reviewList]);
-  const [cardStateMap, setCardStateMap] = useState<Record<string, FSRSState>>({});
-  const [dailyLimits, setDailyLimits] = useState<DailyLimits>(DEFAULT_LIMITS);
-  const [dailyProgress, setDailyProgress] = useState(() => ({ newDone: 0, reviewDone: 0, extraNew: 0 }));
+  const [cardStateMap, setCardStateMap] = useLocalState(currentUser ? `haechivn_srs_state_${currentUser.id}` : "haechivn_srs_state_guest", parseCardStateMap);
+  const dailyLimits = useDailyLimits();
+  const dailyProgress = useDailyProgress();
   const [limitNotice, setLimitNotice] = useState<string | null>(null);
   const [goalPromptSeq, setGoalPromptSeq] = useState(0);
   const [goalPromptLeft, setGoalPromptLeft] = useState<{ words: number; cards: number } | null>(null);
@@ -182,11 +195,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   // shortcut: không tải lại trong lúc trang còn mở, giáo viên sửa bộ thẻ thì học sinh tải lại trang mới thấy.
   const [assignedPayloads, setAssignedPayloads] = useState<Record<string, AssignmentPayload>>({});
   const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
-
-  useEffect(() => {
-    setDailyLimits(loadLimits());
-    setDailyProgress(loadProgress());
-  }, []);
 
   useEffect(() => {
     let active = true;
@@ -213,7 +221,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   }, [currentCardIndex]);
 
   const updateLimits = useCallback((next: DailyLimits) => {
-    setDailyLimits(next);
     saveLimits(next);
     setLimitNotice(null);
   }, []);
@@ -285,28 +292,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
     lastRatedCardRef.current = null;
   }, [currentCardIndex, activeDeckTitle]);
 
-  // Initialize storage
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      const savedMastered = JSON.parse(localStorage.getItem("haechivn_mastered") || "[]");
-      const savedReviews = JSON.parse(localStorage.getItem("haechivn_reviews_list") || "[]");
-      const savedLastId = localStorage.getItem("haechivn_last_lesson_id");
-      const savedLastTitle = localStorage.getItem("haechivn_last_lesson_title");
-      setMasteredWords(savedMastered);
-      setReviewList(savedReviews);
-      setLastStudiedDeckId(savedLastId);
-      setLastStudiedTitle(savedLastTitle);
-
-      const srsKey = currentUser ? `haechivn_srs_state_${currentUser.id}` : "haechivn_srs_state_guest";
-      const srsData = localStorage.getItem(srsKey);
-      if (srsData) {
-        setCardStateMap(JSON.parse(srsData));
-      }
-    } catch (e) {
-      console.warn("Storage init warning", e);
-    }
-  }, [currentUser]);
 
   // Group THTH Decks into 3 Levels:
   // Level 1: Book (e.g. "Tiếng Hàn Tổng Hợp 1")
@@ -638,7 +623,6 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     const reviewLeft = remaining(dailyLimits.reviewPerDay, progress.reviewDone);
     const { activeList, newWords, newWordCards, dueCount } = buildStudyQueue(cards, cardStateMap, { now, newLeft, reviewLeft, reviewOnly: options?.reviewOnly });
     countedNewWordsRef.current = new Set();
-    setDailyProgress(progress);
     if (!options?.reviewOnly && newLeft === 0 && newWords > 0 && !options?.skipMorePrompt) {
       setMoreAmount(String(Math.min(5, newWords)));
       setMorePrompt({ deckId, title, cards, available: newWords, availableCards: newWordCards });
@@ -687,12 +671,8 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     if (!options?.reviewOnly) {
       setLastStudiedDeckId(deckId);
       setLastStudiedTitle(title);
-      if (typeof window !== "undefined") {
-        localStorage.setItem("haechivn_last_lesson_id", deckId);
-        localStorage.setItem("haechivn_last_lesson_title", title);
-      }
     }
-  }, [cardStateMap, currentUser, dailyLimits, exitStudy, setActiveStudySession]);
+  }, [cardStateMap, currentUser, dailyLimits, exitStudy, setActiveStudySession, setLastStudiedDeckId, setLastStudiedTitle]);
 
 
   // Resume last lesson (fallback to first available subdeck/lesson)
@@ -996,23 +976,19 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     if (isMastered) {
       setMasteredWords((prev) => {
         const next = prev.includes(wordKey) ? prev : [...prev, wordKey];
-        localStorage.setItem("haechivn_mastered", JSON.stringify(next));
         return next;
       });
       setReviewList((prev) => {
         const next = prev.filter((w) => w !== wordKey);
-        localStorage.setItem("haechivn_reviews_list", JSON.stringify(next));
         return next;
       });
     } else {
       setMasteredWords((prev) => {
         const next = prev.filter((w) => w !== wordKey);
-        localStorage.setItem("haechivn_mastered", JSON.stringify(next));
         return next;
       });
       setReviewList((prev) => {
         const next = prev.includes(wordKey) ? prev : [...prev, wordKey];
-        localStorage.setItem("haechivn_reviews_list", JSON.stringify(next));
         return next;
       });
     }
@@ -1032,15 +1008,10 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
       const wordId = `${currentCard.deckName || "deck"}_${currentCard.id}`;
       if (!countedNewWordsRef.current.has(wordId)) {
         countedNewWordsRef.current.add(wordId);
-        setDailyProgress(recordCard(true));
+        recordCard(true);
       }
-    } else setDailyProgress(recordCard(false));
-    setCardStateMap((prev) => {
-      const updated = { ...prev, [activeKey]: newState };
-      const srsKey = currentUser ? `haechivn_srs_state_${currentUser.id}` : "haechivn_srs_state_guest";
-      localStorage.setItem(srsKey, JSON.stringify(updated));
-      return updated;
-    });
+    } else recordCard(false);
+    setCardStateMap((prev) => ({ ...prev, [activeKey]: newState }));
 
     if (currentUser) {
       void ApiClient.saveCardState(activeDeckTitle, (currentCard.sibling ? -1 : 1) * (Number(currentCard.id) || 1), newState).catch(() => {});
@@ -1088,7 +1059,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
       finishSrsActivity();
       setViewMode("dashboard");
     }
-  }, [currentCard, cardStateMap, currentUser, activeDeckTitle, currentCardIndex, activeCardsList.length, finishSrsActivity, ownedDecks, setUserDecks, studyMode, typedInput, randomBgEvery10, rotateRandomBackground]);
+  }, [currentCard, cardStateMap, currentUser, activeDeckTitle, currentCardIndex, activeCardsList.length, finishSrsActivity, ownedDecks, setUserDecks, studyMode, typedInput, randomBgEvery10, rotateRandomBackground, setCardStateMap, setMasteredWords, setReviewList]);
 
   // Give typing hint
   const handleGiveHint = () => {
@@ -1221,17 +1192,6 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     return () => window.removeEventListener("keydown", onKey);
   }, [dictPanelOpen]);
 
-  // Nhớ kích thước panel từ điển người học đã kéo.
-  useEffect(() => {
-    const saved = Number(window.localStorage.getItem(DICT_PANEL_WIDTH_KEY));
-    if (Number.isFinite(saved) && saved >= DICT_PANEL_MIN_WIDTH && saved <= DICT_PANEL_MAX_WIDTH) {
-      setDictPanelWidth(saved);
-    }
-  }, []);
-
-  useEffect(() => {
-    window.localStorage.setItem(DICT_PANEL_WIDTH_KEY, String(Math.round(dictPanelWidth)));
-  }, [dictPanelWidth]);
 
   const clampDictPanelWidth = (value: number) => {
     const maxWidth = Math.min(DICT_PANEL_MAX_WIDTH, Math.max(DICT_PANEL_MIN_WIDTH, window.innerWidth * 0.62));
