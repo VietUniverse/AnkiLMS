@@ -171,6 +171,9 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const [dictQuery, setDictQuery] = useState("");
   const [dictResults, setDictResults] = useState<DictionaryEntry[]>([]);
   const [dictLoading, setDictLoading] = useState(false);
+  const dictHasQuery = dictQuery.trim().length > 0;
+  const dictShownResults = dictHasQuery ? dictResults : [];
+  const dictShownLoading = dictHasQuery && dictLoading;
 
   // Resume banner state
   const [lastStudiedDeckId, setLastStudiedDeckId] = useLocalState("haechivn_last_lesson_id", parseText, serializeText);
@@ -751,6 +754,8 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
       const from = params.get("from");
       returnToRef.current = from && from.startsWith("/") && !from.startsWith("//") ? from : null;
       window.history.replaceState(null, "", window.location.pathname);
+      // Mở lượt học một lần theo link URL, sau khi cây bộ thẻ nạp xong: không có sự kiện người dùng nào để chuyển sang.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (requestedDeck) startStudy(requestedDeck.id, requestedDeck.title, requestedDeck.cards);
       else if (params.get("resume") === "true" || params.get("study") === "true") resumeLastLesson();
     }
@@ -1160,11 +1165,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
   useEffect(() => {
     if (!dictPanelOpen) return;
     const q = dictQuery.trim();
-    if (!q) {
-      setDictResults([]);
-      setDictLoading(false);
-      return;
-    }
+    if (!q) return; // ô tìm rỗng: kết quả hiển thị được tính rỗng lúc render (dictShownResults)
     const controller = new AbortController();
     const timer = window.setTimeout(() => {
       setDictLoading(true);
@@ -1517,6 +1518,8 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     if (!isAuthReady || !currentUser) return;
     if (new URLSearchParams(window.location.search).get("review") !== "true") return;
     if (libraryDue === 0) return;
+    // Mở phiên ôn một lần theo link ?review=true, sau khi thẻ đến hạn nạp xong.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     startReviewAll();
     const url = new URL(window.location.href);
     url.searchParams.delete("review");
@@ -2587,7 +2590,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                   autoComplete="off"
                   className="admin-field-input w-full min-w-0 bg-transparent py-0.5 text-xs text-stone-900 outline-none placeholder:text-stone-400 dark:text-white"
                 />
-                {dictLoading ? (
+                {dictShownLoading ? (
                   <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin text-sky-500" />
                 ) : dictQuery ? (
                   <button
@@ -2607,7 +2610,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                 <p className="py-10 text-center text-xs text-stone-400 dark:text-stone-500">
                   Nhập một từ tiếng Hàn hoặc nghĩa tiếng Việt để tra.
                 </p>
-              ) : !dictLoading && dictResults.length === 0 ? (
+              ) : !dictShownLoading && dictShownResults.length === 0 ? (
                 <div className="py-10 text-center">
                   <p className="text-xs font-bold text-stone-600 dark:text-stone-300">Không tìm thấy kết quả</p>
                   <p className="mt-1 text-[11px] text-stone-400 dark:text-stone-500">
@@ -2624,7 +2627,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                   </a>
                 </div>
               ) : (
-                dictResults.map((entry) => (
+                dictShownResults.map((entry) => (
                   <article
                     key={`${entry.hangul}-${entry.source}-${entry.vietnamese}`}
                     className="rounded-xl border border-stone-200 bg-white p-3 dark:border-stone-800 dark:bg-[#101d3d]"
