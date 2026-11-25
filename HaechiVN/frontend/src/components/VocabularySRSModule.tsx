@@ -71,28 +71,31 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const { currentUser, isAuthReady, setActiveStudySession, removedBuiltInDeckIds, userDecks: ownedDecks, setUserDecks, handleOpenAuth } = useApp();
   const isAdmin = currentUser?.role === "admin";
   // Bộ thẻ admin tải từ R2 (THTH, TOPIK Writing): chỉ dùng name và cards.
-  const [adminThthDecks, setAdminThthDecks] = useState<AdminCurriculumDeck[]>([]);
-  const [adminWritingDecks, setAdminWritingDecks] = useState<AdminCurriculumDeck[]>([]);
+  // Gắn userId để đổi tài khoản thì bỏ dữ liệu cũ ngay lúc render, không cần effect reset.
+  const [adminDecks, setAdminDecks] = useState<{ userId: string; thth: AdminCurriculumDeck[]; writing: AdminCurriculumDeck[] } | null>(null);
+  const ownAdminDecks = currentUser && adminDecks?.userId === currentUser.id ? adminDecks : null;
+  const adminThthDecks = useMemo(() => ownAdminDecks?.thth ?? [], [ownAdminDecks]);
+  const adminWritingDecks = useMemo(() => (isAdmin && ownAdminDecks?.writing) || [], [isAdmin, ownAdminDecks]);
   const [writingInputA, setWritingInputA] = useState<string>("");
   const [writingInputB, setWritingInputB] = useState<string>("");
   const [writingEssay, setWritingEssay] = useState<string>("");
   const [writingChoice, setWritingChoice] = useState<number | null>(null);
   const [writingCloze, setWritingCloze] = useState<string>("");
-  const [userFsrsConfig, setUserFsrsConfig] = useState<{ weights: number[] | null; desiredRetention: number } | null>(null);
+  const [loadedFsrsConfig, setLoadedFsrsConfig] = useState<{ userId: string; weights: number[] | null; desiredRetention: number } | null>(null);
+  // Cấu hình FSRS chỉ dùng khi đúng người đang đăng nhập; đăng xuất thì tự thành null.
+  const userFsrsConfig = currentUser && loadedFsrsConfig?.userId === currentUser.id ? loadedFsrsConfig : null;
+  const currentUserId = currentUser?.id;
 
   useEffect(() => {
-    if (!currentUser) {
-      setUserFsrsConfig(null);
-      return;
-    }
+    if (!currentUserId) return;
     let active = true;
     void ApiClient.getFsrsSettings().then((settings) => {
       if (active && settings) {
-        setUserFsrsConfig({ weights: settings.weights, desiredRetention: settings.desiredRetention });
+        setLoadedFsrsConfig({ userId: currentUserId, weights: settings.weights, desiredRetention: settings.desiredRetention });
       }
     }).catch(() => {});
     return () => { active = false; };
-  }, [currentUser?.id]);
+  }, [currentUserId]);
   // Cây bộ thẻ phụ thuộc người dùng và kho thẻ đọc từ localStorage: chỉ dựng sau khi hydrate để HTML tĩnh khớp bản client.
   const hydrated = useSyncExternalStore(() => () => {}, () => true, () => false);
   const studyBg = useStudyBackground();
@@ -197,28 +200,27 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
+    if (!currentUserId) return;
     let active = true;
-    if (currentUser && currentUser.role === "admin") {
-      void loadAdminThthCurriculum().then((decks) => { if (active) setAdminThthDecks(decks || []); });
-      void loadAdminWritingCurriculum().then((decks) => { if (active) setAdminWritingDecks(decks || []); });
-    } else if (currentUser) {
-      void loadAdminThthCurriculum().then((decks) => { if (active) setAdminThthDecks(decks || []); });
-      setAdminWritingDecks([]);
-    } else {
-      setAdminThthDecks([]);
-      setAdminWritingDecks([]);
-    }
+    void Promise.all([
+      loadAdminThthCurriculum(),
+      isAdmin ? loadAdminWritingCurriculum() : Promise.resolve(null),
+    ]).then(([thth, writing]) => {
+      if (active) setAdminDecks({ userId: currentUserId, thth: thth || [], writing: writing || [] });
+    });
     return () => { active = false; };
-  }, [currentUser?.id, currentUser?.role]);
+  }, [currentUserId, isAdmin]);
 
-  // Reset writing input state on card switch
-  useEffect(() => {
+  // Sang thẻ khác thì xoá ô nhập Writing ngay trong lúc render (không cần effect).
+  const [writingCardIndex, setWritingCardIndex] = useState(currentCardIndex);
+  if (writingCardIndex !== currentCardIndex) {
+    setWritingCardIndex(currentCardIndex);
     setWritingInputA("");
     setWritingInputB("");
     setWritingEssay("");
     setWritingChoice(null);
     setWritingCloze("");
-  }, [currentCardIndex]);
+  }
 
   const updateLimits = useCallback((next: DailyLimits) => {
     saveLimits(next);
