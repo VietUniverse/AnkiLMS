@@ -27,6 +27,7 @@ import {
   Pencil,
   Search,
   ChevronRight,
+  LogOut,
 } from "lucide-react";
 import { ApiClient, UserProfile } from "../lib/apiClient";
 import { useApp } from "../contexts/AppProvider";
@@ -493,6 +494,8 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
   // Confirm delete class dialog
   const [showDeleteClassModal, setShowDeleteClassModal] = useState(false);
   const [deletingClass, setDeletingClass] = useState(false);
+  const [showLeaveClassModal, setShowLeaveClassModal] = useState(false);
+  const [leavingClass, setLeavingClass] = useState(false);
 
   // Copy feedback
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
@@ -756,6 +759,23 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
       setMsg({ type: "error", text: error instanceof Error ? error.message : "Không thể xóa lớp." });
     } finally {
       setDeletingClass(false);
+    }
+  };
+
+  const handleLeaveClass = async () => {
+    if (!selectedClassId) return;
+    const className = selectedClass?.name || "";
+    setLeavingClass(true);
+    setMsg(null);
+    try {
+      setClasses(await ApiClient.classAction({ action: "leave", classId: selectedClassId }));
+      setShowLeaveClassModal(false);
+      setSelectedClassId(null);
+      setMsg({ type: "success", text: className ? `Đã rời lớp “${className}”.` : "Đã rời lớp học." });
+    } catch (error) {
+      setMsg({ type: "error", text: error instanceof Error ? error.message : "Không thể rời lớp." });
+    } finally {
+      setLeavingClass(false);
     }
   };
 
@@ -1502,6 +1522,16 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                   Xem bài tập
                 </button>
               </>
+            )}
+            {myMemberRecord && !isClassOwner && (
+              <button
+                type="button"
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-rose-200 bg-white px-4 py-2 text-xs font-black text-rose-700 transition-colors hover:bg-rose-50 dark:border-rose-500/30 dark:bg-transparent dark:text-rose-300"
+                onClick={() => setShowLeaveClassModal(true)}
+              >
+                <LogOut className="h-4 w-4" />
+                Rời lớp
+              </button>
             )}
           </div>
 
@@ -2608,6 +2638,42 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                     </>
                   ) : (
                     "Xóa lớp"
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showLeaveClassModal && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4"
+            role="presentation"
+            onClick={(event) => {
+              if (event.target === event.currentTarget && !leavingClass) setShowLeaveClassModal(false);
+            }}
+          >
+            <div className="cd-confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="cd-leave-class-title">
+              <span className="cd-confirm-icon">
+                <LogOut className="h-5 w-5" />
+              </span>
+              <h3 id="cd-leave-class-title">Rời lớp học?</h3>
+              <p>
+                Rời lớp <strong>{selectedClass?.name}</strong> thì bạn sẽ không xem và học được bài tập của lớp nữa.
+                Muốn quay lại thì phải tham gia lại lớp.
+              </p>
+              <div className="cd-confirm-actions">
+                <button type="button" className="rd-btn cd-btn-ghost" onClick={() => setShowLeaveClassModal(false)} disabled={leavingClass}>
+                  Hủy
+                </button>
+                <button type="button" className="rd-btn cd-btn-danger" onClick={handleLeaveClass} disabled={leavingClass}>
+                  {leavingClass ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      Đang rời
+                    </>
+                  ) : (
+                    "Rời lớp"
                   )}
                 </button>
               </div>

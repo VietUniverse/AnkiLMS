@@ -378,6 +378,14 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     if (!classroom) return errorResponse("Không tìm thấy lớp học.", 404);
     const membership = await getMembership(env, classId, user.id);
     const isSiteAdmin = user.role === "admin";
+    // Rời lớp (mọi chế độ hiển thị, cả khi đang chờ duyệt): xoá tư cách thành viên nên mất quyền xem/học bài tập của lớp.
+    // Tiến độ bài tập được giữ lại để nếu vào lại lớp thì học tiếp.
+    if (body.action === "leave") {
+      if (!membership) return errorResponse("Bạn không ở trong lớp này.", 404);
+      if (membership.role === "owner") return errorResponse("Chủ lớp không thể rời lớp. Hãy xóa lớp nếu không dùng nữa.", 403);
+      await env.DB.prepare("DELETE FROM classroom_members WHERE class_id = ? AND user_id = ?").bind(classId, user.id).run();
+      return jsonResponse({ success: true, classes: await getClasses(env, user.id) });
+    }
     if ((!membership || membership.status !== "approved") && !isSiteAdmin) return errorResponse("Bạn không có quyền thao tác với lớp này.", 403);
     const isManager = isSiteAdmin || membership?.role === "owner" || membership?.role === "admin" || membership?.role === "staff";
 
