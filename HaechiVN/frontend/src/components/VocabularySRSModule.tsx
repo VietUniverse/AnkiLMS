@@ -38,6 +38,8 @@ import { useStudyCardOpacity, useDisableAutoPronounce, useHideChatGpt, useHideDi
 import { LockKeyhole, Globe2 } from "lucide-react";
 import { detectDictionarySearchLanguage, naverLookupUrl, searchLearningDictionary, type DictionaryEntry } from "../lib/dictionarySearch";
 
+type AdminCurriculumDeck = { id: string; name: string; cards?: VocabularyCard[] };
+
 interface VocabularySRSModuleProps {
   userDecks?: AnkiDeck[];
   initialViewMode?: "dashboard" | "study";
@@ -55,8 +57,9 @@ const DICT_PANEL_MAX_WIDTH = 720;
 export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDecks = [], initialViewMode = "dashboard" }) => {
   const { currentUser, isAuthReady, setActiveStudySession, removedBuiltInDeckIds, userDecks: ownedDecks, setUserDecks, handleOpenAuth } = useApp();
   const isAdmin = currentUser?.role === "admin";
-  const [adminThthDecks, setAdminThthDecks] = useState<any[]>([]);
-  const [adminWritingDecks, setAdminWritingDecks] = useState<any[]>([]);
+  // Bộ thẻ admin tải từ R2 (THTH, TOPIK Writing): chỉ dùng name và cards.
+  const [adminThthDecks, setAdminThthDecks] = useState<AdminCurriculumDeck[]>([]);
+  const [adminWritingDecks, setAdminWritingDecks] = useState<AdminCurriculumDeck[]>([]);
   const [writingInputA, setWritingInputA] = useState<string>("");
   const [writingInputB, setWritingInputB] = useState<string>("");
   const [writingEssay, setWritingEssay] = useState<string>("");
