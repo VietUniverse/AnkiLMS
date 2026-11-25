@@ -152,9 +152,19 @@ export function errorResponse(message: string, status = 400) {
   return jsonResponse({ error: message }, status);
 }
 
+const LOOPBACK_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]"]);
+
 export function isSameOriginRequest(request: Request): boolean {
   const origin = request.headers.get("Origin");
-  return !origin || origin === new URL(request.url).origin;
+  const url = new URL(request.url);
+  if (!origin || origin === url.origin) return true;
+  // Dev: Next (localhost:3000) chuyển /api sang wrangler (127.0.0.1:8788) nên origin khác cổng.
+  // Chỉ chấp nhận khi cả hai đầu đều là máy local; production không bao giờ chạy trên loopback.
+  try {
+    return LOOPBACK_HOSTS.has(url.hostname) && LOOPBACK_HOSTS.has(new URL(origin).hostname);
+  } catch {
+    return false;
+  }
 }
 
 // PBKDF2 keeps password hashes slow to crack if the database is ever exposed.
