@@ -411,6 +411,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
           word: c.koreanText || c.frontText || "",
           meaning: c.vietnameseMeaning || c.backText || "",
           pos: "Từ vựng",
+          audio_word: c.audioUrls?.[0] || "",
+          audio_meaning: c.audioUrls?.[1] || "",
           transliteration: "",
           explain: "",
           image: c.imageUrls?.[0] ? `<img src="${c.imageUrls[0]}" />` : "",
@@ -422,10 +424,16 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
           ankiSchedule: c.ankiSchedule,
           reviewHistory: c.reviewHistory,
         });
-        const cards = ud.cards.map(toVocabularyCard);
+        // Older copies of this shared deck contained both Anki directions.
+        // The study queue already creates a separate typing sibling per note.
+        const seenNotes = new Set<number>();
+        const sourceCards = ud.sharedId === "haechivn-cong-giao" || ud.id === "haechivn-cong-giao" || ud.cards.some(c => c.audioUrls?.some(url => url.includes("/deck-media/cong-giao/")))
+          ? ud.cards.filter(c => { if (seenNotes.has(c.noteId)) return false; seenNotes.add(c.noteId); return true; })
+          : ud.cards;
+        const cards = sourceCards.map(toVocabularyCard);
         type ImportTreeBranch = { title: string; path: string; entries: Array<{ card: AnkiDeck["cards"][number]; idx: number }>; children: Map<string, ImportTreeBranch> };
         const subdeckRoot: ImportTreeBranch = { title: "", path: "", entries: [], children: new Map() };
-        ud.cards.forEach((card, idx) => {
+        sourceCards.forEach((card, idx) => {
           const rawParts = (card.deckName || ud.name).split("::").map((part) => part.trim()).filter(Boolean);
           const parts = rawParts[0] === ud.name ? rawParts.slice(1) : rawParts;
           let branch = subdeckRoot;
