@@ -4212,3 +4212,8 @@ html[data-theme="dark"] .classroom-module.cm-page.rd.cd .cd-modal {
   .classroom-module.cm-page.rd .rd-discover-foot { flex-direction: column; align-items: stretch; gap: 10px; }
   .classroom-module.cm-page.rd .rd-discover-foot .rd-btn { width: 100%; }
 }
+
+/* Menu điện thoại trượt lên từ dưới */
+@keyframes mobile-sheet-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.mobile-sheet { animation: mobile-sheet-up 220ms cubic-bezier(0.22, 1, 0.36, 1); }
+@media (prefers-reduced-motion: reduce) { .mobile-sheet { animation: none; } }

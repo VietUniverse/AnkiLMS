@@ -178,18 +178,40 @@ export const Sidebar: React.FC<SidebarProps> = ({
     );
   };
 
+  // Ô lưới trong bảng menu điện thoại: biểu tượng trên, chữ dưới, vùng bấm lớn.
+  const renderNavTile = (item: { href: string; label: string; icon: any; badge?: string }) => {
+    const Icon = item.icon;
+    const active = isActive(item.href);
+    return (
+      <Link
+        key={item.href}
+        href={item.href}
+        onClick={onCloseMobile}
+        aria-current={active ? "page" : undefined}
+        className={`relative flex min-h-[4.5rem] flex-col items-center justify-center gap-1.5 rounded-2xl px-1.5 py-2.5 text-center text-[11px] leading-tight transition-colors ${
+          active ? "bg-[#1b2740] font-extrabold text-white" : "bg-slate-100 font-semibold text-slate-700 hover:bg-slate-200 dark:bg-[#0f1830] dark:text-slate-300 dark:hover:bg-[#131d33] dark:hover:text-white"
+        }`}
+      >
+        <Icon className={`h-5 w-5 shrink-0 ${active ? "text-white" : "text-slate-400"}`} />
+        <span className="line-clamp-2">{item.label}</span>
+        {item.badge && <span className="absolute right-1.5 top-1.5 rounded px-1 text-[8px] font-bold bg-purple-500/20 text-purple-300">{item.badge}</span>}
+      </Link>
+    );
+  };
+
   return (
     <>
-      {/* Mobile Navigation Drawer */}
+      {/* Menu điện thoại: bảng trượt lên từ dưới (gần nút Menu ở thanh dưới) thay vì ngăn trái */}
       {isOpenMobile && (
-        <div className="fixed inset-0 z-50 lg:hidden flex animate-fadeIn">
+        <div className="fixed inset-0 z-[60] lg:hidden flex flex-col justify-end animate-fadeIn" role="dialog" aria-modal="true" aria-label="Menu">
           <div
             className="fixed inset-0 bg-black/70 backdrop-blur-sm"
             onClick={onCloseMobile}
           />
-          <div className="mobile-drawer relative w-72 max-w-[85vw] h-full bg-[#090f1e] text-white flex flex-col justify-between shadow-2xl z-10 border-r border-[#19284d]">
+          <div className="mobile-drawer mobile-sheet relative z-10 flex max-h-[88dvh] w-full flex-col rounded-t-3xl border-t border-[#19284d] bg-[#090f1e] text-white shadow-2xl">
+            <div aria-hidden className="mx-auto mt-2 h-1.5 w-10 shrink-0 rounded-full bg-slate-600/60" />
             {/* Mobile Header with Close button */}
-            <div className="flex h-16 items-center justify-between border-b border-[#111c38]/70 px-4 shrink-0">
+            <div className="flex h-14 items-center justify-between border-b border-[#111c38]/70 px-4 shrink-0">
               <Link
                 href="/"
                 onClick={onCloseMobile}
@@ -219,10 +241,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {/* Mobile Scrollable Links */}
             <div className="flex-1 overflow-y-auto p-3 space-y-4">
               <div>
-                <nav aria-label="Học tập" className="space-y-0.5">
-                  {mainNav.filter((item) => isFeatureEnabled("feature" in item ? item.feature : undefined)).map((item) => renderNavItem(item, true))}
-                  {communityNav.filter((item) => isFeatureEnabled(item.feature)).map((item) => renderNavItem(item, true))}
-                  {currentUser?.role === "admin" && renderNavItem({ href: "/admin", label: "Quản trị hệ thống", icon: ShieldCheck }, true)}
+                <nav aria-label="Học tập" className="grid grid-cols-3 gap-2 min-[420px]:grid-cols-4">
+                  {mainNav.filter((item) => isFeatureEnabled("feature" in item ? item.feature : undefined)).map((item) => renderNavTile(item))}
+                  {communityNav.filter((item) => isFeatureEnabled(item.feature)).map((item) => renderNavTile(item))}
+                  {currentUser?.role === "admin" && renderNavTile({ href: "/admin", label: "Quản trị hệ thống", icon: ShieldCheck })}
                 </nav>
               </div>
 
@@ -237,8 +259,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       THỬ NGHIỆM
                     </span>
                   </div>
-                  <div className="space-y-0.5 mt-1">
-                    {betaNav.filter((item) => isFeatureEnabled(item.feature)).map((item) => renderNavItem(item, true))}
+                  <div className="mt-2 grid grid-cols-3 gap-2 min-[420px]:grid-cols-4">
+                    {betaNav.filter((item) => isFeatureEnabled(item.feature)).map((item) => renderNavTile({ ...item, badge: undefined }))}
+                  </div>
+                  <div className="space-y-0.5 mt-2">
                     {isFeatureEnabled("ankiImport") && (
                       <button
                         onClick={() => {
@@ -262,7 +286,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
 
             {/* Mobile Footer User info */}
-            <div className="p-3 space-y-2 border-t border-[#111c38]/70 bg-[#070d1a] shrink-0">
+            <div className="p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] space-y-2 border-t border-[#111c38]/70 bg-[#070d1a] shrink-0">
               <InstallAppButton onDone={onCloseMobile} />
               {currentUser ? (
                 <div className="flex items-center justify-between p-2 rounded-xl bg-[#0b1329]">

@@ -127,7 +127,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
 
       {/* Đang học thẻ thì ẩn thanh điều hướng dưới để dành chỗ cho nút Quên/Thuộc */}
       {!activeStudySession && <BottomNav onOpenMobileMenu={() => setIsMobileMenuOpen(true)} />}
-      {!activeStudySession && <PWAInstallPrompt />}
+      {!activeStudySession && !isMobileMenuOpen && <PWAInstallPrompt />}
 
       {isFeatureEnabled("ankiImport") && <AnkiImporter
         isOpen={isImporterOpen}
