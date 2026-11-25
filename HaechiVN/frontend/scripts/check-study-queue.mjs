@@ -1,6 +1,6 @@
 // Self-check: `node scripts/check-study-queue.mjs` — thứ tự Review/Typing và hạn mức từ mới đếm theo từ.
 import assert from "node:assert/strict";
-import { buildStudyQueue, learnAheadCards } from "../src/lib/studyQueue.ts";
+import { buildStudyQueue, learnAheadCards, sessionProgress } from "../src/lib/studyQueue.ts";
 import { filterTree, findNodeById } from "../src/lib/vocabCards.ts";
 
 const now = new Date("2026-11-25T07:00:00Z");
@@ -49,5 +49,12 @@ const at = (min) => ({ ...learned("2026-11-25"), state: "learning", dueAt: new D
 const ahead = learnAheadCards([card(1), card(2), card(3), card(1)], { d_1: at(15), d_2: at(1), d_3: at(30) }, now);
 assert.deepEqual(ahead.map((c) => c.id), [2, 1]);
 assert.equal(learnAheadCards([card(1)], { d_1: learned("2026-11-30") }, now).length, 0);
+
+// Thanh tiến độ: nối thêm 10 thẻ ở thẻ cuối (95%) thì chạy tiếp từ 95% lên, không tụt về 50%.
+const seg = { index: 10, percent: sessionProgress(9, 10, { index: 0, percent: 0 }) };
+assert.equal(seg.percent, 90);
+assert.equal(sessionProgress(10, 20, seg), 90);
+assert.equal(sessionProgress(15, 20, seg), 95);
+assert.equal(sessionProgress(20, 20, seg), 100);
 
 console.log("ok: study queue counts new words per word and orders Review before Typing");

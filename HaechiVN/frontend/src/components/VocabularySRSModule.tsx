@@ -34,7 +34,7 @@ import { GRADIENT_PRESETS, saveStudyBackground, STUDY_BACKGROUND_GALLERY, useStu
 import { addExtraNew, DailyLimits, effectiveNewLimit, loadProgress, recordCard, remaining, saveLimits, useDailyLimits, useDailyProgress } from "../lib/dailyLimits";
 import { parseJson, useLocalState } from "../lib/localStore";
 import { speakKorean } from "../lib/koreanSpeech";
-import { buildStudyQueue, learnAheadCards } from "../lib/studyQueue";
+import { buildStudyQueue, learnAheadCards, sessionProgress } from "../lib/studyQueue";
 import { useStudyCardOpacity, useDisableAutoPronounce, useHideChatGpt, useHideDictionary, useMuteAndHideAudio, useMuteExampleAudio, useMuteWordAudio, useRandomStudyBgEvery10 } from "../lib/studyPreferences";
 import { LockKeyhole, Globe2 } from "lucide-react";
 import { detectDictionarySearchLanguage, naverLookupUrl, searchLearningDictionary, type DictionaryEntry } from "../lib/dictionarySearch";
@@ -132,6 +132,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   // Selected Deck and Lesson
   const [activeDeckTitle, setActiveDeckTitle] = useState<string>("1. Quốc gia (나라)");
   const [activeCardsList, setActiveCardsList] = useState<VocabularyCard[]>([]);
+  const [progressSegment, setProgressSegment] = useState({ index: 0, percent: 0 });
   const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
   const [isFlipped, setIsFlipped] = useState<boolean>(false);
   const [typedInput, setTypedInput] = useState<string>("");
@@ -650,6 +651,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
 
     setActiveDeckTitle(title);
     setActiveCardsList(activeList);
+    setProgressSegment({ index: 0, percent: 0 });
     setCurrentCardIndex(0);
     setIsFlipped(false);
     setTypedInput("");
@@ -715,12 +717,12 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
         title: activeDeckTitle,
         onExit: exitStudy,
         progressText: activeCardsList.length > 0 ? `${currentCardIndex + 1} / ${activeCardsList.length}` : "Hoàn thành",
-        progressPercent: activeCardsList.length > 0 ? Math.round((currentCardIndex / activeCardsList.length) * 100) : 0,
+        progressPercent: activeCardsList.length > 0 ? sessionProgress(currentCardIndex, activeCardsList.length, progressSegment) : 0,
         remainingNew: remainingCounts.newCount,
         remainingReview: remainingCounts.reviewCount,
       });
     }
-  }, [viewMode, activeDeckTitle, exitStudy, currentCardIndex, activeCardsList.length, remainingCounts, setActiveStudySession]);
+  }, [viewMode, activeDeckTitle, exitStudy, currentCardIndex, activeCardsList.length, progressSegment, remainingCounts, setActiveStudySession]);
 
   // Auto-resume if query param ?resume=true or ?study=true or ?assignment=... is present
   useEffect(() => {
@@ -870,7 +872,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
         title: activeDeckTitle,
         onExit: exitStudy,
         progressText: activeCardsList.length > 0 ? `${currentCardIndex + 1} / ${activeCardsList.length}` : "",
-        progressPercent: activeCardsList.length > 0 ? Math.round((currentCardIndex / activeCardsList.length) * 100) : 0,
+        progressPercent: activeCardsList.length > 0 ? sessionProgress(currentCardIndex, activeCardsList.length, progressSegment) : 0,
         remainingNew: remainingCounts.newCount,
         remainingReview: remainingCounts.reviewCount,
       });
@@ -880,7 +882,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     return () => {
       setActiveStudySession(null);
     };
-  }, [viewMode, activeDeckTitle, exitStudy, currentCardIndex, activeCardsList.length, remainingCounts, setActiveStudySession]);
+  }, [viewMode, activeDeckTitle, exitStudy, currentCardIndex, activeCardsList.length, progressSegment, remainingCounts, setActiveStudySession]);
 
   const currentCard = activeCardsList[currentCardIndex] || activeCardsList[0];
 
@@ -1066,6 +1068,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     // Hết thẻ: thẻ học dở đến hạn trong 20 phút nữa thì học luôn, không bắt đợi (learn ahead của Anki).
     const ahead = learnAheadCards(activeCardsList, { ...cardStateMap, [activeKey]: newState }, new Date());
     if (ahead.length > 0) {
+      setProgressSegment({ index: currentCardIndex + 1, percent: sessionProgress(currentCardIndex, activeCardsList.length, progressSegment) });
       setActiveCardsList((list) => [...list, ...ahead]);
       setCurrentCardIndex((i) => i + 1);
       return;
@@ -1073,7 +1076,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     // Finished deck
     finishSrsActivity();
     setViewMode("dashboard");
-  }, [activeCardsList, currentCard, cardStateMap, currentUser, activeDeckTitle, currentCardIndex, activeCardsList.length, finishSrsActivity, ownedDecks, setUserDecks, studyMode, typedInput, randomBgEvery10, rotateRandomBackground, setCardStateMap, setMasteredWords, setReviewList]);
+  }, [activeCardsList, progressSegment, currentCard, cardStateMap, currentUser, activeDeckTitle, currentCardIndex, activeCardsList.length, finishSrsActivity, ownedDecks, setUserDecks, studyMode, typedInput, randomBgEvery10, rotateRandomBackground, setCardStateMap, setMasteredWords, setReviewList]);
 
   // Give typing hint
   const handleGiveHint = () => {

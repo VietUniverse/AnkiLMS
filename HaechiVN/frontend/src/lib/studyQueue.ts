@@ -44,6 +44,15 @@ export function buildStudyQueue(
   return { activeList, newWords: newCards.length, newWordCards: newCards.flat().length, dueCount: dueCards.length };
 }
 
+/**
+ * % thanh tiến độ của lượt học. `segment` là điểm bắt đầu đoạn hiện tại: khi nối thêm thẻ (learn ahead)
+ * thì thanh chạy tiếp từ % đang có tới 100%, không tụt lại.
+ */
+export function sessionProgress(index: number, length: number, segment: { index: number; percent: number }): number {
+  if (length <= segment.index) return segment.percent;
+  return Math.round(segment.percent + ((100 - segment.percent) * (index - segment.index)) / (length - segment.index));
+}
+
 /** Giống "learn ahead limit" của Anki: hết thẻ thì học luôn thẻ đang học dở sắp đến hạn (mặc định trong 20 phút). */
 export const LEARN_AHEAD_MINUTES = 20;
 
