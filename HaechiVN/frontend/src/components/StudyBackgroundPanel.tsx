@@ -5,12 +5,13 @@ import { createPortal } from "react-dom";
 import { Check, ImagePlus, Settings, Trash2, X } from "lucide-react";
 import { EggThemeToggle } from "./EggThemeToggle";
 import { backgroundLayerStyle, DEFAULT_STUDY_BG, fileToDataUrl, GRADIENT_PRESETS, saveStudyBackground, STUDY_BACKGROUND_GALLERY, useStudyBackground } from "../lib/studyBackground";
-import { setDisableAutoPronounce, setHideChatGpt, setHideDictionary, setMuteAndHideAudio, setMuteExampleAudio, setMuteWordAudio, setRandomStudyBgEvery10, setStudyCardOpacity, useStudyCardOpacity, useDisableAutoPronounce, useHideChatGpt, useHideDictionary, useMuteAndHideAudio, useMuteExampleAudio, useMuteWordAudio, useRandomStudyBgEvery10 } from "../lib/studyPreferences";
+import { setDisableAutoPronounce, setHideChatGpt, setTinderMode, useTinderMode, setHideDictionary, setMuteAndHideAudio, setMuteExampleAudio, setMuteWordAudio, setRandomStudyBgEvery10, setStudyCardOpacity, useStudyCardOpacity, useDisableAutoPronounce, useHideChatGpt, useHideDictionary, useMuteAndHideAudio, useMuteExampleAudio, useMuteWordAudio, useRandomStudyBgEvery10 } from "../lib/studyPreferences";
 
 export function StudyBackgroundPanel() {
   const bg = useStudyBackground();
   const hideChatGpt = useHideChatGpt();
   const hideDictionary = useHideDictionary();
+  const tinderMode = useTinderMode();
   const muteWordAudio = useMuteWordAudio();
   const cardOpacity = useStudyCardOpacity();
   const muteExampleAudio = useMuteExampleAudio();
@@ -251,6 +252,23 @@ export function StudyBackgroundPanel() {
                 className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${hideDictionary ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
               >
                 <span className={`absolute left-0 top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${hideDictionary ? "translate-x-[22px]" : "translate-x-0.5"}`} />
+              </button>
+            </div>
+
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-bold text-stone-500 dark:text-stone-400">Chế độ Tinder</p>
+                <p className="text-[11px] text-stone-400 dark:text-stone-500">Chạm thẻ để lật, kéo trái là Quên, kéo phải là Thuộc</p>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={tinderMode}
+                aria-label="Bật chế độ học Tinder"
+                onClick={() => setTinderMode(!tinderMode)}
+                className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${tinderMode ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
+              >
+                <span className={`absolute left-0 top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${tinderMode ? "translate-x-[22px]" : "translate-x-0.5"}`} />
               </button>
             </div>
 

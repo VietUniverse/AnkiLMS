@@ -35,7 +35,7 @@ import { addExtraNew, DailyLimits, effectiveNewLimit, loadProgress, recordCard, 
 import { parseJson, useLocalState } from "../lib/localStore";
 import { speakKorean } from "../lib/koreanSpeech";
 import { buildStudyQueue, LEARN_AHEAD_MINUTES, learnAheadCards, sessionProgress } from "../lib/studyQueue";
-import { useStudyCardOpacity, useDisableAutoPronounce, useHideChatGpt, useHideDictionary, useMuteAndHideAudio, useMuteExampleAudio, useMuteWordAudio, useRandomStudyBgEvery10 } from "../lib/studyPreferences";
+import { useStudyCardOpacity, useDisableAutoPronounce, useHideChatGpt, useHideDictionary, useMuteAndHideAudio, useMuteExampleAudio, useMuteWordAudio, useRandomStudyBgEvery10, useTinderMode } from "../lib/studyPreferences";
 import { LockKeyhole, Globe2 } from "lucide-react";
 import { detectDictionarySearchLanguage, naverLookupUrl, searchLearningDictionary, type DictionaryEntry } from "../lib/dictionarySearch";
 
@@ -148,6 +148,10 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const [dictPanelWidth, setDictPanelWidth] = useLocalState(DICT_PANEL_WIDTH_KEY, parseDictPanelWidth, serializeDictPanelWidth);
   const hideChatGpt = useHideChatGpt();
   const hideDictionary = useHideDictionary();
+  const tinderMode = useTinderMode();
+  // Kéo thẻ ở chế độ Tinder: độ lệch ngang (px) của thẻ đang kéo.
+  const [dragX, setDragX] = useState(0);
+  const dragRef = useRef<{ startX: number; pointerId: number } | null>(null);
   const muteWordAudio = useMuteWordAudio();
   const muteExampleAudio = useMuteExampleAudio();
   const muteAndHideAudio = useMuteAndHideAudio();
@@ -219,6 +223,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const [writingCardIndex, setWritingCardIndex] = useState(currentCardIndex);
   if (writingCardIndex !== currentCardIndex) {
     setWritingCardIndex(currentCardIndex);
+    setDragX(0);
     setWritingInputA("");
     setWritingInputB("");
     setWritingEssay("");
@@ -1460,9 +1465,54 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     setDictPanelOpen(true);
   };
 
+  // Chế độ Tinder chỉ cho thẻ lật (Review), không áp cho thẻ gõ và thẻ Writing.
+  const tinderActive = tinderMode && studyMode === "flip" && !isCardAWritingCard(currentCard);
+  const SWIPE_THRESHOLD = 100;
+  const isInteractiveTarget = (target: EventTarget | null) =>
+    target instanceof Element && Boolean(target.closest("button, a, input, textarea, select, [role='button'], [data-no-swipe]"));
+  const tinderHandlers = tinderActive ? {
+    onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => {
+      if (isInteractiveTarget(e.target) || e.button !== 0) return;
+      dragRef.current = { startX: e.clientX, pointerId: e.pointerId };
+      e.currentTarget.setPointerCapture(e.pointerId);
+    },
+    onPointerMove: (e: React.PointerEvent<HTMLDivElement>) => {
+      const drag = dragRef.current;
+      // Chỉ kéo được sau khi đã lật (đã thấy đáp án).
+      if (!drag || drag.pointerId !== e.pointerId || !isFlipped) return;
+      setDragX(e.clientX - drag.startX);
+    },
+    onPointerUp: (e: React.PointerEvent<HTMLDivElement>) => {
+      const drag = dragRef.current;
+      dragRef.current = null;
+      if (!drag || drag.pointerId !== e.pointerId) return;
+      const dx = e.clientX - drag.startX;
+      setDragX(0);
+      if (!isFlipped) {
+        if (Math.abs(dx) < 10) revealAnswer();
+        return;
+      }
+      if (Math.abs(dx) >= SWIPE_THRESHOLD) {
+        handleResponse(dx > 0);
+      } else if (Math.abs(dx) < 10) {
+        // Chạm (không kéo): nửa phải là Thuộc, nửa trái là Quên.
+        const rect = e.currentTarget.getBoundingClientRect();
+        handleResponse(e.clientX - rect.left > rect.width / 2);
+      }
+    },
+    onPointerCancel: () => {
+      dragRef.current = null;
+      setDragX(0);
+    },
+  } : {};
+
   const studyActions = (
     <>
-              {!isFlipped ? (
+              {!isFlipped && tinderActive ? (
+                <p className="h-12 flex items-center justify-center text-sm font-bold text-stone-500 dark:text-stone-400 select-none">
+                  Chạm vào thẻ để lật
+                </p>
+              ) : !isFlipped ? (
                 /* Trạng thái 1: Chưa lật -> Nút Hiện Đáp Án */
                 <button
                   onClick={() => {
@@ -1754,7 +1804,11 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
               </div>
             </div>
           ) : currentCard ? (
-            <div className="min-h-[calc(100vh-140px)] flex flex-col justify-between py-2 pb-28 animate-reveal">
+            <div
+              className="min-h-[calc(100vh-140px)] flex flex-col justify-between py-2 pb-28 animate-reveal"
+              // Tinder: chạm bất cứ đâu trên màn học (ngoài nút/ô nhập) để lật thẻ.
+              onClick={tinderActive && !isFlipped ? (e) => { if (!isInteractiveTarget(e.target)) revealAnswer(); } : undefined}
+            >
               <div className="flex-1 flex flex-col">
 
             {/* CHẾ ĐỘ 1: THẺ NHẬN DIỆN PHẲNG REVEAL (2 CỘT DESKTOP) */}
@@ -2166,7 +2220,20 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
             )}
 
             {studyMode === "flip" && !isCardAWritingCard(currentCard) && (
-              <div className={`mx-auto w-full mb-5 select-text ${activeImageSrc ? "max-w-4xl" : "max-w-2xl"}`}>
+              <div
+                {...tinderHandlers}
+                className={`relative mx-auto w-full mb-5 ${tinderActive ? "select-none cursor-pointer touch-pan-y" : "select-text"} ${activeImageSrc ? "max-w-4xl" : "max-w-2xl"}`}
+                style={tinderActive && dragX !== 0 ? { transform: `translateX(${dragX}px) rotate(${dragX / 25}deg)` } : undefined}
+              >
+                {tinderActive && isFlipped && dragX !== 0 && (
+                  <div
+                    aria-hidden="true"
+                    className={`pointer-events-none absolute top-4 z-20 rounded-xl px-4 py-1.5 text-sm font-black text-white ${dragX > 0 ? "right-4 bg-emerald-600" : "left-4 bg-rose-600"}`}
+                    style={{ opacity: Math.min(1, Math.abs(dragX) / SWIPE_THRESHOLD) }}
+                  >
+                    {dragX > 0 ? "Thuộc" : "Quên"}
+                  </div>
+                )}
                 <div style={cardStyle} className="relative w-full min-h-[22rem] rounded-2xl study-card dark:border dark:border-stone-800/80 px-6 pt-10 pb-5 sm:px-10 sm:pt-14 flex flex-col justify-between shadow-[0_1px_2px_rgba(28,25,23,0.05),0_12px_32px_-16px_rgba(28,25,23,0.18)] dark:shadow-none">
                   {/* Body 2 Cột Desktop: Trái Ảnh - Phải Chữ */}
                   <div className="my-auto pb-8 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">

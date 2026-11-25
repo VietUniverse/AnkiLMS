@@ -12,6 +12,8 @@ const DISABLE_AUTO_PRONOUNCE_KEY = "haechivn_disable_auto_pronounce";
 // Tự đổi nền ngẫu nhiên sau mỗi 10 lượt trả lời.
 const RANDOM_BG_KEY = "haechivn_random_bg_every_10";
 const LEGACY_MUTE_KEY = "haechivn_mute_sound";
+// Chế độ Tinder: chạm thẻ để lật, kéo/chạm trái = Quên, phải = Thuộc.
+const TINDER_MODE_KEY = "haechivn_tinder_mode";
 const PREF_EVENT = "haechivn-study-prefs";
 
 const readHideChatGpt = (): boolean => {
@@ -66,6 +68,22 @@ const writeMuted = (key: string, muted: boolean): void => {
     // Bỏ qua khi trình duyệt chặn lưu trữ.
   }
 };
+
+const readTinderMode = (): boolean => {
+  try {
+    return localStorage.getItem(TINDER_MODE_KEY) === "1";
+  } catch {
+    return false;
+  }
+};
+
+export function useTinderMode(): boolean {
+  return useSyncExternalStore(subscribePrefs, readTinderMode, () => false);
+}
+
+export function setTinderMode(enabled: boolean): void {
+  writeMuted(TINDER_MODE_KEY, enabled);
+}
 
 export function useMuteWordAudio(): boolean {
   return useSyncExternalStore(subscribePrefs, () => readMuted(MUTE_WORD_KEY), () => false);
