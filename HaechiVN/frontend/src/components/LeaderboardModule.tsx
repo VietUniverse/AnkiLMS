@@ -215,7 +215,7 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
                   <span className="grid h-12 w-12 place-items-center rounded-full bg-blue-600 text-base font-black text-white">{user.name?.charAt(0)?.toUpperCase() || "?"}</span>
                 )}
               </Link>
-              <p title={user.name} className="w-full truncate text-sm font-bold text-stone-900 dark:text-white">{user.name}</p>
+              <Link href={`/member?id=${encodeURIComponent(user.id)}`} title={user.name} className="block w-full truncate text-sm font-bold text-stone-900 underline-offset-2 hover:underline dark:text-white">{user.name}</Link>
               <p className={`text-base font-black tabular-nums ${medal[idx]}`}>{score(user)}</p>
             </div>
           ))}
