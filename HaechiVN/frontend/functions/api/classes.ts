@@ -270,7 +270,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       memberId?: string; role?: string; title?: string; deckName?: string; dueDate?: string;
       dueMode?: string; durationDays?: number; assignedUserIds?: string[] | null;
       assignmentId?: string; xpEarned?: number; cardId?: number; correct?: boolean;
-      deckCards?: { id: number; korean: string; meaning: string; example?: string; pronunciation?: string; mediaAssetIds?: string[] }[];
+      deckCards?: { id: number; korean: string; meaning: string; example?: string; pronunciation?: string; deckPath?: string; mediaAssetIds?: string[] }[];
       mediaAssets?: { id: string; filename: string; contentType: string; size: number }[];
     };
     actionName = body.action || "";
@@ -526,7 +526,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       for (const card of deckCards) {
         if (!Number.isSafeInteger(card.id) || card.id < 0 || seenCards.has(card.id)) return errorResponse("Bộ thẻ có mã thẻ không hợp lệ hoặc bị trùng.");
         seenCards.add(card.id);
-        if (typeof card.korean !== "string" || !card.korean.trim() || card.korean.length > 2000 || typeof card.meaning !== "string" || !card.meaning.trim() || card.meaning.length > 4000 || (card.example !== undefined && (typeof card.example !== "string" || card.example.length > 4000)) || (card.pronunciation !== undefined && (typeof card.pronunciation !== "string" || card.pronunciation.length > 300)) || (card.mediaAssetIds !== undefined && (!Array.isArray(card.mediaAssetIds) || card.mediaAssetIds.some((id: string) => typeof id !== "string" || !assetIds.has(id))))) return errorResponse("Nội dung trong bộ thẻ vượt giới hạn cho phép.");
+        if (typeof card.korean !== "string" || !card.korean.trim() || card.korean.length > 2000 || typeof card.meaning !== "string" || !card.meaning.trim() || card.meaning.length > 4000 || (card.example !== undefined && (typeof card.example !== "string" || card.example.length > 4000)) || (card.pronunciation !== undefined && (typeof card.pronunciation !== "string" || card.pronunciation.length > 300)) || (card.deckPath !== undefined && (typeof card.deckPath !== "string" || card.deckPath.length > 300)) || (card.mediaAssetIds !== undefined && (!Array.isArray(card.mediaAssetIds) || card.mediaAssetIds.some((id: string) => typeof id !== "string" || !assetIds.has(id))))) return errorResponse("Nội dung trong bộ thẻ vượt giới hạn cho phép.");
       }
       const deckJson = JSON.stringify(deckCards);
       if (new TextEncoder().encode(deckJson).length > 1_000_000) return errorResponse("Nội dung bộ thẻ quá lớn để chia sẻ.");

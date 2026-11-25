@@ -1,7 +1,7 @@
 // Self-check: `node scripts/check-study-queue.mjs` — thứ tự Review/Typing và hạn mức từ mới đếm theo từ.
 import assert from "node:assert/strict";
 import { buildStudyQueue, learnAheadCards, sessionProgress } from "../src/lib/studyQueue.ts";
-import { filterTree, findNodeById, splitDeckPath } from "../src/lib/vocabCards.ts";
+import { buildAssignedTree, deckPathOf, filterTree, findNodeById } from "../src/lib/vocabCards.ts";
 
 const now = new Date("2026-11-25T07:00:00Z");
 const card = (id, extra = {}) => ({ id, word: `w${id}`, meaning: `m${id}`, deckName: "d", ...extra });
@@ -69,9 +69,23 @@ assert.equal(sessionProgress(15, 20, seg), 95);
 assert.equal(sessionProgress(19, 20, seg), 99);
 assert.equal(sessionProgress(20, 20, seg), 100);
 
-// Bài tập gom theo deck mẹ của bộ thẻ được giao.
-assert.deepEqual(splitDeckPath("Tiếng Hàn Tổng Hợp 1 · Bài 1"), { parent: "Tiếng Hàn Tổng Hợp 1", leaf: "Bài 1" });
-assert.deepEqual(splitDeckPath("THTH::Quyển 1::Bài 6"), { parent: "THTH::Quyển 1", leaf: "Bài 6" });
-assert.deepEqual(splitDeckPath("Bài 4"), { parent: "", leaf: "Bài 4" });
+// Bài tập lớp theo cấu trúc bộ thẻ gốc.
+assert.deepEqual(deckPathOf("Tiếng Hàn Tổng Hợp 1 · Bài 1 (Trọn bài)"), ["Tiếng Hàn Tổng Hợp 1", "Bài 1"]);
+assert.deepEqual(deckPathOf("THTH::Quyển 1::Bài 6"), ["THTH", "Quyển 1", "Bài 6"]);
+assert.deepEqual(deckPathOf("Bài 4"), ["Bài 4"]);
+const asgItem = (id, deckName) => ({ id, classId: "c", className: "Lớp A", title: `Tên bài tập ${id}`, deckName, totalCards: 2, reviewedCards: 0, completed: false, dueLabel: "Không hạn" });
+const asgCard = (id, deckPath) => ({ id, korean: `k${id}`, meaning: `m${id}`, deckPath });
+const atree = buildAssignedTree(
+  [asgItem("a1", "THTH1::Bài 1"), asgItem("a2", "THTH1::Bài 2"), asgItem("a3", "Bài 4")],
+  {
+    a1: { id: "a1", classId: "c", title: "x", deckName: "THTH1::Bài 1", deckCards: [asgCard(1, "THTH1::Bài 1::Từ vựng"), asgCard(2, "THTH1::Bài 1::Ngữ pháp")] },
+    a2: { id: "a2", classId: "c", title: "x", deckName: "THTH1::Bài 2", deckCards: [asgCard(3, "THTH1::Bài 2"), asgCard(4)] },
+  },
+);
+const shape = (n) => `${n.title}${n.groupOnly ? "*" : ""}(${n.cards.length})${n.children?.length ? `[${n.children.map(shape).join(",")}]` : ""}`;
+// Deck mẹ THTH1 gom 2 bài; bài 1 giữ 2 deck con; tên nút là tên deck, không phải tên bài tập; bài cũ không có deckPath vẫn đúng chỗ.
+assert.equal(atree.map(shape).join(" "), "THTH1*(4)[Bài 1(2)[Từ vựng(1),Ngữ pháp(1)],Bài 2(2)] Bài 4(0)");
+assert.equal(atree[0].children[0].id, "assignment-a1");
+assert.equal(atree[0].children[0].children[0].assignment.id, "a1");
 
 console.log("ok: study queue counts new words per word and orders Review before Typing");

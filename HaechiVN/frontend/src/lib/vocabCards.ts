@@ -16,6 +16,8 @@ export type AssignmentCardJson = {
   transliteration?: string; pronunciation?: string; explain?: string; image?: string; mediaHtml?: string;
   example?: string; example_translated?: string; collocation?: string; synonym?: string; antonym?: string;
   audio_word?: string; audio_meaning?: string; audio_example?: string;
+  /** Đường dẫn deck gốc của thẻ ("A::B::C"), để học viên thấy đúng cấu trúc bộ thẻ được giao. */
+  deckPath?: string;
 };
 
 export type AssignmentPayload = {
@@ -32,12 +34,53 @@ export type AssignedDeckClassJson = {
   assignments?: Array<{ id: string; title: string; deckName?: string; totalCards?: number; reviewedCards?: number; completed?: boolean; dueDate?: string }>;
 };
 
-/** Tách tên bộ thẻ thành deck mẹ + tên deck con: "A::B::C" (Anki) hoặc "A · B" → { parent: "A::B" | "A", leaf }. */
-export function splitDeckPath(name: string): { parent: string; leaf: string } {
+/** Tên bộ thẻ được giao → các tầng deck: "A::B" (Anki) hoặc "A · B" (bộ có sẵn), bỏ hậu tố "(Trọn bài)". */
+export function deckPathOf(name: string): string[] {
   const sep = name.includes("::") ? "::" : " · ";
   const parts = name.split(sep).map((p) => p.trim()).filter(Boolean);
-  if (parts.length < 2) return { parent: "", leaf: name.trim() };
-  return { parent: parts.slice(0, -1).join(sep), leaf: parts[parts.length - 1] };
+  if (parts.length) parts[parts.length - 1] = parts[parts.length - 1].replace(/\s*\(Trọn bài\)$/, "");
+  return parts.length ? parts : [name.trim()];
+}
+
+/**
+ * Cây bài tập lớp theo cấu trúc bộ thẻ gốc: deck mẹ (gom các bài chung deck mẹ) → deck được giao → deck con
+ * (lấy từ deckPath của từng thẻ, bỏ phần chung). Nút deck mẹ chỉ mở/đóng; deck được giao và deck con thì học được.
+ */
+export function buildAssignedTree(items: AssignedDeckItem[], payloads: Record<string, AssignmentPayload>): DeckTreeNode[] {
+  const roots: DeckTreeNode[] = [];
+  const childOf = (list: DeckTreeNode[], id: string, title: string, extra: Partial<DeckTreeNode>) => {
+    let node = list.find((n) => n.id === id);
+    if (!node) list.push((node = { id, title, cards: [], children: [], ...extra }));
+    return node;
+  };
+  for (const item of items) {
+    const path = deckPathOf(item.deckName || item.title);
+    const payload = payloads[item.id];
+    const cards = payload ? assignmentCardsOf(payload) : [];
+    let level = roots;
+    path.slice(0, -1).forEach((seg, i) => {
+      const group = childOf(level, `asg-group:${path.slice(0, i + 1).join("::")}`, seg, { groupOnly: true });
+      group.cards.push(...cards);
+      level = group.children!;
+    });
+    const root: DeckTreeNode = { id: `assignment-${item.id}`, title: path[path.length - 1], cards, children: [], assignment: item };
+    level.push(root);
+    // deckCards và cards cùng thứ tự (assignmentCardsOf map 1-1).
+    const paths = (payload?.deckCards || []).map((c) => (c.deckPath || "").split("::").map((p) => p.trim()).filter(Boolean));
+    const withPath = paths.filter((p) => p.length);
+    let common = withPath.length ? Math.min(...withPath.map((p) => p.length)) : 0;
+    while (common > 0 && !withPath.every((p) => p.slice(0, common).join("::") === withPath[0].slice(0, common).join("::"))) common -= 1;
+    cards.forEach((card, i) => {
+      const rel = paths[i].slice(common);
+      let sub = root.children!;
+      rel.forEach((seg, j) => {
+        const node = childOf(sub, `${root.id}::${rel.slice(0, j + 1).join("::")}`, seg, { assignment: item });
+        node.cards.push(card);
+        sub = node.children!;
+      });
+    });
+  }
+  return roots;
 }
 
 // Chuyển thẻ của bài tập lớp sang dạng thẻ SRS dùng chung.
@@ -124,6 +167,10 @@ export interface DeckTreeNode {
   title: string;
   cards: VocabularyCard[];
   children?: DeckTreeNode[];
+  /** Thuộc bài tập lớp: bấm vào thì học thẻ của nút này dưới bài tập đó. */
+  assignment?: AssignedDeckItem;
+  /** Nút deck mẹ gom các bài tập: bấm chỉ mở/đóng. */
+  groupOnly?: boolean;
 }
 
 // Clean image string helper

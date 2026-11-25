@@ -130,6 +130,8 @@ type AssignmentDeckCard = {
   meaning: string;
   example: string;
   mediaRefs: string[];
+  /** Đường dẫn deck gốc ("A::B"), học viên dựng lại đúng cây bộ thẻ. */
+  deckPath?: string;
 };
 
 type AssignmentDeckOption = {
@@ -191,6 +193,7 @@ const assignmentDeckCardFromAnki = (card: AnkiDeck["cards"][number]): Assignment
   meaning: (card.vietnameseMeaning || card.backText || "").replace(/<[^>]*>/g, "").trim(),
   example: (card.exampleSentence || "").replace(/<[^>]*>/g, "").trim(),
   mediaRefs: card.mediaRefs || [],
+  deckPath: card.deckName || undefined,
 });
 
 // An imported deck can hold cards from several Anki subdecks ("A::B"). Expose
@@ -549,6 +552,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
         audio_meaning: card?.audio_meaning || "",
         audio_example: card?.audio_example || "",
         mediaRefs: [],
+        deckPath: `Tiếng Hàn Tổng Hợp ${bookNumber}::${lessonName}${subName && subName !== lessonName ? `::${subName}` : ""}`,
       })).filter((card: AssignmentDeckCard) => card.korean && card.meaning);
 
       if (!cards.length) continue;

@@ -53,7 +53,7 @@ interface VocabularySRSModuleProps {
 }
 
 import type { AssignedDeckClassJson, AssignedDeckItem, AssignmentPayload, DeckTreeNode, VocabularyCard } from "../lib/vocabCards";
-import { findNodeById, filterTree, assignmentCardsOf, splitDeckPath, stateKeyOf, checkWritingVariantMatch, isCardAWritingCard, cardStateFor, formatNextReview, extractImageSrc, extractAudioSrc, cleanHtmlText, TYPING_PUNCTUATION, stripTypingPunctuation, cleanTextOnly, toSlug } from "../lib/vocabCards";
+import { findNodeById, filterTree, assignmentCardsOf, buildAssignedTree, deckPathOf, stateKeyOf, checkWritingVariantMatch, isCardAWritingCard, cardStateFor, formatNextReview, extractImageSrc, extractAudioSrc, cleanHtmlText, TYPING_PUNCTUATION, stripTypingPunctuation, cleanTextOnly, toSlug } from "../lib/vocabCards";
 export type { VocabularyCard, DeckTreeNode } from "../lib/vocabCards";
 
 const DICT_PANEL_WIDTH_KEY = "haechi.dictionaryPanelWidth";
@@ -753,7 +753,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
           const cards = assignmentCardsOf(asg);
           if (cards.length > 0) {
             setActiveAssignmentMeta({ id: asg.id, classId: asg.classId, title: asg.title });
-            startStudy(`assignment-${asg.id}`, splitDeckPath(asg.deckName || asg.title).leaf, cards, { skipMorePrompt: true });
+            startStudy(`assignment-${asg.id}`, deckPathOf(asg.deckName || asg.title).at(-1)!, cards, { skipMorePrompt: true });
           }
         })
         .catch(() => {});
@@ -821,14 +821,16 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
   }, [isAuthReady, currentUser, viewMode]);
 
   const openAssignedDeck = useCallback(
-    async (item: AssignedDeckItem) => {
+    // node: deck con trong cây bài tập (chỉ học thẻ của deck đó); không có thì học cả bài.
+    async (item: AssignedDeckItem, node?: DeckTreeNode) => {
       setOpeningAssignedId(item.id);
       try {
         const asg = assignedPayloads[item.id] || await ApiClient.getClassAssignment(item.classId, item.id);
-        const cards = assignmentCardsOf(asg);
+        const all = assignmentCardsOf(asg);
+        const cards = node?.cards.length ? node.cards : all;
         if (cards.length === 0) return;
         setActiveAssignmentMeta({ id: asg.id, classId: asg.classId, title: asg.title });
-        startStudy(`assignment-${asg.id}`, splitDeckPath(asg.deckName || asg.title).leaf, cards, { skipMorePrompt: true });
+        startStudy(node?.id ?? `assignment-${asg.id}`, node?.title ?? deckPathOf(asg.deckName || asg.title).at(-1)!, cards, { skipMorePrompt: true });
       } catch {
         // im lặng: lỗi mạng thì để học sinh bấm lại
       } finally {
@@ -869,18 +871,8 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     return next;
   }, [assignedPayloads, getDeckStats]);
 
-  // Bài tập gom theo deck mẹ của bộ thẻ được giao ("Tiếng Hàn Tổng Hợp 1 · Bài 1" → nhóm "Tiếng Hàn Tổng Hợp 1"), giữ thứ tự.
-  const assignedGroups = useMemo(() => {
-    const groups = new Map<string, AssignedDeckItem[]>();
-    for (const item of assignedDecks) {
-      const { parent } = splitDeckPath(item.deckName);
-      groups.set(parent, [...(groups.get(parent) || []), item]);
-    }
-    return [...groups.entries()].map(([parent, items]) => {
-      const loaded = items.map((i) => assignedPayloads[i.id]).filter(Boolean);
-      return { parent, items, stats: getDeckStats(loaded.flatMap(assignmentCardsOf)) };
-    });
-  }, [assignedDecks, assignedPayloads, getDeckStats]);
+  // Bài tập lớp dựng theo cấu trúc bộ thẻ gốc (deck mẹ → deck được giao → deck con).
+  const assignedTree = useMemo(() => buildAssignedTree(assignedDecks, assignedPayloads), [assignedDecks, assignedPayloads]);
 
 
   const toggleGroup = (id: string) => {
@@ -1270,6 +1262,15 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
       ? ownedDecks.find((deck) => !deck.id.startsWith("curated-") && node.id === `user-${deck.id}`)
       : undefined;
 
+    // Nút trong cây bài tập lớp: deck mẹ chỉ mở/đóng, deck được giao/deck con thì học dưới bài tập đó.
+    const assignment = node.assignment;
+    const isAssignmentRoot = Boolean(assignment) && node.id === `assignment-${assignment!.id}`;
+    const openNode = () => {
+      if (node.groupOnly) toggleGroup(node.id);
+      else if (assignment) void openAssignedDeck(assignment, node);
+      else startStudy(node.id, node.title, node.cards);
+    };
+
     const indentClass =
       level === 0
         ? "px-4 sm:px-5 min-h-14 py-2 sm:py-0 sm:h-14 bg-white dark:bg-stone-900/60"
@@ -1282,15 +1283,15 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
         <div
           role="button"
           tabIndex={0}
-          onClick={() => startStudy(node.id, node.title, node.cards)}
+          onClick={openNode}
           onKeyDown={(event) => {
             if (event.key === "Enter" || event.key === " ") {
               event.preventDefault();
-              startStudy(node.id, node.title, node.cards);
+              openNode();
             }
           }}
           className={`group relative overflow-hidden flex items-center justify-between cursor-pointer hover:bg-stone-100/70 dark:hover:bg-stone-800/50 transition-colors ${indentClass}`}
-          title={stats.newCount + stats.reviewCount === 0 ? "Không có thẻ đến hạn hôm nay" : `Bấm để học ${node.cards.length} từ trong ${node.title}`}
+          title={isAssignmentRoot ? `Bài tập: ${assignment!.title}` : node.groupOnly ? undefined : stats.newCount + stats.reviewCount === 0 ? "Không có thẻ đến hạn hôm nay" : `Bấm để học ${node.cards.length} từ trong ${node.title}`}
         >
           {/* Vạch pin tiến độ xanh ngọc */}
           <div
@@ -1337,8 +1338,19 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                     : "text-xs font-medium text-stone-600 dark:text-stone-400 group-hover:text-stone-900 dark:group-hover:text-white"
                 }`}
               >
-                <span>{node.title}</span>
+                <span className="truncate">{node.title}</span>
+                {(isAssignmentRoot || (node.groupOnly && level === 0)) && (
+                  <span className="shrink-0 rounded-full bg-sky-700 px-2 py-0.5 text-[9px] font-black uppercase tracking-wide text-white">
+                    Bài tập
+                  </span>
+                )}
+                {assignment && openingAssignedId === assignment.id && <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin text-stone-400" />}
               </h3>
+              {isAssignmentRoot && (
+                <p className="mt-0.5 truncate text-[11px] font-normal text-stone-500 dark:text-stone-400">
+                  Lớp {assignment!.className} · {assignment!.reviewedCards}/{assignment!.totalCards} thẻ · {assignment!.dueLabel}
+                </p>
+              )}
               <p className="sm:hidden mt-0.5 text-[11px] text-stone-500 dark:text-stone-400">
                 <span className="font-bold text-sky-600 dark:text-sky-400">{stats.newCount}</span> mới, <span className="font-bold text-rose-500 dark:text-rose-400">{stats.reviewCount}</span> ôn, <span className={stats.percent > 0 ? "font-bold text-emerald-600 dark:text-emerald-400" : ""}>{stats.percent}%</span>
               </p>
@@ -1621,52 +1633,6 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
   };
   const moreValid = Number.isInteger(Number(moreAmount)) && Number(moreAmount) >= 1 && moreAmount !== "";
 
-  const renderAssignedRow = (item: AssignedDeckItem, nested: boolean) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => void openAssignedDeck(item)}
-                  disabled={openingAssignedId === item.id}
-                  title={item.title}
-                  className={`group flex w-full items-center justify-between gap-3 ${nested ? "pl-8 sm:pl-10 pr-4 sm:pr-5 bg-stone-50/50 dark:bg-stone-900/30" : "px-4 sm:px-5"} py-3 text-left transition-colors hover:bg-stone-50 disabled:opacity-70 dark:hover:bg-stone-800/40 cursor-pointer`}
-                >
-                  <div className="flex min-w-0 items-center gap-2">
-                    <span className="w-4 shrink-0 select-none text-center text-xs text-stone-300 dark:text-stone-700">└</span>
-                    <div className="min-w-0">
-                      <div className="flex min-w-0 items-center gap-2">
-                        <h3 className="truncate text-sm font-bold text-stone-900 dark:text-white">{splitDeckPath(item.deckName).leaf}</h3>
-                        <span className="shrink-0 rounded-full bg-sky-700 px-2 py-0.5 text-[9px] font-black uppercase tracking-wide text-white">
-                          Bài tập
-                        </span>
-                      </div>
-                      <p className="mt-0.5 truncate text-[11px] text-stone-500 dark:text-stone-400">
-                        {item.className} · {item.reviewedCards}/{item.totalCards} thẻ · {item.dueLabel}
-                      </p>
-                      <p className="sm:hidden mt-0.5 text-[11px] text-stone-500 dark:text-stone-400">
-                        <span className="font-bold text-sky-600 dark:text-sky-400">{assignedStats[item.id]?.newCount ?? 0}</span> mới, <span className="font-bold text-rose-500 dark:text-rose-400">{assignedStats[item.id]?.reviewCount ?? 0}</span> ôn, <span className={(assignedStats[item.id]?.percent ?? 0) > 0 ? "font-bold text-emerald-600 dark:text-emerald-400" : ""}>{assignedStats[item.id]?.percent ?? 0}%</span>
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 sm:gap-6 pr-1 sm:pr-2 shrink-0 tabular-nums text-xs">
-                    {openingAssignedId === item.id ? (
-                      <Loader2 className="h-4 w-4 animate-spin text-stone-400" />
-                    ) : (
-                      <>
-                        <div className="hidden sm:block w-10 text-center font-bold text-sky-600 dark:text-sky-400">
-                          {(assignedStats[item.id]?.newCount ?? 0) > 0 ? assignedStats[item.id].newCount : <span className="text-stone-300 dark:text-stone-700 font-normal">0</span>}
-                        </div>
-                        <div className="hidden sm:block w-10 text-center font-bold text-rose-500 dark:text-rose-400">
-                          {(assignedStats[item.id]?.reviewCount ?? 0) > 0 ? assignedStats[item.id].reviewCount : <span className="text-stone-300 dark:text-stone-700 font-normal">0</span>}
-                        </div>
-                        <div className={`hidden sm:block w-12 text-right font-bold ${(assignedStats[item.id]?.percent ?? 0) > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-stone-400"}`}>
-                          {assignedStats[item.id]?.percent ?? 0}%
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </button>
-  );
-
   const reviewButton = (
     <button
       onClick={startReviewAll}
@@ -1780,46 +1746,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
               {/* Danh sách cây bộ thẻ (Tree) */}
               <div className="divide-y divide-stone-100 dark:divide-stone-800/80">
               {/* Bộ thẻ giáo viên giao qua lớp: nằm chung bảng, gắn nhãn Lớp học */}
-              {currentUser && assignedGroups.map(({ parent, items, stats }) => {
-                if (!parent) return items.map((item) => renderAssignedRow(item, false));
-                const groupId = `assigned:${parent}`;
-                const open = expandedDecks[groupId] ?? true;
-                return (
-                  <div key={groupId} className="divide-y divide-stone-100 dark:divide-stone-800/60">
-                    <button
-                      type="button"
-                      onClick={() => setExpandedDecks((prev) => ({ ...prev, [groupId]: !(prev[groupId] ?? true) }))}
-                      aria-expanded={open}
-                      className="group flex w-full items-center justify-between gap-3 px-4 sm:px-5 py-3 text-left transition-colors hover:bg-stone-50 dark:hover:bg-stone-800/40 cursor-pointer"
-                    >
-                      <div className="flex min-w-0 items-center gap-2">
-                        <ChevronRight className={`h-4 w-4 shrink-0 text-stone-400 transition-transform duration-200 ${open ? "rotate-90 text-stone-900 dark:text-white" : ""}`} />
-                        <div className="min-w-0">
-                          <div className="flex min-w-0 items-center gap-2">
-                            <h3 className="truncate text-sm sm:text-base font-bold text-stone-900 dark:text-white">{parent}</h3>
-                            <span className="shrink-0 rounded-full bg-sky-700 px-2 py-0.5 text-[9px] font-black uppercase tracking-wide text-white">
-                              Bài tập
-                            </span>
-                          </div>
-                          <p className="mt-0.5 truncate text-[11px] text-stone-500 dark:text-stone-400">{items.length} bài · {items[0].className}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3 sm:gap-6 pr-1 sm:pr-2 shrink-0 tabular-nums text-xs">
-                        <div className="hidden sm:block w-10 text-center font-bold text-sky-600 dark:text-sky-400">
-                          {stats.newCount > 0 ? stats.newCount : <span className="text-stone-300 dark:text-stone-700 font-normal">0</span>}
-                        </div>
-                        <div className="hidden sm:block w-10 text-center font-bold text-rose-500 dark:text-rose-400">
-                          {stats.reviewCount > 0 ? stats.reviewCount : <span className="text-stone-300 dark:text-stone-700 font-normal">0</span>}
-                        </div>
-                        <div className={`hidden sm:block w-12 text-right font-bold ${stats.percent > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-stone-400"}`}>
-                          {stats.percent}%
-                        </div>
-                      </div>
-                    </button>
-                    {open && items.map((item) => renderAssignedRow(item, true))}
-                  </div>
-                );
-              })}
+              {currentUser && assignedTree.map((node) => renderTreeNode(node, 0))}
 
                 {filteredTree.map((node) => renderTreeNode(node, 0))}
 
