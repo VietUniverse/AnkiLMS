@@ -106,17 +106,29 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
     return start.toISOString().slice(0, 10);
   };
   const dayLabel = (key: string) => `${key.slice(8, 10)}/${key.slice(5, 7)}`;
-  const weekTotals = (from: string, to: string) =>
-    (stats?.days || [])
+  const periodTotals = (from: string, to: string) => {
+    const base = (stats?.days || [])
       .filter((item) => item.day >= from && item.day <= to)
       .reduce((total, item) => ({ minutes: total.minutes + (item.minutes || 0), cards: total.cards + (item.cards || 0) }), { minutes: 0, cards: 0 });
+    const srs = (stats?.srsDays || [])
+      .filter((item) => item.day >= from && item.day <= to)
+      .reduce((total, item) => ({ reviewed: total.reviewed + (item.reviewed || 0), correct: total.correct + (item.correct || 0) }), { reviewed: 0, correct: 0 });
+    // Trí nhớ = % thẻ flashcard trả lời "nhớ" trong khoảng đó (cùng cách tính với ô Trí nhớ ở trên).
+    return { ...base, retention: srs.reviewed > 0 ? Math.round((srs.correct / srs.reviewed) * 100) : null };
+  };
+  const dayBefore = (key: string) => new Date(new Date(`${key}T00:00:00Z`).getTime() - 86400000).toISOString().slice(0, 10);
   const thisWeekStart = todayKey ? weekStartKey(0) : "";
   const lastWeekStart = todayKey ? weekStartKey(1) : "";
-  const lastWeekEnd = thisWeekStart ? new Date(new Date(`${thisWeekStart}T00:00:00Z`).getTime() - 86400000).toISOString().slice(0, 10) : "";
-  const weekCards = todayKey
+  const lastWeekEnd = thisWeekStart ? dayBefore(thisWeekStart) : "";
+  const thisMonthStart = todayKey ? `${todayKey.slice(0, 8)}01` : "";
+  const lastMonthEnd = thisMonthStart ? dayBefore(thisMonthStart) : "";
+  const lastMonthStart = lastMonthEnd ? `${lastMonthEnd.slice(0, 8)}01` : "";
+  const periodCards = todayKey
     ? [
-        { label: `Tuần này (${dayLabel(thisWeekStart)}–${dayLabel(todayKey)})`, totals: weekTotals(thisWeekStart, todayKey) },
-        { label: `Tuần trước (${dayLabel(lastWeekStart)}–${dayLabel(lastWeekEnd)})`, totals: weekTotals(lastWeekStart, lastWeekEnd) },
+        { label: "Tuần này", range: `${dayLabel(thisWeekStart)}–${dayLabel(todayKey)}`, totals: periodTotals(thisWeekStart, todayKey) },
+        { label: "Tuần trước", range: `${dayLabel(lastWeekStart)}–${dayLabel(lastWeekEnd)}`, totals: periodTotals(lastWeekStart, lastWeekEnd) },
+        { label: "Tháng này", range: `${dayLabel(thisMonthStart)}–${dayLabel(todayKey)}`, totals: periodTotals(thisMonthStart, todayKey) },
+        { label: "Tháng trước", range: `${dayLabel(lastMonthStart)}–${dayLabel(lastMonthEnd)}`, totals: periodTotals(lastMonthStart, lastMonthEnd) },
       ]
     : [];
 
@@ -181,13 +193,17 @@ export const ProfileModule: React.FC<ProfileModuleProps> = ({ currentUser, onOpe
         ))}
       </section>
 
-      {/* Thống kê theo tuần: thời gian và số thẻ, lấy từ days của /api/study-session. */}
-      <section className={`${card} grid grid-cols-2 divide-x divide-stone-200 dark:divide-stone-800 overflow-hidden`}>
-        {weekCards.map(({ label, totals }) => (
-          <div key={label} className="p-4 text-center">
+      {/* Thống kê tuần/tháng: thời gian, số thẻ (days) và trí nhớ (srsDays) của /api/study-session. */}
+      <section className={`${card} grid grid-cols-2 sm:grid-cols-4 gap-px overflow-hidden bg-stone-200 dark:bg-stone-800`}>
+        {periodCards.map(({ label, range, totals }) => (
+          <div key={label} className="bg-white p-4 text-center dark:bg-stone-900">
             <p className="text-[11px] font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400">{label}</p>
+            <p className="text-[10px] text-stone-400 dark:text-stone-500">{range}</p>
             <p className="mt-1.5 text-xl font-black tabular-nums">{formatDuration(totals.minutes * 60)}</p>
             <p className="text-[11px] text-stone-500 dark:text-stone-400">{totals.cards.toLocaleString("vi-VN")} thẻ</p>
+            <p className="mt-1 text-[11px] font-bold text-rose-600 dark:text-rose-400">
+              Trí nhớ {totals.retention === null ? "—" : `${totals.retention}%`}
+            </p>
           </div>
         ))}
       </section>

@@ -12,7 +12,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   try {
     const user = await authenticateRequest(request, env);
     if (!user) return errorResponse("Chưa đăng nhập.", 401);
-    const [totals, days, sessions] = await Promise.all([
+    const [totals, days, sessions, srsDays] = await Promise.all([
       env.DB.prepare(
         `SELECT COUNT(*) AS session_count, COALESCE(SUM(cards_reviewed), 0) AS cards_reviewed,
           COALESCE(SUM(correct_count), 0) AS correct_count,
@@ -31,8 +31,14 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
           created_at
          FROM study_sessions WHERE user_id = ? ORDER BY created_at DESC LIMIT 20`,
       ).bind(user.id).all<{ module: string; cards_reviewed: number; correct_count: number; duration_seconds: number | null; created_at: string }>(),
+      // Trí nhớ theo ngày (giờ VN) cho thống kê tuần/tháng: thẻ SRS đã chấm và số thẻ nhớ được.
+      env.DB.prepare(
+        `SELECT date(created_at, '+7 hours') AS day, SUM(cards_reviewed) AS reviewed, SUM(correct_count) AS correct
+         FROM study_sessions WHERE user_id = ? AND module = 'srs' AND created_at >= date('now', '-70 days')
+         GROUP BY day ORDER BY day ASC`,
+      ).bind(user.id).all<{ day: string; reviewed: number; correct: number }>(),
     ]);
-    return jsonResponse({ summary: totals, days: days.results || [], sessions: sessions.results || [] });
+    return jsonResponse({ summary: totals, days: days.results || [], sessions: sessions.results || [], srsDays: srsDays.results || [] });
   } catch {
     return errorResponse("Không tải được thống kê học tập.", 500);
   }

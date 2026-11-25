@@ -41,6 +41,8 @@ export interface StudyProfileSummary {
   summary: { session_count: number; cards_reviewed: number; correct_count: number; srs_cards_reviewed: number; srs_correct_count: number; duration_seconds: number };
   days: Array<{ day: string; minutes: number; cards: number }>;
   sessions: Array<{ module: string; cards_reviewed: number; correct_count: number; duration_seconds: number | null; created_at: string }>;
+  /** Thẻ SRS đã chấm / nhớ được theo ngày giờ VN (70 ngày gần nhất). */
+  srsDays?: Array<{ day: string; reviewed: number; correct: number }>;
 }
 
 export interface DailyMissionsSummary {
