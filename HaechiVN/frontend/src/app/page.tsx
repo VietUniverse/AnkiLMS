@@ -121,7 +121,7 @@ export default function Home() {
               Chào mừng đến với <span className="text-blue-600 dark:text-blue-400">HaechiVN</span>
             </h1>
             <p className="text-base sm:text-lg lg:text-xl font-medium text-slate-700 dark:text-slate-200 leading-relaxed max-w-4xl mx-auto break-words">
-              Lười biếng muốn học ít mà vẫn nhớ lâu thì chào đón cậu tới với Haechi chúng tớ :)))
+              Lười biếng muốn học ít mà vẫn nhớ lâu thì chào đón bạn tới với Haechi^^!
             </p>
             <div className="pt-2 flex items-center justify-center">
               <button
