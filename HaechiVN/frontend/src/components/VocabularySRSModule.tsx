@@ -4,7 +4,6 @@ import React, { useState, useMemo, useEffect, useRef, useCallback, useSyncExtern
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { VOCABULARY_DATA } from "../data/koreanData";
 import { loadAdminThthCurriculum, loadAdminWritingCurriculum } from "../lib/privateLearningContent";
 import { AnkiDeck, AnkiReviewEvent } from "../lib/ankiParser";
 import { useApp } from "../contexts/AppProvider";
@@ -370,37 +369,6 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
         children: lessonNodes,
       });
     });
-
-    // Group 2: Từ Vựng Cơ Bản
-    if (VOCABULARY_DATA.length > 0) {
-      const basicCards: VocabularyCard[] = VOCABULARY_DATA.map((item, idx) => ({
-        id: `basic-${idx + 1}`,
-        code: item.id,
-        word: item.hangul,
-        meaning: item.vietnamese,
-        pos: item.topic || "Từ vựng",
-        transliteration: "",
-        explain: "",
-        image: "",
-        example: item.exampleSentence || "",
-        example_translated: "",
-        collocation: "",
-        synonym: "",
-        antonym: "",
-        audio_word: "",
-        audio_meaning: "",
-        audio_example: "",
-        tag_1: "Cơ bản",
-        tag_2: item.topic || "Giao tiếp",
-        deckName: "Từ vựng cơ bản",
-      }));
-
-      rootNodes.push({
-        id: "korean-basic",
-        title: "Từ Vựng Tiếng Hàn Cơ Bản",
-        cards: basicCards,
-      });
-    }
 
     // User-owned and Explore decks are independent decks, at the same level
     // as the curriculum decks. Do not hide them inside an aggregate parent.
