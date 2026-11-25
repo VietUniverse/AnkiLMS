@@ -5,6 +5,8 @@ import { ankiScheduleToFSRSState, formatLocalDate, type FSRSState } from "./fsrs
 
 export type AssignedDeckItem = {
   id: string; classId: string; className: string; title: string;
+  /** Tên bộ thẻ giáo viên chọn khi giao (vd "Tiếng Hàn Tổng Hợp 1 · Bài 1"), khác tên bài tập. */
+  deckName: string;
   totalCards: number; reviewedCards: number; completed: boolean;
   dueLabel: string;
 };
@@ -27,8 +29,16 @@ export type AssignmentPayload = {
 export type AssignedDeckClassJson = {
   id: string;
   name?: string;
-  assignments?: Array<{ id: string; title: string; totalCards?: number; reviewedCards?: number; completed?: boolean; dueDate?: string }>;
+  assignments?: Array<{ id: string; title: string; deckName?: string; totalCards?: number; reviewedCards?: number; completed?: boolean; dueDate?: string }>;
 };
+
+/** Tách tên bộ thẻ thành deck mẹ + tên deck con: "A::B::C" (Anki) hoặc "A · B" → { parent: "A::B" | "A", leaf }. */
+export function splitDeckPath(name: string): { parent: string; leaf: string } {
+  const sep = name.includes("::") ? "::" : " · ";
+  const parts = name.split(sep).map((p) => p.trim()).filter(Boolean);
+  if (parts.length < 2) return { parent: "", leaf: name.trim() };
+  return { parent: parts.slice(0, -1).join(sep), leaf: parts[parts.length - 1] };
+}
 
 // Chuyển thẻ của bài tập lớp sang dạng thẻ SRS dùng chung.
 export const assignmentCardsOf = (asg: AssignmentPayload): VocabularyCard[] =>

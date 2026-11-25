@@ -1,7 +1,7 @@
 // Self-check: `node scripts/check-study-queue.mjs` — thứ tự Review/Typing và hạn mức từ mới đếm theo từ.
 import assert from "node:assert/strict";
 import { buildStudyQueue, learnAheadCards, sessionProgress } from "../src/lib/studyQueue.ts";
-import { filterTree, findNodeById } from "../src/lib/vocabCards.ts";
+import { filterTree, findNodeById, splitDeckPath } from "../src/lib/vocabCards.ts";
 
 const now = new Date("2026-11-25T07:00:00Z");
 const card = (id, extra = {}) => ({ id, word: `w${id}`, meaning: `m${id}`, deckName: "d", ...extra });
@@ -68,5 +68,10 @@ assert.equal(sessionProgress(10, 20, seg), 90);
 assert.equal(sessionProgress(15, 20, seg), 95);
 assert.equal(sessionProgress(19, 20, seg), 99);
 assert.equal(sessionProgress(20, 20, seg), 100);
+
+// Bài tập gom theo deck mẹ của bộ thẻ được giao.
+assert.deepEqual(splitDeckPath("Tiếng Hàn Tổng Hợp 1 · Bài 1"), { parent: "Tiếng Hàn Tổng Hợp 1", leaf: "Bài 1" });
+assert.deepEqual(splitDeckPath("THTH::Quyển 1::Bài 6"), { parent: "THTH::Quyển 1", leaf: "Bài 6" });
+assert.deepEqual(splitDeckPath("Bài 4"), { parent: "", leaf: "Bài 4" });
 
 console.log("ok: study queue counts new words per word and orders Review before Typing");
