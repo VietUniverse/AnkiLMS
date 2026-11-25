@@ -160,10 +160,11 @@ export default function DeckDetailClient({ id }: { id: string }) {
     return [...samples.slice(0, 9), requested];
   }, [deckCards, requestedPreviewCardId]);
   const curriculumSections = useMemo(() => {
-    if (!deck || (!deck.id.startsWith("curriculum-") && deck.id !== "course-topic-vocabulary")) return [];
+    if (!deck) return [];
     const sections = new Map<string, { count: number; children: Set<string>; levels: Set<string> }>();
     for (const card of deck.cards) {
-      const parts = card.deckName?.split("::").slice(1).map((part) => part.trim()).filter(Boolean) || [];
+      // Deck con: trường subdeck (bộ Explore chia bài) hoặc phần sau tên deck gốc trong deckName ("Gốc::Bài 1::…").
+      const parts = (card.subdeck ? card.subdeck.split("::") : card.deckName?.split("::").slice(1) || []).map((part) => part.trim()).filter(Boolean);
       const section = parts[0];
       if (!section) continue;
       const item = sections.get(section) || { count: 0, children: new Set<string>(), levels: new Set<string>() };
@@ -417,7 +418,10 @@ export default function DeckDetailClient({ id }: { id: string }) {
                 {visibleSections.map(([section, info]) => (
                   <li key={section} className="py-2.5 space-y-1.5">
                     <div className="flex items-baseline justify-between gap-3">
-                      <span className="min-w-0 text-sm font-semibold text-stone-800 dark:text-stone-200">{section}</span>
+                      <span className="min-w-0 text-sm font-semibold text-stone-800 dark:text-stone-200">
+                        {section}
+                        {info.childCount > 0 && <span className="ml-1.5 text-xs font-normal text-stone-400">· {info.childCount} deck con</span>}
+                      </span>
                       <span className="shrink-0 text-xs tabular-nums text-stone-500 dark:text-stone-400">{info.count.toLocaleString("vi-VN")}</span>
                     </div>
                     <div className="h-1 rounded-full bg-stone-100 dark:bg-stone-800 overflow-hidden">
