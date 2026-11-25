@@ -371,18 +371,18 @@ html[data-theme="light"] body:not(:has(.login-page-root)) .mobile-drawer a[aria-
 
 /* Nút/badge nền xanh dương đặc: chữ phải trắng (rule ép text-white thành chữ đen ở trên
    có specificity cao hơn nên phải khai báo cùng cấp + đặt sau). */
-/* Nền mờ /5, /1x, /2x (thường là hover:bg-sky-500/10) không tính là nền đặc, giữ màu chữ gốc.
-   :where() để không tăng specificity so với rule cũ. */
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-sky-500"]:where(:not([class*="bg-sky-500/5"]):not([class*="bg-sky-500/1"]):not([class*="bg-sky-500/2"])),
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-sky-500"]:where(:not([class*="bg-sky-500/5"]):not([class*="bg-sky-500/1"]):not([class*="bg-sky-500/2"])) *,
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-sky-600"]:where(:not([class*="bg-sky-600/5"]):not([class*="bg-sky-600/1"]):not([class*="bg-sky-600/2"])),
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-sky-600"]:where(:not([class*="bg-sky-600/5"]):not([class*="bg-sky-600/1"]):not([class*="bg-sky-600/2"])) *,
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-sky-700"]:where(:not([class*="bg-sky-700/5"]):not([class*="bg-sky-700/1"]):not([class*="bg-sky-700/2"])),
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-sky-700"]:where(:not([class*="bg-sky-700/5"]):not([class*="bg-sky-700/1"]):not([class*="bg-sky-700/2"])) *,
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-cyan-600"]:where(:not([class*="bg-cyan-600/5"]):not([class*="bg-cyan-600/1"]):not([class*="bg-cyan-600/2"])),
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-cyan-600"]:where(:not([class*="bg-cyan-600/5"]):not([class*="bg-cyan-600/1"]):not([class*="bg-cyan-600/2"])) *,
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-cyan-700"]:where(:not([class*="bg-cyan-700/5"]):not([class*="bg-cyan-700/1"]):not([class*="bg-cyan-700/2"])),
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-cyan-700"]:where(:not([class*="bg-cyan-700/5"]):not([class*="bg-cyan-700/1"]):not([class*="bg-cyan-700/2"])) * {
+/* So khớp đúng tên class (~=) thay vì chuỗi con: [class*="bg-sky-500"] từng dính cả hover:bg-sky-500/10, dark:bg-sky-700
+   (nền mờ hoặc chỉ ở dark) làm chữ/icon trắng trên nền trắng. */
+html[data-theme="light"] body:not(:has(.login-page-root)) [class~="bg-sky-500"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class~="bg-sky-500"] *,
+html[data-theme="light"] body:not(:has(.login-page-root)) [class~="bg-sky-600"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class~="bg-sky-600"] *,
+html[data-theme="light"] body:not(:has(.login-page-root)) [class~="bg-sky-700"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class~="bg-sky-700"] *,
+html[data-theme="light"] body:not(:has(.login-page-root)) [class~="bg-cyan-600"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class~="bg-cyan-600"] *,
+html[data-theme="light"] body:not(:has(.login-page-root)) [class~="bg-cyan-700"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class~="bg-cyan-700"] * {
   color: #fff !important;
 }
 
@@ -406,17 +406,18 @@ html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-slate-50
   color: #64748b !important;
 }
 
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-[#38bdf8]"],
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-sky-300"],
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-sky-400"],
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-blue-300"],
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-blue-400"],
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-cyan-300"] {
+/* ~= (đúng tên class): không ép màu cho biến thể dark:/hover: như dark:hover:text-sky-400 ở chế độ sáng. */
+html[data-theme="light"] body:not(:has(.login-page-root)) [class~="text-[#38bdf8]"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class~="text-sky-300"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class~="text-sky-400"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class~="text-blue-300"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class~="text-blue-400"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class~="text-cyan-300"] {
   color: #2563eb !important;
 }
 
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-emerald-300"],
-html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-emerald-400"] {
+html[data-theme="light"] body:not(:has(.login-page-root)) [class~="text-emerald-300"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class~="text-emerald-400"] {
   color: #059669 !important;
 }
 
