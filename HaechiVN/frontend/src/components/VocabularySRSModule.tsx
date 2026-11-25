@@ -1327,7 +1327,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
           </div>
 
           {/* Cột 2, 3, 4: Mới | Ôn | % */}
-          <div className="relative z-10 flex items-center gap-3 sm:gap-6 shrink-0 font-mono text-xs">
+          <div className="relative z-10 flex items-center gap-3 sm:gap-6 shrink-0 tabular-nums text-xs">
             {sourceUserDeck && (
               <button
                 type="button"
@@ -1652,7 +1652,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
             {/* BẢNG ANKI ĐỒNG NHẤT TOÀN TRANG (DECK TREE) */}
             <div className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 overflow-hidden shadow-xs">
               {/* Header 4 Cột Chuẩn */}
-              <div className="hidden sm:flex items-center justify-between px-4 sm:px-5 py-3 border-b border-stone-200 dark:border-stone-800 bg-stone-100/70 dark:bg-stone-800/50 text-[11px] font-mono tracking-wider uppercase text-stone-500 dark:text-stone-400 select-none">
+              <div className="hidden sm:flex items-center justify-between px-4 sm:px-5 py-3 border-b border-stone-200 dark:border-stone-800 bg-stone-100/70 dark:bg-stone-800/50 text-[11px] font-bold tracking-wider uppercase text-stone-500 dark:text-stone-400 select-none">
                 <span className="font-bold">Nội dung</span>
                 <div className="flex items-center gap-3 sm:gap-6 pr-1 sm:pr-2">
                   <span className="w-8 sm:w-10 text-center text-sky-600 dark:text-sky-400 font-bold" title="Thẻ mới chưa học">
@@ -1683,7 +1683,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                     <div className="min-w-0">
                       <div className="flex min-w-0 items-center gap-2">
                         <h3 className="truncate text-sm font-bold text-stone-900 dark:text-white">{item.title}</h3>
-                        <span className="shrink-0 rounded-full border border-sky-200 bg-sky-50 px-2 py-0.5 text-[9px] font-black uppercase tracking-wide text-sky-700 dark:border-sky-800/80 dark:bg-sky-950/60 dark:text-sky-300">
+                        <span className="shrink-0 rounded-full bg-sky-700 px-2 py-0.5 text-[9px] font-black uppercase tracking-wide text-white">
                           Bài tập
                         </span>
                       </div>
@@ -1695,7 +1695,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 sm:gap-6 pr-1 sm:pr-2 shrink-0 font-mono text-xs">
+                  <div className="flex items-center gap-3 sm:gap-6 pr-1 sm:pr-2 shrink-0 tabular-nums text-xs">
                     {openingAssignedId === item.id ? (
                       <Loader2 className="h-4 w-4 animate-spin text-stone-400" />
                     ) : (
