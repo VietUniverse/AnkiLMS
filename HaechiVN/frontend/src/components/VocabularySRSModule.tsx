@@ -34,7 +34,7 @@ import { GRADIENT_PRESETS, saveStudyBackground, STUDY_BACKGROUND_GALLERY, useStu
 import { addExtraNew, DailyLimits, effectiveNewLimit, loadProgress, recordCard, remaining, saveLimits, useDailyLimits, useDailyProgress } from "../lib/dailyLimits";
 import { parseJson, useLocalState } from "../lib/localStore";
 import { speakKorean } from "../lib/koreanSpeech";
-import { buildStudyQueue } from "../lib/studyQueue";
+import { buildStudyQueue, learnAheadCards } from "../lib/studyQueue";
 import { useStudyCardOpacity, useDisableAutoPronounce, useHideChatGpt, useHideDictionary, useMuteAndHideAudio, useMuteExampleAudio, useMuteWordAudio, useRandomStudyBgEvery10 } from "../lib/studyPreferences";
 import { LockKeyhole, Globe2 } from "lucide-react";
 import { detectDictionarySearchLanguage, naverLookupUrl, searchLearningDictionary, type DictionaryEntry } from "../lib/dictionarySearch";
@@ -1061,12 +1061,19 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     setTypedInput("");
     if (currentCardIndex < activeCardsList.length - 1) {
       setCurrentCardIndex((i) => i + 1);
-    } else {
-      // Finished deck
-      finishSrsActivity();
-      setViewMode("dashboard");
+      return;
     }
-  }, [currentCard, cardStateMap, currentUser, activeDeckTitle, currentCardIndex, activeCardsList.length, finishSrsActivity, ownedDecks, setUserDecks, studyMode, typedInput, randomBgEvery10, rotateRandomBackground, setCardStateMap, setMasteredWords, setReviewList]);
+    // Hết thẻ: thẻ học dở đến hạn trong 20 phút nữa thì học luôn, không bắt đợi (learn ahead của Anki).
+    const ahead = learnAheadCards(activeCardsList, { ...cardStateMap, [activeKey]: newState }, new Date());
+    if (ahead.length > 0) {
+      setActiveCardsList((list) => [...list, ...ahead]);
+      setCurrentCardIndex((i) => i + 1);
+      return;
+    }
+    // Finished deck
+    finishSrsActivity();
+    setViewMode("dashboard");
+  }, [activeCardsList, currentCard, cardStateMap, currentUser, activeDeckTitle, currentCardIndex, activeCardsList.length, finishSrsActivity, ownedDecks, setUserDecks, studyMode, typedInput, randomBgEvery10, rotateRandomBackground, setCardStateMap, setMasteredWords, setReviewList]);
 
   // Give typing hint
   const handleGiveHint = () => {

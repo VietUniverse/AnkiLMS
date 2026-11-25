@@ -1,6 +1,6 @@
 // Self-check: `node scripts/check-study-queue.mjs` — thứ tự Review/Typing và hạn mức từ mới đếm theo từ.
 import assert from "node:assert/strict";
-import { buildStudyQueue } from "../src/lib/studyQueue.ts";
+import { buildStudyQueue, learnAheadCards } from "../src/lib/studyQueue.ts";
 import { filterTree, findNodeById } from "../src/lib/vocabCards.ts";
 
 const now = new Date("2026-11-25T07:00:00Z");
@@ -43,5 +43,11 @@ assert.equal(findNodeById(tree, "a2")?.title, "Bài 2");
 assert.equal(findNodeById(tree, "x"), null);
 assert.deepEqual(filterTree(tree, "táo").map((n) => n.children.map((c) => c.id)), [["a1"]]);
 assert.equal(filterTree(tree, "không có").length, 0);
+
+// Learn ahead: chỉ thẻ đến hạn trong 20 phút, sắp theo giờ đến hạn, không lặp thẻ.
+const at = (min) => ({ ...learned("2026-11-25"), state: "learning", dueAt: new Date(now.getTime() + min * 60_000).toISOString() });
+const ahead = learnAheadCards([card(1), card(2), card(3), card(1)], { d_1: at(15), d_2: at(1), d_3: at(30) }, now);
+assert.deepEqual(ahead.map((c) => c.id), [2, 1]);
+assert.equal(learnAheadCards([card(1)], { d_1: learned("2026-11-30") }, now).length, 0);
 
 console.log("ok: study queue counts new words per word and orders Review before Typing");

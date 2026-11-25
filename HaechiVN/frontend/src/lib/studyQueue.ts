@@ -43,3 +43,28 @@ export function buildStudyQueue(
   const activeList = opts.reviewOnly ? dueSession : [...dueSession.slice(0, opts.reviewLeft), ...newSession];
   return { activeList, newWords: newCards.length, newWordCards: newCards.flat().length, dueCount: dueCards.length };
 }
+
+/** Giống "learn ahead limit" của Anki: hết thẻ thì học luôn thẻ đang học dở sắp đến hạn (mặc định trong 20 phút). */
+export const LEARN_AHEAD_MINUTES = 20;
+
+export function learnAheadCards(
+  sessionCards: VocabularyCard[],
+  cardStateMap: Record<string, FSRSState>,
+  now: Date,
+  limitMinutes = LEARN_AHEAD_MINUTES,
+): VocabularyCard[] {
+  const limit = now.getTime() + limitMinutes * 60_000;
+  const seen = new Set<string>();
+  const ahead: { card: VocabularyCard; due: number }[] = [];
+  for (const card of sessionCards) {
+    const key = stateKeyOf(card);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const state = cardStateMap[key];
+    // Thẻ đang học/học lại có giờ đến hạn cụ thể (dueAt); thẻ lên lịch theo ngày sẽ nằm ngoài giới hạn.
+    if (!state?.dueAt) continue;
+    const due = new Date(state.dueAt).getTime();
+    if (due <= limit) ahead.push({ card, due });
+  }
+  return ahead.sort((a, b) => a.due - b.due).map((x) => x.card);
+}
