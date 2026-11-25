@@ -700,14 +700,21 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
   }, [lastStudiedDeckId, deckTree, startStudy]);
 
   // Số thẻ còn lại trong lượt học: thẻ mới (chưa có lịch ôn) và thẻ ôn lại, tính từ thẻ đang học trở đi.
+  // Giống Anki: thẻ đã học trong lượt mà còn bước học trong 20 phút (sẽ được học trước) cũng tính vào "ôn",
+  // nên học 1 thẻ mới xong thì 5 mới / 0 ôn thành 4 mới / 1 ôn.
   const remainingCounts = useMemo(() => {
     let newCount = 0;
     let reviewCount = 0;
-    for (const card of activeCardsList.slice(currentCardIndex)) {
+    const rest = activeCardsList.slice(currentCardIndex);
+    const restKeys = new Set(rest.map(stateKeyOf));
+    for (const card of rest) {
       const state = cardStateMap[stateKeyOf(card)];
       if (state && state.state !== "new") reviewCount += 1;
       else newCount += 1;
     }
+    // shortcut: "bây giờ" chỉ tính lại khi chuyển thẻ, đủ cho giới hạn 20 phút.
+    const pending = learnAheadCards(activeCardsList.slice(0, currentCardIndex), cardStateMap, new Date());
+    reviewCount += pending.filter((card) => !restKeys.has(stateKeyOf(card))).length;
     return { newCount, reviewCount };
   }, [activeCardsList, currentCardIndex, cardStateMap]);
 
