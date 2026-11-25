@@ -434,7 +434,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
         type ImportTreeBranch = { title: string; path: string; entries: Array<{ card: AnkiDeck["cards"][number]; idx: number }>; children: Map<string, ImportTreeBranch> };
         const subdeckRoot: ImportTreeBranch = { title: "", path: "", entries: [], children: new Map() };
         sourceCards.forEach((card, idx) => {
-          const rawParts = (card.deckName || ud.name).split("::").map((part) => part.trim()).filter(Boolean);
+          const rawParts = (card.subdeck ? `${ud.name}::${card.subdeck}` : card.deckName || ud.name).split("::").map((part) => part.trim()).filter(Boolean);
           const parts = rawParts[0] === ud.name ? rawParts.slice(1) : rawParts;
           let branch = subdeckRoot;
           const pathParts: string[] = [];

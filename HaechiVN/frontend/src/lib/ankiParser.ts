@@ -5,6 +5,8 @@ export interface AnkiCard {
   id: number;
   noteId: number;
   deckName: string;
+  /** Deck con hiển thị ("Bài 1::Phần A"), tách khỏi deckName để không đổi stateKey/tiến độ học. */
+  subdeck?: string;
   frontHtml: string;
   backHtml: string;
   frontText: string;
