@@ -36,16 +36,10 @@ export function ClassesScreen() {
   const assignPage = segments[2] === "assign";
   const assignEditId = assignPage && segments[3] ? decodeURIComponent(segments[3]) : null;
 
+  // Trở về = lên cấp cha (không theo lịch sử trình duyệt): giao bài → lớp; danh sách lớp → Trang chủ.
+  // Trong một lớp, nút Trở về của ClassroomModule tự về danh sách lớp.
   const goBack = () => {
-    if (assignPage && initialCode) {
-      router.push(`/classes/${encodeURIComponent(initialCode)}`);
-      return;
-    }
-    if (typeof window !== "undefined" && window.history.length > 1) {
-      router.back();
-      return;
-    }
-    router.push("/");
+    router.push(assignPage && initialCode ? `/classes/${encodeURIComponent(initialCode)}` : "/");
   };
 
   // Mỗi lớp có URL riêng: chọn lớp → /classes/<mã>, về danh sách → /classes.

@@ -446,6 +446,10 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
   const [showAssignModal, setShowAssignModal] = useState(assignPage);
   const [inviteTarget, setInviteTarget] = useState("");
   const [visibilityConfirm, setVisibilityConfirm] = useState<ClassVisibility | null>(null);
+  // Ô đổi tên lớp trong Cài đặt: gắn với id lớp để đổi lớp thì bản nháp cũ không hiện sang lớp khác.
+  const [renameState, setRenameDraft] = useState<{ classId: string; text: string } | null>(null);
+  const renameDraft = renameState && renameState.classId === selectedClassId ? renameState.text : null;
+  const [renaming, setRenaming] = useState(false);
   const [deleteAssignmentTarget, setDeleteAssignmentTarget] = useState<ClassAssignment | null>(null);
   const [deletingAssignment, setDeletingAssignment] = useState(false);
   const [inviteBusy, setInviteBusy] = useState(false);
@@ -731,6 +735,22 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
       ApiClient.getDiscoverClasses().then((result) => setDiscoverClasses(result as DiscoverClass[])).catch(() => {});
     } catch (error) {
       setMsg({ type: "error", text: error instanceof Error ? error.message : "Không thể đổi chế độ hiển thị lớp." });
+    }
+  };
+
+  // 1c'. Đổi tên lớp (giáo viên phụ trách lớp hoặc admin web)
+  const handleRenameClass = async () => {
+    const name = renameDraft?.trim() || "";
+    if (!selectedClassId || name.length < 2 || name.length > 80) return;
+    setRenaming(true);
+    try {
+      setClasses(await ApiClient.classAction({ action: "rename", classId: selectedClassId, name }));
+      setRenameDraft(null);
+      setMsg({ type: "success", text: "Đã đổi tên lớp." });
+    } catch (error) {
+      setMsg({ type: "error", text: error instanceof Error ? error.message : "Không thể đổi tên lớp." });
+    } finally {
+      setRenaming(false);
     }
   };
 
@@ -2038,10 +2058,35 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
 
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   <div className="space-y-1.5">
-                    <span className="block text-[11px] font-bold text-slate-700">Tên lớp</span>
-                    <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-800 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
-                      {selectedClass.name}
-                    </div>
+                    <label className="block text-[11px] font-bold text-slate-700" htmlFor="cd-name">Tên lớp</label>
+                    {myMemberRecord?.role === "owner" || isAdmin ? (
+                      <form
+                        className="flex items-center gap-2"
+                        onSubmit={(e) => { e.preventDefault(); void handleRenameClass(); }}
+                      >
+                        <input
+                          id="cd-name"
+                          value={renameDraft ?? selectedClass.name}
+                          onChange={(e) => setRenameDraft({ classId: selectedClass.id, text: e.target.value })}
+                          onKeyDown={(e) => { if (e.key === "Escape") setRenameDraft(null); }}
+                          maxLength={80}
+                          className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-800 outline-none focus:border-sky-600 dark:border-white/10 dark:bg-[#132247] dark:text-slate-200"
+                        />
+                        {renameDraft !== null && renameDraft.trim() !== selectedClass.name && (
+                          <button
+                            type="submit"
+                            disabled={renaming || renameDraft.trim().length < 2}
+                            className="shrink-0 cursor-pointer rounded-xl bg-sky-600 px-3 py-2 text-[11px] font-black text-white transition-colors hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            {renaming ? "Đang lưu…" : "Lưu"}
+                          </button>
+                        )}
+                      </form>
+                    ) : (
+                      <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-800 dark:border-white/10 dark:bg-white/5 dark:text-slate-200">
+                        {selectedClass.name}
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-1.5">
                     <label className="block text-[11px] font-bold text-slate-700" htmlFor="cd-visibility">
@@ -2094,7 +2139,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                 </div>
 
                 <p className="mt-3 text-[11px] font-semibold text-slate-700">
-                  Quyền truy cập áp dụng ngay cho toàn bộ thành viên. Tên lớp và mô tả hiện do quản trị viên quản lý.
+                  Quyền truy cập áp dụng ngay cho toàn bộ thành viên. Chỉ giáo viên phụ trách lớp đổi được tên lớp.
                 </p>
 
                 {canDeleteClass && (
@@ -3184,25 +3229,25 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                     >
                       <div className="flex items-center justify-between gap-2">
                         <span
-                          className={`rounded-full px-2.5 py-1 text-[10px] font-black ${
-                            isPublic ? "bg-emerald-100 text-emerald-800" : "bg-sky-100 text-sky-800"
+                          className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-black ${
+                            isPublic ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-300" : "bg-sky-100 text-sky-800 dark:bg-sky-500/15 dark:text-sky-300"
                           }`}
                         >
                           {isPublic ? <Globe className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
                           <span>{isPublic ? "Công khai" : "Riêng tư"}</span>
                         </span>
-                        <span className="flex items-center gap-1 text-[11px] font-bold text-slate-700">
+                        <span className="flex items-center gap-1 text-[11px] font-bold text-slate-700 dark:text-slate-300">
                           <Users className="h-3.5 w-3.5" /> {cls.memberCount} thành viên
                         </span>
                       </div>
                       <div>
-                        <h3 className="text-sm font-black text-white">{cls.name}</h3>
-                        <p className="mt-1 line-clamp-2 text-xs text-slate-700">
+                        <h3 className="text-sm font-black text-slate-900 dark:text-white">{cls.name}</h3>
+                        <p className="mt-1 line-clamp-2 text-xs text-slate-600 dark:text-slate-400">
                           {cls.description || "Lớp học chưa có mô tả."}
                         </p>
                       </div>
                       <div className="flex items-center justify-between gap-2">
-                        <span className="flex items-center gap-1 text-xs font-bold text-slate-700">
+                        <span className="flex items-center gap-1 text-xs font-bold text-slate-700 dark:text-slate-300">
                           <UserPlus className="h-4 w-4" /> {cls.ownerName}
                         </span>
                         {cls.myStatus === "approved" ? (
@@ -3222,7 +3267,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                           <button
                             type="button"
                             onClick={() => handleJoinDiscoveredClass(cls)}
-                            className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-[#1e3a70] bg-[#132247] px-3.5 py-2 text-[11px] font-black text-slate-200 transition-colors hover:border-sky-500/40"
+                            className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-sky-200 bg-sky-50 px-3.5 py-2 text-[11px] font-black text-sky-700 transition-colors hover:border-sky-400 dark:border-[#1e3a70] dark:bg-[#132247] dark:text-slate-200 dark:hover:border-sky-500/40"
                           >
                             {isPublic ? <UserPlus className="h-3.5 w-3.5" /> : <KeyRound className="h-3.5 w-3.5" />}
                             {isPublic ? "Tham gia" : "Xin tham gia"}

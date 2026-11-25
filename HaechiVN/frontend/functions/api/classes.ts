@@ -366,6 +366,18 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       return jsonResponse({ success: true, classes: await getClasses(env, user.id) });
     }
 
+    if (body.action === "rename") {
+      const targetClassId = typeof body.classId === "string" ? body.classId.trim() : "";
+      const name = typeof body.name === "string" ? body.name.trim() : "";
+      if (!targetClassId || name.length < 2 || name.length > 80) return errorResponse("Tên lớp phải dài 2–80 ký tự.");
+      const owner = await env.DB.prepare("SELECT owner_id AS ownerId FROM classrooms WHERE id = ?")
+        .bind(targetClassId).first<{ ownerId: string }>();
+      if (!owner) return errorResponse("Không tìm thấy lớp học.", 404);
+      if (owner.ownerId !== user.id && user.role !== "admin") return errorResponse("Chỉ giáo viên phụ trách lớp mới được đổi tên lớp.", 403);
+      await env.DB.prepare("UPDATE classrooms SET name = ? WHERE id = ?").bind(name, targetClassId).run();
+      return jsonResponse({ success: true, classes: await getClasses(env, user.id) });
+    }
+
     let classId = typeof body.classId === "string" ? body.classId.trim() : "";
     if (!classId && typeof body.assignmentId === "string" && body.assignmentId.trim()) {
       const foundAsg = await env.DB.prepare("SELECT class_id FROM class_assignments WHERE id = ?")
