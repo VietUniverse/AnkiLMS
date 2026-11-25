@@ -11,6 +11,10 @@ export type StudyQueue = {
   dueCount: number;
 };
 
+// Thẻ đang học/học lại có giờ đến hạn trong giới hạn học trước: coi như đến hạn (giống learn ahead của Anki).
+const dueWithinLearnAhead = (state: FSRSState, now: Date) =>
+  state.state === "learning" && Boolean(state.dueAt) && new Date(state.dueAt!).getTime() <= now.getTime() + LEARN_AHEAD_MINUTES * 60_000;
+
 export function buildStudyQueue(
   cards: VocabularyCard[],
   cardStateMap: Record<string, FSRSState>,
@@ -31,7 +35,7 @@ export function buildStudyQueue(
     for (const kind of kinds) {
       const c = kind ? { ...base, sibling: kind } : base;
       const state = cardStateMap[stateKeyOf(c)] || (!kind && c.ankiSchedule ? ankiScheduleToFSRSState(c.ankiSchedule) : undefined);
-      if (state && state.state !== "new" && !isFSRSCardDue(state, opts.now)) continue;
+      if (state && state.state !== "new" && !isFSRSCardDue(state, opts.now) && !dueWithinLearnAhead(state, opts.now)) continue;
       (state && state.state !== "new" ? dueCards : fresh).push(c);
     }
     if (fresh.length) (opts.countedToday?.has(stateKeyOf(base)) ? continuing : newCards).push(fresh);
@@ -53,7 +57,9 @@ export function buildStudyQueue(
  */
 export function sessionProgress(index: number, length: number, segment: { index: number; percent: number }): number {
   if (length <= segment.index) return segment.percent;
-  return Math.round(segment.percent + ((100 - segment.percent) * (index - segment.index)) / (length - segment.index));
+  const percent = Math.round(segment.percent + ((100 - segment.percent) * (index - segment.index)) / (length - segment.index));
+  // Còn thẻ thì chưa báo 100% (bấm Again liên tục làm thẻ nối mãi, thanh tiệm cận 100).
+  return index < length ? Math.min(99, percent) : percent;
 }
 
 /** Giống "learn ahead limit" của Anki: hết thẻ thì học luôn thẻ đang học dở sắp đến hạn (mặc định trong 20 phút). */

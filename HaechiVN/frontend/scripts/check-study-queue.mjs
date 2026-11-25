@@ -58,11 +58,15 @@ assert.equal(learnAheadCards([card(1)], { d_1: learned("2026-11-30") }, now).len
 assert.deepEqual(learnAheadCards([card(1), card(2)], { d_1: at(15), d_2: at(1) }, now, 20, "d_2").map((c) => c.id), [1, 2]);
 assert.deepEqual(learnAheadCards([card(2)], { d_2: at(1) }, now, 20, "d_2").map((c) => c.id), [2]);
 
+// Mở bộ: thẻ đang học còn 5 phút nữa mới đến hạn vẫn vào lượt (học trước), 30 phút thì chưa.
+assert.equal(label(buildStudyQueue([card(1), card(2)], { d_1: at(5), d_1_typing: at(30), d_2: learned("2026-12-30"), d_2_typing: learned("2026-12-30") }, { ...opts, newLeft: 0 })), "R1");
+
 // Thanh tiến độ: nối thêm 10 thẻ ở thẻ cuối (95%) thì chạy tiếp từ 95% lên, không tụt về 50%.
 const seg = { index: 10, percent: sessionProgress(9, 10, { index: 0, percent: 0 }) };
 assert.equal(seg.percent, 90);
 assert.equal(sessionProgress(10, 20, seg), 90);
 assert.equal(sessionProgress(15, 20, seg), 95);
+assert.equal(sessionProgress(19, 20, seg), 99);
 assert.equal(sessionProgress(20, 20, seg), 100);
 
 console.log("ok: study queue counts new words per word and orders Review before Typing");
