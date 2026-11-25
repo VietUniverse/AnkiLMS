@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AppShell } from "../components/AppShell";
 import { OnigiriHeatmap } from "../components/OnigiriHeatmap";
+import { StudyStatsPanel } from "../components/StudyStatsPanel";
 import { StreakPanel } from "../components/StreakPanel";
 import { InstallAppButton } from "../components/InstallAppButton";
 import { useApp } from "../contexts/AppProvider";
@@ -188,7 +189,7 @@ export default function Home() {
             <StreakPanel data={heatmapData} streak={currentUser.streak || 0} longestStreak={currentUser.longest_streak || 0} />
 
             {/* Hành động chính */}
-            <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
+            <div className="grid gap-2 sm:grid-cols-2">
               {isFeatureEnabled("flashcards") && (
                 <Link
                   href="/flashcards?resume=true&from=%2F"
@@ -214,6 +215,8 @@ export default function Home() {
                 </Link>
               )}
             </div>
+
+            <StudyStatsPanel userId={currentUser.id} />
 
             {/* Gợi ý cài ứng dụng, chỉ hiện trên điện thoại và máy tính bảng; người dùng có thể để sau */}
             {!installDismissed && (
