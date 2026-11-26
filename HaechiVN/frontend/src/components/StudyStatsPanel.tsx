@@ -23,7 +23,7 @@ export const StudyStatsPanel: React.FC<{ userId: string }> = ({ userId }) => {
     void Promise.all([ApiClient.getStudyProfileSummary(), ApiClient.getCardStates().catch(() => null), ApiClient.getVocabGrowth().catch(() => [])]).then(([summary, cardStates, growthDays]) => {
       if (!active) return;
       setGrowth(growthDays);
-      setVocabCount(cardStates ? Object.values(cardStates).filter((item) => item.state === "review").length : null);
+      setVocabCount(cardStates ? Object.entries(cardStates).filter(([key, item]) => item.state === "review" && !/_-\d+$/.test(key)).length : null);
       setTodayKey(new Date(Date.now() + 7 * 3600 * 1000).toISOString().slice(0, 10));
       setStats(summary);
     });

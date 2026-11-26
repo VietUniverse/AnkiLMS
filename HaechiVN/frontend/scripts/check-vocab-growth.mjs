@@ -6,6 +6,7 @@ const states = [
   { deck_id: "d", card_id: 1, interval: 30, state: "review", last_review: "2026-11-25" },
   { deck_id: "d", card_id: 2, interval: 3, state: "review", last_review: "2026-11-24" },
   { deck_id: "d", card_id: 3, interval: 0, state: "new", last_review: null },
+  { deck_id: "d", card_id: -1, interval: 30, state: "review", last_review: "2026-11-25" }, // thẻ Typing: không đếm
 ];
 const logs = [
   { deck_id: "d", card_id: 1, scheduled_days: 0, review_time: "2026-11-23T01:00:00Z" },

@@ -16,7 +16,8 @@ export function vocabGrowth(
   // Mỗi thẻ: danh sách (ngày, khoảng ôn sau lần chấm đó).
   const events: { day: string; interval: number }[][] = [];
   for (const st of states) {
-    if (st.state === "new") continue;
+    // Đếm theo từ: chỉ thẻ Review (id dương); thẻ Typing lưu id âm.
+    if (st.state === "new" || Number(st.card_id) < 0) continue;
     const key = `${st.deck_id}_${st.card_id}`;
     const reviews = byCard.get(key);
     if (!reviews) {

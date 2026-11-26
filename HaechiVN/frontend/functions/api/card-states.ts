@@ -80,7 +80,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     };
 
     if (typeof body.deckId !== "string" || body.deckId.length < 1 || body.deckId.length > 120) return errorResponse("Bộ thẻ không hợp lệ.");
-    if (!Number.isSafeInteger(body.cardId) || body.cardId < 0) return errorResponse("Thẻ không hợp lệ.");
+    // Thẻ Typing gửi id âm (-id) để tách với thẻ Review cùng từ.
+    if (!Number.isSafeInteger(body.cardId)) return errorResponse("Thẻ không hợp lệ.");
     if (!Number.isInteger(body.interval) || body.interval < 0 || body.interval > 36_500) return errorResponse("Khoảng ôn tập không hợp lệ.");
     if (!Number.isFinite(body.easeFactor) || body.easeFactor < 1.3 || body.easeFactor > 5) return errorResponse("Hệ số ôn tập không hợp lệ.");
     if (!/^\d{4}-\d{2}-\d{2}$/.test(body.dueDate)) return errorResponse("Ngày ôn tập không hợp lệ.");

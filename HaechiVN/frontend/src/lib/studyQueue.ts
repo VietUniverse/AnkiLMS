@@ -59,7 +59,17 @@ export function buildStudyQueue(
   const newSession = [...newBatch.flatMap((g) => g.filter((c) => !c.sibling)), ...newBatch.flatMap((g) => g.filter((c) => c.sibling))];
   // Thứ tự ôn: descending intervals (khoảng ôn dài trước, như tùy chọn của Anki); bằng nhau giữ thứ tự bộ thẻ.
   // Thẻ anh em đã bị bury ở trên nên không cần xếp Review trước Typing.
-  const dueSession = [...dueCards].sort((a, b) => (Number(b.state.interval) || 0) - (Number(a.state.interval) || 0)).map((d) => d.card);
+  const sorted = [...dueCards].sort((a, b) => (Number(b.state.interval) || 0) - (Number(a.state.interval) || 0)).map((d) => d.card);
+  // Thẻ đang học không bị bury nên có thể cả hai thẻ anh em cùng có mặt: thẻ thứ hai dời xuống cuối lượt.
+  const seenWords = new Set<string>();
+  const firsts: VocabularyCard[] = [];
+  const seconds: VocabularyCard[] = [];
+  for (const c of sorted) {
+    const word = stateKeyOf({ ...c, sibling: undefined });
+    (seenWords.has(word) ? seconds : firsts).push(c);
+    seenWords.add(word);
+  }
+  const dueSession = [...firsts, ...seconds];
   // Ôn tập là phiên riêng: không tính vào hạn mức từ mới, và không cắt theo reviewPerDay
   // (mặc định 0 nên nếu cắt thì luôn ra rỗng). Chỉ lấy thẻ đã đến hạn.
   const activeList = opts.reviewOnly ? dueSession : [...dueSession.slice(0, opts.reviewLeft), ...newSession];
