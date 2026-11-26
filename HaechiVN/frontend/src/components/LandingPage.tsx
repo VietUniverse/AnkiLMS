@@ -45,9 +45,9 @@ const FEATURES = [
 
 // Ảnh chụp từ localhost; tên người dùng trên bảng xếp hạng đã đổi thành tên giả.
 const SHOTS = [
-  { src: "/landing/dashboard.webp", alt: "Trang chủ HaechiVN: chuỗi ngày học, nút Học tiếp và các ô thống kê", caption: "Trang chủ", title: "Biết ngay hôm nay học gì.", text: "Chuỗi ngày học, nút Học tiếp và Ôn tập, thời gian học, số thẻ và trí nhớ, tất cả trên một màn." },
-  { src: "/landing/stats.webp", alt: "Thống kê 7 và 30 ngày qua cùng biểu đồ phát triển vốn từ", caption: "Thống kê", title: "Thấy rõ mình tiến bộ.", text: "So 7 và 30 ngày qua với kỳ trước. Biểu đồ cho thấy vốn từ lớn dần mỗi ngày." },
-  { src: "/landing/leaderboard.webp", alt: "Bảng xếp hạng streak với bục 2-1-3", caption: "Bảng xếp hạng", title: "Có bạn đua thì khác.", text: "Đua streak và XP với bạn bè, theo ngày, tuần, tháng hoặc mọi lúc." },
+  { src: "/landing/dashboard.webp", alt: "Trang chủ HaechiVN: chuỗi ngày học, nút Học tiếp và các ô thống kê", caption: "Trang chủ", title: "Biết ngay hôm nay học gì." },
+  { src: "/landing/stats.webp", alt: "Thống kê 7 và 30 ngày qua cùng biểu đồ phát triển vốn từ", caption: "Thống kê", title: "Thấy rõ mình tiến bộ." },
+  { src: "/landing/leaderboard.webp", alt: "Bảng xếp hạng streak với bục 2-1-3", caption: "Bảng xếp hạng", title: "Có bạn đua thì khác." },
 ];
 
 /** Khung iPhone đời mới. Mọi chi tiết (viền, bo góc, Dynamic Island, nút cạnh, thanh trạng thái) tính theo % bề rộng máy
@@ -203,6 +203,7 @@ function BackgroundPlayground() {
             >
               <button type="button" onClick={flip} aria-label={flipped ? `${c.word}: ${c.meaning}. Chạm để úp thẻ` : `${c.word}. Chạm để lật thẻ`} className="flex flex-col items-center gap-1 px-4 pb-5 pt-7 outline-none transition-transform duration-100 active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-sky-300">
                 <span className="text-[40px] font-bold leading-tight" style={{ color: INK, letterSpacing: "-0.03em" }} lang="ko">{c.word}</span>
+                <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${lightChip(posTone(c.pos)?.chip)}`}>{c.pos}</span>
                 <span className="flex min-h-[28px] items-center">
                   {flipped
                     ? <span className="animate-fadeIn text-xl font-semibold" style={{ color: ACCENT }}>{c.meaning}</span>
@@ -211,8 +212,7 @@ function BackgroundPlayground() {
                 <span className="mt-1.5 text-[13px] leading-snug" style={{ color: "#3a3a3c" }} lang="ko">{c.ex}</span>
                 {flipped && <span className="animate-fadeIn text-[11px] leading-snug" style={{ color: MUTED }}>{c.exVi}</span>}
               </button>
-              <div className="flex items-center gap-0.5 whitespace-nowrap border-t px-2.5 py-1.5" style={{ borderColor: "rgba(0,0,0,0.06)" }}>
-                <span className={`mr-auto min-w-0 truncate rounded-full px-2 py-0.5 text-[9px] font-semibold ${lightChip(posTone(c.pos)?.chip)}`}>{c.pos}</span>
+              <div className="flex items-center justify-end gap-0.5 whitespace-nowrap border-t px-2.5 py-1.5" style={{ borderColor: "rgba(0,0,0,0.06)" }}>
                 <button type="button" onClick={() => setSheet("dict")} className="shrink-0 rounded-md px-1.5 py-1 text-[11px] font-medium active:opacity-60" style={{ color: sheet === "dict" ? ACCENT : MUTED }}>Từ điển</button>
                 <button type="button" onClick={() => setSheet("gpt")} className="shrink-0 rounded-md px-1.5 py-1 text-[11px] font-medium active:opacity-60" style={{ color: sheet === "gpt" ? ACCENT : MUTED }}>ChatGPT</button>
                 <button type="button" onClick={() => playCardAudio(c.audioWord, c.word)} aria-label={`Nghe phát âm ${c.word}`} className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full active:scale-90" style={{ backgroundColor: "rgba(0,0,0,0.05)", color: INK }}><Speaker className="h-3.5 w-3.5" /></button>
@@ -255,7 +255,6 @@ function BackgroundPlayground() {
 
       <div className="order-1 text-center md:order-none md:col-start-1 md:row-start-1 md:self-end md:text-left">
         <h2 className="text-[clamp(2rem,1.2rem+3vw,3.5rem)] font-bold" style={heading}>Học trên nền<br />bạn thích.</h2>
-        <p className="mx-auto mt-4 max-w-[28em] text-[clamp(1rem,0.9rem+0.45vw,1.25rem)] md:mx-0" style={{ color: MUTED }}>Chạm thẻ để lật, bấm Quên hoặc Thuộc để qua thẻ. Đổi ảnh nền, màu nền, độ trong của thẻ, tra Từ điển hay hỏi ChatGPT ngay trên thẻ.</p>
       </div>
 
       <div className="order-3 md:order-none md:col-start-1 md:row-start-2 md:self-start">
@@ -492,7 +491,6 @@ export function LandingPage() {
               <div className="order-first text-center md:text-left">
                 <p className="text-sm font-semibold" style={{ color: ACCENT }}>{shot.caption}</p>
                 <h2 className="mt-2 text-[clamp(2rem,1.2rem+3vw,3.5rem)] font-bold" style={heading}>{shot.title}</h2>
-                <p className="mx-auto mt-4 max-w-[26em] text-[clamp(1rem,0.9rem+0.45vw,1.25rem)] md:mx-0" style={{ color: MUTED }}>{shot.text}</p>
               </div>
             </div>
           </section>
