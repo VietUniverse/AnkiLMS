@@ -558,7 +558,9 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   }, [hydrated, userDecks, isAdmin, adminThthDecks, adminWritingDecks, removedBuiltInDeckIds]);
 
   // Đếm trạng thái theo cùng nguồn FSRS dùng khi mở lượt học, không dùng danh sách legacy theo tên từ.
-  const getDeckStats = useCallback((cards: VocabularyCard[]) => {
+  const getDeckStats = useCallback((rawCards: VocabularyCard[]) => {
+    // Nhóm bài tập gộp thẻ của nhiều bài cùng bộ: bỏ thẻ trùng để không đếm hai lần.
+    const cards = Array.from(new Map(rawCards.map((card) => [stateKeyOf(card), card])).values());
     const now = new Date();
     
 const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).flatMap((card) => {
@@ -1012,7 +1014,8 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     setCardStateMap((prev) => ({ ...prev, [activeKey]: newState }));
 
     if (currentUser) {
-      void ApiClient.saveCardState(activeDeckTitle, (currentCard.sibling ? -1 : 1) * (Number(currentCard.id) || 1), newState).catch(() => {});
+      // Lưu theo bộ thật của thẻ (không theo tên lượt học, vd "Ôn tập thư viện") để khớp khóa stateKeyOf.
+      void ApiClient.saveCardState(currentCard.deckName || activeDeckTitle, (currentCard.sibling ? -1 : 1) * (Number(currentCard.id) || 1), newState).catch(() => {});
       if (activeAssignmentMeta && !currentCard.sibling && Number.isSafeInteger(Number(currentCard.id))) {
         void ApiClient.recordClassAssignmentReview(
           activeAssignmentMeta.classId,
@@ -1559,23 +1562,27 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     </>
   );
 
-  // Ôn tập: chỉ lấy thẻ đã học và đang đến hạn trong thư viện của user (không thẻ mới).
-  const startReviewAll = useCallback(() => {
+  // Ôn tập: thẻ đã học và đang đến hạn trong thư viện của user và các bài tập lớp đã tải (không thẻ mới).
+  const reviewAllCards = useMemo(() => {
     const unique = new Map<string, VocabularyCard>();
     for (const node of deckTree) for (const card of node.cards) unique.set(stateKeyOf(card), card);
-    if (unique.size === 0) {
+    for (const asg of Object.values(assignedPayloads)) for (const card of assignmentCardsOf(asg)) unique.set(stateKeyOf(card), card);
+    return Array.from(unique.values());
+  }, [deckTree, assignedPayloads]);
+
+  const startReviewAll = useCallback(() => {
+    if (reviewAllCards.length === 0) {
       setLimitNotice("Thư viện của bạn chưa có thẻ nào. Hãy thêm bộ thẻ hoặc học bài mới trước.");
       return;
     }
-    startStudy("review-all", "Ôn tập thư viện", Array.from(unique.values()), { reviewOnly: true, skipMorePrompt: true });
-  }, [deckTree, startStudy]);
+    startStudy("review-all", "Ôn tập thư viện", reviewAllCards, { reviewOnly: true, skipMorePrompt: true });
+  }, [reviewAllCards, startStudy]);
 
-  // Thẻ đã học và đang đến hạn trong thư viện: cùng nguồn với startReviewAll để số khớp phiên ôn.
-  const libraryDue = useMemo(() => {
-    const unique = new Map<string, VocabularyCard>();
-    for (const node of deckTree) for (const card of node.cards) unique.set(stateKeyOf(card), card);
-    return buildStudyQueue(Array.from(unique.values()), cardStateMap, { now: new Date(), newLeft: 0, reviewLeft: Infinity, reviewOnly: true }).dueCount;
-  }, [deckTree, cardStateMap]);
+  // Cùng nguồn với startReviewAll để số khớp phiên ôn.
+  const libraryDue = useMemo(
+    () => buildStudyQueue(reviewAllCards, cardStateMap, { now: new Date(), newLeft: 0, reviewLeft: Infinity, reviewOnly: true }).dueCount,
+    [reviewAllCards, cardStateMap],
+  );
 
   // Vào /flashcards?review=true (nút Ôn tập ở trang chủ): chờ thẻ đến hạn nạp xong rồi mở phiên ôn,
   // sau đó xoá param để reload không mở lại.

@@ -28,8 +28,11 @@ export function buildStudyQueue(
   const newCards: VocabularyCard[][] = [];
   // Từ đã bắt đầu hôm nay (vd đã học Review, còn Typing): không tốn thêm suất.
   const continuing: VocabularyCard[][] = [];
-  const kinds: (undefined | "typing")[] = cards.some(isCardAWritingCard) ? [undefined] : [undefined, "typing"];
+  // Bộ Writing không có thẻ Typing. Xét theo từng bộ (deckName), vì lượt "Ôn tập thư viện" trộn nhiều bộ:
+  // trước đây xét cả danh sách nên chỉ cần có một bộ Writing là mất hết thẻ Typing của các bộ khác.
+  const writingDecks = new Set(cards.filter(isCardAWritingCard).map((c) => c.deckName));
   for (const base of cards) {
+    const kinds: (undefined | "typing")[] = writingDecks.has(base.deckName) ? [undefined] : [undefined, "typing"];
     // Anki's suspended queue is intentional; keep it out of the review queue.
     if (base.ankiSchedule?.queue === -1) continue;
     const fresh: VocabularyCard[] = [];

@@ -35,6 +35,8 @@ assert.equal(label(buildStudyQueue([card(1), card(2), card(3)], due, { ...opts, 
 // Thẻ anh em đã ôn hôm nay → thẻ còn lại đến hạn cũng để mai.
 const today = (() => { const d = opts.now; return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; })();
 assert.equal(label(buildStudyQueue([card(1)], { d_1: { ...learned("2026-12-30"), lastReview: today }, d_1_typing: learned("2026-11-24") }, { ...opts, reviewOnly: true })), "");
+// Trộn bộ Writing với bộ thường (Ôn tập thư viện): bộ thường vẫn có thẻ Typing.
+assert.equal(label(buildStudyQueue([card(1), { ...card(2, { pos: "Viết" }), deckName: "W" }], {}, opts)), "R1 R2 T1");
 // Descending intervals: khoảng ôn dài ra trước.
 assert.equal(label(buildStudyQueue([card(1), card(2)], { d_1: learned("2026-11-24"), d_2: { ...learned("2026-11-24"), interval: 40 } }, { ...opts, reviewOnly: true })), "R2 R1");
 // Chỉ Typing đến hạn → ôn Typing.
