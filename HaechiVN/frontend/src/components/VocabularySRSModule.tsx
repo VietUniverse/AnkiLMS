@@ -955,13 +955,24 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
   const typingAnswer = currentCard ? stripTypingPunctuation(cleanTextOnly(currentCard.word)) : "";
   const isTypedCorrect = (typed: string) => stripTypingPunctuation(typed) === typingAnswer;
   const currentAudioWordField = currentCard?.audio_word || "";
+  const currentAudioMeaningField = currentCard?.audio_meaning || "";
   useEffect(() => {
-    // Thẻ Typing: đọc to từ sẽ lộ đáp án, nên không tự phát.
+    // Thẻ Typing: đọc to từ sẽ lộ đáp án, nên mặt trước chỉ phát âm thanh của nghĩa (nếu có file).
     // "Tắt phát âm thanh tự động" chỉ chặn tự phát; bấm nút loa vẫn nghe được.
-    if (viewMode === "study" && currentWordForAudio && !currentCard?.sibling && !muteWordRef.current && !disableAutoPronounce) {
+    if (viewMode !== "study" || muteWordRef.current || disableAutoPronounce) return;
+    if (currentCard?.sibling) {
+      if (extractAudioSrc(currentAudioMeaningField)) playAudioWithFallback(currentAudioMeaningField, "");
+    } else if (currentWordForAudio) {
       playAudioWithFallback(currentAudioWordField, currentWordForAudio);
     }
-  }, [viewMode, currentCardIndex, currentWordForAudio, currentAudioWordField, currentCard?.sibling, playAudioWithFallback, disableAutoPronounce]);
+  }, [viewMode, currentCardIndex, currentWordForAudio, currentAudioWordField, currentAudioMeaningField, currentCard?.sibling, playAudioWithFallback, disableAutoPronounce]);
+
+  // Thẻ Typing: lật sang mặt sau thì phát âm từ vựng.
+  useEffect(() => {
+    if (viewMode === "study" && isFlipped && currentCard?.sibling && currentWordForAudio && !muteWordRef.current && !disableAutoPronounce) {
+      playAudioWithFallback(currentAudioWordField, currentWordForAudio);
+    }
+  }, [viewMode, isFlipped, currentCardIndex, currentCard?.sibling, currentWordForAudio, currentAudioWordField, playAudioWithFallback, disableAutoPronounce]);
 
   // Handle Response (Quên: false | Thuộc: true)
   const handleResponse = useCallback((isMastered: boolean, customRating?: FSRSRating) => {
