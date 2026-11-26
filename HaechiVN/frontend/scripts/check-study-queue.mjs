@@ -26,12 +26,19 @@ q = buildStudyQueue([card(1), card(2)], { d_1: learned("2026-12-30") }, { ...opt
 assert.equal(label(q), "T1");
 assert.equal(q.newWords, 1);
 
-// Thẻ đến hạn: Review trước Typing, đứng trước thẻ mới; reviewOnly bỏ thẻ mới.
+// Thẻ đến hạn: bury thẻ anh em (Review và Typing cùng đến hạn thì chỉ ôn một), đứng trước thẻ mới; reviewOnly bỏ thẻ mới.
 const due = { d_1: learned("2026-11-24"), d_1_typing: learned("2026-11-24"), d_2: learned("2026-11-24"), d_2_typing: learned("2026-11-24") };
 q = buildStudyQueue([card(1), card(2), card(3)], due, opts);
-assert.equal(label(q), "R1 R2 T1 T2 R3 T3");
-assert.equal(q.dueCount, 4);
-assert.equal(label(buildStudyQueue([card(1), card(2), card(3)], due, { ...opts, reviewOnly: true })), "R1 R2 T1 T2");
+assert.equal(label(q), "R1 R2 R3 T3");
+assert.equal(q.dueCount, 2);
+assert.equal(label(buildStudyQueue([card(1), card(2), card(3)], due, { ...opts, reviewOnly: true })), "R1 R2");
+// Thẻ anh em đã ôn hôm nay → thẻ còn lại đến hạn cũng để mai.
+const today = (() => { const d = opts.now; return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; })();
+assert.equal(label(buildStudyQueue([card(1)], { d_1: { ...learned("2026-12-30"), lastReview: today }, d_1_typing: learned("2026-11-24") }, { ...opts, reviewOnly: true })), "");
+// Descending intervals: khoảng ôn dài ra trước.
+assert.equal(label(buildStudyQueue([card(1), card(2)], { d_1: learned("2026-11-24"), d_2: { ...learned("2026-11-24"), interval: 40 } }, { ...opts, reviewOnly: true })), "R2 R1");
+// Chỉ Typing đến hạn → ôn Typing.
+assert.equal(label(buildStudyQueue([card(1)], { d_1: learned("2026-12-30"), d_1_typing: learned("2026-11-24") }, { ...opts, reviewOnly: true })), "T1");
 
 // Hết hạn mức: không có thẻ mới, nhưng vẫn báo số từ còn lại.
 q = buildStudyQueue([card(1)], {}, { ...opts, newLeft: 0 });

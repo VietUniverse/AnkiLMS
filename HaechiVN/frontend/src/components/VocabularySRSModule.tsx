@@ -569,7 +569,6 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     if (total === 0) return { total: 0, mastered: 0, percent: 0, newCount: 0, reviewCount: 0 };
     let mastered = 0;
     let newCount = 0;
-    let reviewCount = 0;
     for (const card of playableCards) {
       const state = cardStateMap[stateKeyOf(card)] || (card.ankiSchedule && !card.sibling ? ankiScheduleToFSRSState(card.ankiSchedule) : undefined);
       if (!state || state.state === "new") {
@@ -577,8 +576,9 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
         continue;
       }
       mastered += 1;
-      if (isFSRSCardDue(state, now)) reviewCount += 1;
     }
+    // Số Ôn lấy từ chính hàng đợi (đã bury thẻ anh em) để khớp số thẻ khi bấm Ôn tập.
+    const reviewCount = buildStudyQueue(cards, cardStateMap, { now, newLeft: 0, reviewLeft: Infinity, reviewOnly: true }).dueCount;
     // This column is today's queue completion, not lifetime familiarity.
     const pending = newCount + reviewCount;
     const percent = pending === 0 ? 100 : Math.min(99, Math.round(((total - pending) / total) * 100));
@@ -1574,14 +1574,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
   const libraryDue = useMemo(() => {
     const unique = new Map<string, VocabularyCard>();
     for (const node of deckTree) for (const card of node.cards) unique.set(stateKeyOf(card), card);
-    const now = new Date();
-    let due = 0;
-    for (const card of unique.values()) {
-      if (card.ankiSchedule?.queue === -1) continue;
-      const state = cardStateMap[stateKeyOf(card)] || (!card.sibling && card.ankiSchedule ? ankiScheduleToFSRSState(card.ankiSchedule) : undefined);
-      if (state && state.state !== "new" && isFSRSCardDue(state, now)) due += 1;
-    }
-    return due;
+    return buildStudyQueue(Array.from(unique.values()), cardStateMap, { now: new Date(), newLeft: 0, reviewLeft: Infinity, reviewOnly: true }).dueCount;
   }, [deckTree, cardStateMap]);
 
   // Vào /flashcards?review=true (nút Ôn tập ở trang chủ): chờ thẻ đến hạn nạp xong rồi mở phiên ôn,
