@@ -36,6 +36,8 @@ export default function LoginPage() {
   useEffect(() => {
     const status = new URLSearchParams(window.location.search).get("email_verified");
     if (status === "success" || status === "invalid") setVerificationNotice(status);
+    // Landing page gửi khách mới sang ?mode=register để mở thẳng form đăng ký.
+    if (new URLSearchParams(window.location.search).get("mode") === "register") setIsRegister(true);
   }, []);
 
   useEffect(() => {

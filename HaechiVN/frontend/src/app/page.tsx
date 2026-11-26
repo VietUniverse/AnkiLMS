@@ -2,20 +2,19 @@
 
 import React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { AppShell } from "../components/AppShell";
 import { OnigiriHeatmap } from "../components/OnigiriHeatmap";
 import { StudyStatsPanel } from "../components/StudyStatsPanel";
 import { StreakPanel } from "../components/StreakPanel";
+import { LandingPage } from "../components/LandingPage";
 import { InstallAppButton } from "../components/InstallAppButton";
 import { useApp } from "../contexts/AppProvider";
-import { Zap, X, LogIn, Play, RotateCcw, ClipboardCheck, ArrowRight } from "lucide-react";
+import { Zap, X, Play, RotateCcw, ClipboardCheck, ArrowRight } from "lucide-react";
 import { ApiClient } from "../lib/apiClient";
 import { getStudyRank } from "../lib/studyRanks";
 import { vietnamToday } from "../lib/dailyLimits";
 
 export default function Home() {
-  const router = useRouter();
   const { currentUser, heatmapData, handleOpenAuth, isAuthReady, isFeatureEnabled } = useApp();
   const [showWelcome, setShowWelcome] = React.useState(false);
   const [showPlacementPrompt, setShowPlacementPrompt] = React.useState(false);
@@ -36,12 +35,6 @@ export default function Home() {
     }
   }, []);
 
-  // Nếu chưa đăng nhập thì tự động chuyển hướng sang trang đăng nhập /login
-  React.useEffect(() => {
-    if (isAuthReady && !currentUser) {
-      router.replace("/login");
-    }
-  }, [isAuthReady, currentUser, router]);
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
@@ -86,31 +79,8 @@ export default function Home() {
   const neededXPForNext = Math.max(0, xpForNextLevel - userXP);
   const levelProgressPercent = userLevel > 0 ? Math.min(100, Math.max(0, Math.round((currentLevelProgressXP / 300) * 100))) : 50;
 
-  // Nếu chưa đăng nhập: hiển thị duy nhất 1 khối yêu cầu đăng nhập
-  if (isAuthReady && !currentUser) {
-    return (
-      <AppShell>
-        <div className="flex flex-col items-center justify-center min-h-[65vh] text-center space-y-5 animate-fadeIn p-4 max-w-md mx-auto">
-          <div className="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/30 text-blue-400 flex items-center justify-center shadow-lg">
-            <LogIn className="w-6 h-6" />
-          </div>
-          <div className="space-y-1.5">
-            <h2 className="text-xl md:text-2xl font-black text-white">Yêu Cầu Đăng Nhập</h2>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Vui lòng đăng nhập tài khoản để lưu trữ chuỗi Streak, tích lũy XP, làm nhiệm vụ và mở khóa lộ trình học tiếng Hàn.
-            </p>
-          </div>
-          <Link
-            href="/login"
-            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-xs shadow-lg shadow-blue-900/40 active:scale-95 transition flex items-center justify-center gap-2"
-          >
-            <LogIn className="w-4 h-4" />
-            <span>ĐĂNG NHẬP NGAY</span>
-          </Link>
-        </div>
-      </AppShell>
-    );
-  }
+  // Khách chưa đăng nhập: cho xem trang giới thiệu thay vì đẩy thẳng sang /login.
+  if (isAuthReady && !currentUser) return <LandingPage />;
 
   return (
     <AppShell>
