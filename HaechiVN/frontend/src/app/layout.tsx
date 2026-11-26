@@ -67,7 +67,8 @@ export default function RootLayout({
         <script
           id="ga-init"
           dangerouslySetInnerHTML={{
-            __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-EMV6CCJTG1');`,
+            __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+if(/(^|\\.)haechivn\\.com$/.test(location.hostname)){gtag('js',new Date());gtag('config','G-EMV6CCJTG1');}`,
           }}
         />
         <Script
