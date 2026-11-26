@@ -4217,3 +4217,14 @@ html[data-theme="dark"] .classroom-module.cm-page.rd.cd .cd-modal {
 @keyframes mobile-sheet-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
 .mobile-sheet { animation: mobile-sheet-up 220ms cubic-bezier(0.22, 1, 0.36, 1); }
 @media (prefers-reduced-motion: reduce) { .mobile-sheet { animation: none; } }
+
+/* Từ điển trong màn học: bottom sheet trên điện thoại */
+@media (max-width: 1023px) {
+  .dict-sheet { animation: mobile-sheet-up 380ms cubic-bezier(0.32, 0.72, 0, 1); }
+}
+@media (prefers-reduced-motion: reduce) { .dict-sheet { animation: none; } }
+
+/* Landing: nội dung section hiện dần khi cuộn tới */
+.landing-reveal { opacity: 0; transform: translateY(28px) scale(0.985); transition: opacity 900ms cubic-bezier(0.22, 1, 0.36, 1), transform 1100ms cubic-bezier(0.22, 1, 0.36, 1); }
+.landing-reveal.is-in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .landing-reveal { transform: none; transition: opacity 300ms ease; } }

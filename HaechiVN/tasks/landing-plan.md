@@ -8,7 +8,7 @@ Bản đầu đã xong nhưng chưa commit:
 Plan này làm nốt phần còn thiếu:
 - dùng ảnh thật của app;
 - nút đăng ký mở thẳng form đăng ký;
-- SEO và domain haechi.vn;
+- SEO và domain haechivn.com;
 - kiểm tra ở trạng thái đăng xuất thật.
 
 ## Architecture Decisions
@@ -51,12 +51,12 @@ Plan này làm nốt phần còn thiếu:
 - [ ] Xem mobile 375px và desktop 1280px, sáng và tối.
 
 ### Phase 3: SEO + phát hành
-- [ ] **Task 5: Đổi domain trong metadata sang haechi.vn** (XS)
+- [ ] **Task 5: Đổi domain trong metadata sang haechivn.com** (XS)
   - Áp cho `metadataBase` và `openGraph.url` trong `layout.tsx`. Nếu có thì kiểm cả `sitemap.ts` và `robots.ts`.
   - Accept: `grep -rn lms.ankivn.com frontend/src` không còn chỗ nào cần đổi, hoặc chỗ còn lại có lý do ghi rõ.
 - [ ] **Task 6: Commit + push** (XS)
   - Chỉ `git add` các file của landing.
-  - Accept: CI/deploy xanh; vào haechi.vn bằng tab ẩn danh thấy landing.
+  - Accept: CI/deploy xanh; vào haechivn.com bằng tab ẩn danh thấy landing.
 
 ### Checkpoint: Complete
 - [ ] Khách vào `/` thấy landing, đăng ký được.
@@ -72,5 +72,5 @@ Plan này làm nốt phần còn thiếu:
 
 ## Open Questions
 - Ảnh chụp: bạn tự gửi, hay mình chụp trên localhost bằng tài khoản của bạn (mình sẽ che tên/email)?
-- Domain cũ `lms.ankivn.com` còn chạy không? Có cần chuyển hướng sang haechi.vn không?
+- Domain cũ `lms.ankivn.com` còn chạy không? Có cần chuyển hướng sang haechivn.com không?
 - Số liệu mẫu trên bảng xếp hạng (Bảo Ngọc 87 ngày…) để nguyên, hay thay bằng số thật như tổng số từ hoặc số học viên (cần thêm API)?

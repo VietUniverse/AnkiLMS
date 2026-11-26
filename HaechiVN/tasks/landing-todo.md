@@ -6,8 +6,8 @@
       (bỏ ảnh màn học: hết hạn mức từ mới, bấm "Thêm" sẽ đổi dữ liệu thật; thẻ demo đã thay cho phần này)
 - [x] Task 4: Chế độ tối: landing vẫn sáng; sửa chip loại từ bị nhạt do lớp dark:
 - [x] Checkpoint 2: mobile 375 / desktop 1280, sáng/tối
-- [ ] Task 5: metadata → haechi.vn — CHẶN: 2026-11-26 haechi.vn chưa phản hồi (curl 000), lms.ankivn.com vẫn 200.
+- [ ] Task 5: metadata → haechivn.com — CHẶN: 2026-11-26 haechivn.com chưa phản hồi (curl 000), lms.ankivn.com vẫn 200.
       Khi domain chạy: layout.tsx (3 chỗ), sitemap.ts, robots.ts, manifest*.json. KHÔNG đổi SITE_URL trong wrangler.json
-      nếu chưa thêm redirect URI haechi.vn/api/auth/callback vào Google OAuth (sẽ hỏng đăng nhập Google).
+      nếu chưa thêm redirect URI haechivn.com/api/auth/callback vào Google OAuth (sẽ hỏng đăng nhập Google).
 - [ ] Task 6: Commit + push (chỉ file landing)
 - [ ] Checkpoint: Complete

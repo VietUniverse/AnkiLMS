@@ -1490,6 +1490,8 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     return `https://chatgpt.com/?prompt=${encodeURIComponent(promptText)}`;
   }, [currentCard]);
 
+  const [dictSheetDrag, setDictSheetDrag] = useState(0);
+  const dictSheetStart = useRef<number | null>(null);
   const openDictionary = () => {
     if (hideDictionary) return;
     setDictQuery(cleanTextOnly(currentCard?.word || "").trim());
@@ -2634,9 +2636,20 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
           <aside
             role="dialog"
             aria-label="Tra từ điển"
-            style={{ "--dict-panel-width": `${dictPanelWidth}px` } as React.CSSProperties}
-            className="fixed inset-y-0 right-0 z-[70] flex h-full w-full max-w-md flex-col border-l border-stone-200 bg-white shadow-2xl animate-reveal dark:border-stone-800 dark:bg-[#0b1329] lg:sticky lg:top-0 lg:z-30 lg:h-[calc(100dvh-2rem)] lg:w-[var(--dict-panel-width)] lg:max-w-none lg:shrink-0 lg:animate-none lg:rounded-2xl lg:border"
+            style={{ "--dict-panel-width": `${dictPanelWidth}px`, transform: dictSheetDrag ? `translateY(${dictSheetDrag}px)` : undefined } as React.CSSProperties}
+            // Điện thoại: bottom sheet trồi lên từ đáy, kéo tay nắm xuống để đóng. Máy tính: cột bên phải như cũ.
+            className={`dict-sheet ${dictSheetDrag ? "" : "transition-transform duration-300 ease-out"} fixed inset-x-0 bottom-0 z-[70] flex h-[78dvh] w-full flex-col rounded-t-[24px] bg-white shadow-[0_-12px_40px_rgba(0,0,0,0.18)] dark:bg-[#0b1329] lg:sticky lg:inset-auto lg:top-0 lg:z-30 lg:h-[calc(100dvh-2rem)] lg:w-[var(--dict-panel-width)] lg:shrink-0 lg:rounded-2xl lg:border lg:border-stone-200 lg:shadow-2xl lg:dark:border-stone-800`}
           >
+            <div
+              className="flex shrink-0 cursor-grab touch-none justify-center pb-1 pt-2.5 lg:hidden"
+              onPointerDown={(e) => { dictSheetStart.current = e.clientY; e.currentTarget.setPointerCapture(e.pointerId); }}
+              onPointerMove={(e) => { if (dictSheetStart.current !== null) setDictSheetDrag(Math.max(0, e.clientY - dictSheetStart.current)); }}
+              onPointerUp={() => { dictSheetStart.current = null; if (dictSheetDrag > 110) setDictPanelOpen(false); setDictSheetDrag(0); }}
+              onPointerCancel={() => { dictSheetStart.current = null; setDictSheetDrag(0); }}
+              aria-hidden
+            >
+              <span className="h-1.5 w-10 rounded-full bg-stone-300 dark:bg-stone-600" />
+            </div>
             <div
               role="separator"
               aria-orientation="vertical"
@@ -2654,14 +2667,14 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
             >
               <span className="h-10 w-1 rounded-full bg-stone-300 transition-colors group-hover:bg-sky-400 dark:bg-stone-600 dark:group-hover:bg-sky-500" />
             </div>
-            <header className="flex items-center justify-between gap-3 border-b border-stone-200 px-4 py-3 dark:border-stone-800">
+            <header className="flex items-center justify-between gap-3 px-4 pb-2 pt-1 lg:border-b lg:border-stone-200 lg:py-3 lg:dark:border-stone-800">
               <div className="flex min-w-0 items-center gap-2.5">
-                <span className="rounded-lg bg-sky-500/10 p-2 text-sky-600 dark:text-sky-400">
+                <span className="hidden rounded-lg bg-sky-500/10 p-2 text-sky-600 dark:text-sky-400 lg:inline-flex">
                   <BookOpen className="h-4 w-4" />
                 </span>
                 <div className="min-w-0">
                   <h2 className="text-sm font-black text-stone-900 dark:text-white">Từ điển</h2>
-                  <p className="text-[11px] text-stone-500 dark:text-slate-400">Tra nhanh Hàn · Việt · Anh · Nhật</p>
+                  <p className="hidden text-[11px] text-stone-500 dark:text-slate-400 lg:block">Tra nhanh Hàn · Việt · Anh · Nhật</p>
                 </div>
               </div>
               <button
@@ -2674,11 +2687,12 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
               </button>
             </header>
 
-            <div className="border-b border-stone-200 px-4 py-3 dark:border-stone-800">
+            <div className="px-4 pb-3 lg:border-b lg:border-stone-200 lg:pt-3 lg:dark:border-stone-800">
               <label className="flex items-center gap-2 rounded-xl border border-stone-300 bg-stone-50 px-3 py-2 transition focus-within:border-sky-500 focus-within:ring-2 focus-within:ring-sky-500/20 dark:border-stone-700 dark:bg-[#132247]">
                 <Search className="h-4 w-4 shrink-0 text-stone-400" />
                 <input
-                  autoFocus
+                  // Điện thoại: không tự bật bàn phím (đã có sẵn từ của thẻ), tránh che mất kết quả.
+                  autoFocus={typeof window !== "undefined" && window.matchMedia("(min-width: 1024px)").matches}
                   value={dictQuery}
                   onChange={(event) => setDictQuery(event.target.value)}
                   placeholder="Nhập từ cần tra..."

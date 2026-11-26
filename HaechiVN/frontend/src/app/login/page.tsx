@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { UserPlus, LogIn } from "lucide-react";
 import { ApiClient, UserProfile } from "../../lib/apiClient";
@@ -17,7 +16,10 @@ export default function LoginPage() {
   const [account, setAccount] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [translationLanguage, setTranslationLanguage] = useState<TranslationLanguage>("vi");
+  // Đăng ký không còn hỏi ngôn ngữ: mặc định Hàn – Việt, đổi sau trong hồ sơ nếu cần.
+  const translationLanguage: TranslationLanguage = "vi";
+  const [accountConfirm, setAccountConfirm] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -84,12 +86,15 @@ export default function LoginPage() {
       const email = account.includes("@") ? account.trim() : `${account.trim()}@haechivn.local`;
 
       if (isRegister) {
+        if (account.trim().toLowerCase() !== accountConfirm.trim().toLowerCase()) throw new Error("Hai lần nhập email không khớp.");
+        if (password !== passwordConfirm) throw new Error("Hai lần nhập mật khẩu không khớp.");
         if (!acceptedPolicies) throw new Error("Bạn cần đồng ý các điều khoản và chính sách trước khi tạo tài khoản.");
         const registration = await ApiClient.register(email, name.trim() || account.trim(), password, translationLanguage, acceptedPolicies);
         if (!registration.user) {
           setSuccess(registration.message || "Hãy kiểm tra email để xác minh tài khoản.");
           setIsRegister(false);
           setPassword("");
+          setPasswordConfirm("");
           return;
         }
         user = registration.user;
@@ -148,36 +153,6 @@ export default function LoginPage() {
                 Trang học tiếng Hàn của người lười làm cho những người lười!
               </p>
             </div>
-
-            {/* Widget Thẻ Anki - Căn giữa, không chữ rườm rà, nghĩa to rõ */}
-            <div
-              className="p-6 rounded-2xl shadow-lg max-w-sm mx-auto w-full text-center space-y-4 border-0"
-              style={{ backgroundColor: "#111c38" }}
-            >
-              <div className="space-y-1 py-1">
-                <div className="text-3xl font-black text-white tracking-tight">행복하다</div>
-                <div className="text-base text-slate-300 font-semibold">Hạnh phúc</div>
-              </div>
-              <div className="grid grid-cols-2 gap-3 pt-1 text-xs font-bold">
-                <div
-                  className="py-2.5 rounded-xl text-rose-300 text-center font-bold"
-                  style={{ backgroundColor: "rgba(244, 63, 94, 0.2)" }}
-                >
-                  Quên
-                </div>
-                <div
-                  className="py-2.5 rounded-xl text-emerald-300 text-center font-bold"
-                  style={{ backgroundColor: "rgba(16, 185, 129, 0.2)" }}
-                >
-                  Nhớ
-                </div>
-              </div>
-            </div>
-
-            {/* Cửa vào cho khách: dùng thử trước, đăng ký khi muốn lưu tiến độ. */}
-            <nav aria-label="Dùng thử không cần đăng nhập" className="flex flex-wrap justify-center gap-2 text-sm font-bold">
-              <Link href="/placement-test" className="rounded-xl bg-blue-500/15 px-4 py-2.5 text-blue-200 transition hover:bg-blue-500/25">Kiểm tra trình độ</Link>
-            </nav>
           </div>
 
           {/* Cột phải: Form Đăng nhập nguyên khối không viền */}
@@ -219,9 +194,6 @@ export default function LoginPage() {
                 </div>
               )}
 
-              {isRegister && <label className="block space-y-1.5"><span className="text-xs font-bold text-slate-300">Bạn muốn học tiếng Hàn bằng ngôn ngữ nào?</span><select value={translationLanguage} onChange={(event) => setTranslationLanguage(event.target.value as TranslationLanguage)} className="w-full rounded-xl px-4 py-3.5 text-xs text-white outline-none focus:ring-2 focus:ring-blue-500" style={{ backgroundColor: "#132247" }}><option value="vi">Hàn – Việt</option><option value="en">Hàn – Anh</option><option value="ja">Hàn – Nhật</option></select></label>}
-
-              {isRegister && <PolicyAcceptance checked={acceptedPolicies} onChange={setAcceptedPolicies} />}
 
               {/* Dòng 1: Tài khoản */}
               <div>
@@ -236,6 +208,22 @@ export default function LoginPage() {
                 />
               </div>
 
+              {isRegister && (
+                <div>
+                  <input
+                    type="email"
+                    required
+                    autoComplete="off"
+                    value={accountConfirm}
+                    onChange={(e) => setAccountConfirm(e.target.value)}
+                    placeholder="Nhập lại email"
+                    aria-invalid={accountConfirm !== "" && accountConfirm.trim().toLowerCase() !== account.trim().toLowerCase()}
+                    style={{ backgroundColor: "#132247", color: "#ffffff" }}
+                    className="w-full px-4 py-3.5 rounded-xl text-white text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition shadow-inner border-0"
+                  />
+                </div>
+              )}
+
               {/* Dòng 2: Mật khẩu */}
               <div>
                 <input
@@ -249,6 +237,24 @@ export default function LoginPage() {
                   className="w-full px-4 py-3.5 rounded-xl text-white text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition shadow-inner border-0"
                 />
               </div>
+
+              {isRegister && (
+                <div>
+                  <input
+                    type="password"
+                    autoComplete="new-password"
+                    required
+                    value={passwordConfirm}
+                    onChange={(e) => setPasswordConfirm(e.target.value)}
+                    placeholder="Nhập lại mật khẩu"
+                    aria-invalid={passwordConfirm !== "" && passwordConfirm !== password}
+                    style={{ backgroundColor: "#132247", color: "#ffffff" }}
+                    className="w-full px-4 py-3.5 rounded-xl text-white text-xs placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition shadow-inner border-0"
+                  />
+                </div>
+              )}
+
+              {isRegister && <PolicyAcceptance checked={acceptedPolicies} onChange={setAcceptedPolicies} />}
 
               {/* Nút Vào học */}
               <button

@@ -178,7 +178,8 @@ export default function Home() {
                 <Link
                   href="/flashcards?review=true&from=%2F"
                   title="Ôn tập các thẻ đến hạn trong thư viện"
-                  className="flex min-h-16 items-center justify-center gap-2 rounded-2xl border border-stone-200 bg-white px-5 text-sm font-bold text-stone-800 transition-colors hover:bg-stone-50 dark:border-stone-800 dark:bg-stone-900 dark:text-stone-100 dark:hover:bg-stone-800"
+                  style={{ color: "#fff" }}
+                  className="flex min-h-16 items-center justify-center gap-2 rounded-2xl bg-emerald-600 px-5 text-sm font-bold transition-colors hover:bg-emerald-700 active:scale-[0.99]"
                 >
                   <RotateCcw className="h-4 w-4" />
                   Ôn tập
