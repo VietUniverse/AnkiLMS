@@ -5,7 +5,66 @@ import { createPortal } from "react-dom";
 import { Check, ImagePlus, Settings, Trash2, X } from "lucide-react";
 import { EggThemeToggle } from "./EggThemeToggle";
 import { backgroundLayerStyle, DEFAULT_STUDY_BG, fileToDataUrl, GRADIENT_PRESETS, saveStudyBackground, STUDY_BACKGROUND_GALLERY, useStudyBackground } from "../lib/studyBackground";
-import { setDisableAutoPronounce, setHideChatGpt, setTinderMode, useTinderMode, setHideDictionary, setMuteAndHideAudio, setMuteExampleAudio, setMuteWordAudio, setRandomStudyBgEvery10, setStudyCardOpacity, useStudyCardOpacity, useDisableAutoPronounce, useHideChatGpt, useHideDictionary, useMuteAndHideAudio, useMuteExampleAudio, useMuteWordAudio, useRandomStudyBgEvery10 } from "../lib/studyPreferences";
+import { type AudioMode, setAudioMode, setDisableAutoPronounce, setHideChatGpt, setTinderMode, useTinderMode, setHideDictionary, setRandomStudyBgEvery10, setRequireExactTyping, setStudyCardOpacity, useStudyCardOpacity, useDisableAutoPronounce, useHideChatGpt, useHideDictionary, useHideExampleAudio, useHideWordAudio, useMuteExampleAudio, useMuteWordAudio, useRandomStudyBgEvery10, useRequireExactTyping } from "../lib/studyPreferences";
+
+type SectionKey = "study" | "audio" | "look";
+const SHEET_HEIGHT_KEY = "haechivn_settings_sheet_height";
+const SHEET_MIN = 30;
+const SHEET_MAX = 95;
+const SECTIONS: { key: SectionKey; label: string }[] = [
+  { key: "study", label: "Học" },
+  { key: "audio", label: "Âm thanh" },
+  { key: "look", label: "Giao diện" },
+];
+
+function ToggleRow({ label, hint, checked, onChange }: { label: string; hint?: string; checked: boolean; onChange: (next: boolean) => void }) {
+  return (
+    <label className="flex cursor-pointer items-center justify-between gap-4 py-3">
+      <span className="min-w-0">
+        <span className="block text-sm font-bold">{label}</span>
+        {hint && <span className="mt-0.5 block text-xs text-stone-500 dark:text-stone-400">{hint}</span>}
+      </span>
+      <button type="button" role="switch" aria-checked={checked} aria-label={label} onClick={() => onChange(!checked)}
+        className={`relative h-7 w-12 shrink-0 rounded-full transition cursor-pointer ${checked ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}>
+        <span className={`absolute left-0 top-0.5 h-6 w-6 rounded-full bg-white shadow-sm transition-transform ${checked ? "translate-x-[22px]" : "translate-x-0.5"}`} />
+      </button>
+    </label>
+  );
+}
+
+const AUDIO_MODES: { key: AudioMode; label: string }[] = [
+  { key: "on", label: "Bật" },
+  { key: "mute", label: "Tắt tiếng" },
+  { key: "hide", label: "Ẩn nút loa" },
+];
+
+function AudioModeRow({ label, value, onChange }: { label: string; value: AudioMode; onChange: (mode: AudioMode) => void }) {
+  return (
+    <div role="radiogroup" aria-label={label}>
+      <p className="mb-2 text-sm font-bold">{label}</p>
+      <div className="grid grid-cols-3 gap-1 rounded-xl bg-stone-100 p-1 dark:bg-stone-800">
+        {AUDIO_MODES.map(({ key, label: text }) => (
+          <button key={key} type="button" role="radio" aria-checked={value === key} onClick={() => onChange(key)}
+            className={`min-h-9 rounded-lg text-xs font-bold transition cursor-pointer ${value === key ? "bg-white text-stone-900 shadow-sm dark:bg-stone-950 dark:text-white" : "text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200"}`}>
+            {text}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SliderRow({ id, label, value, min, onChange }: { id: string; label: string; value: number; min: number; onChange: (value: number) => void }) {
+  return (
+    <div>
+      <div className="mb-1.5 flex items-center justify-between text-sm font-bold">
+        <label htmlFor={id}>{label}</label>
+        <span className="tabular-nums text-stone-500 dark:text-stone-400">{value}%</span>
+      </div>
+      <input id={id} type="range" min={min} max={100} step={5} value={value} onChange={(e) => onChange(Number(e.target.value))} className="w-full cursor-pointer accent-sky-500" />
+    </div>
+  );
+}
 
 export function StudyBackgroundPanel() {
   const bg = useStudyBackground();
@@ -15,7 +74,49 @@ export function StudyBackgroundPanel() {
   const muteWordAudio = useMuteWordAudio();
   const cardOpacity = useStudyCardOpacity();
   const muteExampleAudio = useMuteExampleAudio();
-  const muteAndHideAudio = useMuteAndHideAudio();
+  const hideWordAudio = useHideWordAudio();
+  const hideExampleAudio = useHideExampleAudio();
+  const requireExactTyping = useRequireExactTyping();
+  const wordMode: AudioMode = hideWordAudio ? "hide" : muteWordAudio ? "mute" : "on";
+  const exampleMode: AudioMode = hideExampleAudio ? "hide" : muteExampleAudio ? "mute" : "on";
+  const [section, setSection] = useState<SectionKey>("study");
+  // Mobile: kéo vạch trên đầu bảng để đổi chiều cao (% màn hình), nhớ theo thiết bị; kéo thấp quá thì đóng.
+  const [sheetHeight, setSheetHeight] = useState<number | null>(() => {
+    try {
+      const n = Number(localStorage.getItem(SHEET_HEIGHT_KEY));
+      return n >= SHEET_MIN && n <= SHEET_MAX ? n : null;
+    } catch {
+      return null;
+    }
+  });
+  const sheetDragRef = useRef<{ startY: number; startHeight: number } | null>(null);
+  const effectiveHeight = sheetHeight ?? (section === "look" ? 55 : 70);
+  const onSheetPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    sheetDragRef.current = { startY: e.clientY, startHeight: effectiveHeight };
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+  const onSheetPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const drag = sheetDragRef.current;
+    if (!drag) return;
+    const next = drag.startHeight - ((e.clientY - drag.startY) / window.innerHeight) * 100;
+    setSheetHeight(Math.max(SHEET_MIN - 10, Math.min(SHEET_MAX, next)));
+  };
+  const onSheetPointerUp = () => {
+    const drag = sheetDragRef.current;
+    if (!drag) return;
+    sheetDragRef.current = null;
+    if (effectiveHeight < SHEET_MIN) {
+      // Đóng bảng, lần mở sau giữ chiều cao trước khi kéo.
+      setOpen(false);
+      setSheetHeight(drag.startHeight);
+      return;
+    }
+    try {
+      localStorage.setItem(SHEET_HEIGHT_KEY, String(Math.round(effectiveHeight)));
+    } catch {
+      // Bỏ qua khi trình duyệt chặn lưu trữ.
+    }
+  };
   const disableAutoPronounce = useDisableAutoPronounce();
   const randomBgEvery10 = useRandomStudyBgEvery10();
   const [open, setOpen] = useState(false);
@@ -120,270 +221,126 @@ export function StudyBackgroundPanel() {
         document.body,
       )}
 
+      {/* Nhóm Giao diện: bỏ lớp tối, thu bảng xuống đáy (mobile) hoặc sang phải (desktop) để thấy ngay nền vừa chọn. */}
       {open && createPortal(
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4" onClick={() => setOpen(false)}>
+        <div className={`fixed inset-0 z-[100] flex items-end justify-center transition-colors sm:p-4 ${section === "look" ? "bg-transparent sm:items-stretch sm:justify-end" : "bg-black/60 sm:items-center"}`} onClick={() => setOpen(false)}>
           <div
             role="dialog"
             aria-modal="true"
             aria-label="Cài đặt học"
-            className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-2xl border border-stone-200 bg-white text-stone-900 shadow-2xl dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100"
+            style={{ "--sheet-h": `${effectiveHeight}dvh` } as React.CSSProperties}
+            className={`flex w-full flex-col overflow-hidden rounded-t-3xl max-sm:h-[var(--sheet-h)] ${section === "look" ? "sm:max-h-none" : "sm:max-h-[88dvh]"} border border-stone-200 bg-white text-stone-900 shadow-2xl sm:max-w-lg sm:rounded-2xl dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100`}
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-stone-200 bg-white px-4 py-3 dark:border-stone-700 dark:bg-stone-900 sm:px-6">
-              <div>
-                <h2 className="text-sm font-black">Cài đặt học</h2>
-                <p className="mt-0.5 text-[11px] text-stone-500 dark:text-stone-400">Tùy chỉnh nền, âm thanh và giao diện khi học</p>
-              </div>
-              <button type="button" onClick={() => setOpen(false)} aria-label="Đóng" className="rounded-lg p-1.5 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 cursor-pointer"><X className="h-4 w-4" /></button>
+            {/* Thanh kéo trên mobile, tiêu đề, và 3 nhóm cài đặt. */}
+            <div
+              onPointerDown={onSheetPointerDown}
+              onPointerMove={onSheetPointerMove}
+              onPointerUp={onSheetPointerUp}
+              onPointerCancel={onSheetPointerUp}
+              aria-hidden
+              className="flex h-6 shrink-0 cursor-row-resize touch-none items-center justify-center sm:hidden"
+            >
+              <span className="h-1.5 w-10 rounded-full bg-stone-300 dark:bg-stone-700" />
             </div>
-
-            <div className="grid grid-cols-1 gap-3 p-4 sm:p-6 md:grid-cols-2 xl:grid-cols-3">
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-bold text-stone-500 dark:text-stone-400">Giao diện sáng / tối</p>
-              <EggThemeToggle />
+            <div className="flex items-center justify-between gap-3 px-5 pb-3 pt-1 sm:pt-4">
+              <h2 className="text-base font-black">Cài đặt học</h2>
+              <button type="button" onClick={() => setOpen(false)} aria-label="Đóng" className="rounded-full p-2 text-stone-400 hover:bg-stone-100 hover:text-stone-700 dark:hover:bg-stone-800 dark:hover:text-stone-200 cursor-pointer"><X className="h-4 w-4" /></button>
             </div>
-
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-xs font-bold text-stone-500 dark:text-stone-400">Nền động (gradient chuyển màu chậm)</p>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={bg.kind === "animated"}
-                aria-label="Bật nền động"
-                onClick={() => update({ kind: bg.kind === "animated" ? "gradient" : "animated" })}
-                className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${bg.kind === "animated" ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
-              >
-                <span className={`absolute left-0 top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${bg.kind === "animated" ? "translate-x-[22px]" : "translate-x-0.5"}`} />
-              </button>
-            </div>
-
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-xs font-bold text-stone-500 dark:text-stone-400">Tự đổi nền ngẫu nhiên sau mỗi 10 thẻ</p>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={randomBgEvery10}
-                aria-label="Tự đổi nền ngẫu nhiên sau mỗi 10 thẻ"
-                onClick={() => setRandomStudyBgEvery10(!randomBgEvery10)}
-                className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${randomBgEvery10 ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
-              >
-                <span className={`absolute left-0 top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${randomBgEvery10 ? "translate-x-[22px]" : "translate-x-0.5"}`} />
-              </button>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-bold text-stone-500 dark:text-stone-400">Tắt âm thanh từ vựng</p>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={muteWordAudio}
-                aria-label="Tắt âm thanh từ vựng"
-                onClick={() => setMuteWordAudio(!muteWordAudio)}
-                className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${muteWordAudio ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
-              >
-                <span className={`absolute left-0 top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${muteWordAudio ? "translate-x-[22px]" : "translate-x-0.5"}`} />
-              </button>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-bold text-stone-500 dark:text-stone-400">Tắt âm thanh ví dụ</p>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={muteExampleAudio}
-                aria-label="Tắt âm thanh câu ví dụ"
-                onClick={() => setMuteExampleAudio(!muteExampleAudio)}
-                className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${muteExampleAudio ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
-              >
-                <span className={`absolute left-0 top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${muteExampleAudio ? "translate-x-[22px]" : "translate-x-0.5"}`} />
-              </button>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-bold text-stone-500 dark:text-stone-400">Tắt &amp; Ẩn âm thanh</p>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={muteAndHideAudio}
-                aria-label="Tắt và ẩn mọi nút phát âm trên thẻ học"
-                onClick={() => setMuteAndHideAudio(!muteAndHideAudio)}
-                className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${muteAndHideAudio ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
-              >
-                <span className={`absolute left-0 top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${muteAndHideAudio ? "translate-x-[22px]" : "translate-x-0.5"}`} />
-              </button>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-bold text-stone-500 dark:text-stone-400">Tắt phát âm thanh tự động</p>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={disableAutoPronounce}
-                aria-label="Tắt tự động phát âm khi ra thẻ hoặc lật thẻ"
-                onClick={() => setDisableAutoPronounce(!disableAutoPronounce)}
-                className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${disableAutoPronounce ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
-              >
-                <span className={`absolute left-0 top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${disableAutoPronounce ? "translate-x-[22px]" : "translate-x-0.5"}`} />
-              </button>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-bold text-stone-500 dark:text-stone-400">Ẩn nút Hỏi ChatGPT</p>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={hideChatGpt}
-                aria-label="Ẩn nút Hỏi ChatGPT khi học"
-                onClick={() => setHideChatGpt(!hideChatGpt)}
-                className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${hideChatGpt ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
-              >
-                <span className={`absolute left-0 top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${hideChatGpt ? "translate-x-[22px]" : "translate-x-0.5"}`} />
-              </button>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-bold text-stone-500 dark:text-stone-400">Ẩn nút Từ điển</p>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={hideDictionary}
-                aria-label="Ẩn nút Từ điển khi học"
-                onClick={() => setHideDictionary(!hideDictionary)}
-                className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${hideDictionary ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
-              >
-                <span className={`absolute left-0 top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${hideDictionary ? "translate-x-[22px]" : "translate-x-0.5"}`} />
-              </button>
-            </div>
-
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-xs font-bold text-stone-500 dark:text-stone-400">Chế độ Tinder</p>
-                <p className="text-[11px] text-stone-400 dark:text-stone-500">Chạm thẻ để lật, kéo trái là Quên, kéo phải là Thuộc</p>
-              </div>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={tinderMode}
-                aria-label="Bật chế độ học Tinder"
-                onClick={() => setTinderMode(!tinderMode)}
-                className={`relative h-6 w-11 shrink-0 rounded-full transition cursor-pointer ${tinderMode ? "bg-sky-500" : "bg-stone-300 dark:bg-stone-700"}`}
-              >
-                <span className={`absolute left-0 top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${tinderMode ? "translate-x-[22px]" : "translate-x-0.5"}`} />
-              </button>
-            </div>
-
-            <div>
-              <p className="mb-2 text-xs font-bold text-stone-500 dark:text-stone-400">Màu gradient</p>
-              <div className="grid grid-cols-6 gap-2">
-                {GRADIENT_PRESETS.map((preset) => {
-                  const active = bg.kind === "gradient" && bg.from === preset.from && bg.to === preset.to;
-                  return (
-                    <button
-                      key={preset.name}
-                      type="button"
-                      title={preset.name}
-                      aria-label={`Gradient ${preset.name}`}
-                      aria-pressed={active}
-                      onClick={() => update({ kind: "gradient", from: preset.from, to: preset.to })}
-                      className={`h-9 rounded-lg border-2 transition cursor-pointer ${active ? "border-sky-500" : "border-transparent hover:border-stone-300"}`}
-                      style={{ backgroundImage: `linear-gradient(135deg, ${preset.from}, ${preset.to})` }}
-                    />
-                  );
-                })}
-              </div>
-              <div className="mt-3 flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400">
-                <label className="flex items-center gap-1.5">Từ <input type="color" value={bg.from} onChange={(e) => update({ kind: "gradient", from: e.target.value })} aria-label="Màu bắt đầu" className="h-7 w-9 cursor-pointer rounded border border-stone-300 bg-transparent p-0.5 dark:border-stone-600" /></label>
-                <label className="flex items-center gap-1.5">đến <input type="color" value={bg.to} onChange={(e) => update({ kind: "gradient", to: e.target.value })} aria-label="Màu kết thúc" className="h-7 w-9 cursor-pointer rounded border border-stone-300 bg-transparent p-0.5 dark:border-stone-600" /></label>
-              </div>
-            </div>
-
-            <div>
-              <p className="mb-2 text-xs font-bold text-stone-500 dark:text-stone-400">Ảnh nền</p>
-              <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => { void pickImage(e.target.files?.[0]); e.target.value = ""; }} />
-              <div className="grid grid-cols-3 gap-2">
-                {STUDY_BACKGROUND_GALLERY.slice(0, 3).map((src, index) => {
-                  const active = bg.kind === "image" && bg.image === src;
-                  return (
-                    <button
-                      key={src}
-                      type="button"
-                      onClick={() => update({ kind: "image", image: src })}
-                      aria-pressed={active}
-                      aria-label={`Chọn ảnh nền ${index + 1}`}
-                      title={`Ảnh nền ${index + 1}`}
-                      className={`relative h-16 overflow-hidden rounded-xl border-2 bg-cover bg-center transition cursor-pointer ${active ? "border-sky-500" : "border-transparent hover:border-stone-300"}`}
-                      style={{ backgroundImage: `url(${src})` }}
-                    >
-                      {active && (
-                        <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-sky-500 text-white">
-                          <Check className="h-2.5 w-2.5" strokeWidth={3.5} />
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-              <button
-                type="button"
-                onClick={() => setGalleryOpen(true)}
-                className="mb-2 mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl border border-stone-200 py-2 text-xs font-bold transition hover:bg-stone-100 dark:border-stone-700 dark:hover:bg-stone-800 cursor-pointer"
-              >
-                Xem tất cả {STUDY_BACKGROUND_GALLERY.length} ảnh nền
-              </button>
-              <div className="flex gap-2">
-                <button type="button" onClick={() => fileRef.current?.click()} className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-stone-200 py-2 text-xs font-bold hover:bg-stone-100 dark:border-stone-700 dark:hover:bg-stone-800 cursor-pointer">
-                  <ImagePlus className="h-4 w-4" /> {bg.image ? "Đổi ảnh" : "Chọn ảnh"}
+            <div role="tablist" aria-label="Nhóm cài đặt" className="mx-5 grid grid-cols-3 gap-1 rounded-xl bg-stone-100 p-1 dark:bg-stone-800">
+              {SECTIONS.map(({ key, label }) => (
+                <button key={key} type="button" role="tab" aria-selected={section === key} onClick={() => setSection(key)}
+                  className={`min-h-9 rounded-lg text-sm font-bold transition cursor-pointer ${section === key ? "bg-white text-stone-900 shadow-sm dark:bg-stone-950 dark:text-white" : "text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200"}`}>
+                  {label}
                 </button>
-                {bg.image && (
-                  <button type="button" onClick={() => update({ kind: bg.kind === "image" ? "none" : bg.kind, image: "" })} aria-label="Xóa ảnh" title="Xóa ảnh" className="rounded-xl border border-stone-200 px-3 text-rose-500 hover:bg-rose-500/10 dark:border-stone-700 cursor-pointer"><Trash2 className="h-4 w-4" /></button>
-                )}
-              </div>
-              {bg.image && bg.kind !== "image" && (
-                <button type="button" onClick={() => update({ kind: "image" })} className="mt-2 text-xs font-bold text-sky-600 hover:underline dark:text-sky-400 cursor-pointer">Dùng ảnh đã chọn</button>
+              ))}
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] pt-4">
+              {section === "study" && (
+                <div className="divide-y divide-stone-100 dark:divide-stone-800">
+                  <ToggleRow label="Vuốt thẻ để chấm" hint="Vuốt trái là Quên, vuốt phải là Thuộc. Thẻ thường thì chạm để lật." checked={tinderMode} onChange={setTinderMode} />
+                  <ToggleRow label="Thẻ gõ: phải gõ đúng mới qua" hint="Tắt thì gõ sai vẫn bấm được Thuộc." checked={requireExactTyping} onChange={setRequireExactTyping} />
+                  <ToggleRow label="Hiện nút Từ điển" checked={!hideDictionary} onChange={(on) => setHideDictionary(!on)} />
+                  <ToggleRow label="Hiện nút ChatGPT" checked={!hideChatGpt} onChange={(on) => setHideChatGpt(!on)} />
+                </div>
               )}
-            </div>
 
-            <div>
-              <div className="mb-2 flex items-center justify-between text-xs font-bold text-stone-500 dark:text-stone-400">
-                <label htmlFor="study-bg-opacity">Độ đậm nền</label>
-                <span className="tabular-nums text-stone-900 dark:text-stone-100">{bg.opacity}%</span>
-              </div>
-              <input
-                id="study-bg-opacity"
-                type="range"
-                min={10}
-                max={100}
-                step={5}
-                value={bg.opacity}
-                onChange={(e) => update({ opacity: Number(e.target.value) })}
-                className="w-full cursor-pointer accent-sky-500"
-              />
-            </div>
+              {section === "audio" && (
+                <div className="space-y-5">
+                  <ToggleRow label="Tự phát âm khi ra thẻ" hint="Tắt thì chỉ phát khi bấm nút loa." checked={!disableAutoPronounce} onChange={(on) => setDisableAutoPronounce(!on)} />
+                  <AudioModeRow label="Âm thanh từ vựng" value={wordMode} onChange={(mode) => setAudioMode("word", mode)} />
+                  <AudioModeRow label="Âm thanh câu ví dụ" value={exampleMode} onChange={(mode) => setAudioMode("example", mode)} />
+                </div>
+              )}
 
-            <div>
-              <div className="mb-2 flex items-center justify-between text-xs font-bold text-stone-500 dark:text-stone-400">
-                <label htmlFor="study-card-opacity">Độ đục khối học</label>
-                <span className="tabular-nums text-stone-900 dark:text-stone-100">{cardOpacity}%</span>
-              </div>
-              <input
-                id="study-card-opacity"
-                type="range"
-                min={30}
-                max={100}
-                step={5}
-                value={cardOpacity}
-                onChange={(e) => setStudyCardOpacity(Number(e.target.value))}
-                className="w-full cursor-pointer accent-sky-500"
-              />
-            </div>
+              {section === "look" && (
+                <div className="space-y-5">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-bold">Sáng / tối</p>
+                    <EggThemeToggle />
+                  </div>
 
-            <div className="space-y-2 md:col-span-2 xl:col-span-3">
-              {error && <p role="alert" className="text-xs text-rose-600">{error}</p>}
+                  <div>
+                    <p className="mb-2 text-sm font-bold">Nền</p>
+                    <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => { void pickImage(e.target.files?.[0]); e.target.value = ""; }} />
+                    <div className="grid grid-cols-6 gap-2">
+                      {GRADIENT_PRESETS.map((preset) => {
+                        const active = bg.kind === "gradient" && bg.from === preset.from && bg.to === preset.to;
+                        return (
+                          <button key={preset.name} type="button" title={preset.name} aria-label={`Gradient ${preset.name}`} aria-pressed={active}
+                            onClick={() => update({ kind: "gradient", from: preset.from, to: preset.to })}
+                            className={`h-10 rounded-lg border-2 transition cursor-pointer ${active ? "border-sky-500" : "border-transparent hover:border-stone-300"}`}
+                            style={{ backgroundImage: `linear-gradient(135deg, ${preset.from}, ${preset.to})` }} />
+                        );
+                      })}
+                    </div>
+                    <div className="mt-2 grid grid-cols-3 gap-2">
+                      {STUDY_BACKGROUND_GALLERY.slice(0, 3).map((src, index) => {
+                        const active = bg.kind === "image" && bg.image === src;
+                        return (
+                          <button key={src} type="button" onClick={() => update({ kind: "image", image: src })} aria-pressed={active} aria-label={`Chọn ảnh nền ${index + 1}`}
+                            className={`relative h-16 overflow-hidden rounded-xl border-2 bg-cover bg-center transition cursor-pointer ${active ? "border-sky-500" : "border-transparent hover:border-stone-300"}`}
+                            style={{ backgroundImage: `url(${src})` }}>
+                            {active && <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-sky-500 text-white"><Check className="h-2.5 w-2.5" strokeWidth={3.5} /></span>}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <div className="mt-2 flex gap-2">
+                      <button type="button" onClick={() => setGalleryOpen(true)} className="flex-1 rounded-xl border border-stone-200 py-2 text-xs font-bold hover:bg-stone-100 dark:border-stone-700 dark:hover:bg-stone-800 cursor-pointer">
+                        Tất cả {STUDY_BACKGROUND_GALLERY.length} ảnh
+                      </button>
+                      <button type="button" onClick={() => fileRef.current?.click()} className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-stone-200 py-2 text-xs font-bold hover:bg-stone-100 dark:border-stone-700 dark:hover:bg-stone-800 cursor-pointer">
+                        <ImagePlus className="h-4 w-4" /> Ảnh của bạn
+                      </button>
+                      {bg.image && (
+                        <button type="button" onClick={() => update({ kind: bg.kind === "image" ? "none" : bg.kind, image: "" })} aria-label="Xóa ảnh" title="Xóa ảnh" className="rounded-xl border border-stone-200 px-3 text-rose-500 hover:bg-rose-500/10 dark:border-stone-700 cursor-pointer"><Trash2 className="h-4 w-4" /></button>
+                      )}
+                    </div>
+                    <details className="mt-2 text-xs text-stone-500 dark:text-stone-400">
+                      <summary className="cursor-pointer font-bold">Tự chọn màu gradient</summary>
+                      <div className="mt-2 flex items-center gap-3">
+                        <label className="flex items-center gap-1.5">Từ <input type="color" value={bg.from} onChange={(e) => update({ kind: "gradient", from: e.target.value })} aria-label="Màu bắt đầu" className="h-7 w-9 cursor-pointer rounded border border-stone-300 bg-transparent p-0.5 dark:border-stone-600" /></label>
+                        <label className="flex items-center gap-1.5">đến <input type="color" value={bg.to} onChange={(e) => update({ kind: "gradient", to: e.target.value })} aria-label="Màu kết thúc" className="h-7 w-9 cursor-pointer rounded border border-stone-300 bg-transparent p-0.5 dark:border-stone-600" /></label>
+                      </div>
+                    </details>
+                  </div>
 
-              <button type="button" onClick={() => { saveStudyBackground({ ...DEFAULT_STUDY_BG }); setError(""); }} className="w-full rounded-xl py-2 text-xs font-bold text-stone-600 hover:bg-stone-100 dark:text-stone-300 dark:hover:bg-stone-800 cursor-pointer">
-                Bỏ nền, về mặc định
-              </button>
-            </div>
+                  <div className="divide-y divide-stone-100 dark:divide-stone-800">
+                    <ToggleRow label="Nền chuyển màu chậm" checked={bg.kind === "animated"} onChange={(on) => update({ kind: on ? "animated" : "gradient" })} />
+                    <ToggleRow label="Đổi nền ngẫu nhiên sau mỗi 10 thẻ" checked={randomBgEvery10} onChange={setRandomStudyBgEvery10} />
+                  </div>
+
+                  <SliderRow id="study-bg-opacity" label="Độ đậm nền" value={bg.opacity} min={10} onChange={(v) => update({ opacity: v })} />
+                  <SliderRow id="study-card-opacity" label="Độ đục thẻ học" value={cardOpacity} min={30} onChange={setStudyCardOpacity} />
+
+                  {error && <p role="alert" className="text-xs text-rose-600">{error}</p>}
+                  <button type="button" onClick={() => { saveStudyBackground({ ...DEFAULT_STUDY_BG }); setError(""); }} className="w-full rounded-xl py-2 text-xs font-bold text-stone-500 hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 cursor-pointer">
+                    Về giao diện mặc định
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>,

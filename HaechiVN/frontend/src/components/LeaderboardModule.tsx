@@ -51,13 +51,17 @@ const METRIC_LABEL: Record<TabKey, string> = {
   vocab: "Từ vựng",
 };
 
-type RangeUnit = "day" | "week" | "month";
+type RangeUnit = "day" | "week" | "month" | "all";
 
 const RANGE_UNITS: { key: RangeUnit; label: string }[] = [
   { key: "day", label: "Ngày" },
   { key: "week", label: "Tuần" },
   { key: "month", label: "Tháng" },
+  { key: "all", label: "All time" },
 ];
+
+// Mốc đầu cho All time: trước ngày ra mắt app, nên mọi dữ liệu đều nằm trong khoảng.
+const ALL_TIME_FROM = "2020-01-01";
 
 /** Hôm nay theo giờ Việt Nam (UTC+7), dạng YYYY-MM-DD. */
 function vnToday(): string {
@@ -74,6 +78,7 @@ function shiftDays(iso: string, days: number): string {
 function rangeFor(unit: RangeUnit, offset: number): Range {
   const today = vnToday();
   const base = new Date(`${today}T00:00:00Z`);
+  if (unit === "all") return { from: ALL_TIME_FROM, to: today };
   if (unit === "day") {
     const day = shiftDays(today, offset);
     return { from: day, to: day };
@@ -101,8 +106,8 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [vocabulary, setVocabulary] = useState<VocabularyLeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<TabKey>("xp");
-  const [unit, setUnit] = useState<RangeUnit>("day");
+  const [tab, setTab] = useState<TabKey>("streak");
+  const [unit, setUnit] = useState<RangeUnit>("all");
   const [offset, setOffset] = useState(0);
 
   const range = useMemo(() => rangeFor(unit, offset), [unit, offset]);
@@ -143,7 +148,7 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
   const tableOffset = hasPodium ? 3 : 0;
   const tableList = sortedList.slice(tableOffset);
   const showTable = loading || sortedList.length === 0 || tableList.length > 0;
-  const rangeLabel = range.from === range.to
+  const rangeLabel = unit === "all" ? "Toàn thời gian" : range.from === range.to
     ? formatDay(range.from)
     : `${formatDay(range.from)} – ${formatDay(range.to)}`;
 
@@ -152,12 +157,12 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
       {/* Không dùng <header>: globals.css tô nền trắng cho mọi header ở giao diện sáng.
           Không có tiêu đề trang: sidebar đã chỉ rõ đang ở mục Bảng xếp hạng. */}
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div role="group" aria-label="Xếp hạng theo" className="flex flex-wrap rounded-xl border border-stone-200 bg-stone-100 p-1 dark:border-stone-800 dark:bg-transparent">
+        <div role="group" aria-label="Xếp hạng theo" className="flex w-full rounded-xl border border-stone-200 bg-stone-100 p-1 sm:w-auto dark:border-stone-800 dark:bg-transparent">
           {TABS.map(({ key, label, icon: Icon }) => {
             const active = tab === key;
             return (
               <button key={key} type="button" onClick={() => setTab(key)} aria-pressed={active}
-                className={`inline-flex min-h-9 items-center gap-1.5 rounded-lg px-3 text-sm font-bold transition-colors duration-200 ${
+                className={`inline-flex min-h-9 flex-1 items-center justify-center gap-1.5 rounded-lg px-3 text-sm sm:flex-none font-bold transition-colors duration-200 ${
                   active ? TAB_ACTIVE[key] : "text-stone-700 hover:bg-white hover:text-stone-900 dark:text-stone-400 dark:hover:bg-transparent dark:hover:text-white"
                 }`}>
                 <Icon aria-hidden="true" className="h-4 w-4" />{label}
@@ -166,23 +171,23 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
           })}
         </div>
 
-        <div role="group" aria-label="Khoảng thời gian" className="flex flex-wrap items-center gap-2">
-          <span aria-live="polite" className="text-xs font-bold tabular-nums text-stone-700 dark:text-stone-300">
+        <div role="group" aria-label="Khoảng thời gian" className="flex w-full flex-col items-center gap-2 sm:w-auto sm:flex-row">
+          <span aria-live="polite" className="sr-only">
             {rangeLabel}
           </span>
           {/* Mũi tên bao quanh cụm Ngày/Tuần/Tháng: ‹ [Ngày|Tuần|Tháng] › */}
-          <div className="flex items-center gap-1 rounded-xl border border-stone-200 px-1 dark:border-stone-800">
-            <button type="button" onClick={() => setOffset((value) => value - 1)} aria-label="Khoảng trước"
-              className="flex h-8 w-8 items-center justify-center rounded-lg text-stone-600 transition-colors hover:bg-stone-100 hover:text-stone-900 dark:text-stone-300 dark:hover:bg-white/5">
+          <div className="flex w-full items-center gap-1 rounded-xl border border-stone-200 px-1 sm:w-auto dark:border-stone-800">
+            <button type="button" onClick={() => setOffset((value) => value - 1)} disabled={unit === "all"} aria-label="Khoảng trước"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-stone-600 transition-colors hover:bg-stone-100 hover:text-stone-900 disabled:opacity-30 disabled:hover:bg-transparent dark:text-stone-300 dark:hover:bg-white/5">
               <ChevronLeft aria-hidden="true" className="h-4 w-4" />
             </button>
-            <div className="flex rounded-lg bg-stone-100 p-0.5 dark:bg-white/5">
+            <div className="flex flex-1 rounded-lg bg-stone-100 p-0.5 dark:bg-white/5">
               {RANGE_UNITS.map(({ key, label }) => {
                 const active = unit === key;
                 return (
                   <button key={key} type="button" aria-pressed={active}
                     onClick={() => { setUnit(key); setOffset(0); }}
-                    className={`inline-flex min-h-8 items-center rounded-md px-3 text-xs font-bold transition-colors duration-200 ${
+                    className={`inline-flex min-h-8 flex-1 items-center justify-center whitespace-nowrap rounded-md px-2 text-xs sm:flex-none sm:px-3 font-bold transition-colors duration-200 ${
                       active ? "bg-stone-900 text-white dark:bg-white dark:text-stone-900" : "text-stone-700 hover:bg-white hover:text-stone-900 dark:text-stone-400 dark:hover:bg-transparent dark:hover:text-white"
                     }`}>
                     {label}
@@ -190,7 +195,7 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
                 );
               })}
             </div>
-            <button type="button" onClick={() => setOffset((value) => value + 1)} disabled={offset >= 0} aria-label="Khoảng sau"
+            <button type="button" onClick={() => setOffset((value) => value + 1)} disabled={offset >= 0 || unit === "all"} aria-label="Khoảng sau"
               className="flex h-8 w-8 items-center justify-center rounded-lg text-stone-600 transition-colors hover:bg-stone-100 hover:text-stone-900 disabled:opacity-30 disabled:hover:bg-transparent dark:text-stone-300 dark:hover:bg-white/5">
               <ChevronRight aria-hidden="true" className="h-4 w-4" />
             </button>
@@ -198,15 +203,16 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
         </div>
       </div>
 
+      {/* Bục nhận giải: #2 trái, #1 giữa (cao hơn), #3 phải. */}
       {!loading && hasPodium && (
-        <div aria-label="Top 3" className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <div aria-label="Top 3" className="mt-5 grid grid-cols-3 items-end gap-2 sm:gap-3">
           {top.map((user, idx) => (
-            <div key={user.id || idx} className="relative flex flex-col items-center gap-1.5 rounded-2xl border border-stone-200 bg-white p-4 text-center dark:border-stone-800 dark:bg-stone-900/60">
+            <div key={user.id || idx} className={`relative flex min-w-0 flex-col items-center gap-1.5 rounded-2xl border border-stone-200 bg-white px-2 text-center sm:px-4 dark:border-stone-800 dark:bg-stone-900/60 ${["order-2 py-6", "order-1 py-4", "order-3 py-3"][idx]}`}>
               <span className="inline-flex items-center rounded-full border border-stone-200 px-2 py-0.5 text-[11px] font-black tabular-nums text-stone-600 dark:border-stone-700 dark:text-stone-300">
                 #{idx + 1}
               </span>
               {isMe(user) && (
-                <span className="absolute right-3 top-3 text-[10px] font-black text-blue-700 dark:text-blue-400">bạn</span>
+                <span className="absolute right-2 top-2 text-[10px] font-black text-blue-700 dark:text-blue-400">bạn</span>
               )}
               <Link href={`/member?id=${encodeURIComponent(user.id)}`} aria-label={`Mở hồ sơ ${user.name}`} className="mt-0.5">
                 {user.avatar_url ? (
@@ -286,8 +292,6 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
                     <div className="w-24 shrink-0 text-right tabular-nums">
                       <p className={`text-base font-black ${SCORE_COLOR[tab]}`}>{score(user)}</p>
                       <p className="flex items-center justify-end gap-1 text-xs text-stone-500 dark:text-stone-400">
-                        {tab === "xp" && <><Flame aria-hidden="true" className="h-3 w-3" />{fmt(user.streak)} ngày</>}
-                        {tab === "streak" && <><Zap aria-hidden="true" className="h-3 w-3" />{fmt(user.xp)} XP</>}
                         {tab === "vocab" && <><BookOpen aria-hidden="true" className="h-3 w-3" />{fmt(user.vocab_today)} từ hôm nay</>}
                       </p>
                     </div>

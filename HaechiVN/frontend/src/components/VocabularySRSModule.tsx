@@ -9,7 +9,6 @@ import { AnkiDeck, AnkiReviewEvent } from "../lib/ankiParser";
 import { useApp } from "../contexts/AppProvider";
 import {
   Volume2,
-  Sparkles,
   ChevronRight,
   ChevronDown,
   X,
@@ -34,7 +33,7 @@ import { addExtraNew, DailyLimits, effectiveNewLimit, loadProgress, recordCard, 
 import { parseJson, useLocalState } from "../lib/localStore";
 import { speakKorean } from "../lib/koreanSpeech";
 import { buildStudyQueue, LEARN_AHEAD_MINUTES, learnAheadCards, sessionProgress } from "../lib/studyQueue";
-import { useStudyCardOpacity, useDisableAutoPronounce, useHideChatGpt, useHideDictionary, useMuteAndHideAudio, useMuteExampleAudio, useMuteWordAudio, useRandomStudyBgEvery10, useTinderMode } from "../lib/studyPreferences";
+import { useStudyCardOpacity, useDisableAutoPronounce, useHideChatGpt, useHideDictionary, useHideExampleAudio, useHideWordAudio, useMuteExampleAudio, useRequireExactTyping, useMuteWordAudio, useRandomStudyBgEvery10, useTinderMode } from "../lib/studyPreferences";
 import { LockKeyhole, Globe2 } from "lucide-react";
 import { detectDictionarySearchLanguage, naverLookupUrl, searchLearningDictionary, type DictionaryEntry } from "../lib/dictionarySearch";
 
@@ -52,7 +51,7 @@ interface VocabularySRSModuleProps {
 }
 
 import type { AssignedDeckClassJson, AssignedDeckItem, AssignmentPayload, DeckTreeNode, VocabularyCard } from "../lib/vocabCards";
-import { findNodeById, filterTree, assignmentCardsOf, buildAssignedTree, deckPathOf, stateKeyOf, checkWritingVariantMatch, isCardAWritingCard, cardStateFor, formatNextReview, extractImageSrc, extractAudioSrc, cleanHtmlText, TYPING_PUNCTUATION, stripTypingPunctuation, cleanTextOnly, toSlug } from "../lib/vocabCards";
+import { findNodeById, filterTree, assignmentCardsOf, buildAssignedTree, deckPathOf, stateKeyOf, checkWritingVariantMatch, isCardAWritingCard, cardStateFor, formatNextReview, extractImageSrc, extractAudioSrc, cleanHtmlText, TYPING_PUNCTUATION, stripTypingPunctuation, cleanTextOnly, toSlug, posTone } from "../lib/vocabCards";
 export type { VocabularyCard, DeckTreeNode } from "../lib/vocabCards";
 
 const DICT_PANEL_WIDTH_KEY = "haechi.dictionaryPanelWidth";
@@ -153,7 +152,9 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const dragRef = useRef<{ startX: number; pointerId: number } | null>(null);
   const muteWordAudio = useMuteWordAudio();
   const muteExampleAudio = useMuteExampleAudio();
-  const muteAndHideAudio = useMuteAndHideAudio();
+  const hideWordAudio = useHideWordAudio();
+  const hideExampleAudio = useHideExampleAudio();
+  const requireExactTyping = useRequireExactTyping();
   const disableAutoPronounce = useDisableAutoPronounce();
   const randomBgEvery10 = useRandomStudyBgEvery10();
   const answeredCountRef = useRef(0);
@@ -182,6 +183,14 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   // Resume banner state
   const [lastStudiedDeckId, setLastStudiedDeckId] = useLocalState("haechivn_last_lesson_id", parseText, serializeText);
   const [lastStudiedTitle, setLastStudiedTitle] = useLocalState("haechivn_last_lesson_title", parseText, serializeText);
+  // Server giữ bản gốc (đồng bộ giữa thiết bị); localStorage chỉ là bản làm việc, nạp lại từ server mỗi lần mở trang.
+  const serverLastLessonId = currentUser?.last_lesson_id || "";
+  const serverLastLessonTitle = currentUser?.last_lesson_title || "";
+  useEffect(() => {
+    if (!serverLastLessonId || !serverLastLessonTitle) return;
+    setLastStudiedDeckId(serverLastLessonId);
+    setLastStudiedTitle(serverLastLessonTitle);
+  }, [serverLastLessonId, serverLastLessonTitle, setLastStudiedDeckId, setLastStudiedTitle]);
 
   // FSRS & Local Storage Card Memory
   const [masteredWords, setMasteredWords] = useLocalState("haechivn_mastered", parseWordList);
@@ -378,7 +387,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
           id: c.id || `custom-${idx}`,
           word: c.koreanText || c.frontText || "",
           meaning: c.vietnameseMeaning || c.backText || "",
-          pos: "Từ vựng",
+          pos: "",
           audio_word: c.audioUrls?.[0] || "",
           audio_meaning: c.audioUrls?.[1] || "",
           transliteration: "",
@@ -662,11 +671,16 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     if (!options?.reviewOnly) {
       setLastStudiedDeckId(deckId);
       setLastStudiedTitle(title);
+      if (currentUser && !currentUser.id.startsWith("guest_") && !currentUser.id.startsWith("local_")) {
+        void ApiClient.saveLastLesson(deckId, title).catch(() => {});
+      }
     }
   }, [cardStateMap, currentUser, dailyLimits, exitStudy, setActiveStudySession, setLastStudiedDeckId, setLastStudiedTitle]);
 
 
   // Resume last lesson (fallback to first available subdeck/lesson)
+  // Bộ đã lưu không còn trong thư viện (bị xoá, hết quyền) thì ẩn nút Học tiếp, khỏi bấm mà không có gì xảy ra.
+  const canResume = Boolean(lastStudiedDeckId && lastStudiedTitle && findNodeById(deckTree, lastStudiedDeckId));
   const resumeLastLesson = useCallback(() => {
     const targetId = lastStudiedDeckId;
     if (targetId) {
@@ -885,20 +899,20 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
   const currentCard = activeCardsList[currentCardIndex] || activeCardsList[0];
 
   useEffect(() => {
-    muteWordRef.current = muteWordAudio || muteAndHideAudio;
-    if (muteWordAudio || muteAndHideAudio) {
+    muteWordRef.current = muteWordAudio || hideWordAudio;
+    if (muteWordAudio || hideWordAudio) {
       audioPlayerRef.current?.pause();
       audioPlayerRef.current = null;
     }
-  }, [muteWordAudio, muteAndHideAudio]);
+  }, [muteWordAudio, hideWordAudio]);
 
   useEffect(() => {
-    muteExampleRef.current = muteExampleAudio || muteAndHideAudio;
-    if (muteExampleAudio || muteAndHideAudio) {
+    muteExampleRef.current = muteExampleAudio || hideExampleAudio;
+    if (muteExampleAudio || hideExampleAudio) {
       audioPlayerRef.current?.pause();
       audioPlayerRef.current = null;
     }
-  }, [muteExampleAudio, muteAndHideAudio]);
+  }, [muteExampleAudio, hideExampleAudio]);
   const studyMode = currentCard?.sibling ? "typing" : "flip";
   const nextReviewLabel = (rating: FSRSRating): string => {
     if (!currentCard) return "";
@@ -978,7 +992,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
   // Handle Response (Quên: false | Thuộc: true)
   const handleResponse = useCallback((isMastered: boolean, customRating?: FSRSRating) => {
     if (!currentCard) return;
-    if (studyMode === "typing" && isMastered && !isTypedCorrect(typedInput)) return;
+    if (studyMode === "typing" && isMastered && requireExactTyping && !isTypedCorrect(typedInput)) return;
     const wordKey = currentCard.word;
     const activeKey = stateKeyOf(currentCard);
     if (lastRatedCardRef.current === activeKey || Date.now() - answerShownAtRef.current < 450) return;
@@ -1483,7 +1497,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
   };
 
   // Chế độ Tinder chỉ cho thẻ lật (Review), không áp cho thẻ gõ và thẻ Writing.
-  const tinderActive = tinderMode && studyMode === "flip" && !isCardAWritingCard(currentCard);
+  const tinderActive = tinderMode && !isCardAWritingCard(currentCard);
   const SWIPE_THRESHOLD = 100;
   const isInteractiveTarget = (target: EventTarget | null) =>
     target instanceof Element && Boolean(target.closest("button, a, input, textarea, select, [role='button'], [data-no-swipe]"));
@@ -1495,8 +1509,8 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     },
     onPointerMove: (e: React.PointerEvent<HTMLDivElement>) => {
       const drag = dragRef.current;
-      // Chỉ kéo được sau khi đã lật (đã thấy đáp án).
-      if (!drag || drag.pointerId !== e.pointerId || !isFlipped) return;
+      // Kéo được cả khi chưa lật: tự đánh giá Quên/Thuộc mà không cần xem đáp án.
+      if (!drag || drag.pointerId !== e.pointerId) return;
       setDragX(e.clientX - drag.startX);
     },
     onPointerUp: (e: React.PointerEvent<HTMLDivElement>) => {
@@ -1505,13 +1519,17 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
       if (!drag || drag.pointerId !== e.pointerId) return;
       const dx = e.clientX - drag.startX;
       setDragX(0);
+      if (Math.abs(dx) >= SWIPE_THRESHOLD) {
+        handleResponse(dx > 0);
+        return;
+      }
+      // Thẻ gõ: chạm không lật/chấm (người học đang gõ), chỉ vuốt mới chấm.
+      if (studyMode === "typing") return;
       if (!isFlipped) {
         if (Math.abs(dx) < 10) revealAnswer();
         return;
       }
-      if (Math.abs(dx) >= SWIPE_THRESHOLD) {
-        handleResponse(dx > 0);
-      } else if (Math.abs(dx) < 10) {
+      if (Math.abs(dx) < 10) {
         // Chạm (không kéo): nửa phải là Thuộc, nửa trái là Quên.
         const rect = e.currentTarget.getBoundingClientRect();
         handleResponse(e.clientX - rect.left > rect.width / 2);
@@ -1523,13 +1541,33 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     },
   } : {};
 
+  // Kéo thẻ: phủ màu cả thẻ + nhãn lớn ở giữa, đậm dần tới ngưỡng vuốt (đủ ngưỡng thì nhãn đặc màu).
+  const swipeOverlay = tinderActive && dragX !== 0 ? (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center rounded-2xl" style={{ backgroundColor: dragX > 0 ? `rgb(16 185 129 / ${Math.min(0.28, Math.abs(dragX) / SWIPE_THRESHOLD * 0.28)})` : `rgb(244 63 94 / ${Math.min(0.28, Math.abs(dragX) / SWIPE_THRESHOLD * 0.28)})` }}>
+      <span
+        className={`rounded-2xl border-4 px-6 py-2 text-3xl font-black uppercase tracking-wide shadow-lg ${dragX > 0 ? "border-emerald-500" : "border-rose-500"} ${Math.abs(dragX) >= SWIPE_THRESHOLD ? (dragX > 0 ? "bg-emerald-500 text-white" : "bg-rose-500 text-white") : (dragX > 0 ? "bg-white/90 text-emerald-600 dark:bg-stone-900/90" : "bg-white/90 text-rose-600 dark:bg-stone-900/90")}`}
+        style={{ opacity: Math.min(1, 0.35 + Math.abs(dragX) / SWIPE_THRESHOLD), transform: `rotate(${dragX > 0 ? -8 : 8}deg) scale(${0.8 + Math.min(1, Math.abs(dragX) / SWIPE_THRESHOLD) * 0.2})` }}
+      >
+        {dragX > 0 ? "Thuộc ✓" : "✗ Quên"}
+      </span>
+    </div>
+  ) : null;
+
+  // Kéo thẻ: nút cùng hướng phóng to dần, nút kia mờ đi.
+  const dragPull = tinderActive ? Math.max(-1, Math.min(1, dragX / SWIPE_THRESHOLD)) : 0;
+  const dragButtonStyle = (side: 1 | -1): React.CSSProperties => {
+    const pull = Math.max(0, dragPull * side);
+    const other = Math.max(0, -dragPull * side);
+    return { color: "#fff", transform: `scale(${1 + pull * 0.08})`, opacity: 1 - other * 0.6, boxShadow: pull ? `0 0 0 ${Math.round(pull * 4)}px ${side > 0 ? "rgb(16 185 129 / 0.35)" : "rgb(244 63 94 / 0.35)"}` : undefined };
+  };
+
   const studyActions = (
     <>
-              {!isFlipped && tinderActive ? (
+              {!isFlipped && tinderActive && studyMode === "flip" && dragX === 0 ? (
                 <p className="h-12 flex items-center justify-center text-sm font-bold text-stone-500 dark:text-stone-400 select-none">
                   Chạm vào thẻ để lật
                 </p>
-              ) : !isFlipped ? (
+              ) : !isFlipped && dragX === 0 ? (
                 /* Trạng thái 1: Chưa lật -> Nút Hiện Đáp Án */
                 <button
                   onClick={() => {
@@ -1554,19 +1592,19 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                   <div className="grid grid-cols-2 gap-3 sm:gap-4">
                     <button
                       onClick={() => handleResponse(false)}
-                      style={{ color: "#fff" }}
+                      style={dragButtonStyle(-1)}
                       className="h-12 rounded-xl bg-rose-500 hover:bg-rose-600 font-bold text-sm flex items-center justify-center gap-2 transition cursor-pointer"
                     >
-                      <span>Quên{nextReviewLabel("again")}</span>
+                      <span>Quên{isFlipped ? nextReviewLabel("again") : ""}</span>
                     </button>
 
                     <button
                       onClick={() => handleResponse(true)}
-                      disabled={studyMode === "typing" && !isTypedCorrect(typedInput)}
-                      style={{ color: "#fff" }}
+                      disabled={studyMode === "typing" && requireExactTyping && !isTypedCorrect(typedInput)}
+                      style={dragButtonStyle(1)}
                       className="h-12 rounded-xl bg-emerald-500 hover:bg-emerald-600 font-bold text-sm flex items-center justify-center gap-2 transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                     >
-                      <span>Thuộc{nextReviewLabel("good")}</span>
+                      <span>Thuộc{isFlipped ? nextReviewLabel("good") : ""}</span>
                     </button>
                   </div>
                 </div>
@@ -1625,17 +1663,18 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     <button
       onClick={startReviewAll}
       title="Chỉ ôn lại những thẻ đã học trong thư viện của bạn"
-      className="flex h-full min-h-[74px] w-full flex-col items-center justify-center rounded-2xl border border-stone-200 bg-white px-4 text-center transition-colors hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900/60 cursor-pointer"
+      className="flex h-full min-h-[56px] w-full flex-col items-center justify-center rounded-2xl border border-stone-200 bg-white px-2 text-center sm:min-h-[74px] sm:px-4 transition-colors hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900/60 cursor-pointer"
     >
-      <span className="text-[11px] font-bold text-stone-500 dark:text-stone-400">Ôn tập</span>
-      <span className="mt-0.5 text-lg font-black text-stone-900 dark:text-white">
+      <span className="text-sm font-black text-stone-900 sm:hidden dark:text-white">Ôn tập ({libraryDue})</span>
+      <span className="hidden text-[11px] font-bold text-stone-500 sm:inline dark:text-stone-400">Ôn tập</span>
+      <span className="mt-0.5 hidden text-lg font-black text-stone-900 sm:inline dark:text-white">
         {libraryDue} thẻ đến hạn
       </span>
     </button>
   );
 
   return (
-    <div className="flex w-full min-h-[calc(100vh-6rem)] pb-12 transition-colors lg:items-start lg:gap-4">
+    <div className={`flex w-full transition-colors lg:items-start lg:gap-4 ${viewMode === "study" ? "" : "min-h-[calc(100vh-6rem)] pb-12"}`}>
       {/* ====================================================================
           NỘI DUNG CHÍNH (CONTAINER)
           ==================================================================== */}
@@ -1677,21 +1716,21 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
             </div>
 
             {/* Banner tiếp tục học lượt trước + Ôn tập + Từ mới gộp chung một hàng trên desktop */}
-            <div className={`grid gap-3 sm:items-stretch ${lastStudiedDeckId && lastStudiedTitle ? "sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]" : "sm:grid-cols-[minmax(0,1fr)_auto]"}`}>
-            {lastStudiedDeckId && lastStudiedTitle ? (
+            <div className={`grid items-stretch gap-2 sm:gap-3 ${canResume ? "grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]" : "grid-cols-[minmax(0,1fr)_auto]"}`}>
+            {canResume ? (
               <>
                 <button
                   onClick={resumeLastLesson}
                   title="Học tiếp ngay"
-                  className="group flex h-full w-full items-center justify-center gap-3 rounded-2xl border border-stone-200 bg-white px-4 py-3 text-center transition-colors hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900/60 cursor-pointer"
+                  className="group flex h-full w-full items-center justify-center gap-1 rounded-2xl border border-stone-200 bg-white px-2 py-3 text-center sm:gap-3 sm:px-4 transition-colors hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900/60 cursor-pointer"
                 >
                   <span className="min-w-0">
-                    <span className="block text-[11px] font-bold text-stone-500 dark:text-stone-400">Học tiếp</span>
-                    <span className="mt-0.5 block truncate text-base font-black text-stone-900 dark:text-white">
+                    <span className="block text-sm font-black text-stone-900 sm:text-[11px] sm:font-bold sm:text-stone-500 dark:text-white sm:dark:text-stone-400">Học tiếp</span>
+                    <span className="mt-0.5 hidden truncate text-base font-black text-stone-900 sm:block dark:text-white">
                       {lastStudiedTitle}
                     </span>
                   </span>
-                  <ChevronRight className="h-5 w-5 shrink-0 text-stone-400 transition-transform group-hover:translate-x-0.5 group-hover:text-sky-600 dark:group-hover:text-sky-400" />
+                  <ChevronRight className="hidden h-5 w-5 shrink-0 text-stone-400 sm:block transition-transform group-hover:translate-x-0.5 group-hover:text-sky-600 dark:group-hover:text-sky-400" />
                 </button>
                 {reviewButton}
                 <div className="flex h-full items-stretch">
@@ -1776,7 +1815,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
             </div>
           ) : currentCard ? (
             <div
-              className="min-h-[calc(100vh-140px)] flex flex-col justify-between py-2 pb-28 animate-reveal"
+              className="min-h-[calc(100dvh-190px)] flex flex-col justify-between py-2 pb-28 max-sm:min-h-[calc(100dvh-170px)] max-sm:pb-0 lg:min-h-[calc(100dvh-110px)] lg:pb-24 animate-reveal"
               // Tinder: chạm bất cứ đâu trên màn học (ngoài nút/ô nhập) để lật thẻ.
               onClick={tinderActive && !isFlipped ? (e) => { if (!isInteractiveTarget(e.target)) revealAnswer(); } : undefined}
             >
@@ -2193,19 +2232,13 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
             {studyMode === "flip" && !isCardAWritingCard(currentCard) && (
               <div
                 {...tinderHandlers}
-                className={`relative mx-auto w-full mb-5 ${tinderActive ? "select-none cursor-pointer touch-pan-y" : "select-text"} ${activeImageSrc ? "max-w-4xl" : "max-w-2xl"}`}
+                className={`relative mx-auto mb-5 flex w-full flex-col max-sm:mb-2 ${activeImageSrc ? "flex-1" : ""} ${tinderActive ? "select-none cursor-pointer touch-pan-y" : "select-text"} ${activeImageSrc ? "max-w-4xl" : "max-w-2xl"}`}
                 style={tinderActive && dragX !== 0 ? { transform: `translateX(${dragX}px) rotate(${dragX / 25}deg)` } : undefined}
               >
-                {tinderActive && isFlipped && dragX !== 0 && (
-                  <div
-                    aria-hidden="true"
-                    className={`pointer-events-none absolute top-4 z-20 rounded-xl px-4 py-1.5 text-sm font-black text-white ${dragX > 0 ? "right-4 bg-emerald-600" : "left-4 bg-rose-600"}`}
-                    style={{ opacity: Math.min(1, Math.abs(dragX) / SWIPE_THRESHOLD) }}
-                  >
-                    {dragX > 0 ? "Thuộc" : "Quên"}
-                  </div>
-                )}
-                <div style={cardStyle} className="relative w-full min-h-[22rem] rounded-2xl study-card dark:border dark:border-stone-800/80 px-6 pt-10 pb-5 sm:px-10 sm:pt-14 flex flex-col justify-between shadow-[0_1px_2px_rgba(28,25,23,0.05),0_12px_32px_-16px_rgba(28,25,23,0.18)] dark:shadow-none">
+                {swipeOverlay}
+                <div style={cardStyle} className={`relative w-full min-h-[22rem] ${activeImageSrc ? "flex-1" : ""} rounded-2xl study-card dark:border dark:border-stone-800/80 px-6 pt-10 pb-5 sm:px-10 sm:pt-14 flex flex-col justify-between shadow-[0_1px_2px_rgba(28,25,23,0.05),0_12px_32px_-16px_rgba(28,25,23,0.18)] dark:shadow-none`}>
+                  {/* Dải màu theo từ loại: danh từ xanh dương, động từ đỏ, tính từ xanh lá, phó từ tím, khác vàng. */}
+                  {posTone(currentCard.pos) && <span aria-hidden className={`pointer-events-none absolute inset-x-0 top-0 h-1.5 rounded-t-2xl ${posTone(currentCard.pos)?.bar}`} />}
                   {/* Body 2 Cột Desktop: Trái Ảnh - Phải Chữ */}
                   <div className="my-auto pb-8 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
                     {/* Cột Trái: Ảnh Minh Họa Cỡ Lớn */}
@@ -2300,7 +2333,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                             dangerouslySetInnerHTML={{ __html: cleanHtmlText(currentCard.example) }}
                           />
                           {/* Nút nghe nằm dưới câu để không đẩy câu ví dụ lệch khỏi tâm thẻ. */}
-                          {!muteAndHideAudio && (
+                          {!hideExampleAudio && (
                             <div className="mt-1 flex justify-center">
                               <button
                                 type="button"
@@ -2328,8 +2361,9 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                   </div>
 
                   {/* Thanh dưới thẻ: Loại từ + Nút Audio + ChatGPT */}
-                  <div className="w-full flex items-center justify-between pt-4 border-t border-stone-100 dark:border-stone-800">
-                    <span className="text-sm font-medium text-stone-500 dark:text-stone-400">{currentCard.pos || "Từ vựng"}</span>
+                  <div className="w-full flex items-center justify-center gap-2 whitespace-nowrap pt-4 border-t border-stone-100 dark:border-stone-800">
+                    {/* Chỉ hiện từ loại khi thẻ có; chữ "Từ vựng" thay thế không mang thông tin. */}
+                    {currentCard.pos && <span className={`mr-auto truncate rounded-full px-2.5 py-0.5 text-xs font-bold ${posTone(currentCard.pos)?.chip}`}>{currentCard.pos}</span>}
 
                     <div className="flex items-center gap-2">
                       {/* Nút ChatGPT */}
@@ -2340,7 +2374,6 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                           className="inline-flex h-9 items-center gap-1.5 px-3 rounded-lg text-stone-500 dark:text-stone-400 hover:bg-sky-500/10 hover:text-sky-700 dark:hover:text-sky-400 transition text-sm font-medium cursor-pointer"
                           title="Tra từ này trong từ điển"
                         >
-                          <BookOpen aria-hidden="true" className="w-4 h-4" />
                           <span>Từ điển</span>
                         </button>
                       )}
@@ -2352,13 +2385,12 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                           className="inline-flex h-9 items-center gap-1.5 px-3 rounded-lg text-stone-500 dark:text-stone-400 hover:bg-emerald-500/10 hover:text-emerald-700 dark:hover:text-emerald-400 transition text-sm font-medium"
                           title="Hỏi ChatGPT về từ này (mở tab mới)"
                         >
-                          <Sparkles aria-hidden="true" className="w-4 h-4" />
-                          <span>Hỏi ChatGPT</span>
+                          <span>ChatGPT</span>
                         </a>
                       )}
 
                       {/* Nút Loa Phát Âm */}
-                      {!muteAndHideAudio && (
+                      {!hideWordAudio && (
                         <button
                           onClick={playCurrentSound}
                           className="w-9 h-9 rounded-full text-stone-500 dark:text-stone-400 hover:bg-sky-500/10 hover:text-sky-600 dark:hover:text-sky-400 flex items-center justify-center transition cursor-pointer"
@@ -2377,8 +2409,14 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
 
             {/* CHẾ ĐỘ 2: THẺ GÕ TỪ (TYPING - 2 CỘT DESKTOP) */}
             {studyMode === "typing" && (
-              <div style={cardStyle} className={`mx-auto w-full mb-5 rounded-2xl study-card dark:border dark:border-stone-800/80 px-6 py-10 sm:px-10 sm:py-12 shadow-[0_1px_2px_rgba(28,25,23,0.05),0_12px_32px_-16px_rgba(28,25,23,0.18)] dark:shadow-none ${activeImageSrc ? "max-w-4xl" : "max-w-2xl"}`}>
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+              <div
+                {...tinderHandlers}
+                className={`relative mx-auto mb-5 flex w-full flex-col max-sm:mb-2 ${activeImageSrc ? "flex-1" : ""} ${tinderActive ? "touch-pan-y" : ""} ${activeImageSrc ? "max-w-4xl" : "max-w-2xl"}`}
+                style={tinderActive && dragX !== 0 ? { transform: `translateX(${dragX}px) rotate(${dragX / 25}deg)` } : undefined}
+              >
+              {swipeOverlay}
+              <div style={cardStyle} className={`mx-auto flex w-full flex-col justify-between ${activeImageSrc ? "flex-1" : ""} rounded-2xl study-card dark:border dark:border-stone-800/80 px-6 pt-10 pb-5 sm:px-10 sm:pt-12 shadow-[0_1px_2px_rgba(28,25,23,0.05),0_12px_32px_-16px_rgba(28,25,23,0.18)] dark:shadow-none ${activeImageSrc ? "max-w-4xl" : "max-w-2xl"}`}>
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center my-auto pb-8">
                   {/* Cột Trái: Ảnh Gợi Ý */}
                   {activeImageSrc && (
                     <div
@@ -2464,8 +2502,9 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                   </div>
                 </div>
                 {/* Chủ đề ít khi cần nhìn nên đặt cuối thẻ. */}
-                <div className="mt-8 flex min-h-9 items-center justify-between border-t border-stone-100 dark:border-stone-800 pt-4">
-                  <span className="text-sm font-medium text-stone-500 dark:text-stone-400">{currentCard.pos || "Từ vựng"}</span>
+                <div className="flex min-h-9 items-center justify-center gap-2 whitespace-nowrap border-t mt-auto border-stone-100 dark:border-stone-800 pt-4">
+                  {/* Chỉ hiện từ loại khi thẻ có; chữ "Từ vựng" thay thế không mang thông tin. */}
+                    {currentCard.pos && <span className={`mr-auto truncate rounded-full px-2.5 py-0.5 text-xs font-bold ${posTone(currentCard.pos)?.chip}`}>{currentCard.pos}</span>}
                   {isFlipped && (
                     <div className="flex items-center gap-2 animate-fade-only">
                       {!hideDictionary && (
@@ -2475,7 +2514,6 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                           className="inline-flex h-9 items-center gap-1.5 px-3 rounded-lg text-stone-500 dark:text-stone-400 hover:bg-sky-500/10 hover:text-sky-700 dark:hover:text-sky-400 transition text-sm font-medium cursor-pointer"
                           title="Tra từ này trong từ điển"
                         >
-                          <BookOpen aria-hidden="true" className="w-4 h-4" />
                           <span>Từ điển</span>
                         </button>
                       )}
@@ -2487,11 +2525,10 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                           className="inline-flex h-9 items-center gap-1.5 px-3 rounded-lg text-stone-500 dark:text-stone-400 hover:bg-emerald-500/10 hover:text-emerald-700 dark:hover:text-emerald-400 transition text-sm font-medium"
                           title="Hỏi ChatGPT về từ này (mở tab mới)"
                         >
-                          <Sparkles aria-hidden="true" className="w-4 h-4" />
-                          <span>Hỏi ChatGPT</span>
+                          <span>ChatGPT</span>
                         </a>
                       )}
-                      {!muteAndHideAudio && (
+                      {!hideWordAudio && (
                         <button
                           type="button"
                           onClick={playCurrentSound}
@@ -2505,6 +2542,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                     </div>
                   )}
                 </div>
+              </div>
               </div>
             )}
 

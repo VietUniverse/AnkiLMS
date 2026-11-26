@@ -340,3 +340,14 @@ export const filterTree = (nodes: DeckTreeNode[], q: string): DeckTreeNode[] => 
     })
     .filter(Boolean) as DeckTreeNode[];
 };
+
+/** Màu theo từ loại (dữ liệu dùng nhãn tiếng Việt: "Danh từ", "Cụm động từ", "Cụm ĐT"…). Không khớp thì null. */
+export function posTone(pos?: string): { bar: string; chip: string } | null {
+  const p = (pos || "").toLowerCase();
+  if (!p) return null;
+  if (p.includes("động") || p.includes("đt")) return { bar: "bg-rose-500", chip: "bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300" };
+  if (p.includes("tính")) return { bar: "bg-emerald-500", chip: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300" };
+  if (p.includes("phó")) return { bar: "bg-violet-500", chip: "bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300" };
+  if (p.includes("danh") || p.includes("số")) return { bar: "bg-sky-500", chip: "bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300" };
+  return { bar: "bg-amber-500", chip: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300" };
+}

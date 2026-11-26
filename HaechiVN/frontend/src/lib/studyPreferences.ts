@@ -177,3 +177,53 @@ export function setStudyCardOpacity(value: number): void {
     // Bỏ qua khi trình duyệt chặn lưu trữ.
   }
 }
+
+// Âm thanh tách riêng cho từ vựng và câu ví dụ: "on" phát, "mute" tắt tiếng nhưng còn nút loa, "hide" tắt và ẩn nút loa.
+// Công tắc chung cũ "Tắt & Ẩn âm thanh" (MUTE_HIDE_KEY) vẫn được đọc làm giá trị mặc định cho cả hai.
+export type AudioMode = "on" | "mute" | "hide";
+const HIDE_WORD_KEY = "haechivn_hide_word_audio";
+const HIDE_EXAMPLE_KEY = "haechivn_hide_example_audio";
+
+const readHidden = (key: string): boolean => {
+  try {
+    const value = localStorage.getItem(key);
+    if (value !== null) return value === "1";
+    return localStorage.getItem(MUTE_HIDE_KEY) === "1";
+  } catch {
+    return false;
+  }
+};
+
+export function useHideWordAudio(): boolean {
+  return useSyncExternalStore(subscribePrefs, () => readHidden(HIDE_WORD_KEY), () => false);
+}
+
+export function useHideExampleAudio(): boolean {
+  return useSyncExternalStore(subscribePrefs, () => readHidden(HIDE_EXAMPLE_KEY), () => false);
+}
+
+export function setAudioMode(kind: "word" | "example", mode: AudioMode): void {
+  writeMuted(kind === "word" ? HIDE_WORD_KEY : HIDE_EXAMPLE_KEY, mode === "hide");
+  writeMuted(kind === "word" ? MUTE_WORD_KEY : MUTE_EXAMPLE_KEY, mode !== "on");
+}
+
+// Thẻ gõ: bật thì phải gõ đúng từ mới bấm/vuốt được "Thuộc" (mặc định bật).
+const REQUIRE_EXACT_TYPING_KEY = "haechivn_require_exact_typing";
+
+export function useRequireExactTyping(): boolean {
+  return useSyncExternalStore(
+    subscribePrefs,
+    () => {
+      try {
+        return localStorage.getItem(REQUIRE_EXACT_TYPING_KEY) !== "0";
+      } catch {
+        return true;
+      }
+    },
+    () => true,
+  );
+}
+
+export function setRequireExactTyping(required: boolean): void {
+  writeMuted(REQUIRE_EXACT_TYPING_KEY, required);
+}

@@ -20,6 +20,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
         bio: user.bio || null,
         profile_public: user.profile_public ?? 1,
         translation_language: user.translation_language || "vi",
+        last_lesson_id: user.last_lesson_id || null,
+        last_lesson_title: user.last_lesson_title || null,
         ...streakState,
         xp: user.xp,
         gems: user.gems,

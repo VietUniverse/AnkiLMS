@@ -19,6 +19,8 @@ export interface UserProfile {
   last_checkin_date?: string;
   role?: "student" | "teacher" | "admin";
   translation_language?: "vi" | "en" | "ja";
+  last_lesson_id?: string | null;
+  last_lesson_title?: string | null;
   created_at?: string;
 }
 
@@ -310,6 +312,18 @@ export class ApiClient {
       `${item.deck_id}_${item.card_id}`,
       { interval: item.interval, easeFactor: item.ease_factor, reps: item.reps, lapses: item.lapses, state: item.state, dueDate: item.due_date, dueAt: item.due_at || undefined, stability: item.stability || 0, difficulty: item.difficulty || 5, learningSteps: item.learning_steps ?? 0, lastReview: item.last_review || null },
     ]));
+  }
+
+  public static async saveLastLesson(id: string, title: string): Promise<void> {
+    const res = await fetch("/api/preferences", { method: "PATCH", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ lastLesson: { id, title } }) });
+    if (!res.ok) throw new Error("Không lưu được bài học gần nhất.");
+    // Cập nhật user đang nhớ, để mở lại /flashcards không nạp lại giá trị cũ từ phiên.
+    const user = this.getCurrentUser();
+    if (user) {
+      const updated = { ...user, last_lesson_id: id, last_lesson_title: title };
+      this.setSession(updated);
+      window.dispatchEvent(new CustomEvent("haechivn:user-updated", { detail: updated }));
+    }
   }
 
   public static async getVocabGrowth(): Promise<{ day: string; young: number; mature: number }[]> {

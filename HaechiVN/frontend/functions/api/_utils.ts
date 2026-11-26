@@ -24,6 +24,8 @@ export interface UserRow {
   bio?: string | null;
   profile_public?: number;
   translation_language?: "vi" | "en" | "ja";
+  last_lesson_id?: string | null;
+  last_lesson_title?: string | null;
   streak: number;
   longest_streak: number;
   xp: number;
