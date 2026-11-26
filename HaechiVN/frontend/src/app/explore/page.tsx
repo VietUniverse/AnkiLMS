@@ -141,7 +141,8 @@ export default function ExplorePage() {
 
   const handleRemoveCurated = (deck: CuratedDeckItem) => {
     const ankiDeck = curatedDeckToAnkiDeck(deck);
-    handleRemoveDeck(ankiDeck.id);
+    const saved = userDecks.find((item) => item.id === ankiDeck.id || item.name === ankiDeck.name);
+    if (saved) handleRemoveDeck(saved.id);
   };
 
   const filteredDecks = useMemo(() => {

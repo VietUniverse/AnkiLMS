@@ -48,6 +48,8 @@ export type SharedDeckRecord = {
   description: string;
   visibility: "public" | "private";
   cardCount: number;
+  /** Only present in the owner's study inventory. Publication remains intact. */
+  hidden?: boolean;
   cards?: AnkiCard[];
   author: { userId: string; name: string; avatar?: string; bio?: string };
 };

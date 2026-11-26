@@ -87,6 +87,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, []);
   const [activeStudySession, setActiveStudySession] = useState<StudySessionInfo | null>(null);
   const syncingDeckIds = useRef(new Set<string>());
+  const removingDeckIds = useRef(new Set<string>());
+  const removingDeckTitles = useRef(new Set<string>());
+  const readdedDeckTitles = useRef(new Set<string>());
   const nextSharedDeckBackupAt = useRef(0);
   const autoCheckinRef = useRef<string | null>(null);
   const [sharedDeckSyncTick, setSharedDeckSyncTick] = useState(0);
@@ -252,7 +255,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     let active = true;
     let retryTimer: ReturnType<typeof setTimeout> | null = null;
     const userId = currentUser.id;
-    const localDecks = userDecks.filter((deck) => !deck.id.startsWith("curated-"));
+    const localDecks = userDecks.filter((deck) => !deck.id.startsWith("curated-") && !removingDeckIds.current.has(deck.id) && !removingDeckTitles.current.has(deck.name));
 
     void (async () => {
       const remoteRecords = await ApiClient.getMySharedDecks();
@@ -263,11 +266,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         retryTimer = setTimeout(() => setSharedDeckSyncTick((tick) => tick + 1), 60_000);
         return;
       }
-      const localIds = new Set(localDecks.map((deck) => deck.id));
-      const localSharedIds = new Set(localDecks.map((deck) => deck.sharedId).filter((id): id is string => !!id));
+      const visibleRecords = remoteRecords.filter((record) => !record.hidden);
+      const hiddenRecords = remoteRecords.filter((record) => record.hidden);
+      const hiddenIds = new Set(hiddenRecords.map((record) => record.deckId));
+      const visibleTitles = new Set(visibleRecords.map((record) => record.title));
+      const hiddenTitles = new Set(hiddenRecords.filter((record) => !visibleTitles.has(record.title) && !readdedDeckTitles.current.has(record.title)).map((record) => record.title));
+      const visibleLocalDecks = localDecks.filter((deck) => !hiddenIds.has(deck.id) && !hiddenTitles.has(deck.name));
+      if (visibleLocalDecks.length !== localDecks.length) {
+        setUserDecks((previous) => {
+          const next = previous.filter((deck) => deck.id.startsWith("curated-") || (!hiddenIds.has(deck.id) && !hiddenTitles.has(deck.name)));
+          void ApiClient.saveDecks(next, userId).catch((error) => console.error("Could not remove hidden decks locally", error));
+          return next;
+        });
+      }
+      const localIds = new Set(visibleLocalDecks.map((deck) => deck.id));
+      const localSharedIds = new Set(visibleLocalDecks.map((deck) => deck.sharedId).filter((id): id is string => !!id));
       const remoteDeckIds = new Set(remoteRecords.map((record) => record.deckId));
 
-      const missingLocally = remoteRecords.filter((record) => !localIds.has(record.deckId) && !localSharedIds.has(record.sharedId));
+      const missingLocally = visibleRecords.filter((record) => !localIds.has(record.deckId) && !localSharedIds.has(record.sharedId) && !removingDeckIds.current.has(record.deckId) && !removingDeckTitles.current.has(record.title));
       const restored: AnkiDeck[] = [];
       for (let offset = 0; offset < missingLocally.length; offset += 4) {
         const records = missingLocally.slice(offset, offset + 4);
@@ -288,7 +304,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         });
       }
 
-      const localMissingRemotely = localDecks.filter((deck) => !remoteDeckIds.has(deck.id) && !syncingDeckIds.current.has(deck.id));
+      const localMissingRemotely = visibleLocalDecks.filter((deck) => !remoteDeckIds.has(deck.id) && !syncingDeckIds.current.has(deck.id));
       const uploaded: { id: string; sharedId: string }[] = [];
       if (localMissingRemotely.length) {
         const waitMs = Math.max(0, nextSharedDeckBackupAt.current - Date.now());
@@ -320,7 +336,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
       if (!active) return;
 
-      const sharedIdsByDeckId = new Map(remoteRecords.map((record) => [record.deckId, record.sharedId]));
+      const sharedIdsByDeckId = new Map(visibleRecords.map((record) => [record.deckId, record.sharedId]));
       uploaded.forEach((item) => sharedIdsByDeckId.set(item.id, item.sharedId));
       if (restored.length || localDecks.some((deck) => sharedIdsByDeckId.has(deck.id) && deck.sharedId !== sharedIdsByDeckId.get(deck.id))) {
         setUserDecks((previous) => {
@@ -328,7 +344,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             ? { ...deck, sharedId: sharedIdsByDeckId.get(deck.id) }
             : deck);
           const existingIds = new Set(next.map((deck) => deck.id));
-          next.push(...restored.filter((deck) => !existingIds.has(deck.id)));
+          next.push(...restored.filter((deck) => !existingIds.has(deck.id) && !removingDeckIds.current.has(deck.id) && !removingDeckTitles.current.has(deck.name)));
           void ApiClient.saveDecks(next, userId).catch((error) => console.error("Could not save synchronized decks locally", error));
           return next;
         });
@@ -347,6 +363,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, []);
 
   const handleDeckImported = useCallback((deck: AnkiDeck) => {
+    removingDeckIds.current.delete(deck.id);
+    removingDeckTitles.current.delete(deck.name);
+    readdedDeckTitles.current.add(deck.name);
     setUserDecks((prev) => {
       const existing = prev.find((item) => item.id === deck.id || item.name === deck.name);
       const preparedDeck: AnkiDeck = {
@@ -370,12 +389,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [currentUser?.id]);
 
   const handleRemoveDeck = useCallback((deckId: string) => {
-    setUserDecks((prev) => {
-      const updated = prev.filter((d) => d.id !== deckId && `user-${d.id}` !== deckId && `curated-${d.id}` !== deckId);
-      void ApiClient.saveDecks(updated, currentUser?.id).catch((error) => console.error("Could not save study decks", error));
-      return updated;
-    });
-  }, [currentUser?.id]);
+    const deck = userDecks.find((item) => item.id === deckId || `user-${item.id}` === deckId || `curated-${item.id}` === deckId);
+    if (!deck) return;
+    removingDeckIds.current.add(deck.id);
+    removingDeckTitles.current.add(deck.name);
+    readdedDeckTitles.current.delete(deck.name);
+    void (async () => {
+      try {
+        if (currentUser && !deck.id.startsWith("curated-")) await ApiClient.hideStudyDeck(deck.id, deck.name);
+        setUserDecks((prev) => {
+          const updated = prev.filter((item) => item.id !== deck.id);
+          void ApiClient.saveDecks(updated, currentUser?.id).catch((error) => console.error("Could not save study decks", error));
+          return updated;
+        });
+      } catch (error) {
+        removingDeckIds.current.delete(deck.id);
+        removingDeckTitles.current.delete(deck.name);
+        window.alert(error instanceof Error ? error.message : "Không gỡ được bộ thẻ.");
+      }
+    })();
+  }, [currentUser?.id, userDecks]);
 
   const handleCheckin = useCallback(async () => {
     if (!currentUser) {

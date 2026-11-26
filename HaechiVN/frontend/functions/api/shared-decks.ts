@@ -65,9 +65,10 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     if (url.searchParams.get("mine") === "1") {
       const viewer = await authenticateRequest(request, env);
       if (!viewer) return errorResponse("Đăng nhập để xem bộ thẻ đã lưu trên máy chủ.", 401);
-      const result = await env.DB.prepare(`${deckSelect} WHERE d.owner_id = ? ORDER BY d.updated_at DESC LIMIT 200`)
+      const mineSelect = deckSelect.replace(" FROM shared_decks", ", EXISTS(SELECT 1 FROM hidden_study_decks h WHERE h.user_id = d.owner_id AND h.deck_id = d.deck_id) AS hidden FROM shared_decks");
+      const result = await env.DB.prepare(`${mineSelect} WHERE d.owner_id = ? ORDER BY d.updated_at DESC LIMIT 200`)
         .bind(viewer.id).all<SharedDeckRow>();
-      return jsonResponse({ decks: (result.results || []).map((row) => toRecord(row)) }, 200, { "Cache-Control": "private, no-store" });
+      return jsonResponse({ decks: (result.results || []).map((row) => ({ ...toRecord(row), hidden: Boolean((row as SharedDeckRow & { hidden?: number }).hidden) })) }, 200, { "Cache-Control": "private, no-store" });
     }
 
     const result = await env.DB.prepare(`${deckSelect} WHERE d.visibility = 'public' AND d.deck_id NOT LIKE 'catalog:%' ORDER BY d.updated_at DESC LIMIT 200`).all<SharedDeckRow>();
@@ -116,6 +117,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
         id: Number.isSafeInteger(card.id) ? card.id : index + 1,
         noteId: Number.isSafeInteger(card.noteId) ? card.noteId : index + 1,
         deckName: title,
+        subdeck: cleanString("subdeck", 300),
         frontHtml: cleanString("frontHtml", 8_000),
         backHtml: cleanString("backHtml", 12_000),
         frontText: cleanString("frontText", 4_000),
@@ -168,10 +170,33 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
          updated_at = CURRENT_TIMESTAMP WHERE shared_decks.owner_id = excluded.owner_id`,
     ).bind(sharedId, user.id, deckId || sharedId, title, description, visibility, cards.length, newCardsKey).run();
 
+    await env.DB.prepare("DELETE FROM hidden_study_decks WHERE user_id = ? AND deck_id = ?").bind(user.id, deckId || sharedId).run();
+
     if (previous?.cards_key && previous.cards_key !== newCardsKey) await env.MEDIA.delete(previous.cards_key);
     return jsonResponse({ success: true, sharedId, visibility });
   } catch {
     if (newCardsKey) await env.MEDIA.delete(newCardsKey).catch(() => undefined);
     return errorResponse("Không lưu được bộ thẻ lên máy chủ.", 500);
+  }
+};
+
+/** Remove a deck from this account's study list; preserve publication and review history. */
+export const onRequestDelete: PagesFunction<Env> = async ({ request, env }) => {
+  if (!isSameOriginRequest(request)) return errorResponse("Yêu cầu không hợp lệ.", 403);
+  const user = await authenticateRequest(request, env);
+  if (!user) return errorResponse("Chưa đăng nhập.", 401);
+  const deckId = new URL(request.url).searchParams.get("deckId")?.trim() || "";
+  const title = new URL(request.url).searchParams.get("title")?.trim() || "";
+  if (!deckId || deckId.length > 160 || title.length > 120) return errorResponse("Bộ thẻ không hợp lệ.", 400);
+  try {
+    await env.DB.prepare("INSERT OR IGNORE INTO hidden_study_decks(user_id,deck_id) VALUES (?,?)").bind(user.id, deckId).run();
+    // Old imported copies may use a different deck ID from their published row.
+    if (title) {
+      await env.DB.prepare("INSERT OR IGNORE INTO hidden_study_decks(user_id,deck_id) SELECT owner_id,deck_id FROM shared_decks WHERE owner_id=? AND title=?")
+        .bind(user.id, title).run();
+    }
+    return jsonResponse({ success: true });
+  } catch {
+    return errorResponse("Không gỡ được bộ thẻ khỏi kho học.", 500);
   }
 };

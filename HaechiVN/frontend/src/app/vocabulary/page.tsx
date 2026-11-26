@@ -29,7 +29,10 @@ export default function VocabularyLibraryPage() {
   const toggleDeck = (deck: CuratedDeckItem) => {
     if (!currentUser) return handleOpenAuth(true);
     const target = curatedDeckToAnkiDeck(deck);
-    if (isAdded(deck)) handleRemoveDeck(target.id);
+    if (isAdded(deck)) {
+      const saved = userDecks.find((item) => item.id === target.id || item.name === target.name);
+      if (saved) handleRemoveDeck(saved.id);
+    }
     else handleDeckImported(target);
   };
 

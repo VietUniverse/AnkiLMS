@@ -586,6 +586,12 @@ export class ApiClient {
     }
   }
 
+  public static async hideStudyDeck(deckId: string, title: string): Promise<void> {
+    const params = new URLSearchParams({ deckId, title });
+    const response = await fetch(`/api/shared-decks?${params}`, { method: "DELETE", credentials: "same-origin" });
+    if (!response.ok) throw new Error("Không gỡ được bộ thẻ khỏi kho học. Vui lòng thử lại.");
+  }
+
   public static async saveSharedDeck(deck: AnkiDeck): Promise<string> {
     const response = await fetch("/api/shared-decks", {
       method: "POST",

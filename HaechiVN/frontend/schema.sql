@@ -129,6 +129,15 @@ CREATE INDEX IF NOT EXISTS idx_shared_decks_visibility_updated ON shared_decks(v
 CREATE INDEX IF NOT EXISTS idx_shared_decks_owner_updated ON shared_decks(owner_id, updated_at DESC);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_shared_decks_owner_deck ON shared_decks(owner_id, deck_id);
 
+-- A published or backed-up deck may be removed from the owner's study list
+-- without deleting its public listing or FSRS history.
+CREATE TABLE IF NOT EXISTS hidden_study_decks (
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  deck_id TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, deck_id)
+);
+
 -- 7. FSRS Review Logs
 CREATE TABLE IF NOT EXISTS review_logs (
     id TEXT PRIMARY KEY,
