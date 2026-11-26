@@ -3,7 +3,7 @@
 export function vocabGrowth(
   states: { deck_id: string; card_id: number; interval: number; state: string; last_review: string | null }[],
   logs: { deck_id: string; card_id: number; scheduled_days: number; review_time: string }[],
-  dayCount: number,
+  dayCount: number | null, // null = từ ngày học đầu tiên tới hôm nay
   now = Date.now(),
 ) {
   const dayOf = (iso: string) => new Date(new Date(iso).getTime() + 7 * 3600 * 1000).toISOString().slice(0, 10);
@@ -26,6 +26,10 @@ export function vocabGrowth(
     events.push(reviews.map((r, i) => ({ day: r.day, interval: i + 1 < reviews.length ? reviews[i + 1].sched : Number(st.interval) || 0 })));
   }
   const today = dayOf(new Date(now).toISOString());
+  if (dayCount === null) {
+    const first = events.reduce((min, list) => (list[0] && list[0].day < min ? list[0].day : min), today);
+    dayCount = Math.round((Date.parse(`${today}T00:00:00Z`) - Date.parse(`${first}T00:00:00Z`)) / 86400000) + 1;
+  }
   const days: { day: string; young: number; mature: number }[] = [];
   for (let i = dayCount - 1; i >= 0; i--) {
     const day = new Date(new Date(`${today}T00:00:00Z`).getTime() - i * 86400000).toISOString().slice(0, 10);

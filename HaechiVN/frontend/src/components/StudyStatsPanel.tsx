@@ -117,7 +117,7 @@ const VocabGrowthChart: React.FC<{ days: { day: string; young: number; mature: n
   return (
     <section className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/70 p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-[11px] font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400">Sự phát triển vốn từ · 60 ngày</p>
+        <p className="text-[11px] font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400">Sự phát triển vốn từ</p>
         <div className="flex gap-3 text-[11px] text-stone-600 dark:text-stone-300">
           <span className="inline-flex items-center gap-1"><i className="h-2.5 w-2.5 rounded-sm bg-lime-500 dark:bg-lime-400" />Non (&lt; 21 ngày) {last.young.toLocaleString("vi-VN")}</span>
           <span className="inline-flex items-center gap-1"><i className="h-2.5 w-2.5 rounded-sm bg-green-700 dark:bg-green-500" />Chín (≥ 21 ngày) {last.mature.toLocaleString("vi-VN")}</span>

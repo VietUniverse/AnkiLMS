@@ -14,7 +14,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
         env.DB.prepare("SELECT deck_id, card_id, interval, state, last_review FROM card_states WHERE user_id = ?").bind(user.id).all(),
         env.DB.prepare("SELECT deck_id, card_id, scheduled_days, review_time FROM review_logs WHERE user_id = ? ORDER BY review_time").bind(user.id).all().catch(() => ({ results: [] })),
       ]);
-      return jsonResponse({ days: vocabGrowth((states.results || []) as Parameters<typeof vocabGrowth>[0], (logs.results || []) as Parameters<typeof vocabGrowth>[1], 60) });
+      return jsonResponse({ days: vocabGrowth((states.results || []) as Parameters<typeof vocabGrowth>[0], (logs.results || []) as Parameters<typeof vocabGrowth>[1], null) });
     }
     const deckId = url.searchParams.get("deckId");
 

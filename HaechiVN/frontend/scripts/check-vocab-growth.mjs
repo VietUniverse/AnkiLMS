@@ -14,4 +14,6 @@ const logs = [
 const days = vocabGrowth(states, logs, 4, now);
 assert.deepEqual(days.map((d) => d.day), ["2026-11-23", "2026-11-24", "2026-11-25", "2026-11-26"]);
 assert.deepEqual(days.map((d) => [d.young, d.mature]), [[1, 0], [2, 0], [1, 1], [1, 1]]);
+// null: từ ngày học đầu tiên (23/11) tới hôm nay.
+assert.deepEqual(vocabGrowth(states, logs, null, now).map((d) => d.day), days.map((d) => d.day));
 console.log("ok");
