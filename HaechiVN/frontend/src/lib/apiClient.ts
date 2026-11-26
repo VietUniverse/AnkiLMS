@@ -304,13 +304,13 @@ export class ApiClient {
     }
   }
 
-  public static async getCardStates(): Promise<Record<string, { interval: number; easeFactor: number; reps: number; lapses: number; state: "new" | "learning" | "review"; dueDate: string; dueAt?: string; stability: number; difficulty: number; learningSteps?: number; lastReview: string | null }>> {
+  public static async getCardStates(): Promise<Record<string, { interval: number; easeFactor: number; reps: number; lapses: number; state: "new" | "learning" | "review"; dueDate: string; dueAt?: string; stability: number; difficulty: number; learningSteps?: number; lastReview: string | null; updatedAt?: string }>> {
     const res = await fetch("/api/card-states", { credentials: "same-origin" });
     if (!res.ok) throw new Error("Không tải được tiến độ ôn tập.");
     const data = await res.json();
     return Object.fromEntries((data.cardStates || []).map((item: any) => [
-      `${item.deck_id}_${item.card_id}`,
-      { interval: item.interval, easeFactor: item.ease_factor, reps: item.reps, lapses: item.lapses, state: item.state, dueDate: item.due_date, dueAt: item.due_at || undefined, stability: item.stability || 0, difficulty: item.difficulty || 5, learningSteps: item.learning_steps ?? 0, lastReview: item.last_review || null },
+      `${item.deck_id}_${Math.abs(item.card_id)}${item.card_id < 0 ? "_typing" : ""}`,
+      { interval: item.interval, easeFactor: item.ease_factor, reps: item.reps, lapses: item.lapses, state: item.state, dueDate: item.due_date, dueAt: item.due_at || undefined, stability: item.stability || 0, difficulty: item.difficulty || 5, learningSteps: item.learning_steps ?? 0, lastReview: item.last_review || null, updatedAt: item.updated_at ? `${item.updated_at.replace(" ", "T")}Z` : undefined },
     ]));
   }
 

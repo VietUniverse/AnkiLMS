@@ -26,6 +26,8 @@ export interface FSRSState {
   stability: number;
   difficulty: number;
   lastReview: string | null;
+  /** Last persisted change, used to reconcile progress across devices. */
+  updatedAt?: string;
   dueAt?: string;
   /** Index of the current learning step (0-based). Persisted so "Good" can graduate a card. */
   learningSteps?: number;

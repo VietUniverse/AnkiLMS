@@ -198,6 +198,23 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const masteredWordSet = useMemo(() => new Set(masteredWords), [masteredWords]);
   const reviewWordSet = useMemo(() => new Set(reviewList), [reviewList]);
   const [cardStateMap, setCardStateMap] = useLocalState(currentUser ? `haechivn_srs_state_${currentUser.id}` : "haechivn_srs_state_guest", parseCardStateMap);
+  useEffect(() => {
+    if (!currentUser?.id) return;
+    let active = true;
+    void ApiClient.getCardStates().then((remote) => {
+      if (!active) return;
+      setCardStateMap((local) => {
+        const merged = { ...local };
+        for (const [key, state] of Object.entries(remote)) {
+          const localTime = Date.parse(local[key]?.updatedAt || "") || 0;
+          const remoteTime = Date.parse(state.updatedAt || "") || 0;
+          if (remoteTime >= localTime) merged[key] = { ...local[key], ...state };
+        }
+        return merged;
+      });
+    }).catch(() => { /* Keep the local copy available when offline. */ });
+    return () => { active = false; };
+  }, [currentUser?.id, setCardStateMap]);
   const dailyLimits = useDailyLimits();
   const dailyProgress = useDailyProgress();
   const [limitNotice, setLimitNotice] = useState<string | null>(null);
@@ -1033,7 +1050,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
       ? { ...curState, schedulerConfig: { ...curState.schedulerConfig, w: userFsrsConfig.weights } }
       : curState;
     const effectiveRetention = userFsrsConfig?.desiredRetention || FSRS45_DEFAULTS.desiredRetention;
-    const newState = calculateFSRS45(rating, effectiveState, new Date(), effectiveRetention);
+    const newState = { ...calculateFSRS45(rating, effectiveState, new Date(), effectiveRetention), updatedAt: new Date().toISOString() };
     // Hạn mức từ mới đếm theo từ: thẻ Review và Typing của cùng một từ chỉ tính 1 lần trong ngày.
     if (curState.reps === 0 || curState.state === "new") recordNewWord(stateKeyOf({ ...currentCard, sibling: undefined }));
     else recordCard(false);
