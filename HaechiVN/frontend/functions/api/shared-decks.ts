@@ -71,7 +71,14 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
       return jsonResponse({ decks: (result.results || []).map((row) => ({ ...toRecord(row), hidden: Boolean((row as SharedDeckRow & { hidden?: number }).hidden) })) }, 200, { "Cache-Control": "private, no-store" });
     }
 
-    const result = await env.DB.prepare(`${deckSelect} WHERE d.visibility = 'public' AND d.deck_id NOT LIKE 'catalog:%' ORDER BY d.updated_at DESC LIMIT 200`).all<SharedDeckRow>();
+    // A saved copy of a still-public community deck is for studying, not a
+    // second Explore listing of the same source deck.
+    const result = await env.DB.prepare(`${deckSelect} WHERE d.visibility = 'public' AND d.deck_id NOT LIKE 'catalog:%'
+      AND NOT (d.deck_id LIKE 'community-copy-%' AND EXISTS (
+        SELECT 1 FROM shared_decks source
+        WHERE source.shared_id = substr(d.deck_id, length('community-copy-') + 1)
+          AND source.visibility = 'public'
+      )) ORDER BY d.updated_at DESC LIMIT 200`).all<SharedDeckRow>();
     return jsonResponse({ decks: (result.results || []).map((row) => toRecord(row)) }, 200, {
       "Cache-Control": "public, max-age=60, s-maxage=60",
     });
