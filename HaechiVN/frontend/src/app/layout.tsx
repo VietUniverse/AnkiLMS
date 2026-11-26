@@ -61,9 +61,11 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "WebSite", name: "HaechiVN", url: "https://haechivn.com", inLanguage: "vi", description: "Nền tảng học tiếng Hàn với flashcard SRS, từ điển, dictation và shadowing." }) }}
         />
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-EMV6CCJTG1" strategy="afterInteractive" />
-        <Script
+        {/* Thẻ <script> thường, KHÔNG dùng next/script: bản afterInteractive được chèn lúc
+            chạy nên không có nonce, mà CSP có nonce thì 'unsafe-inline' bị bỏ qua → init bị
+            chặn, GA4 không nhận hit nào. Script nằm trong HTML tĩnh mới được nonce. */}
+        <script
           id="ga-init"
-          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-EMV6CCJTG1');`,
           }}
