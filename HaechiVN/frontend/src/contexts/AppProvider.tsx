@@ -372,7 +372,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         ...deck,
         description: deck.description || existing?.description || "",
         visibility: deck.visibility || existing?.visibility || "private",
-        sharedId: deck.sharedId || existing?.sharedId,
+        // A community copy may share its title with the public original. Never
+        // reuse that publication's ID for a different local deck.
+        sharedId: deck.sharedId || (existing?.id === deck.id ? existing.sharedId : undefined),
         author: deck.author || existing?.author || (currentUser ? {
           userId: currentUser.id,
           name: currentUser.name,
