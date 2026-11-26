@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Check, ChevronLeft, ChevronRight, Flame } from "lucide-react";
 import { loadProgress, type DailyProgress } from "../lib/dailyLimits";
 
-type CheckinItem = { checkin_date: string; time_spent_minutes?: number; xp_earned?: number };
+type CheckinItem = { checkin_date: string; time_spent_minutes?: number; xp_earned?: number; checked_in?: number | boolean };
 
 const DAY_LABELS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
 const MONTH_NAMES = ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"];
@@ -25,7 +25,7 @@ export function StreakPanel({ data, streak, longestStreak, publicView = false }:
   const studied = useMemo(() => {
     const set = new Set<string>();
     for (const item of data) {
-      if ((item.time_spent_minutes || 0) > 0 || (item.xp_earned || 0) > 0 || item.checkin_date) set.add(item.checkin_date.slice(0, 10));
+      if (item.checked_in) set.add(item.checkin_date.slice(0, 10));
     }
     return set;
   }, [data]);
@@ -40,8 +40,7 @@ export function StreakPanel({ data, streak, longestStreak, publicView = false }:
   });
 
   // Mục tiêu ngày chỉ tính từ mới; ôn lại không giới hạn.
-  const doneToday = progress.newDone;
-  const learnedToday = studied.has(todayKey) || doneToday > 0 || progress.reviewDone > 0;
+  const learnedToday = studied.has(todayKey) || (progress.reviewedCardIds?.length || 0) > 0;
 
   // Lịch tháng: ô trống đầu tháng + các ngày; ngày học liền nhau nối thành một dải.
   const first = new Date(cursor.getFullYear(), cursor.getMonth(), 1);
@@ -105,7 +104,7 @@ export function StreakPanel({ data, streak, longestStreak, publicView = false }:
 
       {!publicView && !learnedToday && (
         <p className="text-center text-xs font-semibold text-stone-500 dark:text-stone-400">
-          Hôm nay chưa học. Học một lượt để giữ chuỗi.
+          Học đủ 10 thẻ khác nhau hôm nay để điểm danh và giữ chuỗi.
         </p>
       )}
 

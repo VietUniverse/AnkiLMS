@@ -42,19 +42,14 @@ export interface UserRow {
 }
 
 /**
- * Keep the displayed streak consistent with the activity calendar: a day
- * counts when the user either checks in or records a real study session.
+ * Only a qualified check-in counts toward the attendance streak. A short
+ * study session can earn XP without satisfying the ten-card requirement.
  * All dates are evaluated in HaechiVN's Vietnam timezone (UTC+7).
  */
 export async function refreshUserStreak(env: Env, userId: string): Promise<{ streak: number; longest_streak: number }> {
   const rows = await env.DB.prepare(
-    `SELECT day FROM (
-       SELECT checkin_date AS day FROM checkins WHERE user_id = ?
-       UNION
-       SELECT date(created_at, '+7 hours') AS day FROM study_sessions
-       WHERE user_id = ? AND cards_reviewed > 0
-     ) WHERE day IS NOT NULL ORDER BY day DESC`,
-  ).bind(userId, userId).all<{ day: string }>();
+    "SELECT checkin_date AS day FROM checkins WHERE user_id = ? ORDER BY checkin_date DESC",
+  ).bind(userId).all<{ day: string }>();
 
   const dates = [...new Set((rows.results || [])
     .map((row) => row.day)
@@ -101,13 +96,8 @@ export async function refreshUserStreaks(env: Env, userIds: string[]): Promise<M
 
   const placeholders = ids.map(() => "?").join(", ");
   const activity = await env.DB.prepare(
-    `SELECT user_id, day FROM (
-       SELECT user_id, checkin_date AS day FROM checkins WHERE user_id IN (${placeholders})
-       UNION
-       SELECT user_id, date(created_at, '+7 hours') AS day FROM study_sessions
-       WHERE user_id IN (${placeholders}) AND cards_reviewed > 0
-     ) WHERE day IS NOT NULL ORDER BY user_id, day DESC`,
-  ).bind(...ids, ...ids).all<{ user_id: string; day: string }>();
+    `SELECT user_id, checkin_date AS day FROM checkins WHERE user_id IN (${placeholders}) ORDER BY user_id, checkin_date DESC`,
+  ).bind(...ids).all<{ user_id: string; day: string }>();
 
   const daysByUser = new Map<string, Set<string>>(ids.map((id) => [id, new Set<string>()]));
   for (const row of activity.results || []) {

@@ -30,7 +30,7 @@ import { activateProps } from "../lib/a11y";
 import { ApiClient } from "../lib/apiClient";
 import { DailyLimitsPanel } from "./DailyLimitsPanel";
 import { GRADIENT_PRESETS, saveStudyBackground, STUDY_BACKGROUND_GALLERY, useStudyBackground } from "../lib/studyBackground";
-import { addExtraNew, DailyLimits, effectiveNewLimit, loadProgress, recordCard, recordNewWord, remaining, saveLimits, useDailyLimits, useDailyProgress } from "../lib/dailyLimits";
+import { addExtraNew, DailyLimits, effectiveNewLimit, loadProgress, recordCard, recordNewWord, recordReviewedCard, remaining, saveLimits, useDailyLimits, useDailyProgress } from "../lib/dailyLimits";
 import { parseJson, useLocalState } from "../lib/localStore";
 import { speakKorean } from "../lib/koreanSpeech";
 import { buildStudyQueue, LEARN_AHEAD_MINUTES, learnAheadCards, sessionProgress } from "../lib/studyQueue";
@@ -1055,11 +1055,14 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     // Hạn mức từ mới đếm theo từ: thẻ Review và Typing của cùng một từ chỉ tính 1 lần trong ngày.
     if (curState.reps === 0 || curState.state === "new") recordNewWord(stateKeyOf({ ...currentCard, sibling: undefined }));
     else recordCard(false);
+    recordReviewedCard(activeKey);
     setCardStateMap((prev) => ({ ...prev, [activeKey]: newState }));
 
     if (currentUser) {
       // Lưu theo bộ thật của thẻ (không theo tên lượt học, vd "Ôn tập thư viện") để khớp khóa stateKeyOf.
-      void ApiClient.saveCardState(currentCard.deckName || activeDeckTitle, (currentCard.sibling ? -1 : 1) * (Number(currentCard.id) || 1), newState).catch(() => {});
+      void ApiClient.saveCardState(currentCard.deckName || activeDeckTitle, (currentCard.sibling ? -1 : 1) * (Number(currentCard.id) || 1), newState)
+        .then(() => window.dispatchEvent(new Event("haechivn:card-state-saved")))
+        .catch(() => {});
       if (activeAssignmentMeta && !currentCard.sibling && Number.isSafeInteger(Number(currentCard.id))) {
         void ApiClient.recordClassAssignmentReview(
           activeAssignmentMeta.classId,

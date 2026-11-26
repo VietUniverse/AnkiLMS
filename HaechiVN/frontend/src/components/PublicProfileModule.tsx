@@ -19,7 +19,7 @@ type ProfileData = {
     session_count: number; cards_reviewed: number; correct_count: number; duration_seconds: number;
     srs_cards_reviewed: number; srs_correct_count: number; vocab_count: number;
   };
-  days: { day: string; minutes: number; cards: number; xp: number }[];
+  days: { day: string; minutes: number; cards: number; xp: number; checked_in: number }[];
   sessions: { module: string; cards_reviewed: number; duration_seconds: number | null; created_at: string }[];
 };
 
@@ -78,6 +78,7 @@ export function PublicProfileModule({ profileId }: { profileId: string }) {
     time_spent_minutes: day.minutes,
     xp_earned: day.xp,
     cards_reviewed: day.cards,
+    checked_in: day.checked_in,
   }));
   const isMine = currentUser?.id === profile.id;
   // correct_count có thể vượt cards_reviewed (thẻ sibling), chặn ở 100 để không hiện 113%.

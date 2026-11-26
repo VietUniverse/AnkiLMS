@@ -5,23 +5,19 @@ import { readLocal, useLocalRaw, writeLocal } from "./localStore";
 export type DailyLimits = { newPerDay: number; reviewPerDay: number };
 // extraNew: số từ mới người học xin học thêm trong hôm nay (cộng vào giới hạn, hết ngày thì mất).
 // newWordIds: từ mới đã tính hôm nay, để thẻ Review và Typing của cùng một từ chỉ trừ 1 suất kể cả khi học ở 2 lượt khác nhau.
-export type DailyProgress = { newDone: number; reviewDone: number; extraNew: number; newWordIds?: string[] };
+export type DailyProgress = { newDone: number; reviewDone: number; extraNew: number; newWordIds?: string[]; reviewedCardIds?: string[] };
 
 const LIMITS_KEY = "haechivn_daily_limits";
 const PROGRESS_KEY = "haechivn_daily_progress";
 // Chỉ giới hạn từ mới. Từ đến hạn ôn lại luôn không giới hạn (0): có bao nhiêu phải ôn hết bấy nhiêu.
 export const DEFAULT_LIMITS: DailyLimits = { newPerDay: 5, reviewPerDay: 0 };
-/** Học đủ số từ mới này trong ngày mới được tính điểm danh. */
-// Học 1 từ mới là đủ điều kiện điểm danh.
-export const NEW_WORDS_FOR_CHECKIN = 1;
+/** Số thẻ khác nhau cần học trong ngày để được điểm danh. */
+export const CARDS_FOR_CHECKIN = 10;
 
 /** Ngày hiện tại theo múi giờ Việt Nam (GMT+7), khớp với API điểm danh. */
 export const vietnamToday = () => new Date(Date.now() + 7 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
-const today = () => {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-};
+const today = vietnamToday;
 
 const clamp = (value: unknown, fallback: number) => {
   const n = Math.floor(Number(value));
@@ -42,7 +38,8 @@ const parseProgress = (text: string | null): DailyProgress => {
     const raw = JSON.parse(text || "null");
     if (raw?.date === today()) {
       const newWordIds = Array.isArray(raw.newWordIds) ? raw.newWordIds.filter((id: unknown): id is string => typeof id === "string") : [];
-      return { newDone: clamp(raw.newDone, 0), reviewDone: clamp(raw.reviewDone, 0), extraNew: clamp(raw.extraNew, 0), newWordIds };
+      const reviewedCardIds = Array.isArray(raw.reviewedCardIds) ? raw.reviewedCardIds.filter((id: unknown): id is string => typeof id === "string") : [];
+      return { newDone: clamp(raw.newDone, 0), reviewDone: clamp(raw.reviewDone, 0), extraNew: clamp(raw.extraNew, 0), newWordIds, reviewedCardIds };
     }
   } catch { /* dùng giá trị mặc định */ }
   return { newDone: 0, reviewDone: 0, extraNew: 0 };
@@ -82,6 +79,16 @@ export function recordCard(isNew: boolean): DailyProgress {
   const next = isNew ? { ...p, newDone: p.newDone + 1 } : { ...p, reviewDone: p.reviewDone + 1 };
   writeLocal(PROGRESS_KEY, JSON.stringify({ date: today(), ...next }));
   if (typeof window !== "undefined") window.dispatchEvent(new Event("haechivn:daily-progress-updated"));
+  return next;
+}
+
+/** Count each rated SRS card once per Vietnam calendar day for check-in. */
+export function recordReviewedCard(cardKey: string): DailyProgress {
+  const progress = loadProgress();
+  const ids = progress.reviewedCardIds || [];
+  if (ids.includes(cardKey)) return progress;
+  const next = { ...progress, reviewedCardIds: [...ids, cardKey] };
+  writeLocal(PROGRESS_KEY, JSON.stringify({ date: today(), ...next }));
   return next;
 }
 

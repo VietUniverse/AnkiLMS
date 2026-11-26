@@ -7,7 +7,7 @@ import { BETA_FEATURE_KEYS, DEFAULT_FEATURE_FLAGS, FeatureFlags, FeatureKey, IS_
 import { curatedDeckToAnkiDeck, loadCuratedDecks } from "../data/curatedDeckRuntime";
 import { courseToExploreDeck, loadCourseVocabulary, loadSeoul1AExploreDeck } from "../lib/courseVocabulary";
 import { syncManagedDecks } from "../lib/deckSync";
-import { loadProgress, NEW_WORDS_FOR_CHECKIN, vietnamToday } from "../lib/dailyLimits";
+import { CARDS_FOR_CHECKIN, loadProgress, vietnamToday } from "../lib/dailyLimits";
 
 export interface StudySessionInfo {
   title: string;
@@ -30,8 +30,8 @@ interface AppContextType {
   userDecks: AnkiDeck[];
   setUserDecks: React.Dispatch<React.SetStateAction<AnkiDeck[]>>;
   removedBuiltInDeckIds: string[];
-  heatmapData: { checkin_date: string; time_spent_minutes: number; xp_earned: number }[];
-  setHeatmapData: React.Dispatch<React.SetStateAction<{ checkin_date: string; time_spent_minutes: number; xp_earned: number }[]>>;
+  heatmapData: { checkin_date: string; time_spent_minutes: number; xp_earned: number; checked_in: number }[];
+  setHeatmapData: React.Dispatch<React.SetStateAction<{ checkin_date: string; time_spent_minutes: number; xp_earned: number; checked_in: number }[]>>;
   isImporterOpen: boolean;
   setIsImporterOpen: React.Dispatch<React.SetStateAction<boolean>>;
   isAuthOpen: boolean;
@@ -66,7 +66,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [userDecks, setUserDecks] = useState<AnkiDeck[]>([]);
   const [removedBuiltInDeckIds, setRemovedBuiltInDeckIds] = useState<string[]>([]);
-  const [heatmapData, setHeatmapData] = useState<{ checkin_date: string; time_spent_minutes: number; xp_earned: number }[]>([]);
+  const [heatmapData, setHeatmapData] = useState<{ checkin_date: string; time_spent_minutes: number; xp_earned: number; checked_in: number }[]>([]);
   const [isImporterOpen, setIsImporterOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authRegisterMode, setAuthRegisterMode] = useState(false);
@@ -432,7 +432,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, [currentUser, handleOpenAuth]);
 
-  // Điểm danh tự động khi học đủ 10 từ mới trong ngày (bỏ nút điểm danh thủ công).
+  // Điểm danh tự động khi máy chủ đã lưu đủ 10 thẻ khác nhau trong ngày.
   const autoCheckinFromStudy = useCallback(async () => {
     if (!currentUser) return;
     const today = vietnamToday();
@@ -440,20 +440,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const guardKey = `${currentUser.id}:${today}`;
     if (autoCheckinRef.current === guardKey) return;
     autoCheckinRef.current = guardKey;
-    await handleCheckin();
-  }, [currentUser, handleCheckin]);
+    try {
+      const result = await ApiClient.checkin();
+      setCheckinMessage(result.message);
+      if (result.user) setCurrentUser((prev) => ({ ...prev, ...result.user } as UserProfile));
+      setHeatmapData(await ApiClient.getHeatmapData());
+      setTimeout(() => setCheckinMessage(null), 4000);
+    } catch {
+      // A card save may still be in flight. Retry on the next saved card or focus.
+      autoCheckinRef.current = null;
+    }
+  }, [currentUser]);
 
   useEffect(() => {
     if (!isAuthReady || !currentUser) return;
     const maybeCheckin = () => {
       if (typeof window === "undefined") return;
-      if (loadProgress().newDone >= NEW_WORDS_FOR_CHECKIN) void autoCheckinFromStudy();
+      const progress = loadProgress();
+      // Include today's progress saved by older clients during this rollout;
+      // the API remains authoritative for the ten distinct card check.
+      if (Math.max(progress.reviewedCardIds?.length || 0, progress.newDone + progress.reviewDone) >= CARDS_FOR_CHECKIN) void autoCheckinFromStudy();
     };
     maybeCheckin();
-    window.addEventListener("haechivn:daily-progress-updated", maybeCheckin);
+    window.addEventListener("haechivn:card-state-saved", maybeCheckin);
     window.addEventListener("focus", maybeCheckin);
     return () => {
-      window.removeEventListener("haechivn:daily-progress-updated", maybeCheckin);
+      window.removeEventListener("haechivn:card-state-saved", maybeCheckin);
       window.removeEventListener("focus", maybeCheckin);
     };
   }, [isAuthReady, currentUser, autoCheckinFromStudy]);

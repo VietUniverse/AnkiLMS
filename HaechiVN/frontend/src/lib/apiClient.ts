@@ -291,7 +291,7 @@ export class ApiClient {
     return { users: [], vocabulary: [] };
   }
 
-  public static async getHeatmapData(): Promise<{ checkin_date: string; time_spent_minutes: number; xp_earned: number }[]> {
+  public static async getHeatmapData(): Promise<{ checkin_date: string; time_spent_minutes: number; xp_earned: number; checked_in: number }[]> {
     try {
       const res = await fetch("/api/heatmap", {
         credentials: "same-origin",

@@ -33,6 +33,19 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       });
     }
 
+    // Count distinct cards actually saved by the server today. XP can be
+    // earned by shorter sessions and must not serve as check-in evidence.
+    const studied = await env.DB.prepare(
+      `SELECT COUNT(*) AS total FROM (
+         SELECT deck_id, card_id FROM review_logs
+         WHERE user_id = ? AND date(review_time, '+7 hours') = ?
+         GROUP BY deck_id, card_id
+       )`,
+    ).bind(user.id, todayStr).first<{ total: number }>();
+    if ((studied?.total || 0) < 10) {
+      return errorResponse(`Cần học đủ 10 thẻ khác nhau hôm nay để điểm danh (${studied?.total || 0}/10).`, 409);
+    }
+
     const rewardXp = 1;
     const newXp = user.xp + rewardXp;
     const newGems = user.gems + 1;

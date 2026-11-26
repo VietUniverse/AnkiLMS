@@ -40,7 +40,8 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
          SELECT active_days.day AS day,
                 COALESCE(CAST((session_days.duration_seconds + 59) / 60 AS INTEGER), 0) AS minutes,
                 COALESCE(session_days.cards_reviewed, 0) AS cards,
-                COALESCE(session_days.session_xp, 0) + CASE WHEN checkins.id IS NULL THEN 0 ELSE 1 END AS xp
+                COALESCE(session_days.session_xp, 0) + CASE WHEN checkins.id IS NULL THEN 0 ELSE 1 END AS xp,
+                CASE WHEN checkins.id IS NULL THEN 0 ELSE 1 END AS checked_in
          FROM active_days
          LEFT JOIN checkins ON checkins.user_id = ? AND checkins.checkin_date = active_days.day
          LEFT JOIN session_days ON session_days.day = active_days.day
