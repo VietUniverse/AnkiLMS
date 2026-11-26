@@ -762,7 +762,8 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
         if (!active) return;
         const now = Date.now();
         setAssignedDecks(
-          classes.flatMap((cls) =>
+          // Lớp mình là chủ/nhân sự thì bài tập là của mình giao, không phải bài mình học.
+          classes.filter((cls) => cls.ownerId !== currentUser.id && !cls.members?.some((m) => m.id === currentUser.id && m.role !== "student")).flatMap((cls) =>
             (cls.assignments || []).map((a) => {
               const dueDate = a.dueDate || "";
               const days = dueDate ? Math.ceil((new Date(`${dueDate}T23:59:59`).getTime() - now) / 86_400_000) : null;
@@ -1624,7 +1625,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     <button
       onClick={startReviewAll}
       title="Chỉ ôn lại những thẻ đã học trong thư viện của bạn"
-      className="flex h-full min-h-[74px] w-full flex-col justify-center rounded-2xl border border-stone-200 bg-white px-4 text-left transition-colors hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900/60 cursor-pointer"
+      className="flex h-full min-h-[74px] w-full flex-col items-center justify-center rounded-2xl border border-stone-200 bg-white px-4 text-center transition-colors hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900/60 cursor-pointer"
     >
       <span className="text-[11px] font-bold text-stone-500 dark:text-stone-400">Ôn tập</span>
       <span className="mt-0.5 text-lg font-black text-stone-900 dark:text-white">
@@ -1682,7 +1683,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                 <button
                   onClick={resumeLastLesson}
                   title="Học tiếp ngay"
-                  className="group flex h-full w-full items-center justify-between gap-3 rounded-2xl border border-stone-200 bg-white px-4 py-3 text-left transition-colors hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900/60 cursor-pointer"
+                  className="group flex h-full w-full items-center justify-center gap-3 rounded-2xl border border-stone-200 bg-white px-4 py-3 text-center transition-colors hover:border-sky-400 dark:border-stone-800 dark:bg-stone-900/60 cursor-pointer"
                 >
                   <span className="min-w-0">
                     <span className="block text-[11px] font-bold text-stone-500 dark:text-stone-400">Học tiếp</span>

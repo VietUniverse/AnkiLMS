@@ -28,6 +28,9 @@ import {
   Search,
   ChevronRight,
   LogOut,
+  ClipboardList,
+  Settings,
+  School,
 } from "lucide-react";
 import { ApiClient, UserProfile } from "../lib/apiClient";
 import { useApp } from "../contexts/AppProvider";
@@ -1375,8 +1378,10 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                 aria-selected={activeTab === "assignments"}
                 onClick={() => setActiveTab("assignments")}
                 className={`flex cursor-pointer items-center justify-center gap-1 rounded-xl px-3 py-2 text-xs font-black transition ${activeTab === "assignments" ? "bg-sky-600 text-white" : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"}`}
+                aria-label="Bài tập"
               >
-                Bài tập
+                <ClipboardList className="h-4 w-4 sm:hidden" aria-hidden />
+                <span className="hidden sm:inline">Bài tập</span>
                 <span className="text-[10px] font-bold opacity-70">{selectedClass.assignments.length}</span>
               </button>
               <button
@@ -1385,8 +1390,10 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                 aria-selected={activeTab === "leaderboard"}
                 onClick={() => setActiveTab("leaderboard")}
                 className={`flex cursor-pointer items-center justify-center gap-1 rounded-xl px-3 py-2 text-xs font-black transition ${activeTab === "leaderboard" ? "bg-sky-600 text-white" : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"}`}
+                aria-label="Xếp hạng"
               >
-                Xếp hạng
+                <Trophy className="h-4 w-4 sm:hidden" aria-hidden />
+                <span className="hidden sm:inline">Xếp hạng</span>
                 <span className="text-[10px] font-bold opacity-70">{rankedStudents.length}</span>
               </button>
               <button
@@ -1395,8 +1402,10 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                 aria-selected={activeTab === "members"}
                 onClick={() => setActiveTab("members")}
                 className={`flex cursor-pointer items-center justify-center gap-1 rounded-xl px-3 py-2 text-xs font-black transition ${activeTab === "members" ? "bg-sky-600 text-white" : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"}`}
+                aria-label="Thành viên"
               >
-                Thành viên
+                <Users className="h-4 w-4 sm:hidden" aria-hidden />
+                <span className="hidden sm:inline">Thành viên</span>
                 <span className="text-[10px] font-bold opacity-70">{approvedMembers.length}</span>
               </button>
               {canManageClass && (
@@ -1406,8 +1415,10 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                 aria-selected={activeTab === "settings"}
                 onClick={() => setActiveTab("settings")}
                 className={`flex cursor-pointer items-center justify-center gap-1 rounded-xl px-3 py-2 text-xs font-black transition ${activeTab === "settings" ? "bg-sky-600 text-white" : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"}`}
+                aria-label="Cài đặt"
               >
-                Cài đặt
+                <Settings className="h-4 w-4 sm:hidden" aria-hidden />
+                <span className="hidden sm:inline">Cài đặt</span>
               </button>
               )}
             </div>
@@ -2922,8 +2933,10 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                   ? "bg-sky-700 text-white"
                   : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"
               }`}
+              aria-label="Lớp học"
             >
-              <span>Lớp học</span>
+              <School className="h-4 w-4 sm:hidden" aria-hidden />
+              <span className="hidden sm:inline">Lớp học</span>
             </button>
             <button
               type="button"
@@ -2935,8 +2948,10 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                   ? "bg-sky-700 text-white"
                   : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5"
               }`}
+              aria-label="Tham gia lớp học"
             >
-              <span>Tham gia lớp học</span>
+              <UserPlus className="h-4 w-4 sm:hidden" aria-hidden />
+              <span className="hidden sm:inline">Tham gia lớp học</span>
             </button>
           </div>
           <div className="flex flex-1 justify-end">

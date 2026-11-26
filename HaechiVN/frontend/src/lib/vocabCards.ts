@@ -31,6 +31,8 @@ export type AssignmentPayload = {
 export type AssignedDeckClassJson = {
   id: string;
   name?: string;
+  ownerId?: string;
+  members?: Array<{ id: string; role?: string }>;
   assignments?: Array<{ id: string; title: string; deckName?: string; totalCards?: number; reviewedCards?: number; completed?: boolean; dueDate?: string }>;
 };
 
