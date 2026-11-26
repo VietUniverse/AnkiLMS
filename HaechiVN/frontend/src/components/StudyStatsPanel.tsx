@@ -16,11 +16,13 @@ export const StudyStatsPanel: React.FC<{ userId: string }> = ({ userId }) => {
   // Vốn từ = số thẻ đã qua giai đoạn học (state "review", cột Due của Anki).
   const [vocabCount, setVocabCount] = useState<number | null>(null);
   const [todayKey, setTodayKey] = useState("");
+  const [growth, setGrowth] = useState<{ day: string; young: number; mature: number }[]>([]);
 
   useEffect(() => {
     let active = true;
-    void Promise.all([ApiClient.getStudyProfileSummary(), ApiClient.getCardStates().catch(() => null)]).then(([summary, cardStates]) => {
+    void Promise.all([ApiClient.getStudyProfileSummary(), ApiClient.getCardStates().catch(() => null), ApiClient.getVocabGrowth().catch(() => [])]).then(([summary, cardStates, growthDays]) => {
       if (!active) return;
+      setGrowth(growthDays);
       setVocabCount(cardStates ? Object.values(cardStates).filter((item) => item.state === "review").length : null);
       setTodayKey(new Date(Date.now() + 7 * 3600 * 1000).toISOString().slice(0, 10));
       setStats(summary);
@@ -99,6 +101,42 @@ export const StudyStatsPanel: React.FC<{ userId: string }> = ({ userId }) => {
           </div>
         ))}
       </section>
+
+      <VocabGrowthChart days={growth} />
     </>
+  );
+};
+
+// Hai đường theo ngày: non (khoảng ôn < 21 ngày) xanh nhạt, chín (>= 21 ngày) xanh lá đậm.
+const VocabGrowthChart: React.FC<{ days: { day: string; young: number; mature: number }[] }> = ({ days }) => {
+  if (!days.length) return null;
+  const last = days[days.length - 1];
+  const W = 600, H = 160, step = W / Math.max(1, days.length - 1);
+  const max = Math.max(1, ...days.map((d) => Math.max(d.young, d.mature)));
+  const line = (key: "young" | "mature") => days.map((d, i) => `${i * step},${H - (d[key] / max) * H}`).join(" ");
+  return (
+    <section className="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/70 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-[11px] font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400">Sự phát triển vốn từ · 60 ngày</p>
+        <div className="flex gap-3 text-[11px] text-stone-600 dark:text-stone-300">
+          <span className="inline-flex items-center gap-1"><i className="h-2.5 w-2.5 rounded-sm bg-lime-500 dark:bg-lime-400" />Non (&lt; 21 ngày) {last.young.toLocaleString("vi-VN")}</span>
+          <span className="inline-flex items-center gap-1"><i className="h-2.5 w-2.5 rounded-sm bg-green-700 dark:bg-green-500" />Chín (≥ 21 ngày) {last.mature.toLocaleString("vi-VN")}</span>
+        </div>
+      </div>
+      <svg viewBox={`0 0 ${W} ${H}`} className="mt-3 h-40 w-full overflow-visible" preserveAspectRatio="none" role="img" aria-label={`Hôm nay ${last.young} từ non, ${last.mature} từ chín`}>
+        <polygon points={`0,${H} ${line("mature")} ${W},${H}`} className="fill-green-700/15 dark:fill-green-500/15" />
+        <polyline points={line("mature")} fill="none" strokeWidth={2.5} vectorEffect="non-scaling-stroke" strokeLinejoin="round" className="stroke-green-700 dark:stroke-green-500" />
+        <polyline points={line("young")} fill="none" strokeWidth={2.5} vectorEffect="non-scaling-stroke" strokeLinejoin="round" className="stroke-lime-500 dark:stroke-lime-400" />
+        {days.map((d, i) => (
+          <rect key={d.day} x={i * step - step / 2} y={0} width={step} height={H} fill="transparent">
+            <title>{`${d.day.slice(8, 10)}/${d.day.slice(5, 7)}: ${d.young} non, ${d.mature} chín`}</title>
+          </rect>
+        ))}
+      </svg>
+      <div className="mt-1 flex justify-between text-[10px] text-stone-400 dark:text-stone-500">
+        <span>{`${days[0].day.slice(8, 10)}/${days[0].day.slice(5, 7)}`}</span>
+        <span>Hôm nay</span>
+      </div>
+    </section>
   );
 };

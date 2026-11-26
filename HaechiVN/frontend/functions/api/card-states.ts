@@ -1,3 +1,4 @@
+import { vocabGrowth } from "../../src/lib/vocabGrowth";
 import { Env, jsonResponse, errorResponse, authenticateRequest, isSameOriginRequest } from "./_utils";
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
@@ -8,6 +9,13 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     if (!user) return errorResponse("Chưa đăng nhập.", 401);
 
     const url = new URL(request.url);
+    if (url.searchParams.get("growth")) {
+      const [states, logs] = await Promise.all([
+        env.DB.prepare("SELECT deck_id, card_id, interval, state, last_review FROM card_states WHERE user_id = ?").bind(user.id).all(),
+        env.DB.prepare("SELECT deck_id, card_id, scheduled_days, review_time FROM review_logs WHERE user_id = ? ORDER BY review_time").bind(user.id).all().catch(() => ({ results: [] })),
+      ]);
+      return jsonResponse({ days: vocabGrowth((states.results || []) as Parameters<typeof vocabGrowth>[0], (logs.results || []) as Parameters<typeof vocabGrowth>[1], 60) });
+    }
     const deckId = url.searchParams.get("deckId");
 
     let query = "SELECT * FROM card_states WHERE user_id = ?";
@@ -163,3 +171,4 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 export const onRequestOptions: PagesFunction = async () => {
   return jsonResponse({}, 200);
 };
+

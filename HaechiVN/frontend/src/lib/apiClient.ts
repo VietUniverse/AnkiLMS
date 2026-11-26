@@ -312,6 +312,12 @@ export class ApiClient {
     ]));
   }
 
+  public static async getVocabGrowth(): Promise<{ day: string; young: number; mature: number }[]> {
+    const res = await fetch("/api/card-states?growth=1", { credentials: "same-origin" });
+    if (!res.ok) throw new Error("Không tải được biểu đồ từ vựng.");
+    return (await res.json()).days || [];
+  }
+
   public static async saveCardState(deckId: string, cardId: number, state: { interval: number; easeFactor: number; reps: number; lapses: number; state: string; dueDate: string; dueAt?: string; stability: number; difficulty: number; learningSteps?: number; lastReview: string | null; lastReviewLog?: any }): Promise<void> {
     const res = await fetch("/api/card-states", {
       method: "POST", credentials: "same-origin",
