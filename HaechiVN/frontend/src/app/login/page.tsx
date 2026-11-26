@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { UserPlus, LogIn } from "lucide-react";
 import { ApiClient, UserProfile } from "../../lib/apiClient";
@@ -278,6 +279,8 @@ export default function LoginPage() {
                 )}
               </button>
             </form>
+
+            {!isRegister && <Link href="/forgot-password" className="text-right text-xs font-semibold text-blue-400 hover:text-blue-300">Quên mật khẩu?</Link>}
 
             {/* Phân cách Hoặc */}
             <div className="relative flex items-center justify-center py-1">

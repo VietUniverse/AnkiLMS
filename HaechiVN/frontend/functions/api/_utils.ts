@@ -38,6 +38,7 @@ export interface UserRow {
   last_checkin_date: string | null;
   created_at: string;
   email_verified?: number;
+  session_epoch?: number;
 }
 
 /**
@@ -250,9 +251,9 @@ export function clearLegacySessionCookie(): string {
   return `${LEGACY_SESSION_COOKIE}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax`;
 }
 
-export async function createSession(env: Env, user: Pick<UserRow, "id" | "email" | "name">): Promise<string> {
+export async function createSession(env: Env, user: Pick<UserRow, "id" | "email" | "name"> & { session_epoch?: number }): Promise<string> {
   const token = `hcv_${toHex(crypto.getRandomValues(new Uint8Array(32)))}`;
-  await env.SESSIONS.put(token, JSON.stringify({ userId: user.id }), { expirationTtl: SESSION_TTL_SECONDS });
+  await env.SESSIONS.put(token, JSON.stringify({ userId: user.id, sessionEpoch: user.session_epoch ?? 0 }), { expirationTtl: SESSION_TTL_SECONDS });
   return token;
 }
 
@@ -267,7 +268,7 @@ export async function authenticateRequest(request: Request, env: Env): Promise<U
     const sessionData = JSON.parse(sessionDataStr);
 
     const user = await env.DB.prepare("SELECT * FROM users WHERE id = ?").bind(sessionData.userId).first<UserRow>();
-    return user || null;
+    return user && (sessionData.sessionEpoch ?? 0) === (user.session_epoch ?? 0) ? user : null;
   } catch (e) {
     return null;
   }
