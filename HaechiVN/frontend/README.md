@@ -1,6 +1,6 @@
 # HaechiVN
 
-HaechiVN is a Korean-learning LMS deployed on Cloudflare Pages at [lms.ankivn.com](https://lms.ankivn.com). Its Next.js static export is served from `out`, and its Pages Functions provide authentication and the application API using Cloudflare D1 and KV.
+HaechiVN is a Korean-learning LMS deployed on Cloudflare Pages at [haechivn.com](https://haechivn.com). Its Next.js static export is served from `out`, and its Pages Functions provide authentication and the application API using Cloudflare D1 and KV.
 
 ## Local development
 

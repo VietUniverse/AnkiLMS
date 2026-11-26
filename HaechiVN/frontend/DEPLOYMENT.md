@@ -1,6 +1,6 @@
 # Deploy HaechiVN to Cloudflare Pages
 
-The frontend and Pages Functions live in this directory. The configured Pages project is `haechivn-korean`, with the production site at `https://lms.ankivn.com`.
+The frontend and Pages Functions live in this directory. The configured Pages project is `haechivn-korean`, with the production site at `https://haechivn.com`.
 
 ## Build settings
 
@@ -35,7 +35,7 @@ npx wrangler pages secret put GOOGLE_CLIENT_ID --project-name haechivn-korean
 npx wrangler pages secret put GOOGLE_CLIENT_SECRET --project-name haechivn-korean
 ```
 
-Register `https://lms.ankivn.com/api/auth/callback` as an authorized redirect URI in the Google OAuth client. Google sign-in stays unavailable until both secrets and the redirect URI are configured; email/password sign-in does not require them.
+Keep `https://lms.ankivn.com/api/auth/callback` authorized during the transition; it exchanges the Google code and hands the session to `https://haechivn.com`. Add `https://haechivn.com/api/auth/callback` to the Google OAuth client before removing the bridge. Google sign-in stays unavailable until both secrets and the redirect URI are configured; email/password sign-in does not require them.
 
 ## Korean pronunciation
 
@@ -47,6 +47,6 @@ The current learning interface uses the Korean voice supplied by the learner's b
 2. Apply pending D1 migrations to the intended environment.
 3. Deploy the `out` directory and Pages Functions to the existing `haechivn-korean` Pages project.
 4. Confirm sign-up, sign-in, sign-out, check-in, study-session rewards, community, chat, feedback, and rewards on the production hostname.
-5. Verify `lms.ankivn.com` is still the configured custom domain and HTTPS is active.
+5. Verify `haechivn.com` is still the configured custom domain and HTTPS is active.
 
 Do not deploy this site with `next start`; Cloudflare Pages serves the static export and `functions/` API routes.

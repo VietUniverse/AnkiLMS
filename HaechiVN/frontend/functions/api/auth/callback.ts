@@ -64,7 +64,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
         code,
         client_id: clientId,
         client_secret: clientSecret,
-        redirect_uri: `${siteUrl}/api/auth/callback`,
+        redirect_uri: `https://lms.ankivn.com/api/auth/callback`,
         grant_type: "authorization_code",
       }),
     });

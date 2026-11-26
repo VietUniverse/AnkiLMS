@@ -4,7 +4,7 @@ import { CURATED_DECKS } from "../data/curatedDecks";
 export const dynamic = "force-static";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const origin = "https://lms.ankivn.com";
+  const origin = "https://haechivn.com";
   // Chỉ liệt kê trang khách mở được; trang bắt đăng nhập (kể cả /topik/archive) và bộ thẻ khoá học (dữ liệu riêng) không cho máy tìm kiếm.
   const pages = ["", "/classes", "/placement-test", "/dictionary", "/explore"];
   const deckIds = CURATED_DECKS.map((deck) => deck.id);

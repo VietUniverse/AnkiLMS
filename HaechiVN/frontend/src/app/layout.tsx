@@ -10,11 +10,11 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://lms.ankivn.com"),
+  metadataBase: new URL("https://haechivn.com"),
   title: { default: "HaechiVN | Học tiếng Hàn với Flashcard, Dictation và Shadowing", template: "%s | HaechiVN" },
   description: "Học tiếng Hàn tại HaechiVN với flashcard ôn tập SRS, từ điển Hàn–Việt, luyện nghe chép chính tả và shadowing theo video. Bắt đầu học miễn phí.",
   applicationName: "HaechiVN",
-  openGraph: { type: "website", locale: "vi_VN", siteName: "HaechiVN", title: "HaechiVN | Học tiếng Hàn mỗi ngày", description: "Flashcard SRS, từ điển Hàn–Việt, dictation và shadowing trên một nền tảng học tiếng Hàn.", url: "https://lms.ankivn.com", images: [{ url: "/brand/haechivn-mark.png", alt: "HaechiVN" }] },
+  openGraph: { type: "website", locale: "vi_VN", siteName: "HaechiVN", title: "HaechiVN | Học tiếng Hàn mỗi ngày", description: "Flashcard SRS, từ điển Hàn–Việt, dictation và shadowing trên một nền tảng học tiếng Hàn.", url: "https://haechivn.com", images: [{ url: "/brand/haechivn-mark.png", alt: "HaechiVN" }] },
   twitter: { card: "summary", title: "HaechiVN | Học tiếng Hàn mỗi ngày", description: "Flashcard SRS, từ điển Hàn–Việt, dictation và shadowing." },
   manifest: "/manifest.json",
   icons: {
@@ -58,7 +58,7 @@ export default function RootLayout({
           id="ld-json"
           type="application/ld+json"
           strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "WebSite", name: "HaechiVN", url: "https://lms.ankivn.com", inLanguage: "vi", description: "Nền tảng học tiếng Hàn với flashcard SRS, từ điển, dictation và shadowing." }) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "WebSite", name: "HaechiVN", url: "https://haechivn.com", inLanguage: "vi", description: "Nền tảng học tiếng Hàn với flashcard SRS, từ điển, dictation và shadowing." }) }}
         />
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-EMV6CCJTG1" strategy="afterInteractive" />
         <Script

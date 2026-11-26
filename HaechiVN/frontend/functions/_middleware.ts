@@ -5,6 +5,19 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const url = new URL(request.url);
   const path = url.pathname;
 
+  // Give visitors on the former domain time to read the move notice.
+  if (url.hostname === "lms.ankivn.com") {
+    const destination = new URL(path + url.search, "https://haechivn.com").toString();
+    if (path === "/api/auth/callback") return context.next();
+    const isPage = (request.method === "GET" || request.method === "HEAD")
+      && !path.startsWith("/api/") && !path.startsWith("/_next/")
+      && !/\.[a-z0-9]{1,8}$/i.test(path);
+    if (!isPage) return Response.redirect(destination, 308);
+    const safeDestination = destination.replaceAll("&", "&amp;").replaceAll('"', "&quot;");
+    const html = `<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="8;url=${safeDestination}"><title>HaechiVN đã chuyển tên miền</title><style>body{font-family:system-ui,sans-serif;background:#0b1733;color:#fff;min-height:100vh;display:grid;place-items:center;margin:0;padding:24px;box-sizing:border-box}main{max-width:560px;text-align:center}h1{font-size:2rem}p{line-height:1.6;color:#cbd5e1}a{display:inline-block;margin-top:16px;padding:14px 22px;border-radius:12px;background:#2563eb;color:#fff;text-decoration:none;font-weight:700}</style></head><body><main><h1>HaechiVN đã chuyển sang haechivn.com</h1><p>Trang học hiện có địa chỉ mới. Bạn sẽ được chuyển sau 8 giây. Khi sang trang mới, vui lòng đăng nhập lại.</p><a href="${safeDestination}">Đến haechivn.com ngay</a></main></body></html>`;
+    return new Response(request.method === "HEAD" ? null : html, { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "X-Robots-Tag": "noindex", "Referrer-Policy": "no-referrer", "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'" } });
+  }
+
   if ((path === "/admin" || path === "/admin.html" || path.startsWith("/admin/")) && !await authenticateAdminRequest(request, env)) {
     return errorResponse("Không tìm thấy.", 404);
   }

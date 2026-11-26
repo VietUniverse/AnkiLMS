@@ -17,12 +17,13 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     const requestedLanguage = new URL(request.url).searchParams.get("translationLanguage");
     const translationLanguage = ["vi", "en", "ja"].includes(requestedLanguage || "") ? requestedLanguage : "vi";
     await env.SESSIONS.put(`oauth_state:${state}`, JSON.stringify({ translationLanguage }), { expirationTtl: 600 });
-    const siteUrl = configuredSiteUrl(request, env);
+    configuredSiteUrl(request, env);
+    // Keep the registered Google callback during the domain transition.
     const authorizationUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
     authorizationUrl.search = new URLSearchParams({
       response_type: "code",
       client_id: clientId,
-      redirect_uri: `${siteUrl}/api/auth/callback`,
+      redirect_uri: `https://lms.ankivn.com/api/auth/callback`,
       scope: "openid email profile",
       access_type: "online",
       prompt: "select_account",
