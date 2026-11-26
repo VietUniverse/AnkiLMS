@@ -179,8 +179,8 @@ function BackgroundPlayground() {
   const setSheet = (v: null | "dict" | "gpt") => { if (v === "gpt") setGptRun((n) => n + 1); setSheetRaw(v); };
   const glass = opacity < 100;
   return (
-    <div className="grid items-center gap-12 md:grid-cols-[auto_minmax(0,34rem)] md:justify-center md:gap-[clamp(2.5rem,5vw,5rem)]">
-      <div className="mx-auto w-full max-w-[380px] md:w-[min(380px,calc((100dvh-8rem)*0.47))]">
+    <div className="grid items-center gap-8 md:grid-cols-[minmax(0,34rem)_auto] md:grid-rows-[auto_auto] md:justify-center md:gap-x-[clamp(2.5rem,5vw,5rem)] md:gap-y-8">
+      <div className="order-2 mx-auto w-[min(78vw,calc((100dvh-18rem)*0.47))] max-w-[380px] md:order-none md:col-start-2 md:row-span-2 md:row-start-1 md:w-[min(380px,calc((100dvh-8rem)*0.47))]">
         <PhoneFrame fullBleed darkStatus={lightBg}>
           <div className="relative aspect-[9/19.5]">
             <div className="absolute inset-0 transition-colors duration-300" style={{ backgroundColor: isColor ? bg : "#e5e7eb" }} aria-hidden />
@@ -253,11 +253,14 @@ function BackgroundPlayground() {
         </PhoneFrame>
       </div>
 
-      <div className="text-center md:text-left">
+      <div className="order-1 text-center md:order-none md:col-start-1 md:row-start-1 md:self-end md:text-left">
         <h2 className="text-[clamp(2rem,1.2rem+3vw,3.5rem)] font-bold" style={heading}>Học trên nền<br />bạn thích.</h2>
         <p className="mx-auto mt-4 max-w-[28em] text-[clamp(1rem,0.9rem+0.45vw,1.25rem)] md:mx-0" style={{ color: MUTED }}>Chạm thẻ để lật, bấm Quên hoặc Thuộc để qua thẻ. Đổi ảnh nền, màu nền, độ trong của thẻ, tra Từ điển hay hỏi ChatGPT ngay trên thẻ.</p>
+      </div>
 
-        <fieldset className="mt-8">
+      <div className="order-3 md:order-none md:col-start-1 md:row-start-2 md:self-start">
+
+        <fieldset>
           <legend className="text-sm font-semibold" style={{ color: INK }}>Ảnh nền</legend>
           <div className="mt-3 flex flex-wrap justify-center gap-2.5 md:justify-start">
             {BG_PICKS.map((src, n) => (
@@ -338,7 +341,7 @@ function Nav() {
           <span>Haechi<span style={{ color: ACCENT }}>VN</span></span>
         </Link>
         <div className="flex items-center gap-1">
-          <Link href="/login?mode=register" className="rounded-full px-4 py-1.5 text-sm font-medium transition-transform duration-100 active:scale-[0.97]" style={{ backgroundColor: INK, color: "#fff" }}>Học miễn phí</Link>
+          <Link href="/login" className="rounded-full px-4 py-1.5 text-sm font-medium transition-transform duration-100 active:scale-[0.97]" style={{ backgroundColor: INK, color: "#fff" }}>Học miễn phí</Link>
         </div>
       </nav>
     </div>
@@ -478,15 +481,15 @@ export function LandingPage() {
 
         {SHOTS.map((shot, n) => (
           <section key={shot.src} id={n === 0 ? "giao-dien" : undefined} className="snap-start snap-always flex items-center py-16 md:min-h-dvh md:pb-10 md:pt-24" style={{ backgroundColor: n % 2 ? TILE : CANVAS }}>
-            <div className={`mx-auto grid w-full max-w-5xl items-center gap-12 px-4 sm:px-6 md:grid-cols-[auto_minmax(0,30rem)] md:justify-center md:gap-[clamp(2.5rem,6vw,6rem)] ${n % 2 ? "md:[&>*:first-child]:order-2" : ""}`}>
+            <div className={`mx-auto grid w-full max-w-5xl items-center gap-12 px-4 sm:px-6 md:grid-cols-[minmax(0,30rem)_auto] md:justify-center md:gap-[clamp(2.5rem,6vw,6rem)]`}>
               {/* Điện thoại co theo chiều cao màn hình để luôn nằm gọn trong một màn ngang. */}
-              <div className="mx-auto w-[72%] max-w-[360px] md:w-[min(360px,calc((100dvh-8rem)*0.42))]">
+              <div className="mx-auto w-[min(72vw,calc((100dvh-15rem)*0.43))] max-w-[360px] md:w-[min(360px,calc((100dvh-8rem)*0.42))]">
                 <PhoneFrame>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={shot.src} alt={shot.alt} width={374} height={809} loading="lazy" className="block h-auto w-full" />
                 </PhoneFrame>
               </div>
-              <div className="text-center md:text-left">
+              <div className="order-first text-center md:text-left">
                 <p className="text-sm font-semibold" style={{ color: ACCENT }}>{shot.caption}</p>
                 <h2 className="mt-2 text-[clamp(2rem,1.2rem+3vw,3.5rem)] font-bold" style={heading}>{shot.title}</h2>
                 <p className="mx-auto mt-4 max-w-[26em] text-[clamp(1rem,0.9rem+0.45vw,1.25rem)] md:mx-0" style={{ color: MUTED }}>{shot.text}</p>

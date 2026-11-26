@@ -316,16 +316,16 @@ export default function LoginPage() {
                   </button>
                 </p>
               ) : (
-                <p className="text-xs text-slate-400">
-                  Chưa có tài khoản?{" "}
+                <div className="space-y-2.5">
+                  <p className="text-sm font-semibold text-slate-300">Chưa có tài khoản?</p>
                   <button
                     type="button"
                     onClick={() => { setIsRegister(true); setError(null); }}
-                    className="text-blue-400 hover:text-blue-300 font-bold underline underline-offset-4 cursor-pointer ml-1"
+                    className="w-full rounded-xl border-2 border-blue-400/70 py-3.5 text-base font-extrabold text-blue-300 transition hover:bg-blue-500/10 active:scale-[0.98] cursor-pointer"
                   >
-                    Đăng ký ngay
+                    Tạo tài khoản miễn phí
                   </button>
-                </p>
+                </div>
               )}
             </div>
           </div>
