@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Xuất dữ liệu học cũ — HaechiVN</title>
+  <style>
+    body{font:16px/1.6 system-ui,sans-serif;background:#eef5fb;color:#102441;margin:0;padding:24px}
+    main{max-width:620px;margin:8vh auto;background:#fff;border-radius:18px;padding:30px;box-shadow:0 8px 30px #1838581a}
+    h1{font-size:1.5rem;margin:0 0 10px}p{margin:12px 0}strong{color:#0759b4}
+    button{background:#1369d7;color:#fff;border:0;border-radius:10px;padding:12px 18px;font:inherit;font-weight:700;cursor:pointer}
+    button:disabled{opacity:.5;cursor:wait}#status{white-space:pre-wrap;margin-top:18px}
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Xuất dữ liệu học từ tên miền cũ</h1>
+    <p>Trang này đọc dữ liệu học còn trong <strong>trình duyệt hiện tại</strong> tại lms.ankivn.com. Hãy mở bằng đúng máy và trình duyệt đã dùng để học.</p>
+    <p>Tệp tải xuống chứa tiến độ ôn và bộ thẻ cá nhân, không chứa mật khẩu hay phiên đăng nhập. Trang không gửi tệp đi đâu.</p>
+    <button id="export">Tải bản sao dữ liệu</button>
+    <p id="status" role="status"></p>
+  </main>
+  <script>
+    const status = document.getElementById('status');
+    const button = document.getElementById('export');
+    function readIndexedDb(userId) {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open('haechivn-storage', 1);
+        request.onerror = () => reject(request.error);
+        request.onupgradeneeded = () => { request.transaction.abort(); reject(new Error('Máy này chưa có dữ liệu IndexedDB.')); };
+        request.onsuccess = () => {
+          const db = request.result;
+          if (!db.objectStoreNames.contains('app-data')) { db.close(); resolve(null); return; }
+          const tx = db.transaction('app-data', 'readonly');
+          const store = tx.objectStore('app-data');
+          const scoped = store.get('decks:' + userId);
+          scoped.onsuccess = () => {
+            if (scoped.result !== undefined) { db.close(); resolve(scoped.result); return; }
+            const legacy = store.get('decks');
+            legacy.onsuccess = () => { db.close(); resolve(legacy.result ?? null); };
+            legacy.onerror = () => { db.close(); reject(legacy.error); };
+          };
+          scoped.onerror = () => { db.close(); reject(scoped.error); };
+        };
+      });
+    }
+    button.addEventListener('click', async () => {
+      button.disabled = true;
+      status.textContent = 'Đang đọc bản lưu trên máy…';
+      try {
+        const profile = JSON.parse(localStorage.getItem('haechivn_user_profile') || 'null');
+        if (!profile || !profile.id || !profile.email) throw new Error('Không tìm thấy tài khoản đã học trong trình duyệt này. Vui lòng kiểm tra đúng trình duyệt/cấu hình người dùng.');
+        if (profile.email.toLowerCase() !== 'pthuy0506@gmail.com') throw new Error('Trình duyệt này đang lưu tài khoản ' + profile.email + ', không phải tài khoản Phương Thúy. Không xuất nhầm dữ liệu.');
+        let decks = null;
+        let deckError = null;
+        try { decks = await readIndexedDb(profile.id); } catch (error) { deckError = String(error); }
+        if (decks === null) {
+          try { decks = JSON.parse(localStorage.getItem('haechivn_decks') || 'null'); } catch (error) { deckError = String(error); }
+        }
+        const state = JSON.parse(localStorage.getItem('haechivn_srs_state_' + profile.id) || 'null');
+        const exportData = {
+          format: 'haechivn-browser-progress-v1',
+          exportedAt: new Date().toISOString(),
+          origin: location.origin,
+          account: { id: profile.id, email: profile.email, name: profile.name },
+          cardStates: state,
+          decks,
+          deckError,
+          lastLesson: {
+            id: localStorage.getItem('haechivn_last_lesson_id'),
+            title: localStorage.getItem('haechivn_last_lesson_title')
+          }
+        };
+        const blob = new Blob([JSON.stringify(exportData)], { type: 'application/json' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'haechivn-phuong-thuy-du-lieu-cu.json';
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(link.href), 30000);
+        status.textContent = 'Đã tải bản sao: ' + (state ? Object.keys(state).length : 0) + ' trạng thái thẻ; ' + (Array.isArray(decks) ? decks.length : 0) + ' bộ thẻ. Dữ liệu gốc vẫn nằm trên máy.';
+      } catch (error) {
+        status.textContent = 'Không xuất được: ' + (error.message || String(error));
+      } finally { button.disabled = false; }
+    });
+  </script>
+</body>
+</html>

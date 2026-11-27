@@ -7,6 +7,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   // Give visitors on the former domain time to read the move notice.
   if (url.hostname === "lms.ankivn.com") {
+    // Keep the former origin available for a manual, read-only browser-data
+    // export. Browser storage cannot be accessed from haechivn.com.
+    if (path === "/recover-progress.html") return context.next();
     const destination = new URL(path + url.search, "https://haechivn.com").toString();
     if (path === "/api/auth/callback") return context.next();
     const isPage = (request.method === "GET" || request.method === "HEAD")
