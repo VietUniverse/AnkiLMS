@@ -1734,8 +1734,9 @@ html[data-theme="dark"] .lb-badge-2 { color: #e2e8f0; }
 html[data-theme="dark"] .lb-badge-3 { color: #fdba74; }
 
 /* Khối thẻ học: chỉ nền trong suốt dần theo Cài đặt học, chữ giữ nguyên. */
-.study-card { background-color: color-mix(in srgb, #fff var(--study-card-alpha, 100%), transparent); }
-:where([data-theme="dark"], .dark) .study-card { background-color: color-mix(in srgb, #141b2d var(--study-card-alpha, 100%), transparent); }
+/* --study-card-tint: nền thẻ theo từ loại (cài đặt "Tô màu thẻ theo từ loại"); mặc định trắng/navy. */
+.study-card { background-color: color-mix(in srgb, var(--study-card-tint, #fff) var(--study-card-alpha, 100%), transparent); }
+:where([data-theme="dark"], .dark) .study-card { background-color: color-mix(in srgb, var(--study-card-tint-dark, #141b2d) var(--study-card-alpha, 100%), transparent); }
 /* !important + độ ưu tiên cao để thắng luật ép input trắng của light mode (dòng ~291). */
 html[data-theme] .study-card input.study-input, html .study-card input.study-input { background-color: color-mix(in srgb, #fff var(--study-card-alpha, 100%), transparent) !important; }
 html[data-theme="dark"] .study-card input.study-input, html.dark .study-card input.study-input { background-color: color-mix(in srgb, #292524 calc(var(--study-card-alpha, 100%) * 0.8), transparent) !important; }

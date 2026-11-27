@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { Check, ImagePlus, Settings, Trash2, X } from "lucide-react";
 import { EggThemeToggle } from "./EggThemeToggle";
 import { backgroundLayerStyle, DEFAULT_STUDY_BG, fileToDataUrl, GRADIENT_PRESETS, saveStudyBackground, STUDY_BACKGROUND_GALLERY, useStudyBackground } from "../lib/studyBackground";
-import { type AudioMode, setAudioMode, setDisableAutoPronounce, setHideChatGpt, setTinderMode, useTinderMode, setHideDictionary, setRandomStudyBgEvery10, setRequireExactTyping, setStudyCardOpacity, useStudyCardOpacity, useDisableAutoPronounce, useHideChatGpt, useHideDictionary, useHideExampleAudio, useHideWordAudio, useMuteExampleAudio, useMuteWordAudio, useRandomStudyBgEvery10, useRequireExactTyping } from "../lib/studyPreferences";
+import { type AudioMode, setAudioMode, setDisableAutoPronounce, setHideChatGpt, setTinderMode, useTinderMode, usePosCardColor, setPosCardColor, setHideDictionary, setRandomStudyBgEvery10, setRequireExactTyping, setStudyCardOpacity, useStudyCardOpacity, useDisableAutoPronounce, useHideChatGpt, useHideDictionary, useHideExampleAudio, useHideWordAudio, useMuteExampleAudio, useMuteWordAudio, useRandomStudyBgEvery10, useRequireExactTyping } from "../lib/studyPreferences";
 
 type SectionKey = "study" | "audio" | "look";
 const SHEET_HEIGHT_KEY = "haechivn_settings_sheet_height";
@@ -71,6 +71,7 @@ export function StudyBackgroundPanel() {
   const hideChatGpt = useHideChatGpt();
   const hideDictionary = useHideDictionary();
   const tinderMode = useTinderMode();
+  const posCardColor = usePosCardColor();
   const muteWordAudio = useMuteWordAudio();
   const cardOpacity = useStudyCardOpacity();
   const muteExampleAudio = useMuteExampleAudio();
@@ -260,6 +261,7 @@ export function StudyBackgroundPanel() {
               {section === "study" && (
                 <div className="divide-y divide-stone-100 dark:divide-stone-800">
                   <ToggleRow label="Vuốt thẻ để chấm" hint="Vuốt trái là Quên, vuốt phải là Thuộc. Thẻ thường thì chạm để lật." checked={tinderMode} onChange={setTinderMode} />
+                  <ToggleRow label="Tô màu thẻ theo từ loại" hint="Danh từ xanh dương, động từ đỏ, tính từ xanh lá, phó từ tím." checked={posCardColor} onChange={setPosCardColor} />
                   <ToggleRow label="Thẻ gõ: phải gõ đúng mới qua" hint="Tắt thì gõ sai vẫn bấm được Thuộc." checked={requireExactTyping} onChange={setRequireExactTyping} />
                   <ToggleRow label="Hiện nút Từ điển" checked={!hideDictionary} onChange={(on) => setHideDictionary(!on)} />
                   <ToggleRow label="Hiện nút ChatGPT" checked={!hideChatGpt} onChange={(on) => setHideChatGpt(!on)} />

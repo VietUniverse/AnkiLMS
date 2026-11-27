@@ -342,12 +342,12 @@ export const filterTree = (nodes: DeckTreeNode[], q: string): DeckTreeNode[] => 
 };
 
 /** Màu theo từ loại (dữ liệu dùng nhãn tiếng Việt: "Danh từ", "Cụm động từ", "Cụm ĐT"…). Không khớp thì null. */
-export function posTone(pos?: string): { bar: string; chip: string } | null {
+export function posTone(pos?: string): { bar: string; chip: string; tintLight: string; tintDark: string } | null {
   const p = (pos || "").toLowerCase();
   if (!p) return null;
-  if (p.includes("động") || p.includes("đt")) return { bar: "bg-rose-500", chip: "bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300" };
-  if (p.includes("tính")) return { bar: "bg-emerald-500", chip: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300" };
-  if (p.includes("phó")) return { bar: "bg-violet-500", chip: "bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300" };
-  if (p.includes("danh") || p.includes("số")) return { bar: "bg-sky-500", chip: "bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300" };
-  return { bar: "bg-amber-500", chip: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300" };
+  if (p.includes("động") || p.includes("đt")) return { bar: "bg-rose-500", chip: "bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300", tintLight: "#fff1f2", tintDark: "#26131a" };
+  if (p.includes("tính")) return { bar: "bg-emerald-500", chip: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300", tintLight: "#ecfdf5", tintDark: "#0c1f1a" };
+  if (p.includes("phó")) return { bar: "bg-violet-500", chip: "bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300", tintLight: "#f5f3ff", tintDark: "#171327" };
+  if (p.includes("danh") || p.includes("số")) return { bar: "bg-sky-500", chip: "bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300", tintLight: "#f0f9ff", tintDark: "#0b1a26" };
+  return { bar: "bg-amber-500", chip: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300", tintLight: "#fffbeb", tintDark: "#241c0b" };
 }

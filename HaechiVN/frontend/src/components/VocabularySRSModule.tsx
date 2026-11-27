@@ -34,7 +34,7 @@ import { addExtraNew, DailyLimits, effectiveNewLimit, loadProgress, recordCard, 
 import { parseJson, useLocalState } from "../lib/localStore";
 import { speakKorean } from "../lib/koreanSpeech";
 import { buildStudyQueue, LEARN_AHEAD_MINUTES, learnAheadCards, sessionProgress } from "../lib/studyQueue";
-import { useStudyCardOpacity, useDisableAutoPronounce, useHideChatGpt, useHideDictionary, useHideExampleAudio, useHideWordAudio, useMuteExampleAudio, useRequireExactTyping, useMuteWordAudio, useRandomStudyBgEvery10, useTinderMode } from "../lib/studyPreferences";
+import { useStudyCardOpacity, usePosCardColor, useDisableAutoPronounce, useHideChatGpt, useHideDictionary, useHideExampleAudio, useHideWordAudio, useMuteExampleAudio, useRequireExactTyping, useMuteWordAudio, useRandomStudyBgEvery10, useTinderMode } from "../lib/studyPreferences";
 import { LockKeyhole, Globe2 } from "lucide-react";
 import { detectDictionarySearchLanguage, naverLookupUrl, searchLearningDictionary, type DictionaryEntry } from "../lib/dictionarySearch";
 
@@ -104,7 +104,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const autoResumedRef = useRef(false);
   // Nút "Hiện đáp án": khi có nền gradient thì dùng chính gradient đó nhưng pha tối để chữ trắng đạt tương phản ≥ 4.5:1.
   const revealHasGradient = studyBg.kind === "gradient" || studyBg.kind === "animated";
-  const cardStyle = { "--study-card-alpha": `${useStudyCardOpacity()}%` } as React.CSSProperties;
+  const studyCardAlpha = useStudyCardOpacity();
+  const posCardColorOn = usePosCardColor();
   const revealStyle = {
     color: "#fff",
     ...(revealHasGradient
@@ -929,6 +930,13 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
   }, [viewMode, activeDeckTitle, exitStudy, currentCardIndex, activeCardsList.length, progressSegment, remainingCounts, sessionMix, setActiveStudySession]);
 
   const currentCard = activeCardsList[currentCardIndex] || activeCardsList[0];
+
+  // Nền thẻ theo từ loại (Cài đặt học > "Tô màu thẻ theo từ loại"); tắt thì giữ nền trắng/navy như cũ.
+  const posTint = posCardColorOn ? posTone(currentCard?.pos) : null;
+  const cardStyle = {
+    "--study-card-alpha": `${studyCardAlpha}%`,
+    ...(posTint ? { "--study-card-tint": posTint.tintLight, "--study-card-tint-dark": posTint.tintDark } : {}),
+  } as React.CSSProperties;
 
   useEffect(() => {
     muteWordRef.current = muteWordAudio || hideWordAudio;

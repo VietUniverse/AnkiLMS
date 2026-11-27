@@ -14,6 +14,8 @@ const RANDOM_BG_KEY = "haechivn_random_bg_every_10";
 const LEGACY_MUTE_KEY = "haechivn_mute_sound";
 // Chế độ Tinder: chạm thẻ để lật, kéo/chạm trái = Quên, phải = Thuộc.
 const TINDER_MODE_KEY = "haechivn_tinder_mode";
+// Tô nền thẻ học theo từ loại (danh/động/tính/phó từ). Mặc định bật.
+const POS_CARD_COLOR_KEY = "haechivn_pos_card_color";
 const PREF_EVENT = "haechivn-study-prefs";
 
 const readHideChatGpt = (): boolean => {
@@ -83,6 +85,25 @@ export function useTinderMode(): boolean {
 
 export function setTinderMode(enabled: boolean): void {
   writeMuted(TINDER_MODE_KEY, enabled);
+}
+
+/** Mặc định bật: chỉ tắt khi người học chủ động chọn "0". */
+export function usePosCardColor(): boolean {
+  return useSyncExternalStore(
+    subscribePrefs,
+    () => {
+      try {
+        return localStorage.getItem(POS_CARD_COLOR_KEY) !== "0";
+      } catch {
+        return true;
+      }
+    },
+    () => true
+  );
+}
+
+export function setPosCardColor(enabled: boolean): void {
+  writeMuted(POS_CARD_COLOR_KEY, enabled);
 }
 
 export function useMuteWordAudio(): boolean {
