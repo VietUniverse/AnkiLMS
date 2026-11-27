@@ -22,6 +22,8 @@ export interface StudySessionInfo {
   progressPercent?: number;
   remainingNew?: number;
   remainingReview?: number;
+  /** Thành phần lượt học để chia thanh tiến độ: ôn trước (đỏ), mới sau (xanh). */
+  mix?: { newTotal: number; reviewTotal: number; newDone: number; reviewDone: number };
 }
 
 interface AppContextType {

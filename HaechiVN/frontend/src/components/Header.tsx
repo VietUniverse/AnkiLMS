@@ -16,6 +16,9 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onToggleMobileMenu }) => {
   const { activeStudySession } = useApp();
+  // Lượt học xếp ôn trước rồi tới mới: chia thanh theo đúng tỉ lệ đó thay vì một màu.
+  const mix = activeStudySession?.mix;
+  const mixTotal = mix ? mix.newTotal + mix.reviewTotal : 0;
   // Đang học và có nền tùy chỉnh: thanh trên trong suốt để nền chạy liền xuống dưới thanh.
   const studyBg = useStudyBackground();
   const bgActive = !!activeStudySession && backgroundLayerStyle(studyBg) !== null;
@@ -70,11 +73,31 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onToggl
           className={`absolute inset-x-0 top-0 h-1.5 ${bgActive ? "" : "bg-stone-300/40 dark:bg-white/10"}`}
           style={bgActive ? { background: progressTone.track } : undefined}
           role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={activeStudySession.progressPercent}
+          aria-label={mixTotal > 0 && mix
+            ? `Tiến độ: ôn ${mix.reviewDone}/${mix.reviewTotal}, mới ${mix.newDone}/${mix.newTotal}`
+            : `Tiến độ ${activeStudySession.progressPercent}%`}
         >
-          <div
-            className={`h-full rounded-r-full transition-[width] duration-500 ease-out motion-reduce:transition-none ${bgActive ? "" : "bg-emerald-500"}`}
-            style={{ width: `${activeStudySession.progressPercent}%`, ...(bgActive ? { background: progressTone.fill, boxShadow: progressTone.glow } : {}) }}
-          />
+          {!bgActive && mixTotal > 0 && mix ? (
+            <div className="flex h-full w-full">
+              <div className="relative h-full bg-rose-500/25" style={{ width: `${(mix.reviewTotal / mixTotal) * 100}%` }}>
+                <div
+                  className="absolute inset-y-0 left-0 bg-rose-500 transition-[width] duration-500 ease-out motion-reduce:transition-none"
+                  style={{ width: `${mix.reviewTotal ? (mix.reviewDone / mix.reviewTotal) * 100 : 0}%` }}
+                />
+              </div>
+              <div className="relative h-full flex-1 rounded-r-full bg-sky-500/20">
+                <div
+                  className="absolute inset-y-0 left-0 bg-sky-500 transition-[width] duration-500 ease-out motion-reduce:transition-none"
+                  style={{ width: `${mix.newTotal ? (mix.newDone / mix.newTotal) * 100 : 0}%` }}
+                />
+              </div>
+            </div>
+          ) : (
+            <div
+              className={`h-full rounded-r-full transition-[width] duration-500 ease-out motion-reduce:transition-none ${bgActive ? "" : "bg-emerald-500"}`}
+              style={{ width: `${activeStudySession.progressPercent}%`, ...(bgActive ? { background: progressTone.fill, boxShadow: progressTone.glow } : {}) }}
+            />
+          )}
         </div>
       )}
 

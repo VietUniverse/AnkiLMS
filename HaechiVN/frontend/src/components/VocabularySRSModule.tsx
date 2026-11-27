@@ -132,6 +132,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const [activeDeckTitle, setActiveDeckTitle] = useState<string>("1. Quốc gia (나라)");
   const [activeCardsList, setActiveCardsList] = useState<VocabularyCard[]>([]);
   const [progressSegment, setProgressSegment] = useState({ index: 0, percent: 0 });
+  // Thành phần lượt học: hàng đợi xếp ôn trước rồi tới mới, thanh tiến độ chia theo tỉ lệ này.
+  const [sessionMix, setSessionMix] = useState({ newTotal: 0, reviewTotal: 0, newDone: 0, reviewDone: 0 });
   const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
   const [isFlipped, setIsFlipped] = useState<boolean>(false);
   const [typedInput, setTypedInput] = useState<string>("");
@@ -668,6 +670,11 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     setActiveDeckTitle(title);
     setActiveCardsList(activeList);
     setProgressSegment({ index: 0, percent: 0 });
+    const reviewTotal = activeList.filter((card) => {
+      const state = cardStateMap[stateKeyOf(card)];
+      return !!state && state.state !== "new";
+    }).length;
+    setSessionMix({ newTotal: activeList.length - reviewTotal, reviewTotal, newDone: 0, reviewDone: 0 });
     setCurrentCardIndex(0);
     setIsFlipped(false);
     setTypedInput("");
@@ -748,9 +755,10 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
         progressPercent: activeCardsList.length > 0 ? sessionProgress(currentCardIndex, activeCardsList.length, progressSegment) : 0,
         remainingNew: remainingCounts.newCount,
         remainingReview: remainingCounts.reviewCount,
+        mix: sessionMix,
       });
     }
-  }, [viewMode, activeDeckTitle, exitStudy, currentCardIndex, activeCardsList.length, progressSegment, remainingCounts, setActiveStudySession]);
+  }, [viewMode, activeDeckTitle, exitStudy, currentCardIndex, activeCardsList.length, progressSegment, remainingCounts, sessionMix, setActiveStudySession]);
 
   // Auto-resume if query param ?resume=true or ?study=true or ?assignment=... is present
   useEffect(() => {
@@ -910,6 +918,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
         progressPercent: activeCardsList.length > 0 ? sessionProgress(currentCardIndex, activeCardsList.length, progressSegment) : 0,
         remainingNew: remainingCounts.newCount,
         remainingReview: remainingCounts.reviewCount,
+        mix: sessionMix,
       });
     } else {
       setActiveStudySession(null);
@@ -917,7 +926,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     return () => {
       setActiveStudySession(null);
     };
-  }, [viewMode, activeDeckTitle, exitStudy, currentCardIndex, activeCardsList.length, progressSegment, remainingCounts, setActiveStudySession]);
+  }, [viewMode, activeDeckTitle, exitStudy, currentCardIndex, activeCardsList.length, progressSegment, remainingCounts, sessionMix, setActiveStudySession]);
 
   const currentCard = activeCardsList[currentCardIndex] || activeCardsList[0];
 
@@ -1058,7 +1067,9 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     const effectiveRetention = userFsrsConfig?.desiredRetention || FSRS45_DEFAULTS.desiredRetention;
     const newState = { ...calculateFSRS45(rating, effectiveState, new Date(), effectiveRetention), updatedAt: new Date().toISOString() };
     // Hạn mức từ mới đếm theo từ: thẻ Review và Typing của cùng một từ chỉ tính 1 lần trong ngày.
-    if (curState.reps === 0 || curState.state === "new") recordNewWord(stateKeyOf({ ...currentCard, sibling: undefined }));
+    const gradedAsNew = curState.reps === 0 || curState.state === "new";
+    setSessionMix((mix) => (gradedAsNew ? { ...mix, newDone: mix.newDone + 1 } : { ...mix, reviewDone: mix.reviewDone + 1 }));
+    if (gradedAsNew) recordNewWord(stateKeyOf({ ...currentCard, sibling: undefined }));
     else recordCard(false);
     recordReviewedCard(activeKey);
     setCardStateMap((prev) => ({ ...prev, [activeKey]: newState }));
