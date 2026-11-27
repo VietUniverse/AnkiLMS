@@ -76,7 +76,6 @@
       status.textContent = 'Đang đọc bản lưu trên máy…';
       try {
         const exportData = await collectData();
-        if (!confirm('Xuất dữ liệu đang lưu cho tài khoản ' + exportData.account.email + '?')) return;
         const blob = new Blob([JSON.stringify(exportData)], { type: 'application/json' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
@@ -114,12 +113,6 @@
       status.textContent = 'Đang đọc bản lưu và mở trang mới…';
       try {
         payload = await collectData();
-        if (!confirm('Chuyển dữ liệu học của ' + payload.account.email + ' sang đúng tài khoản này ở haechivn.com?')) {
-          window.removeEventListener('message', receive);
-          transferButton.disabled = false;
-          target.close();
-          return;
-        }
         send();
       } catch (error) {
         status.textContent = 'Không chuyển được: ' + (error.message || String(error));
