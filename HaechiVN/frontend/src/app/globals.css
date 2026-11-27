@@ -4244,3 +4244,12 @@ html[data-theme="dark"] .classroom-module.cm-page.rd.cd .cd-modal {
 .landing-reveal { opacity: 0; transform: translateY(28px) scale(0.985); transition: opacity 900ms cubic-bezier(0.22, 1, 0.36, 1), transform 1100ms cubic-bezier(0.22, 1, 0.36, 1); }
 .landing-reveal.is-in { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .landing-reveal { transform: none; transition: opacity 300ms ease; } }
+
+/* Chữ trắng trên nền màu bão hoà, bất kể scope (vd. .classroom-module .text-white ép #0f172a).
+   Khai báo cuối file + độ ưu tiên bằng scope sâu nhất để luôn thắng. */
+html[data-theme="light"] body:not(:has(.login-page-root)) .badge-on-solid,
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module .badge-on-solid,
+html[data-theme="light"] body:not(:has(.login-page-root)) .badge-on-solid *,
+html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module .badge-on-solid * {
+  color: #fff !important;
+}

@@ -1410,7 +1410,14 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
               >
                 <Users className="h-4 w-4 sm:hidden" aria-hidden />
                 <span className="hidden sm:inline">Thành viên</span>
-                <span className="text-[10px] font-bold opacity-70">{approvedMembers.length}</span>
+                {/* Có yêu cầu chờ duyệt thì đổi số thành badge đỏ để giáo viên thấy ngay. */}
+                {pendingMembers.length > 0 ? (
+                  <span className="badge-on-solid flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-black leading-none text-white">
+                    {pendingMembers.length}
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-bold opacity-70">{approvedMembers.length}</span>
+                )}
               </button>
               {canManageClass && (
               <button
@@ -1575,11 +1582,19 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
           </div>
 
           {pendingMembers.length > 0 && (
-            <p className="mt-2 text-[11px] font-bold text-slate-700">
-              <button type="button" className="cursor-pointer underline" onClick={() => setActiveTab("members")}>
-                {pendingMembers.length} yêu cầu tham gia đang chờ duyệt
-              </button>
-            </p>
+            <button
+              type="button"
+              onClick={() => setActiveTab("members")}
+              className="mt-3 flex w-full cursor-pointer items-center gap-3 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2.5 text-left transition hover:bg-amber-100 dark:border-amber-500/40 dark:bg-amber-500/10 dark:hover:bg-amber-500/20"
+            >
+              <span className="badge-on-solid flex h-6 min-w-6 items-center justify-center rounded-full bg-red-600 px-1 text-[11px] font-black leading-none text-white">
+                {pendingMembers.length}
+              </span>
+              <span className="flex-1 text-[12px] font-black text-amber-900 dark:text-amber-200">
+                {pendingMembers.length} người xin vào lớp, chờ bạn duyệt
+              </span>
+              <span className="text-[11px] font-black text-amber-900 underline dark:text-amber-200">Duyệt</span>
+            </button>
           )}
         </section>
         </div>
