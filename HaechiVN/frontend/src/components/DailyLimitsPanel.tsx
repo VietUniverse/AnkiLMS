@@ -17,20 +17,31 @@ type Field = keyof DailyLimits;
 
 const FIELD_LABEL: Record<Field, string> = { newPerDay: "Từ mới", reviewPerDay: "Ôn lại" };
 
-function GoalBar({ done, value, onOpen }: { done: number; value: number; onOpen: () => void }) {
+function ConfigCard({ limits, progress, onOpen }: { limits: DailyLimits; progress: DailyProgress; onOpen: (field: Field) => void }) {
+  const newLimit = limits.newPerDay === 0 ? 0 : limits.newPerDay + progress.extraNew;
+  const rows: { field: Field; done: number; value: number; tone: string }[] = [
+    { field: "newPerDay", done: progress.newDone, value: newLimit, tone: "text-sky-600 dark:text-sky-400" },
+    { field: "reviewPerDay", done: progress.reviewDone, value: limits.reviewPerDay, tone: "text-rose-600 dark:text-rose-400" },
+  ];
   return (
-    <button
-      type="button"
-      onClick={onOpen}
-      aria-label={`Mục tiêu từ mới hôm nay: đã ${done}${value ? ` trên ${value}` : ", không giới hạn"}. Bấm để đổi`}
-      className="flex h-full w-full flex-col items-center justify-center rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 px-3 py-2 text-center transition-colors hover:border-sky-400 cursor-pointer sm:px-6 sm:py-3"
-    >
-      <span className="text-xs font-bold text-stone-500 dark:text-stone-400">Từ mới</span>
-      <span className="mt-0.5 whitespace-nowrap text-base font-black sm:text-xl tabular-nums text-stone-900 dark:text-white">
-        {done}
-        <span className="font-bold text-stone-400">{value === 0 ? "/không giới hạn" : `/${value}`}</span>
-      </span>
-    </button>
+    <div className="flex h-full w-full flex-col justify-center rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 px-3 py-2 sm:px-6 sm:py-3">
+      <span className="text-xs font-bold text-stone-500 dark:text-stone-400">Cấu hình</span>
+      {rows.map((row) => (
+        <button
+          key={row.field}
+          type="button"
+          onClick={() => onOpen(row.field)}
+          aria-label={`${FIELD_LABEL[row.field]} hôm nay: ${row.done} trên ${row.value || "không giới hạn"}. Bấm để đổi`}
+          className="mt-0.5 flex cursor-pointer items-baseline justify-between gap-3 whitespace-nowrap text-base font-black tabular-nums hover:opacity-80 sm:text-lg"
+        >
+          <span className={`text-xs font-bold ${row.tone}`}>{FIELD_LABEL[row.field]}</span>
+          <span className={row.tone}>
+            {row.done}
+            <span className="text-stone-400 dark:text-stone-500">{row.value === 0 ? "/∞" : `/${row.value}`}</span>
+          </span>
+        </button>
+      ))}
+    </div>
   );
 }
 
@@ -63,7 +74,7 @@ export const DailyLimitsPanel: React.FC<Props> = ({ limits, progress, onChange, 
 
   return (
     <section className="h-full w-full">
-      <GoalBar done={progress.newDone} value={limits.newPerDay === 0 ? 0 : limits.newPerDay + progress.extraNew} onOpen={() => open("newPerDay")} />
+      <ConfigCard limits={limits} progress={progress} onOpen={(field) => open(field)} />
 
       {editing && (
         <div
@@ -80,7 +91,7 @@ export const DailyLimitsPanel: React.FC<Props> = ({ limits, progress, onChange, 
           >
             <div>
               <h3 id="goal-title" className="text-base font-black text-stone-900 dark:text-white">{FIELD_LABEL[editing]} mỗi ngày</h3>
-              <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">Nhập số từ bạn muốn học tối đa mỗi ngày.</p>
+              <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">Số tối đa mỗi ngày (1–9999).</p>
               {showRemaining && remainingNew && (
                 <p className="mt-1 text-xs font-bold text-sky-600 dark:text-sky-400">Số từ mới còn lại: {remainingNew.words} ({remainingNew.cards} thẻ)</p>
               )}

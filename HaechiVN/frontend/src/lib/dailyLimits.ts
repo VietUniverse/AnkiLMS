@@ -9,8 +9,8 @@ export type DailyProgress = { newDone: number; reviewDone: number; extraNew: num
 
 const LIMITS_KEY = "haechivn_daily_limits";
 const PROGRESS_KEY = "haechivn_daily_progress";
-// Chỉ giới hạn từ mới. Từ đến hạn ôn lại luôn không giới hạn (0): có bao nhiêu phải ôn hết bấy nhiêu.
-export const DEFAULT_LIMITS: DailyLimits = { newPerDay: 5, reviewPerDay: 0 };
+// Mặc định: 5 từ mới/ngày, ôn lại 9999 (thực tế là không chặn). 0 = không giới hạn.
+export const DEFAULT_LIMITS: DailyLimits = { newPerDay: 5, reviewPerDay: 9999 };
 /** Số thẻ khác nhau cần học trong ngày để được điểm danh. */
 export const CARDS_FOR_CHECKIN = 10;
 
@@ -27,7 +27,12 @@ const clamp = (value: unknown, fallback: number) => {
 const parseLimits = (text: string | null): DailyLimits => {
   try {
     const raw = JSON.parse(text || "null");
-    return { newPerDay: clamp(raw?.newPerDay, DEFAULT_LIMITS.newPerDay), reviewPerDay: 0 };
+    // reviewPerDay trước đây bị ép 0 (chưa cho sửa) nên 0 = giá trị cũ, dùng mặc định mới.
+    const review = Number(raw?.reviewPerDay);
+    return {
+      newPerDay: clamp(raw?.newPerDay, DEFAULT_LIMITS.newPerDay),
+      reviewPerDay: review > 0 ? clamp(review, DEFAULT_LIMITS.reviewPerDay) : DEFAULT_LIMITS.reviewPerDay,
+    };
   } catch {
     return DEFAULT_LIMITS;
   }
