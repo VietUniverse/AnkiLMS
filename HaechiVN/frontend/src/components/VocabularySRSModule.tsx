@@ -23,7 +23,6 @@ import {
   BookOpen,
   CheckCircle2,
   ArrowRight,
-  Trash2,
 } from "lucide-react";
 import { ankiScheduleToFSRSState, calculateFSRS45, isFSRSCardDue, FSRSRating, FSRSState, FSRS45_DEFAULTS } from "../lib/fsrs45";
 import { activateProps } from "../lib/a11y";
@@ -67,7 +66,7 @@ const parseDictPanelWidth = (raw: string | null) => {
 const serializeDictPanelWidth = (value: number) => String(Math.round(value));
 
 export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDecks = [], initialViewMode = "dashboard" }) => {
-  const { currentUser, isAuthReady, setActiveStudySession, removedBuiltInDeckIds, userDecks: ownedDecks, setUserDecks, handleOpenAuth, handleRemoveDeck } = useApp();
+  const { currentUser, isAuthReady, setActiveStudySession, removedBuiltInDeckIds, userDecks: ownedDecks, setUserDecks, handleOpenAuth } = useApp();
   const isAdmin = currentUser?.role === "admin";
   // Bộ thẻ admin tải từ R2 (THTH, TOPIK Writing): chỉ dùng name và cards.
   // Gắn userId để đổi tài khoản thì bỏ dữ liệu cũ ngay lúc render, không cần effect reset.
@@ -1408,20 +1407,6 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
 
           {/* Cột 2, 3, 4: Mới | Ôn | % */}
           <div className="relative z-10 flex items-center gap-3 sm:gap-6 shrink-0 tabular-nums text-xs">
-            {removableDeck && (
-              <button
-                type="button"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  if (window.confirm(`Gỡ “${removableDeck.name}” khỏi Kho thẻ? Lịch sử ôn vẫn được giữ.`)) handleRemoveDeck(removableDeck.id);
-                }}
-                aria-label={`Gỡ ${removableDeck.name} khỏi Kho thẻ`}
-                title="Gỡ khỏi Kho thẻ"
-                className="rounded-lg p-1.5 text-stone-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-500/10 transition"
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-              </button>
-            )}
             {sourceUserDeck && (
               <button
                 type="button"
