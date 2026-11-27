@@ -43,15 +43,18 @@ export function ClassesScreen() {
   };
 
   // Mỗi lớp có URL riêng: chọn lớp → /classes/<mã>, về danh sách → /classes.
+  // history.pushState chứ không router.push: hai route render CÙNG một component nên
+  // router.push remount cả cây, fetch lại 4 API và nháy skeleton chỉ để đổi URL.
+  // Back/Forward do ClassroomModule tự nghe popstate.
   const handleSelectedClassChange = useCallback(
     (code: string | null) => {
       // Trang giao bài giữ nguyên URL /classes/<mã>/assign.
       if (assignPage) return;
       const target = code ? `/classes/${encodeURIComponent(code)}` : "/classes";
-      if ((pathname || "").split("?")[0] === target) return;
-      router.push(target);
+      if (window.location.pathname === target) return;
+      window.history.pushState(null, "", target);
     },
-    [pathname, router, assignPage],
+    [assignPage],
   );
 
   return (

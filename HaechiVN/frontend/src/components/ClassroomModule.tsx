@@ -1204,6 +1204,23 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
     if (match) setSelectedClassId(match.id);
   }, [classes, initialClassCode]);
 
+  // Back/Forward đổi URL mà không remount → đọc mã lớp từ pathname rồi chọn lại.
+  const classesRef = useRef(classes);
+  classesRef.current = classes;
+  useEffect(() => {
+    const onPop = () => {
+      const segs = window.location.pathname.split("/").filter(Boolean);
+      const code = segs[0] === "classes" && segs[1] ? decodeURIComponent(segs[1]).toLowerCase() : "";
+      if (!code) return setSelectedClassId(null);
+      const match = classesRef.current.find(
+        (cls) => cls.code.toLowerCase() === code || cls.id.toLowerCase() === code
+      );
+      if (match) setSelectedClassId(match.id);
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
   // Đồng bộ URL theo lớp đang mở: chỉ báo khi người dùng thật sự đổi lớp
   // (bỏ qua render đầu, nếu không sẽ đẩy /classes/<mã> về /classes).
   // /classes/<mã>/assign/<id>: mở form sửa đúng bài tập một lần khi dữ liệu lớp đã có.
