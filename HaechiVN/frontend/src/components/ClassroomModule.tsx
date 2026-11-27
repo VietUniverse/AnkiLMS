@@ -462,6 +462,8 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
   const [assignDeckQuery, setAssignDeckQuery] = useState("");
   const [assignDeckOpen, setAssignDeckOpen] = useState(false);
   const [assignDeckActive, setAssignDeckActive] = useState(-1);
+  // Nhóm quyển đang thu gọn; mặc định thu hết để 263 bộ thẻ không đổ ra một lượt.
+  const [assignDeckCollapsed, setAssignDeckCollapsed] = useState<Set<number>>(() => new Set(ASSIGN_BOOK_ORDER));
   const deckPickerRef = useRef<HTMLDivElement>(null);
   const deckOptionRefs = useRef(new Map<string, HTMLButtonElement>());
   const [assignDueDate, setAssignDueDate] = useState("");
@@ -621,7 +623,9 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
     ...group,
     decks: group.decks.filter((deck) => !assignDeckTerm || normalizeAssignmentSearch(`${group.label} ${deck.topic} ${deck.name} ${deck.difficulty}`).includes(assignDeckTerm)),
   })).filter((group) => group.decks.length > 0);
-  const assignmentDeckFlat = assignmentDeckGroupsFiltered.flatMap((group) => group.decks);
+  const assignmentDeckFlat = assignmentDeckGroupsFiltered.flatMap((group) =>
+    !assignDeckTerm && assignDeckCollapsed.has(group.book) ? [] : group.decks,
+  );
   const defaultAssignmentDeck =
     assignmentDecks.find((deck) => deck.book >= 1 && deck.book <= 6 && isAssignableAssignmentDeck(deck)) ||
     assignmentDecks.find(isAssignableAssignmentDeck) ||
@@ -2351,6 +2355,8 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                           setAssignDeckOpen(true);
                           setAssignDeckQuery("");
                           setAssignDeckActive(-1);
+                          // Mở sẵn nhóm đang chọn, các quyển khác thu gọn.
+                          setAssignDeckCollapsed(new Set(ASSIGN_BOOK_ORDER.filter((book) => book !== selectedAssignmentDeck?.book)));
                         }}
                         onChange={(event) => {
                           setAssignDeckOpen(true);
@@ -2361,7 +2367,9 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                         onBlur={handleAssignDeckBlur}
                       />
                       <span className="cd-deck-count">
-                        {assignDeckOpen ? `${assignmentDeckFlat.length} kết quả` : `${assignmentDecks.length} bộ thẻ`}
+                        {assignDeckTerm
+                          ? `${assignmentDeckFlat.length} kết quả`
+                          : `${assignmentDeckGroupsFiltered.reduce((total, group) => total + group.decks.length, 0)} bộ thẻ`}
                       </span>
                     </div>
                     {assignDeckOpen && (
@@ -2374,13 +2382,29 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                             </Link>{" "}
                             rồi quay lại giao bài.
                           </p>
-                        ) : assignmentDeckFlat.length === 0 ? (
+                        ) : assignDeckTerm && assignmentDeckFlat.length === 0 ? (
                           <p className="cd-deck-empty">Không tìm thấy bộ thẻ phù hợp.</p>
                         ) : (
-                          assignmentDeckGroupsFiltered.map((group) => (
+                          assignmentDeckGroupsFiltered.map((group) => {
+                            const collapsed = !assignDeckTerm && assignDeckCollapsed.has(group.book);
+                            return (
                             <div key={group.book} className="cd-deck-group" role="group" aria-label={group.label}>
-                              <p className="cd-deck-group-label">{group.label}</p>
-                              {group.decks.map((deck) => {
+                              <button
+                                type="button"
+                                className="cd-deck-group-label flex w-full cursor-pointer items-center gap-1.5 text-left"
+                                aria-expanded={!collapsed}
+                                onMouseDown={(event) => event.preventDefault()}
+                                onClick={() => setAssignDeckCollapsed((prev) => {
+                                  const next = new Set(prev);
+                                  if (next.has(group.book)) next.delete(group.book); else next.add(group.book);
+                                  return next;
+                                })}
+                              >
+                                <ChevronRight className={`h-3 w-3 shrink-0 transition-transform ${collapsed ? "" : "rotate-90"}`} />
+                                <span className="flex-1">{group.label}</span>
+                                <span className="cd-deck-option-count">{group.decks.length} bộ</span>
+                              </button>
+                              {!collapsed && group.decks.map((deck) => {
                                 const index = assignmentDeckFlat.indexOf(deck);
                                 const count = assignmentDeckCardCount(deck);
                                 const disabled = !isAssignableAssignmentDeck(deck);
@@ -2408,7 +2432,8 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                                 );
                               })}
                             </div>
-                          ))
+                            );
+                          })
                         )}
                       </div>
                     )}
