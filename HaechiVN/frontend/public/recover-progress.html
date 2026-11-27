@@ -51,7 +51,7 @@
       try {
         const profile = JSON.parse(localStorage.getItem('haechivn_user_profile') || 'null');
         if (!profile || !profile.id || !profile.email) throw new Error('Không tìm thấy tài khoản đã học trong trình duyệt này. Vui lòng kiểm tra đúng trình duyệt/cấu hình người dùng.');
-        if (profile.email.toLowerCase() !== 'pthuy0506@gmail.com') throw new Error('Trình duyệt này đang lưu tài khoản ' + profile.email + ', không phải tài khoản Phương Thúy. Không xuất nhầm dữ liệu.');
+        if (!confirm('Xuất dữ liệu đang lưu cho tài khoản ' + profile.email + '? Hãy kiểm tra đúng tài khoản trước khi tiếp tục.')) return;
         let decks = null;
         let deckError = null;
         try { decks = await readIndexedDb(profile.id); } catch (error) { deckError = String(error); }
@@ -75,7 +75,7 @@
         const blob = new Blob([JSON.stringify(exportData)], { type: 'application/json' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = 'haechivn-phuong-thuy-du-lieu-cu.json';
+        link.download = 'haechivn-du-lieu-cu-' + profile.id.replace(/[^a-zA-Z0-9_-]/g, '') + '.json';
         link.click();
         setTimeout(() => URL.revokeObjectURL(link.href), 30000);
         status.textContent = 'Đã tải bản sao: ' + (state ? Object.keys(state).length : 0) + ' trạng thái thẻ; ' + (Array.isArray(decks) ? decks.length : 0) + ' bộ thẻ. Dữ liệu gốc vẫn nằm trên máy.';
