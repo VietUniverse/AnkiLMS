@@ -19,6 +19,10 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onToggl
   // Lượt học xếp ôn trước rồi tới mới: chia thanh theo đúng tỉ lệ đó thay vì một màu.
   const mix = activeStudySession?.mix;
   const mixTotal = mix ? mix.newTotal + mix.reviewTotal : 0;
+  // Đã xong = tổng - còn lại (không đếm số lần chấm: chấm "Quên" làm thẻ quay lại
+  // cuối hàng, đếm theo lần chấm thì thanh chạy trước số thẻ thật).
+  const doneOf = (total: number, remaining?: number) =>
+    total <= 0 ? 0 : Math.min(total, Math.max(0, total - (remaining ?? total)));
   // Đang học và có nền tùy chỉnh: thanh trên trong suốt để nền chạy liền xuống dưới thanh.
   const studyBg = useStudyBackground();
   const bgActive = !!activeStudySession && backgroundLayerStyle(studyBg) !== null;
@@ -74,7 +78,7 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onToggl
           style={bgActive ? { background: progressTone.track } : undefined}
           role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={activeStudySession.progressPercent}
           aria-label={mixTotal > 0 && mix
-            ? `Tiến độ: ôn ${mix.reviewDone}/${mix.reviewTotal}, mới ${mix.newDone}/${mix.newTotal}`
+            ? `Tiến độ: ôn ${doneOf(mix.reviewTotal, activeStudySession.remainingReview)}/${mix.reviewTotal}, mới ${doneOf(mix.newTotal, activeStudySession.remainingNew)}/${mix.newTotal}`
             : `Tiến độ ${activeStudySession.progressPercent}%`}
         >
           {!bgActive && mixTotal > 0 && mix ? (
@@ -82,13 +86,13 @@ export const Header: React.FC<HeaderProps> = ({ currentUser, onOpenAuth, onToggl
               <div className="relative h-full bg-rose-500/25" style={{ width: `${(mix.reviewTotal / mixTotal) * 100}%` }}>
                 <div
                   className="absolute inset-y-0 left-0 bg-rose-500 transition-[width] duration-500 ease-out motion-reduce:transition-none"
-                  style={{ width: `${mix.reviewTotal ? (mix.reviewDone / mix.reviewTotal) * 100 : 0}%` }}
+                  style={{ width: `${mix.reviewTotal ? (doneOf(mix.reviewTotal, activeStudySession.remainingReview) / mix.reviewTotal) * 100 : 0}%` }}
                 />
               </div>
               <div className="relative h-full flex-1 rounded-r-full bg-sky-500/20">
                 <div
                   className="absolute inset-y-0 left-0 bg-sky-500 transition-[width] duration-500 ease-out motion-reduce:transition-none"
-                  style={{ width: `${mix.newTotal ? (mix.newDone / mix.newTotal) * 100 : 0}%` }}
+                  style={{ width: `${mix.newTotal ? (doneOf(mix.newTotal, activeStudySession.remainingNew) / mix.newTotal) * 100 : 0}%` }}
                 />
               </div>
             </div>

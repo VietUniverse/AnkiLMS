@@ -134,7 +134,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   const [activeCardsList, setActiveCardsList] = useState<VocabularyCard[]>([]);
   const [progressSegment, setProgressSegment] = useState({ index: 0, percent: 0 });
   // Thành phần lượt học: hàng đợi xếp ôn trước rồi tới mới, thanh tiến độ chia theo tỉ lệ này.
-  const [sessionMix, setSessionMix] = useState({ newTotal: 0, reviewTotal: 0, newDone: 0, reviewDone: 0 });
+  const [sessionMix, setSessionMix] = useState({ newTotal: 0, reviewTotal: 0 });
   const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
   const [isFlipped, setIsFlipped] = useState<boolean>(false);
   const [typedInput, setTypedInput] = useState<string>("");
@@ -675,7 +675,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
       const state = cardStateMap[stateKeyOf(card)];
       return !!state && state.state !== "new";
     }).length;
-    setSessionMix({ newTotal: activeList.length - reviewTotal, reviewTotal, newDone: 0, reviewDone: 0 });
+    setSessionMix({ newTotal: activeList.length - reviewTotal, reviewTotal });
     setCurrentCardIndex(0);
     setIsFlipped(false);
     setTypedInput("");
@@ -1075,9 +1075,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     const effectiveRetention = userFsrsConfig?.desiredRetention || FSRS45_DEFAULTS.desiredRetention;
     const newState = { ...calculateFSRS45(rating, effectiveState, new Date(), effectiveRetention), updatedAt: new Date().toISOString() };
     // Hạn mức từ mới đếm theo từ: thẻ Review và Typing của cùng một từ chỉ tính 1 lần trong ngày.
-    const gradedAsNew = curState.reps === 0 || curState.state === "new";
-    setSessionMix((mix) => (gradedAsNew ? { ...mix, newDone: mix.newDone + 1 } : { ...mix, reviewDone: mix.reviewDone + 1 }));
-    if (gradedAsNew) recordNewWord(stateKeyOf({ ...currentCard, sibling: undefined }));
+    if (curState.reps === 0 || curState.state === "new") recordNewWord(stateKeyOf({ ...currentCard, sibling: undefined }));
     else recordCard(false);
     recordReviewedCard(activeKey);
     setCardStateMap((prev) => ({ ...prev, [activeKey]: newState }));
