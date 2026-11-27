@@ -294,14 +294,14 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     if (body.action === "join") {
       const code = typeof body.code === "string" ? body.code.trim().toUpperCase() : "";
       const requestedClassId = typeof body.classId === "string" ? body.classId.trim() : "";
-      let classroom: { id: string; visibility: ClassVisibility } | null = null;
+      let classroom: { id: string; code: string; name: string; visibility: ClassVisibility } | null = null;
       if (code) {
         if (!/^[A-F0-9]{8}$/.test(code)) return errorResponse("Mã lớp không hợp lệ.");
-        classroom = await env.DB.prepare("SELECT id, visibility FROM classrooms WHERE code = ?").bind(code).first<{ id: string; visibility: ClassVisibility }>();
+        classroom = await env.DB.prepare("SELECT id, code, name, visibility FROM classrooms WHERE code = ?").bind(code).first<{ id: string; code: string; name: string; visibility: ClassVisibility }>();
         if (!classroom) return errorResponse("Không tìm thấy lớp học với mã này.", 404);
       } else if (requestedClassId) {
-        classroom = await env.DB.prepare("SELECT id, visibility FROM classrooms WHERE id = ? AND visibility IN ('public', 'private')")
-          .bind(requestedClassId).first<{ id: string; visibility: ClassVisibility }>();
+        classroom = await env.DB.prepare("SELECT id, code, name, visibility FROM classrooms WHERE id = ? AND visibility IN ('public', 'private')")
+          .bind(requestedClassId).first<{ id: string; code: string; name: string; visibility: ClassVisibility }>();
         if (!classroom) return errorResponse("Không tìm thấy lớp học công khai hoặc riêng tư này.", 404);
       } else {
         return errorResponse("Vui lòng nhập mã lớp hoặc chọn lớp để tham gia.");
@@ -309,8 +309,25 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       const existing = await getMembership(env, classroom.id, user.id);
       if (existing) return errorResponse(existing.status === "approved" ? "Bạn đã tham gia lớp này." : "Yêu cầu tham gia đang chờ duyệt.", 409);
       const nextStatus = classroom.visibility === "public" ? "approved" : "pending";
-      await env.DB.prepare("INSERT INTO classroom_members (class_id, user_id, role, status) VALUES (?, ?, 'student', ?)")
-        .bind(classroom.id, user.id, nextStatus).run();
+      const writes = [env.DB.prepare("INSERT INTO classroom_members (class_id, user_id, role, status) VALUES (?, ?, 'student', ?)")
+        .bind(classroom.id, user.id, nextStatus)];
+      if (nextStatus === "pending") {
+        const managers = await env.DB.prepare(
+          "SELECT user_id FROM classroom_members WHERE class_id = ? AND status = 'approved' AND role IN ('owner', 'admin', 'staff')",
+        ).bind(classroom.id).all<{ user_id: string }>();
+        for (const manager of managers.results || []) {
+          writes.push(env.DB.prepare(
+            "INSERT INTO notifications (id, user_id, kind, title, body, link) VALUES (?, ?, 'class_join_request', ?, ?, ?)",
+          ).bind(
+            `ntf_${crypto.randomUUID()}`,
+            manager.user_id,
+            `Yêu cầu vào lớp ${classroom.name}`,
+            `${user.name || "Học viên"} muốn tham gia lớp ${classroom.name}. Mở lớp để duyệt yêu cầu.`,
+            `/classes/${classroom.code}`,
+          ));
+        }
+      }
+      await env.DB.batch(writes);
       return jsonResponse({ success: true, status: nextStatus, classes: await getClasses(env, user.id) });
     }
 
