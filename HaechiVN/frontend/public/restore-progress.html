@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Nhận lại tiến độ học — HaechiVN</title>
+  <style>
+    body{font:16px/1.6 system-ui,sans-serif;background:#eef5fb;color:#102441;margin:0;padding:24px}
+    main{max-width:620px;margin:8vh auto;background:#fff;border-radius:18px;padding:30px;box-shadow:0 8px 30px #1838581a}
+    h1{font-size:1.5rem;margin:0 0 10px}p{margin:12px 0}a{color:#0759b4}
+    #status{white-space:pre-wrap;margin-top:18px}
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Nhận lại tiến độ học</h1>
+    <p>Trang này nhận dữ liệu từ tab <strong>lms.ankivn.com</strong> trên cùng trình duyệt. Tài khoản cũ và tài khoản đang đăng nhập phải trùng nhau.</p>
+    <p id="account"></p>
+    <p id="status" role="status">Đang kiểm tra đăng nhập…</p>
+  </main>
+  <script>
+    const status = document.getElementById('status');
+    const account = document.getElementById('account');
+    let signedIn = null;
+    let busy = false;
+    const oldOrigin = 'https://lms.ankivn.com';
+    function report(message) {
+      status.textContent = message;
+      if (window.opener) window.opener.postMessage({ type: 'haechivn:recovery-done', message }, oldOrigin);
+    }
+    function readDecks(userId) {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open('haechivn-storage', 1);
+        request.onupgradeneeded = () => request.result.createObjectStore('app-data');
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => {
+          const db = request.result;
+          const tx = db.transaction('app-data', 'readonly');
+          const lookup = tx.objectStore('app-data').get('decks:' + userId);
+          lookup.onsuccess = () => {
+            if (Array.isArray(lookup.result)) { resolve(lookup.result); db.close(); return; }
+            const legacy = tx.objectStore('app-data').get('decks');
+            legacy.onsuccess = () => {
+              if (Array.isArray(legacy.result)) { resolve(legacy.result); db.close(); return; }
+              try { resolve(JSON.parse(localStorage.getItem('haechivn_decks') || '[]')); }
+              catch { resolve([]); }
+              db.close();
+            };
+            legacy.onerror = () => { reject(legacy.error); db.close(); };
+          };
+          lookup.onerror = () => { reject(lookup.error); db.close(); };
+        };
+      });
+    }
+    function writeDecks(userId, decks) {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open('haechivn-storage', 1);
+        request.onupgradeneeded = () => request.result.createObjectStore('app-data');
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => {
+          const db = request.result;
+          const tx = db.transaction('app-data', 'readwrite');
+          tx.objectStore('app-data').put(decks, 'decks:' + userId);
+          tx.oncomplete = () => { resolve(); db.close(); };
+          tx.onerror = () => { reject(tx.error); db.close(); };
+          tx.onabort = () => { reject(tx.error); db.close(); };
+        };
+      });
+    }
+    async function restore(payload) {
+      if (busy) return;
+      busy = true;
+      try {
+        if (payload?.format !== 'haechivn-browser-progress-v1' || payload.origin !== oldOrigin ||
+            payload.account?.id !== signedIn.id || payload.account?.email?.toLowerCase() !== signedIn.email.toLowerCase()) {
+          throw new Error('Tài khoản cũ không khớp tài khoản đang đăng nhập. Chưa nhập dữ liệu nào.');
+        }
+        const states = payload.cardStates && typeof payload.cardStates === 'object' && !Array.isArray(payload.cardStates)
+          ? Object.entries(payload.cardStates).map(([key, value]) => ({ ...value, key })) : [];
+        if (!states.length && (!Array.isArray(payload.decks) || !payload.decks.length)) {
+          throw new Error('Không tìm thấy tiến độ hay bộ thẻ trong trình duyệt cũ này. Hãy kiểm tra đúng máy và cấu hình trình duyệt đã dùng để học.');
+        }
+        let restored = 0;
+        for (let offset = 0; offset < states.length; offset += 80) {
+          status.textContent = 'Đang khôi phục tiến độ thẻ ' + (offset + 1) + '–' + Math.min(states.length, offset + 80) + '/' + states.length + '…';
+          let response;
+          for (let attempt = 0; attempt < 6; attempt++) {
+            response = await fetch('/api/progress-recovery', {
+              method: 'POST', credentials: 'same-origin',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ accountId: signedIn.id, states: states.slice(offset, offset + 80) })
+            });
+            if (response.status !== 429) break;
+            const seconds = Number(response.headers.get('Retry-After'));
+            const wait = Number.isFinite(seconds) && seconds > 0 ? seconds * 1000 : Math.min(60000, 5000 * 2 ** attempt);
+            status.textContent = 'Máy chủ đang giới hạn yêu cầu. Sẽ thử lại sau ' + Math.ceil(wait / 1000) + ' giây…';
+            await new Promise((resolve) => setTimeout(resolve, wait));
+          }
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(result.error || 'Không lưu được tiến độ (HTTP ' + response.status + ').');
+          restored += result.restored || 0;
+          if (offset + 80 < states.length) await new Promise((resolve) => setTimeout(resolve, 800));
+        }
+        if (states.length) {
+          const response = await fetch('/api/card-states', { credentials: 'same-origin', cache: 'no-store' });
+          if (!response.ok) throw new Error('Đã lưu trên máy chủ nhưng chưa tải lại được tiến độ. Hãy tải lại trang học.');
+          const result = await response.json();
+          const key = 'haechivn_srs_state_' + signedIn.id;
+          const local = JSON.parse(localStorage.getItem(key) || '{}');
+          for (const item of result.cardStates || []) {
+            const stateKey = item.deck_id + '_' + Math.abs(item.card_id) + (item.card_id < 0 ? '_typing' : '');
+            const remoteTime = Date.parse((item.updated_at || '').replace(' ', 'T') + 'Z') || 0;
+            const localTime = Date.parse(local[stateKey]?.updatedAt || '') || 0;
+            if (remoteTime >= localTime) local[stateKey] = {
+              interval: item.interval, easeFactor: item.ease_factor, reps: item.reps, lapses: item.lapses,
+              state: item.state, dueDate: item.due_date, dueAt: item.due_at || undefined,
+              stability: item.stability || 0, difficulty: item.difficulty || 5,
+              learningSteps: item.learning_steps || 0, lastReview: item.last_review || null,
+              updatedAt: item.updated_at ? item.updated_at.replace(' ', 'T') + 'Z' : undefined
+            };
+          }
+          try { localStorage.setItem(key, JSON.stringify(local)); }
+          catch { /* Server copy is authoritative and will load on the study page. */ }
+        }
+        let deckCount = 0;
+        if (Array.isArray(payload.decks) && payload.decks.length) {
+          status.textContent = 'Đang ghép bộ thẻ trên máy…';
+          const existing = await readDecks(signedIn.id);
+          const byId = new Map(existing.filter((deck) => deck && typeof deck.id === 'string').map((deck) => [deck.id, deck]));
+          for (const oldDeck of payload.decks) {
+            if (!oldDeck || typeof oldDeck.id !== 'string' || !Array.isArray(oldDeck.cards)) continue;
+            const current = byId.get(oldDeck.id);
+            if (!current) { byId.set(oldDeck.id, oldDeck); deckCount++; continue; }
+            const currentCards = Array.isArray(current.cards) ? current.cards : [];
+            const known = new Set(currentCards.map((card) => card.id + ':' + card.noteId));
+            const missing = oldDeck.cards.filter((card) => !known.has(card.id + ':' + card.noteId));
+            if (missing.length) byId.set(oldDeck.id, { ...current, cards: [...currentCards, ...missing], cardCount: currentCards.length + missing.length });
+          }
+          await writeDecks(signedIn.id, [...byId.values()]);
+        }
+        report('Đã nhập ' + restored + ' tiến độ thẻ còn thiếu hoặc mới hơn và ' + deckCount + ' bộ thẻ chưa có. Dữ liệu cũ vẫn ở máy. Hãy tải lại trang Học tập.');
+      } catch (error) {
+        report('Chưa hoàn tất: ' + (error.message || String(error)) + ' Bạn có thể thử lại từ tab cũ; dữ liệu đã lưu không bị xoá.');
+      } finally { busy = false; }
+    }
+    window.addEventListener('message', (event) => {
+      if (event.origin !== oldOrigin || event.source !== window.opener || event.data?.type !== 'haechivn:legacy-progress' || !signedIn) return;
+      void restore(event.data.payload);
+    });
+    fetch('/api/auth/me', { credentials: 'same-origin', cache: 'no-store' })
+      .then(async (response) => {
+        if (!response.ok) throw new Error('Chưa đăng nhập. Hãy đăng nhập ở haechivn.com trong tab khác, quay lại đây và tải lại trang.');
+        const result = await response.json();
+        if (!result.user?.id || !result.user?.email) throw new Error('Không xác định được tài khoản đăng nhập.');
+        signedIn = result.user;
+        account.textContent = 'Đang đăng nhập: ' + signedIn.email;
+        status.textContent = 'Đang chờ dữ liệu từ tab tên miền cũ…';
+        if (!window.opener) throw new Error('Hãy bắt đầu bằng nút Chuyển tiến độ trên trang lms.ankivn.com/recover-progress.');
+        window.opener.postMessage({ type: 'haechivn:recovery-ready' }, oldOrigin);
+      })
+      .catch((error) => { status.textContent = error.message || String(error); });
+  </script>
+</body>
+</html>

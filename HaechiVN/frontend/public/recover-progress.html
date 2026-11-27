@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <title>Xuất dữ liệu học cũ — HaechiVN</title>
+  <title>Khôi phục dữ liệu học cũ — HaechiVN</title>
   <style>
     body{font:16px/1.6 system-ui,sans-serif;background:#eef5fb;color:#102441;margin:0;padding:24px}
     main{max-width:620px;margin:8vh auto;background:#fff;border-radius:18px;padding:30px;box-shadow:0 8px 30px #1838581a}
@@ -15,15 +15,17 @@
 </head>
 <body>
   <main>
-    <h1>Xuất dữ liệu học từ tên miền cũ</h1>
+    <h1>Khôi phục dữ liệu học từ tên miền cũ</h1>
     <p>Trang này đọc dữ liệu học còn trong <strong>trình duyệt hiện tại</strong> tại lms.ankivn.com. Hãy mở bằng đúng máy và trình duyệt đã dùng để học.</p>
-    <p>Tệp tải xuống chứa tiến độ ôn và bộ thẻ cá nhân, không chứa mật khẩu hay phiên đăng nhập. Trang không gửi tệp đi đâu.</p>
-    <button id="export">Tải bản sao dữ liệu</button>
+    <p>Đăng nhập tài khoản của bạn ở <a href="https://haechivn.com/login" target="_blank" rel="noopener">haechivn.com</a> trước, rồi bấm chuyển. Tiến độ đang có trên máy chủ sẽ được giữ nếu mới hơn.</p>
+    <button id="transfer">Chuyển tiến độ sang trang mới</button>
+    <button id="export" type="button">Tải bản sao dự phòng</button>
     <p id="status" role="status"></p>
   </main>
   <script>
     const status = document.getElementById('status');
     const button = document.getElementById('export');
+    const transferButton = document.getElementById('transfer');
     function readIndexedDb(userId) {
       return new Promise((resolve, reject) => {
         const request = indexedDB.open('haechivn-storage', 1);
@@ -45,13 +47,9 @@
         };
       });
     }
-    button.addEventListener('click', async () => {
-      button.disabled = true;
-      status.textContent = 'Đang đọc bản lưu trên máy…';
-      try {
+    async function collectData() {
         const profile = JSON.parse(localStorage.getItem('haechivn_user_profile') || 'null');
         if (!profile || !profile.id || !profile.email) throw new Error('Không tìm thấy tài khoản đã học trong trình duyệt này. Vui lòng kiểm tra đúng trình duyệt/cấu hình người dùng.');
-        if (!confirm('Xuất dữ liệu đang lưu cho tài khoản ' + profile.email + '? Hãy kiểm tra đúng tài khoản trước khi tiếp tục.')) return;
         let decks = null;
         let deckError = null;
         try { decks = await readIndexedDb(profile.id); } catch (error) { deckError = String(error); }
@@ -59,7 +57,7 @@
           try { decks = JSON.parse(localStorage.getItem('haechivn_decks') || 'null'); } catch (error) { deckError = String(error); }
         }
         const state = JSON.parse(localStorage.getItem('haechivn_srs_state_' + profile.id) || 'null');
-        const exportData = {
+        return {
           format: 'haechivn-browser-progress-v1',
           exportedAt: new Date().toISOString(),
           origin: location.origin,
@@ -72,6 +70,13 @@
             title: localStorage.getItem('haechivn_last_lesson_title')
           }
         };
+    }
+    button.addEventListener('click', async () => {
+      button.disabled = true;
+      status.textContent = 'Đang đọc bản lưu trên máy…';
+      try {
+        const exportData = await collectData();
+        if (!confirm('Xuất dữ liệu đang lưu cho tài khoản ' + exportData.account.email + '?')) return;
         const blob = new Blob([JSON.stringify(exportData)], { type: 'application/json' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
@@ -82,6 +87,46 @@
       } catch (error) {
         status.textContent = 'Không xuất được: ' + (error.message || String(error));
       } finally { button.disabled = false; }
+    });
+    transferButton.addEventListener('click', async () => {
+      const target = window.open('https://haechivn.com/restore-progress', '_blank');
+      if (!target) { status.textContent = 'Trình duyệt chặn tab mới. Hãy cho phép mở tab rồi bấm lại.'; return; }
+      transferButton.disabled = true;
+      let payload;
+      let ready = false;
+      let sent = false;
+      const send = () => {
+        if (!ready || !payload || sent) return;
+        sent = true;
+        target.postMessage({ type: 'haechivn:legacy-progress', payload }, 'https://haechivn.com');
+        status.textContent = 'Đã chuyển dữ liệu sang tab mới. Xem kết quả ở tab haechivn.com.';
+      };
+      const receive = (event) => {
+        if (event.origin !== 'https://haechivn.com' || event.source !== target) return;
+        if (event.data?.type === 'haechivn:recovery-ready') { ready = true; send(); }
+        if (event.data?.type === 'haechivn:recovery-done') {
+          status.textContent = 'Hoàn tất: ' + event.data.message;
+          window.removeEventListener('message', receive);
+          transferButton.disabled = false;
+        }
+      };
+      window.addEventListener('message', receive);
+      status.textContent = 'Đang đọc bản lưu và mở trang mới…';
+      try {
+        payload = await collectData();
+        if (!confirm('Chuyển dữ liệu học của ' + payload.account.email + ' sang đúng tài khoản này ở haechivn.com?')) {
+          window.removeEventListener('message', receive);
+          transferButton.disabled = false;
+          target.close();
+          return;
+        }
+        send();
+      } catch (error) {
+        status.textContent = 'Không chuyển được: ' + (error.message || String(error));
+        window.removeEventListener('message', receive);
+        transferButton.disabled = false;
+        target.close();
+      }
     });
   </script>
 </body>
