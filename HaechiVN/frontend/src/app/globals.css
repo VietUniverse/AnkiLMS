@@ -324,6 +324,22 @@ html[data-theme="light"] body:not(:has(.login-page-root)) [class*="text-slate-20
   color: #0f172a !important;
 }
 
+/* Cùng độ ưu tiên với rule làm tối chữ ở trên, nên phải khai báo SAU nó mới thắng.
+   Badge "Thông báo" (bg-red-600) trước đây bị ép #0f172a → số 1 chìm trên nền đỏ.
+   Áp cho các nền bão hoà hay dùng cho badge/nút: red, blue, rose, amber, indigo. */
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-red-600"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-red-600"] *,
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-blue-600"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-blue-600"] *,
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-rose-600"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-rose-600"] *,
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-amber-600"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-amber-600"] *,
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-indigo-600"],
+html[data-theme="light"] body:not(:has(.login-page-root)) [class*="bg-indigo-600"] * {
+  color: #fff !important;
+}
+
 /* Saturated actions and colored labels retain white text on their surface */
 html[data-theme="light"] .btn-duo,
 html[data-theme="light"] .btn-duo-primary,
