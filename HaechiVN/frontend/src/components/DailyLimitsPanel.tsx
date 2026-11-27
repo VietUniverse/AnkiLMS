@@ -13,11 +13,10 @@ interface Props {
   remainingNew?: { words: number; cards: number } | null;
 }
 
-type Field = keyof DailyLimits;
+const LABEL = { newPerDay: "Từ mới", reviewPerDay: "Ôn lại" } as const;
+type Field = keyof typeof LABEL;
 
-const FIELD_LABEL: Record<Field, string> = { newPerDay: "Từ mới", reviewPerDay: "Ôn lại" };
-
-function ConfigCard({ limits, progress, onOpen }: { limits: DailyLimits; progress: DailyProgress; onOpen: (field: Field) => void }) {
+function ConfigCard({ limits, progress, onOpen }: { limits: DailyLimits; progress: DailyProgress; onOpen: () => void }) {
   const newLimit = limits.newPerDay === 0 ? 0 : limits.newPerDay + progress.extraNew;
   const rows: { field: Field; done: number; value: number; tone: string }[] = [
     { field: "newPerDay", done: progress.newDone, value: newLimit, tone: "text-sky-600 dark:text-sky-400" },
@@ -29,11 +28,11 @@ function ConfigCard({ limits, progress, onOpen }: { limits: DailyLimits; progres
         <button
           key={row.field}
           type="button"
-          onClick={() => onOpen(row.field)}
-          aria-label={`${FIELD_LABEL[row.field]} hôm nay: ${row.done} trên ${row.value || "không giới hạn"}. Bấm để đổi`}
+          onClick={onOpen}
+          aria-label={`${LABEL[row.field]} hôm nay: ${row.done} trên ${row.value || "không giới hạn"}. Bấm để đổi cả từ mới và ôn lại`}
           className="flex cursor-pointer items-baseline justify-between gap-2 whitespace-nowrap text-sm font-black tabular-nums hover:opacity-80 sm:text-base"
         >
-          <span className={`text-xs font-bold ${row.tone}`}>{FIELD_LABEL[row.field]}</span>
+          <span className={`text-xs font-bold ${row.tone}`}>{LABEL[row.field]}</span>
           <span className={row.tone}>
             {row.done}
             <span className="text-stone-400 dark:text-stone-500">{row.value === 0 ? "/∞" : `/${row.value}`}</span>
@@ -44,88 +43,91 @@ function ConfigCard({ limits, progress, onOpen }: { limits: DailyLimits; progres
   );
 }
 
-export const DailyLimitsPanel: React.FC<Props> = ({ limits, progress, onChange, openRequest = 0, remainingNew = null }) => {
-  const [editing, setEditing] = useState<Field | null>(null);
-  const [showRemaining, setShowRemaining] = useState(false);
-  const [draft, setDraft] = useState("");
+/** Một dòng −/ô nhập/+ dùng chung cho cả hai hạn mức. */
+function NumberRow({ label, value, onChange, accent }: { label: string; value: string; onChange: (v: string) => void; accent: string }) {
+  const step = (delta: number) =>
+    onChange(String(Math.min(9999, Math.max(1, (Number(value) || 0) + delta))));
+  return (
+    <div className="flex items-center gap-2">
+      <span className={`w-14 shrink-0 text-left text-xs font-bold ${accent}`}>{label}</span>
+      <button type="button" onClick={() => step(-5)} aria-label={`Giảm 5 ${label.toLowerCase()}`}
+        className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-stone-300 text-xl font-black hover:bg-stone-100 dark:border-stone-600 dark:hover:bg-stone-800">−</button>
+      <input
+        type="number" inputMode="numeric" min={1} max={9999} value={value}
+        onChange={(e) => onChange(e.target.value)} placeholder="20"
+        aria-label={`Số ${label.toLowerCase()} mỗi ngày`}
+        className="h-11 min-w-0 flex-1 rounded-xl border border-stone-300 bg-transparent px-2 text-center text-lg font-black tabular-nums [appearance:textfield] focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 dark:border-stone-600 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none text-stone-900 dark:text-white"
+      />
+      <button type="button" onClick={() => step(5)} aria-label={`Tăng 5 ${label.toLowerCase()}`}
+        className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-stone-300 text-xl font-black hover:bg-stone-100 dark:border-stone-600 dark:hover:bg-stone-800">+</button>
+    </div>
+  );
+}
 
-  const open = (field: Field, fromLimit = false) => {
-    setEditing(field);
+export const DailyLimitsPanel: React.FC<Props> = ({ limits, progress, onChange, openRequest = 0, remainingNew = null }) => {
+  const [editing, setEditing] = useState(false);
+  const [showRemaining, setShowRemaining] = useState(false);
+  const [draftNew, setDraftNew] = useState("");
+  const [draftReview, setDraftReview] = useState("");
+
+  // Một hộp cho cả hai hạn mức: sửa từ mới và ôn lại cùng lúc.
+  const open = (fromLimit = false) => {
+    setEditing(true);
     setShowRemaining(fromLimit);
-    setDraft(limits[field] > 0 ? String(limits[field]) : "");
+    setDraftNew(limits.newPerDay > 0 ? String(limits.newPerDay) : "");
+    setDraftReview(limits.reviewPerDay > 0 ? String(limits.reviewPerDay) : "");
   };
 
   // Có yêu cầu mở mới từ bên ngoài: mở hộp ngay trong lúc render (không cần effect).
   const [handledRequest, setHandledRequest] = useState(openRequest);
   if (openRequest !== handledRequest) {
     setHandledRequest(openRequest);
-    if (openRequest > 0) open("newPerDay", true);
+    if (openRequest > 0) open(true);
   }
 
-  const parsed = Number(draft);
-  const valid = draft === "" ? false : Number.isInteger(parsed) && parsed >= 1 && parsed <= 9999;
+  const validOf = (draft: string) => {
+    const n = Number(draft);
+    return draft !== "" && Number.isInteger(n) && n >= 1 && n <= 9999;
+  };
+  const valid = validOf(draftNew) && validOf(draftReview);
 
-  const save = (value: number) => {
-    if (!editing) return;
-    onChange({ ...limits, [editing]: value });
-    setEditing(null);
+  const save = () => {
+    if (!valid) return;
+    onChange({ newPerDay: Number(draftNew), reviewPerDay: Number(draftReview) });
+    setEditing(false);
   };
 
   return (
     <section className="h-full w-full">
-      <ConfigCard limits={limits} progress={progress} onOpen={(field) => open(field)} />
+      <ConfigCard limits={limits} progress={progress} onOpen={() => open()} />
 
       {editing && (
         <div
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4"
-          onClick={() => setEditing(null)}
+          onClick={() => setEditing(false)}
         >
           <form
             role="dialog"
             aria-modal="true"
             aria-labelledby="goal-title"
-            className="w-full max-w-xs rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-5 space-y-4 text-center shadow-2xl"
+            className="w-full max-w-sm rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-5 space-y-4 text-center shadow-2xl"
             onClick={(e) => e.stopPropagation()}
-            onSubmit={(e) => { e.preventDefault(); if (valid) save(parsed); }}
+            onSubmit={(e) => { e.preventDefault(); save(); }}
           >
             <div>
-              <h3 id="goal-title" className="text-base font-black text-stone-900 dark:text-white">{FIELD_LABEL[editing]} mỗi ngày</h3>
-              <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">Số tối đa mỗi ngày (1–9999).</p>
+              <h3 id="goal-title" className="text-base font-black text-stone-900 dark:text-white">Hạn mức mỗi ngày</h3>
+              <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">Số thẻ tối đa mỗi ngày (1–9999).</p>
               {showRemaining && remainingNew && (
                 <p className="mt-1 text-xs font-bold text-sky-600 dark:text-sky-400">Số từ mới còn lại: {remainingNew.words} ({remainingNew.cards} thẻ)</p>
               )}
             </div>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setDraft(String(Math.max(1, (Number(draft) || 0) - 5)))}
-                aria-label="Giảm 5 từ"
-                className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-stone-300 text-xl font-black hover:bg-stone-100 dark:border-stone-600 dark:hover:bg-stone-800"
-              >
-                −
-              </button>
-              <input
-                autoFocus
-                type="number"
-                inputMode="numeric"
-                min={1}
-                max={9999}
-                value={draft}
-                onChange={(e) => setDraft(e.target.value)}
-                placeholder="20"
-                aria-label={`Số ${FIELD_LABEL[editing].toLowerCase()} mỗi ngày`}
-                className="h-12 min-w-0 flex-1 rounded-xl border border-stone-300 bg-transparent px-2 text-center text-xl font-black tabular-nums [appearance:textfield] focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 dark:border-stone-600 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none text-stone-900 dark:text-white"
-              />
-              <button
-                type="button"
-                onClick={() => setDraft(String(Math.min(9999, (Number(draft) || 0) + 5)))}
-                aria-label="Tăng 5 từ"
-                className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-stone-300 text-xl font-black hover:bg-stone-100 dark:border-stone-600 dark:hover:bg-stone-800"
-              >
-                +
-              </button>
+            <div className="space-y-3">
+              <NumberRow label={LABEL.newPerDay} value={draftNew} onChange={setDraftNew} accent="text-sky-600 dark:text-sky-400" />
+              <NumberRow label={LABEL.reviewPerDay} value={draftReview} onChange={setDraftReview} accent="text-rose-600 dark:text-rose-400" />
             </div>
-            {draft !== "" && !valid && <p role="alert" className="text-xs text-rose-600">Nhập số nguyên từ 1 đến 9999.</p>}
+            {(draftNew !== "" || draftReview !== "") && !valid && (
+              <p role="alert" className="text-xs text-rose-600">Nhập số nguyên từ 1 đến 9999 cho cả hai ô.</p>
+            )}
             <div className="space-y-2">
               <button
                 type="submit"
@@ -134,14 +136,9 @@ export const DailyLimitsPanel: React.FC<Props> = ({ limits, progress, onChange, 
               >
                 Lưu
               </button>
-              <div className="flex gap-2">
-                <button type="button" onClick={() => setEditing(null)} className="flex-1 rounded-xl py-2 text-xs font-bold text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800 transition cursor-pointer">
-                  Hủy
-                </button>
-                <button type="button" onClick={() => save(0)} className="flex-1 rounded-xl py-2 text-xs font-bold text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800 transition cursor-pointer">
-                  Không giới hạn
-                </button>
-              </div>
+              <button type="button" onClick={() => setEditing(false)} className="w-full rounded-xl py-2 text-xs font-bold text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-800 transition cursor-pointer">
+                Hủy
+              </button>
             </div>
           </form>
         </div>
