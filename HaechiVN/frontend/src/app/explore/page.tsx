@@ -199,6 +199,33 @@ export default function ExplorePage() {
     "Trung cấp": "bg-amber-100 text-amber-800",
     "Cao cấp": "bg-rose-100 text-rose-800",
   };
+  // Thẻ bento tô nguyên khối theo cấp độ: nền, viền và chữ cùng một hệ màu.
+  const LEVEL_CARD: Record<string, { card: string; title: string; meta: string; pill: string }> = {
+    "Sơ cấp": {
+      card: "border-emerald-200 bg-emerald-100 hover:bg-emerald-200/80 dark:border-emerald-900 dark:bg-emerald-950 dark:hover:bg-emerald-900",
+      title: "text-emerald-950 dark:text-emerald-50",
+      meta: "text-emerald-800 dark:text-emerald-200",
+      pill: "bg-white/70 text-emerald-900 dark:bg-emerald-900/70 dark:text-emerald-100",
+    },
+    "Trung cấp": {
+      card: "border-amber-200 bg-amber-100 hover:bg-amber-200/80 dark:border-amber-900 dark:bg-amber-950 dark:hover:bg-amber-900",
+      title: "text-amber-950 dark:text-amber-50",
+      meta: "text-amber-800 dark:text-amber-200",
+      pill: "bg-white/70 text-amber-900 dark:bg-amber-900/70 dark:text-amber-100",
+    },
+    "Cao cấp": {
+      card: "border-rose-200 bg-rose-100 hover:bg-rose-200/80 dark:border-rose-900 dark:bg-rose-950 dark:hover:bg-rose-900",
+      title: "text-rose-950 dark:text-rose-50",
+      meta: "text-rose-800 dark:text-rose-200",
+      pill: "bg-white/70 text-rose-900 dark:bg-rose-900/70 dark:text-rose-100",
+    },
+    "Mọi cấp độ": {
+      card: "border-stone-200 bg-stone-100 hover:bg-stone-200/80 dark:border-stone-700 dark:bg-stone-800 dark:hover:bg-stone-700",
+      title: "text-stone-900 dark:text-stone-50",
+      meta: "text-stone-700 dark:text-stone-300",
+      pill: "bg-white text-stone-800 shadow-xs dark:bg-stone-900 dark:text-stone-100",
+    },
+  };
 
   const renderDeckRow = (deck: CuratedDeckItem) => {
     const added = isDeckAdded(deck);
@@ -366,26 +393,29 @@ export default function ExplorePage() {
           </div>
         ) : view === "bento" ? (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {sortedDecks.map((deck) => (
+            {sortedDecks.map((deck) => {
+              const tone = LEVEL_CARD[deck.level] || LEVEL_CARD["Mọi cấp độ"];
+              return (
                 <a
                   key={deck.id}
                   href={deckHref(deck)}
                   style={{ viewTransitionName: deckTransitionName(deck.id) }}
-                  className="group relative flex min-h-[6.5rem] flex-col justify-between gap-3 rounded-xl border border-stone-200 bg-white p-4 transition-colors hover:border-stone-400 dark:border-stone-800 dark:bg-stone-900 dark:hover:border-stone-600"
+                  className={`group relative flex min-h-[6.5rem] flex-col justify-between gap-3 rounded-xl border p-4 transition-colors ${tone.card}`}
                 >
-                  <h3 className="text-sm font-bold leading-snug text-stone-900 line-clamp-2 dark:text-white">
+                  <h3 className={`text-sm font-bold leading-snug line-clamp-2 ${tone.title}`}>
                     {deck.title}
                   </h3>
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${LEVEL_PILL[deck.level] || "bg-stone-100 text-stone-700"}`}>
+                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${tone.pill}`}>
                       {deck.level}
                     </span>
-                    <span className="text-[11px] font-semibold text-stone-600 tabular-nums dark:text-stone-300">
+                    <span className={`text-[11px] font-semibold tabular-nums ${tone.meta}`}>
                       {deckCardCount(deck).toLocaleString("vi-VN")} thẻ
                     </span>
                   </div>
                 </a>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="space-y-1">
