@@ -179,7 +179,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         let decks = await ApiClient.getSavedDecks(user?.id);
         if (user?.email.toLowerCase() === accountDeckCleanupEmail) {
           setRemovedBuiltInDeckIds(accountDeckCleanupIds);
-          const cleanupKey = `haechivn_account_deck_cleanup_v1_${user.id}`;
+          const cleanupKey = `haechivn_account_deck_cleanup_v2_${user.id}`;
           if (!localStorage.getItem(cleanupKey)) {
             const isCopiedDeck = (name: string) => {
               const normalized = name.trim().toLocaleLowerCase();

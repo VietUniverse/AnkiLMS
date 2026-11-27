@@ -76,9 +76,14 @@
             payload.account?.id !== signedIn.id || payload.account?.email?.toLowerCase() !== signedIn.email.toLowerCase()) {
           throw new Error('Tài khoản cũ không khớp tài khoản đang đăng nhập. Chưa nhập dữ liệu nào.');
         }
-        const states = payload.cardStates && typeof payload.cardStates === 'object' && !Array.isArray(payload.cardStates)
+        const oldStates = payload.cardStates && typeof payload.cardStates === 'object' && !Array.isArray(payload.cardStates)
           ? Object.entries(payload.cardStates).map(([key, value]) => ({ ...value, key })) : [];
+        // The former built-in basic vocabulary was removed from the study catalog.
+        // Its old browser-only keys do not belong to a current study deck.
+        const retired = oldStates.filter((state) => /^Từ vựng cơ bản_basic-\d+(?:_typing)?$/i.test(state.key));
+        const states = oldStates.filter((state) => !/^Từ vựng cơ bản_basic-\d+(?:_typing)?$/i.test(state.key));
         if (!states.length && (!Array.isArray(payload.decks) || !payload.decks.length)) {
+          if (retired.length) { report('Không có tiến độ thẻ đang dùng để chuyển. Đã bỏ qua ' + retired.length + ' trạng thái từ vựng cơ bản cũ đã ngừng dùng. Dữ liệu gốc vẫn ở máy.'); return; }
           throw new Error('Không tìm thấy tiến độ hay bộ thẻ trong trình duyệt cũ này. Hãy kiểm tra đúng máy và cấu hình trình duyệt đã dùng để học.');
         }
         let restored = 0;
@@ -134,6 +139,7 @@
           const byId = new Map(existing.filter((deck) => deck && typeof deck.id === 'string').map((deck) => [deck.id, deck]));
           for (const oldDeck of payload.decks) {
             if (!oldDeck || typeof oldDeck.id !== 'string' || !Array.isArray(oldDeck.cards)) continue;
+            if (signedIn.email.toLowerCase() === 'anki@adminvn.com' && oldDeck.name?.trim().toLocaleLowerCase() === 'từ vựng tiếng hàn cơ bản') continue;
             const current = byId.get(oldDeck.id);
             if (!current) { byId.set(oldDeck.id, oldDeck); deckCount++; continue; }
             const currentCards = Array.isArray(current.cards) ? current.cards : [];
@@ -144,6 +150,7 @@
           await writeDecks(signedIn.id, [...byId.values()]);
         }
         report('Đã nhập ' + restored + ' tiến độ thẻ còn thiếu hoặc mới hơn và ' + deckCount + ' bộ thẻ chưa có.' +
+          (retired.length ? ' Đã bỏ qua ' + retired.length + ' trạng thái của bộ từ vựng cơ bản cũ không còn dùng.' : '') +
           (skipped ? ' Có ' + skipped + ' trạng thái cũ không đọc được (' + skippedKeys.join(', ') + '); bản gốc vẫn ở máy.' : '') +
           ' Hãy tải lại trang Học tập.');
       } catch (error) {
