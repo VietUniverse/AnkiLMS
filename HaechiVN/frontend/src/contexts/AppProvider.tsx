@@ -31,6 +31,7 @@ interface AppContextType {
   setUserDecks: React.Dispatch<React.SetStateAction<AnkiDeck[]>>;
   removedBuiltInDeckIds: string[];
   heatmapData: { checkin_date: string; time_spent_minutes: number; xp_earned: number; checked_in: number }[];
+  unreadNotifications: number;
   setHeatmapData: React.Dispatch<React.SetStateAction<{ checkin_date: string; time_spent_minutes: number; xp_earned: number; checked_in: number }[]>>;
   isImporterOpen: boolean;
   setIsImporterOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -67,6 +68,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [userDecks, setUserDecks] = useState<AnkiDeck[]>([]);
   const [removedBuiltInDeckIds, setRemovedBuiltInDeckIds] = useState<string[]>([]);
   const [heatmapData, setHeatmapData] = useState<{ checkin_date: string; time_spent_minutes: number; xp_earned: number; checked_in: number }[]>([]);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [isImporterOpen, setIsImporterOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authRegisterMode, setAuthRegisterMode] = useState(false);
@@ -93,6 +95,33 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const nextSharedDeckBackupAt = useRef(0);
   const autoCheckinRef = useRef<string | null>(null);
   const [sharedDeckSyncTick, setSharedDeckSyncTick] = useState(0);
+
+  useEffect(() => {
+    if (!currentUser?.id) {
+      setUnreadNotifications(0);
+      return;
+    }
+    let active = true;
+    const refresh = () => {
+      if (document.visibilityState === "hidden") return;
+      void ApiClient.getNotifications()
+        .then((data) => { if (active) setUnreadNotifications(data.unread); })
+        .catch(() => { /* Keep the last known count during network errors. */ });
+    };
+    refresh();
+    window.addEventListener("focus", refresh);
+    window.addEventListener("haechivn:notifications-updated", refresh);
+    const onVisibility = () => { if (document.visibilityState === "visible") refresh(); };
+    document.addEventListener("visibilitychange", onVisibility);
+    const timer = window.setInterval(refresh, 120_000);
+    return () => {
+      active = false;
+      window.clearInterval(timer);
+      window.removeEventListener("focus", refresh);
+      window.removeEventListener("haechivn:notifications-updated", refresh);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [currentUser?.id]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -490,6 +519,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setUserDecks,
     removedBuiltInDeckIds,
     heatmapData,
+    unreadNotifications,
     setHeatmapData,
     isImporterOpen,
     setIsImporterOpen,
@@ -509,7 +539,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     handleRemoveDeck,
     activeStudySession,
     setActiveStudySession,
-  }), [currentUser, userDecks, removedBuiltInDeckIds, heatmapData, isImporterOpen, isAuthOpen, authRegisterMode,
+  }), [currentUser, userDecks, removedBuiltInDeckIds, heatmapData, unreadNotifications, isImporterOpen, isAuthOpen, authRegisterMode,
       checkinMessage, authErrorMessage, isAuthReady, featureFlags, featureFlagsLoaded, isFeatureEnabled,
       handleOpenAuth, handleLogout, handleCheckin, handleDeckImported, handleRemoveDeck, activeStudySession]);
 

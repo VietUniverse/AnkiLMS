@@ -20,12 +20,18 @@ async function listNotifications(env: Env, userId: string) {
   return rows.results || [];
 }
 
+async function countUnread(env: Env, userId: string) {
+  const row = await env.DB.prepare("SELECT COUNT(*) AS count FROM notifications WHERE user_id = ? AND read_at IS NULL")
+    .bind(userId).first<{ count: number }>();
+  return row?.count || 0;
+}
+
 /** GET /api/notifications — danh sách + số chưa đọc. POST — đánh dấu đã đọc ({ id } hoặc { all: true }). */
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const user = await authenticateRequest(context.request, context.env);
   if (!user) return errorResponse("Bạn cần đăng nhập.", 401);
-  const notifications = await listNotifications(context.env, user.id);
-  return jsonResponse({ notifications, unread: notifications.filter((item) => !item.readAt).length });
+  const [notifications, unread] = await Promise.all([listNotifications(context.env, user.id), countUnread(context.env, user.id)]);
+  return jsonResponse({ notifications, unread });
 };
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
@@ -43,6 +49,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   } else {
     return errorResponse("Thiếu thông báo cần đánh dấu.");
   }
-  const notifications = await listNotifications(context.env, user.id);
-  return jsonResponse({ success: true, notifications, unread: notifications.filter((item) => !item.readAt).length });
+  const [notifications, unread] = await Promise.all([listNotifications(context.env, user.id), countUnread(context.env, user.id)]);
+  return jsonResponse({ success: true, notifications, unread });
 };

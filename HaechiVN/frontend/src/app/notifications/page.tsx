@@ -26,6 +26,7 @@ export default function NotificationsPage() {
       .then((data) => {
         setItems(data.notifications);
         setUnread(data.unread);
+        window.dispatchEvent(new Event("haechivn:notifications-updated"));
       })
       .catch(() => undefined)
       .finally(() => setLoading(false));
@@ -42,6 +43,7 @@ export default function NotificationsPage() {
       const data = await ApiClient.markNotificationsRead({ all: true });
       setItems(data.notifications);
       setUnread(data.unread);
+      window.dispatchEvent(new Event("haechivn:notifications-updated"));
     } catch {
       /* bỏ qua lỗi mạng, người dùng bấm lại được */
     } finally {
@@ -55,6 +57,7 @@ export default function NotificationsPage() {
       .then((data) => {
         setItems(data.notifications);
         setUnread(data.unread);
+        window.dispatchEvent(new Event("haechivn:notifications-updated"));
       })
       .catch(() => undefined);
   };
@@ -73,7 +76,7 @@ export default function NotificationsPage() {
             <button
               type="button"
               onClick={load}
-              className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-[11px] font-black text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#1e3466] dark:bg-[#0f1b38] dark:text-slate-200"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-[#1e3466] bg-[#0f1b38] px-3 py-2 text-[11px] font-black text-slate-200 transition-colors hover:bg-white/5"
             >
               <RefreshCw className="h-3.5 w-3.5" />
               Tải lại
@@ -84,7 +87,7 @@ export default function NotificationsPage() {
               disabled={busy || unread === 0}
               className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-[11px] font-black transition-colors ${
                 busy || unread === 0
-                  ? "cursor-not-allowed bg-slate-200 text-slate-500 dark:bg-white/10 dark:text-slate-400"
+                  ? "cursor-not-allowed bg-white/10 text-slate-400"
                   : "cursor-pointer bg-sky-700 text-white hover:bg-sky-600"
               }`}
             >
@@ -95,7 +98,7 @@ export default function NotificationsPage() {
         </div>
 
         {!currentUser ? (
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center dark:border-[#1e3466] dark:bg-[#0f1b38]">
+          <div className="rounded-2xl border border-[#1e3466] bg-[#0f1b38] p-6 text-center">
             <p className="text-sm font-bold text-white">Đăng nhập để xem thông báo</p>
             <button
               type="button"
@@ -106,28 +109,28 @@ export default function NotificationsPage() {
             </button>
           </div>
         ) : loading ? (
-          <p className="py-8 text-center text-xs font-bold text-slate-700">Đang tải thông báo…</p>
+          <p className="py-8 text-center text-xs font-bold text-slate-200">Đang tải thông báo…</p>
         ) : items.length === 0 ? (
-          <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center dark:border-[#1e3466] dark:bg-[#0f1b38]">
+          <div className="rounded-2xl border border-[#1e3466] bg-[#0f1b38] p-8 text-center">
             <Bell className="mx-auto h-6 w-6 text-slate-400" />
-            <p className="mt-2 text-xs font-semibold text-slate-700">Chưa có thông báo nào.</p>
+            <p className="mt-2 text-xs font-semibold text-slate-200">Chưa có thông báo nào.</p>
           </div>
         ) : (
-          <div className="divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white dark:divide-white/10 dark:border-[#1e3466] dark:bg-[#0f1b38]">
+          <div className="divide-y divide-white/10 rounded-2xl border border-[#1e3466] bg-[#0f1b38]">
             {items.map((item) => {
               const content = (
-                <div className={`flex items-start gap-3 p-4 ${item.readAt ? "" : "bg-sky-50/60 dark:bg-sky-500/5"}`}>
-                  <Bell className={`mt-0.5 h-4 w-4 shrink-0 ${item.readAt ? "text-slate-400" : "text-sky-600"}`} />
+                <div className={`flex items-start gap-3 p-4 ${item.readAt ? "" : "bg-sky-500/10"}`}>
+                  <Bell className={`mt-0.5 h-4 w-4 shrink-0 ${item.readAt ? "text-slate-400" : "text-sky-400"}`} />
                   <div className="min-w-0 flex-1">
                     <p className="text-xs font-black text-white">{item.title}</p>
-                    {item.body && <p className="mt-0.5 text-[11px] font-semibold leading-5 text-slate-700">{item.body}</p>}
-                    <p className="mt-1 text-[10px] font-bold text-slate-500">{formatTime(item.createdAt)}</p>
+                    {item.body && <p className="mt-0.5 text-[11px] font-semibold leading-5 text-slate-100">{item.body}</p>}
+                    <p className="mt-1 text-[10px] font-bold text-slate-400">{formatTime(item.createdAt)}</p>
                   </div>
                   {!item.readAt && <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-sky-600" aria-label="Chưa đọc" />}
                 </div>
               );
               return item.link ? (
-                <Link key={item.id} href={item.link} onClick={() => openItem(item)} className="block hover:bg-slate-50 dark:hover:bg-white/5">
+                <Link key={item.id} href={item.link} onClick={() => openItem(item)} className="block hover:bg-white/5">
                   {content}
                 </Link>
               ) : (

@@ -102,7 +102,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const [sidebarWidth, setSidebarWidth] = useState(256);
   const [resizing, setResizing] = useState(false);
   const pathname = usePathname();
-  const { isFeatureEnabled } = useApp();
+  const { isFeatureEnabled, unreadNotifications } = useApp();
 
   React.useEffect(() => {
     try {
@@ -144,13 +144,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const renderNavItem = (item: { href: string; label: string; icon: any; badge?: string; feature?: FeatureKey }, isMobile = false) => {
     const Icon = item.icon;
     const active = isActive(item.href);
+    const unread = item.href === "/notifications" ? unreadNotifications : 0;
     return (
       <Link
         key={item.href}
         href={item.href}
         onClick={isMobile ? onCloseMobile : undefined}
         aria-current={active ? "page" : undefined}
-        className={`w-full flex items-center py-2.5 rounded-xl text-xs transition-colors border-0 ${
+        className={`relative w-full flex items-center py-2.5 rounded-xl text-xs transition-colors border-0 ${
           collapsed && !isMobile ? "justify-center px-0" : "justify-between px-3"
         } ${
           active
@@ -163,6 +164,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <Icon className={`w-4 h-4 shrink-0 ${active ? "text-white" : "text-slate-400"}`} />
           {(!collapsed || isMobile) && <span className="tracking-normal truncate">{item.label}</span>}
         </div>
+        {unread > 0 && (
+          <span className={`${collapsed && !isMobile ? "absolute -right-1 -top-1" : "ml-2"} flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-black leading-none text-white`} aria-label={`${unread} thông báo chưa đọc`}>
+            {unread > 99 ? "99+" : unread}
+          </span>
+        )}
         {(!collapsed || isMobile) && item.badge && (
           <span
             className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md border-0 ${
@@ -182,6 +188,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const renderNavTile = (item: { href: string; label: string; icon: any; badge?: string }) => {
     const Icon = item.icon;
     const active = isActive(item.href);
+    const unread = item.href === "/notifications" ? unreadNotifications : 0;
     return (
       <Link
         key={item.href}
@@ -194,6 +201,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       >
         <Icon className={`h-5 w-5 shrink-0 ${active ? "text-white" : "text-slate-400"}`} />
         <span className="line-clamp-2">{item.label}</span>
+        {unread > 0 && <span className="absolute right-1 top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-black text-white" aria-label={`${unread} thông báo chưa đọc`}>{unread > 99 ? "99+" : unread}</span>}
         {item.badge && <span className="absolute right-1.5 top-1.5 rounded px-1 text-[8px] font-bold bg-purple-500/20 text-purple-300">{item.badge}</span>}
       </Link>
     );

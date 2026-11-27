@@ -18,7 +18,7 @@ const items = [
 
 export const BottomNav: React.FC<BottomNavProps> = ({ onOpenMobileMenu }) => {
   const pathname = usePathname();
-  const { isFeatureEnabled } = useApp();
+  const { isFeatureEnabled, unreadNotifications } = useApp();
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -34,11 +34,16 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onOpenMobileMenu }) => {
           <a
             key={item.href}
             href={item.href}
-            className={`flex min-w-0 flex-1 flex-col items-center gap-1 px-1 py-1.5 rounded-xl transition ${
+            className={`relative flex min-w-0 flex-1 flex-col items-center gap-1 px-1 py-1.5 rounded-xl transition ${
               active ? "text-blue-400 bg-blue-500/10 font-bold" : "text-slate-400 hover:text-slate-200"
             }`}
           >
             <Icon className={`w-5 h-5 ${active ? "text-blue-400" : "text-slate-400"}`} />
+            {item.href === "/notifications" && unreadNotifications > 0 && (
+              <span className="absolute right-[25%] top-0 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-black text-white" aria-label={`${unreadNotifications} thông báo chưa đọc`}>
+                {unreadNotifications > 99 ? "99+" : unreadNotifications}
+              </span>
+            )}
             <span className="max-w-full truncate text-[10px] font-bold">{item.label}</span>
           </a>
         );
