@@ -2511,7 +2511,8 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                     <div className="pt-4 space-y-3">
                       {renderTypingHintDisplay()}
 
-                      {!(isFlipped && isTypedCorrect(typedInput)) && <div className={`relative w-full max-w-sm mx-auto ${activeImageSrc ? "md:mx-0" : ""}`}>
+                      {/* Có ảnh gợi ý thì cột chữ vẫn căn giữa: trước đây md:mx-0 đẩy ô gõ sát trái, chừa trống bên phải. */}
+                      {!(isFlipped && isTypedCorrect(typedInput)) && <div className="relative w-full max-w-sm mx-auto">
                         <input
                           ref={inputRef}
                           type="text"
@@ -2542,7 +2543,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                         />
                       </div>}
 
-                      {!isFlipped && <div className={`flex items-center justify-center gap-2 ${activeImageSrc ? "md:justify-start" : ""}`}>
+                      {!isFlipped && <div className="flex items-center justify-center gap-2">
                         <button
                           type="button"
                           onClick={handleGiveHint}
