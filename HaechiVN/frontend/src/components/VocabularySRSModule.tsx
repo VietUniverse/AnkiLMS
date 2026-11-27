@@ -598,6 +598,9 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     if (total === 0) return { total: 0, mastered: 0, percent: 0, newCount: 0, reviewCount: 0 };
     let mastered = 0;
     let newCount = 0;
+    let doneToday = 0;
+    const nowDate = new Date();
+    const todayKey = `${nowDate.getFullYear()}-${String(nowDate.getMonth() + 1).padStart(2, "0")}-${String(nowDate.getDate()).padStart(2, "0")}`;
     for (const card of playableCards) {
       const state = cardStateMap[stateKeyOf(card)] || (card.ankiSchedule && !card.sibling ? ankiScheduleToFSRSState(card.ankiSchedule) : undefined);
       if (!state || state.state === "new") {
@@ -605,12 +608,14 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
         continue;
       }
       mastered += 1;
+      if (state.lastReview && String(state.lastReview).slice(0, 10) === todayKey) doneToday += 1;
     }
     // Số Ôn lấy từ chính hàng đợi (đã bury thẻ anh em) để khớp số thẻ khi bấm Ôn tập.
     const reviewCount = buildStudyQueue(cards, cardStateMap, { now, newLeft: 0, reviewLeft: Infinity, reviewOnly: true }).dueCount;
-    // This column is today's queue completion, not lifetime familiarity.
+    // % = hôm nay đã xong / (đã xong + còn lại). Trước đây chia cho tổng cả bộ nên bộ 100 thẻ
+    // còn 8 thẻ ôn đã hiện 92% dù chưa học gì; giờ đầu ngày là 0%, xong hết mới 100%.
     const pending = newCount + reviewCount;
-    const percent = pending === 0 ? 100 : Math.min(99, Math.round(((total - pending) / total) * 100));
+    const percent = pending === 0 ? 100 : Math.min(99, Math.round((doneToday / (doneToday + pending)) * 100));
     return { total, mastered, percent, newCount, reviewCount };
   }, [cardStateMap]);
 
