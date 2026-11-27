@@ -24,15 +24,14 @@ function ConfigCard({ limits, progress, onOpen }: { limits: DailyLimits; progres
     { field: "reviewPerDay", done: progress.reviewDone, value: limits.reviewPerDay, tone: "text-rose-600 dark:text-rose-400" },
   ];
   return (
-    <div className="flex h-full w-full flex-col justify-center rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 px-3 py-2 sm:px-6 sm:py-3">
-      <span className="text-xs font-bold text-stone-500 dark:text-stone-400">Cấu hình</span>
+    <div className="flex h-full w-full flex-col justify-center gap-0.5 rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/60 px-3 py-1.5 sm:px-4 sm:py-2">
       {rows.map((row) => (
         <button
           key={row.field}
           type="button"
           onClick={() => onOpen(row.field)}
           aria-label={`${FIELD_LABEL[row.field]} hôm nay: ${row.done} trên ${row.value || "không giới hạn"}. Bấm để đổi`}
-          className="mt-0.5 flex cursor-pointer items-baseline justify-between gap-3 whitespace-nowrap text-base font-black tabular-nums hover:opacity-80 sm:text-lg"
+          className="flex cursor-pointer items-baseline justify-between gap-2 whitespace-nowrap text-sm font-black tabular-nums hover:opacity-80 sm:text-base"
         >
           <span className={`text-xs font-bold ${row.tone}`}>{FIELD_LABEL[row.field]}</span>
           <span className={row.tone}>
