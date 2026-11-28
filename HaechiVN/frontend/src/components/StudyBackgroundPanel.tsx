@@ -91,7 +91,7 @@ export function StudyBackgroundPanel() {
     }
   });
   const sheetDragRef = useRef<{ startY: number; startHeight: number } | null>(null);
-  const effectiveHeight = sheetHeight ?? (section === "look" ? 55 : 70);
+  const effectiveHeight = sheetHeight ?? 65;
   const onSheetPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     sheetDragRef.current = { startY: e.clientY, startHeight: effectiveHeight };
     e.currentTarget.setPointerCapture(e.pointerId);
@@ -222,15 +222,15 @@ export function StudyBackgroundPanel() {
         document.body,
       )}
 
-      {/* Nhóm Giao diện: bỏ lớp tối, thu bảng xuống đáy (mobile) hoặc sang phải (desktop) để thấy ngay nền vừa chọn. */}
+      {/* Một kiểu bố cục cho cả 3 nhóm: đáy (mobile) hoặc cạnh phải (desktop), không lớp tối để thấy nền vừa chọn. */}
       {open && createPortal(
-        <div className={`fixed inset-0 z-[100] flex items-end justify-center transition-colors sm:p-4 ${section === "look" ? "bg-transparent sm:items-stretch sm:justify-end" : "bg-black/60 sm:items-center"}`} onClick={() => setOpen(false)}>
+        <div className="fixed inset-0 z-[100] flex items-end justify-center bg-transparent transition-colors sm:items-stretch sm:justify-end sm:p-4" onClick={() => setOpen(false)}>
           <div
             role="dialog"
             aria-modal="true"
             aria-label="Cài đặt học"
             style={{ "--sheet-h": `${effectiveHeight}dvh` } as React.CSSProperties}
-            className={`flex w-full flex-col overflow-hidden rounded-t-3xl max-sm:h-[var(--sheet-h)] ${section === "look" ? "sm:max-h-none" : "sm:max-h-[88dvh]"} border border-stone-200 bg-white text-stone-900 shadow-2xl sm:max-w-lg sm:rounded-2xl dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100`}
+            className="flex w-full flex-col overflow-hidden rounded-t-3xl max-sm:h-[var(--sheet-h)] border border-stone-200 bg-white text-stone-900 shadow-2xl sm:max-h-none sm:max-w-lg sm:rounded-2xl dark:border-stone-700 dark:bg-stone-900 dark:text-stone-100"
             onClick={(event) => event.stopPropagation()}
           >
             {/* Thanh kéo trên mobile, tiêu đề, và 3 nhóm cài đặt. */}
