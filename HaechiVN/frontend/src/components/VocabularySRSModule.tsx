@@ -153,6 +153,8 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
   // Kéo thẻ ở chế độ Tinder: độ lệch ngang (px) của thẻ đang kéo.
   const [dragX, setDragX] = useState(0);
   const dragRef = useRef<{ startX: number; pointerId: number } | null>(null);
+  // Vuốt xong trình duyệt vẫn bắn click lên thẻ vừa thay → chặn để không lật đáp án thẻ kế tiếp.
+  const swipeClickGuardRef = useRef(false);
   const muteWordAudio = useMuteWordAudio();
   const muteExampleAudio = useMuteExampleAudio();
   const hideWordAudio = useHideWordAudio();
@@ -1558,6 +1560,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
   const tinderHandlers = tinderActive ? {
     onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => {
       if (isInteractiveTarget(e.target) || e.button !== 0) return;
+      swipeClickGuardRef.current = false;
       dragRef.current = { startX: e.clientX, pointerId: e.pointerId };
       e.currentTarget.setPointerCapture(e.pointerId);
     },
@@ -1572,6 +1575,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
       dragRef.current = null;
       if (!drag || drag.pointerId !== e.pointerId) return;
       const dx = e.clientX - drag.startX;
+      swipeClickGuardRef.current = Math.abs(dx) >= 10;
       setDragX(0);
       if (Math.abs(dx) >= SWIPE_THRESHOLD) {
         handleResponse(dx > 0);
@@ -1871,7 +1875,11 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
             <div
               className="min-h-[calc(100dvh-190px)] flex flex-col justify-between py-2 pb-28 max-sm:min-h-[calc(100dvh-170px)] max-sm:pb-0 lg:min-h-[calc(100dvh-110px)] lg:pb-24 animate-reveal"
               // Tinder: chạm bất cứ đâu trên màn học (ngoài nút/ô nhập) để lật thẻ.
-              onClick={tinderActive && !isFlipped ? (e) => { if (!isInteractiveTarget(e.target)) revealAnswer(); } : undefined}
+              onClick={tinderActive && !isFlipped ? (e) => {
+                // Click sinh ra sau một cú vuốt thì bỏ qua, nếu không thẻ kế tiếp tự lật đáp án.
+                if (swipeClickGuardRef.current) { swipeClickGuardRef.current = false; return; }
+                if (!isInteractiveTarget(e.target)) revealAnswer();
+              } : undefined}
             >
               <div className="flex-1 flex flex-col">
 
