@@ -2546,7 +2546,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                         <button
                           type="button"
                           onClick={handleGiveHint}
-                          className="inline-flex h-9 items-center gap-1.5 px-3 rounded-lg text-sm font-medium text-stone-500 dark:text-stone-400 hover:bg-amber-500/10 hover:text-amber-700 dark:hover:text-amber-300 transition cursor-pointer"
+                          className={`inline-flex h-9 items-center gap-1.5 px-3 rounded-lg text-sm font-medium transition cursor-pointer ${posTint ? "bg-white/15 hover:bg-white/25 text-white" : "text-stone-500 dark:text-stone-400 hover:bg-amber-500/10 hover:text-amber-700 dark:hover:text-amber-300"}`}
                         >
                           <Lightbulb aria-hidden="true" className="w-4 h-4" />
                           <span>Gợi ý 1 ký tự</span>

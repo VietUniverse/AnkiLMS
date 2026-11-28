@@ -4264,3 +4264,10 @@ html[data-theme] body .study-card-tinted :is([class*="bg-stone-"], [class*="bg-s
 html[data-theme] body .study-card-tinted .badge-on-solid { background-color: rgba(255, 255, 255, 0.22) !important; color: #fff !important; }
 /* Ô gõ từ giữ nền trắng để gõ được, chữ đậm. */
 html[data-theme] body .study-card-tinted input.study-input { background-color: #fff !important; color: #0f172a !important; }
+/* Ký tự gợi ý trên thẻ nền đậm: trắng cho đúng, vàng nhạt cho sai, gạch mờ cho ô trống. */
+html[data-theme] body .study-card-tinted .hint-display .ch.correct { color: #fff; border-bottom-color: rgba(255, 255, 255, 0.75); }
+html[data-theme] body .study-card-tinted .hint-display .ch.blank { color: #fff; opacity: 0.45; }
+html[data-theme] body .study-card-tinted .hint-display .ch.incorrect { color: #fde68a; border-bottom-color: #fde68a; }
+html[data-theme] body .study-card-tinted .hint-display .ch.active-cursor { border-bottom-color: #fff; }
+html[data-theme] body .study-card-tinted input.study-input { border-color: rgba(255, 255, 255, 0.45) !important; }
+html[data-theme] body .study-card-tinted input.study-input:focus { border-color: #fff !important; box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.25) !important; }
