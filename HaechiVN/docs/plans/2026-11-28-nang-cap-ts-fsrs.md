@@ -3,15 +3,22 @@
 Ngày viết: 2026-11-28. Repo: `HaechiVN/frontend`, gồm cả Pages Functions trong `functions/`.
 Tài liệu gốc của thư viện: <https://open-spaced-repetition.github.io/ts-fsrs/guide/migration.md>.
 
+> **Nguyên tắc chính: Anki lên FSRS-7 thì mình mới lên, và làm theo cách Anki xử lý.**
+> - **Giai đoạn A** (API v6, vẫn giữ FSRS-6) **làm ngay**. Việc này không phụ thuộc Anki.
+> - **Giai đoạn B** (FSRS-7) **chỉ bắt đầu khi Anki ra bản chính thức có FSRS-7**. Bản beta (ví dụ `26.11b1`) không tính. Lý do: Anki là app dùng FSRS lớn nhất, và chính đội FSRS viết phần tích hợp. Họ sẽ gặp và sửa lỗi trên rất nhiều người dùng trước, mình đi sau thì ít rủi ro hơn.
+> - **Khi Anki ra bản đó, chép cách Anki làm, không tự nghĩ ra.** Gồm: các bước học, chế độ bỏ qua bước học, giới hạn số lần ôn trong ngày, cách chuyển thẻ cũ, cách hiển thị "độ ổn định", cách tối ưu trọng số. Mục **6.7** liệt kê từng điểm cần đối chiếu và chỗ phải sửa trong HaechiVN.
+> - **Theo dõi:** trang [Releases của Anki](https://github.com/ankitects/anki/releases) và [PR #5687](https://github.com/ankitects/anki/pull/5687), nơi đang bàn tích hợp FSRS-7. Mỗi lần Anki có bản chính thức mới thì đọc ghi chú phát hành, tìm chữ "FSRS-7".
+> - **Các đề xuất cấu hình ở mục 6 chỉ là tạm thời.** Khi Anki đã chốt cách làm thì thay bằng cách của Anki.
+
 ## Đọc nhanh
 
 - Commit `714a2d0` đã đổi `package.json` sang `ts-fsrs@6.0.1`, và app vẫn chạy. Còn ba việc dở:
   - code vẫn gọi API cũ của v5 (`fsrs()`, `createEmptyCard`, `default_w`); v6 vẫn giữ các hàm này nhưng đã đánh dấu **deprecated**;
   - `pnpm-lock.yaml` vẫn ghi 5.4.2;
   - API nhận trọng số chưa chặn vector FSRS-7.
-- **Quyết định:** chuyển sang API v6 nhưng **giữ mô hình FSRS-6**. Chưa lên FSRS-7.
-  - Đã chạy thử 56 tình huống chấm thẻ. API v6 cho kết quả **giống hệt** bản đang chạy.
-  - Không cần migration D1, không đổi dữ liệu.
+- **Quyết định:** làm hai giai đoạn.
+  - **Giai đoạn A (mục 5):** chuyển sang API v6 nhưng **giữ mô hình FSRS-6**. Đã chạy thử 56 tình huống chấm thẻ, API v6 cho kết quả **giống hệt** bản đang chạy. Không cần migration D1, không đổi dữ liệu.
+  - **Giai đoạn B (mục 6), chỉ làm khi Anki đã ra bản chính thức có FSRS-7:** **thẻ mới dùng FSRS-7**, còn thẻ đã học giữ FSRS-6, mỗi thẻ có nhãn mô hình riêng. Bật dần bằng feature flag. Cần migration D1 với các cột thêm mới (B1). Chủ app phải chốt cấu hình trước, vì với trọng số mặc định, FSRS-7 hẹn ôn xa hơn hẳn (6.5).
 - **Việc của backend:**
   - T2: kiểm độ dài trọng số;
   - T3: không nuốt lỗi khi ghi `review_logs`;
@@ -240,28 +247,166 @@ Mỗi task là một commit, chỉ `git add` file của task đó. Chạy thử 
 - Thứ tự deploy: T2, T3, T7a (backend) → T1, T4, T5, T6 → T7b.
 - Rollback: revert commit tương ứng. Giai đoạn này không có migration và không đổi dạng dữ liệu.
 
-## 6. FSRS-7: chưa làm, nhưng backend cần biết
+## 6. Giai đoạn B: FSRS-7 cho thẻ mới (làm sau khi xong mục 5)
 
-Chưa làm vì thẻ đã học chỉ chuyển sang FSRS-7 được khi có **toàn bộ** lịch sử ôn, để dựng lại trí nhớ bằng `Reschedule.replay()`. Hiện tại:
-- `review_logs` mới có từ 24/11/2026;
-- thẻ nhập từ Anki không có log;
-- trọng số FSRS-6 không dùng được cho FSRS-7.
+### 6.1 Quyết định
 
-Điều kiện để mở lại:
-1. Có vài tháng log đầy đủ. T3 là điều kiện tiên quyết.
-2. Chạy `evaluateWithTimeSeriesSplits` của binding trên dữ liệu thật thấy FSRS-7 tốt hơn FSRS-6 rõ rệt.
-3. Có người duyệt kế hoạch migration riêng.
+- **Thời điểm bắt đầu:** khi Anki ra bản chính thức có FSRS-7 (xem nguyên tắc ở đầu file). Chưa tới lúc đó thì chỉ đọc mục này để chuẩn bị.
+- **Thẻ mới**, tức chưa được chấm lần nào kể từ ngày bật, dùng **FSRS-7**.
+- **Thẻ đã học giữ FSRS-6.** Lý do: `review_logs` mới có từ 24/11/2026, nên không có đủ lịch sử để dựng lại trí nhớ cho FSRS-7. Thẻ nhập từ Anki đang là beta, tắt trên production (`featureFlags.ts:28`).
+- **Mỗi thẻ mang nhãn `fsrs_model`** (`'FSRS-6'` hoặc `'FSRS-7'`), và scheduler được chọn theo nhãn. Thẻ không có nhãn là FSRS-6. **Không bao giờ đổi nhãn ngầm.**
+- **Bật dần bằng feature flag:** chỉ admin trước, theo dõi rồi mới mở cho mọi người (B7).
 
-Những chỗ backend sẽ phải đổi khi tới lúc:
-- `card-states.ts:85` đang bắt `interval` là **số nguyên**. FSRS-7 dùng `fractionalDays: true` nên sẽ bị trả 400. Cần nới điều kiện, hoặc tách cột khoảng ôn có phần lẻ.
-- `card_states.last_review` và điều kiện kiểm ở `card-states.ts:95` chỉ nhận `YYYY-MM-DD`. FSRS-7 cần giờ chính xác, nên phải lấy từ `review_logs.review_time` hoặc thêm cột `last_review_at`.
-- Migration mới cần thêm:
-  - `card_states.stability_fast REAL`;
-  - `card_states.fsrs_model TEXT DEFAULT 'FSRS-6'`;
-  - `user_fsrs_settings.model_version TEXT DEFAULT 'FSRS-6'`, và vector 34 trọng số lưu riêng.
-- T2 phải kiểm độ dài theo `model_version`.
-- Script migration phải có `--dry-run` và backup trước (`wrangler d1 export`). Chỉ ghi trí nhớ của thẻ (`stability`, `stability_fast`, `difficulty`, `fsrs_model`). **Không sửa `review_logs`**, không đổi `due_*`, `reps`, `lapses` hay bước học.
-- Thẻ có lịch sử thiếu giữ FSRS-6, và mỗi thẻ được xử lý theo `fsrs_model` của nó.
+### 6.2 Vì sao: số liệu chính thức
+
+Nguồn: README của `open-spaced-repetition/srs-benchmark`. Dữ liệu là khoảng 10.000 bộ thẻ Anki, 350–520 triệu lượt ôn. Bảng dưới là Log Loss, càng thấp càng đoán trúng khả năng nhớ:
+
+| Mô hình | Không tính ôn cùng ngày | Có tính ôn cùng ngày |
+|---|---|---|
+| FSRS-6, đã tối ưu theo từng người | 0,3460 | 0,3842 |
+| FSRS-7, đã tối ưu theo từng người | **0,3401** | **0,3206** |
+| FSRS-7, trọng số mặc định | 0,3620 | 0,3399 |
+
+**Cách đọc:**
+- FSRS-7 tốt hơn, nhất là khi tính cả những lần ôn trong cùng một ngày; học từ vựng có nhiều lần ôn kiểu này.
+- Nếu **không** tính ôn cùng ngày, FSRS-7 dùng trọng số mặc định lại kém FSRS-6 đã tối ưu.
+- Phần lớn user HaechiVN đang dùng trọng số mặc định. Bảng không có dòng "FSRS-6 mặc định", nên chưa so trực tiếp được hai bản mặc định với nhau. Vì vậy cần bước theo dõi ở B7, và cần optimizer FSRS-7 ở B8.
+
+### 6.3 Tình trạng hệ sinh thái (ngày 28/11/2026)
+
+| Nơi | FSRS-7 |
+|---|---|
+| ts-fsrs 6.0.0 (28/10) và 6.0.1 (22/11) | Bản chính thức; mô hình mặc định của `DefaultScheduler` |
+| fsrs-rs 7.0.0 (10/11), lõi Rust mà Anki dùng | Bản chính thức |
+| py-fsrs 6.3.3 | Chưa có, vẫn là FSRS-6 |
+| Anki 26.09.4 (chính thức), 26.11b1 (beta) | **Chưa có**. Ghi chú phát hành không nhắc tới FSRS-7 |
+
+FSRS-7 mới ra khoảng một tháng, bản 6.0.1 đã là một bản vá. **Giữ phiên bản ghim cứng** (`"ts-fsrs": "6.0.1"`, không dùng `^`). Mỗi lần nâng thì đọc release note và chạy lại T6, B5.
+
+### 6.4 Cộng đồng đang chuyển đổi thế nào
+
+- **Anki, [PR #5687](https://github.com/ankitects/anki/pull/5687)** (bản nháp, mở từ 24/09, chưa merge). Ngày 16/11 nhóm Anki cho biết sẽ bàn kế hoạch khi có đủ regression test. Hướng đang đề xuất:
+  - Preset đã có trọng số FSRS-6 do người dùng tối ưu thì **giữ FSRS-6**, cho tới khi người dùng reset hoặc tối ưu lại.
+  - Preset rỗng hoặc mặc định thì chuyển sang FSRS-7, và dựng lại trí nhớ từ toàn bộ revlog (Anki có đủ lịch sử).
+  - **Giữ nguyên ngày hẹn ôn** khi tự động chuyển.
+  - Lịch sử bị cắt ngắn thì "căn chỉnh": dùng `scale_memory_state_to_interval` ([fsrs-rs PR #485](https://github.com/open-spaced-repetition/fsrs-rs/pull/485)) để tìm trạng thái FSRS-7 khớp với khoảng ôn đã ghi.
+- **Hướng dẫn của ts-fsrs** ([migration guide](https://open-spaced-repetition.github.io/ts-fsrs/guide/migration.md)) chặt hơn Anki: thẻ thiếu lịch sử thì **giữ FSRS-6**, không suy ra trạng thái, không tự đặt `stabilityFast = 0.8 * S`. ts-fsrs 6.0.1 **không có** hàm căn chỉnh tương đương. Vì vậy HaechiVN chưa chuyển thẻ cũ.
+- **Tranh luận về learning steps** (trong PR #5687):
+  - Expertium, người nghiên cứu chính của FSRS, đề xuất để learning steps **trống** khi dùng FSRS-7, và thêm hai cài đặt: "tối đa N lần ôn trong ngày" (gợi ý 1–2) và "khoảng tối thiểu" (gợi ý 30 phút đến 1 giờ).
+  - Đề xuất này chưa được chốt. Tài liệu ts-fsrs thì khuyên **giữ rõ** các bước đang dùng.
+- **Lỗi cũ đã được báo:** [srs-benchmark #313](https://github.com/open-spaced-repetition/srs-benchmark/issues/313), mở từ tháng 4: FSRS-7 với trọng số mặc định cho khoảng ôn vô lý sau khi trả lời sai ở lần đầu. Tháng 6, Expertium trả lời rằng bản cuối sẽ chính xác hơn. Issue vẫn đang mở.
+
+### 6.5 Lịch ôn thử với FSRS-7 mặc định: thay đổi rõ với người học
+
+Đã chạy ts-fsrs 6.0.1 với `FSRS7_DEFAULT_WEIGHTS`, `fractionalDays: true`, bước `1m/10m`, retention 0,9. Mỗi chuỗi là: chấm X ở lần đầu, sau đó bấm Good đúng hạn hai lần.
+
+| Lần đầu chấm | FSRS-6 hiện tại | FSRS-7, `allowModelOverride: true` (mặc định của FSRS-7) | FSRS-7, `allowModelOverride: false` |
+|---|---|---|---|
+| Again | 1 phút → 10 phút → 3 ngày | 1 phút → 27,5 phút → 1 ngày | 1 phút → 10 phút → 1 ngày |
+| Hard | 5,5 phút → 10 phút → 6 ngày | 14,3 giờ → 5,7 ngày → 20,1 ngày | 5,5 phút → 10 phút → 3,8 ngày |
+| Good | 10 phút → 4 ngày → 16 ngày | **4,8 ngày** → 26,2 ngày → 92,4 ngày | 10 phút → 10,1 ngày → 42,6 ngày |
+| Easy | 2 ngày → 11 ngày → 44 ngày | **53,9 ngày** → 233 ngày → 868 ngày | 53,9 ngày → 233 ngày → 868 ngày |
+
+- Với `allowModelOverride: true`, bấm Good ở lần đầu là **bỏ qua bước 10 phút** và hẹn sau gần 5 ngày.
+- Bấm Easy ở lần đầu thì cả hai chế độ đều hẹn sau khoảng 54 ngày; FSRS-6 hiện tại chỉ hẹn 2 ngày.
+- Trọng số mặc định được train trên người dùng Anki nói chung, không phải người Việt mới học tiếng Hàn.
+
+**Đề xuất:**
+- Bắt đầu với `allowModelOverride: false` để giữ bước 1m/10m quen thuộc.
+- Cân nhắc giới hạn khoảng ôn của thẻ mới sau lần chấm đầu. Ví dụ: Easy ở lần đầu không quá 7 ngày, làm bằng middleware riêng (`defineMiddleware`). Đây là **quyết định sản phẩm**, cần chủ app chốt trước khi bật.
+
+### 6.6 Việc cần làm
+
+**B0. Điều kiện trước** (không có thì không bắt đầu)
+- **Anki đã ra bản chính thức có FSRS-7, và cột "Anki làm gì" ở bảng 6.7 đã được điền đủ.**
+- Mục 5 đã xong và đã lên production.
+- T3 đã xong. Thẻ FSRS-7 phải có log đầy đủ ngay từ lần chấm đầu, để sau này phát lại được nếu phải quay về.
+- Chủ app chốt cấu hình ở 6.5.
+
+**B1. Migration D1** (S, **backend**)
+- Thêm file migration mới trong `frontend/migrations/` và cập nhật `schema.sql`. Mọi cột đều **thêm mới**, có giá trị mặc định, nên dữ liệu cũ tự là FSRS-6 mà không phải ghi lại.
+  ```sql
+  ALTER TABLE card_states ADD COLUMN fsrs_model TEXT NOT NULL DEFAULT 'FSRS-6';
+  ALTER TABLE card_states ADD COLUMN stability_fast REAL;          -- chỉ FSRS-7
+  ALTER TABLE card_states ADD COLUMN last_review_at TEXT;          -- ISO đầy đủ; FSRS-7 cần giờ chính xác
+  ALTER TABLE card_states ADD COLUMN scheduled_days REAL;          -- khoảng ôn có phần lẻ ngày
+  ALTER TABLE review_logs ADD COLUMN fsrs_model TEXT NOT NULL DEFAULT 'FSRS-6';
+  ALTER TABLE review_logs ADD COLUMN stability_fast REAL;
+  ALTER TABLE user_fsrs_settings ADD COLUMN weights_fsrs7_json TEXT; -- 34 trọng số, tách khỏi weights_json (FSRS-6)
+  ```
+- Chạy `--local` trước. Trước khi chạy `--remote` thì `wrangler d1 export` để sao lưu.
+
+**B2. `POST /api/card-states` nhận thẻ FSRS-7** (S, **backend**, `functions/api/card-states.ts`)
+- Nhận thêm `fsrsModel` (`'FSRS-6'` hoặc `'FSRS-7'`, mặc định `'FSRS-6'`), `stabilityFast`, `lastReviewAt` (kiểm bằng `Date.parse`) và `scheduledDays` (số hữu hạn từ 0 tới 36500).
+- Với FSRS-7, `stabilityFast` là **bắt buộc** và phải nằm trong `[0.0001, 36500]`.
+- **Giữ** điều kiện `interval` là số nguyên ở dòng 85, và giữ `lastReview` dạng `YYYY-MM-DD` ở dòng 95, để thống kê và client cũ không vỡ. Client gửi `interval = Math.round(scheduledDays)`; giá trị chính xác nằm ở `scheduled_days`, `due_at` và `last_review_at`.
+- **Không cho hạ nhãn:** nếu thẻ đang là `FSRS-7` trong D1 mà request gửi `FSRS-6`, trả 409. Trường hợp này xảy ra khi client cũ chưa cập nhật ghi đè lên thẻ.
+- INSERT `review_logs` ghi thêm `fsrs_model` và `stability_fast`.
+- `functions/api/progress-recovery.ts` phải mang theo các trường mới. GET trả các trường mới về cho client.
+
+**B3. Trọng số theo mô hình** (XS, **backend**)
+- `functions/api/fsrs/settings.ts` và `functions/api/fsrs/optimize.ts` nhận thêm `modelVersion`.
+- FSRS-6 thì kiểm độ dài 17, 19 hoặc 21 và ghi vào `weights_json`. FSRS-7 thì kiểm đúng 34 phần tử và ghi vào `weights_fsrs7_json`.
+- GET trả về cả hai.
+
+**B4. Optimizer theo mô hình** (S, **backend/script**)
+- `scripts/fsrs-optimizer.mjs` nhận thêm tham số `--model FSRS-6|FSRS-7`.
+- Chỉ đọc `review_logs` có `fsrs_model` đúng với tham số đó. **Không trộn** log của hai mô hình.
+- Gọi `computeParameters(items, { modelVersion, enableShortTerm: true })`. Với FSRS-7, cân nhắc thêm `enableSchedPenalties: true`; benchmark khuyên dùng khi đưa vào app thật.
+- Thêm `--dry-run` chỉ in ra kết quả mà không ghi D1.
+
+**B5. Lib `fsrs45.ts` chạy hai mô hình** (M, lib frontend)
+- Thêm định nghĩa thứ hai với `FSRS7Model`, cùng 7 middleware và cấu hình đã chốt ở 6.5: `fractionalDays: true`, `learningSteps: ["1m","10m"]`, `relearningSteps: ["10m"]`, giá trị `allowModelOverride` đã chọn.
+- `FSRSState` thêm `fsrsModel?`, `stabilityFast?`, `lastReviewAt?`, `scheduledDays?`. Hàm `calculateFSRS45` chọn scheduler theo `fsrsModel`; không có nhãn thì là FSRS-6.
+- Thẻ mới chỉ được gắn `fsrsModel: 'FSRS-7'` ở **lần chấm đầu**, và chỉ khi flag `fsrs7NewCards` đang bật cho user. Thêm flag này vào `src/lib/featureFlags.ts`.
+- Rà các chỗ đang coi `stability` là "số ngày nhớ". Ví dụ `KoreanGamesModule.tsx:83` dùng `stability >= 3`. Với FSRS-7, `stability` là thành phần chậm, không phải khoảng ôn đạt 90%. Dùng `interval` hoặc `scheduledDays` thay vào.
+
+**B6. Kiểm thử** (S)
+- Thêm `scripts/check-fsrs7-new-cards.mjs`. Script phải kiểm:
+  - thẻ FSRS-6 cho lịch giống hệt T6;
+  - thẻ mới khi bật flag ra FSRS-7, đúng như bảng 6.5 với cấu hình đã chốt;
+  - thẻ FSRS-7 đi qua JSON và API rồi quay lại vẫn còn `stabilityFast`;
+  - vector 21 phần tử gửi cho FSRS-7 thì bị từ chối.
+- Ở D1 local: client cũ gửi `FSRS-6` cho thẻ đang là `FSRS-7` thì nhận 409.
+
+**B7. Bật dần và theo dõi** (XS)
+- Bật flag cho admin khoảng 1–2 tuần, sau đó mới mở cho mọi user.
+- So tỉ lệ nhớ thật của thẻ đang ở trạng thái ôn (`state = 2`), tách theo mô hình:
+  ```sql
+  SELECT fsrs_model, COUNT(*) AS n, ROUND(AVG(rating > 1), 3) AS true_retention
+  FROM review_logs WHERE state = 2 AND review_time >= date('now', '-30 day')
+  GROUP BY fsrs_model;
+  ```
+  Nhắm tỉ lệ gần `desiredRetention` (0,9). Nếu FSRS-7 thấp hơn nhiều thì tắt flag và xem lại cấu hình ở 6.5.
+- **Quay lại:** tắt flag thì từ đó thẻ mới không được gắn FSRS-7 nữa. Thẻ đã là FSRS-7 thì vẫn ở FSRS-7. Muốn đưa chúng về FSRS-6 thì phải phát lại log bằng `new Reschedule(fsrs6Scheduler).replay({ history })`. Việc này làm được nhờ T3 và B2, vì thẻ FSRS-7 có log đầy đủ từ đầu.
+
+**B8. Về sau, không làm ngay**
+- Khi một user có đủ log FSRS-7, chạy B4 để tối ưu trọng số FSRS-7 cho riêng họ. Đây là lúc FSRS-7 đạt kết quả tốt nhất như bảng 6.2.
+- Có chuyển thẻ cũ sang FSRS-7 bằng cách căn chỉnh như Anki hay không: chờ Anki chốt PR #5687, và chờ ts-fsrs có hàm tương đương. Không tự viết công thức.
+
+### 6.7 Đối chiếu với Anki khi Anki ra bản có FSRS-7
+
+Cách dùng bảng này:
+1. Khi Anki ra bản chính thức có FSRS-7, đọc ghi chú phát hành, phần Deck Options trong [Anki Manual](https://docs.ankiweb.net/deck-options.html) và PR đã merge.
+2. Điền cột "Anki làm gì" cho từng dòng, kèm link nguồn.
+3. Đổi cột "Đề xuất hiện tại" của HaechiVN cho khớp với Anki. Muốn làm khác Anki thì phải ghi rõ lý do ngay trong dòng đó.
+
+| # | Điểm cần đối chiếu | Anki làm gì (điền khi Anki ra bản chính thức) | Đề xuất hiện tại của HaechiVN | Chỗ sửa |
+|---|---|---|---|---|
+| 1 | Các bước học mặc định khi dùng FSRS-7: để trống, hay giữ `1m/10m` | PR #5687: giữ các bước người dùng đã đặt; Expertium muốn để trống. Chưa chốt | Giữ `1m/10m` | `fsrs45.ts` (B5) |
+| 2 | Chế độ dùng khoảng của mô hình thay cho bước học (`allowModelOverride`) | Chưa rõ | `false` | B5 |
+| 3 | Giới hạn số lần ôn trong ngày, khoảng tối thiểu | Expertium đề xuất tối đa 1–2 lần/ngày, tối thiểu 30 phút đến 1 giờ. Chưa chốt | Chưa có | Middleware riêng (B5) |
+| 4 | Người đã có trọng số FSRS-6 tối ưu riêng: thẻ mới của họ dùng FSRS-6 hay FSRS-7 | PR #5687: preset đã có trọng số FSRS-6 thì **giữ FSRS-6** đến khi tối ưu lại | Mọi thẻ mới dùng FSRS-7 | B5: nếu theo Anki, user có `weights_json` thì thẻ mới vẫn dùng FSRS-6 |
+| 5 | Thẻ đã học: dựng lại từ lịch sử; lịch sử thiếu thì căn chỉnh hay giữ FSRS-6 | PR #5687: dựng lại từ lịch sử; lịch sử thiếu thì căn chỉnh bằng `scale_memory_state_to_interval` | Giữ FSRS-6 | B8, cần ts-fsrs có hàm tương đương |
+| 6 | Ngày hẹn ôn của thẻ khi chuyển mô hình | PR #5687: giữ nguyên | Giữ nguyên (không chuyển thẻ cũ) | B8 |
+| 7 | "Độ ổn định" hiển thị cho người dùng | PR #5687: vẫn hiển thị số ngày đến khi khả năng nhớ còn 90% | Dùng `interval`/`scheduledDays` thay cho `stability` | `KoreanGamesModule.tsx:83`, các màn thống kê |
+| 8 | Khoảng ôn quá xa ở lần chấm đầu (Easy khoảng 54 ngày, mục 6.5) | Chưa rõ. Fork của tác giả có bảng "khoảng ôn khi tốt nghiệp" cho thẻ mới | Giới hạn bằng middleware, ví dụ tối đa 7 ngày | B5 |
+| 9 | Tối ưu trọng số FSRS-7: recency, scheduling penalties, health check | Benchmark khuyên bật recency và scheduling penalties khi đưa FSRS-7 vào Anki | Cân nhắc `enableSchedPenalties: true` | B4 |
+| 10 | Retention mong muốn mặc định | Chưa rõ | 0,9 | `FSRS45_DEFAULTS` |
+
+**Lưu ý về thư viện:** Anki dùng **fsrs-rs** (Rust), còn HaechiVN dùng **ts-fsrs** (TypeScript). Cùng một mô hình nhưng hai thư viện khác nhau.
+- Khi nâng ts-fsrs, chọn bản ra **sau** bản Anki, và release note phải nói đã khớp với fsrs-rs. Ví dụ: ts-fsrs PR #625 "update fsrs-rs to 7.0.0", PR #628 "align FSRS-6 rounding, FSRS-7 short-term".
+- Sau khi nâng, chạy lại T6 và B6.
 
 ## 7. Rủi ro
 
@@ -272,6 +417,10 @@ Những chỗ backend sẽ phải đổi khi tới lúc:
 | Pages build dùng Node dưới 24 | Trung bình | T8 |
 | Vector FSRS-7 lọt vào D1 | Trung bình | T2, và kiểm bằng câu SQL ở T2 |
 | WebView cũ (Chrome dưới 93) | Thấp | Nếu cần, thêm `transpilePackages: ['ts-fsrs', '@open-spaced-repetition/srs-kit']` vào `next.config.ts` |
+| FSRS-7 mặc định hẹn ôn quá xa với người mới học (6.5) | Cao | Chốt `allowModelOverride` và giới hạn lần đầu trước khi bật; bật cho admin trước (B7) |
+| Client cũ ghi đè thẻ FSRS-7 thành FSRS-6 | Trung bình | B2 trả 409 khi bị hạ nhãn |
+| Trộn log hoặc trọng số của hai mô hình khi tối ưu | Trung bình | B3, B4 tách theo `fsrs_model` |
+| FSRS-7 còn mới, các bản vá có thể đổi lịch | Trung bình | Ghim đúng phiên bản; mỗi lần nâng đọc release note và chạy lại T6, B6 |
 
 ---
 
