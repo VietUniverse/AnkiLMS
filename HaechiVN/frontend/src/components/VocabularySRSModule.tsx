@@ -646,15 +646,21 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     const { activeList, newWords, newWordCards, dueCount } = buildStudyQueue(cards, cardStateMap, {
       now, newLeft, reviewLeft, reviewOnly: options?.reviewOnly, countedToday: new Set(progress.newWordIds),
     });
-    // Hết hạn mức từ mới: chỉ hỏi học thêm khi không còn thẻ ôn đến hạn, để thẻ ôn không bị chặn.
+    // Hết hạn mức từ mới: chỉ hỏi học thêm khi không còn thẻ ôn trong lượt này.
     if (!options?.reviewOnly && newLeft === 0 && newWords > 0 && activeList.length === 0 && !options?.skipMorePrompt) {
       setMoreAmount(String(Math.min(5, newWords)));
       setMorePrompt({ deckId, title, cards, available: newWords, availableCards: newWordCards });
       return;
     }
     if (activeList.length === 0) {
-      // Hết hạn mức mà bộ vẫn còn thẻ: mở luôn hộp "Từ mới mỗi ngày" để người học tăng mục tiêu.
-      if (!options?.reviewOnly && dueCount + newWords > 0) {
+      // Có thẻ đến hạn nhưng đã dùng hết suất ôn: cho chỉnh mục tiêu ngay.
+      if (dueCount > 0 && reviewLeft === 0) {
+        setLimitNotice("Đã đạt hạn mức ôn lại hôm nay. Bạn có thể tăng hạn mức để học tiếp.");
+        setGoalPromptLeft(null);
+        setGoalPromptSeq((n) => n + 1);
+        return;
+      }
+      if (!options?.reviewOnly && newWords > 0) {
         setLimitNotice(null);
         setGoalPromptLeft({ words: newWords, cards: newWordCards });
         setGoalPromptSeq((n) => n + 1);
@@ -1075,7 +1081,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
     const newState = { ...calculateFSRS45(rating, effectiveState, new Date(), effectiveRetention), updatedAt: new Date().toISOString() };
     // Hạn mức từ mới đếm theo từ: thẻ Review và Typing của cùng một từ chỉ tính 1 lần trong ngày.
     if (curState.reps === 0 || curState.state === "new") recordNewWord(stateKeyOf({ ...currentCard, sibling: undefined }));
-    else recordCard(false);
+    else recordCard(false, activeKey);
     recordReviewedCard(activeKey);
     setCardStateMap((prev) => ({ ...prev, [activeKey]: newState }));
 

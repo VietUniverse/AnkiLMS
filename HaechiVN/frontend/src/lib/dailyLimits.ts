@@ -5,7 +5,7 @@ import { readLocal, useLocalRaw, writeLocal } from "./localStore";
 export type DailyLimits = { newPerDay: number; reviewPerDay: number };
 // extraNew: số từ mới người học xin học thêm trong hôm nay (cộng vào giới hạn, hết ngày thì mất).
 // newWordIds: từ mới đã tính hôm nay, để thẻ Review và Typing của cùng một từ chỉ trừ 1 suất kể cả khi học ở 2 lượt khác nhau.
-export type DailyProgress = { newDone: number; reviewDone: number; extraNew: number; newWordIds?: string[]; reviewedCardIds?: string[] };
+export type DailyProgress = { newDone: number; reviewDone: number; extraNew: number; newWordIds?: string[]; reviewedCardIds?: string[]; reviewedDueCardIds?: string[] };
 
 const LIMITS_KEY = "haechivn_daily_limits";
 const PROGRESS_KEY = "haechivn_daily_progress";
@@ -44,7 +44,8 @@ const parseProgress = (text: string | null): DailyProgress => {
     if (raw?.date === today()) {
       const newWordIds = Array.isArray(raw.newWordIds) ? raw.newWordIds.filter((id: unknown): id is string => typeof id === "string") : [];
       const reviewedCardIds = Array.isArray(raw.reviewedCardIds) ? raw.reviewedCardIds.filter((id: unknown): id is string => typeof id === "string") : [];
-      return { newDone: clamp(raw.newDone, 0), reviewDone: clamp(raw.reviewDone, 0), extraNew: clamp(raw.extraNew, 0), newWordIds, reviewedCardIds };
+      const reviewedDueCardIds = Array.isArray(raw.reviewedDueCardIds) ? raw.reviewedDueCardIds.filter((id: unknown): id is string => typeof id === "string") : [];
+      return { newDone: clamp(raw.newDone, 0), reviewDone: clamp(raw.reviewDone, 0), extraNew: clamp(raw.extraNew, 0), newWordIds, reviewedCardIds, reviewedDueCardIds };
     }
   } catch { /* dùng giá trị mặc định */ }
   return { newDone: 0, reviewDone: 0, extraNew: 0 };
@@ -79,9 +80,14 @@ export function recordNewWord(wordId: string): DailyProgress {
   return next;
 }
 
-export function recordCard(isNew: boolean): DailyProgress {
+export function recordCard(isNew: boolean, cardKey?: string): DailyProgress {
   const p = loadProgress();
-  const next = isNew ? { ...p, newDone: p.newDone + 1 } : { ...p, reviewDone: p.reviewDone + 1 };
+  if (!isNew && cardKey && p.reviewedDueCardIds?.includes(cardKey)) return p;
+  const next = isNew ? { ...p, newDone: p.newDone + 1 } : {
+    ...p,
+    reviewDone: p.reviewDone + 1,
+    reviewedDueCardIds: cardKey ? [...(p.reviewedDueCardIds || []), cardKey] : p.reviewedDueCardIds,
+  };
   writeLocal(PROGRESS_KEY, JSON.stringify({ date: today(), ...next }));
   if (typeof window !== "undefined") window.dispatchEvent(new Event("haechivn:daily-progress-updated"));
   return next;

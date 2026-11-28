@@ -32,6 +32,9 @@ q = buildStudyQueue([card(1), card(2), card(3)], due, opts);
 assert.equal(label(q), "R1 R2 R3 T3");
 assert.equal(q.dueCount, 2);
 assert.equal(label(buildStudyQueue([card(1), card(2), card(3)], due, { ...opts, reviewOnly: true })), "R1 R2");
+assert.equal(label(buildStudyQueue([card(1), card(2), card(3)], due, { ...opts, reviewLeft: 1, reviewOnly: true })), "R1");
+assert.equal(label(buildStudyQueue([card(1), card(2), card(3)], due, { ...opts, reviewLeft: 0, reviewOnly: true })), "");
+assert.equal(label(buildStudyQueue([card(1), card(2), card(3)], due, { ...opts, reviewLeft: 1 })), "R1 R3 T3");
 // Thẻ anh em đã ôn hôm nay → thẻ còn lại đến hạn cũng để mai.
 const today = (() => { const d = opts.now; return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; })();
 assert.equal(label(buildStudyQueue([card(1)], { d_1: { ...learned("2026-12-30"), lastReview: today }, d_1_typing: learned("2026-11-24") }, { ...opts, reviewOnly: true })), "");

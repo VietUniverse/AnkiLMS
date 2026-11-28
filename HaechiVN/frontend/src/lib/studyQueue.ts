@@ -70,9 +70,9 @@ export function buildStudyQueue(
     seenWords.add(word);
   }
   const dueSession = [...firsts, ...seconds];
-  // Ôn tập là phiên riêng: không tính vào hạn mức từ mới, và không cắt theo reviewPerDay
-  // (mặc định 0 nên nếu cắt thì luôn ra rỗng). Chỉ lấy thẻ đã đến hạn.
-  const activeList = opts.reviewOnly ? dueSession : [...dueSession.slice(0, opts.reviewLeft), ...newSession];
+  // Cả phiên Ôn tập riêng và lượt học thường đều dùng chung hạn mức ôn mỗi ngày.
+  const limitedDue = dueSession.slice(0, opts.reviewLeft);
+  const activeList = opts.reviewOnly ? limitedDue : [...limitedDue, ...newSession];
   return { activeList, newWords: newCards.length, newWordCards: newCards.flat().length, dueCount: dueCards.length };
 }
 
