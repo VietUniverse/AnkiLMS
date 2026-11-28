@@ -356,10 +356,10 @@ export function posOfCard(c: { pos?: string; tags?: string[]; fields?: string[] 
 export function posTone(pos?: string): { chip: string; chipOnTint: string; tintLight: string; tintDark: string } | null {
   const p = (pos || "").toLowerCase();
   if (!p) return null;
-  // Màu nền thẻ là bậc 100 (không phải 50) để nhìn rõ khác biệt với nền trắng.
-  if (p.includes("động") || p.includes("đt")) return { chip: "bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300", chipOnTint: "bg-rose-500 text-white", tintLight: "#ffe4e6", tintDark: "#2a1218" };
-  if (p.includes("tính")) return { chip: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300", chipOnTint: "bg-emerald-500 text-white", tintLight: "#d1fae5", tintDark: "#0a2119" };
-  if (p.includes("phó")) return { chip: "bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300", chipOnTint: "bg-violet-500 text-white", tintLight: "#ede9fe", tintDark: "#1a1533" };
-  if (p.includes("danh") || p.includes("số")) return { chip: "bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300", chipOnTint: "bg-sky-500 text-white", tintLight: "#e0f2fe", tintDark: "#0b2233" };
-  return { chip: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300", chipOnTint: "bg-amber-500 text-white", tintLight: "#fef3c7", tintDark: "#241c0b" };
+  // Flat design: nền bậc 200 (khối phẳng, mỗi từ loại một màu rõ rệt), chữ đậm vẫn đủ tương phản.
+  if (p.includes("động") || p.includes("đt")) return { chip: "bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300", chipOnTint: "bg-rose-500 text-white", tintLight: "#fecdd3", tintDark: "#2a1218" };
+  if (p.includes("tính")) return { chip: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300", chipOnTint: "bg-emerald-500 text-white", tintLight: "#a7f3d0", tintDark: "#0a2119" };
+  if (p.includes("phó")) return { chip: "bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300", chipOnTint: "bg-violet-500 text-white", tintLight: "#ddd6fe", tintDark: "#1a1533" };
+  if (p.includes("danh") || p.includes("số")) return { chip: "bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300", chipOnTint: "bg-sky-500 text-white", tintLight: "#bae6fd", tintDark: "#0b2233" };
+  return { chip: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300", chipOnTint: "bg-amber-500 text-white", tintLight: "#fde68a", tintDark: "#241c0b" };
 }
