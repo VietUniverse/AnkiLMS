@@ -174,6 +174,7 @@ async function getClasses(env: Env, userId: string) {
         totalCards: a.totalCards || 0, reviewedCards: a.reviewedCards || 0,
         correctCards: a.correctCards || 0, lastStudiedAt: a.lastStudiedAt,
         assignedBy: a.assignedBy, completed: Boolean(a.completedAt),
+        completedAt: a.completedAt,
         progress: (managerProgress.results || []).filter((item: any) => item.assignmentId === a.id).map((item: any) => ({
           studentId: item.studentId, studentName: item.studentName,
           reviewedCards: item.reviewedCards || 0, totalCards: item.totalCards || a.totalCards || 0,
@@ -580,6 +581,30 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       } catch (error) {
         await env.DB.prepare("DELETE FROM class_assignments WHERE id = ? AND class_id = ?").bind(assignmentId, classId).run();
         throw error;
+      }
+      // Thông báo cho học viên nhận bài (bảng notifications có sẵn, không cần migration).
+      try {
+        const classroom = await env.DB.prepare("SELECT code, name FROM classrooms WHERE id = ?")
+          .bind(classId).first<{ code: string; name: string }>();
+        const recipients = assignedUserIdsJson
+          ? (JSON.parse(assignedUserIdsJson) as string[])
+          : ((await env.DB.prepare("SELECT user_id AS id FROM classroom_members WHERE class_id = ? AND status = 'approved' AND role = 'student'")
+              .bind(classId).all<{ id: string }>()).results || []).map((row) => row.id);
+        const targets = [...new Set(recipients)].filter((id) => id !== user.id).slice(0, 500);
+        if (classroom && targets.length) {
+          const dueText = dueMode === "duration" ? ` · ${durationDays} ngày để hoàn thành` : dueDate ? ` · hạn ${dueDate}` : "";
+          await env.DB.batch(targets.map((id) => env.DB.prepare(
+            "INSERT INTO notifications (id, user_id, kind, title, body, link) VALUES (?, ?, 'class_assignment', ?, ?, ?)",
+          ).bind(
+            `ntf_${crypto.randomUUID()}`,
+            id,
+            `Bài tập mới: ${title}`,
+            `${user.name || "Giáo viên"} giao trong lớp ${classroom.name} · ${deckCards.length} thẻ${dueText}`,
+            `/classes/${classroom.code}`,
+          )));
+        }
+      } catch {
+        // Gửi thông báo lỗi không được chặn việc giao bài.
       }
     } else if (body.action === "review_card") {
       if (!body.assignmentId || !Number.isSafeInteger(body.cardId) || typeof body.correct !== "boolean") return errorResponse("Tiến độ ôn thẻ không hợp lệ.");

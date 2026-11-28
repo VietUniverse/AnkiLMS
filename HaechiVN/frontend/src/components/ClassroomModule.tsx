@@ -81,6 +81,8 @@ export interface ClassAssignment {
   reviewedCards?: number;
   correctCards?: number;
   lastStudiedAt?: string | null;
+  /** Lúc hoàn thành bài (UTC) — dùng để tính hạn từ lúc mở khoá điều kiện. */
+  completedAt?: string | null;
   progress?: StudentAssignmentProgress[];
   deckCards?: AssignmentPreviewCard[];
   /** Danh sách học viên được giao; null/undefined nghĩa là cả lớp. */
@@ -148,6 +150,28 @@ const dueModeLabel = (
       : dueCountdownLabel(assignment.dueDate);
   }
   return assignment.dueDate ? dueCountdownLabel(assignment.dueDate) : "Không hạn";
+};
+
+const addDaysIso = (utc: string, days: number) => {
+  const base = new Date(`${utc.replace(" ", "T")}Z`);
+  if (Number.isNaN(base.getTime())) return "";
+  return new Date(base.getTime() + days * 86400000).toISOString().slice(0, 10);
+};
+
+/** Hạn của bài có điều kiện: đếm từ lúc bài điều kiện được hoàn thành, không phải lúc giao. */
+const dueFromUnlockLabel = (
+  assignment: Pick<ClassAssignment, "dueDate" | "dueMode" | "durationDays">,
+  requiredAssignment: ClassAssignment | undefined,
+  managerView = false,
+) => {
+  const days = assignment.durationDays || 0;
+  if (!requiredAssignment || assignment.dueMode !== "duration" || days <= 0) {
+    return dueModeLabel(assignment, managerView);
+  }
+  const unlockAt = requiredAssignment.completedAt;
+  const due = unlockAt ? addDaysIso(unlockAt, days) : "";
+  if (managerView) return `${days} ngày kể từ khi mở khoá`;
+  return due ? dueCountdownLabel(due) : "Chưa tính hạn";
 };
 
 type AssignmentDeckCard = {
@@ -1723,7 +1747,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                               {asg.totalCards ?? 0} thẻ
                             </span>
                             <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black text-slate-700 dark:bg-white/10 dark:text-slate-200">
-                              {dueModeLabel(asg, canManageClass)}
+                              {dueFromUnlockLabel(asg, requiredAssignment, canManageClass)}
                             </span>
                             {requiredAssignment && (
                               <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-black text-amber-900 dark:bg-amber-500/20 dark:text-amber-200">
@@ -2632,7 +2656,7 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                       ))}
                     </select>
                     <p className="mt-1 text-[11px] font-semibold text-slate-700">
-                      Phải hoàn thành bài đã chọn thì bộ thẻ này mới mở cho học viên.
+                      Phải hoàn thành bài đã chọn thì bộ thẻ này mới mở. Hạn "{Number(assignmentForm.durationDays) || 7} ngày" tính từ lúc học viên mở khoá.
                     </p>
                   </div>
                 )}
