@@ -1040,7 +1040,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
   // Handle Response (Quên: false | Thuộc: true)
   const handleResponse = useCallback((isMastered: boolean, customRating?: FSRSRating) => {
     if (!currentCard) return;
-    if (studyMode === "typing" && isMastered && requireExactTyping && !isTypedCorrect(typedInput)) return;
+    if (studyMode === "typing" && isMastered && requireExactTyping && !isFlipped && !isTypedCorrect(typedInput)) return;
     const wordKey = currentCard.word;
     const activeKey = stateKeyOf(currentCard);
     if (lastRatedCardRef.current === activeKey || Date.now() - answerShownAtRef.current < 450) return;
@@ -1654,7 +1654,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
 
                     <button
                       onClick={() => handleResponse(true)}
-                      disabled={studyMode === "typing" && requireExactTyping && !isTypedCorrect(typedInput)}
+                      disabled={studyMode === "typing" && !isFlipped && requireExactTyping && !isTypedCorrect(typedInput)}
                       style={dragButtonStyle(1)}
                       className="h-12 rounded-xl bg-emerald-500 hover:bg-emerald-600 font-bold text-sm flex items-center justify-center gap-2 transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                     >

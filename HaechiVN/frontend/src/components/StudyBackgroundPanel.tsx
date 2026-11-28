@@ -262,7 +262,7 @@ export function StudyBackgroundPanel() {
                 <div className="divide-y divide-stone-100 dark:divide-stone-800">
                   <ToggleRow label="Vuốt thẻ để chấm" hint="Vuốt trái là Quên, vuốt phải là Thuộc. Thẻ thường thì chạm để lật." checked={tinderMode} onChange={setTinderMode} />
                   <ToggleRow label="Tô màu thẻ theo từ loại" hint="Danh từ xanh dương, động từ đỏ, tính từ xanh lá, phó từ tím." checked={posCardColor} onChange={setPosCardColor} />
-                  <ToggleRow label="Thẻ gõ: phải gõ đúng mới qua" hint="Tắt thì gõ sai vẫn bấm được Thuộc." checked={requireExactTyping} onChange={setRequireExactTyping} />
+                  <ToggleRow label="Thẻ gõ: phải gõ đúng mới qua" hint="Mặc định tắt: xem đáp án rồi vẫn chấm Thuộc được. Bật thì phải gõ đúng." checked={requireExactTyping} onChange={setRequireExactTyping} />
                   <ToggleRow label="Hiện nút Từ điển" checked={!hideDictionary} onChange={(on) => setHideDictionary(!on)} />
                   <ToggleRow label="Hiện nút ChatGPT" checked={!hideChatGpt} onChange={(on) => setHideChatGpt(!on)} />
                 </div>

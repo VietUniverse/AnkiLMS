@@ -228,7 +228,8 @@ export function setAudioMode(kind: "word" | "example", mode: AudioMode): void {
   writeMuted(kind === "word" ? MUTE_WORD_KEY : MUTE_EXAMPLE_KEY, mode !== "on");
 }
 
-// Thẻ gõ: bật thì phải gõ đúng từ mới bấm/vuốt được "Thuộc" (mặc định bật).
+// Thẻ gõ: bật thì phải gõ đúng từ mới bấm/vuốt được "Thuộc" (mặc định TẮT —
+// hiện đáp án rồi vẫn chấm Thuộc được).
 const REQUIRE_EXACT_TYPING_KEY = "haechivn_require_exact_typing";
 
 export function useRequireExactTyping(): boolean {
@@ -236,12 +237,12 @@ export function useRequireExactTyping(): boolean {
     subscribePrefs,
     () => {
       try {
-        return localStorage.getItem(REQUIRE_EXACT_TYPING_KEY) !== "0";
+        return localStorage.getItem(REQUIRE_EXACT_TYPING_KEY) === "1";
       } catch {
-        return true;
+        return false;
       }
     },
-    () => true,
+    () => false,
   );
 }
 
