@@ -115,6 +115,29 @@ const dueCountdownLabel = (value?: string | null) => {
   return `Còn ${days} ngày`;
 };
 
+// Điều kiện mở khoá bài tập: frontend-only, lưu ở máy người giao bài.
+// ponytail: luật chỉ nằm trong localStorage của trình duyệt giáo viên, chưa đồng bộ
+// sang máy học viên; cần backend lưu cột prerequisite_id khi có API.
+const ASSIGNMENT_REQUIRES_KEY = "haechivn_class_assignment_requires";
+type AssignmentRequiresMap = Record<string, string>;
+
+function readAssignmentRequires(): AssignmentRequiresMap {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(ASSIGNMENT_REQUIRES_KEY) || "{}");
+    return parsed && typeof parsed === "object" ? parsed as AssignmentRequiresMap : {};
+  } catch {
+    return {};
+  }
+}
+
+function writeAssignmentRequires(map: AssignmentRequiresMap) {
+  try {
+    localStorage.setItem(ASSIGNMENT_REQUIRES_KEY, JSON.stringify(map));
+  } catch {
+    // localStorage đầy hoặc bị chặn: bỏ qua, luật điều kiện chỉ là tiện ích.
+  }
+}
+
 const dueModeLabel = (
   assignment: Pick<ClassAssignment, "dueDate" | "dueMode" | "durationDays">,
   managerView = false,
@@ -469,6 +492,13 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
   const [assignDueDate, setAssignDueDate] = useState("");
   const [assignDueMode, setAssignDueMode] = useState<"date" | "duration" | "none">("date");
   const [assignDurationDays, setAssignDurationDays] = useState("7");
+  const [assignRequiresId, setAssignRequiresId] = useState("");
+  const [assignmentRequires, setAssignmentRequires] = useState<AssignmentRequiresMap>({});
+
+  // Đọc luật điều kiện sau khi mount để không lệch hydrate.
+  useEffect(() => {
+    setAssignmentRequires(readAssignmentRequires());
+  }, []);
   const [editAssignmentId, setEditAssignmentId] = useState<string | null>(null);
   const [editAssignmentTitle, setEditAssignmentTitle] = useState("");
   const [editAssignmentDueDate, setEditAssignmentDueDate] = useState("");
@@ -1035,6 +1065,14 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
       return;
     }
     if (sourceAssets.length) setClasses(await ApiClient.getClasses().catch(() => classes));
+    setAssignmentRequires((prev) => {
+      const next = { ...prev };
+      if (assignRequiresId) next[assignmentId] = assignRequiresId;
+      else delete next[assignmentId];
+      writeAssignmentRequires(next);
+      return next;
+    });
+    setAssignRequiresId("");
     setShowAssignModal(false);
     setAssignTitle("");
     setAssignRecipients(null);
@@ -1664,16 +1702,22 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                       const isDone = canManageClass
                         ? rows.length > 0 && rows.every((point) => point.completed)
                         : asg.completed;
+                      const requiredId = assignmentRequires[asg.id];
+                      const requiredAssignment = requiredId
+                        ? selectedClass.assignments.find((item) => item.id === requiredId)
+                        : undefined;
+                      // Học viên chỉ bị khoá khi bài điều kiện của chính họ chưa xong.
+                      const locked = !canManageClass && !!requiredAssignment && !requiredAssignment.completed;
 
                       return (
                         <article key={asg.id} className="rounded-xl border border-slate-200 p-4 dark:border-white/10">
                           <div className="flex flex-wrap items-center gap-1.5">
                             <span
                               className={`rounded-full px-2.5 py-1 text-[10px] font-black ${
-                                isDone ? "bg-emerald-100 text-emerald-800" : "bg-sky-100 text-sky-800"
+                                isDone ? "bg-emerald-100 text-emerald-800" : locked ? "bg-amber-100 text-amber-900" : "bg-sky-100 text-sky-800"
                               }`}
                             >
-                              {isDone ? "Hoàn thành" : "Đang mở"}
+                              {isDone ? "Hoàn thành" : locked ? "Chưa mở" : "Đang mở"}
                             </span>
                             <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black text-slate-700 dark:bg-white/10 dark:text-slate-200">
                               {asg.totalCards ?? 0} thẻ
@@ -1681,6 +1725,12 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                             <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black text-slate-700 dark:bg-white/10 dark:text-slate-200">
                               {dueModeLabel(asg, canManageClass)}
                             </span>
+                            {requiredAssignment && (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-black text-amber-900 dark:bg-amber-500/20 dark:text-amber-200">
+                                <Lock className="h-3 w-3" aria-hidden="true" />
+                                Sau: {requiredAssignment.title}
+                              </span>
+                            )}
                           </div>
 
                           <h3 className="mt-2 text-sm font-black text-white">{asg.title}</h3>
@@ -1706,6 +1756,32 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                                   Chưa có dữ liệu tiến độ, học viên cần mở bộ thẻ trong mục Từ vựng.
                                 </p>
                               )}
+
+                              <div className="mt-3 flex items-center gap-2">
+                                <Lock className="h-3.5 w-3.5 shrink-0 text-slate-500" aria-hidden="true" />
+                                <select
+                                  aria-label={`Điều kiện mở khoá bài ${asg.title}`}
+                                  value={requiredId ?? ""}
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    setAssignmentRequires((prev) => {
+                                      const next = { ...prev };
+                                      if (value) next[asg.id] = value;
+                                      else delete next[asg.id];
+                                      writeAssignmentRequires(next);
+                                      return next;
+                                    });
+                                  }}
+                                  className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-[11px] font-bold text-slate-700 outline-none focus:border-sky-600 dark:border-white/10 dark:bg-[#132247] dark:text-slate-200"
+                                >
+                                  <option value="">Điều kiện: không cần</option>
+                                  {selectedClass.assignments
+                                    .filter((item) => item.id !== asg.id)
+                                    .map((item) => (
+                                      <option key={item.id} value={item.id}>Phải xong: {item.title}</option>
+                                    ))}
+                                </select>
+                              </div>
 
                               <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-slate-200 pt-3 dark:border-white/10">
                                 <span className="text-[11px] font-semibold text-slate-700">
@@ -1769,14 +1845,24 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                                     <>Đúng {asg.correctCards || 0} thẻ</>
                                   )}
                                 </span>
-                                <a
-                                  className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-black text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#1e3466] dark:bg-[#0f1b38] dark:text-slate-200"
-                                  href={`/flashcards?assignment=${encodeURIComponent(asg.id)}&classId=${encodeURIComponent(
-                                    selectedClass.id
-                                  )}`}
-                                >
-                                  {isDone ? "Ôn lại" : "Vào học"}
-                                </a>
+                                {locked ? (
+                                  <span
+                                    title={`Hoàn thành "${requiredAssignment?.title}" trước khi mở bài này`}
+                                    className="inline-flex cursor-not-allowed items-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 px-3 py-1.5 text-[11px] font-black text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200"
+                                  >
+                                    <Lock className="h-3.5 w-3.5" aria-hidden="true" />
+                                    Chưa mở khoá
+                                  </span>
+                                ) : (
+                                  <a
+                                    className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-black text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#1e3466] dark:bg-[#0f1b38] dark:text-slate-200"
+                                    href={`/flashcards?assignment=${encodeURIComponent(asg.id)}&classId=${encodeURIComponent(
+                                      selectedClass.id
+                                    )}`}
+                                  >
+                                    {isDone ? "Ôn lại" : "Vào học"}
+                                  </a>
+                                )}
                               </div>
                             </>
                           )}
@@ -2530,6 +2616,26 @@ export const ClassroomModule: React.FC<ClassroomModuleProps> = ({ currentUser, d
                     </>
                   )}
                 </div>
+
+                {assignmentFormIsCreate && (
+                  <div>
+                    <label htmlFor="assignRequires" className="mb-1 block text-[11px] font-bold text-slate-700">Điều kiện</label>
+                    <select
+                      id="assignRequires"
+                      value={assignRequiresId}
+                      onChange={(e) => setAssignRequiresId(e.target.value)}
+                      className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs font-bold text-slate-900 outline-none focus:border-sky-600 dark:border-white/10 dark:bg-[#132247] dark:text-white"
+                    >
+                      <option value="">Không cần điều kiện — mở ngay</option>
+                      {selectedClass?.assignments.map((asg) => (
+                        <option key={asg.id} value={asg.id}>{asg.title} · {asg.totalCards ?? 0} thẻ</option>
+                      ))}
+                    </select>
+                    <p className="mt-1 text-[11px] font-semibold text-slate-700">
+                      Phải hoàn thành bài đã chọn thì bộ thẻ này mới mở cho học viên.
+                    </p>
+                  </div>
+                )}
 
                 <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-white/10 dark:bg-white/5">
                   <div className="flex items-center justify-between gap-3">
