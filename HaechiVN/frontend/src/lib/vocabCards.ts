@@ -342,6 +342,17 @@ export const filterTree = (nodes: DeckTreeNode[], q: string): DeckTreeNode[] => 
 };
 
 /** Màu theo từ loại (dữ liệu dùng nhãn tiếng Việt: "Danh từ", "Cụm động từ", "Cụm ĐT"…). Không khớp thì null. */
+const POS_TAGS = ["Danh từ", "Động từ", "Tính từ", "Phó từ", "Trợ từ", "Thán từ", "Cụm từ", "Thành ngữ"];
+
+/** Thẻ nhập từ Anki không có field `pos`: lấy từ tag hoặc field dạng "[Danh từ]". */
+export function posOfCard(c: { pos?: string; tags?: string[]; fields?: string[] }): string {
+  if (c.pos) return c.pos;
+  const tag = (c.tags || []).map((t) => t.trim()).find((t) => POS_TAGS.includes(t));
+  if (tag) return tag;
+  const field = (c.fields || []).map((v) => v.trim()).find((v) => /^\[[^\]]+\]$/.test(v));
+  return field ? field.slice(1, -1) : "";
+}
+
 export function posTone(pos?: string): { bar: string; chip: string; tintLight: string; tintDark: string } | null {
   const p = (pos || "").toLowerCase();
   if (!p) return null;

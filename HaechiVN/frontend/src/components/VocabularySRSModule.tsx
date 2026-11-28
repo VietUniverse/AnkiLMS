@@ -51,7 +51,7 @@ interface VocabularySRSModuleProps {
 }
 
 import type { AssignedDeckClassJson, AssignedDeckItem, AssignmentPayload, DeckTreeNode, VocabularyCard } from "../lib/vocabCards";
-import { findNodeById, filterTree, assignmentCardsOf, buildAssignedTree, deckPathOf, stateKeyOf, checkWritingVariantMatch, isCardAWritingCard, cardStateFor, formatNextReview, extractImageSrc, extractAudioSrc, cleanHtmlText, TYPING_PUNCTUATION, stripTypingPunctuation, cleanTextOnly, toSlug, posTone } from "../lib/vocabCards";
+import { findNodeById, filterTree, assignmentCardsOf, buildAssignedTree, deckPathOf, stateKeyOf, checkWritingVariantMatch, isCardAWritingCard, cardStateFor, formatNextReview, extractImageSrc, extractAudioSrc, cleanHtmlText, TYPING_PUNCTUATION, stripTypingPunctuation, cleanTextOnly, toSlug, posTone, posOfCard } from "../lib/vocabCards";
 export type { VocabularyCard, DeckTreeNode } from "../lib/vocabCards";
 
 const DICT_PANEL_WIDTH_KEY = "haechi.dictionaryPanelWidth";
@@ -407,7 +407,7 @@ export const VocabularySRSModule: React.FC<VocabularySRSModuleProps> = ({ userDe
           id: c.id || `custom-${idx}`,
           word: c.koreanText || c.frontText || "",
           meaning: c.vietnameseMeaning || c.backText || "",
-          pos: "",
+          pos: posOfCard(c),
           audio_word: c.audioUrls?.[0] || "",
           audio_meaning: c.audioUrls?.[1] || "",
           transliteration: "",
