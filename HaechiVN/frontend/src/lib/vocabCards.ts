@@ -356,10 +356,10 @@ export function posOfCard(c: { pos?: string; tags?: string[]; fields?: string[] 
 export function posTone(pos?: string): { chip: string; chipOnTint: string; tintLight: string; tintDark: string } | null {
   const p = (pos || "").toLowerCase();
   if (!p) return null;
-  // Flat design: nền bậc 200 (khối phẳng, mỗi từ loại một màu rõ rệt), chữ đậm vẫn đủ tương phản.
-  if (p.includes("động") || p.includes("đt")) return { chip: "bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300", chipOnTint: "bg-rose-500 text-white", tintLight: "#fecdd3", tintDark: "#2a1218" };
-  if (p.includes("tính")) return { chip: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300", chipOnTint: "bg-emerald-500 text-white", tintLight: "#a7f3d0", tintDark: "#0a2119" };
-  if (p.includes("phó")) return { chip: "bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300", chipOnTint: "bg-violet-500 text-white", tintLight: "#ddd6fe", tintDark: "#1a1533" };
-  if (p.includes("danh") || p.includes("số")) return { chip: "bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300", chipOnTint: "bg-sky-500 text-white", tintLight: "#bae6fd", tintDark: "#0b2233" };
-  return { chip: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300", chipOnTint: "bg-amber-500 text-white", tintLight: "#fde68a", tintDark: "#241c0b" };
+  // Flat design: nền đậm bậc 700 (khối màu đặc, chữ trắng) — mọi cặp đạt ≥4.5:1 cho cả chữ nhỏ.
+  if (p.includes("động") || p.includes("đt")) return { chip: "bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300", chipOnTint: "bg-rose-500 text-white", tintLight: "#be123c", tintDark: "#9f1239" };
+  if (p.includes("tính")) return { chip: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300", chipOnTint: "bg-emerald-500 text-white", tintLight: "#047857", tintDark: "#065f46" };
+  if (p.includes("phó")) return { chip: "bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300", chipOnTint: "bg-violet-500 text-white", tintLight: "#6d28d9", tintDark: "#5b21b6" };
+  if (p.includes("danh") || p.includes("số")) return { chip: "bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300", chipOnTint: "bg-sky-500 text-white", tintLight: "#0369a1", tintDark: "#075985" };
+  return { chip: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300", chipOnTint: "bg-slate-600 text-white", tintLight: "#334155", tintDark: "#1e293b" };
 }

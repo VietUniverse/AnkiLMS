@@ -4255,6 +4255,12 @@ html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module .bad
   color: #fff !important;
 }
 
-/* Thẻ có nền màu theo từ loại: chữ xám đậm lên một bậc để đủ tương phản trên nền pastel. */
-.study-card-tinted :is(.text-stone-400, .text-stone-500, .text-stone-600) { color: #44403c !important; }
-:where([data-theme="dark"], .dark) .study-card-tinted :is(.text-stone-400, .text-stone-500, .text-stone-600) { color: #d6d3d1 !important; }
+/* Thẻ nền đậm theo từ loại (flat): mọi chữ thành trắng.
+   Selector phải nặng hơn rule light-theme ép [class*="text-white"] về #0f172a. */
+html[data-theme] body .study-card-tinted { color: #fff !important; }
+html[data-theme] body .study-card-tinted :is([class*="text-stone-"], [class*="text-slate-"], [class*="text-white"], [class*="text-rose-"], [class*="text-sky-"], [class*="text-emerald-"], [class*="text-violet-"], [class*="text-amber-"]) { color: #fff !important; }
+html[data-theme] body .study-card-tinted :is([class*="border-stone-"], [class*="border-slate-"]) { border-color: rgba(255, 255, 255, 0.3) !important; }
+html[data-theme] body .study-card-tinted :is([class*="bg-stone-"], [class*="bg-slate-"]) { background-color: rgba(255, 255, 255, 0.16) !important; }
+html[data-theme] body .study-card-tinted .badge-on-solid { background-color: rgba(255, 255, 255, 0.22) !important; color: #fff !important; }
+/* Ô gõ từ giữ nền trắng để gõ được, chữ đậm. */
+html[data-theme] body .study-card-tinted input.study-input { background-color: #fff !important; color: #0f172a !important; }
