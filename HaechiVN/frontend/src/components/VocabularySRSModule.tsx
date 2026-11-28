@@ -940,7 +940,8 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
   const posTint = posCardColorOn ? posTone(currentCard?.pos) : null;
   const cardStyle = {
     "--study-card-alpha": `${studyCardAlpha}%`,
-    ...(posTint ? { "--study-card-tint": posTint.tintLight, "--study-card-tint-dark": posTint.tintDark } : {}),
+    // Nguyên khối: có màu từ loại thì bỏ viền và shadow, chỉ còn nền.
+    ...(posTint ? { "--study-card-tint": posTint.tintLight, "--study-card-tint-dark": posTint.tintDark, borderColor: "transparent", boxShadow: "none" } : {}),
   } as React.CSSProperties;
 
   useEffect(() => {
@@ -2289,7 +2290,6 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                 {swipeOverlay}
                 <div style={cardStyle} className={`relative w-full min-h-[22rem] ${activeImageSrc ? "flex-1" : ""} rounded-2xl study-card dark:border dark:border-stone-800/80 px-6 pt-10 pb-5 sm:px-10 sm:pt-14 flex flex-col justify-between shadow-[0_1px_2px_rgba(28,25,23,0.05),0_12px_32px_-16px_rgba(28,25,23,0.18)] dark:shadow-none`}>
                   {/* Dải màu theo từ loại: danh từ xanh dương, động từ đỏ, tính từ xanh lá, phó từ tím, khác vàng. */}
-                  {posTone(currentCard.pos) && <span aria-hidden className={`pointer-events-none absolute inset-x-0 top-0 h-1.5 rounded-t-2xl ${posTone(currentCard.pos)?.bar}`} />}
                   {/* Body 2 Cột Desktop: Trái Ảnh - Phải Chữ */}
                   <div className="my-auto pb-8 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
                     {/* Cột Trái: Ảnh Minh Họa Cỡ Lớn */}
