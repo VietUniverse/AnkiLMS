@@ -39,7 +39,7 @@ export interface FSRSState {
 }
 
 export const FSRS45_DEFAULTS = {
-  version: "ts-fsrs@5.4.2",
+  version: "ts-fsrs@6.0.1/fsrs-6",
   desiredRetention: 0.9,
   maxInterval: 36_500,
 } as const;
@@ -231,7 +231,7 @@ function parseFsrsData(raw: string): string | undefined {
   return undefined;
 }
 
-/** Schedule the next review using the official ts-fsrs 5.4.2 scheduler. */
+/** Schedule the next review while preserving the existing FSRS-6 card state. */
 export function calculateFSRS45(
   rating: FSRSRating,
   current: Partial<FSRSState> = {},
@@ -256,7 +256,8 @@ export function calculateFSRS45(
   const activeScheduler = !importedConfig && effectiveRetention === FSRS45_DEFAULTS.desiredRetention
     ? scheduler
     : fsrs(schedulerOptions as Parameters<typeof fsrs>[0]);
-  const { card, log } = activeScheduler.next(toFsrsCard(current, now), now, ratingMap[rating]);
+  const previousCard = toFsrsCard(current, now);
+  const { card, log } = activeScheduler.next(previousCard, now, ratingMap[rating]);
   const interval = Math.max(0, card.scheduled_days);
 
   const lastReviewLog: FSRSReviewLog = {
@@ -265,8 +266,8 @@ export function calculateFSRS45(
     due: log.due.toISOString(),
     stability: Number(log.stability.toFixed(4)),
     difficulty: Number(log.difficulty.toFixed(4)),
-    elapsed_days: log.elapsed_days,
-    last_elapsed_days: log.last_elapsed_days,
+    elapsed_days: previousCard.elapsed_days,
+    last_elapsed_days: previousCard.elapsed_days,
     scheduled_days: log.scheduled_days,
     review: log.review.toISOString(),
   };
