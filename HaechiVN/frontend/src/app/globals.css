@@ -4254,3 +4254,7 @@ html[data-theme="light"] body:not(:has(.login-page-root)) .badge-on-solid *,
 html[data-theme="light"] body:not(:has(.login-page-root)) .classroom-module .badge-on-solid * {
   color: #fff !important;
 }
+
+/* Thẻ có nền màu theo từ loại: chữ xám đậm lên một bậc để đủ tương phản trên nền pastel. */
+.study-card-tinted :is(.text-stone-400, .text-stone-500, .text-stone-600) { color: #44403c !important; }
+:where([data-theme="dark"], .dark) .study-card-tinted :is(.text-stone-400, .text-stone-500, .text-stone-600) { color: #d6d3d1 !important; }

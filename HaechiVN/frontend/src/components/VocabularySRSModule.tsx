@@ -938,6 +938,8 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
 
   // Nền thẻ theo từ loại (Cài đặt học > "Tô màu thẻ theo từ loại"); tắt thì giữ nền trắng/navy như cũ.
   const posTint = posCardColorOn ? posTone(currentCard?.pos) : null;
+  // Nền thẻ đổi màu thì chip từ loại đổi theo: chip nhạt sẽ chìm vào nền cùng tông.
+  const posChip = posTint ? posTint.chipOnTint : posTone(currentCard?.pos)?.chip;
   const cardStyle = {
     "--study-card-alpha": `${studyCardAlpha}%`,
     // Nguyên khối: có màu từ loại thì bỏ viền và shadow, chỉ còn nền.
@@ -1878,7 +1880,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
             {/* CHẾ ĐỘ THẺ LUYỆN VIẾT TOPIK II (CÂU 51~54) VỚI Ô GÕ TỰ ĐỘNG CHẤM */}
             {studyMode === "flip" && isCardAWritingCard(currentCard) && (
               <div className="mx-auto w-full max-w-3xl mb-5 select-text">
-                <div style={cardStyle} className="relative w-full rounded-3xl study-card border border-stone-200/80 dark:border-stone-800/80 p-5 sm:p-8 shadow-sm">
+                <div style={cardStyle} className={`relative w-full rounded-3xl study-card ${posTint ? "study-card-tinted" : ""} border border-stone-200/80 dark:border-stone-800/80 p-5 sm:p-8 shadow-sm`}>
                   {/* Top Meta Chips */}
                   <div className="flex flex-wrap items-center justify-between gap-2.5 pb-4 border-b border-stone-100 dark:border-stone-800">
                     <div className="flex flex-wrap items-center gap-2">
@@ -2288,7 +2290,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                 style={tinderActive && dragX !== 0 ? { transform: `translateX(${dragX}px) rotate(${dragX / 25}deg)` } : undefined}
               >
                 {swipeOverlay}
-                <div style={cardStyle} className={`relative w-full min-h-[22rem] ${activeImageSrc ? "flex-1" : ""} rounded-2xl study-card dark:border dark:border-stone-800/80 px-6 pt-10 pb-5 sm:px-10 sm:pt-14 flex flex-col justify-between shadow-[0_1px_2px_rgba(28,25,23,0.05),0_12px_32px_-16px_rgba(28,25,23,0.18)] dark:shadow-none`}>
+                <div style={cardStyle} className={`relative w-full min-h-[22rem] ${activeImageSrc ? "flex-1" : ""} rounded-2xl study-card ${posTint ? "study-card-tinted" : ""} dark:border dark:border-stone-800/80 px-6 pt-10 pb-5 sm:px-10 sm:pt-14 flex flex-col justify-between shadow-[0_1px_2px_rgba(28,25,23,0.05),0_12px_32px_-16px_rgba(28,25,23,0.18)] dark:shadow-none`}>
                   {/* Dải màu theo từ loại: danh từ xanh dương, động từ đỏ, tính từ xanh lá, phó từ tím, khác vàng. */}
                   {/* Body 2 Cột Desktop: Trái Ảnh - Phải Chữ */}
                   <div className="my-auto pb-8 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
@@ -2414,7 +2416,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                   {/* Thanh dưới thẻ: Loại từ + Nút Audio + ChatGPT */}
                   <div className="w-full flex items-center justify-center gap-2 whitespace-nowrap pt-4 border-t border-stone-100 dark:border-stone-800">
                     {/* Chỉ hiện từ loại khi thẻ có; chữ "Từ vựng" thay thế không mang thông tin. */}
-                    {currentCard.pos && <span className={`mr-auto truncate rounded-full px-2.5 py-0.5 text-xs font-bold ${posTone(currentCard.pos)?.chip}`}>{currentCard.pos}</span>}
+                    {currentCard.pos && <span className={`mr-auto truncate rounded-full px-2.5 py-0.5 text-xs font-bold ${posChip} ${posTint ? "badge-on-solid" : ""}`}>{currentCard.pos}</span>}
 
                     <div className="flex items-center gap-2">
                       {/* Nút ChatGPT */}
@@ -2466,7 +2468,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                 style={tinderActive && dragX !== 0 ? { transform: `translateX(${dragX}px) rotate(${dragX / 25}deg)` } : undefined}
               >
               {swipeOverlay}
-              <div style={cardStyle} className={`mx-auto flex w-full flex-col justify-between ${activeImageSrc ? "flex-1" : ""} rounded-2xl study-card dark:border dark:border-stone-800/80 px-6 pt-10 pb-5 sm:px-10 sm:pt-12 shadow-[0_1px_2px_rgba(28,25,23,0.05),0_12px_32px_-16px_rgba(28,25,23,0.18)] dark:shadow-none ${activeImageSrc ? "max-w-4xl" : "max-w-2xl"}`}>
+              <div style={cardStyle} className={`mx-auto flex w-full flex-col justify-between ${activeImageSrc ? "flex-1" : ""} rounded-2xl study-card ${posTint ? "study-card-tinted" : ""} dark:border dark:border-stone-800/80 px-6 pt-10 pb-5 sm:px-10 sm:pt-12 shadow-[0_1px_2px_rgba(28,25,23,0.05),0_12px_32px_-16px_rgba(28,25,23,0.18)] dark:shadow-none ${activeImageSrc ? "max-w-4xl" : "max-w-2xl"}`}>
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center my-auto pb-8">
                   {/* Cột Trái: Ảnh Gợi Ý */}
                   {activeImageSrc && (
@@ -2556,7 +2558,7 @@ const playableCards = cards.filter((card) => card.ankiSchedule?.queue !== -1).fl
                 {/* Chủ đề ít khi cần nhìn nên đặt cuối thẻ. */}
                 <div className="flex min-h-9 items-center justify-center gap-2 whitespace-nowrap border-t mt-auto border-stone-100 dark:border-stone-800 pt-4">
                   {/* Chỉ hiện từ loại khi thẻ có; chữ "Từ vựng" thay thế không mang thông tin. */}
-                    {currentCard.pos && <span className={`mr-auto truncate rounded-full px-2.5 py-0.5 text-xs font-bold ${posTone(currentCard.pos)?.chip}`}>{currentCard.pos}</span>}
+                    {currentCard.pos && <span className={`mr-auto truncate rounded-full px-2.5 py-0.5 text-xs font-bold ${posChip} ${posTint ? "badge-on-solid" : ""}`}>{currentCard.pos}</span>}
                   {isFlipped && (
                     <div className="flex items-center gap-2 animate-fade-only">
                       {!hideDictionary && (
