@@ -223,6 +223,11 @@ export const LeaderboardModule: React.FC<LeaderboardModuleProps> = ({ currentUse
               </Link>
               <Link href={`/member?id=${encodeURIComponent(user.id)}`} title={user.name} className="block w-full truncate text-sm font-bold text-stone-900 underline-offset-2 hover:underline dark:text-white">{user.name}</Link>
               <p className={`text-base font-black tabular-nums ${medal[idx]}`}>{score(user)}</p>
+              {tab === "vocab" && (
+                <p className="flex items-center gap-1 text-[11px] font-bold tabular-nums text-stone-500 dark:text-stone-400">
+                  <BookOpen aria-hidden="true" className="h-3 w-3" />{fmt(user.vocab_today)} từ hôm nay
+                </p>
+              )}
             </div>
           ))}
         </div>
